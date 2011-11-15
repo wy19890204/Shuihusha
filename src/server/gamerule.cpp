@@ -447,7 +447,16 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
             if(killer){
-                rewardAndPunish(killer, player);
+                if(player->hasSkill("zuohua")){
+                    LogMessage log;
+                    log.type = "#Zuohua";
+                    log.from = player;
+                    log.to << killer;
+                    log.arg = "zuohua";
+                    room->sendLog(log);
+                }
+                else
+                    rewardAndPunish(killer, player);
             }
 
             setGameProcess(room);

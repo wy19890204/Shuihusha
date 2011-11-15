@@ -62,7 +62,7 @@ public:
                 LogMessage log;
                 log.type = "$Kaixian";
                 log.from = huarong;
-                log.card_str = QString::number(card->getId());
+                log.card_str = card->getEffectIdString();
                 room->sendLog(log);
 
                 room->playSkillEffect(objectName());
@@ -134,6 +134,41 @@ public:
     }
 };
 
+class Liba: public TriggerSkill{
+public:
+    Liba():TriggerSkill("liba"){
+        events << Predamage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *luda, QVariant &data) const{
+        Room *room = luda->getRoom();
+        if(luda->getPhase() != Player::Play)
+            return false;
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
+            && !damage.to->isKongcheng()){
+            if(room->askForSkillInvoke(luda, objectName(), data)){
+                room->playSkillEffect(objectName());
+                const Card *card = room->askForCardShow(damage.to, luda, objectName());
+                if(!card->inherits("BasicCard")){
+                    room->throwCard(card->getId());
+                    LogMessage log;
+                    log.type = "$ForceDiscardCard";
+                    log.from = luda;
+                    log.to = damage.to;
+                    log.card_str = card->getEffectIdString();
+                    room->sendLog(log);
+
+                    damage.damage ++;
+                }
+                data = QVariant::fromValue(damage);
+            }
+        }
+        return false;
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4);
@@ -144,13 +179,12 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     General *liying = new General(this, "liying", "wei");
     liying->addSkill(new Kongliang);
 
+    General *luzhishen = new General(this, "luzhishen", "qun");
+    luzhishen->addSkill(new Liba);
+    luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
     /*
 
     related_skills.insertMulti("jiushi", "#jiushi-flip");
-
-    General *xushu = new General(this, "xushu", "shu", 3);
-    xushu->addSkill(new Wuyan);
-    xushu->addSkill(new Jujian);
 
     General *masu = new General(this, "masu", "shu", 3);
     masu->addSkill(new Xinzhan);
