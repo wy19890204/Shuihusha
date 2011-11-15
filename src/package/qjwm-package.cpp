@@ -21,8 +21,14 @@ public:
 
         if(huarong->distanceTo(effect.to) == huarong->getAttackRange()){
             room->playSkillEffect(objectName());
-            room->slashResult(effect, NULL);
+            LogMessage log;
+            log.type = "#Jingzhun";
+            log.from = huarong;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
 
+            room->slashResult(effect, NULL);
             return true;
         }
         return false;
@@ -47,18 +53,83 @@ public:
 
     }
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        if(target->getPhase() == Player::Start){
-            Room *room = target->getRoom();
-            if(!target->isKongcheng() && room->askForSkillInvoke(target, objectName())){
-                const Card *card = room->askForCard(target, ".kaixian!", "@kaixian");
-                room->setPlayerMark(target, "kaixian", card->getNumber());
+    virtual bool onPhaseChange(ServerPlayer *huarong) const{
+        Room *room = huarong->getRoom();
+        if(huarong->getPhase() == Player::Start){
+            if(!huarong->isKongcheng() && room->askForSkillInvoke(huarong, objectName())){
+                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian");
+                room->setPlayerMark(huarong, "kaixian", card->getNumber());
+                LogMessage log;
+                log.type = "$Kaixian";
+                log.from = huarong;
+                log.card_str = QString::number(card->getId());
+                room->sendLog(log);
+
                 room->playSkillEffect(objectName());
             }
         }
-        else if(target->getPhase() == Player::NotActive)
-            room->setPlayerMark(target, "kaixian", 0);
+        else if(huarong->getPhase() == Player::NotActive)
+            room->setPlayerMark(huarong, "kaixian", 0);
 
+        return false;
+    }
+};
+
+class Kongliang: public TriggerSkill{
+public:
+    Kongliang():TriggerSkill("kongliang"){
+        events << DrawNCards << PhaseChange;
+    }
+
+    static bool CompareBySuit(int card1, int card2){
+        const Card *c1 = Sanguosha->getCard(card1);
+        const Card *c2 = Sanguosha->getCard(card2);
+
+        int a = static_cast<int>(c1->getSuit());
+        int b = static_cast<int>(c2->getSuit());
+
+        return a < b;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *liying, QVariant &data) const{
+        Room *room = liying->getRoom();
+        if(event == DrawNCards){
+            if(room->askForSkillInvoke(liying, objectName())){
+                room->playSkillEffect(objectName());
+                data = liying->getMaxHP() + liying->getLostHp();
+                liying->setFlags("kongliang");
+            }
+        }
+        else if(event == PhaseChange && liying->hasFlag("kongliang") && liying->getPhase() == Player::Play){
+            QList<int> card_ids;
+            foreach(const Card *tmp, liying->getHandcards()){
+                card_ids << tmp->getId();
+            }
+            qSort(card_ids.begin(), card_ids.end(), CompareBySuit);
+            room->fillAG(card_ids);
+            int count = 0;
+            while(!card_ids.isEmpty() && count < 2){
+                int card_id = room->askForAG(liying, card_ids, false, objectName());
+                card_ids.removeOne(card_id);
+                room->throwCard(card_id);
+                room->takeAG(NULL, card_id);
+
+                // throw the rest cards that matches the same suit
+                const Card *card = Sanguosha->getCard(card_id);
+                Card::Suit suit = card->getSuit();
+                QMutableListIterator<int> itor(card_ids);
+                while(itor.hasNext()){
+                    const Card *c = Sanguosha->getCard(itor.next());
+                    if(c->getSuit() == suit){
+                        itor.remove();
+                        room->throwCard(card_id);
+                        room->takeAG(NULL, c->getId());
+                    }
+                }
+                count ++;
+            }
+            room->broadcastInvoke("clearAG");
+        }
         return false;
     }
 };
@@ -69,12 +140,13 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
     patterns.insert(".kaixian!", new KaixianPattern);
+
+    General *liying = new General(this, "liying", "wei");
+    liying->addSkill(new Kongliang);
+
     /*
 
     related_skills.insertMulti("jiushi", "#jiushi-flip");
-
-    General *yujin = new General(this, "yujin", "wei");
-    yujin->addSkill(new Yizhong);
 
     General *xushu = new General(this, "xushu", "shu", 3);
     xushu->addSkill(new Wuyan);
