@@ -191,13 +191,13 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     if(!designer_text.startsWith("designer:"))
         ui->designerLineEdit->setText(designer_text);
     else
-        ui->designerLineEdit->setText(tr("Official"));
+        ui->designerLineEdit->setText(Sanguosha->translate("DefaultDesigner"));
 
     QString cv_text = Sanguosha->translate("cv:" + general->objectName());
     if(!cv_text.startsWith("cv:"))
         ui->cvLineEdit->setText(cv_text);
     else
-        ui->cvLineEdit->setText(tr("Official"));
+        ui->cvLineEdit->setText(Sanguosha->translate("DefaultCV"));
 
     button_layout->addStretch();
     ui->skillTextEdit->append(general->getSkillDescription());

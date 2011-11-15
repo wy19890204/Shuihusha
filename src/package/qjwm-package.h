@@ -1,12 +1,86 @@
-#include "yjcm-package.h"
-#include "skill.h"
-#include "standard.h"
-#include "maneuvering.h"
-#include "clientplayer.h"
-#include "carditem.h"
-#include "engine.h"
-#include "ai.h"
+#ifndef QJWMPACKAGE_H
+#define QJWMPACKAGE_H
 
+#include "package.h"
+#include "card.h"
+
+class QJWMPackage: public Package{
+    Q_OBJECT
+
+public:
+    QJWMPackage();
+};
+/*
+class JujianCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JujianCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class MingceCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE MingceCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class GanluCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE GanluCard();
+    void swapEquip(ServerPlayer *first, ServerPlayer *second, int index) const;
+
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class XianzhenSlashCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XianzhenSlashCard();
+
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class XianzhenCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XianzhenCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class XuanhuoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XuanhuoCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class XinzhanCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XinzhanCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+*/
+#endif // QJWMPACKAGE_H
+
+/*
 class Yizhong: public TriggerSkill{
 public:
     Yizhong():TriggerSkill("yizhong"){
@@ -907,60 +981,4 @@ public:
         return new XinzhanCard;
     }
 };
-
-YJCMPackage::YJCMPackage():Package("YJCM"){
-    General *caozhi = new General(this, "caozhi", "wei", 3);
-    caozhi->addSkill(new Luoying);
-    caozhi->addSkill(new Jiushi);
-    caozhi->addSkill(new JiushiFlip);
-
-    related_skills.insertMulti("jiushi", "#jiushi-flip");
-
-    General *yujin = new General(this, "yujin", "wei");
-    yujin->addSkill(new Yizhong);
-
-    General *xushu = new General(this, "xushu", "shu", 3);
-    xushu->addSkill(new Wuyan);
-    xushu->addSkill(new Jujian);
-
-    General *masu = new General(this, "masu", "shu", 3);
-    masu->addSkill(new Xinzhan);
-    masu->addSkill(new Huilei);
-
-    General *fazheng = new General(this, "fazheng", "shu", 3);
-    fazheng->addSkill(new Enyuan);
-    fazheng->addSkill(new Xuanhuo);
-
-    patterns.insert(".enyuan", new EnyuanPattern);
-
-    General *lingtong = new General(this, "lingtong", "wu");
-    lingtong->addSkill(new Xuanfeng);
-
-    General *xusheng = new General(this, "xusheng", "wu");
-    xusheng->addSkill(new Pojun);
-
-    General *wuguotai = new General(this, "wuguotai", "wu", 3, false);
-    wuguotai->addSkill(new Ganlu);
-    wuguotai->addSkill(new Buyi);
-
-    General *chengong = new General(this, "chengong", "qun", 3);
-    chengong->addSkill(new Zhichi);
-    chengong->addSkill(new ZhichiClear);
-    chengong->addSkill(new Mingce);
-
-    related_skills.insertMulti("zhichi", "#zhichi-clear");
-
-    General *gaoshun = new General(this, "gaoshun", "qun");
-    gaoshun->addSkill(new Xianzhen);
-    gaoshun->addSkill(new Jiejiu);
-
-    addMetaObject<JujianCard>();
-    addMetaObject<MingceCard>();
-    addMetaObject<GanluCard>();
-    addMetaObject<XianzhenCard>();
-    addMetaObject<XianzhenSlashCard>();
-    addMetaObject<XuanhuoCard>();
-    addMetaObject<XinzhanCard>();
-}
-
-ADD_PACKAGE(YJCM)
+*/

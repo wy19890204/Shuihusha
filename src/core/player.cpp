@@ -139,6 +139,9 @@ int Player::getAttackRange() const{
     if(hasFlag("tianyi_success"))
         return 1000;
 
+    if(getMark("kaixian") > 0)
+        return getMark("kaixian");
+
     if(weapon)
         return weapon->getRange();
     else if(hasSkill("zhengfeng"))
