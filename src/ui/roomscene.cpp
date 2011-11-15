@@ -157,6 +157,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(skill_acquired(const ClientPlayer*,QString)), this, SLOT(acquireSkill(const ClientPlayer*,QString)));
     connect(ClientInstance, SIGNAL(animated(QString,QStringList)), this, SLOT(doAnimation(QString,QStringList)));
     connect(ClientInstance, SIGNAL(judge_result(QString,QString)), this, SLOT(showJudgeResult(QString,QString)));
+    connect(ClientInstance, SIGNAL(role_state_changed(QString)),this, SLOT(update_state_item(QString)));
 
     connect(ClientInstance, SIGNAL(game_started()), this, SLOT(onGameStart()));
     connect(ClientInstance, SIGNAL(game_over()), this, SLOT(onGameOver()));
@@ -246,7 +247,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     {
         // chat box
         chat_box = new QTextEdit;
-        chat_box->resize(230 + widen_width, 195);
+        chat_box->resize(230 + widen_width, 175);
 
         QGraphicsProxyWidget *chat_box_widget = addWidget(chat_box);
         chat_box_widget->setPos(-343 - widen_width, -83);
@@ -271,7 +272,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         connect(chat_edit, SIGNAL(returnPressed()), this, SLOT(speak()));
 
         if(circular){
-            chat_box->resize(268, 180);
+            chat_box->resize(268, 165);
             chat_box_widget->setPos(367 , -38);
 
             chat_edit->setFixedWidth(chat_box->width());
@@ -287,7 +288,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     {
         // log box
         log_box = new ClientLogBox;
-        log_box->resize(chat_box->width(), 213);
+        log_box->resize(chat_box->width(), 205);
         log_box->setTextColor(Config.TextEditColor);
 
         QGraphicsProxyWidget *log_box_widget = addWidget(log_box);
@@ -302,7 +303,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     }
 
     {
-        prompt_box = new Window(tr("ConanSlash"), QSize(480, 200));
+        prompt_box = new Window(tr("Sanguosha"), QSize(480, 200));
         prompt_box->setOpacity(0.8);
         prompt_box->setFlag(QGraphicsItem::ItemIsMovable);
         prompt_box->shift();
@@ -344,7 +345,15 @@ RoomScene::RoomScene(QMainWindow *main_window)
     skill_dock = new QDockWidget(main_window);
     skill_dock->setTitleBarWidget(new QWidget);
     skill_dock->titleBarWidget()->hide();
+    skill_dock->setFixedHeight(30);
+
     main_window->addDockWidget(Qt::BottomDockWidgetArea, skill_dock);
+
+    QFile file("sanguosha.qss");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        skill_dock->setStyleSheet(stream.readAll());
+    }
 
     addWidgetToSkillDock(sort_combobox, true);
 
@@ -563,10 +572,8 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
 }
 
 void RoomScene::changeTextEditBackground(){
-    QPalette palette;
-    palette.setBrush(QPalette::Base, backgroundBrush());
-    chat_box->setPalette(palette);
-    log_box->setPalette(palette);
+    chat_box->setStyleSheet("background-color: rgba(0,0,0,50%);");
+    log_box->setStyleSheet("background-color: rgba(0,0,0,50%);");
 }
 
 void RoomScene::addPlayer(ClientPlayer *player){
@@ -663,14 +670,14 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(pixmap, "pos");
         ugoku->setStartValue(DrawPilePos);
-        ugoku->setDuration(500);
-        ugoku->setEasingCurve(QEasingCurve::OutBounce);
+        ugoku->setDuration(1000);
+        ugoku->setEasingCurve(QEasingCurve::OutQuart);
         ugoku->setEndValue(photo->pos() + QPointF(20 *i, 0));
 
         QPropertyAnimation *kieru = new QPropertyAnimation(pixmap, "opacity");
-        kieru->setDuration(900);
-        kieru->setKeyValueAt(0.8, 1.0);
+        kieru->setKeyValueAt(0.4, 1.0);
         kieru->setEndValue(0.0);
+        kieru->setDuration(500);
 
         moving->addAnimation(ugoku);
         disappering->addAnimation(kieru);
@@ -750,7 +757,7 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
 
     case Qt::Key_E: dashboard->selectCard("equip"); break;
     case Qt::Key_W: dashboard->selectCard("weapon"); break;
-    case Qt::Key_H: dashboard->selectCard("car"); break;
+    case Qt::Key_H: dashboard->selectCard("horse"); break;
 
     case Qt::Key_T: dashboard->selectCard("trick"); break;
     case Qt::Key_A: dashboard->selectCard("aoe"); break;
@@ -1039,7 +1046,8 @@ void RoomScene::moveNCards(int n, const QString &from, const QString &to){
         ugoku->setDuration(1000);
 
         QPropertyAnimation *kieru = new QPropertyAnimation(card_pixmap, "opacity");
-        kieru->setStartValue(1.0);
+        kieru->setStartValue(0.0);
+        kieru->setKeyValueAt(0.2, 1.0);
         kieru->setKeyValueAt(0.8, 1.0);
         kieru->setEndValue(0.0);
         kieru->setDuration(1000);
@@ -1262,6 +1270,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     button->setText(skill->getText());
     button->setToolTip(skill->getDescription());
     button->setDisabled(skill->getFrequency() == Skill::Compulsory);
+    //button->setStyleSheet(Config.value("style/button").toString());
 
     if(skill->isLordSkill())
         button->setIcon(QIcon("image/system/roles/lord.png"));
@@ -1271,7 +1280,8 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 }
 
 void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
-    widget->setFixedHeight(30);
+    if(widget->inherits("QComboBox"))widget->setFixedHeight(20);
+    else widget->setFixedHeight(26);
 
     QWidget *container = skill_dock->widget();
     QHBoxLayout *container_layout = NULL;
@@ -2328,7 +2338,7 @@ void RoomScene::saveReplayRecord(){
     QString filename = QFileDialog::getSaveFileName(main_window,
                                                     tr("Save replay record"),
                                                     location,
-                                                    tr("Image replay file (*.png);; Pure text replay file (*.txt)"));
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(!filename.isEmpty()){
         ClientInstance->save(filename);
@@ -2681,34 +2691,11 @@ void RoomScene::createStateItem(){
 
     QPixmap state("image/system/state.png");
 
-    QGraphicsItem *state_item = addPixmap(state);//QPixmap("image/system/state.png"));
+    state_item = addPixmap(state);//QPixmap("image/system/state.png"));
     state_item->setPos(-110, -90);
-    char roles[100] = {0}, *role;
+    char roles[100] = {0};
     Sanguosha->getRoles(ServerInfo.GameMode, roles);
-    for(role = roles; *role!='\0'; role++){
-        static QPixmap lord("image/system/roles/small-lord.png");
-        static QPixmap loyalist("image/system/roles/small-loyalist.png");
-        static QPixmap rebel("image/system/roles/small-rebel.png");
-        static QPixmap renegade("image/system/roles/small-renegade.png");
-
-        QPixmap *to_add = NULL;
-        switch(*role){
-        case 'Z': to_add = &lord; break;
-        case 'C': to_add = &loyalist; break;
-        case 'N': to_add = &renegade; break;
-        case 'F': to_add = &rebel; break;
-        default:
-            break;
-        }
-
-        if(to_add){
-            QGraphicsPixmapItem *item = addPixmap(*to_add);
-            item->setPos(21*role_items.length(), 6);
-            item->setParentItem(state_item);
-
-            role_items << item;
-        }
-    }
+    updateStateItem(roles);
 
     QGraphicsTextItem *text_item = addText("");
     text_item->setParentItem(state_item);
@@ -3556,4 +3543,40 @@ void RoomScene::finishArrange(){
     ClientInstance->request("arrange " + names.join("+"));
 }
 
+void RoomScene::update_state_item(const QString &qstr)
+{
+    char *c_str2 = qstr.toLocal8Bit().data();
+    updateStateItem(c_str2);
+}
 
+void RoomScene::updateStateItem(char* roles)
+{
+    foreach(QGraphicsItem *item, role_items)
+        removeItem(item);
+    role_items.clear();
+
+    for(char *role = roles; *role!='\0'; role++){
+        static QPixmap lord("image/system/roles/small-lord.png");
+        static QPixmap loyalist("image/system/roles/small-loyalist.png");
+        static QPixmap rebel("image/system/roles/small-rebel.png");
+        static QPixmap renegade("image/system/roles/small-renegade.png");
+
+        QPixmap *to_add = NULL;
+        switch(*role){
+        case 'Z': to_add = &lord; break;
+        case 'C': to_add = &loyalist; break;
+        case 'N': to_add = &renegade; break;
+        case 'F': to_add = &rebel; break;
+        default:
+            break;
+        }
+
+        if(to_add){
+            QGraphicsPixmapItem *item = addPixmap(*to_add);
+            item->setPos(21*role_items.length(), 6);
+            item->setParentItem(state_item);
+
+            role_items << item;
+        }
+    }
+}

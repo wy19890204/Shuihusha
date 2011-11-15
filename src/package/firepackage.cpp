@@ -6,7 +6,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "maneuvering.h"
-/*
+
 QuhuCard::QuhuCard(){
     once = true;
     mute = true;
@@ -413,7 +413,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0;
+        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0 && target->getMark("wuqian") == 0;
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *wolong, QVariant &data) const{
@@ -532,10 +532,10 @@ public:
         return false;
     }
 };
-*/
+
 FirePackage::FirePackage()
     :Package("fire")
-{/*
+{
     General *xunyu, *dianwei, *wolong, *pangtong, *taishici, *yuanshao, *shuangxiong, *pangde;
 
     xunyu = new General(this, "xunyu", "wei", 3);
@@ -574,7 +574,7 @@ FirePackage::FirePackage()
     addMetaObject<QuhuCard>();
     addMetaObject<JiemingCard>();
     addMetaObject<QiangxiCard>();
-    addMetaObject<TianyiCard>();*/
+    addMetaObject<TianyiCard>();
 }
 
 ADD_PACKAGE(Fire);

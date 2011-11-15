@@ -19,15 +19,15 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
-                }else if(player->getGeneralName() == "haibaraai"){
+                }else if(player->getGeneralName() == "lubu"){
                     if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "yoshidaayumi", true);
-                /*}else if(player->getGeneralName() == "hattoriheiji"){
+                        room->transfigure(player, "dongzhuo", true);
+                }else if(player->getGeneralName() == "zhugeliang"){
                     if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "heiji", true);*/
-                }else if(player->getGeneralName() == "tenkei"){
+                        room->transfigure(player, "wolong", true);
+                }else if(player->getGeneralName() == "caopi"){
                     if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "ubun", true);
+                        room->transfigure(player, "caozhi", true);
                 }
 
                 break;
@@ -112,21 +112,25 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "aoyamagoushou";
-    renegades << "kudoushinichi" << "mouriran";
+    lord = "caocao";
+    renegades << "lubu" << "diaochan";
     rule = new CoupleScenarioRule(this);
 
-    map["kudoushinichi"] = "mouriran";
-    map["hattoriheiji"] = "touyamakazuha";
-    map["mourikogorou"] = "kisakieri";
-    map["edogawaconan"] = "haibaraai";
-    map["kyougokumakoto"] = "suzukisonoko";
-    map["kurobakaitou"] = "nakamoriaoko";
-    map["shiratorininzaburou"] = "kobayashisumiko";
+    map["caopi"] = "zhenji";
+    map["guojia"] = "simayi";
+    map["liubei"] = "sunshangxiang";
+    map["zhugeliang"] = "huangyueying";
+    map["menghuo"] = "zhurong";
+    map["zhouyu"] = "xiaoqiao";
+    map["lubu"] = "diaochan";
+    map["zhangfei"] = "xiahoujuan";
+    map["sunjian"] = "wuguotai";
+    map["sunce"] = "daqiao";
 
     full_map = map;
-    full_map["haibaraai"] = "yoshidaayumi";
-    //full_map["hattoriheiji"] = "heiji";
+    full_map["dongzhuo"] = "diaochan";
+    full_map["wolong"] = "huangyueying";
+    full_map["caozhi"] = "zhenji";
 }
 
 void CoupleScenario::marryAll(Room *room) const{
@@ -218,7 +222,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "aoyamagoushou")
+        if(generals.at(i) == "caocao")
             roles << "lord";
         else
             roles << "renegade";

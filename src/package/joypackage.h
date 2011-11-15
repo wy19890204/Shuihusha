@@ -36,15 +36,7 @@ public:
     static bool HasShit(const Card *card);
 };
 
-class Stink: public BasicCard{
-    Q_OBJECT
 
-public:
-    Q_INVOKABLE Stink(Card::Suit suit, int number);
-    virtual QString getSubtype() const;
-    virtual QString getEffectPath(bool is_male) const;
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
 
 // five disasters:
 
@@ -88,7 +80,7 @@ public:
     virtual void takeEffect(ServerPlayer *target) const;
 };
 
-class Monkey: public OffensiveCar{
+class Monkey: public OffensiveHorse{
     Q_OBJECT
 
 public:
@@ -100,6 +92,23 @@ public:
 
 private:
     TriggerSkill *grab_peach;
+};
+
+class GaleShell:public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE GaleShell(Card::Suit suit, int number);
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class YxSword: public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE YxSword(Card::Suit suit = Club, int number = 9);
 };
 
 #endif // JOYPACKAGE_H

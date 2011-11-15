@@ -117,10 +117,6 @@ QList<ServerPlayer *> Room::getOtherPlayers(ServerPlayer *except) const{
     return other_players;
 }
 
-QList<ServerPlayer *> Room::getPlayers() const{
-    return players ;
-}
-
 QList<ServerPlayer *> Room::getAllPlayers() const{
     if(current == NULL)
         return alive_players;
@@ -188,6 +184,33 @@ void Room::revivePlayer(ServerPlayer *player){
     broadcastInvoke("revivePlayer", player->objectName());
 }
 
+QString Room::getRoleStateString()
+{
+    int lords=0,rebels=0,loyals=0,renes=0;
+    foreach(ServerPlayer * player,getAlivePlayers())
+    {
+        switch(player->getRoleEnum())
+        {
+        case Player::Lord:
+            lords++;break;
+            case Player::Renegade:
+            renes++;break;
+            case Player::Rebel:
+            rebels++;break;
+            case Player::Loyalist:
+            loyals++;break;
+        default:
+            break;
+        }
+    }
+    QString op="";
+    for(int i=0;i<lords;i++)op+="Z";
+    for(int i=0;i<loyals;i++)op+="C";
+    for(int i=0;i<rebels;i++)op+="F";
+    for(int i=0;i<renes;i++)op+="N";
+    return op;
+}
+
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
     ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.ContestMode && killer){
@@ -199,6 +222,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     broadcastProperty(victim, "role");
     broadcastInvoke("killPlayer", victim->objectName());
+
 
     int index = alive_players.indexOf(victim);
     int i;
@@ -214,6 +238,8 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
     log.to << victim;
     log.arg = victim->getRole();
     log.from = killer;
+
+    broadcastInvoke("updateStateItem", getRoleStateString());
 
     if(killer){
         if(killer == victim)
@@ -1980,8 +2006,6 @@ void Room::startGame(){
         game_rule = new BossMode(this);
     else if(mode == "04_1v3")
         game_rule = new HulaoPassMode(this);
-    else if(mode == "08raw")
-        game_rule = new RunawayMode(this);
     else if(Config.EnableScene)	//changjing
         game_rule = new SceneRule(this);	//changjing
     else
@@ -2401,7 +2425,7 @@ QString Room::askForKingdom(ServerPlayer *player){
         return askForKingdom(player);
 
     if(result == ".")
-        return "zhen";
+        return "wei";
     else
         return result;
 }

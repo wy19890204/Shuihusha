@@ -32,22 +32,30 @@ Engine *Sanguosha = NULL;
 extern "C" {
     Package *NewStandard();
     Package *NewWind();
+    Package *NewFire();
     Package *NewThicket();
-//    Package *NewFire();
-//    Package *NewMountain();
-    Package *NewStandardCard();
-    Package *NewManeuvering();
-//    Package *NewGod();
-//    Package *NewYitian();
-    Package *NewNostalgia();
-    Package *NewJoy();
-    Package *NewDisaster();
-    Package *NewJoyEquip();
-    Package *NewSecrets();
+    Package *NewMountain();
+    Package *NewGod();
+    Package *NewYitian();
+    Package *NewSP();
+    Package *NewYJCM();
     Package *NewWisdom();
     Package *NewTest();
 
+    Package *NewStandardCard();
+    Package *NewStandardExCard();
+    Package *NewManeuvering();
+    Package *NewSPCard();
+    Package *NewNostalgia();
+    Package *NewYitianCard();
+    Package *NewJoy();
+    Package *NewDisaster();
+    Package *NewJoyEquip();
+
+    Scenario *NewGuanduScenario();
+    Scenario *NewFanchengScenario();
     Scenario *NewCoupleScenario();
+    Scenario *NewHongyanScenario();
     Scenario *NewZombieScenario();
     Scenario *NewLegendScenario();
     Scenario *NewImpasseScenario();
@@ -63,23 +71,30 @@ Engine::Engine()
 
     addPackage(NewStandard());
     addPackage(NewWind());
+    addPackage(NewFire());
     addPackage(NewThicket());
-    //addPackage(NewFire());
-    //addPackage(NewMountain());
-    //addPackage(NewGod());
-    //addPackage(NewYitian());
-    //addPackage(NewWisdom());
+    addPackage(NewMountain());
+    addPackage(NewGod());
+    addPackage(NewSP());
+    addPackage(NewYJCM());
+    addPackage(NewYitian());
+    addPackage(NewWisdom());
     addPackage(NewTest());
 
     addPackage(NewStandardCard());
+    addPackage(NewStandardExCard());
     addPackage(NewManeuvering());
+    addPackage(NewSPCard());
+    addPackage(NewYitianCard());
     addPackage(NewNostalgia());
     addPackage(NewJoy());
     addPackage(NewDisaster());
     addPackage(NewJoyEquip());
-    addPackage(NewSecrets());
 
+    addScenario(NewGuanduScenario());
+    addScenario(NewFanchengScenario());
     addScenario(NewCoupleScenario());
+    addScenario(NewHongyanScenario());
     addScenario(NewZombieScenario());
     addScenario(NewLegendScenario());
     addScenario(NewImpasseScenario());
@@ -90,7 +105,7 @@ Engine::Engine()
     modes["02_1v1"] = tr("2 players (KOF style)");
     modes["03p"] = tr("3 players");
     modes["04p"] = tr("4 players");
-    //modes["04_1v3"] = tr("4 players (Hulao Pass)");
+    modes["04_1v3"] = tr("4 players (Hulao Pass)");
     modes["05p"] = tr("5 players");
     modes["06p"] = tr("6 players");
     modes["06pd"] = tr("6 players (2 renegades)");
@@ -98,9 +113,8 @@ Engine::Engine()
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
     modes["08pd"] = tr("8 players (2 renegades)");
-    //modes["08boss"] = tr("8 players (boss mode)");
+    modes["08boss"] = tr("8 players (boss mode)");
     modes["08same"] = tr("8 players (same mode)");
-    modes["08raw"] = tr("8 players (runaway mode)");
     modes["09p"] = tr("9 players");
     modes["10p"] = tr("10 players");
 
@@ -109,7 +123,6 @@ Engine::Engine()
     //addPackage(challenge_mode_set);
 
     translations.insert("bossmode", tr("Boss mode"));
-    translations.insert("runaway", tr("Runaway mode"));
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -342,11 +355,11 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersion() const{
-    return "0.7";
+    return "20111113";
 }
 
 QString Engine::getVersionName() const{
-    return tr("Bachelor");
+    return tr("Chibi");
 }
 
 QStringList Engine::getExtensions() const{
@@ -367,8 +380,7 @@ QStringList Engine::getExtensions() const{
 QStringList Engine::getKingdoms() const{
     static QStringList kingdoms;
     if(kingdoms.isEmpty())
-        kingdoms << "zhen" << "shao" << "woo" << "yi" << "jing"
-                << "guai" << "hei" << "te" << "za" << "god";
+        kingdoms << "wei" << "shu" << "wu" << "qun" << "god";
 
     return kingdoms;
 }
@@ -376,15 +388,10 @@ QStringList Engine::getKingdoms() const{
 QColor Engine::getKingdomColor(const QString &kingdom) const{
     static QMap<QString, QColor> color_map;
     if(color_map.isEmpty()){
-        color_map["guai"] = QColor(0x03, 0x01, 0xEE);
-        color_map["jing"] = QColor(0x54, 0x79, 0x98);
-        color_map["woo"] = QColor(0xD0, 0x79, 0x6C);
-        color_map["yi"] = QColor(0xFF, 0x34, 0xB3);
-        color_map["te"] = QColor(0xFF, 0x00, 0x00);
-        color_map["shao"] = QColor(0x00, 0xFF, 0x00);
-        color_map["zhen"] = QColor(0x8A, 0x80, 0x7A);
-        color_map["hei"] = QColor(0x04, 0x02, 0x05);
-        color_map["za"] = QColor(0x0A, 0x0A, 0x0B);
+        color_map["wei"] = QColor(0x54, 0x79, 0x98);
+        color_map["shu"] = QColor(0xD0, 0x79, 0x6C);
+        color_map["wu"] = QColor(0x4D, 0xB8, 0x73);
+        color_map["qun"] = QColor(0x8A, 0x80, 0x7A);
         color_map["god"] = QColor(0x96, 0x94, 0x3D);
     }
 

@@ -24,16 +24,13 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
     ui->tableWidget->clearContents();
-    ui->tableWidget->setRowCount(generals.length() -3);
+    ui->tableWidget->setRowCount(generals.length());
     ui->tableWidget->setIconSize(QSize(20,20));
     QIcon lord_icon("image/system/roles/lord.png");
 
     int i;
     for(i=0; i<generals.length(); i++){
         const General *general = generals[i];
-
-        if(general->isHidden())
-            continue;
 
         QString name, kingdom, gender, max_hp, package;
 
@@ -52,8 +49,8 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             name_item->setTextAlignment(Qt::AlignCenter);
         }
 
-        //if(general->isHidden())
-        //    name_item->setBackgroundColor(Qt::gray);
+        if(general->isHidden())
+            name_item->setBackgroundColor(Qt::gray);
 
         QTableWidgetItem *kingdom_item = new QTableWidgetItem(kingdom);
         kingdom_item->setTextAlignment(Qt::AlignCenter);
@@ -74,7 +71,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         ui->tableWidget->setItem(i, 4, package_item);
     }
 
-    ui->tableWidget->setColumnWidth(0, 100);
+    ui->tableWidget->setColumnWidth(0, 80);
     ui->tableWidget->setColumnWidth(1, 50);
     ui->tableWidget->setColumnWidth(2, 50);
     ui->tableWidget->setColumnWidth(3, 60);
@@ -176,17 +173,31 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         addCopyAction(death_button);
     }
 
+    if(general_name == "caocao" || general_name == "shencc" || general_name == "shencaocao"){
+        QCommandLinkButton *win_button = new QCommandLinkButton(tr("Victory"), tr(
+                "Six dragons lead my chariot, "
+                "I will ride the wind with the greatest speed."
+                "With all of the feudal lords under my command,"
+                "to rule the world with one name!"));
+
+        button_layout->addWidget(win_button);
+        addCopyAction(win_button);
+
+        win_button->setObjectName("audio/system/win-cc.ogg");
+        connect(win_button, SIGNAL(clicked()), this, SLOT(playEffect()));
+    }
+
     QString designer_text = Sanguosha->translate("designer:" + general->objectName());
     if(!designer_text.startsWith("designer:"))
         ui->designerLineEdit->setText(designer_text);
     else
-        ui->designerLineEdit->setText(Sanguosha->translate("DefaultDesigner"));
+        ui->designerLineEdit->setText(tr("Official"));
 
     QString cv_text = Sanguosha->translate("cv:" + general->objectName());
     if(!cv_text.startsWith("cv:"))
         ui->cvLineEdit->setText(cv_text);
     else
-        ui->cvLineEdit->setText("");
+        ui->cvLineEdit->setText(tr("Official"));
 
     button_layout->addStretch();
     ui->skillTextEdit->append(general->getSkillDescription());

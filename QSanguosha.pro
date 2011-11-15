@@ -43,6 +43,7 @@ SOURCES += src/main.cpp \
 	src/package/maneuvering.cpp \
 	src/package/mountainpackage.cpp \
 	src/package/nostalgia.cpp \
+	src/package/sp-package.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
@@ -51,10 +52,13 @@ SOURCES += src/main.cpp \
 	src/package/wind.cpp \
 	src/package/wisdompackage.cpp \
 	src/package/yitianpackage.cpp \
-	src/package/secrets.cpp \
+	src/package/yjcm-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
+	src/scenario/fancheng-scenario.cpp \
+	src/scenario/guandu-scenario.cpp \
+	src/scenario/hongyan-scenario.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
@@ -118,18 +122,21 @@ HEADERS += src/client/aux-skills.h \
 	src/package/mountainpackage.h \
 	src/package/nostalgia.h \
 	src/package/package.h \
+	src/package/sp-package.h \
 	src/package/standard-equips.h \
-	src/package/standard-generals.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
 	src/package/thicket.h \
 	src/package/wind.h \
 	src/package/wisdompackage.h \
 	src/package/yitianpackage.h \
-	src/package/secrets.h \
+	src/package/yjcm-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \
+	src/scenario/fancheng-scenario.h \
+	src/scenario/guandu-scenario.h \
+	src/scenario/hongyan-scenario.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \

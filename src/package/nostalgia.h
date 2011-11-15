@@ -3,7 +3,6 @@
 
 #include "package.h"
 #include "card.h"
-#include "standard.h"
 
 class NostalgiaPackage: public Package{
     Q_OBJECT
@@ -11,5 +10,7 @@ class NostalgiaPackage: public Package{
 public:
     NostalgiaPackage();
 };
+
+
 
 #endif // NOSTALGIA_H

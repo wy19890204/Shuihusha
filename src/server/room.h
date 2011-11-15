@@ -38,7 +38,6 @@ public:
     void setCurrent(ServerPlayer *current);
     int alivePlayerCount() const;
     QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
-    QList<ServerPlayer *> getPlayers() const;
     QList<ServerPlayer *> getAllPlayers() const;
     QList<ServerPlayer *> getAlivePlayers() const;
     void output(const QString &message);
@@ -99,6 +98,7 @@ public:
     ServerPlayer *getFront(ServerPlayer *a, ServerPlayer *b) const;
     void signup(ServerPlayer *player, const QString &screen_name, const QString &avatar, bool is_robot);
     ServerPlayer *getOwner() const;
+    QString getRoleStateString();
 
     void reconnect(ServerPlayer *player, ClientSocket *socket);
     void marshal(ServerPlayer *player);

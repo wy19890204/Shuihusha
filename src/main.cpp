@@ -1,3 +1,5 @@
+#include <QtGui/QApplication>
+
 #include <QCoreApplication>
 #include <QTranslator>
 #include <QDir>

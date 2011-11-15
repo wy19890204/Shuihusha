@@ -153,8 +153,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
     switch(event){
     case GameStart: {
-            QString ki = player->getGeneral()->getKingdom();
-            if(ki == "god" || ki == "za"){
+            if(player->getGeneral()->getKingdom() == "god"){
                 QString new_kingdom = room->askForKingdom(player);
                 room->setPlayerProperty(player, "kingdom", new_kingdom);
 
@@ -399,6 +398,9 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             damage.damage = 1;
             if(effect.drank)
+                damage.damage ++;
+
+            if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
                 damage.damage ++;
 
             damage.from = effect.from;
@@ -807,77 +809,3 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
     return GameRule::trigger(event, player, data);
 }
 
-RunawayMode::RunawayMode(QObject *parent)
-    :GameRule(parent)
-{
-    setObjectName("runaway_mode");
-}
-
-bool RunawayMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-    Room *room = player->getRoom();
-
-    switch(event)
-    {
-    case TurnStart:{
-            LogMessage log, log2;
-            int playercount = room->getAlivePlayers().length();
-            QList<int> card_ids = room->getNCards(1);
-            int runum = Sanguosha->getCard(card_ids.first())->getNumber();
-            if(runum >= playercount){
-                log.type = "#Runprex";
-                log.from = player;
-                log.arg = QString::number(runum);
-                room->sendLog(log);
-                break;
-            }
-
-            log.type = "#Runpre";
-            log.from = player;
-            log.arg = QString::number(runum);
-            room->sendLog(log);
-
-            if(player->getDefensiveCar() || player->getOffensiveCar()){
-                QString step;
-                if(player->getDefensiveCar() && player->getOffensiveCar())
-                    step = room->askForChoice(player, "runbycar", "fast+slow+kao");
-                else if(player->getDefensiveCar())
-                    step = room->askForChoice(player, "runbycar", "slow+kao");
-                else
-                    step = room->askForChoice(player, "runbycar", "fast+kao");
-                if(step == "fast"){
-                    log2.type = "$runfast";
-                    log2.card_str = player->getOffensiveCar()->toString();
-                    runum ++;
-                }
-                else if(step == "slow"){
-                    log2.type = "$runslow";
-                    log2.card_str = player->getDefensiveCar()->toString();
-                    runum --;
-                }
-                log2.from = player;
-                room->sendLog(log2);
-            }
-
-            int myseat = player->getSeat();
-            for(int i = 0; i < runum; i++){
-                room->swapSeat(player, player->getNextAlive());
-                room->getThread()->delay();
-            }
-
-            log.type = "#Runaway";
-            log.from = player;
-            log.arg = QString::number(myseat);
-            log.arg2 = QString::number(player->getSeat());
-            room->sendLog(log);
-
-            room->throwCard(card_ids.first());
-
-            break;
-        }
-
-    default:
-        break;
-    }
-
-    return GameRule::trigger(event, player, data);
-}

@@ -45,8 +45,21 @@ void Settings::init(){
     }
 
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
-    GameMode = value("GameMode", "05p").toString();
+    GameMode = value("GameMode", "02p").toString();
+
+
+    if(!contains("BanPackages")){
+        QStringList banlist;
+        banlist << "nostalgia" << "yitian" << "wisdom" << "test"
+                << "disaster" << "god" << "YJCM" << "yitian_cards"
+                << "sp" << "sp_cards"
+                << "joy" << "joy_equip";
+
+        setValue("BanPackages", banlist);
+    }
+
     BanPackages = value("BanPackages").toStringList();
+
     ContestMode = value("ContestMode", false).toBool();
     FreeChoose = value("FreeChoose", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
@@ -67,11 +80,11 @@ void Settings::init(){
 #endif
 
     if(UserName == "Admin" || UserName == "Administrator")
-        UserName = tr("ConanSlash-fans");
+        UserName = tr("Sanguosha-fans");
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
-    UserAvatar = value("UserAvatar", "aoyamagoushou").toString();
+    UserAvatar = value("UserAvatar", "zhangliao").toString();
     HistoryIPs = value("HistoryIPs").toStringList();
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
@@ -88,11 +101,11 @@ void Settings::init(){
     EnableBgMusic = value("EnableBgMusic", true).toBool();
     Volume = value("Volume", 1.0f).toFloat();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/guixin.jpg").toString();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/chibi.jpg").toString();
 
     if(!contains("1v1/Banlist")){
         QStringList banlist;
-        banlist << "hattoriheiji" << "mourikogorou" << "touyamakazuha" << "gin" << "akaishuichi";
+        banlist << "sunquan" << "huatuo" << "zhangliao" << "liubei";
         setValue("1v1/Banlist", banlist);
     }
 }

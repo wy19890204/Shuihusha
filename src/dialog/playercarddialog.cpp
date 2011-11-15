@@ -94,7 +94,7 @@ QWidget *PlayerCardDialog::createAvatar(){
 }
 
 QWidget *PlayerCardDialog::createHandcardButton(){
-    if((Self->hasSkill("dongcha") || Self->hasSkill("zhenxiang")) && player->hasFlag("dongchaee") && !player->isKongcheng()){
+    if(Self->hasSkill("dongcha") && player->hasFlag("dongchaee") && !player->isKongcheng()){
         QGroupBox *area = new QGroupBox(tr("Handcard area"));
         QVBoxLayout *layout =  new QVBoxLayout;
         QList<const Card *> cards = player->getCards();
@@ -150,22 +150,22 @@ QWidget *PlayerCardDialog::createEquipArea(){
         layout->addWidget(button);
     }
 
-    const Car *car = player->getDefensiveCar();
-    if(car){
-        QCommandLinkButton *button = new QCommandLinkButton(car->getFullName() + tr("(+1 car)"));
-        button->setIcon(car->getSuitIcon());
+    const Horse *horse = player->getDefensiveHorse();
+    if(horse){
+        QCommandLinkButton *button = new QCommandLinkButton(horse->getFullName() + tr("(+1 horse)"));
+        button->setIcon(horse->getSuitIcon());
 
-        mapper.insert(button, car->getId());
+        mapper.insert(button, horse->getId());
         connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
         layout->addWidget(button);
     }
 
-    car = player->getOffensiveCar();
-    if(car){
-        QCommandLinkButton *button = new QCommandLinkButton(car->getFullName() + tr("(-1 car)"));
-        button->setIcon(car->getSuitIcon());
+    horse = player->getOffensiveHorse();
+    if(horse){
+        QCommandLinkButton *button = new QCommandLinkButton(horse->getFullName() + tr("(-1 horse)"));
+        button->setIcon(horse->getSuitIcon());
 
-        mapper.insert(button, car->getId());
+        mapper.insert(button, horse->getId());
         connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
         layout->addWidget(button);
     }

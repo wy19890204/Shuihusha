@@ -8,7 +8,7 @@
 #include "generaloverview.h"
 #include "clientplayer.h"
 #include "client.h"
-/*
+
 #include <QCommandLinkButton>
 
 QiaobianCard::QiaobianCard(){
@@ -225,6 +225,12 @@ public:
 
         if(damage && damage->from){
             Room *room = player->getRoom();
+
+            LogMessage log;
+            log.type = "#DuanchangLoseSkills";
+            log.from = player;
+            log.to << damage->from;
+            room->sendLog(log);
 
             QList<const Skill *> skills = damage->from->getVisibleSkillList();
             foreach(const Skill *skill, skills){
@@ -1108,10 +1114,10 @@ public:
             Huashen::AcquireGenerals(zuoci, n);
     }
 };
-*/
+
 MountainPackage::MountainPackage()
     :Package("mountain")
-{/*
+{
     General *zhanghe = new General(this, "zhanghe", "wei");
     zhanghe->addSkill(new Qiaobian);
 
@@ -1175,7 +1181,7 @@ MountainPackage::MountainPackage()
 
     skills << new ZhibaPindian << new Jixi;
 
-    patterns[".basic"] = new BasicPattern;*/
+    patterns[".basic"] = new BasicPattern;
 }
 
 ADD_PACKAGE(Mountain);

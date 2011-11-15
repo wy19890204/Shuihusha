@@ -33,6 +33,7 @@ public:
 
         QString gender = player->getGeneral()->isMale() ? "male" : "female";
         room->broadcastInvoke("playAudio", QString("zombify-%1").arg(gender));
+        room->broadcastInvoke("updateStateItem", room->getRoleStateString());
 
         player->tag.remove("zombie");
     }
@@ -347,8 +348,8 @@ ZombieScenario::ZombieScenario()
     zombie->addSkill(new Ganran);
     zombie->addSkill(new Zaibian);
 
-    zombie->addSkill(new Skill("paoxiao"));
-    zombie->addSkill(new Skill("wansha"));
+    zombie->addSkill("paoxiao");
+    zombie->addSkill("wansha");
 
     addMetaObject<PeachingCard>();
     addMetaObject<GanranEquip>();

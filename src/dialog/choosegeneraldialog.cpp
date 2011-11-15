@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QCheckBox>
+#include <QTabWidget>
 
 OptionButton::OptionButton(QString icon_path, const QString &caption, QWidget *parent)
     :QToolButton(parent)
@@ -182,7 +183,8 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
 {
     setWindowTitle(tr("Free choose generals"));
 
-    QGridLayout *box_layout = new QGridLayout;
+    QTabWidget *tab_widget = new QTabWidget;
+
     group = new QButtonGroup(this);
     group->setExclusive(! pair_choose);
 
@@ -194,17 +196,14 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
 
     QStringList kingdoms = Sanguosha->getKingdoms();
 
-    int i=0,j=0;
     foreach(QString kingdom, kingdoms){
         QList<const General *> generals = map[kingdom];
+
         if(!generals.isEmpty()){
-            QGroupBox *box = createGroupBox(generals);
-            box_layout->addWidget(box, j, i);
-            i++;
-            if(i>4){
-                j++;
-                i=i-5;
-            }
+            QWidget *tab = createTab(generals);
+            tab_widget->addTab(tab,
+                               QIcon(QString("image/kingdom/icon/%1.png").arg(kingdom)),
+                               Sanguosha->translate(kingdom));
         }
     }
 
@@ -220,7 +219,7 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
     button_layout->addWidget(cancel_button);
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addLayout(box_layout);
+    layout->addWidget(tab_widget);
     layout->addLayout(button_layout);
 
     setLayout(layout);
@@ -255,15 +254,17 @@ void FreeChooseDialog::chooseGeneral(){
     accept();
 }
 
-QGroupBox *FreeChooseDialog::createGroupBox(const QList<const General *> &generals){
-    QGroupBox *box = new QGroupBox;
-    QString kingdom = generals.first()->getKingdom();
-    box->setTitle(Sanguosha->translate(kingdom));
+QWidget *FreeChooseDialog::createTab(const QList<const General *> &generals){
+    QWidget *tab = new QWidget;
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    QGridLayout *layout = new QGridLayout;
+    layout->setOriginCorner(Qt::TopLeftCorner);
     QIcon lord_icon("image/system/roles/lord.png");
 
-    foreach(const General *general, generals){
+    const int columns = 4;
+
+    for(int i=0; i<generals.length(); i++){
+        const General *general = generals.at(i);
         QString general_name = general->objectName();
 
         QString text = QString("%1[%2]")
@@ -281,18 +282,20 @@ QGroupBox *FreeChooseDialog::createGroupBox(const QList<const General *> &genera
             button->setIcon(lord_icon);
 
         group->addButton(button);
-        layout->addWidget(button);
+
+        int row = i / columns;
+        int column = i % columns;
+        layout->addWidget(button, row, column);
     }
 
-    layout->addStretch();
-    box->setLayout(layout);
+    tab->setLayout(layout);
 
     if(pair_choose){
         connect(group, SIGNAL(buttonClicked(QAbstractButton*)),
                 this, SLOT(uncheckExtraButton(QAbstractButton*)));
     }
 
-    return box;
+    return tab;
 }
 
 void FreeChooseDialog::uncheckExtraButton(QAbstractButton *click_button){

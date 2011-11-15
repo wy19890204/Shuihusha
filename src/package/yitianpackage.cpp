@@ -6,6 +6,48 @@
 #include "god.h"
 #include "standard.h"
 
+class YitianSwordSkill : public WeaponSkill{
+public:
+    YitianSwordSkill():WeaponSkill("yitian_sword"){
+        events << DamageComplete;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+        if(player->getPhase() != Player::NotActive)
+           return false;
+
+        if(player->askForSkillInvoke("yitian_sword"))
+            player->getRoom()->askForUseCard(player, "slash", "@askforslash");
+
+        return false;
+    }
+};
+
+YitianSword::YitianSword(Suit suit, int number)
+    :Weapon(suit, number, 2)
+{
+    setObjectName("yitian_sword");
+    skill = new YitianSwordSkill;
+}
+
+void YitianSword::onMove(const CardMoveStruct &move) const{
+    if(move.from_place == Player::Equip && move.from->isAlive()){
+        Room *room = move.from->getRoom();
+
+        bool invoke = move.from->askForSkillInvoke("yitian-lost");
+        if(!invoke)
+            return;
+
+        ServerPlayer *target = room->askForPlayerChosen(move.from, room->getAllPlayers(), "yitian-lost");
+        DamageStruct damage;
+        damage.from = move.from;
+        damage.to = target;
+        damage.card = this;
+
+        room->damage(damage);
+    }
+}
+
 ChengxiangCard::ChengxiangCard()
 {
 
@@ -1215,7 +1257,7 @@ public:
         }
     }
 };
-/*
+
 XunzhiCard::XunzhiCard(){
     target_fixed = true;
 }
@@ -1276,7 +1318,7 @@ public:
         return false;
     }
 };
-*/
+
 class Dongcha: public PhaseChangeSkill{
 public:
     Dongcha():PhaseChangeSkill("dongcha"){
@@ -1778,6 +1820,16 @@ public:
     }
 };
 
+YitianCardPackage::YitianCardPackage()
+    :Package("yitian_cards")
+{
+    (new YitianSword)->setParent(this);
+
+    type = CardPack;
+}
+
+ADD_PACKAGE(YitianCard)
+
 YitianPackage::YitianPackage()
     :Package("yitian")
 {
@@ -1797,7 +1849,7 @@ YitianPackage::YitianPackage()
 
     related_skills.insertMulti("jueji", "#jueji-get");
 
-    General *lukang = new General(this, "lukang", "wu", 3);
+    General *lukang = new General(this, "lukang", "wu", 4);
     lukang->addSkill(new LukangWeiyan);
     lukang->addSkill(new Kegou);
 
@@ -1846,7 +1898,7 @@ YitianPackage::YitianPackage()
 
     General *jiangboyue = new General(this, "jiangboyue", "shu");
     jiangboyue->addSkill(new Lexue);
-   //jiangboyue->addSkill(new Xunzhi);
+    jiangboyue->addSkill(new Xunzhi);
 
     General *jiawenhe = new General(this, "jiawenhe", "qun");
     jiawenhe->addSkill(new Dongcha);
@@ -1881,7 +1933,7 @@ YitianPackage::YitianPackage()
     addMetaObject<LianliSlashCard>();
     addMetaObject<GuihanCard>();
     addMetaObject<LexueCard>();
-    //addMetaObject<XunzhiCard>();
+    addMetaObject<XunzhiCard>();
     addMetaObject<YisheAskCard>();
     addMetaObject<YisheCard>();
     addMetaObject<TaichenCard>();

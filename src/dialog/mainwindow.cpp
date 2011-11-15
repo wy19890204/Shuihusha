@@ -135,7 +135,7 @@ void MainWindow::on_actionExit_triggered()
 {
     QMessageBox::StandardButton result;
     result = QMessageBox::question(this,
-                                   tr("ConanSlash"),
+                                   tr("Sanguosha"),
                                    tr("Are you sure to exit?"),
                                    QMessageBox::Ok | QMessageBox::Cancel);
     if(result == QMessageBox::Ok){
@@ -214,7 +214,7 @@ void MainWindow::on_actionReplay_triggered()
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Select a reply file"),
                                                     location,
-                                                    tr("Image replay file (*.png);; Pure text replay file (*.txt)"));
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(filename.isEmpty())
         return;
@@ -785,7 +785,7 @@ void MainWindow::on_actionReplay_file_convert_triggered()
     QString filename = QFileDialog::getOpenFileName(
             this, tr("Please select a replay file"),
             Config.value("LastReplayDir").toString(),
-            tr("Image replay file (*.png);; Pure text replay file (*.txt)"));
+            tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(filename.isEmpty())
         return;

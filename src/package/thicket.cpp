@@ -7,7 +7,7 @@
 #include "clientplayer.h"
 #include "client.h"
 #include "engine.h"
-/*
+
 class Xingshang: public TriggerSkill{
 public:
     Xingshang():TriggerSkill("xingshang"){
@@ -34,8 +34,8 @@ public:
 
             caopi->obtainCard(player->getWeapon());
             caopi->obtainCard(player->getArmor());
-            caopi->obtainCard(player->getDefensiveCar());
-            caopi->obtainCard(player->getOffensiveCar());
+            caopi->obtainCard(player->getDefensiveHorse());
+            caopi->obtainCard(player->getOffensiveHorse());
 
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
@@ -866,128 +866,65 @@ public:
         return false;
     }
 };
-*/
-//conan
-class Guilin: public MasochismSkill{
-public:
-    Guilin():MasochismSkill("guilin"){
-    }
-
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
-        Room *room = player->getRoom();
-        const Card *card = damage.card;
-        if(room->obtainable(card, player) && room->askForSkillInvoke(player, objectName())){
-            player->obtainCard(card);
-            QList<ServerPlayer *> targets;
-            if(damage.from)
-                targets << damage.from;
-            if(room->getCurrent() && room->getCurrent() != damage.from)
-                targets << room->getCurrent();
-            if(!targets.isEmpty()){
-                ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
-                int card2_id = room->askForCardChosen(player, target, "he", objectName());
-                room->obtainCard(player, card2_id);
-                if(card->getSuit() != Sanguosha->getCard(card2_id)->getSuit())
-                    room->askForDiscard(player, objectName(), 1, false, true);
-            }
-        }
-    }
-};
-
-class Mihu: public TriggerSkill{
-public:
-    Mihu():TriggerSkill("mihu"){
-        frequency = Compulsory;
-        events << CardUsed;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        if(player->getPhase() != Player::Play)
-            return false;
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->getSkillName() != "zhizhuo")
-            return false;
-        int frog = qrand() % 4;
-        Room *room = player->getRoom();
-        if(frog == 0){
-            if(use.card->subcardsLength() > 0)
-                room->throwCard(use.card);
-            else
-                room->throwCard(use.card->getId());
-
-            LogMessage log;
-            log.type = "#Mihu_cup";
-            log.from = player;
-            log.arg = objectName();
-            room->sendLog(log);
-
-            return true;
-        }
-        return false;
-    }
-};
-
-class ZhizhuoViewAsSkill: public OneCardViewAsSkill{
-public:
-    ZhizhuoViewAsSkill():OneCardViewAsSkill("zhizhuo"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->tag.value("Store", -1).toInt() > -1;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        if(to_select->isEquipped())
-            return false;
-        if(to_select->getCard()->getSuit() != Sanguosha->getCard(Self->tag.value("Store", -1).toInt())->getSuit())
-            return false;
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        Card *new_card = Sanguosha->cloneCard(Sanguosha->getCard(Self->tag.value("Store", -1).toInt())->objectName(), card->getSuit(), card->getNumber());
-        new_card->addSubcard(card);
-        new_card->setSkillName("zhizhuo");
-        return new_card;
-    }
-};
-
-class Zhizhuo: public TriggerSkill{
-public:
-    Zhizhuo():TriggerSkill("zhizhuo"){
-        view_as_skill = new ZhizhuoViewAsSkill;
-        events << CardUsed << PhaseChange;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        if(!player)
-            return false;
-        if(event == PhaseChange){
-            if(player->getPhase() == Player::Start)
-                Self->tag["Store"] = -1;
-            return false;
-        }
-        CardUseStruct card = data.value<CardUseStruct>();
-        if(card.card->subcardsLength() > 0 || card.card->getNumber() < 1)
-            return false;
-        if(card.card->isNDTrick() || card.card->inherits("BasicCard"))
-            Self->tag["Store"] = card.card->getId();
-
-        return false;
-    }
-};
 
 ThicketPackage::ThicketPackage()
     :Package("thicket")
 {
-    General *shiratorininzaburou = new General(this, "shiratorininzaburou", "jing");
-    shiratorininzaburou->addSkill(new Guilin);
-/*
-    General *hondoueisuke = new General(this, "hondoueisuke", "za");
-    hondoueisuke->addSkill(new Mihu);
-    hondoueisuke->addSkill(new Zhizhuo);
-*/
+    General *caopi, *xuhuang, *menghuo, *zhurong, *sunjian, *lusu, *jiaxu, *dongzhuo;
+
+    caopi = new General(this, "caopi$", "wei", 3);
+    caopi->addSkill(new Xingshang);
+    caopi->addSkill(new Fangzhu);
+    caopi->addSkill(new Songwei);
+
+    xuhuang = new General(this, "xuhuang", "wei");
+    xuhuang->addSkill(new Duanliang);
+
+    menghuo = new General(this, "menghuo", "shu");
+    menghuo->addSkill(new SavageAssaultAvoid("huoshou"));
+    menghuo->addSkill(new Huoshou);
+    menghuo->addSkill(new Zaiqi);
+
+    related_skills.insertMulti("huoshou", "#sa_avoid_huoshou");
+
+    zhurong = new General(this, "zhurong", "shu", 4, false);
+    zhurong->addSkill(new SavageAssaultAvoid("juxiang"));
+    zhurong->addSkill(new Juxiang);
+    zhurong->addSkill(new Lieren);
+
+    related_skills.insertMulti("juxiang", "#sa_avoid_juxiang");
+
+    sunjian = new General(this, "sunjian", "wu");
+    sunjian->addSkill(new Yinghun);
+
+    lusu = new General(this, "lusu", "wu", 3);
+    lusu->addSkill(new Haoshi);
+    lusu->addSkill(new HaoshiViewAsSkill);
+    lusu->addSkill(new HaoshiGive);
+    lusu->addSkill(new Dimeng);
+
+    related_skills.insertMulti("haoshi", "#haoshi");
+    related_skills.insertMulti("haoshi", "#haoshi-give");
+
+    jiaxu = new General(this, "jiaxu", "qun", 3);
+    jiaxu->addSkill(new Skill("wansha", Skill::Compulsory));
+    jiaxu->addSkill(new Weimu);
+    jiaxu->addSkill(new MarkAssignSkill("@chaos", 1));
+    jiaxu->addSkill(new Luanwu);
+
+    related_skills.insertMulti("luanwu", "#@chaos");
+
+    dongzhuo = new General(this, "dongzhuo$", "qun", 8);
+    dongzhuo->addSkill(new Jiuchi);
+    dongzhuo->addSkill(new Roulin);
+    dongzhuo->addSkill(new Benghuai);
+    dongzhuo->addSkill(new Baonue);
+
+    addMetaObject<DimengCard>();
+    addMetaObject<LuanwuCard>();
+    addMetaObject<YinghunCard>();
+    addMetaObject<FangzhuCard>();
+    addMetaObject<HaoshiCard>();
 }
 
 ADD_PACKAGE(Thicket)

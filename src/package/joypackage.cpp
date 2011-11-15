@@ -66,29 +66,6 @@ bool Shit::HasShit(const Card *card){
         return card->objectName() == "shit";
 }
 
-Stink::Stink(Suit suit, int number):BasicCard(suit, number){
-    setObjectName("stink");
-    target_fixed = true;
-}
-
-QString Stink::getSubtype() const{
-    return "disgusting_card";
-}
-
-QString Stink::getEffectPath(bool is_male) const{
-    return "audio/card/common/stink.ogg";
-}
-
-void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-    ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
-    room->setEmotion(nextfriend, "bad");
-    if(!room->askForCard(nextfriend, "jink", "haochou", true)){
-        room->swapSeat(nextfriend, nextfriend->getNextAlive());
-    }
-    else room->setEmotion(nextfriend, "good");
-}
-
 // -----------  Deluge -----------------
 
 Deluge::Deluge(Card::Suit suit, int number)
@@ -189,7 +166,7 @@ void Earthquake::takeEffect(ServerPlayer *target) const{
     QList<ServerPlayer *> players = room->getAllPlayers();
     foreach(ServerPlayer *player, players){
         if(target->distanceTo(player) <= 1 ||
-           (player->getDefensiveCar() && target->distanceTo(player) <= 2)){
+           (player->getDefensiveHorse() && target->distanceTo(player) <= 2)){
             if(player->getEquips().isEmpty()){
                 room->setEmotion(player, "good");
             }else{
@@ -221,7 +198,7 @@ void Volcano::takeEffect(ServerPlayer *target) const{
     QList<ServerPlayer *> players = room->getAllPlayers();
 
     foreach(ServerPlayer *player, players){
-        int point = player->getDefensiveCar() && target != player ?
+        int point = player->getDefensiveHorse() && target != player ?
                     3 - target->distanceTo(player) :
                     2 - target->distanceTo(player);
         if(point >= 1){
@@ -291,10 +268,10 @@ public:
             QList<ServerPlayer *> players = room->getOtherPlayers(player);
 
             foreach(ServerPlayer *p, players){
-                if(p->getOffensiveCar() == parent() &&
+                if(p->getOffensiveHorse() == parent() &&
                    p->askForSkillInvoke("grab_peach", data))
                 {
-                    room->throwCard(p->getOffensiveCar());
+                    room->throwCard(p->getOffensiveHorse());
                     room->playCardEffect(objectName(), p->getGeneral()->isMale());
                     p->obtainCard(use.card);
 
@@ -308,7 +285,7 @@ public:
 };
 
 Monkey::Monkey(Card::Suit suit, int number)
-    :OffensiveCar(suit, number)
+    :OffensiveHorse(suit, number)
 {
     setObjectName("monkey");
 
@@ -326,6 +303,44 @@ void Monkey::onUninstall(ServerPlayer *player) const{
 
 QString Monkey::getEffectPath(bool ) const{
     return "audio/card/common/monkey.ogg";
+}
+
+class GaleShellSkill: public ArmorSkill{
+public:
+    GaleShellSkill():ArmorSkill("gale-shell"){
+        events << Predamaged;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.nature == DamageStruct::Fire){
+            LogMessage log;
+            log.type = "#GaleShellDamage";
+            log.from = player;
+            log.arg = QString::number(damage.damage);
+            log.arg2 = QString::number(damage.damage + 1);
+            player->getRoom()->sendLog(log);
+
+            damage.damage ++;
+            data = QVariant::fromValue(damage);
+        }
+        return false;
+    }
+};
+
+GaleShell::GaleShell(Suit suit, int number) :Armor(suit, number){
+    setObjectName("gale-shell");
+    skill = new GaleShellSkill;
+
+    target_fixed = false;
+}
+
+bool GaleShell::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->distanceTo(to_select) <= 1;
+}
+
+void GaleShell::onUse(Room *room, const CardUseStruct &card_use) const{
+    Card::onUse(room, card_use);
 }
 
 DisasterPackage::DisasterPackage()
@@ -353,8 +368,7 @@ JoyPackage::JoyPackage()
     cards << new Shit(Card::Club, 1)
             << new Shit(Card::Heart, 8)
             << new Shit(Card::Diamond, 13)
-            << new Shit(Card::Spade, 10)
-            << new Stink(Card::Diamond, 1);
+            << new Shit(Card::Spade, 10);
 
     foreach(Card *card, cards)
         card->setParent(this);
@@ -362,10 +376,53 @@ JoyPackage::JoyPackage()
     type = CardPack;
 }
 
+class YxSwordSkill: public WeaponSkill{
+public:
+    YxSwordSkill():WeaponSkill("yx_sword"){
+        events << Predamage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        Room *room = player->getRoom();
+        if(damage.card && damage.card->inherits("Slash") && room->askForSkillInvoke(player, objectName(), data)){
+            QList<ServerPlayer *> players = room->getOtherPlayers(player);
+            QMutableListIterator<ServerPlayer *> itor(players);
+
+            while(itor.hasNext()){
+                itor.next();
+                if(!player->inMyAttackRange(itor.value()))
+                    itor.remove();
+            }
+
+            if(players.isEmpty())
+                return false;
+
+            QVariant victim = QVariant::fromValue(damage.to);
+            room->setTag("YxSwordVictim", victim);
+            ServerPlayer *target = room->askForPlayerChosen(player, players, objectName());
+            room->removeTag("YxSwordVictim");
+            damage.from = target;
+            data = QVariant::fromValue(damage);
+            room->moveCardTo(player->getWeapon(), damage.from, Player::Hand);
+        }
+        return damage.to->isDead();
+    }
+};
+
+YxSword::YxSword(Suit suit, int number)
+    :Weapon(suit, number, 3)
+{
+    setObjectName("yx_sword");
+    skill = new YxSwordSkill;
+}
+
 JoyEquipPackage::JoyEquipPackage()
     :Package("joy_equip")
 {
     (new Monkey(Card::Diamond, 5))->setParent(this);
+    (new GaleShell(Card::Heart, 1))->setParent(this);
+    (new YxSword)->setParent(this);
 
     type = CardPack;
 }
