@@ -1,8 +1,3 @@
--- guilin
-sgs.ai_skill_invoke["guilin"] = true
-
-
-
 -- zaiqi
 sgs.ai_skill_invoke["zaiqi"] = function(self, data)
 	return self.player:getLostHp() >= 2

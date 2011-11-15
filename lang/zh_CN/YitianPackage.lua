@@ -1,6 +1,7 @@
 -- translation for YitianPackage
 
 return {
+	["#AcquireSkill"] = "%from 获得了技能 【%arg】", 
 	["#ChangeKingdom"] = "%from 把 %to 的国籍由原来的 %arg 改成了 %arg2", 
 	["#DanlaoAvoid"] = "%from 发动了技能【啖酪】，跳过了锦囊 %arg 对他的结算", 
 	["yitian"] = "倚天", 
@@ -158,6 +159,8 @@ return {
 	["jiangboyue"] = "姜伯约",
 	["lexue"] = "乐学",
 	[":lexue"] = "出牌阶段，可令一名有手牌的其他角色展示一张手牌，若为基本牌或非延时锦囊，则你可将与该牌同花色的牌当作该牌使用或打出直到回合结束；若为其他牌，则立刻被你获得。每回合限一次",
+	["xunzhi"] = "殉志",
+	[":xunzhi"] = "出牌阶段，可摸三张牌并变身为任意未上场或已阵亡的蜀势力角色，若如此做，回合结束时你立即死亡",
 	["$lexue1"] = "勤习出奇策,乐学生妙计",
 	["$lexue2"] = "此乃五虎上将之勇",
 	["$lexue3"] = "此乃诸葛武侯之智",
@@ -243,7 +246,7 @@ return {
 	["designer:shencc"] = "官方内测第三版",
 	["designer:caochong"] = "太阳神上",
 	["designer:zhangjunyi"] = "孔孟老庄胡",
-	["designer:lukang"] = "冢冢的青藤",
+	["designer:lukang"] = "太阳神上",
 	["designer:jinxuandi"] = "title2009,塞克洛",
 	["designer:xiahoujuan"] = "宇文天启，艾艾艾",
 	["designer:caizhaoji"] = "冢冢的青藤",

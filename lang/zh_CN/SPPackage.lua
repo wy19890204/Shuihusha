@@ -44,7 +44,7 @@ return {
         
 	["sp_sunshangxiang"] = "SP孙尚香",
 	["chujia"] = "出嫁",
-	[":chujia"] = "<b>限定技<b>, 游戏开始时，你可以选择变身为SP孙尚香，势力为蜀",
+	[":chujia"] = "<b>限定技</b>, 游戏开始时，你可以选择变身为SP孙尚香，势力为蜀",
 
 	["sp_pangde"] = "SP庞德",
 	["sp_diaochan"] = "SP貂蝉",
@@ -80,6 +80,7 @@ return {
 	["guixiang"] = "归乡",
 	[":guixiang"] = "<b>限定技</b>，游戏开始时，你可以选择变身为SP蔡文姬，势力为魏",
 	
+	["sp_machao"] = "SP马超",
 --sp_card	
 	["sp_cards"] = "SP卡牌包",
 	["sp_moonspear"] = "SP银月枪", 

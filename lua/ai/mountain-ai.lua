@@ -19,8 +19,8 @@ local function card_for_qiaobian(self, who, return_prompt)
 		local equips = who:getCards("e")
 		if not equips:isEmpty() then
 			for _, equip in sgs.qlist(equips) do
-				if equip:inherits("OffensiveCar") then card = equip break
-				elseif equip:inherits("DefensiveCar") then card = equip break
+				if equip:inherits("OffensiveHorse") then card = equip break
+				elseif equip:inherits("DefensiveHorse") then card = equip break
 				elseif equip:inherits("Weapon") then card = equip break
 				elseif equip:inherits("Armor") then card = equip break
 				end
@@ -41,9 +41,9 @@ local function card_for_qiaobian(self, who, return_prompt)
 		if equips:isEmpty() then return end
 		for _, equip in sgs.qlist(equips) do
 			if equip:inherits("Armor") then card = equip break
-			elseif equip:inherits("DefensiveCar") then card = equip break
+			elseif equip:inherits("DefensiveHorse") then card = equip break
 			elseif equip:inherits("Weapon") then card = equip break
-			elseif equip:inherits("OffensiveCar") then card = equip break
+			elseif equip:inherits("OffensiveHorse") then card = equip break
 			end
 		end
 

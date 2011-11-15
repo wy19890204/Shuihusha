@@ -758,10 +758,6 @@ function SmartAI:askForYiji(cards)
 					end
 				end
 				
-				if friend:hasSkill("duoren") then 
-					if card:isRed() then return friend, card_id end 
-				end
-				
 				if friend:hasSkill("qingguo") then 
 					if card:isBlack() then return friend, card_id end 
 				end
@@ -813,7 +809,7 @@ sgs.ai_skill_use["slash"] = function(self, prompt)
 	if not slash then return "." end
 	for _, enemy in ipairs(self.enemies) do
 		if self.player:canSlash(enemy, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
-			return ("%d->%s"):format(slash:getId(), enemy:objectName())
+			return ("%s->%s"):format(slash:toString(), enemy:objectName())
 		end
 	end
 	return "."
@@ -926,8 +922,6 @@ local function getSkillViewCard(card, class_name, player, card_place)
 		if card_place ~= sgs.Player_Equip then
 			if player:hasSkill("longdan") and card:inherits("Slash") then
 				return ("jink:longdan[%s:%s]=%d"):format(suit, number, card_id)
-			elseif player:hasSkill("duoren") and card:isRed() then
-				return ("jink:duoren[%s:%s]=%d"):format(suit, number, card_id)
 			elseif player:hasSkill("qingguo") and card:isBlack() then
 				return ("jink:qingguo[%s:%s]=%d"):format(suit, number, card_id)
 			end
@@ -1150,10 +1144,6 @@ function SmartAI:useBasicCard(card, use,no_distance)
 				
 			use.card = card
 		end
-	elseif card:inherits("Stink") then
-		local next_player = self.player:getNextAlive()
-		if self:isFriend(next_player) then return end
-		use.card = card
 	end
 end
 
@@ -1196,11 +1186,6 @@ function SmartAI:aoeIsEffective(card, to)
 		if (to:hasSkill("leiji") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
 			return false
 		end
-	end
-
-	-- Aumy
-	if self.player:hasSkill("tianzhen") or to:hasSkill("tianzhen") then
-		return false
 	end
 
 	return true
@@ -1295,8 +1280,6 @@ function SmartAI:useCardDismantlement(dismantlement, use)
 			   not (enemy:getCards("he"):length() == 1 and self:isEquip("GaleShell",enemy)) then                   
 				if enemy:getHandcardNum() == 1 then
 					if enemy:hasSkill("kongcheng") or enemy:hasSkill("lianying") then return end
-				elseif enemy:hasSkill("zhinang") then
-					return
 				end
 				use.card = dismantlement
                 if use.to then 
@@ -1363,9 +1346,7 @@ function SmartAI:useCardSnatch(snatch, use)
 			   not (enemy:getCards("he"):length() == 1 and self:isEquip("GaleShell",enemy)) then                    
 			if enemy:getHandcardNum() == 1 then
 				if enemy:hasSkill("kongcheng") or enemy:hasSkill("lianying") then return end
-			elseif enemy:hasSkill("zhinang") then
-				return
-			end
+			end       
 			use.card = snatch
 			if use.to then 
 				use.to:append(enemy) 
@@ -1377,7 +1358,7 @@ function SmartAI:useCardSnatch(snatch, use)
 end
 
 function SmartAI:useCardFireAttack(fire_attack, use)
-	if self.player:hasSkill("wuyan") or self.player:hasSkill("tianzhen") then return end
+	if self.player:hasSkill("wuyan") then return end
 	local lack = {
 		spade = true,
 		club = true,
@@ -1449,7 +1430,7 @@ local function factorial(n)
 end
 
 function SmartAI:useCardDuel(duel, use)
-	if self.player:hasSkill("wuyan") or self.player:hasSkill("tianzhen") then return end
+	if self.player:hasSkill("wuyan") then return end
 	self:sort(self.enemies,"handcard")
 	local enemies = self:exclude(self.enemies, duel)
 	for _, enemy in ipairs(enemies) do
@@ -1494,7 +1475,8 @@ function SmartAI:useCardSupplyShortage(card, use)
 	for _, enemy in ipairs(enemies) do
 		if ((#enemies == 1) or not enemy:hasSkill("tiandu")) and not enemy:containsTrick("supply_shortage") then
 			use.card = card
-			if use.to then use.to:append(enemy) end
+             if use.to then use.to:append(enemy) end
+
 			return
 		end
 	end
@@ -1689,7 +1671,7 @@ end
 function SmartAI:useTrickCard(card, use)
 	if self.player:hasSkill("chengxiang") and self.player:getHandcardNum() < 8 and card:getNumber() < 7 then return end
 	if card:inherits("AOE") then
-		if self.player:hasSkill("wuyan") or self.player:hasSkill("tianzhen") then return end
+		if self.player:hasSkill("wuyan") then return end
 		local good, bad = 0, 0
 		for _, friend in ipairs(self.friends_noself) do
 			if self:aoeIsEffective(card, friend) then
@@ -1773,7 +1755,7 @@ function SmartAI:evaluateEquip(card)
 					deltaSelfThreat = deltaSelfThreat+3
 				elseif card:inherits("Axe") and enemy:getHp() < 3 then
 					deltaSelfThreat = deltaSelfThreat+3-enemy:getHp()
-				elseif card:inherits("KylinBow") and (enemy:getDefensiveCar() or enemy:getDefensiveCar())then
+				elseif card:inherits("KylinBow") and (enemy:getDefensiveHorse() or enemy:getDefensiveHorse())then
 					deltaSelfThreat = deltaSelfThreat+1
 					break
 				elseif card:inherits("GudingBlade") and enemy:getHandcardNum() < 3 then
@@ -1823,7 +1805,7 @@ function SmartAI:getTurnUse()
     local turnUse = {}
     local slashAvail = 1
     self.predictedRange = self.player:getAttackRange()
-    self.predictNewCar = false
+    self.predictNewHorse = false
     self.retain_thresh = 5
     self.slash_targets = 1
     self.slash_distance_limit = false
@@ -1873,8 +1855,6 @@ function SmartAI:getTurnUse()
             self:useEquipCard(card, dummy_use)
         elseif type == sgs.Card_Skill then
             self:useSkillCard(card, dummy_use)
-		else
-			dummy_use.card = card
         end
 
         if dummy_use.card then
@@ -1888,7 +1868,7 @@ function SmartAI:getTurnUse()
                     self.predictedRange = sgs.weapon_range[card:className()] 
                     self.weaponUsed = true
                 end
-                if card:inherits("OffensiveCar") then self.predictNewCar = true end
+                if card:inherits("OffensiveHorse") then self.predictNewHorse = true end
                 if card:objectName() == "crossbow" then slashAvail = 100 end
                 if card:inherits("Snatch") then i = i-1 end
                 if card:inherits("Peach") then i = i+2 end
@@ -1923,11 +1903,10 @@ function SmartAI:activate(use)
 				self:useTrickCard(card, use)
 			elseif type == sgs.Card_Skill then
 				self:useSkillCard(card, use)
-			elseif type == sgs.Card_Equip then
-				self:useEquipCard(card, use)
 			else
-				use.card = card
+				self:useEquipCard(card, use)
 			end
+			
 			if use:isValid() then
 				self.toUse = nil
 				return
@@ -1980,8 +1959,8 @@ function SmartAI:getUseValue(card)
 	
 	if card:getTypeId() == sgs.Card_Equip then 
 		if self:hasEquip(card) then
-			if card:inherits("OffensiveCar") and self.player:getAttackRange()>2 then return 5.5 end
-			if card:inherits("DefensiveCar") and self:isEquip("EightDiagram") then return 5.5 end
+			if card:inherits("OffensiveHorse") and self.player:getAttackRange()>2 then return 5.5 end
+			if card:inherits("DefensiveHorse") and self:isEquip("EightDiagram") then return 5.5 end
 			return 9
 		end
 		if not self:hasSameEquip(card) then v = 6.7 end
@@ -2026,8 +2005,8 @@ function SmartAI:getUsePriority(card)
 		if self:hasSkill(sgs.lose_equip_skill) then return 10 end
         if card:inherits("Armor") and not self.player:getArmor() then v = 6
         elseif card:inherits("Weapon") and not self.player:getWeapon() then v = 5.7
-        elseif card:inherits("DefensiveCar") and not self.player:getDefensiveCar() then v = 5.8
-        elseif card:inherits("OffensiveCar") and not self.player:getOffensiveCar() then v = 5.5
+        elseif card:inherits("DefensiveHorse") and not self.player:getDefensiveHorse() then v = 5.8
+        elseif card:inherits("OffensiveHorse") and not self.player:getOffensiveHorse() then v = 5.5
         end
         return v
     end	
@@ -2069,10 +2048,8 @@ function SmartAI:getDynamicUsePriority(card)
 		self:useBasicCard(card, dummy_use)
 	elseif type == sgs.Card_Equip then
 		self:useEquipCard(card, dummy_use)
-	elseif type == sgs.Card_Skill then
-		self:useSkillCard(card, dummy_use)
 	else
-		dummy_use.card = card
+		self:useSkillCard(card, dummy_use)
 	end
 	
 	local good_null, bad_null = 0, 0
@@ -2288,8 +2265,8 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	
 	local weapon = self.player:getWeapon()
 	local armor = self.player:getArmor()
-	local offensive_car = self.player:getOffensiveCar()
-	local defensive_car = self.player:getDefensiveCar()
+	local offensive_horse = self.player:getOffensiveHorse()
+	local defensive_horse = self.player:getDefensiveHorse()
 	
 	if reason == "gongmou" then
 		for _, card in ipairs(cards) do
@@ -2309,9 +2286,9 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 			if armor:inherits("GaleShell") then table.insert(to_discard, armor:getId()) armor = nil
 			elseif armor:inherits("SilverLion") and self.player:isWounded() then table.insert(to_discard, armor:getId()) armor = nil end
 		end
-		if #to_discard < discard_num and offensive_car then table.insert(to_discard, offensive_car:getId()) offensive_car = nil end
+		if #to_discard < discard_num and offensive_horse then table.insert(to_discard, offensive_horse:getId()) offensive_horse = nil end
 		if #to_discard < discard_num and weapon then table.insert(to_discard, weapon:getId()) weapon = nil end
-		if #to_discard < discard_num and defensive_car then table.insert(to_discard, defensive_car:getId()) defensive_car = nil end
+		if #to_discard < discard_num and defensive_horse then table.insert(to_discard, defensive_horse:getId()) defensive_horse = nil end
 		if #to_discard < discard_num and armor then table.insert(to_discard, armor:getId()) armor = nil end
 	end
 	
@@ -2328,9 +2305,9 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 			if armor:inherits("GaleShell") then table.insert(to_discard, armor:getId()) armor = nil
 			elseif armor:inherits("SilverLion") and self.player:isWounded() then table.insert(to_discard, armor:getId()) armor = nil end
 		end
-		if #to_discard < discard_num and offensive_car then table.insert(to_discard, offensive_car:getId()) end
+		if #to_discard < discard_num and offensive_horse then table.insert(to_discard, offensive_horse:getId()) end
 		if #to_discard < discard_num and weapon then table.insert(to_discard, weapon:getId()) end
-		if #to_discard < discard_num and defensive_car then table.insert(to_discard, defensive_car:getId()) end
+		if #to_discard < discard_num and defensive_horse then table.insert(to_discard, defensive_horse:getId()) end
 		if #to_discard < discard_num and armor then table.insert(to_discard, armor:getId()) end
 	end
 	return to_discard	
@@ -2501,10 +2478,10 @@ function SmartAI:askForCardChosen(who, flags, reason)
 		end
 		
 		if flags:match("e") then		    
-			if who:getDefensiveCar() then
+			if who:getDefensiveHorse() then
 				for _,friend in ipairs(self.friends) do
 					if friend:distanceTo(who) == friend:getAttackRange()+1 then 
-					 	return who:getDefensiveCar():getId()
+					 	return who:getDefensiveHorse():getId()
 					end
 				end
 			end			
@@ -2529,7 +2506,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 			end
 			
 			if who:getWeapon() then
-			    if not (who:hasSkill("wuyu") and (who:getHandcardNum() >= who:getHp())) then
+			    if not (who:hasSkill("xiaoji") and (who:getHandcardNum() >= who:getHp())) then
 					for _,friend in ipairs(self.friends) do
 						if (who:distanceTo(friend) <= who:getAttackRange()) and (who:distanceTo(friend) > 1) then 
 							return who:getWeapon():getId()
@@ -2538,13 +2515,13 @@ function SmartAI:askForCardChosen(who, flags, reason)
 				end
 			end
 		
-			if who:getOffensiveCar() then
-			    if who:hasSkill("wuyu") and who:getHandcardNum() >= who:getHp() then
+			if who:getOffensiveHorse() then
+			    if who:hasSkill("xiaoji") and who:getHandcardNum() >= who:getHp() then
 			    else
 				    for _,friend in ipairs(self.friends) do
 					    if who:distanceTo(friend) == who:getAttackRange() and
 					    who:getAttackRange() > 1 then 
-					 	    return who:getOffensiveCar():getId() 
+					 	    return who:getOffensiveHorse():getId() 
 					    end
 				    end
 				end
@@ -2630,43 +2607,20 @@ function SmartAI:askForCard(pattern, prompt, data)
 		elseif not self:isFriend(who) then return "."
 		end
 		return self:getCardId("Jink") or "."
-	elseif parsedPrompt[1] == "@wuwei-slash" then
-		local damage = data:toDamage()
-		if self:isEnemy(damage.from) and self:getCardsNum("Slash") ~= 0 then
-			return self:getCardId("Slash")
-		else
-			return "."
+	elseif parsedPrompt[1] == "@jijiang-slash" then
+		local who = data:toPlayer()
+		if self.player:hasSkill("jijiang") and who:hasSkill("jijiang") then return "."
+		elseif not self:isFriend(who) then return "."
 		end
-	elseif parsedPrompt[1] == "@diaobing-slash" then
-		local target = data:toPlayer()
-		if self:isFriend(target) then
-			local cards = self.player:getHandcards()
-			cards = sgs.QList2Table(cards)
-			for _, fcard in ipairs(cards) do
-				if fcard:inherits("Slash") or fcard:inherits("FireAttack") or fcard:inherits("Duel") then
-					return fcard:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@dashou-get" then
-		local player = data:toPlayer()
-		if self:isFriend(player) and not self.player:isKongcheng() then
-			return self.player:getRandomHandCard()
-		elseif self:isEnemy(player) and not self.player:isKongcheng() then
-			if self:getCardId("Shit") then return self:getCardId("Shit") end
-			if self:getCardId("Disaster") then return self:getCardId("Disaster") end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@dushu" then
-		local player = data:toPlayer()
-		if self:isEnemy(player) then
-			local cards = self.player:getHandcards()
-			cards = sgs.QList2Table(cards)
-			for _, fcard in ipairs(cards) do
-				if fcard:inherits("Peach") then
-					return fcard:getEffectiveId()
-				end
+		return self:getCardId("Slash") or "."
+	elseif parsedPrompt[1] == "@weidai-analeptic" then
+		local who = data:toPlayer()
+		if self:isEnemy(who) then return "." end
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		for _, fcard in ipairs(cards) do
+			if fcard:getSuit() == sgs.Card_Spade and fcard:getNumber() > 1 and fcard:getNumber() < 10 then
+				return fcard:getEffectiveId()
 			end
 		end
 		return "."
@@ -2692,14 +2646,14 @@ function SmartAI:askForCard(pattern, prompt, data)
 			cards = sgs.QList2Table(cards)
 			local index
 			if self:hasSkills(sgs.need_kongcheng) then index = #cards end
-			if self.player:getOffensiveCar() then 
+			if self.player:getOffensiveHorse() then 
 				if index then 
 					if index < 2 then 
 						index = index + 1 
-						table.insert(cards, self.player:getOffensiveCar()) 
+						table.insert(cards, self.player:getOffensiveHorse()) 
 					end 
 				end
-				table.insert(cards, self.player:getOffensiveCar()) 
+				table.insert(cards, self.player:getOffensiveHorse()) 
 			end
 			if self.player:getArmor() then 
 				if index then 
@@ -2710,14 +2664,14 @@ function SmartAI:askForCard(pattern, prompt, data)
 				end
 				table.insert(cards, self.player:getArmor()) 
 			end
-			if self.player:getDefensiveCar() then 
+			if self.player:getDefensiveHorse() then 
 				if index then 
 					if index < 2 then 
 						index = index + 1 
-						table.insert(cards, self.player:getDefensiveCar()) 
+						table.insert(cards, self.player:getDefensiveHorse()) 
 					end 
 				end
-				table.insert(cards, self.player:getDefensiveCar()) 
+				table.insert(cards, self.player:getDefensiveHorse()) 
 			end
 			if #cards >= 2 then
 				self:sortByUseValue(cards, true)
@@ -2945,8 +2899,8 @@ end
 function SmartAI:fillSkillCards(cards)
     for _,skill in ipairs(sgs.ai_skills) do
         if self:hasSkill(skill) then       
-			for _, card in ipairs(cards) do
-				if prohibitUseDirectly(card, self.player) then table.remove(cards, card) end
+			for index, card in ipairs(cards) do
+				if prohibitUseDirectly(card, self.player) then table.remove(cards, index) end
 			end
 
             local skill_card = skill.getTurnUseCard(self)
@@ -3054,19 +3008,19 @@ function SmartAI:hasSameEquip(card, player)
 		if player:getWeapon() then return true end
 	elseif card:inherits("Armor") then
 		if player:getArmor() then return true end
-	elseif card:inherits("DefensiveCar") then
-		if player:getDefensiveCar() then return true end
-	elseif card:inherits("OffensiveCar") then 
-		if player:getOffensiveCar() then return true end
+	elseif card:inherits("DefensiveHorse") then
+		if player:getDefensiveHorse() then return true end
+	elseif card:inherits("OffensiveHorse") then 
+		if player:getOffensiveHorse() then return true end
 	end
 	return false
 end
 
-sgs.lose_equip_skill = "wuyu|qingdi"
+sgs.lose_equip_skill = "xiaoji|xuanfeng"
 sgs.need_kongcheng = "lianying|kongcheng"
-sgs.masochism_skill = "wuwei|rexue|jingxing|quhu"
-sgs.wizard_skill = "shouqiu|fating|tiandu"
-sgs.wizard_harm_skill = "shouqiu|fating"
+sgs.masochism_skill = "fankui|quhu|yiji|ganglie|enyuan|fangzhu"
+sgs.wizard_skill = "guicai|guidao|tiandu"
+sgs.wizard_harm_skill = "guicai|guidao"
 
 function SmartAI:hasSkills(skill_names, player)
 	player = player or self.player
@@ -3227,7 +3181,7 @@ function SmartAI:getAoeValueTo(card, to , from)
 					value = value + 20
 				end
 			end
-			if to:hasSkill("duoren") or to:hasSkill("qingguo") or self:isEquip("EightDiagram", to) then
+			if to:hasSkill("qingguo") or self:isEquip("EightDiagram", to) then
 				value = value + 10
 			end	
 		end	
@@ -3366,26 +3320,23 @@ function SmartAI:cardProhibit(card, to)
 		if card:isBlack() and to:hasSkill("weimu") then return true end
 		if card:inherits("Indulgence") or card:inherits("Snatch") and to:hasSkill("qianxun") then return true end
 		if card:inherits("Duel") and to:hasSkill("kongcheng") and to:isKongcheng() then return true end
-		if to:hasSkill("rougu") then
-			if card:inherits("Snatch") or card:inherits("Dismantlement") and
-				to:getHandcardNum() < to:getMaxHP() then return true end
-			if card:inherits("SupplyShortage") or card:inherits("Indulgence") and
-				to:getHandcardNum() > to:getMaxHP() then return true end
-		end
 	end
 	return false
 end
+
 -- load other ai scripts
 dofile "lua/ai/standard-ai.lua"
+dofile "lua/ai/standard-skill-ai.lua"
 dofile "lua/ai/wind-ai.lua"
-dofile "lua/ai/thicket-ai.lua"
 dofile "lua/ai/fire-ai.lua"
+dofile "lua/ai/thicket-ai.lua"
 dofile "lua/ai/mountain-ai.lua"
 dofile "lua/ai/god-ai.lua"
--- dofile "lua/ai/yitian-ai.lua"
+dofile "lua/ai/yitian-ai.lua"
 dofile "lua/ai/nostalgia-ai.lua"
-dofile "lua/ai/secrets-ai.lua"
--- dofile "lua/ai/sp-ai.lua"
+dofile "lua/ai/yjcm-ai.lua"
+dofile "lua/ai/sp-ai.lua"
+dofile "lua/ai/wisdom-ai.lua"
 dofile "lua/ai/joy-ai.lua"
 
 dofile "lua/ai/general_config.lua"
@@ -3395,10 +3346,11 @@ dofile "lua/ai/playrule-ai.lua"
 dofile "lua/ai/chat-ai.lua"
 dofile "lua/ai/value_config.lua"
 
-dofile "lua/ai/standard-skill-ai.lua"
 dofile "lua/ai/thicket-skill-ai.lua"
 dofile "lua/ai/fire-skill-ai.lua"
 dofile "lua/ai/yjcm-skill-ai.lua"
--- dofile "lua/ai/hulaoguan-ai.lua"
+
+dofile "lua/ai/fancheng-ai.lua"
+dofile "lua/ai/hulaoguan-ai.lua"
 
 dofile "lua/ai/guanxing-ai.lua"

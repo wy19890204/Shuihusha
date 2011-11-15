@@ -7,8 +7,11 @@ sgs.dynamic_value = {
 		FireAttack = true,
 		SavageAssault = true,
 		
-		DiaobingCard = true,
-		AnshaCard = true,
+		QiangxiCard = true,
+		FanjianCard = true,
+		LijianCard = true,
+		LuanwuCard = true,
+		ShenfenCard = true,
 	},
 	control_usecard = 
 	{
@@ -23,13 +26,13 @@ sgs.dynamic_value = {
 		
 		GaleShell = true,
 		
-		ZhenxiangCard = true,
-		JiaojinCard = true,
-		MazuiCard = true,
-		BaiyiCard = true,
-		RenxingCard = true,
-		YuandingCard = true,
-		JingshenCard = true,
+		TianyiCard = true,
+		XianzhenCard = true,
+		DimengCard = true,
+		JixiCard = true,
+		GanluCard = true,
+		QuhuCard = true,
+		ShenfenCard = true,
 	},
 	lucky_chance = 
 	{
@@ -42,11 +45,11 @@ sgs.dynamic_value = {
 		IronChain = true,
 		Exnihilo = true,
 		
-		MaixiongCard = true,
-		ShiyanCard = true,
-		ZhenxiangCard = true,
-		RenxingCard = true,
-		MazuiCard = true,
+		RendeCard = true,
+		JieyinCard = true,
+		QingnangCard = true,
+		JujianCard = true,
+		ZhihengCard = true,
 	},
 }
 
@@ -104,7 +107,7 @@ Fan				= 4.8,
 KylinBow		= 4.7,
 Halberd			= 4.6,
 MoonSpear		= 4.5,
-DefensiveCar 	= 4
+DefensiveHorse 	= 4
 }
 
 sgs.sunshangxiang_keep_value = 
@@ -123,8 +126,8 @@ IceSword=5,
 Fan=5,
 MoonSpear=5,
 GudingBlade=5,
-DefensiveCar = 5,
-OffensiveCar = 5
+DefensiveHorse = 5,
+OffensiveHorse = 5
 }
 
 sgs.xiahouyuan_keep_value = 
@@ -143,8 +146,8 @@ IceSword=5,
 Fan=5,
 MoonSpear=5,
 GudingBlade=5,
-DefensiveCar = 5,
-OffensiveCar = 5
+DefensiveHorse = 5,
+OffensiveHorse = 5
 }
 
 sgs.shenzhaoyun_suit_value = 

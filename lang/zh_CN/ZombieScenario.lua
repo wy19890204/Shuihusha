@@ -14,14 +14,5 @@ return {
 	["#ZaibianGood"]="%from 的【灾变】效果被触发，%from 获得了 %arg 张手牌",
 	["#Zombify"]="%from 变成僵尸复活了！%from 失去理智并开始攻击人类！",
 	["@round"]="退治",
-	["#survive_victory"]="%from 聚集起了足够的退治之力！僵尸被退治！",
-
-	["wansha"] = "完杀", 
-	[":wansha"] = "锁定技，在你的回合，除你以外，只有处于濒死状态的角色才能使用【桃】",
-	["#WanshaOne"] = "%from 的锁定技【完杀】被触发，只能 %from 自救",
-	["#WanshaTwo"] = "%from 的锁定技【完杀】被触发，只有 %from 和 %to 自己才能救 %to",
-	["$wansha"] = "汝今势孤，命必绝矣",
-	["paoxiao"] = "咆哮",
-	[":paoxiao"] = "出牌阶段，你可以使用任意数量的【杀】", 
-	["$paoxiao1"] = "啊～", 
+	["#survive_victory"]="%from 聚集起了足够的退治之力！僵尸被退治！"
 }
