@@ -53,6 +53,7 @@ SOURCES += src/main.cpp \
 	src/package/wisdompackage.cpp \
 	src/package/yitianpackage.cpp \
 	src/package/qjwm-package.cpp \
+	src/package/yi.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -131,6 +132,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/wisdompackage.h \
 	src/package/yitianpackage.h \
 	src/package/qjwm-package.h \
+	src/package/yi.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \

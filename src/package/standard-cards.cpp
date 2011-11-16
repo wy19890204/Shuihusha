@@ -771,6 +771,9 @@ bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to
     if(to_select == Self)
         return false;
 
+    if(Self->distanceTo(to_select) <= 2 && Self->hasSkill("shentou"))
+        return true;
+
     if(Self->distanceTo(to_select) > 1 && !Self->hasSkill("qicai"))
         return false;
 

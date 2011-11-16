@@ -41,6 +41,7 @@ extern "C" {
     Package *NewQJWM();
     Package *NewWisdom();
     Package *NewTest();
+    Package *NewYi();//бнбн
 
     Package *NewStandardCard();
     Package *NewStandardExCard();
@@ -80,6 +81,7 @@ Engine::Engine()
     addPackage(NewYitian());
     addPackage(NewWisdom());
     addPackage(NewTest());
+    addPackage(NewYi());//zxz
 
     addPackage(NewStandardCard());
     addPackage(NewStandardExCard());
