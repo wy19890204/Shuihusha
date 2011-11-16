@@ -704,7 +704,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
-    effect.from->tag["Xiaozai_to"] = QVariant::fromValue(effect.to);
+    effect.from->tag["Xiaozai"] = QVariant::fromValue(effect.to);
 }
 
 class XiaozaiViewAsSkill: public ViewAsSkill{
@@ -752,19 +752,58 @@ public:
             room->setPlayerMark(damage.from, "Xiaozai", 0);
             damage.to = cup;
             room->damage(damage);
-            /*LogMessage log;
-            log.type = "#GaleShellDamage";
-            log.from = player;
-            log.arg = QString::number(damage.damage);
-            log.arg2 = QString::number(damage.damage + 1);
-            player->getRoom()->sendLog(log);
 
-            damage.damage ++;
-            data = QVariant::fromValue(damage);
-            */
             return true;
         }
         return false;
+    }
+};
+
+class Huaxian: public TriggerSkill{
+public:
+    Huaxian():TriggerSkill("huaxian"){
+        events << Dying;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *ren, QVariant &data) const{
+        DyingStruct dying = data.value<DyingStruct>();
+        if(dying.who == ren && ren->askForSkillInvoke(objectName())){
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(heart):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = ren;
+
+            Room *room = ren->getRoom();
+            room->judge(judge);
+            if(judge.isGood()){
+                RecoverStruct rev;
+                rev.card = judge.card;
+                rev.who = ren;
+                room->recover(ren, rev);
+            }
+        }
+        return false;
+    }
+};
+
+class Qibing:public DrawCardsSkill{
+public:
+    Qibing():DrawCardsSkill("qibing"){
+        frequency = Compulsory;
+    }
+
+    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
+        Room *room = wangq->getRoom();
+        room->playSkillEffect(objectName());
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = wangq;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        return qMin(wangq->getHp(), 4);
     }
 };
 
@@ -816,7 +855,10 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     shin->addSkill(new Xiaozai);
 
     General *luozhenren = new General(this, "luozhenren", "qun");
+    luozhenren->addSkill(new Huaxian);
+
     General *wangqing = new General(this, "wangqing", "wu");
+    wangqing->addSkill(new Qibing);
     /*
 
     addMetaObject<JujianCard>();
