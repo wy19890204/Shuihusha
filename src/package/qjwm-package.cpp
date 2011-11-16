@@ -736,6 +736,7 @@ public:
 class Xiaozai: public TriggerSkill{
 public:
     Xiaozai():TriggerSkill("xiaozai"){
+        view_as_skill = new XiaozaiViewAsSkill;
         events << Predamaged;
     }
 
