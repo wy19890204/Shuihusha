@@ -55,8 +55,15 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *huarong) const{
         Room *room = huarong->getRoom();
-        if(huarong->getPhase() == Player::Start){
-            if(!huarong->isKongcheng() && room->askForSkillInvoke(huarong, objectName())){
+        if(huarong->getPhase() == Player::Start && !huarong->isKongcheng()){
+            bool caninvoke = false;
+            foreach(const Card *cd, huarong->getHandcards()){
+                if(cd->getNumber() <= 5){
+                    caninvoke = true;
+                    break;
+                }
+            }
+            if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
                 const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian");
                 room->setPlayerMark(huarong, "kaixian", card->getNumber());
                 LogMessage log;
@@ -271,7 +278,14 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.nature == DamageStruct::Normal && damage.to->isAlive() && damage.damage > 0){
-            if(room->askForSkillInvoke(jiuwenlong, objectName(), data)){
+            bool caninvoke = false;
+            foreach(const Card *cd, jiuwenlong->getHandcards()){
+                if(cd->getTypeId() == Card::Equip){
+                    caninvoke = true;
+                    break;
+                }
+            }
+            if(caninvoke && room->askForSkillInvoke(jiuwenlong, objectName(), data)){
                 room->playSkillEffect(objectName());
                 const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
                 if(card){
@@ -610,9 +624,9 @@ public:
             if(opt->askForSkillInvoke(objectName())){
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
+                room->acquireSkill(opt, "tengfei");
+                opt->loseMark("@vfui");
             }
-            room->acquireSkill(opt, "tengfei");
-            opt->loseMark("@vfui");
         }
         return false;
     }
@@ -638,6 +652,117 @@ public:
 
             room->setCurrent(opt);
             room->getThread()->trigger(TurnStart, opt);
+        }
+        return false;
+    }
+};
+
+class Bribe:public TriggerSkill{
+public:
+    Bribe():TriggerSkill("bribe"){
+        events << CardEffected;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *shien, QVariant &data) const{
+        Room *room = shien->getRoom();
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(!effect.card->inherits("Slash"))
+            return false;
+
+        if(room->askForSkillInvoke(shien, objectName(), data)){
+            QList<int> card_ids = room->getNCards(2);
+            room->fillAG(card_ids);
+            QMutableListIterator<int> itor(card_ids);
+            while(itor.hasNext()){
+                const Card *c = Sanguosha->getCard(itor.next());
+                if(c->getTypeId() != Card::Basic){
+                    itor.remove();
+                    room->takeAG(NULL, c->getId());
+                }
+            }
+            while(!card_ids.isEmpty()){
+                int card_id = room->askForAG(shien, card_ids, false, objectName());
+                card_ids.removeOne(card_id);
+                ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
+                room->takeAG(target, card_id);
+            }
+            room->broadcastInvoke("clearAG");
+        }
+        return false;
+    }
+};
+
+XiaozaiCard::XiaozaiCard(){
+}
+
+bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+
+    return to_select->getMark("Xiaozai") > 0;
+}
+
+void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->tag["Xiaozai_to"] = QVariant::fromValue(effect.to);
+}
+
+class XiaozaiViewAsSkill: public ViewAsSkill{
+public:
+    XiaozaiViewAsSkill():ViewAsSkill("xiaozai"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return !to_select->isEquipped() && selected.length() < 2;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@xiaozai";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        XiaozaiCard *card = new XiaozaiCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Xiaozai: public TriggerSkill{
+public:
+    Xiaozai():TriggerSkill("xiaozai"){
+        events << Predamaged;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        Room *room = player->getRoom();
+        room->setPlayerMark(damage.from, "Xiaozai", 1);
+        if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
+            ServerPlayer *cup = player->tag.value("Xiaozai", NULL).value<ServerPlayer *>();
+            room->setPlayerMark(damage.from, "Xiaozai", 0);
+            damage.to = cup;
+            room->damage(damage);
+            /*LogMessage log;
+            log.type = "#GaleShellDamage";
+            log.from = player;
+            log.arg = QString::number(damage.damage);
+            log.arg2 = QString::number(damage.damage + 1);
+            player->getRoom()->sendLog(log);
+
+            damage.damage ++;
+            data = QVariant::fromValue(damage);
+            */
+            return true;
         }
         return false;
     }
@@ -686,7 +811,10 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     related_skills.insertMulti("zhanchi", "#@vfui");
     skills << new Tengfei;
 
-    General *shien = new General(this, "shien", "wu");
+    General *shin = new General(this, "shin", "wu");
+    shin->addSkill(new Bribe);
+    shin->addSkill(new Xiaozai);
+
     General *luozhenren = new General(this, "luozhenren", "qun");
     General *wangqing = new General(this, "wangqing", "wu");
     /*
@@ -694,11 +822,11 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     addMetaObject<JujianCard>();
     addMetaObject<MingceCard>();
     addMetaObject<GanluCard>();
-    addMetaObject<XianzhenCard>();
     */
     addMetaObject<DaleiCard>();
     addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
+    addMetaObject<XiaozaiCard>();
 }
 
 ADD_PACKAGE(QJWM)
