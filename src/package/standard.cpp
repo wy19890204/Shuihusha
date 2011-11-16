@@ -400,6 +400,13 @@ public:
     }
 };
 
+class BasicPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return ! player->hasEquip(card) && card->getTypeId() == Card::Basic;
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -416,6 +423,7 @@ StandardPackage::StandardPackage()
     patterns["peach"] = new NamePattern("peach");
     patterns["nullification"] = new NamePattern("nullification");
     patterns["peach+analeptic"] = new PAPattern;
+    patterns[".basic"] = new BasicPattern;
 }
 
 ADD_PACKAGE(Standard)

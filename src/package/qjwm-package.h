@@ -720,31 +720,7 @@ void MingceCard::onEffect(const CardEffectStruct &effect) const{
     QString choice = room->askForChoice(effect.to, "mingce", "use+draw");
     if(choice == "use"){
         QList<ServerPlayer *> players = room->getOtherPlayers(effect.to), targets;
-        foreach(ServerPlayer *player, players){
-            if(effect.to->canSlash(player))
-                targets << player;
-        }
-
-        if(!targets.isEmpty()){
-            ServerPlayer *target = room->askForPlayerChosen(effect.from, targets, "mingce");
-            room->cardEffect(new Slash(Card::NoSuit, 0), effect.to, target);
-        }
-    }else if(choice == "draw"){
-        effect.to->drawCards(1, true);
-    }
-}
-
-class Mingce: public OneCardViewAsSkill{
-public:
-    Mingce():OneCardViewAsSkill("mingce"){
-        default_choice = "draw";
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("MingceCard");
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
+        foreach(Servirtual bool viewFilter(const CardItem *to_select) const{
         const Card *c = to_select->getCard();
         return c->getTypeId() == Card::Equip || c->inherits("Slash");
     }
@@ -757,17 +733,7 @@ public:
     }
 };
 
-class ZhichiClear: public TriggerSkill{
-public:
-    ZhichiClear():TriggerSkill("#zhichi-clear"){
-        events << PhaseChange;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+class ZhichiClear: pugger(TriggerEvent, ServerPlayer *player, QVariant &) const{
         if(player->getPhase() == Player::NotActive)
             player->getRoom()->setTag("Zhichi", QVariant());
 
@@ -835,28 +801,7 @@ void GanluCard::swapEquip(ServerPlayer *first, ServerPlayer *second, int index) 
         room->moveCardTo(e2, first, Player::Equip);
 
     if(e1)
-        room->moveCardTo(e1, second, Player::Equip);
-}
-
-bool GanluCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
-bool GanluCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    switch(targets.length()){
-    case 0: return true;
-    case 1: {
-            int n1 = targets.first()->getEquips().length();
-            int n2 = to_select->getEquips().length();
-            return qAbs(n1-n2) <= Self->getLostHp();
-        }
-
-    default:
-        return false;
-    }
-}
-
-void GanluCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+        room->moveCarrPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *first = targets.first();
     ServerPlayer *second = targets.at(1);
 
@@ -886,99 +831,4 @@ public:
     }
 };
 
-class Buyi: public TriggerSkill{
-public:
-    Buyi():TriggerSkill("buyi"){
-        events << Dying;
-    }
-
-    virtual bool triggerable(const ServerPlayer *player) const{
-        return !player->isKongcheng();
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *wuguotai = room->findPlayerBySkillName(objectName());
-
-        if(wuguotai && wuguotai->askForSkillInvoke(objectName(), data)){
-            const Card *card = NULL;
-            if(player == wuguotai)
-                card = room->askForCardShow(player, wuguotai, objectName());
-            else{
-                int card_id = room->askForCardChosen(wuguotai, player, "h", "buyi");
-                card = Sanguosha->getCard(card_id);
-            }
-
-            room->showCard(player, card->getEffectiveId());
-
-            if(card->getTypeId() != Card::Basic){
-                room->throwCard(card);
-
-                room->playSkillEffect(objectName());
-
-                RecoverStruct recover;
-                recover.who = wuguotai;
-                room->recover(player, recover);
-            }
-        }
-
-        return false;
-    }
-};
-
-XinzhanCard::XinzhanCard(){
-    target_fixed = true;
-    once = true;
-}
-
-void XinzhanCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    QList<int> cards = room->getNCards(3), left;
-    left = cards;
-
-    QList<int> hearts;
-    foreach(int card_id, cards){
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->getSuit() == Card::Heart)
-            hearts << card_id;
-    }
-
-    if(!hearts.isEmpty()){
-        room->fillAG(cards, source);
-
-        while(!hearts.isEmpty()){
-            int card_id = room->askForAG(source, hearts, true, "xinzhan");
-            if(card_id == -1)
-                break;
-
-            if(!hearts.contains(card_id))
-                continue;
-
-            hearts.removeOne(card_id);
-            left.removeOne(card_id);
-
-            source->obtainCard(Sanguosha->getCard(card_id));
-            room->showCard(source, card_id);
-        }
-
-        source->invoke("clearAG");
-    }
-
-    if(!left.isEmpty())
-        room->doGuanxing(source, left, true);
- }
-
-class Xinzhan: public ZeroCardViewAsSkill{
-public:
-    Xinzhan():ZeroCardViewAsSkill("xinzhan"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("XinzhanCard") && player->getHandcardNum() > player->getMaxHP();
-    }
-
-    virtual const Card *viewAs() const{
-        return new XinzhanCard;
-    }
-};
 */

@@ -156,7 +156,7 @@ public:
                     LogMessage log;
                     log.type = "$ForceDiscardCard";
                     log.from = luda;
-                    log.to = damage.to;
+                    log.to << damage.to;
                     log.card_str = card->getEffectIdString();
                     room->sendLog(log);
 
@@ -164,6 +164,52 @@ public:
                 }
                 data = QVariant::fromValue(damage);
             }
+        }
+        return false;
+    }
+};
+
+class Fuhu: public TriggerSkill{
+public:
+    Fuhu():TriggerSkill("fuhu"){
+        events << DamageComplete;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *wusong = room->findPlayerBySkillName(objectName());
+        if(!wusong)
+            return false;
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
+            && !wusong->isKongcheng() && damage.from != wusong
+                    && room->askForSkillInvoke(wusong, objectName(), data)){
+            room->playSkillEffect(objectName());
+            const Card *card = room->askForCard(wusong, ".basic", "@fuhu", data);
+            if(!card)
+                return false;
+            Slash *slash = new Slash(card->getSuit(), card->getNumber());
+            slash->setSkillName(objectName());
+            CardUseStruct use;
+            use.card = slash;
+            use.from = wusong;
+            use.to << damage.to;
+
+            if(card->inherits("Analeptic")){
+                LogMessage log;
+                log.type = "$Fuhu";
+                log.from = wusong;
+                log.card_str = card->getEffectIdString();
+                room->sendLog(log);
+
+                room->setPlayerFlag(wusong, "drank");
+            }
+            room->useCard(use);
         }
         return false;
     }
@@ -182,13 +228,12 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     General *luzhishen = new General(this, "luzhishen", "qun");
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
+
+    General *wusong = new General(this, "wusong", "qun");
+    wusong->addSkill(new Fuhu);
+
     /*
-
     related_skills.insertMulti("jiushi", "#jiushi-flip");
-
-    General *masu = new General(this, "masu", "shu", 3);
-    masu->addSkill(new Xinzhan);
-    masu->addSkill(new Huilei);
 
     General *fazheng = new General(this, "fazheng", "shu", 3);
     fazheng->addSkill(new Enyuan);
