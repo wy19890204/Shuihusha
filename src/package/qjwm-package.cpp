@@ -700,7 +700,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
     if(!targets.isEmpty())
         return false;
 
-    return to_select->getMark("Xiaozai") > 0;
+    return to_select->getMark("Xiaozai") == 0;
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
@@ -747,10 +747,12 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
-        room->setPlayerMark(damage.from, "Xiaozai", 1);
+        if(damage.from)
+            room->setPlayerMark(damage.from, "Xiaozai", 1);
         if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
             ServerPlayer *cup = player->tag.value("Xiaozai", NULL).value<ServerPlayer *>();
-            room->setPlayerMark(damage.from, "Xiaozai", 0);
+            if(damage.from)
+                room->setPlayerMark(damage.from, "Xiaozai", 0);
             damage.to = cup;
             room->damage(damage);
 
@@ -808,6 +810,37 @@ public:
     }
 };
 
+class Jiachu:public MasochismSkill{
+public:
+    Jiachu():MasochismSkill("jiachu$"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasLordSkill(objectName()) && target->getKingdom() == "wu";
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        ServerPlayer *wangqing = room->findPlayerBySkillName(objectName());
+        if(!wangqing || !wangqing->isLord())
+            return;
+        int x = damage.damage, i;
+        for(i=0; i<x; i++){
+            if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName())){
+                RecoverStruct rev;
+                rev.who = player;
+
+                LogMessage log;
+                log.type = "#InvokeSkill";
+                log.from = player;
+                log.arg = "jiachu";
+                room->sendLog(log);
+                room->recover(wangqing, rev);
+            }
+        }
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
@@ -851,14 +884,14 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     related_skills.insertMulti("zhanchi", "#@vfui");
     skills << new Tengfei;
 
-    General *shin = new General(this, "shin", "wu");
+    General *shin = new General(this, "shin", "wu", 3);
     shin->addSkill(new Bribe);
     shin->addSkill(new Xiaozai);
 
-    General *luozhenren = new General(this, "luozhenren", "qun");
+    General *luozhenren = new General(this, "luozhenren", "qun", 3);
     luozhenren->addSkill(new Huaxian);
 
-    General *wangqing = new General(this, "wangqing", "wu");
+    General *wangqing = new General(this, "wangqing$", "wu");
     wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
 
