@@ -367,6 +367,33 @@ public:
     }
 };
 
+class Fuqin: public MasochismSkill{
+public:
+    Fuqin():MasochismSkill("fuqin"){
+    }
+
+    virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
+        Room *room = yan->getRoom();
+        int lstn = yan->getLostHp();
+        QString choice = damage.from ?
+                         room->askForChoice(yan, objectName(), "yan+qing+nil"):
+                         room->askForChoice(yan, objectName(), "qing+nil");
+        if(choice == "nil")
+            return;
+        if(choice == "yan"){
+            for(int i = 0; i < lstn; i++){
+                room->throwCard(room->askForCardChosen(damage.from, yan, "he", objectName()));
+                if(damage.from->isNude())
+                    break;
+            }
+        }
+        else{
+            ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
+            target->drawCards(lstn);
+        }
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
@@ -391,6 +418,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *yanqing = new General(this, "yanqing", "wu"); //min == wu
     yanqing->addSkill(new Dalei);
+    yanqing->addSkill(new Fuqin);
 
     General *zhuwu = new General(this, "zhuwu", "qun");
     General *hantao = new General(this, "hantao", "wei");
