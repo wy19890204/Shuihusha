@@ -215,9 +215,161 @@ public:
     }
 };
 
+class Wubang: public TriggerSkill{
+public:
+    Wubang():TriggerSkill("wubang"){
+        events << CardLost;
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
+        if(!jiuwenlong || player == jiuwenlong)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->to_place == Player::DiscardedPile){
+            const Card *weapon = Sanguosha->getCard(move->card_id);
+            if(weapon->inherits("Weapon") &&
+               jiuwenlong->askForSkillInvoke(objectName()))
+                jiuwenlong->obtainCard(weapon);
+        }
+        return false;
+    }
+};
+
+class EquipPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return card->getTypeId() == Card::Equip;
+    }
+};
+
+class Xiagu: public TriggerSkill{
+public:
+    Xiagu():TriggerSkill("xiagu"){
+        events << Predamage;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
+        if(!jiuwenlong || jiuwenlong->isKongcheng())
+            return false;
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.nature == DamageStruct::Normal && damage.to->isAlive() && damage.damage > 0){
+            if(room->askForSkillInvoke(jiuwenlong, objectName(), data)){
+                room->playSkillEffect(objectName());
+                const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
+                if(card){
+                    LogMessage log;
+                    log.type = "$Xiagu";
+                    log.from = jiuwenlong;
+                    log.to << damage.to;
+                    log.card_str = card->getEffectIdString();
+                    room->sendLog(log);
+
+                    damage.damage --;
+                }
+                data = QVariant::fromValue(damage);
+            }
+        }
+        return false;
+    }
+};
+
+DaleiCard::DaleiCard(){
+    once = true;
+    will_throw = false;
+}
+
+bool DaleiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isMale() &&
+            !to_select->isKongcheng() && to_select != Self;
+}
+
+void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *> &targets) const{
+    bool success = xiaoyi->pindian(targets.first(), "dalei", this);
+    if(success){
+        room->setPlayerFlag(xiaoyi, "dalei_success");
+        room->setPlayerFlag(targets.first(), "dalei_target");
+    }else{
+        DamageStruct damage;
+        damage.from = targets.first();
+        damage.to = xiaoyi;
+        room->damage(damage);
+    }
+}
+
+class DaleiViewAsSkill: public OneCardViewAsSkill{
+public:
+    DaleiViewAsSkill():OneCardViewAsSkill("dalei"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("DaleiCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new DaleiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Dalei: public TriggerSkill{
+public:
+    Dalei():TriggerSkill("dalei"){
+        view_as_skill = new DaleiViewAsSkill;
+        events << Damage << PhaseChange;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(!player->hasFlag("dalei_success"))
+            return false;
+        if(event == PhaseChange){
+            if(player->getPhase() == Player::NotActive){
+                room->setPlayerFlag(player, "-dalei_success");
+                foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                    if(tmp->hasFlag("dalei_target"))
+                        room->setPlayerFlag(tmp, "-dalei_target");
+                }
+            }
+            return false;
+        }
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to->hasFlag("dalei_target") && player->askForSkillInvoke(objectName())){
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName());
+            RecoverStruct rev;
+            rev.who = player;
+            room->recover(target, rev);
+        }
+        return false;
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
-    General *huarong = new General(this, "huarong", "wei", 4);
+    General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
     patterns.insert(".kaixian!", new KaixianPattern);
@@ -225,40 +377,29 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     General *liying = new General(this, "liying", "wei");
     liying->addSkill(new Kongliang);
 
-    General *luzhishen = new General(this, "luzhishen", "qun");
+    General *luzhishen = new General(this, "luzhishen", "qun"); //kou == qun
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
 
     General *wusong = new General(this, "wusong", "qun");
     wusong->addSkill(new Fuhu);
 
+    General *shijin = new General(this, "shijin", "qun");
+    shijin->addSkill(new Wubang);
+    shijin->addSkill(new Xiagu);
+    patterns[".equip"] = new EquipPattern;
+
+    General *yanqing = new General(this, "yanqing", "wu"); //min == wu
+    yanqing->addSkill(new Dalei);
+
+    General *zhuwu = new General(this, "zhuwu", "qun");
+    General *hantao = new General(this, "hantao", "wei");
+    General *oupeng = new General(this, "oupeng", "wu"); //jiang == shu
+    General *shien = new General(this, "shien", "wu");
+    General *luozhenren = new General(this, "luozhenren", "qun");
+    General *wangqing = new General(this, "wangqing", "wu");
     /*
     related_skills.insertMulti("jiushi", "#jiushi-flip");
-
-    General *fazheng = new General(this, "fazheng", "shu", 3);
-    fazheng->addSkill(new Enyuan);
-    fazheng->addSkill(new Xuanhuo);
-
-    General *lingtong = new General(this, "lingtong", "wu");
-    lingtong->addSkill(new Xuanfeng);
-
-    General *xusheng = new General(this, "xusheng", "wu");
-    xusheng->addSkill(new Pojun);
-
-    General *wuguotai = new General(this, "wuguotai", "wu", 3, false);
-    wuguotai->addSkill(new Ganlu);
-    wuguotai->addSkill(new Buyi);
-
-    General *chengong = new General(this, "chengong", "qun", 3);
-    chengong->addSkill(new Zhichi);
-    chengong->addSkill(new ZhichiClear);
-    chengong->addSkill(new Mingce);
-
-    related_skills.insertMulti("zhichi", "#zhichi-clear");
-
-    General *gaoshun = new General(this, "gaoshun", "qun");
-    gaoshun->addSkill(new Xianzhen);
-    gaoshun->addSkill(new Jiejiu);
 
     addMetaObject<JujianCard>();
     addMetaObject<MingceCard>();
@@ -266,8 +407,8 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     addMetaObject<XianzhenCard>();
     addMetaObject<XianzhenSlashCard>();
     addMetaObject<XuanhuoCard>();
-    addMetaObject<XinzhanCard>();
     */
+    addMetaObject<DaleiCard>();
 }
 
 ADD_PACKAGE(QJWM)

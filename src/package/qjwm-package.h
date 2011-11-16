@@ -10,25 +10,18 @@ class QJWMPackage: public Package{
 public:
     QJWMPackage();
 };
+
+class DaleiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE DaleiCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 /*
-class JujianCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE JujianCard();
-
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class MingceCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE MingceCard();
-
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class GanluCard: public SkillCard{
     Q_OBJECT
 
