@@ -117,8 +117,8 @@ public:
             int count = 0;
             while(!card_ids.isEmpty() && count < 2){
                 int card_id = room->askForAG(liying, card_ids, false, objectName());
+                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile);
                 card_ids.removeOne(card_id);
-                room->throwCard(card_id);
                 room->takeAG(NULL, card_id);
 
                 // throw the rest cards that matches the same suit
@@ -128,8 +128,8 @@ public:
                 while(itor.hasNext()){
                     const Card *c = Sanguosha->getCard(itor.next());
                     if(c->getSuit() == suit){
+                        room->moveCardTo(c, NULL, Player::DiscardedPile);
                         itor.remove();
-                        room->throwCard(card_id);
                         room->takeAG(NULL, c->getId());
                     }
                 }
@@ -193,11 +193,11 @@ public:
             return false;
         DamageStruct damage = data.value<DamageStruct>();
 
-        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
+        if(damage.from && damage.card && damage.card->inherits("Slash")
             && !wusong->isKongcheng() && damage.from != wusong
                     && room->askForSkillInvoke(wusong, objectName(), data)){
             room->playSkillEffect(objectName());
-            const Card *card = room->askForCard(wusong, ".basic", "@fuhu", data);
+            const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
             if(!card)
                 return false;
             Slash *slash = new Slash(card->getSuit(), card->getNumber());
@@ -205,7 +205,7 @@ public:
             CardUseStruct use;
             use.card = slash;
             use.from = wusong;
-            use.to << damage.to;
+            use.to << damage.from;
 
             if(card->inherits("Analeptic")){
                 LogMessage log;
@@ -396,7 +396,7 @@ public:
             return;
         if(choice == "yan"){
             for(int i = 0; i < lstn; i++){
-                room->throwCard(room->askForCardChosen(damage.from, yan, "he", objectName()));
+                room->throwCard(room->askForCardChosen(yan, damage.from, "he", objectName()));
                 if(damage.from->isNude())
                     break;
             }
@@ -694,16 +694,23 @@ public:
 };
 
 XiaozaiCard::XiaozaiCard(){
+    will_throw = false;
 }
 
 bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
 
+    if(to_select == Self)
+        return false;
+
     return to_select->getMark("Xiaozai") == 0;
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
+    foreach(int card_id, this->getSubcards()){
+        effect.to->getRoom()->obtainCard(effect.to, card_id);
+    }
     effect.from->tag["Xiaozai"] = QVariant::fromValue(effect.to);
 }
 
@@ -863,7 +870,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     shijin->addSkill(new Xiagu);
     patterns[".equip"] = new EquipPattern;
 
-    General *yanqing = new General(this, "yanqing", "wu"); //min == wu
+    General *yanqing = new General(this, "yanqing", "wu", 3); //min == wu
     yanqing->addSkill(new Dalei);
     yanqing->addSkill(new Fuqin);
 
