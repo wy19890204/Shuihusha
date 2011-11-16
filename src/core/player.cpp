@@ -136,6 +136,9 @@ void Player::clearFlags(){
 }
 
 int Player::getAttackRange() const{
+    if(hasSkill("tengfei"))
+        return hp;
+
     if(getMark("kaixian") > 0)
         return getMark("kaixian");
 

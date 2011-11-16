@@ -468,8 +468,7 @@ TaolueCard::TaolueCard(){
 }
 
 bool TaolueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->getGeneral()->isMale() &&
-            !to_select->isKongcheng() && to_select != Self;
+    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
 }
 
 void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer *> &targets) const{
@@ -583,6 +582,67 @@ public:
     }
 };
 
+class Losthp: public TriggerSkill{
+public:
+    Losthp():TriggerSkill("#losthp"){
+        events << GameStart;
+    }
+
+    virtual int getPriority() const{
+        return 4;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        player->getRoom()->setPlayerProperty(player, "hp", player->getHp() - 1);
+        return false;
+    }
+};
+
+class Zhanchi:public PhaseChangeSkill{
+public:
+    Zhanchi():PhaseChangeSkill("zhanchi"){
+        frequency = Limited;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *opt) const{
+        if(opt->getMark("@vfui") > 0 && opt->getPhase() == Player::Judge){
+            Room *room = opt->getRoom();
+            if(opt->askForSkillInvoke(objectName())){
+                while(!opt->getJudgingArea().isEmpty())
+                    room->throwCard(opt->getJudgingArea().first()->getId());
+            }
+            room->acquireSkill(opt, "tengfei");
+            opt->loseMark("@vfui");
+        }
+        return false;
+    }
+};
+
+class Tengfei:public PhaseChangeSkill{
+public:
+    Tengfei():PhaseChangeSkill("tengfei"){
+        frequency = Compulsory;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *opt) const{
+        if(opt->getPhase() == Player::NotActive){
+            Room *room = opt->getRoom();
+            room->loseMaxHp(opt);
+
+            LogMessage log;
+            log.type = "#Tengfei";
+            log.from = opt;
+            log.arg = objectName();
+            log.arg2 = QString::number(1);
+            room->sendLog(log);
+
+            room->setCurrent(opt);
+            room->getThread()->trigger(TurnStart, opt);
+        }
+        return false;
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
@@ -619,7 +679,13 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
-    General *oupeng = new General(this, "oupeng", "wu"); //jiang == shu
+    General *oupeng = new General(this, "oupeng", "wu", 5); //jiang == shu
+    oupeng->addSkill(new Losthp);
+    oupeng->addSkill(new Zhanchi);
+    oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
+    related_skills.insertMulti("zhanchi", "#@vfui");
+    skills << new Tengfei;
+
     General *shien = new General(this, "shien", "wu");
     General *luozhenren = new General(this, "luozhenren", "qun");
     General *wangqing = new General(this, "wangqing", "wu");
