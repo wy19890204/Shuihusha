@@ -818,12 +818,8 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *luozhenren = new General(this, "luozhenren", "qun");
     General *wangqing = new General(this, "wangqing", "wu");
-    /*
-
-    addMetaObject<JujianCard>();
-    addMetaObject<MingceCard>();
-    addMetaObject<GanluCard>();
-    */
+    wangqing->addSkill(new Jiachu);
+    
     addMetaObject<DaleiCard>();
     addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
