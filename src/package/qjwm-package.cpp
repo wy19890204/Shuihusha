@@ -394,6 +394,195 @@ public:
     }
 };
 
+BuzhenCard::BuzhenCard(){
+}
+
+bool BuzhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() >= 2)
+        return false;
+    return true;
+}
+
+bool BuzhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+void BuzhenCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *first = targets.first();
+    room->swapSeat(first, targets.last());
+}
+
+class BuzhenViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    BuzhenViewAsSkill():ZeroCardViewAsSkill("buzhen"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@buzhen";
+    }
+
+    virtual const Card *viewAs() const{
+        return new BuzhenCard;
+    }
+};
+
+class Buzhen:public PhaseChangeSkill{
+public:
+    Buzhen():PhaseChangeSkill("buzhen"){
+        view_as_skill = new BuzhenViewAsSkill;
+        frequency = Limited;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
+        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
+            Room *room = zhuwu->getRoom();
+            if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
+                zhuwu->loseMark("@buvr");
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+class Fangzhen: public ProhibitSkill{
+public:
+    Fangzhen():ProhibitSkill("fangzhen"){
+    }
+
+    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
+        if(card->inherits("Slash") || card->inherits("Duel"))
+            return from->getHp() > to->getHp();
+        else
+            return false;
+    }
+};
+
+TaolueCard::TaolueCard(){
+    once = true;
+    will_throw = false;
+}
+
+bool TaolueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isMale() &&
+            !to_select->isKongcheng() && to_select != Self;
+}
+
+void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer *> &targets) const{
+    bool success = player->pindian(targets.first(), "Taolue", this);
+    if(!success){
+        if(!player->isNude())
+            room->askForDiscard(player, "taolue", 1, false, true);
+        return;
+    }
+    PlayerStar from = targets.first();
+    if(from->getCards("ej").isEmpty())
+        return;
+
+    int card_id = room->askForCardChosen(player, from , "ej", "taolue");
+    const Card *card = Sanguosha->getCard(card_id);
+    Player::Place place = room->getCardPlace(card_id);
+
+    int equip_index = -1;
+    const DelayedTrick *trick = NULL;
+    if(place == Player::Equip){
+        const EquipCard *equip = qobject_cast<const EquipCard *>(card);
+        equip_index = static_cast<int>(equip->location());
+    }else{
+        trick = DelayedTrick::CastFrom(card);
+    }
+
+    QList<ServerPlayer *> tos;
+    foreach(ServerPlayer *p, room->getAlivePlayers()){
+        if(equip_index != -1){
+            if(p->getEquip(equip_index) == NULL)
+                tos << p;
+        }else{
+            if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName()))
+                tos << p;
+        }
+    }
+    if(trick && trick->isVirtualCard())
+        delete trick;
+
+    room->setTag("TaolueTarget", QVariant::fromValue(from));
+    ServerPlayer *to = room->askForPlayerChosen(player, tos, "qiaobian");
+    if(to)
+        room->moveCardTo(card, to, place);
+    room->removeTag("TaolueTarget");
+}
+
+class Taolue: public OneCardViewAsSkill{
+public:
+    Taolue():OneCardViewAsSkill("taolue"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("TaolueCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new TaolueCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Changsheng: public TriggerSkill{
+public:
+    Changsheng():TriggerSkill("changsheng"){
+        events << Pindian;
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *aoko = room->findPlayerBySkillName(objectName());
+        PindianStar pindian = data.value<PindianStar>();
+        if(pindian->from != aoko && pindian->to != aoko)
+            return false;
+        Card *pdcd;
+        if(pindian->from != aoko && pindian->to_card->getSuit() == Card::Spade){
+            pdcd = Sanguosha->cloneCard(pindian->to_card->objectName(), pindian->to_card->getSuit(), 13);
+            pdcd->addSubcard(pindian->to_card);
+            pdcd->setSkillName(objectName());
+            pindian->to_card = pdcd;
+        }
+        else if(pindian->to != aoko && pindian->from_card->getSuit() == Card::Spade){
+            pdcd = Sanguosha->cloneCard(pindian->from_card->objectName(), pindian->from_card->getSuit(), 13);
+            pdcd->addSubcard(pindian->from_card);
+            pdcd->setSkillName(objectName());
+            pindian->from_card = pdcd;
+        }
+
+        LogMessage log;
+        log.type = "#Changsheng";
+        log.from = aoko;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        data = QVariant::fromValue(pindian);
+        return false;
+    }
+};
+
 QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
@@ -420,23 +609,30 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     yanqing->addSkill(new Dalei);
     yanqing->addSkill(new Fuqin);
 
-    General *zhuwu = new General(this, "zhuwu", "qun");
+    General *zhuwu = new General(this, "zhuwu", "qun", 3);
+    zhuwu->addSkill(new Buzhen);
+    zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
+    related_skills.insertMulti("buzhen", "#@buvr");
+    zhuwu->addSkill(new Fangzhen);
+
     General *hantao = new General(this, "hantao", "wei");
+    hantao->addSkill(new Taolue);
+    hantao->addSkill(new Changsheng);
+
     General *oupeng = new General(this, "oupeng", "wu"); //jiang == shu
     General *shien = new General(this, "shien", "wu");
     General *luozhenren = new General(this, "luozhenren", "qun");
     General *wangqing = new General(this, "wangqing", "wu");
     /*
-    related_skills.insertMulti("jiushi", "#jiushi-flip");
 
     addMetaObject<JujianCard>();
     addMetaObject<MingceCard>();
     addMetaObject<GanluCard>();
     addMetaObject<XianzhenCard>();
-    addMetaObject<XianzhenSlashCard>();
-    addMetaObject<XuanhuoCard>();
     */
     addMetaObject<DaleiCard>();
+    addMetaObject<BuzhenCard>();
+    addMetaObject<TaolueCard>();
 }
 
 ADD_PACKAGE(QJWM)
