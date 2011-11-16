@@ -860,12 +860,8 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
 
     General *wangqing = new General(this, "wangqing", "wu");
     wangqing->addSkill(new Qibing);
-    /*
+    wangqing->addSkill(new Jiachu);
 
-    addMetaObject<JujianCard>();
-    addMetaObject<MingceCard>();
-    addMetaObject<GanluCard>();
-    */
     addMetaObject<DaleiCard>();
     addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
