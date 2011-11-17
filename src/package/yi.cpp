@@ -10,45 +10,29 @@
 
 GanlinCard::GanlinCard(){
     will_throw = false;
+    once = true;
 }
 
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = NULL;
-    if(targets.isEmpty()){
-        foreach(ServerPlayer *player, room->getAlivePlayers()){
-            if(player != source){
-                target = player;
-                break;
-            }
-        }
-    }else
-        target = targets.first();
+    ServerPlayer *target = targets.first();
 
     room->moveCardTo(this, target, Player::Hand, false);
-
-    int old_value = source->getMark("ganlin");
-    int new_value = old_value + subcards.length();
-    room->setPlayerMark(source, "ganlin", new_value);
-
-    if(old_value < 2 && new_value >= 2){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = source;
-        room->recover(source, recover);
-    }
+    int n = source->getLostHp() - source->getHandcardNum();
+    if(n > 0)
+        source->drawCards(n);
 };
 
-class GanlinViewAsSkill:public ViewAsSkill{
+class Ganlin:public ViewAsSkill{
 public:
-    GanlinViewAsSkill():ViewAsSkill("ganlin"){
+    Ganlin():ViewAsSkill("ganlin"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(ServerInfo.GameMode == "04_1v3"
-           && selected.length() + Self->getMark("ganlin") >= 2)
-           return false;
-        else
-            return !to_select->isEquipped();
+        return !to_select->isEquipped();
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("GanlinCard");
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
@@ -61,90 +45,100 @@ public:
     }
 };
 
-class Ganlin: public PhaseChangeSkill{
+JuyiCard::JuyiCard(){
+    once = true;
+}
+
+void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *song = targets.first();
+    if(song->hasSkill("juyi")){
+        song->obtainCard(this);
+        source->obtainCard(room->askForCardShow(song, source, "juyi"));
+    }
+}
+
+bool JuyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->hasLordSkill("juyi") && to_select != Self;
+}
+
+class JuyiViewAsSkill: public OneCardViewAsSkill{
 public:
-    Ganlin():PhaseChangeSkill("ganlin"){
-        view_as_skill = new GanlinViewAsSkill;
+    JuyiViewAsSkill():OneCardViewAsSkill("jui"){
+
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::NotActive
-                && target->hasUsed("GanlinCard");
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("JuyiCard") && player->getKingdom() == "qun";
     }
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "ganlin", 0);
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
 
-        return false;
+    virtual const Card *viewAs(CardItem *card_item) const{
+        JuyiCard *card = new JuyiCard;
+        card->addSubcard(card_item->getFilteredCard());
+
+        return card;
+    }
+};
+
+class Juyi: public GameStartSkill{
+public:
+    Juyi():GameStartSkill("juyi$"){
+
+    }
+
+    virtual void onGameStart(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+            room->attachSkillToPlayer(tmp, "jui");
+        }
     }
 };
 
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
-        events << Damage << FinishJudge << PhaseChange;//伤害事件、判定牌生效后、阶段改变
+        events << Damage << PhaseChange;
    }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *likui, QVariant &data) const
-    {
-        if(likui->getPhase() == Player::Finish)
-         {    Room *room = likui->getRoom();
-            room->setPlayerMark(likui, "shalu_success", 0);
-            return false;
-           }
+    virtual int getPriority() const{
+        return -1;
+    }
 
-        if(likui->getPhase() != Player::Play)
-        {
+    virtual bool trigger(TriggerEvent e, ServerPlayer *likui, QVariant &data) const{
+        Room *room = likui->getRoom();
+        if(e == PhaseChange){
+            if(likui->getPhase() == Player::NotActive)
+                room->setPlayerMark(likui, "shalu", 0);
             return false;
         }
-
-
-
-
         DamageStruct damage = data.value<DamageStruct>();
-        if(event == Damage && damage.card
-           && damage.card->inherits("Slash"))
-        {
-            Room *room = likui->getRoom();
-            if(room->askForSkillInvoke(likui, objectName(), data))
-            {
-                room->playSkillEffect(objectName());
-                likui->setFlags("shalu"); //发动标记
-                JudgeStruct judge;
-                judge.pattern = QRegExp("(.*):(spade|club):(.*)");
-                judge.good = true;
-                judge.reason = objectName();
-                judge.who = likui;
+        if(!damage.card || damage.from != likui)
+            return false;
+        if(damage.card->inherits("Slash")){
+            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow") && !likui->hasSkill("paoxiao"))
+                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
+            if(!room->askForSkillInvoke(likui, objectName(), data))
+                return false;
+            room->playSkillEffect(objectName());
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(spade|club):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = likui;
 
-                room->judge(judge);
-                if(judge.isGood())
-                {
-
-                    room->setPlayerMark(likui, "shalu_success",  likui->getMark("shalu_success") + 1);//每有一次判黑，判黑标记+1，
-                }
-                else
-                {
-
-                    likui->setFlags("-shalu");//移除发动标记
-                }
+            room->judge(judge);
+            if(judge.isGood()){
+                room->playSkillEffect(objectName(), 1);
+                likui->obtainCard(judge.card);
+                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
             }
         }
-        else if(event == FinishJudge){
-            if(likui->hasFlag("shalu")){
-                JudgeStar judge = data.value<JudgeStar>();
-                if(judge->card->isBlack()){
-                    likui->obtainCard(judge->card);
-                    likui->setFlags("-shalu");
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
 };
-
 
 class Fenhui: public TriggerSkill{
 public:
@@ -351,9 +345,10 @@ YiPackage::YiPackage()
     :Package("yi")
 {
     General *songjiang, *likui, *weidingguo, *yanshun, *lizhong, *shiqian, *jiashi;
-	songjiang = new General(this, "songjiang$", "qun");
+    songjiang = new General(this, "songjiang$", "qun");
     songjiang->addSkill(new Ganlin);
-    addMetaObject<GanlinCard>();
+    songjiang->addSkill(new Juyi);
+    skills << new JuyiViewAsSkill;
 
     likui = new General(this, "likui", "shu");
     likui->addSkill(new Shalu);
@@ -380,6 +375,8 @@ YiPackage::YiPackage()
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
 
+    addMetaObject<GanlinCard>();
+    addMetaObject<JuyiCard>();
 }
 
 ADD_PACKAGE(Yi)

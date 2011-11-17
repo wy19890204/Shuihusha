@@ -24,7 +24,8 @@ bool Slash::IsAvailable(const Player *player){
     if(player->hasFlag("tianyi_failed") || player->hasFlag("xianzhen_failed"))
         return false;
 
-    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow();
+    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
+        || (player->hasSkill("shalu") && player->getMark("shalu") > 0);
 }
 
 bool Slash::isAvailable(const Player *player) const{
@@ -50,6 +51,8 @@ void Slash::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
 
 void Slash::onEffect(const CardEffectStruct &card_effect) const{
     Room *room = card_effect.from->getRoom();
+    if(effect.from->hasSkill("shalu") && effect.from->getMark("shalu") > 0)
+        room->playSkillEffect("shalu", 2);
 
     SlashEffectStruct effect;
     effect.from = card_effect.from;

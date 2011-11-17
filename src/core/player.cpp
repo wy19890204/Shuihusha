@@ -713,9 +713,6 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
 
     int slash_count = getSlashCount();
-    if(getMark("shalu_success")- slash_count>=0) //现有【杀戮】判黑标记不小于不用连弩已经杀过的次数
-        return true;
-
     if(hasFlag("tianyi_success"))
         return slash_count < 2;
     else
