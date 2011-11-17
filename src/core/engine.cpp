@@ -38,9 +38,9 @@ extern "C" {
     Package *NewGod();
     Package *NewYitian();
     Package *NewSP();
-    Package *NewQJWM();
     Package *NewWisdom();
     Package *NewTest();
+    Package *NewQJWM();
     Package *NewYi();//бнбн
 
     Package *NewStandardCard();
@@ -77,10 +77,10 @@ Engine::Engine()
     addPackage(NewMountain());
     addPackage(NewGod());
     addPackage(NewSP());
-    addPackage(NewQJWM());
     addPackage(NewYitian());
     addPackage(NewWisdom());
     addPackage(NewTest());
+    addPackage(NewQJWM());
     addPackage(NewYi());//zxz
 
     addPackage(NewStandardCard());

@@ -148,31 +148,32 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        LogMessage log;
+        log.from = player;
+        log.arg2 = objectName();
+
         if(event == Predamage){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.nature != DamageStruct::Fire){
                 Room *room = player->getRoom();
                 damage.nature = DamageStruct::Fire;
 
-                data = QVariant::fromValue(damage);
-
-                LogMessage log;
                 log.type = "#FenhuiFire";
-                log.from = player;
                 log.arg = QString::number(damage.damage);
                 room->sendLog(log);
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
+
+                data = QVariant::fromValue(damage);
                 return false;
             }
        }else if(event == Predamaged){
            DamageStruct damage = data.value<DamageStruct>();
            if(damage.nature == DamageStruct::Fire){
                Room *room = player->getRoom();
-               LogMessage log;
                log.type = "#FenhuiProtect";
-               log.from = player;
                log.arg = QString::number(damage.damage);
                room->sendLog(log);
+
                room->playSkillEffect(objectName(), qrand() % 2 + 3);
                return true;
            }else
