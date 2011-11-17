@@ -19,8 +19,7 @@ return {
 	["$shalu1"] = "你吃俺一个，俺杀你一窝！",
 	["$shalu2"] = "再来！爷爷还没杀够呢",
 	
-	["weidingguo"] = "魏定国",
-	["cv:weidingguo"] = "烨子",
+	["weidingguo"] = "神火将魏定国",
 	["~weidingguo"] = "玩火自焚啊！",
 	["fenhui"] = "焚毁",
 	[":fenhui"] = "锁定技，你造成的伤害均视为火焰伤害；当你受到火焰伤害时，防止此伤害。",	
@@ -38,8 +37,7 @@ return {
 	["$shenhuo3"] = "看我焚诀秘法！",
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
 	
-	["yanshun"] = "燕顺",
-	["designer:yanshun"] = "烨子",
+	["yanshun"] = "锦毛虎燕顺",
 	["cv:yanshun"] = "烨子",
 	["~yanshun"] = "虎落平阳被犬欺啊……",
 	["huxiao"] = "虎啸",
@@ -48,8 +46,7 @@ return {
 	["$huxiao2"] = "小的们，统统给我抓起来！",
 	["$huxiao3"] = "谁敢擅入清风寨？",
 	
-	["lizhong"] = "李忠",
-	["designer:lizhong"] = "烨子",
+	["lizhong"] = "打虎将李忠",
 	["cv:lizhong"] = "烨子",
 	["~lizhong"] = "只可惜了俺祖传的膏药啊！",
 	["linse"] = "吝啬",
@@ -57,8 +54,7 @@ return {
 	["$linse1"] = "嗯？休要打吾主意！",
 	["$linse2"] = "此地无银三百两。",
 	
-	["shiqian"] = "时迁",
-	["designer:shiqian"] = "烨子",
+	["shiqian"] = "鼓上蚤时迁",
 	["cv:shiqian"] = "爪子",
 	["~shiqian"] = "上天不公，无过于此",	
 	["feiyan"] = "飞檐",
@@ -69,17 +65,14 @@ return {
 	["$shentou2"] = "探囊取物，易如反掌",
 
 	["jiashi"] = "贾氏",
-	["designer:jiashi"] = "烨子",
 	["cv:jiashi"] = "呼呼",
 	["~jiashi"] = "员外，饶了奴家吧～",
 	["banzhuang"] = "半妆",
 	[":banzhuang"] = "出牌阶段，你可以将你的任一红桃手牌当【无中生有】使用",
 	["$banzhuang1"] = "一顾倾人城，再顾倾人国。",
-    ["$banzhuang2"] = "虚事难入公门，实事难以抵对。",
+	["$banzhuang2"] = "虚事难入公门，实事难以抵对。",
 	["zhuying"] = "朱樱",
 	[":zhuying"] = "锁定技，你的【酒】均视为【桃】",
 	["$zhuying1"] = "奴家这厢有礼了～",
-    ["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
-	
-
+	["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
 }

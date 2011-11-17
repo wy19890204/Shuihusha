@@ -469,6 +469,10 @@ int Player::getMaxCards() const{
             extra = 1;
     }
 
+    if(hasSkill("linse"))
+       //return getMaxHP();两者等价，抓出来的字段就是max_hp。不过max_hp只能对自己用，getMaxHP()前面加player->可以抓取别人的数据
+        return max_hp;
+
     int juejing = hasSkill("juejing") ? 2 : 0;
 
     int xueyi = 0;
@@ -483,11 +487,6 @@ int Player::getMaxCards() const{
     int shenwei = 0;
     if(hasSkill("shenwei"))
         shenwei = 2;
-
-    if(hasSkill("linse"))
-       //return getMaxHP();两者等价，抓出来的字段就是max_hp。不过max_hp只能对自己用，getMaxHP()前面加player->可以抓取别人的数据
-
-    return max_hp;
 
     return qMax(hp,0) + extra + juejing + xueyi + shenwei;
 }

@@ -51,7 +51,7 @@ void Slash::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
 
 void Slash::onEffect(const CardEffectStruct &card_effect) const{
     Room *room = card_effect.from->getRoom();
-    if(effect.from->hasSkill("shalu") && effect.from->getMark("shalu") > 0)
+    if(card_effect.from->hasSkill("shalu") && card_effect.from->getMark("shalu") > 0)
         room->playSkillEffect("shalu", 2);
 
     SlashEffectStruct effect;
@@ -774,7 +774,7 @@ bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to
     if(to_select == Self)
         return false;
 
-    if(Self->distanceTo(to_select) <= 2 && Self->hasSkill("shentou"))
+    if(Self->distanceTo(to_select) < 3 && Self->hasSkill("shentou"))
         return true;
 
     if(Self->distanceTo(to_select) > 1 && !Self->hasSkill("qicai"))

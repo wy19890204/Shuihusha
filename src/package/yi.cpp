@@ -166,29 +166,25 @@ public:
             }
        }else if(event == Predamaged){
            DamageStruct damage = data.value<DamageStruct>();
-                  if(damage.nature == DamageStruct::Fire){
-                      Room *room = player->getRoom();
-                      LogMessage log;
-                      log.type = "#FenhuiProtect";
-                      log.from = player;
-                      log.arg = QString::number(damage.damage);
-                      room->sendLog(log);
-                      room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                      return true;
-                  }else
-                      return false;
-
-            }
-
-
-        return false;
+           if(damage.nature == DamageStruct::Fire){
+               Room *room = player->getRoom();
+               LogMessage log;
+               log.type = "#FenhuiProtect";
+               log.from = player;
+               log.arg = QString::number(damage.damage);
+               room->sendLog(log);
+               room->playSkillEffect(objectName(), qrand() % 2 + 3);
+               return true;
+           }else
+               return false;
+       }
+       return false;
     }
 };
 
-
-class Shenhuo: public OneCardViewAsSkill{
+class ShenhuoViewAsSkill: public OneCardViewAsSkill{
 public:
-    Shenhuo():OneCardViewAsSkill("shenhuo"){
+    ShenhuoViewAsSkill():OneCardViewAsSkill("shenhuo"){
 
     }
 
@@ -206,77 +202,65 @@ public:
     }
 };
 
-class Shenhuogetcards:public TriggerSkill{
+class Shenhuo:public TriggerSkill{
 public:
-    Shenhuogetcards():TriggerSkill("#shenhuogetcards"){
+    Shenhuo():TriggerSkill("shenhuo"){
+        view_as_skill = new ShenhuoViewAsSkill;
         events << CardUsed;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *weidingguo, QVariant &data) const{
-        CardStar card = NULL;
-
-            CardUseStruct use = data.value<CardUseStruct>();
-            card = use.card;
-
-
-    if(card->inherits("FireAttack")){
+    virtual bool trigger(TriggerEvent , ServerPlayer *weidingguo, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        CardStar card = use.card;
+        if(card->inherits("FireAttack")){
             Room *room = weidingguo->getRoom();
             if(room->askForSkillInvoke(weidingguo, objectName())){
                 room->playSkillEffect(objectName());
                 weidingguo->drawCards(2);
             }
         }
-           return false;
-       }
-    };
+        return false;
+    }
+};
 
 class Huxiao: public OneCardViewAsSkill{
 public:
-Huxiao():OneCardViewAsSkill("huxiao"){
-}
+    Huxiao():OneCardViewAsSkill("huxiao"){
 
-virtual bool viewFilter(const CardItem *to_select) const{
-return to_select->getFilteredCard()->inherits("EquipCard");
-}
+    }
 
-virtual const Card *viewAs(CardItem *card_item) const{
-const Card *card = card_item->getCard();
-SavageAssault *savage_assault = new SavageAssault
-(card->getSuit(), card->getNumber());
-savage_assault->addSubcard(card->getId());
-savage_assault->setSkillName(objectName());
-return savage_assault;
-}
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        SavageAssault *savage_assault = new SavageAssault(card->getSuit(), card->getNumber());
+        savage_assault->addSubcard(card->getId());
+        savage_assault->setSkillName(objectName());
+        return savage_assault;
+    }
 };
 
 class Linse: public ProhibitSkill{
 public:
     Linse():ProhibitSkill("linse"){
     }
+
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
         return card->inherits("Snatch") || card->inherits("Dismantlement");
     }
-};
-
-class  Halfhp: public GameStartSkill{
-public:
-     Halfhp():GameStartSkill("#halfhp"){}
-
-     virtual void onGameStart(ServerPlayer *lizhong) const{
-        Room *room = lizhong->getRoom();
-         room->setPlayerProperty(lizhong, "maxhp", lizhong->getMaxHP() + 1);
-     }
 };
 
 class Feiyan: public ProhibitSkill{
 public:
     Feiyan():ProhibitSkill("feiyan"){
     }
+
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
         return card->inherits("Snatch") || card->inherits("SupplyShortage");
     }
 };
-
 
 class Shentou: public OneCardViewAsSkill{
 public:
@@ -317,7 +301,6 @@ public:
     }
 };
 
-
 class Banzhuang: public OneCardViewAsSkill{
 public:
     Banzhuang():OneCardViewAsSkill("banzhuang"){
@@ -325,7 +308,6 @@ public:
 
     virtual bool viewFilter(const CardItem *to_select) const{
         return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
-
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -336,10 +318,6 @@ public:
         return ex_nihilo;
     }
 };
-
-
-
-
 
 YiPackage::YiPackage()
     :Package("yi")
@@ -356,22 +334,19 @@ YiPackage::YiPackage()
     weidingguo = new General(this, "weidingguo", "shu", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
-    weidingguo->addSkill(new Shenhuogetcards);
-    related_skills.insertMulti("shenhuo", "#shenhuogetcards");
 
     yanshun = new General(this, "yanshun", "shu");
     yanshun->addSkill(new Huxiao);
 
-    lizhong = new General(this, "lizhong", "qun", 3);
+    lizhong = new General(this, "lizhong", "qun", 4);
+    lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
-    lizhong->addSkill(new Halfhp);
-    related_skills.insertMulti("linse", "#halfhp");
 
     shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    jiashi = new General(this, "jiashi", "wu", 3,false);
+    jiashi = new General(this, "jiashi", "wu", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
 
