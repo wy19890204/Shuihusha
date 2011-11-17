@@ -85,7 +85,7 @@ public:
 class Kongliang: public TriggerSkill{
 public:
     Kongliang():TriggerSkill("kongliang"){
-        events << DrawNCards << PhaseChange;
+        events << PhaseChange;
     }
 
     static bool CompareBySuit(int card1, int card2){
@@ -98,16 +98,14 @@ public:
         return a < b;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *liying, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, ServerPlayer *liying, QVariant &data) const{
         Room *room = liying->getRoom();
-        if(event == DrawNCards){
-            if(room->askForSkillInvoke(liying, objectName())){
-                room->playSkillEffect(objectName());
-                data = liying->getMaxHP() + liying->getLostHp();
-                liying->setFlags("kongliang");
-            }
-        }
-        else if(event == PhaseChange && liying->hasFlag("kongliang") && liying->getPhase() == Player::Play){
+        if(liying->getPhase() != Player::Draw)
+            return false;
+        if(room->askForSkillInvoke(liying, objectName())){
+            room->playSkillEffect(objectName());
+            liying->drawCards(liying->getMaxHP() + liying->getLostHp());
+
             QList<int> card_ids;
             foreach(const Card *tmp, liying->getHandcards()){
                 card_ids << tmp->getId();
@@ -136,6 +134,7 @@ public:
                 count ++;
             }
             room->broadcastInvoke("clearAG");
+            return true;
         }
         return false;
     }
@@ -157,9 +156,12 @@ public:
             && !damage.to->isKongcheng()){
             if(room->askForSkillInvoke(luda, objectName(), data)){
                 room->playSkillEffect(objectName());
-                const Card *card = room->askForCardShow(damage.to, luda, objectName());
+                int card_id = damage.to->getRandomHandCardId();
+                const Card *card = Sanguosha->getCard(card_id);
+                room->showCard(damage.to, card_id);
+                room->getThread()->delay();
                 if(!card->inherits("BasicCard")){
-                    room->throwCard(card->getId());
+                    room->throwCard(card_id);
                     LogMessage log;
                     log.type = "$ForceDiscardCard";
                     log.from = luda;

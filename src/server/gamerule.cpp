@@ -453,10 +453,14 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                     log.from = player;
                     log.to << killer;
                     log.arg = "zuohua";
+                    room->playSkillEffect("zuohua", 1);
                     room->sendLog(log);
                 }
                 else
                     rewardAndPunish(killer, player);
+            }
+            else if(player->hasSkill("zuohua")){
+                room->playSkillEffect("zuohua", 2);
             }
 
             setGameProcess(room);
