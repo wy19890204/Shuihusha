@@ -38,6 +38,8 @@ Card::CardType TrickCard::getTypeId() const{
 }
 
 bool TrickCard::isCancelable(const CardEffectStruct &effect) const{
+    if(this->isNDTrick() && effect.from->hasSkill("pozhen"))
+        return false;
     return cancelable;
 }
 

@@ -829,16 +829,15 @@ public:
             room->throwCard(judge->card);
 
             QList<int> card_ids = room->getNCards(3);
-            for(int i = 0; i < 3; i ++){
-                room->moveCardTo(Sanguosha->getCard(card_ids.at(i)), player, Player::Special, false);
-            }
             room->fillAG(card_ids, player);
             int card_id = room->askForAG(player, card_ids, false, objectName());
             if(card_id == -1)
                 return false;
-            int locat = card_ids.lastIndexOf(card_id);
+            int locat = card_ids.indexOf(card_id);
             card_ids.replace(locat, judge->card->getId());
             room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile);
+
+            player->invoke("clearAG");
 
             QListIterator<int> i(card_ids);
             i.toBack();
@@ -847,8 +846,6 @@ public:
             //foreach(int tmp, card_ids){
             //    room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile, true);
             //}
-
-            player->invoke("clearAG");
 
             judge->card = Sanguosha->getCard(card_id);
             room->moveCardTo(judge->card, NULL, Player::Special);
@@ -972,6 +969,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     yanqing->addSkill(new Fuqin);
 
     General *zhuwu = new General(this, "zhuwu", "qun", 3);
+    zhuwu->addSkill(new Skill("pozhen", Skill::Compulsory));
     zhuwu->addSkill(new Buzhen);
     zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
     related_skills.insertMulti("buzhen", "#@buvr");
