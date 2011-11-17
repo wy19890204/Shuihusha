@@ -482,7 +482,9 @@ public:
         if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
             Room *room = zhuwu->getRoom();
             if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
+                //room->broadcastInvoke("animate", "lightbox:$buzhen");
                 zhuwu->loseMark("@buvr");
+                room->getThread()->delay();
                 return true;
             }
         }
@@ -602,11 +604,13 @@ public:
         if(pindian->from != aoko && pindian->to != aoko)
             return false;
         Card *pdcd;
+        bool invoke = false;
         if(pindian->from != aoko && pindian->to_card->getSuit() == Card::Spade){
             pdcd = Sanguosha->cloneCard(pindian->to_card->objectName(), pindian->to_card->getSuit(), 13);
             pdcd->addSubcard(pindian->to_card);
             pdcd->setSkillName(objectName());
             pindian->to_card = pdcd;
+            invoke = true;
             room->playSkillEffect(objectName(), 2);
         }
         else if(pindian->to != aoko && pindian->from_card->getSuit() == Card::Spade){
@@ -614,14 +618,17 @@ public:
             pdcd->addSubcard(pindian->from_card);
             pdcd->setSkillName(objectName());
             pindian->from_card = pdcd;
+            invoke = true;
             room->playSkillEffect(objectName(), 1);
         }
 
-        LogMessage log;
-        log.type = "#Changsheng";
-        log.from = aoko;
-        log.arg = objectName();
-        room->sendLog(log);
+        if(invoke){
+            LogMessage log;
+            log.type = "#Changsheng";
+            log.from = aoko;
+            log.arg = objectName();
+            room->sendLog(log);
+        }
 
         data = QVariant::fromValue(pindian);
         return false;
@@ -654,6 +661,8 @@ public:
         if(opt->getMark("@vfui") > 0 && opt->getPhase() == Player::Judge){
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                room->broadcastInvoke("animate", "lightbox:$zhanchi");
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
@@ -673,6 +682,10 @@ public:
     virtual bool onPhaseChange(ServerPlayer *opt) const{
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
+            if(opt->getMaxHP() > 2)
+                room->playSkillEffect(objectName(), 1);
+            else
+                room->playSkillEffect(objectName(), 2);
             room->loseMaxHp(opt);
 
             LogMessage log;
@@ -713,6 +726,8 @@ public:
                     room->takeAG(NULL, c->getId());
                 }
             }
+            if(!card_ids.isEmpty())
+                room->playSkillEffect(objectName());
             while(!card_ids.isEmpty()){
                 int card_id = room->askForAG(shien, card_ids, false, objectName());
                 card_ids.removeOne(card_id);
@@ -905,13 +920,15 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *ren, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == ren && ren->askForSkillInvoke(objectName())){
+            Room *room = ren->getRoom();
+            room->playSkillEffect(objectName());
+
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(heart):(.*)");
             judge.good = true;
             judge.reason = objectName();
             judge.who = ren;
 
-            Room *room = ren->getRoom();
             room->judge(judge);
             if(judge.isGood()){
                 RecoverStruct rev;
@@ -962,6 +979,7 @@ public:
             if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName())){
                 RecoverStruct rev;
                 rev.who = player;
+                room->playSkillEffect(objectName());
 
                 LogMessage log;
                 log.type = "#InvokeSkill";
