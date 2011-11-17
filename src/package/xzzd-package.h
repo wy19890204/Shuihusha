@@ -1,14 +1,14 @@
-#ifndef YI_H
-#define YI_H
+#ifndef XZDDPACKAGE_H
+#define XZDDPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class YiPackage: public Package{
+class XZDDPackage: public Package{
     Q_OBJECT
 
 public:
-    YiPackage();
+    XZDDPackage();
 };
 
 class GanlinCard:public SkillCard{
@@ -29,4 +29,4 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
-#endif // YI_H
+#endif // XZDDPACKAGE_H

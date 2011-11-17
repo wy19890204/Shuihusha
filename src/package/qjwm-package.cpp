@@ -992,7 +992,8 @@ public:
     }
 };
 
-QJWMPackage::QJWMPackage():Package("QJWM"){
+QJWMPackage::QJWMPackage()
+    :Package("QJWM"){
 
     General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
     huarong->addSkill(new Jingzhun);
@@ -1029,7 +1030,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
-    General *oupeng = new General(this, "oupeng", "wu", 5); //jiang == shu
+    General *oupeng = new General(this, "oupeng", "shu", 5); //jiang == shu
     oupeng->addSkill(new Losthp);
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));

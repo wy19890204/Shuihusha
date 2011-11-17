@@ -1,4 +1,4 @@
-#include "yi.h"
+#include "xzzd-package.h"
 #include "general.h"
 #include "skill.h"
 #include "room.h"
@@ -320,34 +320,33 @@ public:
     }
 };
 
-YiPackage::YiPackage()
-    :Package("yi")
-{
-    General *songjiang, *likui, *weidingguo, *yanshun, *lizhong, *shiqian, *jiashi;
-    songjiang = new General(this, "songjiang$", "qun");
+XZDDPackage::XZDDPackage()
+    :Package("XZDD"){
+/*
+    General *songjiang = new General(this, "songjiang$", "qun");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
     skills << new JuyiViewAsSkill;
-
-    likui = new General(this, "likui", "shu");
+*/
+    General *likui = new General(this, "likui", "shu");
     likui->addSkill(new Shalu);
 
-    weidingguo = new General(this, "weidingguo", "shu", 3);
+    General *weidingguo = new General(this, "weidingguo", "shu", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
 
-    yanshun = new General(this, "yanshun", "shu");
+    General *yanshun = new General(this, "yanshun", "shu");
     yanshun->addSkill(new Huxiao);
 
-    lizhong = new General(this, "lizhong", "qun", 4);
+    General *lizhong = new General(this, "lizhong", "qun", 4);
     lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
 
-    shiqian = new General(this, "shiqian", "qun", 3);
+    General *shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    jiashi = new General(this, "jiashi", "wu", 3, false);
+    General *jiashi = new General(this, "jiashi", "wu", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
 
@@ -355,4 +354,4 @@ YiPackage::YiPackage()
     addMetaObject<JuyiCard>();
 }
 
-ADD_PACKAGE(Yi)
+ADD_PACKAGE(XZDD)
