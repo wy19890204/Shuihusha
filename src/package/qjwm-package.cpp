@@ -769,6 +769,103 @@ public:
     }
 };
 
+ButianCard::ButianCard(){
+    target_fixed = true;
+}
+
+void ButianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+
+}
+
+class ButianViewAsSkill:public OneCardViewAsSkill{
+public:
+    ButianViewAsSkill():OneCardViewAsSkill("butian"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return true;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@butian";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new ButianCard;
+        card->addSubcard(card_item->getFilteredCard());
+
+        return card;
+    }
+};
+
+class Butian: public TriggerSkill{
+public:
+    Butian():TriggerSkill("butian"){
+        view_as_skill = new ButianViewAsSkill;
+        events << AskForRetrial;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return TriggerSkill::triggerable(target) && !target->isNude();
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        JudgeStar judge = data.value<JudgeStar>();
+
+        QStringList prompt_list;
+        prompt_list << "@butian-card" << judge->who->objectName()
+                << "" << judge->reason << judge->card->getEffectIdString();
+        QString prompt = prompt_list.join(":");
+
+        player->tag["Judge"] = data;
+        const Card *card = room->askForCard(player, "@butian", prompt, data);
+
+        if(card){
+            room->throwCard(judge->card);
+
+            QList<int> card_ids = room->getNCards(3);
+            for(int i = 0; i < 3; i ++){
+                room->moveCardTo(Sanguosha->getCard(card_ids.at(i)), player, Player::Special, false);
+            }
+            room->fillAG(card_ids, player);
+            int card_id = room->askForAG(player, card_ids, false, objectName());
+            if(card_id == -1)
+                return false;
+            int locat = card_ids.lastIndexOf(card_id);
+            card_ids.replace(locat, judge->card->getId());
+            room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile);
+
+            QListIterator<int> i(card_ids);
+            i.toBack();
+            while(i.hasPrevious())
+                room->moveCardTo(Sanguosha->getCard(i.previous()), NULL, Player::DrawPile, true);
+            //foreach(int tmp, card_ids){
+            //    room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile, true);
+            //}
+
+            player->invoke("clearAG");
+
+            judge->card = Sanguosha->getCard(card_id);
+            room->moveCardTo(judge->card, NULL, Player::Special);
+
+            LogMessage log;
+            log.type = "$ChangedJudge";
+            log.from = player;
+            log.to << judge->who;
+            log.card_str = QString::number(card_id);
+            room->sendLog(log);
+
+            room->sendJudgeResult(judge);
+        }
+        return false;
+    }
+};
+
 class Huaxian: public TriggerSkill{
 public:
     Huaxian():TriggerSkill("huaxian"){
@@ -896,6 +993,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     shin->addSkill(new Xiaozai);
 
     General *luozhenren = new General(this, "luozhenren", "qun", 3);
+    luozhenren->addSkill(new Butian);
     luozhenren->addSkill(new Huaxian);
 
     General *wangqing = new General(this, "wangqing$", "wu");
@@ -906,6 +1004,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();
+    addMetaObject<ButianCard>();
 }
 
 ADD_PACKAGE(QJWM)
