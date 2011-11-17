@@ -418,6 +418,23 @@ public:
     }
 };
 
+class Pozhen: public TriggerSkill{
+public:
+    Pozhen():TriggerSkill("pozhen"){
+        events << CardUsed;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->isNDTrick() && !use.card->inherits("Nullification")){
+            room->playSkillEffect(objectName());
+        }
+        return false;
+    }
+};
+
 BuzhenCard::BuzhenCard(){
 }
 
@@ -488,6 +505,7 @@ public:
 
 TaolueCard::TaolueCard(){
     once = true;
+    mute = true;
     will_throw = false;
 }
 
@@ -498,10 +516,12 @@ bool TaolueCard::targetFilter(const QList<const Player *> &targets, const Player
 void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer *> &targets) const{
     bool success = player->pindian(targets.first(), "Taolue", this);
     if(!success){
+        room->playSkillEffect("taolue", 2);
         if(!player->isNude())
             room->askForDiscard(player, "taolue", 1, false, true);
         return;
     }
+    room->playSkillEffect("taolue", 1);
     PlayerStar from = targets.first();
     if(from->getCards("ej").isEmpty())
         return;
@@ -587,12 +607,14 @@ public:
             pdcd->addSubcard(pindian->to_card);
             pdcd->setSkillName(objectName());
             pindian->to_card = pdcd;
+            room->playSkillEffect(objectName(), 2);
         }
         else if(pindian->to != aoko && pindian->from_card->getSuit() == Card::Spade){
             pdcd = Sanguosha->cloneCard(pindian->from_card->objectName(), pindian->from_card->getSuit(), 13);
             pdcd->addSubcard(pindian->from_card);
             pdcd->setSkillName(objectName());
             pindian->from_card = pdcd;
+            room->playSkillEffect(objectName(), 1);
         }
 
         LogMessage log;
@@ -979,7 +1001,7 @@ QJWMPackage::QJWMPackage():Package("QJWM"){
     yanqing->addSkill(new Fuqin);
 
     General *zhuwu = new General(this, "zhuwu", "qun", 3);
-    zhuwu->addSkill(new Skill("pozhen", Skill::Compulsory));
+    zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
     zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
     related_skills.insertMulti("buzhen", "#@buvr");
