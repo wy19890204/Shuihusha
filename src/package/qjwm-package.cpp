@@ -215,9 +215,12 @@ public:
                 log.from = wusong;
                 log.card_str = card->getEffectIdString();
                 room->sendLog(log);
+                room->playSkillEffect(objectName(), 2);
 
                 room->setPlayerFlag(wusong, "drank");
             }
+            else
+                room->playSkillEffect(objectName(), 1);
             room->useCard(use);
         }
         return false;
@@ -248,8 +251,10 @@ public:
         if(move->to_place == Player::DiscardedPile){
             const Card *weapon = Sanguosha->getCard(move->card_id);
             if(weapon->inherits("Weapon") &&
-               jiuwenlong->askForSkillInvoke(objectName()))
+               jiuwenlong->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
                 jiuwenlong->obtainCard(weapon);
+            }
         }
         return false;
     }
@@ -297,6 +302,7 @@ public:
                     log.to << damage.to;
                     log.card_str = card->getEffectIdString();
                     room->sendLog(log);
+                    room->playSkillEffect(objectName());
 
                     damage.damage --;
                 }
@@ -397,6 +403,7 @@ public:
         if(choice == "nil")
             return;
         if(choice == "yan"){
+            room->playSkillEffect(objectName(), 1);
             for(int i = 0; i < lstn; i++){
                 room->throwCard(room->askForCardChosen(yan, damage.from, "he", objectName()));
                 if(damage.from->isNude())
@@ -404,6 +411,7 @@ public:
             }
         }
         else{
+            room->playSkillEffect(objectName(), 2);
             ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
             target->drawCards(lstn);
         }
