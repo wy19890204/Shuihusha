@@ -198,7 +198,6 @@ public:
         if(damage.from && damage.card && damage.card->inherits("Slash")
             && !wusong->isKongcheng() && damage.from != wusong
                     && room->askForSkillInvoke(wusong, objectName(), data)){
-            room->playSkillEffect(objectName());
             const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
             if(!card)
                 return false;
@@ -293,7 +292,6 @@ public:
                 }
             }
             if(caninvoke && room->askForSkillInvoke(jiuwenlong, objectName(), data)){
-                room->playSkillEffect(objectName());
                 const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
                 if(card){
                     LogMessage log;
@@ -661,8 +659,8 @@ public:
         if(opt->getMark("@vfui") > 0 && opt->getPhase() == Player::Judge){
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$zhanchi");
+                room->playSkillEffect(objectName(), 1);
+                room->broadcastInvoke("animate", "lightbox:$zhanchi1");
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
@@ -682,10 +680,10 @@ public:
     virtual bool onPhaseChange(ServerPlayer *opt) const{
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
-            if(opt->getMaxHP() > 2)
-                room->playSkillEffect(objectName(), 1);
-            else
-                room->playSkillEffect(objectName(), 2);
+            if(opt->getMaxHP() > 3)
+                room->playSkillEffect("zhanchi", 2);
+            else if(opt->getMaxHP() > 1)
+                room->playSkillEffect("zhanchi", 3);
             room->loseMaxHp(opt);
 
             LogMessage log;
@@ -707,6 +705,10 @@ public:
     Bribe():TriggerSkill("bribe"){
         events << CardEffected;
         frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return 3;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *shien, QVariant &data) const{
