@@ -122,7 +122,7 @@ public:
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
             if(!room->askForSkillInvoke(likui, objectName(), data))
                 return false;
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), 1);
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(spade|club):(.*)");
             judge.good = true;
@@ -131,7 +131,7 @@ public:
 
             room->judge(judge);
             if(judge.isGood()){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), 2);
                 likui->obtainCard(judge.card);
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
             }
