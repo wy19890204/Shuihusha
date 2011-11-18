@@ -43,7 +43,7 @@ SOURCES += src/main.cpp \
 	src/package/maneuvering.cpp \
 	src/package/mountainpackage.cpp \
 	src/package/nostalgia.cpp \
-	src/package/sp-package.cpp \
+	src/package/bwqz-package.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
@@ -121,7 +121,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/mountainpackage.h \
 	src/package/nostalgia.h \
 	src/package/package.h \
-	src/package/sp-package.h \
+	src/package/bwqz-package.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
