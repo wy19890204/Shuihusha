@@ -35,15 +35,18 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QString name, kingdom, gender, max_hp, package;
 
         name = Sanguosha->translate(general->objectName());
-
         kingdom = Sanguosha->translate(general->getKingdom());
         gender = general->isMale() ? tr("Male") : tr("Female");
         max_hp = QString::number(general->getMaxHp());
         package = Sanguosha->translate(general->getPackage());
 
+        QString nickname = Sanguosha->translate("#_" + general->objectName());
+        QTableWidgetItem *nickname_item = new QTableWidgetItem(nickname);
+        nickname_item->setData(Qt::UserRole, general->objectName());
+        nickname_item->setTextAlignment(Qt::AlignCenter);
+
         QTableWidgetItem *name_item = new QTableWidgetItem(name);
         name_item->setTextAlignment(Qt::AlignCenter);
-        name_item->setData(Qt::UserRole, general->objectName());
         if(general->isLord()){
             name_item->setIcon(lord_icon);
             name_item->setTextAlignment(Qt::AlignCenter);
@@ -64,17 +67,20 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QTableWidgetItem *package_item = new QTableWidgetItem(package);
         package_item->setTextAlignment(Qt::AlignCenter);
 
-        ui->tableWidget->setItem(i, 0, name_item);
-        ui->tableWidget->setItem(i, 1, kingdom_item);
-        ui->tableWidget->setItem(i, 2, gender_item);
-        ui->tableWidget->setItem(i, 3, max_hp_item);
-        ui->tableWidget->setItem(i, 4, package_item);
+        ui->tableWidget->setItem(i, 0, nickname_item);
+        ui->tableWidget->setItem(i, 1, name_item);
+        ui->tableWidget->setItem(i, 2, kingdom_item);
+        ui->tableWidget->setItem(i, 3, gender_item);
+        ui->tableWidget->setItem(i, 4, max_hp_item);
+        ui->tableWidget->setItem(i, 5, package_item);
     }
 
-    ui->tableWidget->setColumnWidth(0, 100);
-    ui->tableWidget->setColumnWidth(1, 50);
-    ui->tableWidget->setColumnWidth(2, 50);
-    ui->tableWidget->setColumnWidth(3, 60);
+    ui->tableWidget->setColumnWidth(0, 70);
+    ui->tableWidget->setColumnWidth(1, 70);
+    ui->tableWidget->setColumnWidth(2, 40);
+    ui->tableWidget->setColumnWidth(3, 50);
+    ui->tableWidget->setColumnWidth(4, 60);
+    ui->tableWidget->setColumnWidth(5, 65);
 
     ui->tableWidget->setCurrentItem(ui->tableWidget->item(0,0));
 }

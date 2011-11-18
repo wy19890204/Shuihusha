@@ -39,6 +39,11 @@
    </property>
    <column>
     <property name="text">
+     <string>Nick</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
      <string>General</string>
     </property>
    </column>
