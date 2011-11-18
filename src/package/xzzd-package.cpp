@@ -224,6 +224,42 @@ public:
     }
 };
 
+class Tongxia: public PhaseChangeSkill{
+public:
+    Tongxia():PhaseChangeSkill("tongxia"){
+
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *hx) const{
+        Room *room = hx->getRoom();
+        if(hx->getPhase() == Player::Draw && hx->askForSkillInvoke(objectName())){
+            QList<int> card_ids = room->getNCards(3);
+            room->fillAG(card_ids);
+
+            while(!card_ids.isEmpty()){
+                int card_id = room->askForAG(hx, card_ids, false, "shelie");
+                card_ids.removeOne(card_id);
+                ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
+                const Card *card = Sanguosha->getCard(card_id);
+                room->takeAG(target, card_id);
+                if(card->inherits("EquipCard")){
+                    const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+                    QList<ServerPlayer *> targets;
+                    targets << target;
+                    equipped->use(room, hx, targets);
+                }
+                else{
+                    room->moveCardTo(card, target, Player::Hand);
+                }
+            }
+            room->broadcastInvoke("clearAG");
+
+            return true;
+        }
+        return false;
+    }
+};
+
 class Huxiao: public OneCardViewAsSkill{
 public:
     Huxiao():OneCardViewAsSkill("huxiao"){
@@ -274,7 +310,7 @@ void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
 
 class Feiqiang:public OneCardViewAsSkill{
 public:
-    Feiqiang():OneCardViewAsSkill("Feiqiang"){
+    Feiqiang():OneCardViewAsSkill("feiqiang"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -282,7 +318,7 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->inherits("Weapon");
+        return to_select->getCard()->inherits("Weapon");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -337,6 +373,7 @@ XZDDPackage::XZDDPackage()
     weidingguo->addSkill(new Shenhuo);
 
     General *huangxin = new General(this, "huangxin", "shu");
+    huangxin->addSkill(new Tongxia);
 
     General *yanshun = new General(this, "yanshun", "shu");
     yanshun->addSkill(new Huxiao);
