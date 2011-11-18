@@ -321,26 +321,38 @@ public:
 };
 
 XZDDPackage::XZDDPackage()
-    :Package("XZDD"){
+    :Package("XZDD"){ //guan == wei, jiang == shu, min == wu, kou == qun
 /*
     General *songjiang = new General(this, "songjiang$", "qun");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
     skills << new JuyiViewAsSkill;
 */
+    General *linchong = new General(this, "linchong", "shu");
+    General *zhutong = new General(this, "zhutong", "wu");
+    General *yangzhi = new General(this, "yangzhi", "wei");
+
     General *likui = new General(this, "likui", "shu");
     likui->addSkill(new Shalu);
+
+    General *zhangshun = new General(this, "zhangshun", "qun", 3);
 
     General *weidingguo = new General(this, "weidingguo", "shu", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
 
+    General *huangxin = new General(this, "huangxin", "shu");
+
     General *yanshun = new General(this, "yanshun", "shu");
     yanshun->addSkill(new Huxiao);
+
+    General *peixuan = new General(this, "peixuan", "wei", 3);
 
     General *lizhong = new General(this, "lizhong", "qun", 4);
     lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
+
+    General *gongwang = new General(this, "gongwang", "shu");
 
     General *shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);

@@ -41,7 +41,11 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         package = Sanguosha->translate(general->getPackage());
 
         QString nickname = Sanguosha->translate("#_" + general->objectName());
-        QTableWidgetItem *nickname_item = new QTableWidgetItem(nickname);
+        QTableWidgetItem *nickname_item;
+        if(!nickname.startsWith("#_"))
+            nickname_item = new QTableWidgetItem(nickname);
+        else
+            nickname_item = new QTableWidgetItem(Sanguosha->translate("UnknowNick"));
         nickname_item->setData(Qt::UserRole, general->objectName());
         nickname_item->setTextAlignment(Qt::AlignCenter);
 

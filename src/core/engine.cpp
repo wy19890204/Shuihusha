@@ -68,6 +68,9 @@ Engine::Engine()
 {
     Sanguosha = this;
 
+    addPackage(NewQJWM());
+    addPackage(NewXZDD());
+
     addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
@@ -78,9 +81,6 @@ Engine::Engine()
     addPackage(NewYitian());
     addPackage(NewWisdom());
     addPackage(NewTest());
-    addPackage(NewQJWM());
-    addPackage(NewXZDD());
-
     addPackage(NewStandardCard());
     addPackage(NewStandardExCard());
     addPackage(NewManeuvering());

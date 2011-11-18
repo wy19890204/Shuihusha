@@ -1,8 +1,16 @@
--- translation for YJCM Package
+-- TitianXingDao Shuihusha part 3.
 
 return {
-	["YJCM"] = "一将成名", 
+	["TTXD"] = "替天行道", 
 	
+	["#_songjiang"] = "呼保义",
+	["songjiang"] = "宋江",
+	["ganlin"] = "甘霖",
+	[":ganlin"] = "出牌阶段，你可以将任意数量的手牌以任意分配方式交给其他角色，然后你将手牌补至X张，X为你已损失的体力值。每回合限一次。",
+	["juyi"] = "聚义",
+	[":juyi"] = "主公技，其他寇势力角色可在他们各自的出牌阶段与你交换一次手牌（可拒绝）。",
+	["jui"] = "聚义换牌",
+
 	["caozhi"] = "曹植",
 	["yujin"] = "于禁",
 	["fazheng"] = "法正",

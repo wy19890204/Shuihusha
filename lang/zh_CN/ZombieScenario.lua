@@ -14,5 +14,6 @@ return {
 	["#ZaibianGood"]="%from 的【灾变】效果被触发，%from 获得了 %arg 张手牌",
 	["#Zombify"]="%from 变成僵尸复活了！%from 失去理智并开始攻击人类！",
 	["@round"]="退治",
+	["#_zombie"] = "植物大战",
 	["#survive_victory"]="%from 聚集起了足够的退治之力！僵尸被退治！"
 }
