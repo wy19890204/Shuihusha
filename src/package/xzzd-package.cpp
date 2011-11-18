@@ -119,8 +119,8 @@ MaidaoCard::MaidaoCard(){
     target_fixed = true;
 }
 
-void MaidaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    source->addToPile("knife", this->getSubcards().first(), false);
+void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->addToPile("knife", this->getSubcards().first());
 }
 
 class MaidaoViewAsSkill: public OneCardViewAsSkill{
@@ -130,7 +130,7 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->getCard()->inherits("Weapon");
+        return to_select->getCard()->inherits("Weapon");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -163,7 +163,7 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *yang) const{
         Room *room = yang->getRoom();
-        if(yang->getPhase() == Player::Start || yang->getPile("knife").isEmpty())
+        if(yang->getPhase() != Player::Start || yang->getPile("knife").isEmpty())
             return false;
         if(yang->askForSkillInvoke(objectName())){
             const QList<int> &knife = yang->getPile("knife");
@@ -173,7 +173,7 @@ public:
             else{
                 room->fillAG(knife, yang);
                 card_id = room->askForAG(yang, knife, false, objectName());
-                source->invoke("clearAG");
+                yang->invoke("clearAG");
             }
 
             QList<ServerPlayer *> players;
@@ -184,7 +184,9 @@ public:
             if(players.isEmpty())
                 return false;
             ServerPlayer *target = room->askForPlayerChosen(yang, players, objectName());
-            Weapon *weapon = Sanguosha->getCard(card_id);
+
+            const Card *card = Sanguosha->getCard(card_id);
+            const Weapon *weapon = qobject_cast<const Weapon *>(card);
             yang->tag["Daozi"] = weapon->getRange();
             room->throwCard(card_id);
             Slash *slash = new Slash(Card::NoSuit, 0);
@@ -515,6 +517,66 @@ public:
     }
 };
 
+BinggongCard::BinggongCard(){
+    will_throw = false;
+}
+
+bool BinggongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select != Self;
+}
+
+void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    int num = this->getSubcards().length();
+    ServerPlayer *target = targets.first();
+    target->obtainCard(this);
+    if(num >= 3){
+        RecoverStruct rev;
+        rev.who = source;
+        room->recover(source, rev);
+    }
+}
+
+class BinggongViewAsSkill: public ViewAsSkill{
+public:
+    BinggongViewAsSkill():ViewAsSkill("maida0"){
+
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        int num = Self->getMark("Bingo");
+        return !to_select->isEquipped() && selected.length() < num;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != Self->getMark("Bingo"))
+            return NULL;
+
+        BinggongCard *card = new BinggongCard();
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Binggong: public PhaseChangeSkill{
+public:
+    Binggong():PhaseChangeSkill("binggong"){
+        view_as_skill = new BinggongViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *pei) const{
+        Room *room = pei->getRoom();
+        if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp() &&
+           pei->askForSkillInvoke(objectName())){
+            int num = pei->getHandcardNum() > pei->getHp();
+            room->setPlayerMark(pei, "Bingo", num);
+            room->askForUseCard(pei, "@@binggong", "@binggong");
+        }
+        return false;
+    }
+};
+
 class Linse: public ProhibitSkill{
 public:
     Linse():ProhibitSkill("linse"){
@@ -626,6 +688,7 @@ XZDDPackage::XZDDPackage()
     yanshun->addSkill(new Huxiao);
 
     General *peixuan = new General(this, "peixuan", "wei", 3);
+    peixuan->addSkill(new Binggong);
 
     General *lizhong = new General(this, "lizhong", "qun", 4);
     lizhong->addSkill("#losthp");
@@ -641,6 +704,7 @@ XZDDPackage::XZDDPackage()
     addMetaObject<DuijueCard>();
     addMetaObject<MaidaoCard>();
     addMetaObject<Maida0Card>();
+    addMetaObject<BinggongCard>();
     addMetaObject<FeiqiangCard>();
 }
 
