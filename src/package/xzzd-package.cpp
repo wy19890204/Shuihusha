@@ -8,6 +8,104 @@
 #include "client.h"
 #include "engine.h"
 
+DuijueCard::DuijueCard(){
+}
+
+bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty() || to_select == Self)
+        return false;
+    return !to_select->hasFlag("Duijue");
+}
+
+void DuijueCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    JudgeStruct judge;
+    judge.pattern = QRegExp("(.*):(spade):(.*)");
+    judge.good = true;
+    judge.reason = "duijue";
+    judge.who = effect.to;
+
+    room->judge(judge);
+    if(judge.isBad()){
+        Duel *duel = new Duel(judge.card->getSuit(), judge.card->getNumber());
+        duel->setSkillName("duijue");
+        duel->setCancelable(false);
+
+        CardUseStruct use;
+        use.from = effect.from;
+        use.to << effect.to;
+        use.card = duel;
+        room->useCard(use);
+    }
+    foreach(ServerPlayer *tmp, room->getAllPlayers())
+        if(tmp->hasFlag("Duijue"))
+            room->setPlayerFlag(tmp, "-Duijue");
+}
+
+class DuijueViewAsSkill:public ZeroCardViewAsSkill{
+public:
+    DuijueViewAsSkill():ZeroCardViewAsSkill("duijue"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@duijue";
+    }
+
+    virtual const Card *viewAs() const{
+        return new DuijueCard;
+    }
+};
+
+class Duijue: public TriggerSkill{
+public:
+    Duijue():TriggerSkill("duijue"){
+        view_as_skill = new DuijueViewAsSkill;
+        events << Damage << Damaged;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card || !damage.card->inherits("Slash"))
+            return false;
+        Room *room = player->getRoom();
+        if(player == damage.from)
+            room->setPlayerFlag(damage.to, "Duijue");
+        else
+            room->setPlayerFlag(damage.from, "Duijue");
+        room->askForUseCard(player, "@@duijue", "@duijue");
+        return false;
+    }
+};
+
+class Yixian: public TriggerSkill{
+public:
+    Yixian():TriggerSkill("yixian"){
+        events << Damage;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1)
+            return false;
+        if(!damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
+            Room *room = player->getRoom();
+            room->throwCard(room->askForCardChosen(player, damage.to, "he", objectName()));
+            player->drawCards(1);
+            return true;
+        }
+        return false;
+    }
+};
+
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
@@ -333,7 +431,11 @@ XZDDPackage::XZDDPackage()
     :Package("XZDD"){ //guan == wei, jiang == shu, min == wu, kou == qun
 
     General *linchong = new General(this, "linchong", "shu");
+    linchong->addSkill(new Duijue);
+
     General *zhutong = new General(this, "zhutong", "wu");
+    zhutong->addSkill(new Yixian);
+
     General *yangzhi = new General(this, "yangzhi", "wei");
 
     General *likui = new General(this, "likui", "shu");
@@ -366,6 +468,7 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
+    addMetaObject<DuijueCard>();
     addMetaObject<FeiqiangCard>();
 }
 
