@@ -98,6 +98,7 @@ public:
             return false;
         if(!damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
+            room->playSkillEffect(objectName());
             int dust = room->askForCardChosen(player, damage.to, "he", objectName());
             room->throwCard(dust);
 
@@ -196,6 +197,7 @@ public:
             use.card = slash;
             use.from = yang;
             use.to << target;
+            room->playSkillEffect(objectName());
 
             room->useCard(use);
         }
@@ -473,6 +475,7 @@ public:
         if(hx->getPhase() == Player::Draw && hx->askForSkillInvoke(objectName())){
             QList<int> card_ids = room->getNCards(3);
             room->fillAG(card_ids);
+            room->playSkillEffect(objectName());
 
             while(!card_ids.isEmpty()){
                 int card_id = room->askForAG(hx, card_ids, false, "shelie");
@@ -533,6 +536,7 @@ public:
 
         if(player->askForSkillInvoke(objectName())){
             player->obtainCard(judge->card);
+            room->playSkillEffect(objectName());
             int card_id = room->drawCard();
             room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
             room->getThread()->delay();
@@ -626,6 +630,7 @@ public:
 
 FeiqiangCard::FeiqiangCard(){
     once = true;
+    mute = true;
 }
 
 bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -636,10 +641,13 @@ void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     if(!room->askForCard(effect.to, "jink", "@feiqiang:" + effect.from->objectName())){
         QString choice = room->askForChoice(effect.from, "feiqiang", "gong+wang");
-        if(choice == "gong")
+        if(choice == "gong"){
+            room->playSkillEffect("feiqiang", 1);
             room->loseHp(effect.to);
-        else
+        }else{
+            room->playSkillEffect("feiqiang", 2);
             effect.to->throwAllEquips();
+        }
     }
 }
 
