@@ -517,6 +517,43 @@ public:
     }
 };
 
+class Shenpan: public TriggerSkill{
+public:
+    Shenpan():TriggerSkill("shenpan"){
+        events << AskForRetrial;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return TriggerSkill::triggerable(target);
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        JudgeStar judge = data.value<JudgeStar>();
+
+        if(player->askForSkillInvoke(objectName())){
+            player->obtainCard(judge->card);
+            int card_id = room->drawCard();
+            room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+            room->getThread()->delay();
+
+            judge->card = Sanguosha->getCard(card_id);
+            room->moveCardTo(judge->card, NULL, Player::Special);
+
+            LogMessage log;
+            log.type = "$ChangedJudge";
+            log.from = player;
+            log.to << judge->who;
+            log.card_str = QString::number(card_id);
+            room->sendLog(log);
+
+            player->setMark("BreakJudge", 1);
+            room->sendJudgeResult(judge);
+        }
+        return false;
+    }
+};
+
 BinggongCard::BinggongCard(){
     will_throw = false;
 }
@@ -688,6 +725,7 @@ XZDDPackage::XZDDPackage()
     yanshun->addSkill(new Huxiao);
 
     General *peixuan = new General(this, "peixuan", "wei", 3);
+    peixuan->addSkill(new Shenpan);
     peixuan->addSkill(new Binggong);
 
     General *lizhong = new General(this, "lizhong", "qun", 4);
