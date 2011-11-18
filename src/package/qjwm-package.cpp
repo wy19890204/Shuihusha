@@ -82,9 +82,9 @@ public:
     }
 };
 
-class Kongliang: public TriggerSkill{
+class Kong1iang: public TriggerSkill{
 public:
-    Kongliang():TriggerSkill("kongliang"){
+    Kong1iang():TriggerSkill("kong1iang"){
         events << PhaseChange;
     }
 
@@ -1003,7 +1003,7 @@ QJWMPackage::QJWMPackage()
     patterns.insert(".kaixian!", new KaixianPattern);
 
     General *liying = new General(this, "liying", "wei");
-    liying->addSkill(new Kongliang);
+    liying->addSkill(new Kong1iang);
 
     General *luzhishen = new General(this, "luzhishen", "qun"); //kou == qun
     luzhishen->addSkill(new Liba);

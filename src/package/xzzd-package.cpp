@@ -345,11 +345,11 @@ XZDDPackage::XZDDPackage()
     General *shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
-
+/*
     General *jiashi = new General(this, "jiashi", "wu", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
-
+*/
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
 }

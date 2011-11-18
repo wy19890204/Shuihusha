@@ -51,8 +51,8 @@ void Slash::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
 
 void Slash::onEffect(const CardEffectStruct &card_effect) const{
     Room *room = card_effect.from->getRoom();
-    if(card_effect.from->hasSkill("shalu") && card_effect.from->getMark("shalu") > 0)
-        room->playSkillEffect("shalu", 2);
+    //if(card_effect.from->hasSkill("shalu") && card_effect.from->getMark("shalu") > 0)
+    //    room->playSkillEffect("shalu", 2);
 
     SlashEffectStruct effect;
     effect.from = card_effect.from;
