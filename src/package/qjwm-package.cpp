@@ -201,7 +201,7 @@ public:
             const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
             if(!card)
                 return false;
-            Slash *slash = new Slash(card->getSuit(), card->getNumber());
+            Slash *slash = new Slash(Card::NoSuit, 0);
             slash->setSkillName(objectName());
             CardUseStruct use;
             use.card = slash;

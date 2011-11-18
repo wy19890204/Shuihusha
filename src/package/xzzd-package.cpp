@@ -547,8 +547,8 @@ public:
             log.card_str = QString::number(card_id);
             room->sendLog(log);
 
-            player->setMark("BreakJudge", 1);
             room->sendJudgeResult(judge);
+            return true;
         }
         return false;
     }
@@ -606,7 +606,7 @@ public:
         Room *room = pei->getRoom();
         if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp() &&
            pei->askForSkillInvoke(objectName())){
-            int num = pei->getHandcardNum() > pei->getHp();
+            int num = pei->getHandcardNum() - pei->getHp();
             room->setPlayerMark(pei, "Bingo", num);
             room->askForUseCard(pei, "@@binggong", "@binggong");
         }
