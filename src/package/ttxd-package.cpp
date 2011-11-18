@@ -8,7 +8,6 @@
 
 GanlinCard::GanlinCard(){
     will_throw = false;
-    once = true;
 }
 
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -16,8 +15,10 @@ void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
 
     room->moveCardTo(this, target, Player::Hand, false);
     int n = source->getLostHp() - source->getHandcardNum();
-    if(n > 0)
+    if(n > 0 && source->askForSkillInvoke("ganlin")){
         source->drawCards(n);
+        source->setFlags("Ganlin");
+    }
 };
 
 class Ganlin:public ViewAsSkill{
@@ -30,7 +31,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("GanlinCard");
+        return ! player->hasFlag("Ganlin");
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{

@@ -1,7 +1,18 @@
--- translation for SP Package
+-- TitianXingDao Shuihusha part 4.
 
 return {
-	["sp"] = "SP", 
+	["BWQZ"] = "博闻强识", 
+
+	["#_houjian"] = "通臂猿",
+	["houjian"] = "侯健",
+	["designer:houjian"] = "宇文天启",
+	["yuanyin"] = "援引",
+	[":yuanyin"] = "你可以将其他角色装备区里的武器当【杀】、非武器当【闪】使用或打出",
+	["yuanyin:slash"] = "你想发动技能【援引·杀】吗？",
+	["yuanyin:jink"] = "你想发动技能【援引·闪】吗？",
+
+
+
 	["gongsunzan"] = "公孙瓒", 
 	["yicong"] = "义从", 
 	[":yicong"] = "锁定技，只要你的体力值大于2点，你计算与其他角色的距离时，始终-1；只要你的体力值为2点或更低，其他角色计算与你的距离时，始终+1。",

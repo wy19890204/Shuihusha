@@ -701,9 +701,9 @@ public:
     }
 };
 
-class Bribe:public TriggerSkill{
+class Longluo:public TriggerSkill{
 public:
-    Bribe():TriggerSkill("bribe"){
+    Longluo():TriggerSkill("longluo"){
         events << CardEffected;
         frequency = Frequent;
     }
@@ -1039,9 +1039,9 @@ QJWMPackage::QJWMPackage()
     related_skills.insertMulti("zhanchi", "#@vfui");
     skills << new Tengfei;
 
-    General *shin = new General(this, "shin", "wu", 3);
-    shin->addSkill(new Bribe);
-    shin->addSkill(new Xiaozai);
+    General *shien = new General(this, "shien", "wu", 3);
+    shien->addSkill(new Longluo);
+    shien->addSkill(new Xiaozai);
 
     General *luozhenren = new General(this, "luozhenren", "qun", 3);
     luozhenren->addSkill(new Butian);
