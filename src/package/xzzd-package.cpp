@@ -253,6 +253,45 @@ public:
     }
 };
 
+FeiqiangCard::FeiqiangCard(){
+    once = true;
+}
+
+bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    if(!room->askForCard(effect.to, "jink", "@feiqiang:" + effect.from->objectName())){
+        QString choice = room->askForChoice(effect.from, "feiqiang", "gong+wang");
+        if(choice == "gong")
+            room->loseHp(effect.to);
+        else
+            effect.to->throwAllEquips();
+    }
+}
+
+class Feiqiang:public OneCardViewAsSkill{
+public:
+    Feiqiang():OneCardViewAsSkill("Feiqiang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("FeiqiangCard");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->inherits("Weapon");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new FeiqiangCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
 class Feiyan: public ProhibitSkill{
 public:
     Feiyan():ProhibitSkill("feiyan"){
@@ -281,53 +320,9 @@ public:
     }
 };
 
-class Zhuying: public FilterSkill{
-public:
-    Zhuying():FilterSkill("zhuying"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->objectName() == "analeptic";
-    //视为技用getCard()，表示变化前的牌；当做技用getFilteredCard()，表示调用变化后（比如被视为过了的）牌
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *c = card_item->getCard();
-        Peach *peach = new Peach(c->getSuit(), c->getNumber());
-        peach->setSkillName(objectName());
-        peach->addSubcard(card_item->getCard());
-
-        return peach;
-    }
-};
-
-class Banzhuang: public OneCardViewAsSkill{
-public:
-    Banzhuang():OneCardViewAsSkill("banzhuang"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        ExNihilo *ex_nihilo = new ExNihilo(card->getSuit(), card->getNumber());
-        ex_nihilo->addSubcard(card->getId());
-        ex_nihilo->setSkillName(objectName());
-        return ex_nihilo;
-    }
-};
-
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){ //guan == wei, jiang == shu, min == wu, kou == qun
-/*
-    General *songjiang = new General(this, "songjiang$", "qun");
-    songjiang->addSkill(new Ganlin);
-    songjiang->addSkill(new Juyi);
-    skills << new JuyiViewAsSkill;
-*/
+
     General *linchong = new General(this, "linchong", "shu");
     General *zhutong = new General(this, "zhutong", "wu");
     General *yangzhi = new General(this, "yangzhi", "wei");
@@ -353,17 +348,15 @@ XZDDPackage::XZDDPackage()
     lizhong->addSkill(new Linse);
 
     General *gongwang = new General(this, "gongwang", "shu");
+    gongwang->addSkill(new Feiqiang);
 
     General *shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
-/*
-    General *jiashi = new General(this, "jiashi", "wu", 3, false);
-    jiashi->addSkill(new Zhuying);
-    jiashi->addSkill(new Banzhuang);
-*/
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
+    addMetaObject<FeiqiangCard>();
 }
 
 ADD_PACKAGE(XZDD)

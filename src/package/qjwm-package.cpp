@@ -686,15 +686,17 @@ public:
                 room->playSkillEffect("zhanchi", 3);
             room->loseMaxHp(opt);
 
-            LogMessage log;
-            log.type = "#Tengfei";
-            log.from = opt;
-            log.arg = objectName();
-            log.arg2 = QString::number(1);
-            room->sendLog(log);
+            if(opt->isAlive()){
+                LogMessage log;
+                log.type = "#Tengfei";
+                log.from = opt;
+                log.arg = objectName();
+                log.arg2 = QString::number(1);
+                room->sendLog(log);
 
-            room->setCurrent(opt);
-            room->getThread()->trigger(TurnStart, opt);
+                room->setCurrent(opt);
+                room->getThread()->trigger(TurnStart, opt);
+            }
         }
         return false;
     }
@@ -877,7 +879,8 @@ public:
         if(card){
             room->throwCard(judge->card);
 
-            QList<int> card_ids = room->getNCards(3);
+            room->drawCards(player, 3);
+            QList<int> card_ids = player->handCards().mid(player->getHandcardNum() - 3);
             room->fillAG(card_ids, player);
             int card_id = room->askForAG(player, card_ids, false, objectName());
             if(card_id == -1)
@@ -888,13 +891,11 @@ public:
 
             player->invoke("clearAG");
 
-            QListIterator<int> i(card_ids);
-            i.toBack();
-            while(i.hasPrevious())
-                room->moveCardTo(Sanguosha->getCard(i.previous()), NULL, Player::DrawPile, true);
-            //foreach(int tmp, card_ids){
-            //    room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile, true);
-            //}
+            card_ids.swap(0, 2);
+            foreach(int tmp, card_ids){
+                room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile);
+            }
+            room->getThread()->delay();
 
             judge->card = Sanguosha->getCard(card_id);
             room->moveCardTo(judge->card, NULL, Player::Special);
