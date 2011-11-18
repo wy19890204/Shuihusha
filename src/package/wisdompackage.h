@@ -5,25 +5,24 @@
 #include "card.h"
 #include "standard.h"
 
+class GanlinCard:public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE GanlinCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class JuyiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JuyiCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+};
 /*
-class JuaoCard:public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE JuaoCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class BawangCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE BawangCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class WeidaiCard: public SkillCard{
     Q_OBJECT
 
@@ -41,7 +40,6 @@ public:
 
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
-
 
 */
 class WisdomPackage: public Package{

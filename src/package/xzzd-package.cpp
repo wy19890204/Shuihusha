@@ -8,95 +8,6 @@
 #include "client.h"
 #include "engine.h"
 
-GanlinCard::GanlinCard(){
-    will_throw = false;
-    once = true;
-}
-
-void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
-
-    room->moveCardTo(this, target, Player::Hand, false);
-    int n = source->getLostHp() - source->getHandcardNum();
-    if(n > 0)
-        source->drawCards(n);
-};
-
-class Ganlin:public ViewAsSkill{
-public:
-    Ganlin():ViewAsSkill("ganlin"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("GanlinCard");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        GanlinCard *ganlin_card = new GanlinCard;
-        ganlin_card->addSubcards(cards);
-        return ganlin_card;
-    }
-};
-
-JuyiCard::JuyiCard(){
-    once = true;
-}
-
-void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *song = targets.first();
-    if(song->hasSkill("juyi")){
-        song->obtainCard(this);
-        source->obtainCard(room->askForCardShow(song, source, "juyi"));
-    }
-}
-
-bool JuyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->hasLordSkill("juyi") && to_select != Self;
-}
-
-class JuyiViewAsSkill: public OneCardViewAsSkill{
-public:
-    JuyiViewAsSkill():OneCardViewAsSkill("jui"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("JuyiCard") && player->getKingdom() == "qun";
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        JuyiCard *card = new JuyiCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
-    }
-};
-
-class Juyi: public GameStartSkill{
-public:
-    Juyi():GameStartSkill("juyi$"){
-
-    }
-
-    virtual void onGameStart(ServerPlayer *player) const{
-        Room *room = player->getRoom();
-        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-            room->attachSkillToPlayer(tmp, "jui");
-        }
-    }
-};
-
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
@@ -135,6 +46,68 @@ public:
                 likui->obtainCard(judge.card);
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
             }
+        }
+        return false;
+    }
+};
+
+class Shunshui: public TriggerSkill{
+public:
+    Shunshui():TriggerSkill("shunshui"){
+        events << CardAsked;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        QString asked = data.toString();
+        if(asked == "jink"){
+            Room *room = player->getRoom();
+            QList<ServerPlayer *> targets;
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                if(!tmp->getJudgingArea().isEmpty())
+                    targets << tmp;
+            }
+            if(!targets.isEmpty() && room->askForSkillInvoke(player, objectName())){
+                ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+                int card_id = room->askForCardChosen(player, target, "j", objectName());
+                if(card_id > -1){
+                    room->throwCard(card_id);
+                    Jink *jink = new Jink(Card::NoSuit, 0);
+                    jink->setSkillName(objectName());
+                    room->provide(jink);
+                    room->setEmotion(player, "good");
+                    room->playSkillEffect(objectName());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+class Lihun: public TriggerSkill{
+public:
+    Lihun():TriggerSkill("lihun"){
+        events << Dying;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *shun, QVariant &data) const{
+        DyingStruct dying = data.value<DyingStruct>();
+        DamageStruct *damage = dying.damage;
+        if(damage->from && !damage->from->isNude() && shun->askForSkillInvoke(objectName())){
+            Room *room = shun->getRoom();
+            room->playSkillEffect(objectName());
+            DummyCard *dummy = new DummyCard;
+            dummy->addSubcard(room->askForCardChosen(shun, damage->from, "he", objectName()));
+            shun->obtainCard(Sanguosha->getCard(dummy->getSubcards().first()));
+            if(!damage->from->isNude() && shun->askForSkillInvoke(objectName()))
+                dummy->addSubcard(room->askForCardChosen(shun, damage->from, "he", objectName()));
+            ServerPlayer *target = room->askForPlayerChosen(shun, room->getAllPlayers(), objectName());
+            room->moveCardTo(dummy, target, Player::Hand);
+            delete dummy;
         }
         return false;
     }
@@ -367,6 +340,8 @@ XZDDPackage::XZDDPackage()
     likui->addSkill(new Shalu);
 
     General *zhangshun = new General(this, "zhangshun", "qun", 3);
+    zhangshun->addSkill(new Shunshui);
+    zhangshun->addSkill(new Lihun);
 
     General *weidingguo = new General(this, "weidingguo", "shu", 3);
     weidingguo->addSkill(new Fenhui);
@@ -391,8 +366,6 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    addMetaObject<GanlinCard>();
-    addMetaObject<JuyiCard>();
     addMetaObject<FeiqiangCard>();
 }
 
