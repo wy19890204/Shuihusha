@@ -596,6 +596,9 @@ bool Player::canSlash(const Player *other, bool distance_limit) const{
     if(other->hasSkill("kongcheng") && other->isKongcheng())
         return false;
 
+    if(other->hasSkill("fangzhen") && this->getHp() > other->getHp())
+        return false;
+
     if(other == this)
         return false;
 
