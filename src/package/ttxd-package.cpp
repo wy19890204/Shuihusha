@@ -17,13 +17,13 @@ void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     int n = source->getLostHp() - source->getHandcardNum();
     if(n > 0 && source->askForSkillInvoke("ganlin")){
         source->drawCards(n);
-        source->setFlags("Ganlin");
+        room->setPlayerFlag(source, "Ganlin");
     }
 };
 
-class Ganlin:public ViewAsSkill{
+class GanlinViewAsSkill:public ViewAsSkill{
 public:
-    Ganlin():ViewAsSkill("ganlin"){
+    GanlinViewAsSkill():ViewAsSkill("ganlin"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
@@ -41,6 +41,25 @@ public:
         GanlinCard *ganlin_card = new GanlinCard;
         ganlin_card->addSubcards(cards);
         return ganlin_card;
+    }
+};
+
+class Ganlin: public PhaseChangeSkill{
+public:
+    Ganlin():PhaseChangeSkill("ganlin"){
+        view_as_skill = new GanlinViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *p) const{
+        if(p->getPhase() == Player::NotActive){
+            Room *room = p->getRoom();
+            room->setPlayerFlag(p, "-Ganlin");
+        }
+        return false;
     }
 };
 
