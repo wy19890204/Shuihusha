@@ -5,7 +5,6 @@
 #include "carditem.h"
 #include "maneuvering.h"
 #include "clientplayer.h"
-#include "client.h"
 #include "engine.h"
 
 DuijueCard::DuijueCard(){

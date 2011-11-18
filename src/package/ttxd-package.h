@@ -1,5 +1,5 @@
-#ifndef WISDOM_H
-#define WISDOM_H
+#ifndef TTXDPACKAGE_H
+#define TTXDPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -42,11 +42,11 @@ public:
 };
 
 */
-class WisdomPackage: public Package{
+class TTXDPackage: public Package{
     Q_OBJECT
 
 public:
-    WisdomPackage();
+    TTXDPackage();
 };
 
-#endif // WISDOM_H
+#endif // TTXDPACKAGE_H

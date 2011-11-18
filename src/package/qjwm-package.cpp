@@ -5,7 +5,6 @@
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
-#include "ai.h"
 
 class Jingzhun: public SlashBuffSkill{
 public:

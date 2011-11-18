@@ -50,10 +50,10 @@ SOURCES += src/main.cpp \
 	src/package/standard.cpp \
 	src/package/thicket.cpp \
 	src/package/wind.cpp \
-	src/package/wisdompackage.cpp \
 	src/package/yitianpackage.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
+	src/package/ttxd-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -127,10 +127,10 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard.h \
 	src/package/thicket.h \
 	src/package/wind.h \
-	src/package/wisdompackage.h \
 	src/package/yitianpackage.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
+	src/package/ttxd-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \

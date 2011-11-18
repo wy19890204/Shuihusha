@@ -1,9 +1,8 @@
-#include "wisdompackage.h"
+#include "ttxd-package.h"
 #include "skill.h"
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
-#include "settings.h"
 #include "room.h"
 #include "maneuvering.h"
 
@@ -135,9 +134,9 @@ public:
     }
 };
 
-WisdomPackage::WisdomPackage()
-    :Package("wisdom")
-{
+TTXDPackage::TTXDPackage()
+    :Package("TTXD")
+{ //guan == wei, jiang == shu, min == wu, kou == qun
     General *songjiang = new General(this, "songjiang$", "qun");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
@@ -151,4 +150,4 @@ WisdomPackage::WisdomPackage()
     addMetaObject<JuyiCard>();
 }
 
-ADD_PACKAGE(Wisdom)
+ADD_PACKAGE(TTXD)
