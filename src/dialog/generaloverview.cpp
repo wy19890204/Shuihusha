@@ -211,6 +211,12 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     else
         ui->cvLineEdit->setText(Sanguosha->translate("DefaultCV"));
 
+    QString coder_text = Sanguosha->translate("coder:" + general->objectName());
+    if(!coder_text.startsWith("coder:"))
+        ui->coderLineEdit->setText(coder_text);
+    else
+        ui->coderLineEdit->setText(Sanguosha->translate("DefaultCoder"));
+
     button_layout->addStretch();
     ui->skillTextEdit->append(general->getSkillDescription());
 }

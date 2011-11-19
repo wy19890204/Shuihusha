@@ -4,6 +4,7 @@ return {
 	["QJWM"] = "千军万马",
 	["DefaultDesigner"] = "烨子",
 	["DefaultCV"] = "水浒杀配音室",
+	["DefaultCoder"] = "宇文天启",
 	["UnknowNick"] = "无绰号",
 
 	["#_huarong"] = "小李广",

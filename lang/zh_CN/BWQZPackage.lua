@@ -20,6 +20,7 @@ return {
 
 	["jiashi"] = "贾氏",
 	["cv:jiashi"] = "呼呼",
+	["coder:jiashi"] = "凌天翼",
 	["banzhuang"] = "半妆",
 	[":banzhuang"] = "出牌阶段，你可以将你的任一红桃手牌当【无中生有】使用",
 	["$banzhuang1"] = "一顾倾人城，再顾倾人国。",
