@@ -1048,13 +1048,13 @@ QJWMPackage::QJWMPackage()
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
-    General *luozhenren = new General(this, "luozhenren", "qun", 3);
-    luozhenren->addSkill(new Butian);
-    luozhenren->addSkill(new Huaxian);
-
     General *wangqing = new General(this, "wangqing$", "wu");
     wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
+
+    General *luozhenren = new General(this, "luozhenren", "qun", 3);
+    luozhenren->addSkill(new Butian);
+    luozhenren->addSkill(new Huaxian);
 
     addMetaObject<DaleiCard>();
     addMetaObject<BuzhenCard>();

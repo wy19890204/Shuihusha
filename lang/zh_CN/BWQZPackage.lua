@@ -18,6 +18,7 @@ return {
 	[":xiaofang"] = "当场上出现火焰伤害时，你可以弃掉一张手牌，将其改为无属性伤害",
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
 
+	["#_jiashi"] = "毒蔷薇",
 	["jiashi"] = "贾氏",
 	["cv:jiashi"] = "呼呼",
 	["coder:jiashi"] = "凌天翼",

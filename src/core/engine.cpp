@@ -39,8 +39,8 @@ extern "C" {
     Package *NewYitian();
     Package *NewTest();
     Package *NewQJWM();
-    Package *NewXZDD();
     Package *NewTTXD();
+    Package *NewXZDD();
     Package *NewBWQZ();
 
     Package *NewStandardCard();
@@ -68,8 +68,8 @@ Engine::Engine()
     Sanguosha = this;
 
     addPackage(NewQJWM());
-    addPackage(NewXZDD());
     addPackage(NewTTXD());
+    addPackage(NewXZDD());
     addPackage(NewBWQZ());
 
     addPackage(NewStandard());

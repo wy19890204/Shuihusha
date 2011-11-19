@@ -1,7 +1,8 @@
 -- TitianXingDao Shuihusha part 3.
 
-return {
+local tt = {
 	["TTXD"] = "替天行道",
+	["coder:TTXD"] = "roxiel",
 
 	["#_songjiang"] = "呼保义",
 	["songjiang"] = "宋江",
@@ -10,7 +11,7 @@ return {
 	["ganlin"] = "甘霖",
 	[":ganlin"] = "出牌阶段，你可以将任意数量的手牌以任意分配方式交给其他角色。若如此做，你可以将手牌补至X张，X为你已损失的体力值(补牌之后,将不能再次发动本技能)",
 	["juyi"] = "聚义",
-	[":juyi"] = "主公技，其他寇势力角色可在他们各自的出牌阶段与你交换一次手牌（可拒绝）。",
+	[":juyi"] = "<font color=red><b>主公技</b></font>，其他寇势力角色可在他们各自的出牌阶段与你交换一次手牌（可拒绝）。",
 	["jui"] = "聚义换牌",
 	["jui:agree"] = "莫和大哥客气~",
 	["jui:deny"] = "你是……奸细！",
@@ -68,11 +69,11 @@ return {
 	["yueli:yes"] = "拿屎", 
 	["yueli:no"] = "不拿屎", 
 	["taohui"] = "韬晦",
-	[":taohui"] = "回合结束阶段，你可以进行一次判定：若结果不为基本牌，你可以令任一角色摸一张牌，并可以再次使用“韬晦”，直到出现基本牌或你不想判定了为止.",
+	[":taohui"] = "回合结束阶段，你可以进行一次判定：若结果不为基本牌，你可以令任一角色摸一张牌，并可以再次使用“韬晦”，直到出现基本牌或你不想判定了为止。",
 	["$yueli1"] = "呵呵～",
-	["$yueli2"] = "且慢,音律有误。",
-	["$taohui1"] = "白云起,郁披香;离复合,曲未央。",
-	["$taohui2"] = "此曲只应天上有,人间哪得几回闻。",
+	["$yueli2"] = "且慢，音律有误。",
+	["$taohui1"] = "白云起，郁披香；离复合，曲未央。",
+	["$taohui2"] = "此曲只应天上有，人间哪得几回闻。",
 
 	["#_muhong"] = "没遮拦",
 	["muhong"] = "穆弘",
@@ -148,26 +149,20 @@ return {
 
 	["#_gaoqiu"] = "球王",
 	["gaoqiu"] = "高俅",
+	["coder:gaoqiu"] = "roxiel、宇文天启",
 	["hengxing"] = "横行",
-	[":hengxing"] = "摸牌阶段,若你未受伤,可以额外摸X张牌,X为已死亡的角色数且至多为2.",
+	[":hengxing"] = "摸牌阶段，若你未受伤，可以额外摸X张牌，X为已死亡的角色数且至多为2.",
 	["cuju"] = "蹴鞠",
-	[":cuju"] = "每当你受到伤害时,可以进行一次判定:若结果为♠或♣,你可以弃置一张手牌,将该伤害转移给任一其他角色.",
+	[":cuju"] = "每当你受到伤害时，可以进行一次判定：若结果为♠或♣，你可以弃置一张手牌，将该伤害转移给任一其他角色。",
 	["panquan"] = "攀权",
-	[":panquan"] = "<b>主公技</b>,其他官势力角色每回复1点体力,可以让你摸两张牌,然后你将一张手牌置于牌堆顶.",
-	["#hengxing"] = "%from的技能“<b><font color = 'red'>横行</font></b>”被触发,将额外摸%arg张牌",
-	["#hengxingdeath"] = "%arg this",
-	["#cuju"] = "%from将伤害踢给了%arg",
-	["#cujufailed"] = "%from“<b><font color = 'red'>蹴鞠</font></b>”不赖,只可惜进了国家队,怎么都射不出来",
-	["#panquan"] = "%arg发动技能“<b><font color = 'blue'>攀权</font><b>”,%from摸了2张牌",
-	["@panquan"] = "请选择一张手牌,然后点击[确定],这张牌将被置于牌堆顶",
-	["panquan:agree"] = "发动攀权,令高俅摸2张牌",
-	["panquan:ignore"] = "放弃攀权",
-	["$hengxing1"] = "安敢辄入白虎节堂,可知法度否?",
-	["$hengxing2"] = "哼!不认得我?!",
-	["$cuju1"] = "看我入那风流眼!",
-	["$cuju2"] = "有此绝技,休想伤我!",
-	["$panquan1"] = "圣上有旨!",
-	["$panquan2"] = "共求富贵!",
+	[":panquan"] = "<font color=red><b>主公技</b></font>，其他官势力角色每回复1点体力，可以让你摸两张牌，然后你将一张手牌置于牌堆顶。",
+	["@cuju-card"] = "你可以用一张手牌来转移伤害",
+	["$hengxing1"] = "安敢辄入白虎节堂，可知法度否？",
+	["$hengxing2"] = "哼！不认得我？！",
+	["$cuju1"] = "看我入那风流眼！",
+	["$cuju2"] = "有此绝技，休想伤我！",
+	["$panquan1"] = "圣上有旨！",
+	["$panquan2"] = "共求富贵！",
 
 	["#_husanniang"] = "一丈青",
 	["husanniang"] = "扈三娘",
@@ -202,3 +197,12 @@ return {
 	["~gaoqiu"] = "报应啊～报应！",
 	["~husanniang"] = "卿本佳人，奈何从贼？",
 }
+
+local gege = {"lujunyi", "chaijin", "zhangqing", "yuehe", "muhong", "zhoutong",
+		"qiaodaoqing", "andaoquan", "gongsunsheng", "husanniang"}
+
+for _, player in ipairs(gege) do
+	tt["designer:" .. player] = tt["coder:TTXD"]
+end
+
+return tt

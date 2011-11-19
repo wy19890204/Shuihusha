@@ -193,6 +193,122 @@ public:
     }
 };
 
+class Hengxing:public DrawCardsSkill{
+public:
+    Hengxing():DrawCardsSkill("hengxing"){
+        frequency = Frequent;
+    }
+
+    virtual int getDrawNum(ServerPlayer *qiu, int n) const{
+        if(qiu->isWounded())
+            return n;
+        Room *room = qiu->getRoom();
+        int death = room->getPlayers().length() - room->getAlivePlayers().length();
+        if(death > 0 && room->askForSkillInvoke(qiu, objectName())){
+            room->playSkillEffect(objectName());
+            return n + qMin(death, 2);
+        }else
+            return n;
+    }
+};
+
+CujuCard::CujuCard(){
+}
+
+void CujuCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.to->getRoom();
+    DamageStruct damage = effect.from->tag["CujuDamage"].value<DamageStruct>();
+    damage.to = effect.to;
+    damage.chain = true;
+    room->damage(damage);
+}
+
+class CujuViewAsSkill: public OneCardViewAsSkill{
+public:
+    CujuViewAsSkill():OneCardViewAsSkill("cuju"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@cuju";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        CujuCard *card = new CujuCard;
+        card->addSubcard(card_item->getFilteredCard());
+
+        return card;
+    }
+};
+
+class Cuju: public TriggerSkill{
+public:
+    Cuju():TriggerSkill("cuju"){
+        events << Predamaged;
+        view_as_skill = new CujuViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *gaoqiu, QVariant &data) const{
+        if(!gaoqiu->isKongcheng() && gaoqiu->askForSkillInvoke(objectName())){
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(club|spade):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = gaoqiu;
+
+            Room *room = gaoqiu->getRoom();
+            room->judge(judge);
+            if(judge.isGood()){
+                DamageStruct damage = data.value<DamageStruct>();
+                gaoqiu->tag["CujuDamage"] = QVariant::fromValue(damage);
+                if(room->askForUseCard(gaoqiu, "@@cuju", "@cuju-card"))
+                    return true;
+            }
+        }
+        return false;
+    }
+};
+
+class Panquan: public TriggerSkill{
+public:
+    Panquan():TriggerSkill("panquan$"){
+        events << HpRecover;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName()) && target->getKingdom() == "wei";
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *ply, QVariant &data) const{
+        Room *room = ply->getRoom();
+        ServerPlayer *gaoqiu = room->findPlayerBySkillName(objectName());
+        if(!gaoqiu)
+            return false;
+        RecoverStruct recover = data.value<RecoverStruct>();
+        for(int i = 0; i < recover.recover; i++){
+            if(ply->askForSkillInvoke(objectName(), data)){
+                gaoqiu->drawCards(2);
+                room->playSkillEffect(objectName());
+                const Card *ball = room->askForCardShow(gaoqiu, ply, objectName());
+                room->moveCardTo(ball, NULL, Player::DrawPile);
+            }
+        }
+        return false;
+    }
+};
+
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
 { //guan == wei, jiang == shu, min == wu, kou == qun
@@ -205,8 +321,14 @@ TTXDPackage::TTXDPackage()
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
+    General *gaoqiu = new General(this, "gaoqiu$", "wei", 3);
+    gaoqiu->addSkill(new Hengxing);
+    gaoqiu->addSkill(new Cuju);
+    gaoqiu->addSkill(new Panquan);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
+    addMetaObject<CujuCard>();
 }
 
 ADD_PACKAGE(TTXD)
