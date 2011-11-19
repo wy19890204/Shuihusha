@@ -1198,6 +1198,7 @@
         <translation>4 人局</translation>
     </message>
     <message>
+        <location filename="src/core/engine.cpp" line="104"/>
         <source>4 players (Hulao Pass)</source>
         <translation>4 人局 [虎牢关1v3]</translation>
     </message>
@@ -1358,7 +1359,7 @@
         <translation>声优</translation>
     </message>
     <message>
-        <location filename="src/dialog/generaloverview.ui" line="180"/>
+        <location filename="src/dialog/generaloverview.ui" line="189"/>
         <source>Coder</source>
         <translation>程序</translation>
     </message>
@@ -2391,7 +2392,7 @@
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 加入了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2383"/>
+        <location filename="src/server/room.cpp" line="2388"/>
         <source>Card can not parse:
  %1</source>
         <oldsource>Card can not parse:
