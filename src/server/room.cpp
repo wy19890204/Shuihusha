@@ -1805,6 +1805,11 @@ void Room::damage(const DamageStruct &damage_data){
             return;
     }
 
+    if(damage_data.chain && damage_data.from && damage_data.from->hasSkill("yixian")){
+        if(thread->trigger(Predamage, damage_data.from, data))
+            return;
+    }
+
     // predamaged
     bool broken = thread->trigger(Predamaged, damage_data.to, data);
     if(broken)

@@ -735,6 +735,8 @@ public:
                 int card_id = room->askForAG(shien, card_ids, false, objectName());
                 card_ids.removeOne(card_id);
                 ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
+                if(!target)
+                    target = shien;
                 room->takeAG(target, card_id);
             }
             room->broadcastInvoke("clearAG");
@@ -808,13 +810,13 @@ public:
             room->setPlayerMark(damage.from, "Xiaozai", 1);
         if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
             ServerPlayer *cup = player->tag.value("Xiaozai", NULL).value<ServerPlayer *>();
-            if(damage.from)
-                room->setPlayerMark(damage.from, "Xiaozai", 0);
             damage.to = cup;
             room->damage(damage);
 
             return true;
         }
+        if(damage.from)
+            room->setPlayerMark(damage.from, "Xiaozai", 0);
         return false;
     }
 };

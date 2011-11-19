@@ -11,9 +11,9 @@ DuijueCard::DuijueCard(){
 }
 
 bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty() || to_select == Self)
+    if(!targets.isEmpty())
         return false;
-    return !to_select->hasFlag("Duijue");
+    return to_select != Self;
 }
 
 void DuijueCard::onEffect(const CardEffectStruct &effect) const{
@@ -36,9 +36,6 @@ void DuijueCard::onEffect(const CardEffectStruct &effect) const{
         use.card = duel;
         room->useCard(use);
     }
-    foreach(ServerPlayer *tmp, room->getAllPlayers())
-        if(tmp->hasFlag("Duijue"))
-            room->setPlayerFlag(tmp, "-Duijue");
 }
 
 class DuijueViewAsSkill:public ZeroCardViewAsSkill{
@@ -72,10 +69,6 @@ public:
         if(!damage.card || !damage.card->inherits("Slash"))
             return false;
         Room *room = player->getRoom();
-        if(player == damage.from)
-            room->setPlayerFlag(damage.to, "Duijue");
-        else
-            room->setPlayerFlag(damage.from, "Duijue");
         room->askForUseCard(player, "@@duijue", "@duijue");
         return false;
     }
@@ -229,9 +222,9 @@ Maida0Card::Maida0Card(){
 }
 
 bool Maida0Card::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    if(!targets.isEmpty() || to_select == Self)
         return false;
-    return to_select->hasSkill("maidao");
+    return to_select->hasSkill("maidao") && !to_select->getPile("knife").isEmpty();
 }
 
 void Maida0Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -367,11 +360,15 @@ public:
             Room *room = shun->getRoom();
             room->playSkillEffect(objectName());
             DummyCard *dummy = new DummyCard;
-            dummy->addSubcard(room->askForCardChosen(shun, damage->from, "he", objectName()));
-            shun->obtainCard(Sanguosha->getCard(dummy->getSubcards().first()));
-            if(!damage->from->isNude() && shun->askForSkillInvoke(objectName()))
-                dummy->addSubcard(room->askForCardChosen(shun, damage->from, "he", objectName()));
-            ServerPlayer *target = room->askForPlayerChosen(shun, room->getAllPlayers(), objectName());
+            int first = room->askForCardChosen(shun, damage->from, "he", objectName());
+            shun->obtainCard(Sanguosha->getCard(first));
+            dummy->addSubcard(first);
+            if(!damage->from->isNude() && shun->askForSkillInvoke(objectName())){
+                first = room->askForCardChosen(shun, damage->from, "he", objectName());
+                shun->obtainCard(Sanguosha->getCard(first));
+                dummy->addSubcard(first);
+            }
+            ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(damage->from), objectName());
             room->moveCardTo(dummy, target, Player::Hand);
             delete dummy;
         }
@@ -480,8 +477,10 @@ public:
                 int card_id = room->askForAG(hx, card_ids, false, "shelie");
                 card_ids.removeOne(card_id);
                 ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
-                const Card *card = Sanguosha->getCard(card_id);
+                if(!target)
+                    target = hx;
                 room->takeAG(target, card_id);
+                const Card *card = Sanguosha->getCard(card_id);
                 if(card->inherits("EquipCard")){
                     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
                     QList<ServerPlayer *> targets;
@@ -580,7 +579,7 @@ void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
 
 class BinggongViewAsSkill: public ViewAsSkill{
 public:
-    BinggongViewAsSkill():ViewAsSkill("maida0"){
+    BinggongViewAsSkill():ViewAsSkill("binggong"){
 
     }
 
@@ -627,6 +626,13 @@ public:
     }
 };
 
+class FeiQPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return card->objectName() == "jink";
+    }
+};
+
 FeiqiangCard::FeiqiangCard(){
     once = true;
     mute = true;
@@ -638,7 +644,7 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(!room->askForCard(effect.to, "jink", "@feiqiang:" + effect.from->objectName())){
+    if(!room->askForCard(effect.to, ".FeiQ", "@feiqiang:" + effect.from->objectName())){
         QString choice = room->askForChoice(effect.from, "feiqiang", "gong+wang");
         if(choice == "gong"){
             room->playSkillEffect("feiqiang", 1);
@@ -741,6 +747,7 @@ XZDDPackage::XZDDPackage()
 
     General *gongwang = new General(this, "gongwang", "shu");
     gongwang->addSkill(new Feiqiang);
+    patterns[".FeiQ"] = new FeiQPattern;
 
     General *shiqian = new General(this, "shiqian", "qun", 3);
     shiqian->addSkill(new Feiyan);
