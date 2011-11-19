@@ -1411,9 +1411,63 @@ public:
     }
 };
 
+class Xiuluo: public PhaseChangeSkill{
+public:
+    Xiuluo():PhaseChangeSkill("xiuluo"){
+
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target)
+                && target->getPhase() == Player::Start
+                && !target->isKongcheng()
+                && !target->getJudgingArea().isEmpty();
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        if(!target->askForSkillInvoke(objectName()))
+            return false;
+
+        Room *room = target->getRoom();
+        int card_id = room->askForCardChosen(target, target, "j", objectName());
+        const Card *card = Sanguosha->getCard(card_id);
+
+        QString suit_str = card->getSuitString();
+        QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
+        QString prompt = QString("@xiuluo:::%1").arg(suit_str);
+        if(room->askForCard(target, pattern, prompt)){
+            room->throwCard(card);
+        }
+
+        return false;
+    }
+};
+
+class Shenwei: public DrawCardsSkill{
+public:
+    Shenwei():DrawCardsSkill("shenwei"){
+        frequency = Compulsory;
+    }
+
+    virtual int getDrawNum(ServerPlayer *player, int n) const{
+        return n + 2;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
-{
+{    
+    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
+    shenlvbu1->addSkill("mashu");
+    shenlvbu1->addSkill("wushuang");
+
+    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
+    shenlvbu2->addSkill("mashu");
+    shenlvbu2->addSkill("wushuang");
+    shenlvbu2->addSkill(new Xiuluo);
+    shenlvbu2->addSkill(new Shenwei);
+    shenlvbu2->addSkill(new Skill("shenji"));
+
     // for test only
     General *zhiba_sunquan = new General(this, "zhibasunquan$", "wu", 4, true, true);
     zhiba_sunquan->addSkill(new Zhiba);
@@ -1423,7 +1477,7 @@ TestPackage::TestPackage()
     wuxing_zhuge->addSkill(new SuperGuanxing);
     wuxing_zhuge->addSkill("kongcheng");
     wuxing_zhuge->addSkill("#kongcheng-effect");
-
+    
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
 }
