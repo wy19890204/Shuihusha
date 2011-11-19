@@ -13,6 +13,8 @@ DuijueCard::DuijueCard(){
 bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
+    if(to_select->hasSkill("fangzhen") && Self->getHp() > to_select->getHp())
+        return false;
     return to_select != Self;
 }
 
@@ -156,9 +158,11 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *yang) const{
         Room *room = yang->getRoom();
-        if(yang->getPhase() != Player::Start || yang->getPile("knife").isEmpty())
+        if(yang->getPhase() != Player::Start)
             return false;
-        if(yang->askForSkillInvoke(objectName())){
+        while(!yang->getPile("knife").isEmpty()){
+            if(!yang->askForSkillInvoke(objectName()))
+                return false;
             const QList<int> &knife = yang->getPile("knife");
             int card_id;
             if(knife.length() == 1)

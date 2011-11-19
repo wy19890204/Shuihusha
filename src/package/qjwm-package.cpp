@@ -195,8 +195,9 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.from && damage.card && damage.card->inherits("Slash")
-            && !wusong->isKongcheng() && damage.from != wusong
-                    && room->askForSkillInvoke(wusong, objectName(), data)){
+                && wusong->canSlash(damage.from, false)
+                && !wusong->isKongcheng() && damage.from != wusong
+                && room->askForSkillInvoke(wusong, objectName(), data)){
             const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
             if(!card)
                 return false;

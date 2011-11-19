@@ -69,9 +69,26 @@ JuyiCard::JuyiCard(){
 
 void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *song = targets.first();
-    if(song->hasSkill("juyi")){
-        song->obtainCard(this);
-        source->obtainCard(room->askForCardShow(song, source, "juyi"));
+    if(song->isKongcheng() && source->isKongcheng())
+        return;
+    if(song->hasSkill("juyi") && room->askForChoice(song, "jui", "agree+deny") == "agree"){
+        DummyCard *card1 = source->wholeHandCards();
+        DummyCard *card2 = song->wholeHandCards();
+        if(card1){
+            room->moveCardTo(card1, song, Player::Hand, false);
+            delete card1;
+        }
+        room->getThread()->delay();
+
+        if(card2){
+            room->moveCardTo(card2, source, Player::Hand, false);
+            delete card2;
+        }
+        LogMessage log;
+        log.type = "#Juyi";
+        log.from = source;
+        log.to << song;
+        room->sendLog(log);
     }
 }
 
@@ -79,25 +96,20 @@ bool JuyiCard::targetFilter(const QList<const Player *> &targets, const Player *
     return targets.isEmpty() && to_select->hasLordSkill("juyi") && to_select != Self;
 }
 
-class JuyiViewAsSkill: public OneCardViewAsSkill{
+class JuyiViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    JuyiViewAsSkill():OneCardViewAsSkill("jui"){
+    JuyiViewAsSkill():ZeroCardViewAsSkill("jui"){
 
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("JuyiCard") && player->getKingdom() == "qun";
+        return !player->hasLordSkill("juyi")
+                && player->getKingdom() == "qun"
+                && !player->hasUsed("JuyiCard");
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        JuyiCard *card = new JuyiCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
+    virtual const Card *viewAs() const{
+        return new JuyiCard;
     }
 };
 
