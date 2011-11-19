@@ -91,4 +91,21 @@ return {
 	["cw"] = "顺时针",
 	["ccw"] = "逆时针",
 	["#TrickDirection"] = "%from 选择了 %arg 作为锦囊的顺序",
+
+-- hulao
+	["hulaopass"] = "虎牢关模式",
+	["shenlvbu1"] = "神吕布(1)",
+	["shenlvbu2"] = "神吕布(2)",
+	["xiuluo"] = "修罗",
+	[":xiuluo"] = "回合开始阶段，你可以弃一张手牌来弃置你判定区里的一张延时类锦囊(必须花色相同)。",
+	["shenwei"] = "神威",
+	[":shenwei"] = "<b>锁定技</b>，摸牌阶段，你额外摸两张牌，你的手牌上限+2。",	
+	["shenji"] = "神戟",
+	[":shenji"] = "没装备武器时，你使用的杀可指定至多3名角色为目标。",
+        
+	["#Reforming"] = "%from 进入重整状态",
+	["#ReformingRecover"] = "%from 在重整状态中回复了1点体力",
+	["#ReformingRevive"] = "%from 从重整状态中复活!",
+	["draw_1v3"] = "重整摸牌",
+	["weapon_recast"] = "武器重铸",
 }

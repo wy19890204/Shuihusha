@@ -115,6 +115,72 @@ public:
     }
 };
 
+class Yueli:public TriggerSkill{
+public:
+    Yueli():TriggerSkill("yueli"){
+        frequency = Frequent;
+        events << FinishJudge;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *yuehe, QVariant &data) const{
+        JudgeStar judge = data.value<JudgeStar>();
+        CardStar card = judge->card;
+
+        QVariant data_card = QVariant::fromValue(card);
+        Room *room = yuehe->getRoom();
+        if(judge->card->inherits("BasicCard") && yuehe->askForSkillInvoke(objectName(), data_card)){
+            if(card->objectName() == "shit"){
+                QString result = room->askForChoice(yuehe, objectName(), "yes+no");
+                if(result == "no")
+                    return false;
+            }
+            yuehe->obtainCard(judge->card);
+            room->playSkillEffect(objectName(), 1);
+            return true;
+        }
+        else
+            room->playSkillEffect(objectName(), 2);
+        return false;
+    }
+};
+
+class Taohui:public TriggerSkill{
+public:
+    Taohui():TriggerSkill("taohui"){
+        events << PhaseChange << FinishJudge;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *yuehe, QVariant &data) const{
+        if(event == PhaseChange && yuehe->getPhase() == Player::Finish){
+            Room *room = yuehe->getRoom();
+            while(yuehe->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+
+                JudgeStruct judge;
+                judge.reason = objectName();
+                judge.who = yuehe;
+
+                room->judge(judge);
+                if(judge.card->inherits("BasicCard"))
+                    break;
+            }
+        }
+        else if(event == FinishJudge){
+            JudgeStar judge = data.value<JudgeStar>();
+            if(judge->reason == objectName()){
+                if(!judge->card->inherits("BasicCard")){
+                    Room *room = yuehe->getRoom();
+                    ServerPlayer *target = room->askForPlayerChosen(yuehe, room->getAllPlayers(), objectName());
+                    target->drawCards(1);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
 { //guan == wei, jiang == shu, min == wu, kou == qun
@@ -122,6 +188,10 @@ TTXDPackage::TTXDPackage()
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
     skills << new JuyiViewAsSkill;
+
+    General *yuehe = new General(this, "yuehe", "wu", 3);
+    yuehe->addSkill(new Yueli);
+    yuehe->addSkill(new Taohui);
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();

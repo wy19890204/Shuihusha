@@ -81,22 +81,6 @@ return {
 	["sp_pangde"] = "SP庞德",
 	["sp_diaochan"] = "SP貂蝉",
         
-	["shenlvbu1"] = "神吕布(1)",
-	["shenlvbu2"] = "神吕布(2)",
-	["xiuluo"] = "修罗",
-	[":xiuluo"] = "回合开始阶段，你可以弃一张手牌来弃置你判定区里的一张延时类锦囊(必须花色相同)。",
-	["shenwei"] = "神威",
-	[":shenwei"] = "<b>锁定技</b>，摸牌阶段，你额外摸两张牌，你的手牌上限+2。",	
-	["shenji"] = "神戟",
-	[":shenji"] = "没装备武器时，你使用的杀可指定至多3名角色为目标。",
-        
-	["#Reforming"] = "%from 进入重整状态",
-	["#ReformingRecover"] = "%from 在重整状态中回复了1点体力",
-	["#ReformingRevive"] = "%from 从重整状态中复活!",
-	["draw_1v3"] = "重整摸牌",
-	["weapon_recast"] = "武器重铸",
-	["hulaopass"] = "虎牢关模式",
-	
 	["sp_guanyu"] = "SP关羽",
 	["danji"] = "单骑",
 	[":danji"] = "<b>觉醒技</b>，回合开始阶段，若你的手牌数大于你当前的体力值，且本局主公为曹操时，你须减1点体力上限并永久获得技能“马术”。",
@@ -106,11 +90,7 @@ return {
 	["tuoqiao"] = "脱壳",
 	["xuwei"] = "续尾",
 	[":tuoqiao"] = "金蝉脱壳，变身为SP貂蝉",
-	[":xuwei"] = "狗尾续貂，变身为原版貂蝉",
-	
-	["sp_caiwenji"] = "SP蔡文姬",
-	["guixiang"] = "归乡",
-	[":guixiang"] = "<b>限定技</b>，游戏开始时，你可以选择变身为SP蔡文姬，势力为魏",
+	[":xuwei"] = "狗尾续貂，变身技</b>，游戏开始时，你可以选择变身为SP蔡文姬，势力为魏",
 	
 	["sp_machao"] = "SP马超",
 --sp_card	

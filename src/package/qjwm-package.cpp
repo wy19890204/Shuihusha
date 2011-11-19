@@ -376,11 +376,13 @@ public:
             return false;
         }
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->hasFlag("dalei_target") && player->askForSkillInvoke(objectName())){
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName());
+        if(damage.to->hasFlag("dalei_target")){
             RecoverStruct rev;
             rev.who = player;
-            room->recover(target, rev);
+            for(int p = 0; p < damage.damage; p++){
+                if(player->askForSkillInvoke(objectName()))
+                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
+            }
         }
         return false;
     }
