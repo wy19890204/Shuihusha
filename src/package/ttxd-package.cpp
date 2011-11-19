@@ -193,6 +193,49 @@ public:
     }
 };
 
+class Wuzu: public TriggerSkill{
+public:
+    Wuzu():TriggerSkill("wuzu"){
+        events << CardUsed << CardFinished;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent e, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        Room *room = player->getRoom();
+        if(e == CardUsed){
+            bool play = false;
+            foreach(ServerPlayer *tmp, use.to){
+                if(tmp->getArmor()){
+                    tmp->addMark("qinggang");
+                    play = true;
+                }
+            }
+            if(play)
+                room->playSkillEffect(objectName());
+        }
+        else{
+            foreach(ServerPlayer *tmp, use.to)
+                tmp->removeMark("qinggang");
+        }
+        return false;
+    }
+};
+
+class Huqi: public DistanceSkill{
+public:
+    Huqi():DistanceSkill("huqi")
+    {
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        if(from->hasSkill(objectName()))
+            return -1;
+        else
+            return 0;
+    }
+};
+
 class Hengxing:public DrawCardsSkill{
 public:
     Hengxing():DrawCardsSkill("hengxing"){
@@ -317,14 +360,29 @@ TTXDPackage::TTXDPackage()
     songjiang->addSkill(new Juyi);
     skills << new JuyiViewAsSkill;
 
+    General *lujunyi = new General(this, "lujunyi", "wei");
+    General *chaijin = new General(this, "chaijin", "wei", 3);
+    General *zhangqing = new General(this, "zhangqing", "wei");
+
     General *yuehe = new General(this, "yuehe", "wu", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
+
+    General *muhong = new General(this, "muhong", "shu");
+    muhong->addSkill(new Wuzu);
+    muhong->addSkill(new Huqi);
+
+    General *zhoutong = new General(this, "zhoutong", "qun", 3);
+    General *qiaodaoqing = new General(this, "qiaodaoqing", "qun", 3);
+    General *andaoquan = new General(this, "andaoquan", "wu", 3);
+    General *gongsunsheng = new General(this, "gongsunsheng", "qun", 3);
 
     General *gaoqiu = new General(this, "gaoqiu$", "wei", 3);
     gaoqiu->addSkill(new Hengxing);
     gaoqiu->addSkill(new Cuju);
     gaoqiu->addSkill(new Panquan);
+
+    General *husanniang = new General(this, "husanniang", "shu", 3);
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();

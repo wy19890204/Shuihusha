@@ -7,6 +7,7 @@ local tt = {
 	["#_songjiang"] = "呼保义",
 	["songjiang"] = "宋江",
 	["designer:songjiang"] = "烨子&凌天翼",
+	["cv:songjiang"] = "声声melody猎狐",
 	["coder:songjiang"] = "宇文天启、凌天翼",
 	["ganlin"] = "甘霖",
 	[":ganlin"] = "出牌阶段，你可以将任意数量的手牌以任意分配方式交给其他角色。若如此做，你可以将手牌补至X张，X为你已损失的体力值(补牌之后,将不能再次发动本技能)",
@@ -23,6 +24,7 @@ local tt = {
 
 	["#_lujunyi"] = "玉麒麟",
 	["lujunyi"] = "卢俊义",
+	["cv:lujunyi"] = "声声melody猎狐",
 	["baoguo"] = "报国",
 	[":baoguo"] = "每当其他角色受到伤害时,你可以弃置一张牌,将此伤害转移给你;你每受到一次伤害,可以摸X张牌,X为你已损失的体力值.",
 	["$baoguo1"] = "大丈夫为国尽忠,死而无憾!",
@@ -31,6 +33,7 @@ local tt = {
 	["#_chaijin"] = "小旋风",
 	["chaijin"] = "柴进",
 	["designer:chaijin"] = "烨子&小花荣",
+	["cv:chaijin"] = "烨子",
 	["danshu"] = "丹书",
 	[":danshu"] = "<b>锁定技</b>,当其他角色使用【杀】指定你为目标时,须额外弃置X张手牌,X为你已损失的体力值,否则该【杀】对你无效.",
 	["haoshen"] = "豪绅",
@@ -46,6 +49,7 @@ local tt = {
 
 	["#_zhangqing"] = "没遇见",
 	["zhangqing"] = "张清",
+	["cv:zhangqing"] = "烨子",
 	["yinyu"] = "饮羽",
 	["yinyu_heart"] = "石影",
 	[":yinyu_heart"] = "<b>锁定技</b>,若“饮羽”的判定结果为<b><font color = 'red'>♥</font></b>,你的攻击范围无限.",
@@ -64,6 +68,7 @@ local tt = {
 
 	["#_yuehe"] = "铁叫子",
 	["yuehe"] = "乐和",
+	["cv:yuehe"] = "烨子",
 	["yueli"] = "乐理",
 	[":yueli"] = "若你的判定牌为基本牌，在其生效后可以获得之。",
 	["yueli:yes"] = "拿屎", 
@@ -73,19 +78,21 @@ local tt = {
 	["$yueli1"] = "呵呵～",
 	["$yueli2"] = "且慢，音律有误。",
 	["$taohui1"] = "白云起，郁披香；离复合，曲未央。",
-	["$taohui2"] = "此曲只应天上有，人间哪得几回闻。",
+	["$taohui2"] = "此曲只应天上有，人间能得几回闻。",
 
 	["#_muhong"] = "没遮拦",
 	["muhong"] = "穆弘",
+	["cv:muhong"] = "爪子",
 	["wuzu"] = "无阻",
-	[":wuzu"] = "<b>锁定技</b>,你始终无视其他角色的防具.",
+	[":wuzu"] = "<b>锁定技</b>，你始终无视其他角色的防具。",
 	["huqi"] = "虎骑",
-	[":huqi"] = "<b>锁定技</b>,当你计算与其他角色的距离时,始终-1.",
-	["$wuzu1"] = "谁敢拦我?",
-	["$wuzu2"] = "游击部,冲!",
+	[":huqi"] = "<b>锁定技</b>，当你计算与其他角色的距离时，始终-1.",
+	["$wuzu1"] = "谁敢拦我？",
+	["$wuzu2"] = "游击部，冲！",
 
 	["#_zhoutong"] = "小霸王",
 	["zhoutong"] = "周通",
+	["cv:zhoutong"] = "烨子",
 	["qiangqu"] = "强娶",
 	[":qiangqu"] = "当你使用【杀】对已受伤的女性角色造成伤害时,你可以防止此伤害,改为获得该角色的一张牌若如此做,你和她各回复1点体力.",
 	["#qiangqu"] = "%from硬是把%arg拉入了洞房",
@@ -104,6 +111,7 @@ local tt = {
 
 	["#_qiaodaoqing"] = "幻魔君",
 	["qiaodaoqing"] = "乔道清",
+	["cv:qiaodaoqing"] = "烨子",
 	["huanshu"] = "幻术",
 	[":huanshu"] = "你每受到1点伤害,可以令任一其他角色连续进行两次判定:\
         若结果均为<b><font color = 'red'>红色</font></b>,你对其造成2点火焰伤害;\
@@ -121,6 +129,7 @@ local tt = {
 
 	["#_andaoquan"] = "伪神医",
 	["andaoquan"] = "安道全",
+	["cv:andaoquan"] = "烨子",
 	["shsjishi"] = "济世",
 	[":shsjishi"] = "任意角色的回合开始时,若该角色已受伤,你可以弃置一张手牌,令其回复1点体力.",
 	["yanshou"] = "延寿",
@@ -135,6 +144,7 @@ local tt = {
 
 	["#_gongsunsheng"] = "入云龙",
 	["gongsunsheng"] = "公孙胜",
+	["cv:gongsunsheng"] = "黑马之殇【KA.U】",
 	["yixing"] = "移星",
 	[":yixing"] = "在任意角色的判定牌生效前,你可以用任一角色装备区里的一张牌替换之(替换后,该角色将获得该判定牌).",
 	["qimen"] = "奇门",
@@ -149,6 +159,7 @@ local tt = {
 
 	["#_gaoqiu"] = "球王",
 	["gaoqiu"] = "高俅",
+	["cv:gaoqiu"] = "爪子",
 	["coder:gaoqiu"] = "roxiel、宇文天启",
 	["hengxing"] = "横行",
 	[":hengxing"] = "摸牌阶段，若你未受伤，可以额外摸X张牌，X为已死亡的角色数且至多为2.",
@@ -166,6 +177,7 @@ local tt = {
 
 	["#_husanniang"] = "一丈青",
 	["husanniang"] = "扈三娘",
+	["cv:husanniang"] = "明日如歌",
 	["hongjin"] = "红锦",
 	[":hongjin"] = "出牌阶段,你每对男性角色造成一次伤害,可以执行下列两项中的一项:\
         1.摸一张牌;\
@@ -202,7 +214,7 @@ local gege = {"lujunyi", "chaijin", "zhangqing", "yuehe", "muhong", "zhoutong",
 		"qiaodaoqing", "andaoquan", "gongsunsheng", "husanniang"}
 
 for _, player in ipairs(gege) do
-	tt["designer:" .. player] = tt["coder:TTXD"]
+	tt["coder:" .. player] = tt["coder:TTXD"]
 end
 
 return tt
