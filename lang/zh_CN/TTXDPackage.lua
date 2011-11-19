@@ -44,7 +44,7 @@ local tt = {
 	["$haoshen3"] = "碎银铺路,富贵如云。",
 	["$haoshen4"] = "既是兄弟,理应有福同享。",
 
-	["#_zhangqing"] = "没遇见",
+	["#_zhangqing"] = "没羽箭",
 	["zhangqing"] = "张清",
 	["yinyu"] = "饮羽",
 	["yinyu_heart"] = "石影",
