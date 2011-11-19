@@ -71,14 +71,12 @@ public:
     }
 
     virtual int getPriority() const{
-        return 1;
+        return 2;
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         QString asked = data.toString();
         if(asked != "slash" && asked != "jink")
-            return false;
-        if(asked == "slash" && player->getMark("yany") > 0)
             return false;
         Room *room = player->getRoom();
         QList<ServerPlayer *> playerAs, playerBs;
@@ -132,47 +130,44 @@ public:
     virtual const Card *viewAs() const{
         return Sanguosha->cloneSkillCard("JijiangCard");
     }
-};
+};*/
 
-
-class Yicong: public DistanceSkill{
+class Xiaofang: public TriggerSkill{
 public:
-    Yicong():DistanceSkill("yicong"){
-
+    Xiaofang():TriggerSkill("xiaofang"){
+        events << Predamaged;
     }
 
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        int correct = 0;
-        if(from->hasSkill(objectName()) && from->getHp() > 2)
-            correct --;
-        if(to->hasSkill(objectName()) && to->getHp() <= 2)
-            correct ++;
-
-        return correct;
-    }
-};
-
-class Xuwei: public ZeroCardViewAsSkill{
-public:
-    Xuwei():ZeroCardViewAsSkill("xuwei"){
-        huanzhuang_card = new HuanzhuangCard;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->hasUsed("HuanzhuangCard"))
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        Room *room = player->getRoom();
+        ServerPlayer *water = room->findPlayerBySkillName(objectName());
+        if(!water || water->isKongcheng() || damage.nature != DamageStruct::Fire)
             return false;
+        if(water->askForSkillInvoke(objectName()) && room->askForDiscard(water, objectName(), 1)){
+            LogMessage log;
+            log.type = "#Xiaofang";
+            log.from = water;
+            log.arg = objectName();
+            log.to << damage.to;
+            room->sendLog(log);
 
-        return player->getGeneralName() == "sp_diaochan";
+            damage.nature = DamageStruct::Normal;
+            data = QVariant::fromValue(damage);
+        }
+        return false;
     }
-
-    virtual const Card *viewAs() const{
-        return huanzhuang_card;
-    }
-
-private:
-    HuanzhuangCard *huanzhuang_card;
 };
 
+/*
 class Xiuluo: public PhaseChangeSkill{
 public:
     Xiuluo():PhaseChangeSkill("xiuluo"){
@@ -304,6 +299,9 @@ BWQZPackage::BWQZPackage()
 {
     General *houjian = new General(this, "houjian", "wu", 3);
     houjian->addSkill(new Yuanyin);
+
+    General *shantinggui = new General(this, "shantinggui", "shu", 5);
+    shantinggui->addSkill(new Xiaofang);
 
     General *jiashi = new General(this, "jiashi", "wu", 3, false);
     jiashi->addSkill(new Zhuying);

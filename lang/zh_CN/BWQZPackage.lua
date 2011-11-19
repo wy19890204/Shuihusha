@@ -11,6 +11,13 @@ return {
 	["yuanyin:slash"] = "你想发动技能【援引·杀】吗？",
 	["yuanyin:jink"] = "你想发动技能【援引·闪】吗？",
 
+	["#_shantinggui"] = "圣水将",
+	["shantinggui"] = "单廷珪",
+	["designer:shantinggui"] = "宇文天启",
+	["xiaofang"] = "消防",
+	[":xiaofang"] = "当场上出现火焰伤害时，你可以弃掉一张手牌，将其改为无属性伤害",
+	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
+
 	["jiashi"] = "贾氏",
 	["cv:jiashi"] = "呼呼",
 	["banzhuang"] = "半妆",
