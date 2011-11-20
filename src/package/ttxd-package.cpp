@@ -127,6 +127,118 @@ public:
     }
 };
 
+class Danshu: public TriggerSkill{
+public:
+    Danshu():TriggerSkill("danshu"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+
+        if(effect.card->inherits("Slash")){
+            Room *room = player->getRoom();
+
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Danshu";
+            log.from = effect.from;
+            log.to << effect.to;
+            log.arg = objectName();
+            log.arg2 = QString::number(effect.to->getLostHp());
+            room->sendLog(log);
+
+            return !room->askForDiscard(effect.from, objectName(), effect.to->getLostHp(), true);
+        }
+        return false;
+    }
+};
+
+HaoshenCard::HaoshenCard(){
+    will_throw = false;
+}
+
+bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(Self->getPhase() == Player::Draw)
+        return to_select != Self && to_select->getHandcardNum() != to_select->getMaxHP();
+    else
+        return to_select != Self;
+    return false;
+}
+
+void HaoshenCard::use(Room *room, ServerPlayer *chaijin, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = targets.first();
+    if(chaijin->getPhase() == Player::Draw)
+        if(target->getHandcardNum() < target->getMaxHP())
+            target->drawCards(target->getMaxHP() - target->getHandcardNum());
+    else if(chaijin->getPhase() == Player::Play)
+        target->obtainCard(this);
+}
+
+class HaoshenViewAsSkill: public ViewAsSkill{
+public:
+    HaoshenViewAsSkill():ViewAsSkill("haoshen"){
+
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->getPhase() == Player::Draw)
+            return selected.isEmpty();
+        else{
+            int length = Self->getHandcardNum() / 2;
+            return selected.length() < length;
+        }
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->getPhase() == Player::Play && cards.length() != Self->getHandcardNum() / 2)
+            return NULL;
+        HaoshenCard *card = new HaoshenCard;
+        card->addSubcards(cards)
+        return card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@haoshen";
+    }
+};
+
+class Haoshen: public PhaseChangeSkill{
+public:
+    Haoshen():PhaseChangeSkill("haoshen"){
+        view_as_skill = new HaoshenViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target);
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *chaijin) const{
+        Room *room = chaijin->getRoom();
+
+        switch(chaijin->getPhase()){
+        case Player::Draw: return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-draw");
+        case Player::Play:
+            if(!chaijin->isKongcheng())
+                return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-play");
+        default: return false;
+        }
+
+        return false;
+    }
+};
+
 class Yueli:public TriggerSkill{
 public:
     Yueli():TriggerSkill("yueli"){
@@ -208,6 +320,13 @@ public:
             foreach(ServerPlayer *tmp, use.to){
                 if(tmp->getArmor()){
                     tmp->addMark("qinggang");
+                    LogMessage log;
+                    log.type = "$IgnoreArmor";
+                    log.from = player;
+                    log.to << tmp;
+                    log.card_str = tmp->getArmor()->getEffectIdString();
+                    room->sendLog(log);
+
                     play = true;
                 }
             }
@@ -362,6 +481,8 @@ TTXDPackage::TTXDPackage()
 
     General *lujunyi = new General(this, "lujunyi", "wei");
     General *chaijin = new General(this, "chaijin", "wei", 3);
+    chaijin->addSkill(new Danshu);
+    chaijin->addSkill(new Haoshen);
     General *zhangqing = new General(this, "zhangqing", "wei");
 
     General *yuehe = new General(this, "yuehe", "wu", 3);
