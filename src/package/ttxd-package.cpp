@@ -465,6 +465,114 @@ public:
     }
 };
 
+class Qiangqu:public TriggerSkill{
+public:
+    Qiangqu():TriggerSkill("qiangqu"){
+        events << Predamage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
+            && damage.to->isWounded() && player->askForSkillInvoke(objectName())){
+            Room *room = player->getRoom();
+            int card = room->askForCardChosen(damage.from, damage.to, "he", objectName());
+            RecoverStruct re;
+            re.card = Sanguosha->getCard(card);
+            re.who = player;
+            room->obtainCard(player, card);
+
+            LogMessage log;
+            log.from = player;
+            log.type = "#Qiangqu";
+            log.to << damage.to;
+            room->sendLog(log);
+            room->recover(damage.to, re);
+            room->playSkillEffect(objectName());
+            room->recover(damage.from, re);
+            return true;
+        }
+        return false;
+    }
+};
+
+HuatianAiCard::HuatianAiCard(){
+    mute = true;
+}
+
+bool HuatianAiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(ClientInstance->getPattern().endsWith("ai"))
+        return to_select != Self && to_select->isWounded();
+    else
+        return to_select != Self;
+}
+
+void HuatianAiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    if(ClientInstance->getPattern().endsWith("ai")){
+        RecoverStruct recovvv;
+        recovvv.card = this;
+        recovvv.who = effect.from;
+        room->playSkillEffect("huatian", qrand() % 2 + 1);
+        room->recover(effect.to, recovvv);
+    }
+    else{
+        DamageStruct damag;
+        damag.from = effect.from;
+        damag.to = effect.to;
+        damag.card = this;
+        room->playSkillEffect("huatian", qrand() % 2 + 3);
+        room->damage(damag);
+    }
+}
+
+class HuatianAi: public ZeroCardViewAsSkill{
+public:
+    HuatianAi():ZeroCardViewAsSkill("huatian"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern.startsWith("@@huatian");
+    }
+
+    virtual const Card *viewAs() const{
+        return new HuatianAiCard;
+    }
+};
+
+class Huatian:public TriggerSkill{
+public:
+    Huatian():TriggerSkill("huatian"){
+        view_as_skill = new HuatianAi;
+        events << Damaged << HpRecover;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(event == Damaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            for(int i = 0; i < damage.damage; i++){
+                if(!room->askForUseCard(player, "@@huatianai", "@huatianai"))
+                    break;
+            }
+        }
+        else{
+            RecoverStruct rec = data.value<RecoverStruct>();
+            for(int i = 0; i < rec.recover; i++){
+                if(!room->askForUseCard(player, "@@huatiancuo", "@huatiancuo"))
+                    break;
+            }
+        }
+        return false;
+    }
+};
+
 HuanshuCard::HuanshuCard(){
     mute = true;
 }
@@ -771,6 +879,8 @@ TTXDPackage::TTXDPackage()
     muhong->addSkill(new Huqi);
 
     General *zhoutong = new General(this, "zhoutong", "qun", 3);
+    zhoutong->addSkill(new Qiangqu);
+    zhoutong->addSkill(new Huatian);
 
     General *qiaodaoqing = new General(this, "qiaodaoqing", "qun", 3);
     qiaodaoqing->addSkill(new Huanshu);
@@ -791,6 +901,7 @@ TTXDPackage::TTXDPackage()
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HaoshenCard>();
+    addMetaObject<HuatianAiCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();

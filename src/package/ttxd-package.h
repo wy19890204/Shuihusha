@@ -33,6 +33,16 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
+class HuatianAiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE HuatianAiCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+};
+
 class CujuCard: public SkillCard{
     Q_OBJECT
 

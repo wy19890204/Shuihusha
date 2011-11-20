@@ -224,6 +224,7 @@ public:
 
 Maida0Card::Maida0Card(){
     will_throw = false;
+    mute = true;
 }
 
 bool Maida0Card::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -234,6 +235,7 @@ bool Maida0Card::targetFilter(const QList<const Player *> &targets, const Player
 
 void Maida0Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
+    room->playSkillEffect("maidao", qrand() % 2 + 3);
     target->obtainCard(this);
 
     const QList<int> &knife = target->getPile("knife");
