@@ -629,7 +629,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
-        return to_select->inherits("Slash");
+        return to_select->getCard()->inherits("Slash");
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
@@ -642,6 +642,29 @@ public:
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return ! player->hasUsed("WujiCard");
+    }
+};
+
+class Mozhang: public PhaseChangeSkill{
+public:
+    Mozhang():PhaseChangeSkill("mozhang"){
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *p) const{
+        if(p->getPhase() == Player::NotActive){
+            Room *room = p->getRoom();
+            if(!p->isChained()){
+                p->setChained(true);
+                room->playSkillEffect(objectName());
+                room->broadcastProperty(p, "chained");
+            }
+        }
+        return false;
     }
 };
 
@@ -673,6 +696,7 @@ TTXDPackage::TTXDPackage()
 
     General *zhoutong = new General(this, "zhoutong", "qun", 3);
     General *qiaodaoqing = new General(this, "qiaodaoqing", "qun", 3);
+    qiaodaoqing->addSkill(new Mozhang);
     General *andaoquan = new General(this, "andaoquan", "wu", 3);
     General *gongsunsheng = new General(this, "gongsunsheng", "qun", 3);
 
@@ -681,7 +705,7 @@ TTXDPackage::TTXDPackage()
     gaoqiu->addSkill(new Cuju);
     gaoqiu->addSkill(new Panquan);
 
-    General *husanniang = new General(this, "husanniang", "shu", 3);
+    General *husanniang = new General(this, "husanniang", "shu", 3, false);
     husanniang->addSkill(new Hongjin);
     husanniang->addSkill(new Wuji);
 
