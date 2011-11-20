@@ -3,7 +3,6 @@ zuoci
 shencaocao
 caocao caochong
 xushu zhugeliang
-simayi caizhaoji
 zhenji zhangjiao
 zhenji simayi
 huanggai yuanshao
@@ -12,12 +11,6 @@ dengshizai caoren
 dengshizai shenlubu
 luxun liubei
 luxun wolong
-luxun yuji
-huangyueying wolong
-huangyueying yuanshao
-huangyueying ganning
-shuangxiong sunce
-shuangxiong huanggai
 shuangxiong huangyueying
 dengai guojia
 dengai simayi

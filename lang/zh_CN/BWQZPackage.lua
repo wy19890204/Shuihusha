@@ -11,6 +11,13 @@ return {
 	["yuanyin:slash"] = "你想发动技能【援引·杀】吗？",
 	["yuanyin:jink"] = "你想发动技能【援引·闪】吗？",
 
+	["#_mengkang"] = "玉幡竿",
+	["mengkang"] = "孟康",
+	["zaochuan"] = "造船",
+	[":zaochuan"] = "出牌阶段，你可以将你的任一锦囊牌当【铁索连环】使用或重铸。",
+	["mengchong"] = "艨艟",
+	[":mengchong"] = "锁定技，武将牌未处于横置状态的角色计算与武将牌处于横置状态的角色的距离时，始终+1。",
+
 	["#_jiaoting"] = "没面目",
 	["jiaoting"] = "焦挺",
 	["designer:jiaoting"] = "宇文天启",

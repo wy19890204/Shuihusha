@@ -181,6 +181,18 @@ int Player::distanceTo(const Player *other) const{
     if(distance < 1)
         distance = 1;
 
+    bool mengkang = false;
+    foreach(const Player *player, getSiblings()){
+        if(player->hasSkill("mengchong")){
+            mengkang = true;
+            break;
+        }
+    }
+    if(mengkang || this->hasSkill("mengchong")){
+        if(!this->isChained() && other->isChained())
+            distance ++;
+    }
+
     return distance;
 }
 
