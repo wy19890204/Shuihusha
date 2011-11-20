@@ -214,12 +214,9 @@ public:
                 log.from = wusong;
                 log.card_str = card->getEffectIdString();
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 2);
 
                 room->setPlayerFlag(wusong, "drank");
             }
-            else
-                room->playSkillEffect(objectName(), 1);
             room->useCard(use);
         }
         return false;
