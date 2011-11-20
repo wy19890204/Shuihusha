@@ -149,7 +149,7 @@ public:
                 duck->drawCards(duck->getLostHp());
             }
         }
-        else if(!duck->isNude() && duck->askForSkillInvoke(objectName())){
+        else if(duck != player && !duck->isNude() && duck->askForSkillInvoke(objectName())){
             if(room->askForDiscard(duck, objectName(), 1, false, true)){
                 room->playSkillEffect(objectName(), 2);
                 damage.to = duck;
