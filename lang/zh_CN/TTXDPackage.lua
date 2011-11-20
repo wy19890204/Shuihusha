@@ -54,20 +54,20 @@ local tt = {
 	["zhangqing"] = "张清",
 	["cv:zhangqing"] = "烨子",
 	["yinyu"] = "饮羽",
-	["yinyu_heart"] = "石影",
-	[":yinyu_heart"] = "<b>锁定技</b>,若“饮羽”的判定结果为<b><font color = 'red'>♥</font></b>,你的攻击范围无限.",
-	[":yinyu"] = "—回合开始阶段,你可以进行一次判定,获得与判定结果对应的一项技能直到回合结束：\
-	<b><font color = 'red'>♥</font></b>~攻击范围无限;\
-	<b><font color = 'red'>♦</font></b>~使用的【杀】不可被闪避;\
-	♠~可使用任意数量的【杀】;\
-	♣~无视其他角色的防具.",
-	["@yinyu_heart"] = "请使用一张【杀】",
-	["@yinyu_spade"] = "请使用一张【杀】",
-	["$yinyu1"] = "飞蝗如雨,看尔等翻成画饼!",
-	["$yinyu2"] = "飞石连伤,休想逃跑!",
-	["$yinyu3"] = "叫汝等饮羽沙场吧!",
-	["$yinyu4"] = "此等破铜烂铁岂能挡我!",
-	["$yinyu5"] = "看你马快,还是我飞石快!",
+	[":yinyu"] = "回合开始阶段，你可以进行一次判定，获得与判定结果对应的一项技能直到回合结束：\
+	<b><font color = 'red'>♥</font></b>~攻击范围无限；\
+	<b><font color = 'red'>♦</font></b>~使用的【杀】不可被闪避；\
+	♠~可使用任意数量的【杀】；\
+	♣~无视其他角色的防具",
+	["#Yinyu1"] = "%from 获得了无限的攻击范围",
+	["#Yinyu2"] = "%from 获得了【杀】不可闪避的特权",
+	["#Yinyu4"] = "%from 获得了无限出杀的特权",
+	["#Yinyu8"] = "%from 获得了无视防具的特权",
+	["$yinyu1"] = "飞蝗如雨，看尔等翻成画饼！",
+	["$yinyu2"] = "飞石连伤，休想逃跑！",
+	["$yinyu3"] = "叫汝等饮羽沙场吧！",
+	["$yinyu4"] = "此等破铜烂铁岂能挡我！",
+	["$yinyu5"] = "看你马快，还是我飞石快！",
 
 	["#_yuehe"] = "铁叫子",
 	["yuehe"] = "乐和",
@@ -106,8 +106,8 @@ local tt = {
 	[":huatiancuo"] = "你每回复1点体力,可以对任一其他角色造成1点伤害.",
 	["#huatianai"] = "%from与%arg爱来爱去,死去活来",
 	["#huatiancuo"] = "%arg嘤咛一声倒在了花田中,看样子是中了情毒",
-	["$qiangqu1"] = "小娘子,春宵一刻值千金啊!",
-	["$qiangqu2"] = "今夜,本大王定要做新郎!",
+	["$qiangqu1"] = "小娘子,春宵一刻值千金啊！",
+	["$qiangqu2"] = "今夜,本大王定要做新郎！",
 	["$huatianai1"] = "无妨,只当为汝披嫁纱！",
 	["$huatianai2"] = "只要娘子开心,怎样都好！",
 	["$huatiancuo1"] = "破晓之前,忘了此错。",
@@ -126,8 +126,8 @@ local tt = {
 	["#huanshuthunder"] = "%arg受到%from的技能“<b><font color = 'red'>幻术</font></b>”的影响,尝到了五雷轰顶的滋味",
 	["#huanshufailed"] = "%from发动了技能“<b><font color = 'red'>幻术</font></b>”,结果却连个屁声都听不到",
 	["#mozhang"] = "%from的技能“<b><font color = 'yellow'>魔障</font></b>”被触发,%from进入连环状态",
-	["$huanshu1"] = "沙石一起,真假莫辨!",
-	["$huanshu2"] = "五行幻化,破!",
+	["$huanshu1"] = "沙石一起,真假莫辨！",
+	["$huanshu2"] = "五行幻化,破！",
 	["$huanshu3"] = "五雷天心,五雷天心,缘何不灵?",
 	["$mozhang"] = "外道之法,也可乱心?",
 
@@ -140,9 +140,9 @@ local tt = {
 	[":yanshou"] = "<b>限定技</b>,出牌阶段,你可以弃置两张<b><font color = 'red'>♥</font></b>牌,令任一角色增加1点体力上限.",
 	["fengyue"] = "风月",
 	[":fengyue"] = "回合结束阶段,你可以摸X张牌,X为场上存活的女性角色数且至多为2.每回合限一次.",
-	["$yanshou"] = "助你延寿十年!",
+	["$yanshou"] = "助你延寿十年！",
 	["$shsjishi1"] = "祖传内科外科尽皆医得。",
-	["$shsjishi2"] = "回春之术!",
+	["$shsjishi2"] = "回春之术！",
 	["$fengyue1"] = "一生风月供惆怅。",
 	["$fengyue2"] = "活色生香伴佳人。",
 
@@ -194,9 +194,9 @@ local tt = {
 	["wuji"] = "武姬",
 	[":wuji"] = "出牌阶段,你可以弃置任意数量的【杀】,然后摸等量的牌.",
 	["#wuji"] = "%from发动了技能“<b><font color = 'red'>武姬</font><b>”",
-	["$hongjin1"] = "一击枫叶落!",
+	["$hongjin1"] = "一击枫叶落！",
 	["$hongjin2"] = "玉纤擒猛将,霜刀砍雄兵！",
-	["$wuji1"] = "巾帼不让须眉!",
+	["$wuji1"] = "巾帼不让须眉！",
 	["$wuji2"] = "连环铠甲衬红纱。",
 
 -- last words
@@ -206,7 +206,7 @@ local tt = {
 	["~zhangqing"] = "一技之长，不足傍身啊！",
 	["~yuehe"] = "叫子也难吹奏了。",
 	["~muhong"] = "弟，兄先去矣。",
-	["~zhoutong"] = "虽有霸王相，奈无霸王功啊!",
+	["~zhoutong"] = "虽有霸王相，奈无霸王功啊！",
 	["~qiaodaoqing"] = "这，就是五雷轰顶的滋味吗？",
 	["~andaoquan"] = "救人易，救己难！",
 	["~gongsunsheng"] = "天罡尽已归天界，地煞还应入地中。",
@@ -214,7 +214,7 @@ local tt = {
 	["~husanniang"] = "卿本佳人，奈何从贼？",
 }
 
-local gege = {"lujunyi", "chaijin", "zhangqing", "yuehe", "muhong", "zhoutong",
+local gege = {"lujunyi", "zhangqing", "yuehe", "muhong", "zhoutong",
 		"qiaodaoqing", "andaoquan", "gongsunsheng", "husanniang"}
 
 for _, player in ipairs(gege) do

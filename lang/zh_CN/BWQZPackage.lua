@@ -11,6 +11,12 @@ return {
 	["yuanyin:slash"] = "你想发动技能【援引·杀】吗？",
 	["yuanyin:jink"] = "你想发动技能【援引·闪】吗？",
 
+	["#_jiaoting"] = "没面目",
+	["jiaoting"] = "焦挺",
+	["designer:jiaoting"] = "宇文天启",
+	["qinlong"] = "擒龙",
+	[":qinlong"] = "当你装备区没牌时，使用【杀】可额外指定一个目标且无使用次数限制",
+
 	["#_shantinggui"] = "圣水将",
 	["shantinggui"] = "单廷珪",
 	["designer:shantinggui"] = "宇文天启",

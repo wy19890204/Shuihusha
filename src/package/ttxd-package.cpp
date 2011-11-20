@@ -284,6 +284,70 @@ public:
     }
 };
 
+class Yinyu: public PhaseChangeSkill{
+public:
+    Yinyu():PhaseChangeSkill("yinyu"){
+
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *qing) const{
+        Room *room = qing->getRoom();
+        if(qing->getPhase() == Player::Start){
+            if(qing->askForSkillInvoke(objectName())){
+                JudgeStruct judge;
+                judge.pattern = QRegExp("(.*):(.*):(.*)");
+                judge.good = true;
+                judge.who = qing;
+                judge.reason = objectName();
+                room->judge(judge);
+
+                LogMessage log;
+                log.from = qing;
+                switch(judge.card->getSuit()){
+                case Card::Heart:{
+                        room->playSkillEffect(objectName(), 5);
+                        room->setPlayerFlag(qing, "tianyi_success");
+                        log.type = "#Yinyu1";
+                        break;
+                    }
+                case Card::Diamond:{
+                        room->playSkillEffect(objectName(), 3);
+                        room->setPlayerFlag(qing, "Hitit");
+                        log.type = "#Yinyu2";
+                        break;
+                    }
+                case Card::Spade:{
+                        room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                        room->attachSkillToPlayer(qing, "paoxiao");
+                        qing->tag["Stone"] = "paoxiao";
+                        log.type = "#Yinyu4";
+                        break;
+                    }
+                case Card::Club:{
+                        room->playSkillEffect(objectName(), 4);
+                        room->attachSkillToPlayer(qing, "wuzu");
+                        qing->tag["Stone"] = "wuzu";
+                        log.type = "#Yinyu8";
+                        break;
+                    }
+                default:
+                    break;
+                }
+                room->sendLog(log);
+            }
+        }
+        else if(qing->getPhase() == Player::NotActive){
+            if(qing->hasFlag("tianyi_success"))
+                room->setPlayerFlag(qing, "-tianyi_success");
+            if(qing->hasFlag("Hitit"))
+                room->setPlayerFlag(qing, "-Hitit");
+            QString atcski = qing->tag.value("Stone", "").toString();
+            room->detachSkillFromPlayer(qing, atcski);
+        }
+        return false;
+    }
+};
+
 class Yueli:public TriggerSkill{
 public:
     Yueli():TriggerSkill("yueli"){
@@ -532,6 +596,7 @@ TTXDPackage::TTXDPackage()
     chaijin->addSkill(new Haoshen);
 
     General *zhangqing = new General(this, "zhangqing", "wei");
+    zhangqing->addSkill(new Yinyu);
 
     General *yuehe = new General(this, "yuehe", "wu", 3);
     yuehe->addSkill(new Yueli);

@@ -293,7 +293,7 @@ public:
         if(!damage.card || damage.from != likui)
             return false;
         if(damage.card->inherits("Slash")){
-            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow") && !likui->hasSkill("paoxiao"))
+            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow") && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong"))
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
             if(!room->askForSkillInvoke(likui, objectName(), data))
                 return false;
