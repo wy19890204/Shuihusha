@@ -210,9 +210,10 @@ public:
     virtual bool buff(const SlashEffectStruct &effect) const{
         if(effect.slash && effect.slash->getSkillName() != "fengmang")
             return false;
-        int range = effect.from->tag.value("Daozi", 0).toInt();
+        int weapon_range = effect.from->tag.value("Daozi", 0).toInt();
+        int range = effect.from->distanceTo(effect.to);
         Room *room = effect.from->getRoom();
-        if(range > effect.from->distanceTo(effect.to)){
+        if(range <= weapon_range){
             room->playSkillEffect(objectName());
             room->slashResult(effect, NULL);
             return true;

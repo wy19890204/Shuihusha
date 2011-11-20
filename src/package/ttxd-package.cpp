@@ -157,6 +157,7 @@ public:
 
 HaoshenCard::HaoshenCard(){
     will_throw = false;
+    mute = true;
 }
 
 bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -171,11 +172,21 @@ bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void HaoshenCard::use(Room *room, ServerPlayer *chaijin, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
-    if(chaijin->getPhase() == Player::Draw)
-        if(target->getHandcardNum() < target->getMaxHP())
-            target->drawCards(target->getMaxHP() - target->getHandcardNum());
-    else if(chaijin->getPhase() == Player::Play)
+    int num = target->getMaxHP() - target->getHandcardNum();
+    if(chaijin->getPhase() == Player::Draw && num > 0){
+        if(num > 2)
+            room->playSkillEffect("haoshen", 1);
+        else
+            room->playSkillEffect("haoshen", 3);
+        target->drawCards(num);
+    }
+    else if(chaijin->getPhase() == Player::Play){
         target->obtainCard(this);
+        if(this->getSubcards().length() > 2)
+            room->playSkillEffect("haoshen", 2);
+        else
+            room->playSkillEffect("haoshen", 4);
+    }
 }
 
 class HaoshenViewAsSkill: public ViewAsSkill{
@@ -197,7 +208,7 @@ public:
         if(Self->getPhase() == Player::Play && cards.length() != Self->getHandcardNum() / 2)
             return NULL;
         HaoshenCard *card = new HaoshenCard;
-        card->addSubcards(cards)
+        card->addSubcards(cards);
         return card;
     }
 
@@ -507,6 +518,7 @@ TTXDPackage::TTXDPackage()
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
+    addMetaObject<HaoshenCard>();
     addMetaObject<CujuCard>();
 }
 
