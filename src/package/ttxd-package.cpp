@@ -127,6 +127,40 @@ public:
     }
 };
 
+class Baoguo:public TriggerSkill{
+public:
+    Baoguo():TriggerSkill("baoguo"){
+        events << Predamaged << Damaged;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent evt, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        Room *room = player->getRoom();
+        ServerPlayer *duck = room->findPlayerBySkillName(objectName());
+        if(!duck)
+            return false;
+        if(evt == Damaged){
+            if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName(), 1);
+                duck->drawCards(duck->getLostHp());
+            }
+        }
+        else if(!duck->isNude() && duck->askForSkillInvoke(objectName())){
+            if(room->askForDiscard(duck, objectName(), 1, false, true)){
+                room->playSkillEffect(objectName(), 2);
+                damage.to = duck;
+                room->damage(damage);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
 class Danshu: public TriggerSkill{
 public:
     Danshu():TriggerSkill("danshu"){
@@ -491,9 +525,12 @@ TTXDPackage::TTXDPackage()
     skills << new JuyiViewAsSkill;
 
     General *lujunyi = new General(this, "lujunyi", "wei");
+    lujunyi->addSkill(new Baoguo);
+
     General *chaijin = new General(this, "chaijin", "wei", 3);
     chaijin->addSkill(new Danshu);
     chaijin->addSkill(new Haoshen);
+
     General *zhangqing = new General(this, "zhangqing", "wei");
 
     General *yuehe = new General(this, "yuehe", "wu", 3);
