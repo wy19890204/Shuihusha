@@ -325,8 +325,8 @@ public:
                     }
                 case Card::Club:{
                         room->playSkillEffect(objectName(), 4);
-                        room->attachSkillToPlayer(qing, "wuzu");
-                        qing->tag["Stone"] = "wuzu";
+                        foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
+                            tmp->addMark("qinggang");
                         log.type = "#Yinyu8";
                         break;
                     }
@@ -341,8 +341,9 @@ public:
                 room->setPlayerFlag(qing, "-tianyi_success");
             if(qing->hasFlag("Hitit"))
                 room->setPlayerFlag(qing, "-Hitit");
-            QString atcski = qing->tag.value("Stone", "").toString();
-            room->detachSkillFromPlayer(qing, atcski);
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
+                tmp->removeMark("qinggang");
+            room->detachSkillFromPlayer(qing, qing->tag.value("Stone", "").toString());
         }
         return false;
     }
@@ -580,6 +581,70 @@ public:
     }
 };
 
+WujiCard::WujiCard(){
+    target_fixed = true;
+    once = true;
+}
+
+void WujiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    room->throwCard(this);
+    if(source->isAlive())
+        room->drawCards(source, subcards.length());
+}
+
+class Hongjin: public TriggerSkill{
+public:
+    Hongjin():TriggerSkill("hongjin"){
+        events << Damage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *hu3niang, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.to->isAlive() && damage.to->getGeneral()->isMale()){
+            Room *room = hu3niang->getRoom();
+            QString ball = room->askForChoice(hu3niang, objectName(), "draw+throw+cancel");
+            if(ball == "cancel")
+                return false;
+            LogMessage log;
+            log.type = "#InvokeSkill";
+            log.from = hu3niang;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            if(ball == "throw"){
+                room->playSkillEffect(objectName(), 1);
+                room->throwCard(room->askForCardChosen(hu3niang, damage.to, "he", objectName()));
+            }
+            else
+                hu3niang->drawCards(1);
+        }
+        return false;
+    }
+};
+
+class Wuji:public ViewAsSkill{
+public:
+    Wuji():ViewAsSkill("wuji"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+        return to_select->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        WujiCard *uji_card = new WujiCard;
+        uji_card->addSubcards(cards);
+        return uji_card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("WujiCard");
+    }
+};
+
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
 { //guan == wei, jiang == shu, min == wu, kou == qun
@@ -617,11 +682,14 @@ TTXDPackage::TTXDPackage()
     gaoqiu->addSkill(new Panquan);
 
     General *husanniang = new General(this, "husanniang", "shu", 3);
+    husanniang->addSkill(new Hongjin);
+    husanniang->addSkill(new Wuji);
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HaoshenCard>();
     addMetaObject<CujuCard>();
+    addMetaObject<WujiCard>();
 }
 
 ADD_PACKAGE(TTXD)
