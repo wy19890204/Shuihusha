@@ -503,34 +503,41 @@ HuatianAiCard::HuatianAiCard(){
 bool HuatianAiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    if(ClientInstance->getPattern().endsWith("ai"))
-        return to_select != Self && to_select->isWounded();
-    else
-        return to_select != Self;
+    return to_select != Self && to_select->isWounded();
 }
 
 void HuatianAiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(ClientInstance->getPattern().endsWith("ai")){
-        RecoverStruct recovvv;
-        recovvv.card = this;
-        recovvv.who = effect.from;
-        room->playSkillEffect("huatian", qrand() % 2 + 1);
-        room->recover(effect.to, recovvv);
-    }
-    else{
-        DamageStruct damag;
-        damag.from = effect.from;
-        damag.to = effect.to;
-        damag.card = this;
-        room->playSkillEffect("huatian", qrand() % 2 + 3);
-        room->damage(damag);
-    }
+    RecoverStruct recovvv;
+    recovvv.card = this;
+    recovvv.who = effect.from;
+    room->playSkillEffect("huatian", qrand() % 2 + 1);
+    room->recover(effect.to, recovvv);
 }
 
-class HuatianAi: public ZeroCardViewAsSkill{
+HuatianCuoCard::HuatianCuoCard(){
+    mute = true;
+}
+
+bool HuatianCuoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select != Self;
+}
+
+void HuatianCuoCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    DamageStruct damag;
+    damag.from = effect.from;
+    damag.to = effect.to;
+    damag.card = this;
+    room->playSkillEffect("huatian", qrand() % 2 + 3);
+    room->damage(damag);
+}
+
+class HuatianViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    HuatianAi():ZeroCardViewAsSkill("huatian"){
+    HuatianViewAsSkill():ZeroCardViewAsSkill("huatian"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -542,14 +549,17 @@ public:
     }
 
     virtual const Card *viewAs() const{
-        return new HuatianAiCard;
+        if(ClientInstance->getPattern().endsWith("ai"))
+            return new HuatianAiCard;
+        else
+            return new HuatianCuoCard;
     }
 };
 
 class Huatian:public TriggerSkill{
 public:
     Huatian():TriggerSkill("huatian"){
-        view_as_skill = new HuatianAi;
+        view_as_skill = new HuatianViewAsSkill;
         events << Damaged << HpRecover;
     }
 
@@ -645,6 +655,52 @@ public:
             if(!room->askForUseCard(qiaodaoq, "@@huanshu", "@huanshu"))
                 break;
         }
+    }
+};
+
+class Yixing: public TriggerSkill{
+public:
+    Yixing():TriggerSkill("yixing"){
+        events << AskForRetrial;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        if(!TriggerSkill::triggerable(target))
+            return false;
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        JudgeStar judge = data.value<JudgeStar>();
+
+        player->tag["Judge"] = data;
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+            if(!tmp->getEquips().isEmpty())
+                targets << tmp;
+        }
+        if(targets.isEmpty())
+            return false;
+        if(player->askForSkillInvoke(objectName())){
+            ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+            int card_id = room->askForCardChosen(player, target, "e", objectName());
+            const Card *card = Sanguosha->getCard(card_id);
+            player->obtainCard(judge->card);
+
+            judge->card = card;
+            room->moveCardTo(judge->card, NULL, Player::Special);
+
+            LogMessage log;
+            log.type = "$ChangedJudge";
+            log.from = player;
+            log.to << judge->who;
+            log.card_str = card->getEffectIdString();
+            room->sendLog(log);
+
+            room->sendJudgeResult(judge);
+        }
+        return false;
     }
 };
 
@@ -888,6 +944,7 @@ TTXDPackage::TTXDPackage()
 
     General *andaoquan = new General(this, "andaoquan", "wu", 3);
     General *gongsunsheng = new General(this, "gongsunsheng", "qun", 3);
+    gongsunsheng->addSkill(new Yixing);
 
     General *gaoqiu = new General(this, "gaoqiu$", "wei", 3);
     gaoqiu->addSkill(new Hengxing);
@@ -902,6 +959,7 @@ TTXDPackage::TTXDPackage()
     addMetaObject<JuyiCard>();
     addMetaObject<HaoshenCard>();
     addMetaObject<HuatianAiCard>();
+    addMetaObject<HuatianCuoCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();

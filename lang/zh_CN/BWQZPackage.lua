@@ -1,7 +1,7 @@
 -- TitianXingDao Shuihusha part 4.
 
 return {
-	["BWQZ"] = "博闻强识", 
+	["BWQZ"] = "博闻强识",
 
 	["#_houjian"] = "通臂猿",
 	["houjian"] = "侯健",

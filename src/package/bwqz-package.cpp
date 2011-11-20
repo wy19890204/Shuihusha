@@ -5,6 +5,25 @@
 #include "engine.h"
 #include "standard.h"
 #include "clientplayer.h"
+#include "maneuvering.h"
+
+class Zaochuan: public OneCardViewAsSkill{
+public:
+    Zaochuan():OneCardViewAsSkill("zaochuan"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
+        chain->addSubcard(card);
+        chain->setSkillName(objectName());
+        return chain;
+    }
+};
 
 YuanyinCard::YuanyinCard(){
 }
