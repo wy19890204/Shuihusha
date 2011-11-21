@@ -313,6 +313,96 @@ public:
     }
 };
 
+ShougeCard::ShougeCard(){
+    will_throw = false;
+    target_fixed = true;
+}
+
+void ShougeCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->addToPile("vege", this->getSubcards().first());
+}
+
+class ShougeViewAsSkill: public OneCardViewAsSkill{
+public:
+    ShougeViewAsSkill():OneCardViewAsSkill("shouge"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Peach") ||
+                to_select->getCard()->inherits("Analeptic");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ShougeCard *card = new ShougeCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Shouge: public TriggerSkill{
+public:
+    Shouge():TriggerSkill("shouge"){
+        view_as_skill = new ShougeViewAsSkill;
+        events << CardLost << HpLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getPhase() == Player::NotActive;
+    }
+
+    static bool doDraw(Room *room, ServerPlayer *vgqq){
+        room->throwCard(vgqq->getPile("vege").last());
+        vgqq->drawCards(3);
+        return vgqq->getPile("vege").isEmpty();
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *vgqq, QVariant &data) const{
+        Room *room = vgqq->getRoom();
+        if(vgqq->getPile("vege").isEmpty())
+            return false;
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand && move->to != vgqq
+               && vgqq->askForSkillInvoke(objectName())){
+                doDraw(room, vgqq);
+            }
+        }
+        else{
+            int lose = data.toInt();
+            for(; lose > 0; lose --){
+                if(vgqq->askForSkillInvoke(objectName()))
+                    if(doDraw(room, vgqq))
+                        break;
+            }
+        }
+        return false;
+    }
+};
+
+class Qiongtu: public PhaseChangeSkill{
+public:
+    Qiongtu():PhaseChangeSkill("qiongtu"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        Room *room = target->getRoom();
+        ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
+        if(zhangqing && target->getPhase() == Player::Finish){
+            if(target->getHandcardNum() <= 1 && !target->isNude()
+                && zhangqing->askForSkillInvoke(objectName())){
+                int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
+                room->obtainCard(zhangqing, card_id);
+            }
+        }
+        return false;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -329,11 +419,16 @@ BWQZPackage::BWQZPackage()
     General *shantinggui = new General(this, "shantinggui", "jiang", 5);
     shantinggui->addSkill(new Xiaofang);
 
+    General *qingzhang = new General(this, "qingzhang", "kou", 3);
+    qingzhang->addSkill(new Shouge);
+    qingzhang->addSkill(new Qiongtu);
+
     General *jiashi = new General(this, "jiashi", "min", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
 
     addMetaObject<YuanyinCard>();
+    addMetaObject<ShougeCard>();
 }
 
 ADD_PACKAGE(BWQZ);

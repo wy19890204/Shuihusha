@@ -165,7 +165,7 @@ local tt = {
 	["$qimen1"] = "汝逢大凶，不宜出兵再战。",
 	["$qimen2"] = "小奇改门户，大奇变格局。",
 
-	["#_gaoqiu"] = "太尉",
+	["#_gaoqiu"] = "帅府太尉",
 	["gaoqiu"] = "高俅",
 	["cv:gaoqiu"] = "爪子",
 	["coder:gaoqiu"] = "roxiel、宇文天启",
