@@ -153,7 +153,7 @@ table.insert(sgs.ai_skills,huangtianv_skill)
 huangtianv_skill.getTurnUseCard=function(self)
     if self.player:hasUsed("HuangtianCard") then return nil end
     if self.player:isLord() then return nil end
-    if self.player:getKingdom() ~= "qun" then return nil end
+    if self.player:getKingdom() ~= "kou" then return nil end
 	if not self.room:getLord():hasSkill("huangtian") then return nil end
 
     local cards = self.player:getCards("h")	

@@ -411,7 +411,7 @@ public:
 
 class Jiang: public TriggerSkill{
 public:
-    Jiang():TriggerSkill("jiang"){
+    Jiang():TriggerSkill("Jiang"){
         events << CardUsed << CardEffected;
 
         frequency = Frequent;
@@ -497,7 +497,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("ZhibaCard") && player->getKingdom() == "wu" && !player->isKongcheng();
+        return ! player->hasUsed("ZhibaCard") && player->getKingdom() == "min" && !player->isKongcheng();
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
@@ -1095,52 +1095,52 @@ public:
 MountainPackage::MountainPackage()
     :Package("mountain")
 {
-    General *zhanghe = new General(this, "zhanghe", "wei");
+    General *zhanghe = new General(this, "zhanghe", "guan");
     zhanghe->addSkill(new Qiaobian);
 
-    General *dengai = new General(this, "dengai", "wei", 4);
+    General *dengai = new General(this, "dengai", "guan", 4);
     dengai->addSkill(new Tuntian);
     dengai->addSkill(new TuntianGet);
     dengai->addSkill(new Zaoxian);
 
     related_skills.insertMulti("tuntian", "#tuntian-get");
 
-    General *liushan = new General(this, "liushan$", "shu", 3);
+    General *liushan = new General(this, "liushan$", "jiang", 3);
     liushan->addSkill(new Xiangle);
     liushan->addSkill(new Fangquan);
     liushan->addSkill(new Ruoyu);
 
-    General *jiangwei = new General(this, "jiangwei", "shu");
+    General *jiangwei = new General(this, "jiangwei", "jiang");
     jiangwei->addSkill(new Tiaoxin);
     jiangwei->addSkill(new Zhiji);
 
     related_skills.insertMulti("zhiji", "guanxing");
 
-    General *sunce = new General(this, "sunce$", "wu");
+    General *sunce = new General(this, "sunce$", "min");
     sunce->addSkill(new Jiang);
     sunce->addSkill(new Hunzi);
     sunce->addSkill(new SunceZhiba);
 
     related_skills.insertMulti("hunzi", "yinghun");
 
-    General *erzhang = new General(this, "erzhang", "wu", 3);
+    General *erzhang = new General(this, "erzhang", "min", 3);
     erzhang->addSkill(new Zhijian);
     erzhang->addSkill(new Guzheng);
     erzhang->addSkill(new GuzhengGet);
 
     related_skills.insertMulti("guzheng", "#guzheng-get");
 
-    General *caiwenji = new General(this, "caiwenji", "qun", 3, false);
+    General *caiwenji = new General(this, "caiwenji", "kou", 3, false);
     caiwenji->addSkill(new Beige);
     caiwenji->addSkill(new Duanchang);
 
-    General *zuoci = new General(this, "zuoci", "qun", 3);
+    General *zuoci = new General(this, "zuoci", "kou", 3);
     zuoci->addSkill(new Huashen);
     zuoci->addSkill(new HuashenBegin);
     zuoci->addSkill(new HuashenEnd);
     zuoci->addSkill(new Xinsheng);
 
-    General *zuocif = new General(this, "zuocif", "qun", 3, false, true);
+    General *zuocif = new General(this, "zuocif", "kou", 3, false, true);
     zuocif->addSkill("huashen");
     zuocif->addSkill("#huashen-begin");
     zuocif->addSkill("#huashen-end");

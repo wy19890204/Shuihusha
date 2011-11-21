@@ -143,7 +143,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->hasLordSkill("jijiang") && Slash::IsAvailable(player);
+        return player->hasLordSkill("ji"jiang"") && Slash::IsAvailable(player);
     }
 
     virtual const Card *viewAs() const{
@@ -316,20 +316,20 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
-    General *houjian = new General(this, "houjian", "wu", 3);
+    General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 
-    General *mengkang = new General(this, "mengkang", "qun", 3);
+    General *mengkang = new General(this, "mengkang", "kou", 3);
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
 
-    General *jiaoting = new General(this, "jiaoting", "wu", 4);
+    General *jiaoting = new General(this, "jiaoting", "min", 4);
     jiaoting->addSkill(new Skill("qinlong"));
 
-    General *shantinggui = new General(this, "shantinggui", "shu", 5);
+    General *shantinggui = new General(this, "shantinggui", "jiang", 5);
     shantinggui->addSkill(new Xiaofang);
 
-    General *jiashi = new General(this, "jiashi", "wu", 3, false);
+    General *jiashi = new General(this, "jiashi", "min", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
 

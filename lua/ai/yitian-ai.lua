@@ -145,7 +145,7 @@ local function findPlayerForModifyKingdom(self, players)
 				return player
 			end
 		elseif lord:hasLordSkill("xueyi") and not player:isLord() then
-			local isQun = player:getKingdom() == "qun"
+			local isQun = player:getKingdom() == "kou"
 			if isGood ~= isQun then
 				return player
 			end
@@ -161,7 +161,7 @@ local function chooseKingdomForPlayer(self, to_modify)
 			return lord:getKingdom()
 		else
 			-- find a kingdom that is different from the lord
-			local kingdoms = {"wei", "shu", "wu", "qun"}
+			local kingdoms = {"guan", "jiang", "min", "kou"}
 			for _, kingdom in ipairs(kingdoms) do
 				if lord:getKingdom() ~= kingdom then
 					return kingdom
@@ -169,10 +169,10 @@ local function chooseKingdomForPlayer(self, to_modify)
 			end
 		end
 	elseif lord:hasLordSkill("xueyi") and not to_modify:isLord() then
-		return isGood and "qun" or "wei"
+		return isGood and "kou" or "guan"
 	end
 
-	return "wei"
+	return "guan"
 end
 
 sgs.ai_skill_choice.guixin2 = function(self, choices)

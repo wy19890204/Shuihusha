@@ -491,7 +491,7 @@ int Player::getMaxCards() const{
     if(hasLordSkill("xueyi")){
         QList<const Player *> players = getSiblings();
         foreach(const Player *player, players){
-            if(player->isAlive() && player->getKingdom() == "qun")
+            if(player->isAlive() && player->getKingdom() == "kou")
                 xueyi += 2;
         }
     }

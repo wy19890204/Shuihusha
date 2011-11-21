@@ -970,7 +970,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasLordSkill(objectName()) && target->getKingdom() == "wu";
+        return !target->hasLordSkill(objectName()) && target->getKingdom() == "min";
     }
 
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
@@ -999,57 +999,57 @@ public:
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
 
-    General *huarong = new General(this, "huarong", "wei", 4); //guan == wei
+    General *huarong = new General(this, "huarong", "guan", 4); //guan == wei
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
     patterns.insert(".kaixian!", new KaixianPattern);
 
-    General *liying = new General(this, "liying", "wei");
+    General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);
 
-    General *luzhishen = new General(this, "luzhishen", "qun"); //kou == qun
+    General *luzhishen = new General(this, "luzhishen", "kou"); //kou == qun
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
 
-    General *wusong = new General(this, "wusong", "qun");
+    General *wusong = new General(this, "wusong", "kou");
     wusong->addSkill(new Fuhu);
 
-    General *shijin = new General(this, "shijin", "qun");
+    General *shijin = new General(this, "shijin", "kou");
     shijin->addSkill(new Wubang);
     shijin->addSkill(new Xiagu);
     patterns[".equip"] = new EquipPattern;
 
-    General *yanqing = new General(this, "yanqing", "wu", 3); //min == wu
+    General *yanqing = new General(this, "yanqing", "min", 3); //min == wu
     yanqing->addSkill(new Dalei);
     yanqing->addSkill(new Fuqin);
 
-    General *zhuwu = new General(this, "zhuwu", "qun", 3);
+    General *zhuwu = new General(this, "zhuwu", "kou", 3);
     zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
     zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
     related_skills.insertMulti("buzhen", "#@buvr");
     zhuwu->addSkill(new Fangzhen);
 
-    General *hantao = new General(this, "hantao", "wei");
+    General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
-    General *oupeng = new General(this, "oupeng", "shu", 5); //jiang == shu
+    General *oupeng = new General(this, "oupeng", "jiang", 5); //jiang == shu
     oupeng->addSkill(new Losthp);
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
     related_skills.insertMulti("zhanchi", "#@vfui");
     skills << new Tengfei;
 
-    General *shien = new General(this, "shien", "wu", 3);
+    General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
-    General *wangqing = new General(this, "wangqing$", "wu");
+    General *wangqing = new General(this, "wangqing$", "min");
     wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
 
-    General *luozhenren = new General(this, "luozhenren", "qun", 3);
+    General *luozhenren = new General(this, "luozhenren", "kou", 3);
     luozhenren->addSkill(new Butian);
     luozhenren->addSkill(new Huaxian);
 

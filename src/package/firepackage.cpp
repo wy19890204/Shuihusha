@@ -538,36 +538,36 @@ FirePackage::FirePackage()
 {
     General *xunyu, *dianwei, *wolong, *pangtong, *taishici, *yuanshao, *shuangxiong, *pangde;
 
-    xunyu = new General(this, "xunyu", "wei", 3);
+    xunyu = new General(this, "xunyu", "guan", 3);
     xunyu->addSkill(new Quhu);
     xunyu->addSkill(new Jieming);
 
-    dianwei = new General(this, "dianwei", "wei");
+    dianwei = new General(this, "dianwei", "guan");
     dianwei->addSkill(new Qiangxi);
 
-    wolong = new General(this, "wolong", "shu", 3);
+    wolong = new General(this, "wolong", "jiang", 3);
     wolong->addSkill(new Huoji);
     wolong->addSkill(new Kanpo);
     wolong->addSkill(new Bazhen);
 
-    pangtong = new General(this, "pangtong", "shu", 3);
+    pangtong = new General(this, "pangtong", "jiang", 3);
     pangtong->addSkill(new Lianhuan);
     pangtong->addSkill(new MarkAssignSkill("@nirvana", 1));
     pangtong->addSkill(new Niepan);
 
     related_skills.insertMulti("niepan", "#@nirvana");
 
-    taishici = new General(this, "taishici", "wu");
+    taishici = new General(this, "taishici", "min");
     taishici->addSkill(new Tianyi);
 
-    yuanshao = new General(this, "yuanshao$", "qun");
+    yuanshao = new General(this, "yuanshao$", "kou");
     yuanshao->addSkill(new Luanji);
     yuanshao->addSkill(new Skill("xueyi$", Skill::Compulsory));
 
-    shuangxiong = new General(this, "shuangxiong", "qun");
+    shuangxiong = new General(this, "shuangxiong", "kou");
     shuangxiong->addSkill(new Shuangxiong);
 
-    pangde = new General(this, "pangde", "qun");
+    pangde = new General(this, "pangde", "kou");
     pangde->addSkill(new Mengjin);
     pangde->addSkill("mashu");
 
