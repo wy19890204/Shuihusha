@@ -145,14 +145,17 @@ public:
             return false;
         if(evt == Damaged){
             if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName(), 1);
+                if(duck->getMark("baoguo") == 0)
+                    room->playSkillEffect(objectName(), 1);
                 duck->drawCards(duck->getLostHp());
             }
+            duck->setMark("baoguo", 0);
         }
         else if(duck != player && !duck->isNude() && duck->askForSkillInvoke(objectName())){
             if(room->askForDiscard(duck, objectName(), 1, false, true)){
                 room->playSkillEffect(objectName(), 2);
                 damage.to = duck;
+                duck->setMark("baoguo", 1);
                 room->damage(damage);
                 return true;
             }
