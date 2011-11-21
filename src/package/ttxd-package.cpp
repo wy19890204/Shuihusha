@@ -1054,7 +1054,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *ply, QVariant &data) const{
         Room *room = ply->getRoom();
         ServerPlayer *gaoqiu = room->findPlayerBySkillName(objectName());
-        if(!gaoqiu)
+        if(!gaoqiu || !gaoqiu->hasLordSkill(objectName()))
             return false;
         RecoverStruct recover = data.value<RecoverStruct>();
         for(int i = 0; i < recover.recover; i++){
