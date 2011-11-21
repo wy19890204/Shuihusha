@@ -107,7 +107,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "wei";
+        return target->getKingdom() == "guan";
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
@@ -829,7 +829,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "qun";
+        return target->getKingdom() == "kou";
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
@@ -872,32 +872,32 @@ ThicketPackage::ThicketPackage()
 {
     General *caopi, *xuhuang, *menghuo, *zhurong, *sunjian, *lusu, *jiaxu, *dongzhuo;
 
-    caopi = new General(this, "caopi$", "wei", 3);
+    caopi = new General(this, "caopi$", "guan", 3);
     caopi->addSkill(new Xingshang);
     caopi->addSkill(new Fangzhu);
     caopi->addSkill(new Songwei);
 
-    xuhuang = new General(this, "xuhuang", "wei");
+    xuhuang = new General(this, "xuhuang", "guan");
     xuhuang->addSkill(new Duanliang);
 
-    menghuo = new General(this, "menghuo", "shu");
+    menghuo = new General(this, "menghuo", "jiang");
     menghuo->addSkill(new SavageAssaultAvoid("huoshou"));
     menghuo->addSkill(new Huoshou);
     menghuo->addSkill(new Zaiqi);
 
     related_skills.insertMulti("huoshou", "#sa_avoid_huoshou");
 
-    zhurong = new General(this, "zhurong", "shu", 4, false);
+    zhurong = new General(this, "zhurong", "jiang", 4, false);
     zhurong->addSkill(new SavageAssaultAvoid("juxiang"));
     zhurong->addSkill(new Juxiang);
     zhurong->addSkill(new Lieren);
 
     related_skills.insertMulti("juxiang", "#sa_avoid_juxiang");
 
-    sunjian = new General(this, "sunjian", "wu");
+    sunjian = new General(this, "sunjian", "min");
     sunjian->addSkill(new Yinghun);
 
-    lusu = new General(this, "lusu", "wu", 3);
+    lusu = new General(this, "lusu", "min", 3);
     lusu->addSkill(new Haoshi);
     lusu->addSkill(new HaoshiViewAsSkill);
     lusu->addSkill(new HaoshiGive);
@@ -906,7 +906,7 @@ ThicketPackage::ThicketPackage()
     related_skills.insertMulti("haoshi", "#haoshi");
     related_skills.insertMulti("haoshi", "#haoshi-give");
 
-    jiaxu = new General(this, "jiaxu", "qun", 3);
+    jiaxu = new General(this, "jiaxu", "kou", 3);
     jiaxu->addSkill(new Skill("wansha", Skill::Compulsory));
     jiaxu->addSkill(new Weimu);
     jiaxu->addSkill(new MarkAssignSkill("@chaos", 1));
@@ -914,7 +914,7 @@ ThicketPackage::ThicketPackage()
 
     related_skills.insertMulti("luanwu", "#@chaos");
 
-    dongzhuo = new General(this, "dongzhuo$", "qun", 8);
+    dongzhuo = new General(this, "dongzhuo$", "kou", 8);
     dongzhuo->addSkill(new Jiuchi);
     dongzhuo->addSkill(new Roulin);
     dongzhuo->addSkill(new Benghuai);

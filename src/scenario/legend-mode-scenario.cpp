@@ -208,10 +208,10 @@ void ChuanqiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
 
         static QMap<QString,int> amap;
         if(amap.isEmpty()){
-            amap.insert("wu",Card::Diamond);
-            amap.insert("shu",Card::Heart);
-            amap.insert("wei",Card::Spade);
-            amap.insert("qun",Card::Club);
+            amap.insert("min",Card::Diamond);
+            amap.insert("jiang",Card::Heart);
+            amap.insert("guan",Card::Spade);
+            amap.insert("kou",Card::Club);
         }
 
         if(amap.value(kingdom)!=suit)room->throwCard(this);
@@ -250,10 +250,10 @@ void ArcChuanqiCard::use(Room *room, ServerPlayer *source, const QList<ServerPla
 
         static QMap<QString,int> amap;
         if(amap.isEmpty()){
-            amap.insert("wu",Card::Diamond);
-            amap.insert("shu",Card::Heart);
-            amap.insert("wei",Card::Spade);
-            amap.insert("qun",Card::Club);
+            amap.insert("min",Card::Diamond);
+            amap.insert("jiang",Card::Heart);
+            amap.insert("guan",Card::Spade);
+            amap.insert("kou",Card::Club);
         }
 
         if(amap.value(kingdom)!=suit)room->throwCard(this);

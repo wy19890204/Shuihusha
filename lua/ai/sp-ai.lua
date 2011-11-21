@@ -93,12 +93,12 @@ end
 
 -- chujia
 sgs.ai_skill_invoke.chujia = function(self, data)
-	return self.room:getLord():getKingdom() == "shu"
+	return self.room:getLord():getKingdom() == "jiang"
 end
 
 -- guixiang
 sgs.ai_skill_invoke.guixiang = function(self, data)
-	return self.room:getLord():getKingdom() == "wei"
+	return self.room:getLord():getKingdom() == "guan"
 end
 
 sgs.ai_skill_invoke.sp_moonspear = function(self, data)

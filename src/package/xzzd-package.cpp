@@ -714,49 +714,49 @@ public:
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){ //guan == wei, jiang == shu, min == wu, kou == qun
 
-    General *linchong = new General(this, "linchong", "shu");
+    General *linchong = new General(this, "linchong", "jiang");
     linchong->addSkill(new Duijue);
 
-    General *zhutong = new General(this, "zhutong", "wu");
+    General *zhutong = new General(this, "zhutong", "min");
     zhutong->addSkill(new Yixian);
 
-    General *yangzhi = new General(this, "yangzhi", "wei");
+    General *yangzhi = new General(this, "yangzhi", "guan");
     yangzhi->addSkill(new Maidao);
     skills << new Maida0;
     yangzhi->addSkill(new Fengmang);
     yangzhi->addSkill(new FengmangBuff);
     related_skills.insertMulti("fengmang", "#fengmangbuff");
 
-    General *likui = new General(this, "likui", "shu");
+    General *likui = new General(this, "likui", "jiang");
     likui->addSkill(new Shalu);
 
-    General *zhangshun = new General(this, "zhangshun", "qun", 3);
+    General *zhangshun = new General(this, "zhangshun", "kou", 3);
     zhangshun->addSkill(new Shunshui);
     zhangshun->addSkill(new Lihun);
 
-    General *weidingguo = new General(this, "weidingguo", "shu", 3);
+    General *weidingguo = new General(this, "weidingguo", "jiang", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
 
-    General *huangxin = new General(this, "huangxin", "shu");
+    General *huangxin = new General(this, "huangxin", "jiang");
     huangxin->addSkill(new Tongxia);
 
-    General *yanshun = new General(this, "yanshun", "shu");
+    General *yanshun = new General(this, "yanshun", "jiang");
     yanshun->addSkill(new Huxiao);
 
-    General *peixuan = new General(this, "peixuan", "wei", 3);
+    General *peixuan = new General(this, "peixuan", "guan", 3);
     peixuan->addSkill(new Shenpan);
     peixuan->addSkill(new Binggong);
 
-    General *lizhong = new General(this, "lizhong", "qun", 4);
+    General *lizhong = new General(this, "lizhong", "kou", 4);
     lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
 
-    General *gongwang = new General(this, "gongwang", "shu");
+    General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);
     patterns[".FeiQ"] = new FeiQPattern;
 
-    General *shiqian = new General(this, "shiqian", "qun", 3);
+    General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 

@@ -104,7 +104,7 @@ public:
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->hasLordSkill("juyi")
-                && player->getKingdom() == "qun"
+                && player->getKingdom() == "kou"
                 && !player->hasUsed("JuyiCard");
     }
 
@@ -705,7 +705,7 @@ public:
 };
 
 QimenStruct::QimenStruct()
-    :kingdom("wei"), generalA("gongsunsheng"), generalB("zhuwu"), maxhp(5), skills(NULL)
+    :kingdom("guan"), generalA("gongsunsheng"), generalB("zhuwu"), maxhp(5), skills(NULL)
 {
 }
 
@@ -915,7 +915,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName()) && target->getKingdom() == "wei";
+        return !target->hasSkill(objectName()) && target->getKingdom() == "guan";
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *ply, QVariant &data) const{
@@ -1027,49 +1027,49 @@ public:
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
 { //guan == wei, jiang == shu, min == wu, kou == qun
-    General *songjiang = new General(this, "songjiang$", "qun");
+    General *songjiang = new General(this, "songjiang$", "kou");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
     skills << new JuyiViewAsSkill;
 
-    General *lujunyi = new General(this, "lujunyi", "wei");
+    General *lujunyi = new General(this, "lujunyi", "guan");
     lujunyi->addSkill(new Baoguo);
 
-    General *chaijin = new General(this, "chaijin", "wei", 3);
+    General *chaijin = new General(this, "chaijin", "guan", 3);
     chaijin->addSkill(new Danshu);
     chaijin->addSkill(new Haoshen);
 
-    General *zhangqing = new General(this, "zhangqing", "wei");
+    General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
 
-    General *yuehe = new General(this, "yuehe", "wu", 3);
+    General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
-    General *muhong = new General(this, "muhong", "shu");
+    General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     muhong->addSkill(new Huqi);
 
-    General *zhoutong = new General(this, "zhoutong", "qun", 3);
+    General *zhoutong = new General(this, "zhoutong", "kou", 3);
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 
-    General *qiaodaoqing = new General(this, "qiaodaoqing", "qun", 3);
+    General *qiaodaoqing = new General(this, "qiaodaoqing", "kou", 3);
     qiaodaoqing->addSkill(new Huanshu);
     qiaodaoqing->addSkill(new Mozhang);
 
-    General *andaoquan = new General(this, "andaoquan", "wu", 3);
+    General *andaoquan = new General(this, "andaoquan", "min", 3);
 
-    General *gongsunsheng = new General(this, "gongsunsheng", "qun", 3);
+    General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
     gongsunsheng->addSkill(new Yixing);
     gongsunsheng->addSkill(new Qimen);
 
-    General *gaoqiu = new General(this, "gaoqiu$", "wei", 3);
+    General *gaoqiu = new General(this, "gaoqiu$", "guan", 3);
     gaoqiu->addSkill(new Hengxing);
     gaoqiu->addSkill(new Cuju);
     gaoqiu->addSkill(new Panquan);
 
-    General *husanniang = new General(this, "husanniang", "shu", 3, false);
+    General *husanniang = new General(this, "husanniang", "jiang", 3, false);
     husanniang->addSkill(new Hongjin);
     husanniang->addSkill(new Wuji);
 

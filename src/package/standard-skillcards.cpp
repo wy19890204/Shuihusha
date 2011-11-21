@@ -263,7 +263,7 @@ bool JijiangCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void JijiangCard::use(Room *room, ServerPlayer *liubei, const QList<ServerPlayer *> &targets) const{
-    QList<ServerPlayer *> lieges = room->getLieges("shu", liubei);
+    QList<ServerPlayer *> lieges = room->getLieges("jiang", liubei);
     const Card *slash = NULL;
 
     QVariant tohelp = QVariant::fromValue((PlayerStar)liubei);

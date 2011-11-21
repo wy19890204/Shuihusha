@@ -3291,7 +3291,7 @@ function SmartAI:getCardsNum(class_name, player, flag)
 	
 	if class_name == "Jink" then
 		if player:hasLordSkill("hujia") then
-			local lieges = self.room:getLieges("wei", player)
+			local lieges = self.room:getLieges("guan", player)
 			for _, liege in sgs.qlist(lieges) do
 				if self:isFriend(liege, player) then
 				n = n + self:getCardsNum("Jink", liege)
@@ -3303,7 +3303,7 @@ function SmartAI:getCardsNum(class_name, player, flag)
 			n = n * 2
 		end
 		if player:hasLordSkill("jijiang") then
-			local lieges = self.room:getLieges("shu", player)
+			local lieges = self.room:getLieges("jiang", player)
 			for _, liege in sgs.qlist(lieges) do
 				if self:isFriend(liege, player) then
 				n = n + self:getCardsNum("Slash", liege)

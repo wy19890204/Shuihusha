@@ -2435,7 +2435,7 @@ QString Room::askForKingdom(ServerPlayer *player){
         return askForKingdom(player);
 
     if(result == ".")
-        return "wei";
+        return "guan";
     else
         return result;
 }
