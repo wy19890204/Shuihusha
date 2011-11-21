@@ -53,6 +53,17 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
+struct QimenStruct{
+    QimenStruct();
+    QString kingdom;
+    QString generalA;
+    QString generalB;
+    int maxhp;
+    QStringList skills;
+};
+
+Q_DECLARE_METATYPE(QimenStruct);
+
 class CujuCard: public SkillCard{
     Q_OBJECT
 
@@ -81,6 +92,7 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+typedef Skill SkillClass;
 class TTXDPackage: public Package{
     Q_OBJECT
 
