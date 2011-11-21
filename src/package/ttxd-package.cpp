@@ -712,6 +712,7 @@ YanshouCard::YanshouCard(){
 }
 
 void YanshouCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->loseMark("@life");
     effect.from->getRoom()->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
 }
 
@@ -1143,6 +1144,9 @@ TTXDPackage::TTXDPackage()
 
     General *andaoquan = new General(this, "andaoquan", "min", 3);
     andaoquan->addSkill(new Jishi);
+    andaoquan->addSkill(new Yanshou);
+    andaoquan->addSkill(new MarkAssignSkill("@life", 1));
+    related_skills.insertMulti("yanshou", "#@life");
     andaoquan->addSkill(new Fengyue);
 
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
@@ -1166,6 +1170,7 @@ TTXDPackage::TTXDPackage()
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();
+    addMetaObject<YanshouCard>();
 }
 
 ADD_PACKAGE(TTXD)
