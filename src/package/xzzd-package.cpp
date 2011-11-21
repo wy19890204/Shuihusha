@@ -112,9 +112,11 @@ public:
 MaidaoCard::MaidaoCard(){
     will_throw = false;
     target_fixed = true;
+    mute = true;
 }
 
 void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->getRoom()->playSkillEffect("maidao", qrand() % 2 + 1);
     source->addToPile("knife", this->getSubcards().first());
 }
 
@@ -654,7 +656,8 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     if(!room->askForCard(effect.to, ".FeiQ", "@feiqiang:" + effect.from->objectName())){
-        QString choice = room->askForChoice(effect.from, "feiqiang", "gong+wang");
+        QString choice = effect.to->getCards("e").isEmpty() ? "gong"
+            : room->askForChoice(effect.from, "feiqiang", "gong+wang");
         if(choice == "gong"){
             room->playSkillEffect("feiqiang", 1);
             room->loseHp(effect.to);
