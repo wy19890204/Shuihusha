@@ -675,7 +675,7 @@ public:
             return false;
         if(lingtianyi->askForSkillInvoke(objectName())){
             RecoverStruct lty;
-            lty.card = room->askForCardShow(lingtianyi, lingtianyi, objectName());
+            lty.card = room->askForCardShow(lingtianyi, player, objectName());
             lty.who = lingtianyi;
             room->throwCard(lty.card);
             room->playSkillEffect(objectName());
@@ -711,9 +711,21 @@ public:
 YanshouCard::YanshouCard(){
 }
 
+bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Player *, const Player *Self) const{
+    return targets.isEmpty();
+}
+
 void YanshouCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    room->broadcastInvoke("animate", "lightbox:$xuming");
     effect.from->loseMark("@life");
-    effect.from->getRoom()->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
+    LogMessage log;
+    log.type = "#Yanshou";
+    log.from = effect.from;
+    log.to << effect.to;
+
+    room->sendLog(log);
+    room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
 }
 
 class Yanshou: public ViewAsSkill{
@@ -729,7 +741,6 @@ public:
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         if(selected.length() >= 2)
             return false;
-
         return to_select->getCard()->getSuit() == Card::Heart;
     }
 
