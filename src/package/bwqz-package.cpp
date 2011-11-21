@@ -316,9 +316,11 @@ public:
 ShougeCard::ShougeCard(){
     will_throw = false;
     target_fixed = true;
+    mute = true;
 }
 
-void ShougeCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void ShougeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->playSkillEffect("shouge", qrand() % 2 + 1);
     source->addToPile("vege", this->getSubcards().first());
 }
 
@@ -353,6 +355,7 @@ public:
 
     static bool doDraw(Room *room, ServerPlayer *vgqq){
         room->throwCard(vgqq->getPile("vege").last());
+        room->playSkillEffect("shouge", qrand() % 2 + 3);
         vgqq->drawCards(3);
         return vgqq->getPile("vege").isEmpty();
     }
@@ -395,6 +398,7 @@ public:
         if(zhangqing && target->getPhase() == Player::Finish){
             if(target->getHandcardNum() <= 1 && !target->isNude()
                 && zhangqing->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
                 int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
                 room->obtainCard(zhangqing, card_id);
             }
