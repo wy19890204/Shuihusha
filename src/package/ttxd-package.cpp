@@ -671,7 +671,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
-        if(!lingtianyi)
+        if(!lingtianyi || lingtianyi->isKongcheng())
             return false;
         if(lingtianyi->askForSkillInvoke(objectName())){
             RecoverStruct lty;
