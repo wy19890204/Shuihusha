@@ -92,6 +92,15 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class YanshouCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE YanshouCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 typedef Skill SkillClass;
 class TTXDPackage: public Package{
     Q_OBJECT
