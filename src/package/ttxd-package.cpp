@@ -658,6 +658,89 @@ public:
     }
 };
 
+class Jishi: public TriggerSkill{
+public:
+    Jishi():TriggerSkill("jishi"){
+        events << TurnStart;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->isWounded();
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
+        if(!lingtianyi)
+            return false;
+        if(lingtianyi->askForSkillInvoke(objectName())){
+            RecoverStruct lty;
+            lty.card = room->askForCardShow(lingtianyi, lingtianyi, objectName());
+            lty.who = lingtianyi;
+            room->throwCard(lty.card);
+            room->playSkillEffect(objectName());
+            room->recover(player, lty);
+        }
+        return false;
+    }
+};
+
+class Fengyue: public PhaseChangeSkill{
+public:
+    Fengyue():PhaseChangeSkill("fengyue"){
+        frequency = Frequent;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *yinzei) const{
+        if(yinzei->getPhase() == Player::Finish){
+            Room *room = yinzei->getRoom();
+            int girl = 0;
+            foreach(ServerPlayer *t, room->getAlivePlayers()){
+                if(t->getGeneral()->isFemale())
+                    girl ++;
+            }
+            if(girl > 0 && room->askForSkillInvoke(yinzei, objectName())){
+                room->playSkillEffect(objectName());
+                yinzei->drawCards(qMin(girl, 2));
+            }
+        }
+        return false;
+    }
+};
+
+YanshouCard::YanshouCard(){
+}
+
+void YanshouCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->getRoom()->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
+}
+
+class Yanshou: public ViewAsSkill{
+public:
+    Yanshou():ViewAsSkill("yanshou"){
+        frequency = Limited;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getMark("@life") >= 1;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 2)
+            return false;
+
+        return to_select->getCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        YanshouCard *card = new YanshouCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
 class Yixing: public TriggerSkill{
 public:
     Yixing():TriggerSkill("yixing"){
@@ -1059,6 +1142,8 @@ TTXDPackage::TTXDPackage()
     qiaodaoqing->addSkill(new Mozhang);
 
     General *andaoquan = new General(this, "andaoquan", "min", 3);
+    andaoquan->addSkill(new Jishi);
+    andaoquan->addSkill(new Fengyue);
 
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
     gongsunsheng->addSkill(new Yixing);

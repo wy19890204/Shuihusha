@@ -64,9 +64,9 @@ public:
     }
 };
 
-class Jishi: public PhaseChangeSkill{
+class JishI: public PhaseChangeSkill{
 public:
-    Jishi():PhaseChangeSkill("jishi"){
+    JishI():PhaseChangeSkill("jishI"){
         frequency = Compulsory;
     }
 
@@ -93,7 +93,7 @@ public:
             if(!invoke_skill)   return false;
 
             LogMessage log;
-            log.type = "#Jishi";
+            log.type = "#JishI";
             log.from = target;
             room->sendLog(log);
 
@@ -377,7 +377,7 @@ public:
                         room->acquireSkill(player, "kedi");
                     }
                     else{
-                        room->acquireSkill(player, "jishi");
+                        room->acquireSkill(player, "jishI");
                         room->acquireSkill(player, "daji");
                     }
 
@@ -533,7 +533,7 @@ ImpasseScenario::ImpasseScenario()
     rule = new ImpasseRule(this);
 
     skills << new Silue << new Kedi
-            << new Daji << new Jishi
+            << new Daji << new JishI
             << new Guzhan << new Jizhan << new Duduan;
 
 }
