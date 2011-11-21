@@ -388,6 +388,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             QString slasher = effect.from->objectName();
             const Card *jink = !effect.from->hasFlag("Hitit") ?
                                room->askForCard(effect.to, "jink", "slash-jink:" + slasher) : NULL;
+            if(effect.from->hasFlag("Hitit"))
+                room->playSkillEffect("yinyu", 3);
             room->slashResult(effect, jink);
 
             break;

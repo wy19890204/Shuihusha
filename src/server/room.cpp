@@ -376,6 +376,8 @@ void Room::slashEffect(const SlashEffectStruct &effect){
 
     if(effect.from->getMark("SlashCount") > 1 && effect.from->hasSkill("paoxiao"))
         playSkillEffect("paoxiao");
+    if(effect.from->getMark("SlashCount") > 1 && effect.from->hasFlag("SlashbySlash"))
+        playSkillEffect("yinyu", 2);
 
     QVariant data = QVariant::fromValue(effect);
 

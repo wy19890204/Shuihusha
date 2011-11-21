@@ -142,6 +142,9 @@ int Player::getAttackRange() const{
     if(getMark("kaixian") > 0)
         return getMark("kaixian");
 
+    if(hasFlag("Longest"))
+        return 1234;
+
     if(hasFlag("tianyi_success"))
         return 1000;
 
@@ -723,6 +726,8 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
 }
 
 bool Player::canSlashWithoutCrossbow() const{
+    if(hasFlag("SlashbySlash"))
+        return true;
     if(hasSkill("paoxiao"))
         return true;
     if(hasSkill("qinlong") && getEquips().isEmpty())

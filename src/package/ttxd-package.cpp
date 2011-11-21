@@ -306,20 +306,19 @@ public:
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
                         room->playSkillEffect(objectName(), 5);
-                        room->setPlayerFlag(qing, "tianyi_success");
+                        room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
-                        room->playSkillEffect(objectName(), 3);
+                        //room->playSkillEffect(objectName(), 3);
                         room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
-                        room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                        room->attachSkillToPlayer(qing, "paoxiao");
-                        qing->tag["Stone"] = "paoxiao";
+                        room->playSkillEffect(objectName(), 1);
+                        room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
                     }
@@ -337,13 +336,14 @@ public:
             }
         }
         else if(qing->getPhase() == Player::NotActive){
-            if(qing->hasFlag("tianyi_success"))
-                room->setPlayerFlag(qing, "-tianyi_success");
+            if(qing->hasFlag("Longest"))
+                room->setPlayerFlag(qing, "-Longest");
             if(qing->hasFlag("Hitit"))
                 room->setPlayerFlag(qing, "-Hitit");
+            if(qing->hasFlag("SlashbySlash"))
+                room->setPlayerFlag(qing, "-SlashbySlash");
             foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                 tmp->removeMark("qinggang");
-            room->detachSkillFromPlayer(qing, qing->tag.value("Stone", "").toString());
         }
         return false;
     }
@@ -813,8 +813,9 @@ public:
         return 2;
     }
 
-    static bool willCry(Room *room, ServerPlayer *target){
+    static void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun){
         QStringList skills;
+        bool has_qimen = target == gongsun;
         foreach(const SkillClass *skill, target->getVisibleSkillList()){
             QString skill_name = skill->objectName();
             skills << skill_name;
@@ -825,7 +826,12 @@ public:
         Qimen_data.generalA = target->getGeneralName();
         Qimen_data.maxhp = target->getMaxHP();
         QString to_transfigure = target->getGeneral()->isMale() ? "sujiang" : "sujiangf";
-        room->transfigure(target, to_transfigure, false, false);
+        if(!has_qimen)
+            room->transfigure(target, to_transfigure, false, false);
+        else{
+            room->setPlayerProperty(target, "general", to_transfigure);
+            room->acquireSkill(target, "qimen");
+        }
         room->setPlayerProperty(target, "maxhp", Qimen_data.maxhp);
         if(target->getGeneral2()){
             Qimen_data.generalB = target->getGeneral2Name();
@@ -835,10 +841,9 @@ public:
         Qimen_data.skills = skills;
         target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
         target->setMark("Qimen_target", 1);
-        return true;
     }
 
-    static bool stopCry(Room *room, ServerPlayer *player){
+    static void stopCry(Room *room, ServerPlayer *player){
         player->setMark("Qimen_target", 0);
         QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
 
@@ -861,7 +866,6 @@ public:
         room->setPlayerProperty(player, "kingdom", Qimen_data.kingdom);
 
         player->tag["QimenStore"] = NULL;
-        return true;
     }
 
     virtual bool onPhaseChange(ServerPlayer *target) const{
@@ -908,7 +912,7 @@ public:
                     log.arg = objectName();
                     room->sendLog(log);
 
-                    willCry(room, superman);
+                    willCry(room, superman, dragon);
                 }
             }
         }
@@ -917,6 +921,35 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
+    }
+};
+
+class QimenClear: public TriggerSkill{
+public:
+    QimenClear():TriggerSkill("#qimencls"){
+        events << Death;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill("qimen");
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+            if(tmp->getMark("Qimen_target") > 0){
+                Qimen::stopCry(room, tmp);
+
+                LogMessage log;
+                log.type = "#QimenClear";
+                log.from = player;
+                log.to << tmp;
+                log.arg = "qimen";
+
+                room->sendLog(log);
+            }
+        }
+        return false;
     }
 };
 
@@ -1168,6 +1201,8 @@ TTXDPackage::TTXDPackage()
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
     gongsunsheng->addSkill(new Yixing);
     gongsunsheng->addSkill(new Qimen);
+    gongsunsheng->addSkill(new QimenClear);
+    related_skills.insertMulti("qimen", "#qimencls");
 
     General *gaoqiu = new General(this, "gaoqiu$", "guan", 3);
     gaoqiu->addSkill(new Hengxing);
