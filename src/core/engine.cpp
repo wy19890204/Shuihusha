@@ -36,7 +36,7 @@ extern "C" {
     Package *NewThicket();
     Package *NewMountain();
     Package *NewGod();
-    Package *NewYitian();
+    //Package *NewYitian();
     Package *NewTest();
     Package *NewQJWM();
     Package *NewTTXD();
@@ -78,7 +78,7 @@ Engine::Engine()
     addPackage(NewThicket());
     addPackage(NewMountain());
     addPackage(NewGod());
-    addPackage(NewYitian());
+    //addPackage(NewYitian());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewStandardExCard());

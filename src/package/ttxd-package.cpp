@@ -867,43 +867,48 @@ public:
     virtual bool onPhaseChange(ServerPlayer *target) const{
         Room *room = target->getRoom();
         ServerPlayer *dragon = room->findPlayerBySkillName(objectName());
-        if(!dragon || target == dragon)
+        if(!dragon)
             return false;
         if(target->getPhase() == Player::NotActive){
-            if(target->getMark("Qimen_target") > 0){
-                stopCry(room, target);
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(dragon)){
+                if(tmp->getMark("Qimen_target") > 0){
+                    stopCry(room, tmp);
 
-                LogMessage log;
-                log.type = "#QimenEnd";
-                log.from = dragon;
-                log.to << target;
-                log.arg = objectName();
-                room->sendLog(log);
+                    LogMessage log;
+                    log.type = "#QimenEnd";
+                    log.from = dragon;
+                    log.to << tmp;
+                    log.arg = objectName();
+
+                    room->sendLog(log);
+                    break;
+                }
             }
             return false;
         }
         else if(target->getPhase() == Player::Start){
             if(dragon->askForSkillInvoke(objectName())){
+                ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
                 judge.good = true;
                 judge.reason = objectName();
-                judge.who = target;
+                judge.who = superman;
 
                 room->judge(judge);
                 QString suit_str = judge.card->getSuitString();
-                QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
-                QString prompt = QString("@qimen:%1::%2").arg(target->getGeneralName()).arg(suit_str);
+                QString pattern = QString("..%1").arg(suit_str.at(0).toUpper());
+                QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
                 if(room->askForCard(dragon, pattern, prompt)){
                     room->playSkillEffect(objectName());
                     LogMessage log;
                     log.type = "#Qimen";
                     log.from = dragon;
-                    log.to << target;
+                    log.to << superman;
                     log.arg = objectName();
                     room->sendLog(log);
 
-                    willCry(room, target);
+                    willCry(room, superman);
                 }
             }
         }

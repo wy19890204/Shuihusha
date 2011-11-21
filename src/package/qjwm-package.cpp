@@ -976,11 +976,12 @@ public:
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
         ServerPlayer *wangqing = room->findPlayerBySkillName(objectName());
-        if(!wangqing || !wangqing->isLord())
+        if(!wangqing || !wangqing->isLord() && wangqing == player)
             return;
         int x = damage.damage, i;
         for(i=0; i<x; i++){
-            if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName())){
+            if(wangqing->isWounded() && player->getKingdom() == "min"
+               && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName())){
                 RecoverStruct rev;
                 rev.who = player;
                 room->playSkillEffect(objectName());

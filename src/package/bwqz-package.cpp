@@ -319,7 +319,7 @@ BWQZPackage::BWQZPackage()
     General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 
-    General *mengkang = new General(this, "mengkang", "kou", 3);
+    General *mengkang = new General(this, "mengkang", "kou", 4);
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
 
