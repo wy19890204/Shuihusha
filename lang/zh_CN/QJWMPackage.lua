@@ -129,6 +129,7 @@ return {
 
 	["#_luozhenren"] = "半仙",
 	["luozhenren"] = "罗真人",
+	["cv:luozhenren"] = "东方胤弘",
 	["butian"] = "卜天",
 	[":butian"] = "在任意角色的判定牌生效前，你可以弃置一张牌，观看牌堆顶的三张牌，将其中的任意一张牌与该判定牌进行交换。",
 	["@butian-card"] = "请使用【卜天】技能来修改 %src 的 %arg 判定",
