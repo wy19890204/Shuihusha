@@ -164,7 +164,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardUseStruct effect = data.value<CardUseStruct>();
         Room *room = player->getRoom();
-        if(effect.card->inherits("Ecstasy") && player->askForSkillInvoke("double_whip")){
+        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip")){
             foreach(ServerPlayer *effecto, effect.to){
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
@@ -181,181 +181,36 @@ DoubleWhip::DoubleWhip(Suit suit, int number)
     setObjectName("double_whip");
     skill = new DoubleWhipSkill;
 }
-/*
-class LianliClear: public TriggerSkill{
+
+class MeteorSwordSkill : public WeaponSkill{
 public:
-    LianliClear():TriggerSkill("#lianli-clear"){
-        events << Death;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> players = room->getAllPlayers();
-        foreach(ServerPlayer *player, players){
-            if(player->getMark("@tied") > 0)
-                player->loseMark("@tied");
-        }
-
-        return false;
-    }
-};
-
-// -------- end of Lianli related skills
-
-QiaocaiCard::QiaocaiCard(){
-    once = true;
-}
-
-void QiaocaiCard::onEffect(const CardEffectStruct &effect) const{
-    QList<const Card *> cards = effect.to->getJudgingArea();
-    foreach(const Card *card, cards){
-        effect.from->obtainCard(card);
-    }
- }
-
-class Qiaocai: public ZeroCardViewAsSkill{
-public:
-    Qiaocai():ZeroCardViewAsSkill("qiaocai"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@tied") == 0 && ! player->hasUsed("QiaocaiCard");
-    }
-
-    virtual const Card *viewAs() const{
-        return new QiaocaiCard;
-    }
-};
-
-class Jinshen: public ProhibitSkill{
-public:
-    Jinshen():ProhibitSkill("jinshen"){
-
-    }
-
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
-        return card->inherits("Indulgence") || card->inherits("SupplyShortage");
-    }
-};
-
-class WulingExEffect: public TriggerSkill{
-public:
-    WulingExEffect():TriggerSkill("#wuling-ex-effect"){
-        events << CardEffected << Predamaged;
+    MeteorSwordSkill():WeaponSkill("meteor_sword"){
+        events << Predamage;
     }
 
     virtual int getPriority() const{
         return -1;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *xuandi = room->findPlayerBySkillName(objectName());
-        if(xuandi == NULL)
-            return false;
-
-        QString wuling = xuandi->tag.value("wuling").toString();
-        if(event == CardEffected && wuling == "water"){
-            CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(effect.card && effect.card->inherits("Peach")){
-                RecoverStruct recover;
-                recover.card = effect.card;
-                recover.who = effect.from;
-                room->recover(player, recover);
-
-                LogMessage log;
-                log.type = "#WulingWater";
-                log.from = player;
-                room->sendLog(log);
-            }
-        }else if(event == Predamaged && wuling == "earth"){
-            DamageStruct damage = data.value<DamageStruct>();
-            if(damage.nature != DamageStruct::Normal && damage.damage > 1){
-                damage.damage = 1;
-                data = QVariant::fromValue(damage);
-
-                LogMessage log;
-                log.type = "#WulingEarth";
-                log.from = player;
-                room->sendLog(log);
-            }
-        }
-
-        return false;
-    }
-};
-
-class WulingEffect: public TriggerSkill{
-public:
-    WulingEffect():TriggerSkill("#wuling-effect"){
-        events << Predamaged;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *xuandi = room->findPlayerBySkillName(objectName());
-        if(xuandi == NULL)
-            return false;
-
-        QString wuling = xuandi->tag.value("wuling").toString();
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-
-        if(wuling == "wind"){
-            if(damage.nature == DamageStruct::Fire && !damage.chain){
-                damage.damage ++;
-                data = QVariant::fromValue(damage);
-
-                LogMessage log;
-                log.type = "#WulingWind";
-                log.from = damage.to;
-                log.arg = QString::number(damage.damage - 1);
-                log.arg2 = QString::number(damage.damage);
-                room->sendLog(log);
-            }
-        }else if(wuling == "thunder"){
-            if(damage.nature == DamageStruct::Thunder && !damage.chain){
-                damage.damage ++;
-                data = QVariant::fromValue(damage);
-
-                LogMessage log;
-                log.type = "#WulingThunder";
-                log.from = damage.to;
-                log.arg = QString::number(damage.damage - 1);
-                log.arg2 = QString::number(damage.damage);
-                room->sendLog(log);
-            }
-        }else if(wuling == "fire"){
-            if(damage.nature != DamageStruct::Fire){
-                damage.nature = DamageStruct::Fire;
-                data = QVariant::fromValue(damage);
-
-                LogMessage log;
-                log.type = "#WulingFire";
-                log.from = damage.to;
-                room->sendLog(log);
-            }
+        Room *room = player->getRoom();
+        if(damage.card->inherits("Slash") && damage.to->isAlive()){
+            room->loseHp(damage.to, damage.damage);
+            return true;
         }
-
         return false;
     }
 };
+
+MeteorSword::MeteorSword(Suit suit, int number)
+    :Weapon(suit, number, 3)
+{
+    setObjectName("meteor_sword");
+    skill = new MeteorSwordSkill;
+}
+
+/*
 
 class Wuling: public PhaseChangeSkill{
 public:
@@ -1366,7 +1221,7 @@ PloughPackage::PloughPackage()
     cards
             << new Assassinate(Card::Spade, 1)
             << new SilverLion(Card::Spade, 2)
-            //<< new meteor_sword(Card::Spade, 3)
+            << new MeteorSword(Card::Spade, 3)
             << new ThunderSlash(Card::Spade, 5)
             << new ThunderSlash(Card::Spade, 6)
             //<< new ThunderEcstasy(Card::Spade, 7)

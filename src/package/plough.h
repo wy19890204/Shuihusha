@@ -85,28 +85,15 @@ class DoubleWhip:public Weapon{
 public:
     Q_INVOKABLE DoubleWhip(Card::Suit suit, int number);
 };
+
+class MeteorSword:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE MeteorSword(Card::Suit suit, int number);
+};
+
 /*
-class XunzhiCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE XunzhiCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
-class YisheCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE YisheCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
-class YisheAskCard: public SkillCard{
-    Q_OBJECT
-
 public:
     Q_INVOKABLE YisheAskCard();
 

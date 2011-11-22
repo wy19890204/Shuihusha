@@ -1000,6 +1000,9 @@ public:
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
 
+    General *guansheng = new General(this, "guansheng", "guan", 4);
+    guansheng->addSkill("wusheng");
+
     General *huarong = new General(this, "huarong", "guan", 4); //guan == wei
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
