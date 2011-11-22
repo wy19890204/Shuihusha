@@ -49,7 +49,6 @@ extern "C" {
     Package *NewNostalgia();
     Package *NewYitianCard();
     Package *NewJoy();
-    Package *NewDisaster();
     Package *NewJoyEquip();
 
     Scenario *NewCoupleScenario();
@@ -86,7 +85,6 @@ Engine::Engine()
     addPackage(NewYitianCard());
     addPackage(NewNostalgia());
     addPackage(NewJoy());
-    addPackage(NewDisaster());
     addPackage(NewJoyEquip());
 
     addScenario(NewCoupleScenario());
