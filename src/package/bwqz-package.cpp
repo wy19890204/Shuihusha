@@ -417,7 +417,7 @@ BWQZPackage::BWQZPackage()
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
 
-    General *jiaoting = new General(this, "jiaoting", "min", 4);
+    General *jiaoting = new General(this, "jiaoting", "kou", 4);
     jiaoting->addSkill(new Skill("qinlong"));
 
     General *shantinggui = new General(this, "shantinggui", "jiang", 5);
