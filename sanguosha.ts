@@ -1501,7 +1501,7 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="14"/>
         <location filename="src/dialog/mainwindow.cpp" line="138"/>
-        <source>Sanguosha</source>
+        <source>Shuihusha</source>
         <translation>太阳神水浒杀 - 太阳神三国杀MOD</translation>
     </message>
     <message>
