@@ -1,10 +1,17 @@
--- translation for YitianPackage
+-- translation for PloughPackage
 
 return {
-	["#AcquireSkill"] = "%from 获得了技能 【%arg】", 
+	["plough"] = "天罡卡牌包", 
+	
+	["mi"] = "迷",
+	[":mi"] = "使用时机：出牌阶段。\
+使用目标：除你以外，你攻击范围内的一名角色。\
+效果：目标角色不能使用或打出【杀】和【闪】，直到你的回合结束或其受到一次伤害。每回合限用一次。",
+
+
+
 	["#ChangeKingdom"] = "%from 把 %to 的国籍由原来的 %arg 改成了 %arg2", 
 	["#DanlaoAvoid"] = "%from 发动了技能【啖酪】，跳过了锦囊 %arg 对他的结算", 
-	["yitian"] = "倚天", 
 	["yitian_cards"] = "倚天卡牌包",
 	["yitian_sword"] = "倚天剑",
 	["yitian-lost"] = "倚天剑",
