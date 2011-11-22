@@ -17,7 +17,7 @@ local function card_for_qiaobian(self, who, return_prompt)
 		end
 
 		local equips = who:getCards("e")
-		if not equips:isEmpty() then
+		if not target and not equips:isEmpty() then
 			for _, equip in sgs.qlist(equips) do
 				if equip:inherits("OffensiveHorse") then card = equip break
 				elseif equip:inherits("DefensiveHorse") then card = equip break
@@ -387,7 +387,7 @@ zhiba_skill.getTurnUseCard = function(self)
 		or self.player:getHandcardNum() == 0
 		or self.player:getHandcardNum() < self.player:getHp()
 		or self.player == lord
-		or self.player:getKingdom() ~= "min"
+		or self.player:getKingdom() ~= "wu"
 		or self.player:hasUsed("ZhibaCard")
 		or not lord:hasSkill("sunce_zhiba") then
 		return
@@ -404,7 +404,7 @@ zhiba_skill.getTurnUseCard = function(self)
 			max_card = hcard
 		end
 
-		if hcard:getNumber() <= min_num then
+		if hcard:getNumber() <= min_num and not (self:isFriend(lord) and hcard:inherits("Shit")) then
 			if hcard:getNumber() == min_num then
 				if min_card and self:getKeepValue(hcard) > self:getKeepValue(min_card) then
 					min_num = hcard:getNumber()
