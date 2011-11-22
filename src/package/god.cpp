@@ -1245,10 +1245,9 @@ public:
     }
 };
 
-
 GodPackage::GodPackage()
     :Package("god")
-{
+{/*
     General *shenguanyu = new General(this, "shenguanyu", "god", 5);
     shenguanyu->addSkill(new Wushen);
     shenguanyu->addSkill(new Wuhun);
@@ -1317,7 +1316,7 @@ GodPackage::GodPackage()
     addMetaObject<WuqianCard>();
     addMetaObject<JilveCard>();
 
-    skills << new Jilve << new JilveClear;
+    skills << new Jilve << new JilveClear;*/
 }
 
 ADD_PACKAGE(God)

@@ -85,6 +85,10 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
         slash_targets ++;
     }
 
+    if(Self->hasWeapon("sun_bow") && this->isRed() && this->getNature() == DamageStruct::Normal){
+        slash_targets ++;
+    }
+
     if(Self->hasSkill("shenji") && Self->getWeapon() == NULL)
         slash_targets = 3;
 

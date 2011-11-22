@@ -93,13 +93,14 @@ public:
     Q_INVOKABLE MeteorSword(Card::Suit suit, int number);
 };
 
-/*
-public:
-    Q_INVOKABLE YisheAskCard();
+class SunBow:public Weapon{
+    Q_OBJECT
 
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+public:
+    Q_INVOKABLE SunBow(Card::Suit suit, int number);
 };
 
+/*
 class TaichenCard: public SkillCard{
     Q_OBJECT
 
