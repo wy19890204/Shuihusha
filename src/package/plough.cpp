@@ -1,4 +1,4 @@
-#include "yitianpackage.h"
+#include "plough.h"
 #include "skill.h"
 #include "engine.h"
 #include "client.h"
@@ -6,178 +6,73 @@
 #include "god.h"
 #include "standard.h"
 
-class YitianSwordSkill : public WeaponSkill{
-public:
-    YitianSwordSkill():WeaponSkill("yitian_sword"){
-        events << DamageComplete;
-    }
+Bsls::Bsls(Suit suit, int number)
+    :SingleTargetTrick(suit, number, true) {
+    setObjectName("bsls");
+}
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
-        if(player->getPhase() != Player::NotActive)
-           return false;
-
-        if(player->askForSkillInvoke("yitian_sword"))
-            player->getRoom()->askForUseCard(player, "slash", "@askforslash");
-
+bool Bsls::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
         return false;
-    }
-};
 
-YitianSword::YitianSword(Suit suit, int number)
-    :Weapon(suit, number, 2)
-{
-    setObjectName("yitian_sword");
-    skill = new YitianSwordSkill;
+    if(to_select == Self)
+        return false;
+
+    if(to_select->getKingdom() == Self->getKingdom())
+        return false;
+
+    return to_select->getCardCount(true) >= 2;
 }
 
-void YitianSword::onMove(const CardMoveStruct &move) const{
-    if(move.from_place == Player::Equip && move.from->isAlive()){
-        Room *room = move.from->getRoom();
-
-        bool invoke = move.from->askForSkillInvoke("yitian-lost");
-        if(!invoke)
-            return;
-
-        ServerPlayer *target = room->askForPlayerChosen(move.from, room->getAllPlayers(), "yitian-lost");
-        DamageStruct damage;
-        damage.from = move.from;
-        damage.to = target;
-        damage.card = this;
-
-        room->damage(damage);
-    }
-}
-
-ChengxiangCard::ChengxiangCard()
-{
-
-}
-
-bool ChengxiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.length() < subcardsLength() && to_select->isWounded();
-}
-
-bool ChengxiangCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() <= subcardsLength();
-}
-
-void ChengxiangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<ServerPlayer *> to = targets;
-
-    if(to.isEmpty())
-        to << source;
-
-    return SkillCard::use(room, source, to);
-}
-
-void ChengxiangCard::onEffect(const CardEffectStruct &effect) const{
+void Bsls::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
-
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = effect.from;
-    room->recover(effect.to, recover);
+    room->loseHp(effect.to);
+    room->askForDiscard(effect.to, "bsls", 2, false, true);
+    effect.to->drawCards(3);
 }
 
-class ChengxiangViewAsSkill: public ViewAsSkill{
-public:
-    ChengxiangViewAsSkill():ViewAsSkill("chengxiang"){
+Bathroom::Bathroom(Suit suit, int number)
+    :SingleTargetTrick(suit, number, false) {
+    setObjectName("bathroom");
+}
 
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
+bool Bathroom::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
+    if(!targets.isEmpty())
         return false;
-    }
+    return true;
+}
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "@@chengxiang";
-    }
+void Bathroom::onEffect(const CardEffectStruct &effect) const{
+    effect.to->getRoom()->showAllCards(effect.to, effect.from);
+}
 
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() >= 3)
-            return false;
+Xingci::Xingci(Suit suit, int number)
+    :SingleTargetTrick(suit, number, false) {
+    setObjectName("xc");
+}
 
-        int sum = 0;
-        foreach(CardItem *item, selected){
-            sum += item->getCard()->getNumber();
-        }
-
-        sum += to_select->getCard()->getNumber();
-
-        return sum <= Self->getMark("chengxiang");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        int sum = 0;
-        foreach(CardItem *item, cards){
-            sum += item->getCard()->getNumber();
-        }
-
-        if(sum == Self->getMark("chengxiang")){
-            ChengxiangCard *card = new ChengxiangCard;
-            card->addSubcards(cards);
-            return card;
-        }else
-            return NULL;
-    }
-};
-
-class Chengxiang: public MasochismSkill{
-public:
-    Chengxiang():MasochismSkill("chengxiang"){
-        view_as_skill = new ChengxiangViewAsSkill;
-    }
-
-    virtual void onDamaged(ServerPlayer *caochong, const DamageStruct &damage) const{
-        const Card *card = damage.card;
-        if(card == NULL)
-            return;
-
-        int point = card->getNumber();
-        if(point == 0)
-            return;
-
-        if(caochong->isNude())
-            return;
-
-        Room *room = caochong->getRoom();
-        room->setPlayerMark(caochong, objectName(), point);
-
-        QString prompt = QString("@chengxiang-card:::%1").arg(point);
-        room->askForUseCard(caochong, "@@chengxiang", prompt);
-    }
-};
-
-class Conghui: public PhaseChangeSkill{
-public:
-    Conghui():PhaseChangeSkill("conghui"){
-        frequency = Compulsory;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target) && target->getPhase() == Player::Discard;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *) const{
-        return true;
-    }
-};
-
-class Zaoyao: public PhaseChangeSkill{
-public:
-    Zaoyao():PhaseChangeSkill("zaoyao"){
-        frequency = Compulsory;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *caochong) const{
-        if(caochong->getPhase() == Player::Finish && caochong->getHandcardNum() > 13){
-            caochong->throwAllHandCards();
-            caochong->getRoom()->loseHp(caochong);
-        }
-
+bool Xingci::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
+    if(!targets.isEmpty())
         return false;
+    return true;
+}
+
+void Xingci::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    const Card *card1 = room->askForCard(effect.to, "jink", "xingci");
+    const Card *card2;
+    if(card1)
+        card2 = room->askForCard(effect.to, "jink", "xingci");
+    if(card1 && card2)
+        effect.from->turnOver();
+    else{
+        DamageStruct dmae;
+        dmae.card = this;
+        dmae.from = effect.from;
+        dmae.to = effect.to;
+        room->damage(dmae);
     }
-};
+}
 
 class Guixin2: public PhaseChangeSkill{
 public:

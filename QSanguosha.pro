@@ -50,7 +50,7 @@ SOURCES += src/main.cpp \
 	src/package/standard.cpp \
 	src/package/thicket.cpp \
 	src/package/wind.cpp \
-	src/package/yitianpackage.cpp \
+	src/package/plough.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
 	src/package/ttxd-package.cpp \
@@ -127,7 +127,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard.h \
 	src/package/thicket.h \
 	src/package/wind.h \
-	src/package/yitianpackage.h \
+	src/package/plough.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
 	src/package/ttxd-package.h \
