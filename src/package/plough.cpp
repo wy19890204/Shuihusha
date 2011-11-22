@@ -6,12 +6,12 @@
 #include "god.h"
 #include "standard.h"
 
-Bsls::Bsls(Suit suit, int number)
+Drivolt::Drivolt(Suit suit, int number)
     :SingleTargetTrick(suit, number, true) {
-    setObjectName("bsls");
+    setObjectName("drivolt");
 }
 
-bool Bsls::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool Drivolt::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
 
@@ -24,45 +24,45 @@ bool Bsls::targetFilter(const QList<const Player *> &targets, const Player *to_s
     return to_select->getCardCount(true) >= 2;
 }
 
-void Bsls::onEffect(const CardEffectStruct &effect) const{
+void Drivolt::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     room->loseHp(effect.to);
-    room->askForDiscard(effect.to, "bsls", 2, false, true);
+    room->askForDiscard(effect.to, "Drivolt", 2, false, true);
     effect.to->drawCards(3);
 }
 
-Bathroom::Bathroom(Suit suit, int number)
+Wiretap::Wiretap(Suit suit, int number)
     :SingleTargetTrick(suit, number, false) {
-    setObjectName("bathroom");
+    setObjectName("wiretap");
 }
 
-bool Bathroom::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
+bool Wiretap::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
     if(!targets.isEmpty())
         return false;
     return true;
 }
 
-void Bathroom::onEffect(const CardEffectStruct &effect) const{
+void Wiretap::onEffect(const CardEffectStruct &effect) const{
     effect.to->getRoom()->showAllCards(effect.to, effect.from);
 }
 
-Xingci::Xingci(Suit suit, int number)
+Assassinate::Assassinate(Suit suit, int number)
     :SingleTargetTrick(suit, number, false) {
-    setObjectName("xc");
+    setObjectName("assassinate");
 }
 
-bool Xingci::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
+bool Assassinate::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
     if(!targets.isEmpty())
         return false;
     return true;
 }
 
-void Xingci::onEffect(const CardEffectStruct &effect) const{
+void Assassinate::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *card1 = room->askForCard(effect.to, "jink", "xingci");
+    const Card *card1 = room->askForCard(effect.to, "jink", "Assassinate");
     const Card *card2;
     if(card1)
-        card2 = room->askForCard(effect.to, "jink", "xingci");
+        card2 = room->askForCard(effect.to, "jink", "Assassinate");
     if(card1 && card2)
         effect.from->turnOver();
     else{
@@ -73,7 +73,7 @@ void Xingci::onEffect(const CardEffectStruct &effect) const{
         room->damage(dmae);
     }
 }
-
+/*
 class Guixin2: public PhaseChangeSkill{
 public:
     Guixin2():PhaseChangeSkill("guixin2"){
@@ -1714,118 +1714,31 @@ public:
             return NULL;
     }
 };
+*/
 
-YitianCardPackage::YitianCardPackage()
-    :Package("yitian_cards")
+PloughPackage::PloughPackage()
+    :Package("plough")
 {
-    (new YitianSword)->setParent(this);
+    type = CardPack;/*
+    QList<Card *> cards;
 
-    type = CardPack;
+    // spade
+    cards << new GudingBlade(Card::Spade, 1)
+            << new Machine(Card::Spade, 2)
+            << new Analeptic(Card::Spade, 3)
+            << new ThunderSlash(Card::Spade, 4)
+            << new ThunderSlash(Card::Spade, 5)
+            << new ThunderSlash(Card::Spade, 6)
+            << new ThunderSlash(Card::Spade, 7)
+            << new ThunderSlash(Card::Spade, 8)
+            << new Analeptic(Card::Spade, 9)
+            << new SupplyShortage(Card::Spade,10)
+            << new IronChain(Card::Spade, 11)
+            << new IronChain(Card::Spade, 12)
+            << new Nullification(Card::Spade, 13);
+    foreach(Card *card, cards)
+        card->setParent(this);
+    */
 }
 
-ADD_PACKAGE(YitianCard)
-
-YitianPackage::YitianPackage()
-    :Package("yitian")
-{
-    // generals
-    General *shencc = new General(this, "shencc", "god", 3);
-    shencc->addSkill(new Guixin2);
-    shencc->addSkill("feiying");
-
-    General *caochong = new General(this, "caochong", "guan", 3);
-    caochong->addSkill(new Chengxiang);
-    caochong->addSkill(new Conghui);
-    caochong->addSkill(new Zaoyao);
-
-    General *zhangjunyi = new General(this, "zhangjunyi", "kou");
-    zhangjunyi->addSkill(new Jueji);
-    zhangjunyi->addSkill(new JuejiGet);
-
-    related_skills.insertMulti("jueji", "#jueji-get");
-
-    General *lukang = new General(this, "lukang", "min", 4);
-    lukang->addSkill(new LukangWeiyan);
-    lukang->addSkill(new Kegou);
-
-    General *jinxuandi = new General(this, "jinxuandi", "god");
-    jinxuandi->addSkill(new Wuling);
-    jinxuandi->addSkill(new WulingEffect);
-    jinxuandi->addSkill(new WulingExEffect);
-
-    related_skills.insertMulti("wuling", "#wuling-effect");
-    related_skills.insertMulti("wuling", "#wuling-ex-effect");
-
-    General *xiahoujuan = new General(this, "xiahoujuan", "guan", 3, false);
-    xiahoujuan->addSkill(new LianliStart);
-    xiahoujuan->addSkill(new Lianli);
-    xiahoujuan->addSkill(new LianliSlash);
-    xiahoujuan->addSkill(new LianliJink);
-    xiahoujuan->addSkill(new LianliClear);
-    xiahoujuan->addSkill(new Tongxin);
-    xiahoujuan->addSkill(new Skill("liqian", Skill::Compulsory));
-    xiahoujuan->addSkill(new Qiaocai);
-
-    related_skills.insertMulti("lianli", "#lianli-start");
-    related_skills.insertMulti("lianli", "#lianli-slash");
-    related_skills.insertMulti("lianli", "#lianli-jink");
-    related_skills.insertMulti("lianli", "#lianli-clear");
-
-    General *caizhaoji = new General(this, "caizhaoji", "kou", 3, false);
-    caizhaoji->addSkill(new Guihan);
-    caizhaoji->addSkill(new CaizhaojiHujia);
-
-    General *luboyan = new General(this, "luboyan", "min", 3);
-    luboyan->addSkill(new Shenjun);
-    luboyan->addSkill(new Shaoying);
-    luboyan->addSkill(new Zonghuo);
-
-    General *luboyanf = new General(this, "luboyanf", "min", 3, false, true);
-    luboyanf->addSkill("shenjun");
-    luboyanf->addSkill("shaoying");
-    luboyanf->addSkill("zonghuo");
-
-    General *zhongshiji = new General(this, "zhongshiji", "guan");
-    zhongshiji->addSkill(new Gongmou);
-    zhongshiji->addSkill(new GongmouExchange);
-
-    related_skills.insertMulti("gongmou", "#gongmou-exchange");
-
-    General *jiawenhe = new General(this, "jiawenhe", "kou");
-    jiawenhe->addSkill(new Dongcha);
-    jiawenhe->addSkill(new Dushi);
-
-    General *elai = new General(this, "guzhielai", "guan");
-    elai->addSkill(new Sizhan);
-    elai->addSkill(new Shenli);
-
-    General *dengshizai = new General(this, "dengshizai", "guan", 3);
-    dengshizai->addSkill(new Zhenggong);
-    dengshizai->addSkill(new Toudu);
-
-    General *zhanggongqi = new General(this, "zhanggongqi", "kou", 3);
-    zhanggongqi->addSkill(new Yishe);
-    zhanggongqi->addSkill(new Xiliang);
-
-    General *yitianjian = new General(this, "yitianjian", "guan");
-    yitianjian->addSkill(new Skill("zhengfeng", Skill::Compulsory));
-    yitianjian->addSkill(new Zhenwei);
-    yitianjian->addSkill(new Yitian);
-
-    General *sp_pangde = new General(this, "sp_pangde", "guan");
-    sp_pangde->addSkill(new Taichen);
-
-    skills << new LianliSlashViewAsSkill << new YisheAsk;
-
-    addMetaObject<ChengxiangCard>();
-    addMetaObject<JuejiCard>();
-    addMetaObject<LianliCard>();
-    addMetaObject<QiaocaiCard>();
-    addMetaObject<LianliSlashCard>();
-    addMetaObject<GuihanCard>();
-    addMetaObject<YisheAskCard>();
-    addMetaObject<YisheCard>();
-    addMetaObject<TaichenCard>();
-}
-
-ADD_PACKAGE(Yitian);
+ADD_PACKAGE(Plough)

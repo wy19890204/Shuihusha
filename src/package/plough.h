@@ -1,39 +1,39 @@
-#ifndef YITIANPACKAGE_H
-#define YITIANPACKAGE_H
+#ifndef PLOUGHPACKAGE_H
+#define PLOUGHPACKAGE_H
 
 #include "package.h"
 #include "standard.h"
 
-class Bsls:public SingleTargetTrick{
+class Drivolt:public SingleTargetTrick{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Bsls(Card::Suit suit, int number);
+    Q_INVOKABLE Drivolt(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class Bathroom: public SingleTargetTrick{
+class Wiretap: public SingleTargetTrick{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Bathroom(Card::Suit suit, int number);
+    Q_INVOKABLE Wiretap(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class Xingci: public SingleTargetTrick{
+class Assassinate: public SingleTargetTrick{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Xingci(Card::Suit suit, int number);
+    Q_INVOKABLE Assassinate(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
-
+/*
 class JuejiCard: public SkillCard{
     Q_OBJECT
 
@@ -137,12 +137,12 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
-
-class YitianCardPackage: public Package{
+*/
+class PloughPackage: public Package{
     Q_OBJECT
 
 public:
-    YitianCardPackage();
+    PloughPackage();
 };
 
-#endif // YITIANPACKAGE_H
+#endif // PLOUGHPACKAGE_H

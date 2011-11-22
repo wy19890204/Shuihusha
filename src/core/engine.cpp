@@ -36,7 +36,6 @@ extern "C" {
     Package *NewThicket();
     Package *NewMountain();
     Package *NewGod();
-    //Package *NewYitian();
     Package *NewTest();
     Package *NewQJWM();
     Package *NewTTXD();
@@ -45,9 +44,9 @@ extern "C" {
 
     Package *NewStandardCard();
     Package *NewStandardExCard();
+    Package *NewPlough();
     Package *NewManeuvering();
     Package *NewNostalgia();
-    Package *NewYitianCard();
     Package *NewJoy();
     Package *NewJoyEquip();
 
@@ -77,12 +76,11 @@ Engine::Engine()
     addPackage(NewThicket());
     addPackage(NewMountain());
     addPackage(NewGod());
-    //addPackage(NewYitian());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewStandardExCard());
+    addPackage(NewPlough());
     addPackage(NewManeuvering());
-    addPackage(NewYitianCard());
     addPackage(NewNostalgia());
     addPackage(NewJoy());
     addPackage(NewJoyEquip());
