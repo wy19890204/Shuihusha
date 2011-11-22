@@ -1502,7 +1502,7 @@
         <location filename="src/dialog/mainwindow.ui" line="14"/>
         <location filename="src/dialog/mainwindow.cpp" line="138"/>
         <source>Sanguosha</source>
-        <translation>太阳神三国杀</translation>
+        <translation>太阳神水浒杀 - 太阳神三国杀MOD</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="28"/>
@@ -2461,7 +2461,7 @@
     <message>
         <location filename="src/ui/roomscene.cpp" line="307"/>
         <source>Sanguosha</source>
-        <translation>三国杀</translation>
+        <translation>水浒杀</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="1029"/>
@@ -3206,7 +3206,7 @@
         <location filename="src/core/settings.cpp" line="83"/>
         <source>Sanguosha-fans</source>
         <oldsource>Sanguosha-lover</oldsource>
-        <translation>三国杀fans</translation>
+        <translation>天启姐fans</translation>
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="84"/>
