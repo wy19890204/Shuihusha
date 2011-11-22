@@ -7,6 +7,32 @@
 #include "standard.h"
 #include "maneuvering.h"
 
+Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
+{
+    setObjectName("ecstasy");
+}
+
+bool Ecstasy::isAvailable(const Player *player) const{
+    return !player->hasUsed("Ecstasy");
+}
+
+QString Ecstasy::getSubtype() const{
+    return "attack_card";
+}
+
+bool Ecstasy::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return !targets.isEmpty();
+}
+
+bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return to_select != Self && Self->inMyAttackRange(to_select);
+}
+
+void Ecstasy::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    room->setPlayerFlag(effect.to, "Ecstasy");
+}
+
 Drivolt::Drivolt(Suit suit, int number)
     :SingleTargetTrick(suit, number, true) {
     setObjectName("drivolt");
@@ -138,7 +164,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardUseStruct effect = data.value<CardUseStruct>();
         Room *room = player->getRoom();
-        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip")){
+        if(effect.card->inherits("Ecstasy") && player->askForSkillInvoke("double_whip")){
             foreach(ServerPlayer *effecto, effect.to){
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
@@ -516,11 +542,11 @@ class Zonghuo: public TriggerSkill{
 public:
     Zonghuo():TriggerSkill("zonghuo"){
         frequency = Compulsory;
-        events << SlashEffect;
+        events << EcstasyEffect;
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        EcstasyEffectStruct effect = data.value<EcstasyEffectStruct>();
         if(effect.nature != DamageStruct::Fire){
             effect.nature = DamageStruct::Fire;
 
@@ -949,7 +975,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *elai, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") &&
+        if(damage.card && damage.card->inherits("Ecstasy") &&
            elai->getPhase() == Player::Play && !elai->hasFlag("shenli"))
         {
             elai->setFlags("shenli");
@@ -1042,7 +1068,7 @@ public:
 
         QList<ServerPlayer *> players = room->getOtherPlayers(dengshizai), targets;
         foreach(ServerPlayer *player, players){
-            if(dengshizai->canSlash(player, false)){
+            if(dengshizai->canEcstasy(player, false)){
                 targets << player;
             }
         }
@@ -1050,11 +1076,11 @@ public:
         if(!targets.isEmpty()){
             ServerPlayer *target = room->askForPlayerChosen(dengshizai, targets, "toudu");
 
-            Slash *slash = new Slash(Card::NoSuit, 0);
-            slash->setSkillName("toudu");
+            Ecstasy *Ecstasy = new Ecstasy(Card::NoSuit, 0);
+            Ecstasy->setSkillName("toudu");
 
             CardUseStruct use;
-            use.card = slash;
+            use.card = Ecstasy;
             use.from = dengshizai;
             use.to << target;
             room->useCard(use);
@@ -1244,11 +1270,11 @@ public:
 class Zhenwei: public TriggerSkill{
 public:
     Zhenwei():TriggerSkill("zhenwei"){
-        events << SlashMissed;
+        events << EcstasyMissed;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        EcstasyEffectStruct effect = data.value<EcstasyEffectStruct>();
         if(player->getRoom()->obtainable(effect.jink, player) && player->askForSkillInvoke(objectName(), data))
             player->obtainCard(effect.jink);
 
@@ -1343,9 +1369,9 @@ PloughPackage::PloughPackage()
             //<< new meteor_sword(Card::Spade, 3)
             << new ThunderSlash(Card::Spade, 5)
             << new ThunderSlash(Card::Spade, 6)
-            //<< new ThunderSlash(Card::Spade, 7)
+            //<< new ThunderEcstasy(Card::Spade, 7)
             << new IronChain(Card::Spade, 8)
-            //<< new ecstasy(Card::Spade, 9)
+            << new Ecstasy(Card::Spade, 9)
             //<< new gold_armor(Card::Spade,10)
             << new Wiretap(Card::Spade, 11)
             << new IronChain(Card::Spade, 12)
@@ -1353,10 +1379,10 @@ PloughPackage::PloughPackage()
 
     // club
             << new Tsunami(Card::Club, 1)
-            //<< new Vine(Card::Club, 2)
-            //<< new Analeptic(Card::Club, 3)
+            << new Ecstasy(Card::Club, 2)
+            << new Ecstasy(Card::Club, 3)
             << new Analeptic(Card::Club, 4)
-            //<< new ThunderSlash(Card::Club, 5)
+            << new Ecstasy(Card::Club, 5)
             << new Provistore(Card::Club, 6)
             << new DoubleWhip(Card::Club, 7)
             << new IronChain(Card::Club, 8)
@@ -1374,8 +1400,8 @@ PloughPackage::PloughPackage()
             << new Peach(Card::Heart, 5)
             << new Jink(Card::Heart, 6)
             << new Wiretap(Card::Heart, 7)
-            //<< new Jink(Card::Heart, 8)
-            //<< new Jink(Card::Heart, 9)
+            << new Ecstasy(Card::Heart, 8)
+            << new Ecstasy(Card::Heart, 9)
             << new Peach(Card::Heart, 10)
             << new Counterplot(Card::Heart, 11)
             << new Drivolt(Card::Heart, 13)

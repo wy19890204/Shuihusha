@@ -4,6 +4,18 @@
 #include "package.h"
 #include "standard.h"
 
+class Ecstasy: public BasicCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Ecstasy(Card::Suit suit, int number);
+    virtual QString getSubtype() const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool isAvailable(const Player *player) const;
+};
+
 class Drivolt:public SingleTargetTrick{
     Q_OBJECT
 

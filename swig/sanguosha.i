@@ -252,7 +252,7 @@ public:
     QList<const Card *> getHandcards() const;
     QList<const Card *> getCards(const char *flags) const;
     DummyCard *wholeHandCards() const;
-    bool hasNullification() const;
+    bool hasNullification(bool include_counterplot = false) const;
     void kick();
     bool pindian(ServerPlayer *target, const char *reason, const Card *card1 = NULL);
     void turnOver();

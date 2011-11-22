@@ -535,7 +535,7 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
     QString trick_name = trick->objectName();
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
-        if(!player->hasNullification())
+        if(!player->hasNullification(trick->inherits("SingleTargetTrick")))
             continue;
 
         trust:
@@ -583,7 +583,7 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
             log.arg = trick_name;
             sendLog(log);
             if(card->objectName() == "counterplot")
-                from->obtainCard(trick);
+                player->obtainCard(trick);
 
             broadcastInvoke("animate", QString("nullification:%1:%2")
                             .arg(player->objectName()).arg(to->objectName()));
@@ -641,6 +641,8 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
+    if(player->hasFlag("Ecstasy") && (asked.toString() == "slash" || asked.toString() == "jink"))
+        return NULL;
     thread->trigger(CardAsked, player, asked);
     if(provided){
         card = provided;

@@ -410,8 +410,6 @@ public:
     }
 
     virtual bool match(const Player *player, const Card *card) const{
-        if(name == "nullification")
-            return !player->hasEquip(card) && card->inherits("Nullification");
         return ! player->hasEquip(card) && card->objectName() == name;
     }
 
@@ -424,6 +422,13 @@ public:
     virtual bool match(const Player *player, const Card *card) const{
         return ! player->hasEquip(card) &&
                 (card->inherits("Peach") || card->inherits("Analeptic"));
+    }
+};
+
+class NCPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return ! player->hasEquip(card) && card->inherits("Nullification");
     }
 };
 
@@ -455,6 +460,7 @@ StandardPackage::StandardPackage()
     patterns["jink"] = new NamePattern("jink");
     patterns["peach"] = new NamePattern("peach");
     patterns["nullification"] = new NamePattern("nullification");
+    patterns["nulliplot"] = new NCPattern;
     patterns["peach+analeptic"] = new PAPattern;
     patterns[".basic"] = new BasicPattern;
 }

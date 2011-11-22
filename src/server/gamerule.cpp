@@ -114,6 +114,10 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
                 room->setPlayerFlag(player, "-drank");
             }
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                if(tmp->hasFlag("Ecstasy"))
+                    room->setPlayerFlag(tmp, "-Ecstasy");
+            }
 
             player->clearFlags();
 
@@ -314,6 +318,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             DamageStruct damage = data.value<DamageStruct>();
             room->sendDamageLog(damage);
 
+            if(damage.to->hasFlag("Ecstasy"))
+                room->setPlayerFlag(damage.to, "-Ecstasy");
             room->applyDamage(player, damage);
             if(player->getHp() <= 0){
                 room->enterDying(player, &damage);

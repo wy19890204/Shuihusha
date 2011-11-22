@@ -371,33 +371,24 @@ DummyCard *ServerPlayer::wholeHandCards() const{
     return dummy_card;
 }
 
-bool ServerPlayer::hasNullification() const{
+bool ServerPlayer::hasNullification(bool include_counterplot) const{
     if(hasSkill("kanpo")){
         foreach(const Card *card, handcards){
-            if(card->isBlack() || card->inherits("Nullification"))
+            if(card->isBlack() || card->objectName() == "nullification")
                 return true;
         }
     }else if(hasSkill("wushen")){
         foreach(const Card *card, handcards){
-            if(card->inherits("Nullification") && card->getSuit() != Card::Heart)
+            if(card->objectName() == "nullification" && card->getSuit() != Card::Heart)
                 return true;
         }
     }else if(hasSkill("guhuo")){
         return !isKongcheng();
-    }else if(hasFlag("lexue")){
-        int card_id = getMark("lexue");
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->inherits("Nullification")){
-            foreach(const Card *c, handcards + getEquips()){
-                if(c->inherits("Nullification") || c->getSuit() == card->getSuit())
-                    return true;
-            }
-        }
     }else if(hasSkill("longhun")){
         int n = qMax(1, getHp());
         int count = 0;
         foreach(const Card *card, handcards + getEquips()){
-            if(card->inherits("Nullification"))
+            if(card->objectName() == "nullification")
                 return true;
 
             if(card->getSuit() == Card::Spade)
@@ -407,7 +398,9 @@ bool ServerPlayer::hasNullification() const{
         return count >= n;
     }else{
         foreach(const Card *card, handcards){
-            if(card->inherits("Nullification"))
+            if(include_counterplot && card->inherits("Nullification"))
+                return true;
+            if(!include_counterplot && card->objectName() == "nullification")
                 return true;
         }
     }

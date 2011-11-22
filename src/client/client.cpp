@@ -762,7 +762,8 @@ void Client::askForNullification(const QString &ask_str){
         prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2'/> ==&gt; <img src='%3' />").arg(trick_path).arg(from).arg(to));
     }
 
-    card_pattern = "nullification";
+    card_pattern = !trick_card->inherits("SingleTargetTrick") ?
+                   "nullification" : "nulliplot";
     refusable = true;
     use_card = false;
 
