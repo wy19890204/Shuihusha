@@ -53,11 +53,4 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class YxSword: public Weapon{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE YxSword(Card::Suit suit = Club, int number = 9);
-};
-
 #endif // JOYPACKAGE_H
