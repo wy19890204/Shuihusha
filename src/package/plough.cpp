@@ -5,6 +5,7 @@
 #include "carditem.h"
 #include "god.h"
 #include "standard.h"
+#include "maneuvering.h"
 
 Drivolt::Drivolt(Suit suit, int number)
     :SingleTargetTrick(suit, number, true) {
@@ -74,6 +75,12 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
     }
 }
 
+Counterplot::Counterplot(Suit suit, int number)
+    :Nullification(suit, number)
+{
+    setObjectName("counterplot");
+}
+
 Provistore::Provistore(Suit suit, int number)
     :DelayedTrick(suit, number)
 {
@@ -124,14 +131,14 @@ void Tsunami::takeEffect(ServerPlayer *target) const{
 
 class DoubleWhipSkill : public WeaponSkill{
 public:
-    DoubleWhipSkill():WeaponSkill("blade"){
+    DoubleWhipSkill():WeaponSkill("double_whip"){
         events << CardUsed;
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardUseStruct effect = data.value<CardUseStruct>();
         Room *room = player->getRoom();
-        if(effect.card->inherits("Slash") && player->askForSkillInvoke(objectName())){
+        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip")){
             foreach(ServerPlayer *effecto, effect.to){
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
@@ -1326,26 +1333,76 @@ public:
 PloughPackage::PloughPackage()
     :Package("plough")
 {
-    type = CardPack;/*
+    type = CardPack;
     QList<Card *> cards;
 
     // spade
-    cards << new GudingBlade(Card::Spade, 1)
-            << new Machine(Card::Spade, 2)
-            << new Analeptic(Card::Spade, 3)
-            << new ThunderSlash(Card::Spade, 4)
+    cards
+            << new Assassinate(Card::Spade, 1)
+            << new SilverLion(Card::Spade, 2)
+            //<< new meteor_sword(Card::Spade, 3)
             << new ThunderSlash(Card::Spade, 5)
             << new ThunderSlash(Card::Spade, 6)
-            << new ThunderSlash(Card::Spade, 7)
-            << new ThunderSlash(Card::Spade, 8)
-            << new Analeptic(Card::Spade, 9)
-            << new SupplyShortage(Card::Spade,10)
-            << new IronChain(Card::Spade, 11)
+            //<< new ThunderSlash(Card::Spade, 7)
+            << new IronChain(Card::Spade, 8)
+            //<< new ecstasy(Card::Spade, 9)
+            //<< new gold_armor(Card::Spade,10)
+            << new Wiretap(Card::Spade, 11)
             << new IronChain(Card::Spade, 12)
-            << new Nullification(Card::Spade, 13);
+            << new Counterplot(Card::Spade, 13)
+
+    // club
+            << new Tsunami(Card::Club, 1)
+            //<< new Vine(Card::Club, 2)
+            //<< new Analeptic(Card::Club, 3)
+            << new Analeptic(Card::Club, 4)
+            //<< new ThunderSlash(Card::Club, 5)
+            << new Provistore(Card::Club, 6)
+            << new DoubleWhip(Card::Club, 7)
+            << new IronChain(Card::Club, 8)
+            << new ThunderSlash(Card::Club, 9)
+            //<< new IronChain(Card::Club, 10)
+            << new IronChain(Card::Club, 11)
+            << new Drivolt(Card::Club, 12)
+            << new ArcheryAttack(Card::Club, 13)
+
+    // heart
+            << new Provistore(Card::Heart, 1)
+            << new Jink(Card::Heart, 2)
+            << new Analeptic(Card::Heart, 3)
+            << new FireSlash(Card::Heart, 4)
+            << new Peach(Card::Heart, 5)
+            << new Jink(Card::Heart, 6)
+            << new Wiretap(Card::Heart, 7)
+            //<< new Jink(Card::Heart, 8)
+            //<< new Jink(Card::Heart, 9)
+            << new Peach(Card::Heart, 10)
+            << new Counterplot(Card::Heart, 11)
+            << new Drivolt(Card::Heart, 13)
+
+    // diamond
+            << new Tsunami(Card::Diamond, 1)
+            << new Peach(Card::Diamond, 2)
+            << new Peach(Card::Diamond, 3)
+            << new FireSlash(Card::Diamond, 4)
+            << new Jink(Card::Diamond, 5)
+            << new Tsunami(Card::Diamond, 6)
+            << new Wiretap(Card::Diamond, 7)
+            << new Treasury(Card::Diamond, 8)
+            << new Analeptic(Card::Diamond, 9)
+            << new Jink(Card::Diamond, 10)
+            //<< new gong(Card::Diamond, 11)
+            << new Assassinate(Card::Diamond, 12)
+            << new Counterplot(Card::Diamond, 13);
+
+    DefensiveHorse *white = new DefensiveHorse(Card::Heart, 12);
+    white->setObjectName("white");
+    OffensiveHorse *brown = new OffensiveHorse(Card::Spade, 4);
+    brown->setObjectName("brown");
+
+    cards << white << brown;
     foreach(Card *card, cards)
         card->setParent(this);
-    */
 }
 
 ADD_PACKAGE(Plough)

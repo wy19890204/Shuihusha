@@ -396,8 +396,8 @@ local t = {
 	["$Dismantlement"] = "%from 被拆掉了 %card",
 }
 
-local ohorses = {"chitu", "dayuan", "zixing"}
-local dhorses = {"zhuahuangfeidian", "dilu", "jueying", "hualiu"}
+local ohorses = {"chitu", "dayuan", "zixing", "brown"}
+local dhorses = {"zhuahuangfeidian", "dilu", "jueying", "hualiu", "white"}
 
 for _, horse in ipairs(ohorses) do
 	t[":" .. horse] = t[":-1 horse"]

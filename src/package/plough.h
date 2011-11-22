@@ -34,6 +34,13 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class Counterplot:public Nullification{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Counterplot(Card::Suit suit, int number);
+};
+
 class Provistore:public DelayedTrick{
     Q_OBJECT
 

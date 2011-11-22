@@ -374,12 +374,12 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 bool ServerPlayer::hasNullification() const{
     if(hasSkill("kanpo")){
         foreach(const Card *card, handcards){
-            if(card->isBlack() || card->objectName() == "nullification")
+            if(card->isBlack() || card->inherits("Nullification"))
                 return true;
         }
     }else if(hasSkill("wushen")){
         foreach(const Card *card, handcards){
-            if(card->objectName() == "nullification" && card->getSuit() != Card::Heart)
+            if(card->inherits("Nullification") && card->getSuit() != Card::Heart)
                 return true;
         }
     }else if(hasSkill("guhuo")){
@@ -387,9 +387,9 @@ bool ServerPlayer::hasNullification() const{
     }else if(hasFlag("lexue")){
         int card_id = getMark("lexue");
         const Card *card = Sanguosha->getCard(card_id);
-        if(card->objectName() == "nullification"){
+        if(card->inherits("Nullification")){
             foreach(const Card *c, handcards + getEquips()){
-                if(c->objectName() == "nullification" || c->getSuit() == card->getSuit())
+                if(c->inherits("Nullification") || c->getSuit() == card->getSuit())
                     return true;
             }
         }
@@ -397,7 +397,7 @@ bool ServerPlayer::hasNullification() const{
         int n = qMax(1, getHp());
         int count = 0;
         foreach(const Card *card, handcards + getEquips()){
-            if(card->objectName() == "nullification")
+            if(card->inherits("Nullification"))
                 return true;
 
             if(card->getSuit() == Card::Spade)
@@ -407,7 +407,7 @@ bool ServerPlayer::hasNullification() const{
         return count >= n;
     }else{
         foreach(const Card *card, handcards){
-            if(card->objectName() == "nullification")
+            if(card->inherits("Nullification"))
                 return true;
         }
     }

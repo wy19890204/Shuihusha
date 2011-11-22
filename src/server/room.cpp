@@ -582,6 +582,8 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
             log.to << to;
             log.arg = trick_name;
             sendLog(log);
+            if(card->objectName() == "counterplot")
+                from->obtainCard(trick);
 
             broadcastInvoke("animate", QString("nullification:%1:%2")
                             .arg(player->objectName()).arg(to->objectName()));

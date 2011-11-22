@@ -243,7 +243,7 @@ const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *,
         QList<const Card *> cards = self->getHandcards();
 
         foreach(const Card *card, cards){
-            if(card->objectName() == "nullification")
+            if(card->inherits("Nullification"))
                 return card;
         }
 
