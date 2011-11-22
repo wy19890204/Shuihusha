@@ -100,17 +100,13 @@ public:
     Q_INVOKABLE SunBow(Card::Suit suit, int number);
 };
 
-/*
-class TaichenCard: public SkillCard{
+class GoldArmor:public Armor{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE TaichenCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    Q_INVOKABLE GoldArmor(Card::Suit suit, int number);
 };
-*/
+
 class PloughPackage: public Package{
     Q_OBJECT
 

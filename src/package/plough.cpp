@@ -216,485 +216,47 @@ SunBow::SunBow(Suit suit, int number)
     setObjectName("sun_bow");
 }
 
-/*
-        case Player::Finish:{
-                Room *room = jiawenhe->getRoom();
-                QString dongchaee_name = room->getTag("Dongchaee").toString();
-                if(!dongchaee_name.isEmpty()){
-                    ServerPlayer *dongchaee = room->findChild<ServerPlayer *>(dongchaee_name);
-                    room->setPlayerFlag(dongchaee, "-dongchaee");
-
-                    room->setTag("Dongchaee", QVariant());
-                    room->setTag("Dongchaer", QVariant());
-                }
-
-                break;
-            }
-
-        default:
-            break;
-        }
-
-        return false;
-    }
-};
-
-class Dushi: public TriggerSkill{
+class GoldArmorSkill: public ArmorSkill{
 public:
-    Dushi():TriggerSkill("dushi"){
-        events << Death;
-        frequency = Compulsory;
+    GoldArmorSkill():ArmorSkill("gold_armor"){
+        events << Damaged << SlashEffected;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStar damage = data.value<DamageStar>();
-        ServerPlayer *killer = damage ? damage->from : NULL;
-
-        if(killer){
-            Room *room = player->getRoom();
-            if(killer != player && !killer->hasSkill("benghuai")){
-                killer->gainMark("@collapse");
-                room->acquireSkill(killer, "benghuai");
-            }
-        }
-
-        return false;
-    }
-};
-
-class Sizhan: public TriggerSkill{
-public:
-    Sizhan():TriggerSkill("sizhan"){
-        events << Predamaged << PhaseChange;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *elai, QVariant &data) const{
-        if(event == Predamaged){
-            DamageStruct damage = data.value<DamageStruct>();
-
-            LogMessage log;
-            log.type = "#SizhanPrevent";
-            log.from = elai;
-            log.arg = QString::number(damage.damage);
-            elai->getRoom()->sendLog(log);
-
-            elai->gainMark("@struggle", damage.damage);
-
-            return true;
-        }else if(event == PhaseChange && elai->getPhase() == Player::Finish){
-            int x = elai->getMark("@struggle");
-            if(x > 0){
-                elai->loseMark("@struggle", x);
-
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(event == SlashEffected){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            if(effect.nature != DamageStruct::Normal){
                 LogMessage log;
-                log.type = "#SizhanLoseHP";
-                log.from = elai;
-                log.arg = QString::number(x);
-
-                Room *room = elai->getRoom();
+                log.from = player;
+                log.type = "#ArmorNullify";
+                log.arg = objectName();
+                log.arg2 = effect.slash->objectName();
                 room->sendLog(log);
-                room->loseHp(elai, x);
+
+                return true;
             }
-
-            elai->setFlags("-shenli");
-        }
-
-        return false;
-    }
-};
-
-class Shenli: public TriggerSkill{
-public:
-    Shenli():TriggerSkill("shenli"){
-        events << Predamage;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *elai, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Ecstasy") &&
-           elai->getPhase() == Player::Play && !elai->hasFlag("shenli"))
-        {
-            elai->setFlags("shenli");
-
-            int x = elai->getMark("@struggle");
-            if(x > 0){
-                x = qMin(3, x);
-                damage.damage += x;
-                data = QVariant::fromValue(damage);
-
+        }else if(event == Damaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.card->inherits("Slash")){
                 LogMessage log;
-                log.type = "#ShenliBuff";
-                log.from = elai;
-                log.arg = QString::number(x);
-                log.arg2 = QString::number(damage.damage);
-                elai->getRoom()->sendLog(log);
+                log.type = "#ThrowWeapon";
+                log.from = player;
+                log.arg = objectName();
+                if(damage.from->getWeapon()){
+                    room->sendLog(log);
+                    room->throwCard(damage.from->getWeapon());
+                }
             }
         }
-
         return false;
     }
 };
 
-class Zhenggong: public TriggerSkill{
-public:
-    Zhenggong():TriggerSkill("zhenggong"){
-        events << TurnStart;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return ! target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
-        Room *room = player->getRoom();
-        ServerPlayer *dengshizai = room->findPlayerBySkillName(objectName());
-
-        if(dengshizai && dengshizai->faceUp() && dengshizai->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-
-            dengshizai->turnOver();
-
-            PlayerStar zhenggong = room->getTag("Zhenggong").value<PlayerStar>();
-            if(zhenggong == NULL){
-                PlayerStar p = player;
-                room->setTag("Zhenggong", QVariant::fromValue(p));
-                player->gainMark("@zhenggong");
-            }
-
-            room->setCurrent(dengshizai);
-            dengshizai->play();
-
-            return true;
-
-        }else{
-            PlayerStar p = room->getTag("Zhenggong").value<PlayerStar>();
-            if(p){
-                p->loseMark("@zhenggong");
-                room->setCurrent(p);
-                room->setTag("Zhenggong", QVariant());
-            }
-        }
-
-        return false;
-    }
-};
-
-class Toudu: public MasochismSkill{
-public:
-    Toudu():MasochismSkill("toudu"){
-
-    }
-
-    virtual void onDamaged(ServerPlayer *dengshizai, const DamageStruct &) const{
-        if(dengshizai->faceUp())
-            return;
-
-        if(dengshizai->isKongcheng())
-            return;
-
-        if(!dengshizai->askForSkillInvoke("toudu"))
-            return;
-
-        Room *room = dengshizai->getRoom();
-
-        if(!room->askForDiscard(dengshizai, "toudu", 1, false, false))
-            return;
-
-        dengshizai->turnOver();
-
-        QList<ServerPlayer *> players = room->getOtherPlayers(dengshizai), targets;
-        foreach(ServerPlayer *player, players){
-            if(dengshizai->canEcstasy(player, false)){
-                targets << player;
-            }
-        }
-
-        if(!targets.isEmpty()){
-            ServerPlayer *target = room->askForPlayerChosen(dengshizai, targets, "toudu");
-
-            Ecstasy *Ecstasy = new Ecstasy(Card::NoSuit, 0);
-            Ecstasy->setSkillName("toudu");
-
-            CardUseStruct use;
-            use.card = Ecstasy;
-            use.from = dengshizai;
-            use.to << target;
-            room->useCard(use);
-        }
-    }
-};
-
-YisheCard::YisheCard(){
-    target_fixed = true;
-    will_throw = false;
+GoldArmor::GoldArmor(Suit suit, int number):Armor(suit, number){
+    setObjectName("gold_armor");
+    skill = new GoldArmorSkill;
 }
-
-void YisheCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    const QList<int> rice = source->getPile("rice");
-
-    if(subcards.isEmpty()){
-        foreach(int card_id, rice){
-            room->obtainCard(source, card_id);
-        }
-    }else{
-        foreach(int card_id, subcards){
-            source->addToPile("rice", card_id);
-        }
-    }
-}
-
-class YisheViewAsSkill: public ViewAsSkill{
-public:
-    YisheViewAsSkill():ViewAsSkill(""){
-        card = new YisheCard;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->getPile("rice").isEmpty())
-            return !player->isKongcheng();
-        else
-            return true;
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        int n = Self->getPile("rice").length();
-        if(selected.length() + n >= 5)
-            return false;
-
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->getPile("rice").isEmpty() && cards.isEmpty())
-            return NULL;
-
-        card->clearSubcards();
-        card->addSubcards(cards);
-        return card;
-    }
-
-private:
-    YisheCard *card;
-};
-
-YisheAskCard::YisheAskCard(){
-    target_fixed = true;
-}
-
-void YisheAskCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    ServerPlayer *zhanglu = room->findPlayerBySkillName("yishe");
-    if(zhanglu == NULL)
-        return;
-
-    const QList<int> &yishe = zhanglu->getPile("rice");
-    if(yishe.isEmpty())
-        return;
-
-    int card_id;
-    if(yishe.length() == 1)
-        card_id = yishe.first();
-    else{
-        room->fillAG(yishe, source);
-        card_id = room->askForAG(source, yishe, false, "yisheask");
-        source->invoke("clearAG");
-    }
-
-    source->obtainCard(Sanguosha->getCard(card_id));
-    room->showCard(source, card_id);
-
-    if(room->askForChoice(zhanglu, "yisheask", "allow+disallow") == "disallow"){
-        zhanglu->addToPile("rice", card_id);
-    }
-}
-
-class YisheAsk: public ZeroCardViewAsSkill{
-public:
-    YisheAsk():ZeroCardViewAsSkill("yisheask"){
-        default_choice = "disallow";
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->hasSkill("yishe"))
-            return false;
-
-        if(player->usedTimes("YisheAskCard") >= 2)
-            return false;
-
-        Player *zhanglu = NULL;
-        foreach(Player *p, player->parent()->findChildren<Player *>()){
-            if(p->isAlive() && p->hasSkill("yishe")){
-                zhanglu = p;
-                break;
-            }
-        }
-
-        return zhanglu && !zhanglu->getPile("rice").isEmpty();
-    }
-
-    virtual const Card *viewAs() const{
-        return new YisheAskCard;
-    }
-};
-
-class Yishe: public GameStartSkill{
-public:
-    Yishe():GameStartSkill("yishe"){
-        view_as_skill = new YisheViewAsSkill;
-    }
-
-    virtual void onGameStart(ServerPlayer *player) const{
-        Room *room = player->getRoom();
-        foreach(ServerPlayer *p, room->getOtherPlayers(player))
-            room->attachSkillToPlayer(p, "yisheask");
-    }
-};
-
-class Xiliang: public TriggerSkill{
-public:
-    Xiliang():TriggerSkill("xiliang"){
-        events << CardDiscarded;
-
-        default_choice = "obtain";
-
-        frequency = Frequent;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-
-        if(player->getPhase() != Player::Discard)
-            return false;
-
-        ServerPlayer *zhanglu = room->findPlayerBySkillName(objectName());
-
-        if(zhanglu == NULL)
-            return false;
-
-        CardStar card = data.value<CardStar>();
-        QList<const Card *> red_cards;
-        foreach(int card_id, card->getSubcards()){
-            const Card *c = Sanguosha->getCard(card_id);
-            if(c->isRed())
-                red_cards << c;
-        }
-
-        if(red_cards.isEmpty())
-            return false;
-
-        if(!zhanglu->askForSkillInvoke(objectName(), data))
-            return false;
-
-        bool can_put = 5 - zhanglu->getPile("rice").length() >= red_cards.length();
-        if(can_put && room->askForChoice(zhanglu, objectName(), "put+obtain") == "put"){
-            foreach(const Card *card, red_cards){
-                zhanglu->addToPile("rice", card->getEffectiveId());
-            }
-        }else{
-            foreach(const Card *card, red_cards){
-                zhanglu->obtainCard(card);
-            }
-        }
-
-        return false;
-    }
-};
-
-class Zhenwei: public TriggerSkill{
-public:
-    Zhenwei():TriggerSkill("zhenwei"){
-        events << EcstasyMissed;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        EcstasyEffectStruct effect = data.value<EcstasyEffectStruct>();
-        if(player->getRoom()->obtainable(effect.jink, player) && player->askForSkillInvoke(objectName(), data))
-            player->obtainCard(effect.jink);
-
-        return false;
-    }
-};
-
-class Yitian: public TriggerSkill{
-public:
-    Yitian():TriggerSkill("yitian"){
-        events << Predamage;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->isCaoCao() && player->askForSkillInvoke(objectName(), data)){
-            LogMessage log;
-            log.type = "#YitianSolace";
-            log.from = player;
-            log.to << damage.to;
-            log.arg = QString::number(damage.damage);
-            log.arg2 = QString::number(damage.damage - 1);
-            player->getRoom()->sendLog(log);
-
-            damage.damage --;
-            data.setValue(damage);
-        }
-
-        return false;
-    }
-};
-
-TaichenCard::TaichenCard(){
-}
-
-bool TaichenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty() || to_select->isAllNude())
-        return false;
-
-    if(!subcards.isEmpty() && Sanguosha->getCard(subcards.first()) == Self->getWeapon() && !Self->hasSkill("zhengfeng"))
-        return Self->distanceTo(to_select) == 1;
-    else
-        return Self->inMyAttackRange(to_select);
-}
-
-void TaichenCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-
-    if(subcards.isEmpty())
-        room->loseHp(effect.from);
-    else
-        room->throwCard(this);
-
-    int i;
-    for(i=0; i<2; i++){
-        if(!effect.to->isAllNude())
-            room->throwCard(room->askForCardChosen(effect.from, effect.to, "hej", "taichen"));
-    }
-}
-
-class Taichen: public ViewAsSkill{
-public:
-    Taichen():ViewAsSkill("taichen"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return selected.isEmpty() && to_select->getFilteredCard()->inherits("Weapon");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() <= 1){
-            TaichenCard *taichen_card = new TaichenCard;
-            taichen_card->addSubcards(cards);
-            return taichen_card;
-        }else
-            return NULL;
-    }
-};
-*/
 
 PloughPackage::PloughPackage()
     :Package("plough")
@@ -709,10 +271,10 @@ PloughPackage::PloughPackage()
             << new MeteorSword(Card::Spade, 3)
             << new ThunderSlash(Card::Spade, 5)
             << new ThunderSlash(Card::Spade, 6)
-            //<< new ThunderEcstasy(Card::Spade, 7)
+            << new Counterplot(Card::Spade, 7)
             << new IronChain(Card::Spade, 8)
             << new Ecstasy(Card::Spade, 9)
-            //<< new gold_armor(Card::Spade,10)
+            << new GoldArmor(Card::Spade, 10)
             << new Wiretap(Card::Spade, 11)
             << new IronChain(Card::Spade, 12)
             << new Counterplot(Card::Spade, 13)
@@ -742,7 +304,7 @@ PloughPackage::PloughPackage()
             << new DoubleWhip(Card::Club, 7)
             << new IronChain(Card::Club, 8)
             << new ThunderSlash(Card::Club, 9)
-            //<< new IronChain(Card::Club, 10)
+            << new GoldArmor(Card::Club, 10)
             << new IronChain(Card::Club, 11)
             << new Drivolt(Card::Club, 12)
             << new ArcheryAttack(Card::Club, 13)
