@@ -180,10 +180,6 @@ int Player::distanceTo(const Player *other) const{
 
     distance += Sanguosha->correctDistance(this, other);
 
-    // keep the distance >=1
-    if(distance < 1)
-        distance = 1;
-
     bool mengkang = false;
     foreach(const Player *player, getSiblings()){
         if(player->hasSkill("mengchong")){
@@ -195,6 +191,10 @@ int Player::distanceTo(const Player *other) const{
         if(!this->isChained() && other->isChained())
             distance ++;
     }
+
+    // keep the distance >=1
+    if(distance < 1)
+        distance = 1;
 
     return distance;
 }

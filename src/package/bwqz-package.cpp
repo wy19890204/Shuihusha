@@ -367,14 +367,14 @@ public:
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand && move->to != vgqq
-               && vgqq->askForSkillInvoke(objectName())){
+               && vgqq->isAlive() && vgqq->askForSkillInvoke(objectName())){
                 doDraw(room, vgqq);
             }
         }
         else{
             int lose = data.toInt();
             for(; lose > 0; lose --){
-                if(vgqq->askForSkillInvoke(objectName()))
+                if(vgqq->isAlive() && vgqq->askForSkillInvoke(objectName()))
                     if(doDraw(room, vgqq))
                         break;
             }

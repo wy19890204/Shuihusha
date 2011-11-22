@@ -368,14 +368,17 @@ public:
         if(judge->card->inherits("BasicCard") && yuehe->askForSkillInvoke(objectName(), data_card)){
             if(card->objectName() == "shit"){
                 QString result = room->askForChoice(yuehe, objectName(), "yes+no");
-                if(result == "no")
+                if(result == "no"){
+                    room->playSkillEffect(objectName(), 2);
                     return false;
+                }
             }
             yuehe->obtainCard(judge->card);
-            room->playSkillEffect(objectName(), 1);
+            if(judge->reason != "taohui")
+                room->playSkillEffect(objectName(), 1);
             return true;
         }
-        else
+        if(judge->reason != "taohui")
             room->playSkillEffect(objectName(), 2);
         return false;
     }
@@ -720,7 +723,7 @@ bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->broadcastInvoke("animate", "lightbox:$xuming");
+    room->broadcastInvoke("animate", "lightbox:$yanshou");
     effect.from->loseMark("@life");
     LogMessage log;
     log.type = "#Yanshou";
@@ -738,7 +741,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@life") >= 1;
+        return player->getMark("@life") > 0;
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
