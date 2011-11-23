@@ -4,7 +4,7 @@
 #include "engine.h"
 #include "carditem.h"
 #include "room.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 
 GanlinCard::GanlinCard(){
     will_throw = false;

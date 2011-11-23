@@ -45,7 +45,7 @@ extern "C" {
     Package *NewStandardCard();
     Package *NewStandardExCard();
     Package *NewPlough();
-    Package *NewManeuvering();
+    Package *NewTocheck();
     Package *NewNostalgia();
     Package *NewJoy();
     Package *NewJoyEquip();
@@ -80,7 +80,7 @@ Engine::Engine()
     addPackage(NewStandardCard());
     addPackage(NewStandardExCard());
     addPackage(NewPlough());
-    addPackage(NewManeuvering());
+    addPackage(NewTocheck());
     addPackage(NewNostalgia());
     addPackage(NewJoy());
     addPackage(NewJoyEquip());

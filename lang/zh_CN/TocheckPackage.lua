@@ -1,7 +1,7 @@
--- translation for ManeuveringPackage
+-- translation for TocheckPackage
 
 return {
-	["maneuvering"] = "地煞卡牌包", 
+	["tocheck"] = "地煞卡牌包", 
 	["buff_card"] = "辅助伤害卡", 
 	["damage_spread"] = "伤害传导", 
 	["fire_attack"] = "火攻", 

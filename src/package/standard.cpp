@@ -2,7 +2,7 @@
 #include "serverplayer.h"
 #include "room.h"
 #include "skill.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 #include "clientplayer.h"
 #include "engine.h"
 #include "client.h"

@@ -1,4 +1,4 @@
-#include "maneuvering.h"
+#include "tocheck.h"
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
@@ -365,8 +365,8 @@ void SupplyShortage::takeEffect(ServerPlayer *target) const{
     target->skip(Player::Draw);
 }
 
-ManeuveringPackage::ManeuveringPackage()
-    :Package("maneuvering")
+TocheckPackage::TocheckPackage()
+    :Package("tocheck")
 {
     QList<Card *> cards;
 
@@ -440,4 +440,4 @@ ManeuveringPackage::ManeuveringPackage()
     type = CardPack;
 }
 
-ADD_PACKAGE(Maneuvering)
+ADD_PACKAGE(Tocheck)

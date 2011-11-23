@@ -40,7 +40,6 @@ SOURCES += src/main.cpp \
 	src/package/firepackage.cpp \
 	src/package/god.cpp \
 	src/package/joypackage.cpp \
-	src/package/maneuvering.cpp \
 	src/package/mountainpackage.cpp \
 	src/package/nostalgia.cpp \
 	src/package/bwqz-package.cpp \
@@ -51,6 +50,7 @@ SOURCES += src/main.cpp \
 	src/package/thicket.cpp \
 	src/package/wind.cpp \
 	src/package/plough.cpp \
+	src/package/tocheck.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
 	src/package/ttxd-package.cpp \
@@ -117,7 +117,6 @@ HEADERS += src/client/aux-skills.h \
 	src/package/firepackage.h \
 	src/package/god.h \
 	src/package/joypackage.h \
-	src/package/maneuvering.h \
 	src/package/mountainpackage.h \
 	src/package/nostalgia.h \
 	src/package/package.h \
@@ -128,6 +127,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/thicket.h \
 	src/package/wind.h \
 	src/package/plough.h \
+	src/package/tocheck.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
 	src/package/ttxd-package.h \

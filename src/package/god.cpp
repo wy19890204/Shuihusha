@@ -3,7 +3,7 @@
 #include "engine.h"
 #include "carditem.h"
 #include "settings.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 
 GongxinCard::GongxinCard(){
     once = true;

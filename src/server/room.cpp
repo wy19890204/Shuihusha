@@ -535,7 +535,7 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
     QString trick_name = trick->objectName();
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
-        if(!player->hasNullification(trick->inherits("SingleTargetTrick")))
+        if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
             continue;
 
         trust:
@@ -641,8 +641,14 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
-    if(player->hasFlag("Ecstasy") && (asked.toString() == "slash" || asked.toString() == "jink"))
+    if(player->hasFlag("Ecstasy") && (asked.toString() == "slash" || asked.toString() == "jink")){
+        LogMessage log;
+        log.type = "#EcstasyEffect";
+        log.from = player;
+        log.arg = asked.toString();
+        sendLog(log);
         return NULL;
+    }
     thread->trigger(CardAsked, player, asked);
     if(provided){
         card = provided;
@@ -714,6 +720,14 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
+    if(player->hasFlag("Ecstasy") && answer == "slash"){
+        LogMessage log;
+        log.type = "#EcstasyEffect";
+        log.from = player;
+        log.arg = answer;
+        sendLog(log);
+        return NULL;
+    }
 
     AI *ai = player->getAI();
     if(ai){
@@ -935,7 +949,7 @@ void Room::swapPile(){
     if(times == 6)
         gameOver(".");
     if(mode == "04_1v3"){
-        int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
+        int limit = Config.BanPackages.contains("tocheck") ? 3 : 2;
         if(times == limit)
             gameOver(".");
     }

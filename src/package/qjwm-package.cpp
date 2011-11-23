@@ -1,7 +1,7 @@
 #include "qjwm-package.h"
 #include "skill.h"
 #include "standard.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"

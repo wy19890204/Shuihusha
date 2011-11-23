@@ -5,7 +5,7 @@
 #include "engine.h"
 #include "standard.h"
 #include "clientplayer.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 
 class Zaochuan: public OneCardViewAsSkill{
 public:

@@ -5,7 +5,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "maneuvering.h"
+#include "tocheck.h"
 
 QuhuCard::QuhuCard(){
     once = true;
