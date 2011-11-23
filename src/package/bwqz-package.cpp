@@ -379,6 +379,90 @@ public:
     }
 };
 
+class Qiaogong: public TriggerSkill{
+public:
+    Qiaogong():TriggerSkill("qiaogong"){
+        events << CardFinished;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *turtle = room->findPlayerBySkillName(objectName());
+        CardUseStruct card = data.value<CardUseStruct>();
+        if(!turtle || !card.card->inherits("EquipCard"))
+            return false;
+        int weapon, armor, horseo, horsed;
+        const EquipCard *w, *a, *o, *d;
+        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+            w = tmp->getWeapon();
+            if(w)
+                weapon ++;
+            a = tmp->getArmor();
+            if(a)
+                armor ++;
+            o = tmp->getOffensiveHorse();
+            if(o)
+                horseo ++;
+            d = tmp->getDefensiveHorse();
+            if(d)
+                horsed ++;
+        }
+        if(weapon == 1){
+            const Weapon *e1 = qobject_cast<const Weapon *>(w);
+            turtle->setMark("@qrange", e1->getRange());
+            room->attachSkillToPlayer(turtle, e1->objectName());
+        }
+        if(armor == 1){
+            const Armor *e2 = qobject_cast<const Armor *>(a);
+            room->attachSkillToPlayer(turtle, e2->objectName());
+        }
+        if(horseo == 1){
+            //const OffensiveHorse *e3 = qobject_cast<const OffensiveHorse *>(o);
+            room->setPlayerFlag(turtle, "horseo");
+        }
+        if(horsed == 1){
+            //const DefensiveHorse *e4 = qobject_cast<const DefensiveHorse *>(d);
+            room->setPlayerFlag(turtle, "horsed");
+        }
+        return false;
+    }
+};
+
+class Manli: public TriggerSkill{
+public:
+    Manli():TriggerSkill("manli"){
+        events << Predamage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *turtle, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        const Card *reason = damage.card;
+        if(reason == NULL)
+            return false;
+        Room *room = turtle->getRoom();
+        if((reason->inherits("Slash") || reason->inherits("Duel"))
+            && turtle->getWeapon() && turtle->getArmor()
+            && turtle->askForSkillInvoke(objectName())){
+            LogMessage log;
+            log.type = "#ManliBuff";
+            log.from = turtle;
+            log.to << damage.to;
+            log.arg = QString::number(damage.damage);
+            log.arg2 = QString::number(damage.damage + 1);
+            room->sendLog(log);
+
+            damage.damage ++;
+            data = QVariant::fromValue(damage);
+        }
+        return false;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -407,6 +491,10 @@ BWQZPackage::BWQZPackage()
     General *jiashi = new General(this, "jiashi", "min", 3, false);
     jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
+
+    General *taozongwang = new General(this, "taozongwang", "min", 3);
+    taozongwang->addSkill(new Qiaogong);
+    taozongwang->addSkill(new Manli);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
