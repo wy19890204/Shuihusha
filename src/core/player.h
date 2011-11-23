@@ -120,6 +120,7 @@ public:
 
     virtual int aliveCount() const = 0;
     void setFixedDistance(const Player *player, int distance);
+    bool isBetweenAandB(const Player *a, const Player *b) const;
     int distanceTo(const Player *other) const;
     const General *getAvatarGeneral() const;
     const General *getGeneral() const;

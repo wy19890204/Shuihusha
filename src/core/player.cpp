@@ -167,6 +167,19 @@ void Player::setFixedDistance(const Player *player, int distance){
         fixed_distance.insert(player, distance);
 }
 
+bool Player::isBetweenAandB(const Player *a, const Player *b) const{
+    int R = qAbs(a->seat - b->seat);
+    int L = aliveCount() - R;
+    int atob = qMin(R, L);
+    R = qAbs(this->seat - a->seat);
+    L = aliveCount() - R;
+    int metoa = qMin(R, L);
+    R = qAbs(this->seat - b->seat);
+    L = aliveCount() - R;
+    int metob = qMin(R, L);
+    return metoa + metob == atob;
+}
+
 int Player::distanceTo(const Player *other) const{
     if(this == other)
         return 0;
@@ -175,9 +188,11 @@ int Player::distanceTo(const Player *other) const{
         return fixed_distance.value(other);
 
     int noseecount = 0;
+    QList<const Player *> shuis;
     foreach(const Player *player, getSiblings()){
         if(player != other && player->hasSkill("shuizhan")){
             noseecount ++;
+            shuis << player;
         }
     }
 
@@ -186,7 +201,10 @@ int Player::distanceTo(const Player *other) const{
     int distance = qMin(left, right);
 
     if(noseecount > 0 && !this->hasSkill("shuizhan") && !other->hasSkill("shuizhan")){
-        distance = distance - noseecount;
+        foreach(const Player *tmp, shuis){
+            if(tmp->isBetweenAandB(this, other))
+                distance --;
+        }
     }
     distance += Sanguosha->correctDistance(this, other);
 
