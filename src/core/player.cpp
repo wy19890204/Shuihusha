@@ -174,10 +174,20 @@ int Player::distanceTo(const Player *other) const{
     if(fixed_distance.contains(other))
         return fixed_distance.value(other);
 
+    int noseecount = 0;
+    foreach(const Player *player, getSiblings()){
+        if(player != other && player->hasSkill("shuizhan")){
+            noseecount ++;
+        }
+    }
+
     int right = qAbs(seat - other->seat);
     int left = aliveCount() - right;
     int distance = qMin(left, right);
 
+    if(noseecount > 0 && !this->hasSkill("shuizhan") && !other->hasSkill("shuizhan")){
+        distance = distance - noseecount;
+    }
     distance += Sanguosha->correctDistance(this, other);
 
     bool mengkang = false;

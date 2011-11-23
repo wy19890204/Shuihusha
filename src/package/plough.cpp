@@ -45,17 +45,16 @@ bool Drivolt::targetFilter(const QList<const Player *> &targets, const Player *t
     if(to_select == Self)
         return false;
 
-    if(to_select->getKingdom() == Self->getKingdom())
-        return false;
-
-    return to_select->getCardCount(true) >= 2;
+    return to_select->getKingdom() != Self->getKingdom();
 }
 
 void Drivolt::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     room->loseHp(effect.to);
-    room->askForDiscard(effect.to, "Drivolt", 2, false, true);
-    effect.to->drawCards(3);
+    if(effect.to->isAlive()){
+        room->askForDiscard(effect.to, "Drivolt", qMin(2, effect.to->getCardCount(true)), false, true);
+        effect.to->drawCards(3);
+    }
 }
 
 Wiretap::Wiretap(Suit suit, int number)

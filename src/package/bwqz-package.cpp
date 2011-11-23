@@ -394,6 +394,7 @@ BWQZPackage::BWQZPackage()
 
     General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
     shantinggui->addSkill(new Xiaofang);
+    shantinggui->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *qingzhang = new General(this, "qingzhang", "kou", 3);
     qingzhang->addSkill(new Shouge);

@@ -34,6 +34,8 @@ return {
 	["xiaofang"] = "消防",
 	[":xiaofang"] = "当场上出现火焰伤害时，你可以弃掉一张手牌，将其改为无属性伤害",
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
+	["shuizhan"] = "水战",
+	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",
 
 	["#_qingzhang"] = "菜园子",
 	["qingzhang"] = "张青",
