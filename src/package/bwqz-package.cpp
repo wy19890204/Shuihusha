@@ -191,9 +191,9 @@ NushaCard::NushaCard(){
 }
 
 bool NushaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int i = 1000;
+    int i = 0;
     foreach(const Player *player, Self->getSiblings()){
-        if(player->getHandcardNum() <= i){
+        if(player->getHandcardNum() >= i){
             i = player->getHandcardNum();
         }
     }
@@ -201,9 +201,11 @@ bool NushaCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void NushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
     DamageStruct damage;
     damage.from = source;
     damage.to = targets.first();
+    damage.card = this;
     room->damage(damage);
 }
 
@@ -238,6 +240,7 @@ public:
         if(zhugeliang->getPhase() == Player::Finish &&
            zhugeliang->getHp() > zhugeliang->getHandcardNum() &&
            zhugeliang->askForSkillInvoke(objectName())){
+            zhugeliang->getRoom()->playSkillEffect(objectName());
             zhugeliang->drawCards(zhugeliang->getHp() - zhugeliang->getHandcardNum());
         }
         return false;
