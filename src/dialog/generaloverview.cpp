@@ -49,6 +49,9 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         nickname_item->setData(Qt::UserRole, general->objectName());
         nickname_item->setTextAlignment(Qt::AlignCenter);
 
+        if(general->isHidden())
+            nickname_item->setBackgroundColor(Qt::gray);
+
         QTableWidgetItem *name_item = new QTableWidgetItem(name);
         name_item->setTextAlignment(Qt::AlignCenter);
         if(general->isLord()){

@@ -186,94 +186,63 @@ public:
     }
 };
 
-/*
-class Xiuluo: public PhaseChangeSkill{
-public:
-    Xiuluo():PhaseChangeSkill("xiuluo"){
-
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::Start
-                && !target->isKongcheng()
-                && !target->getJudgingArea().isEmpty();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        if(!target->askForSkillInvoke(objectName()))
-            return false;
-
-        Room *room = target->getRoom();
-        int card_id = room->askForCardChosen(target, target, "j", objectName());
-        const Card *card = Sanguosha->getCard(card_id);
-
-        QString suit_str = card->getSuitString();
-        QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
-        QString prompt = QString("@xiuluo:::%1").arg(suit_str);
-        if(room->askForCard(target, pattern, prompt)){
-            room->throwCard(card);
-        }
-
-        return false;
-    }
-};
-
-class Shenwei: public DrawCardsSkill{
-public:
-    Shenwei():DrawCardsSkill("shenwei"){
-        frequency = Compulsory;
-    }
-
-    virtual int getDrawNum(ServerPlayer *player, int n) const{
-        return n + 2;
-    }
-};
-
-class Danji: public PhaseChangeSkill{
-public:
-    Danji():PhaseChangeSkill("danji"){
-        frequency = Wake;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::Start
-                && target->getMark("danji") == 0
-                && target->getHandcardNum() > target->getHp();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *guanyu) const{
-        Room *room = guanyu->getRoom();
-        ServerPlayer *the_lord = room->getLord();
-        if(the_lord && the_lord->isCaoCao()){
-            LogMessage log;
-            log.type = "#DanjiWake";
-            log.from = guanyu;
-            log.arg = QString::number(guanyu->getHandcardNum());
-            log.arg2 = QString::number(guanyu->getHp());
-            room->sendLog(log);
-
-            guanyu->setMark("danji", 1);
-
-            room->loseMaxHp(guanyu);
-            room->acquireSkill(guanyu, "mashu");
-        }
-
-        return false;
-    }
-};
-
-SPCardPackage::SPCardPackage()
-    :Package("sp_cards")
-{
-    (new SPMoonSpear)->setParent(this);
-
-    type = CardPack;
+NushaCard::NushaCard(){
+    once = true;
 }
 
-ADD_PACKAGE(SPCard)
-*/
+bool NushaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int i = 1000;
+    foreach(const Player *player, Self->getSiblings()){
+        if(player->getHandcardNum() <= i){
+            i = player->getHandcardNum();
+        }
+    }
+    return targets.isEmpty() && to_select->getHandcardNum() == i && to_select != Self;
+}
+
+void NushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    DamageStruct damage;
+    damage.from = source;
+    damage.to = targets.first();
+    room->damage(damage);
+}
+
+class Nusha: public OneCardViewAsSkill{
+public:
+    Nusha():OneCardViewAsSkill("nusha"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("NushaCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new NushaCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Wanku:public PhaseChangeSkill{
+public:
+    Wanku():PhaseChangeSkill("wanku"){
+        frequency = Frequent;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *zhugeliang) const{
+        if(zhugeliang->getPhase() == Player::Finish &&
+           zhugeliang->getHp() > zhugeliang->getHandcardNum() &&
+           zhugeliang->askForSkillInvoke(objectName())){
+            zhugeliang->drawCards(zhugeliang->getHp() - zhugeliang->getHandcardNum());
+        }
+        return false;
+    }
+};
 
 class Zhuying: public FilterSkill{
 public:
@@ -420,12 +389,16 @@ BWQZPackage::BWQZPackage()
     General *jiaoting = new General(this, "jiaoting", "kou", 4);
     jiaoting->addSkill(new Skill("qinlong"));
 
-    General *shantinggui = new General(this, "shantinggui", "jiang", 5);
+    General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
     shantinggui->addSkill(new Xiaofang);
 
     General *qingzhang = new General(this, "qingzhang", "kou", 3);
     qingzhang->addSkill(new Shouge);
     qingzhang->addSkill(new Qiongtu);
+
+    General *kongliang = new General(this, "kongliang", "kou", 3);
+    kongliang->addSkill(new Nusha);
+    kongliang->addSkill(new Wanku);
 
     General *jiashi = new General(this, "jiashi", "min", 3, false);
     jiashi->addSkill(new Zhuying);
@@ -433,6 +406,7 @@ BWQZPackage::BWQZPackage()
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
+    addMetaObject<NushaCard>();
 }
 
 ADD_PACKAGE(BWQZ);
