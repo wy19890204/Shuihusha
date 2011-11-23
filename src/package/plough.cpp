@@ -140,6 +140,8 @@ Treasury::Treasury(Suit suit, int number):Disaster(suit, number){
 }
 
 void Treasury::takeEffect(ServerPlayer *target) const{
+    //room->broadcastInvoke("animate", "treasury:" + target->objectName());
+    target->getRoom()->broadcastInvoke("playAudio", "treasury");
     target->drawCards(5);
 }
 
@@ -152,6 +154,8 @@ Tsunami::Tsunami(Suit suit, int number):Disaster(suit, number){
 }
 
 void Tsunami::takeEffect(ServerPlayer *target) const{
+    //room->broadcastInvoke("animate", "tsunami:" + target->objectName());
+    target->getRoom()->broadcastInvoke("playAudio", "tsunami");
     target->throwAllCards();
 }
 
