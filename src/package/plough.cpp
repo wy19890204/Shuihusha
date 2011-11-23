@@ -20,11 +20,9 @@ QString Ecstasy::getSubtype() const{
     return "attack_card";
 }
 
-bool Ecstasy::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return !targets.isEmpty();
-}
-
 bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
     return to_select != Self && Self->inMyAttackRange(to_select);
 }
 
@@ -69,7 +67,10 @@ bool Wiretap::targetFilter(const QList<const ClientPlayer *> &targets, const Cli
 }
 
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
-    effect.to->getRoom()->showAllCards(effect.to, effect.from);
+    Room *room = effect.to->getRoom();
+    room->showAllCards(effect.to, effect.from);
+    room->getThread()->delay(3210);
+    room->broadcastInvoke("clearAG");
 }
 
 Assassinate::Assassinate(Suit suit, int number)
