@@ -4,7 +4,7 @@ local tt = {
 	["TTXD"] = "替天行道",
 	["coder:TTXD"] = "roxiel",
 
-	["#_songjiang"] = "呼保义",
+	["#_songjiang"] = "及时雨",
 	["songjiang"] = "宋江",
 	["designer:songjiang"] = "烨子&凌天翼",
 	["cv:songjiang"] = "声声melody猎狐",

@@ -135,22 +135,6 @@ public:
     }
 };
 
-/*
-class Weidi:public ZeroCardViewAsSkill{
-public:
-    Weidi():ZeroCardViewAsSkill("weidi"){
-        frequency = Compulsory;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->hasLordSkill("ji"jiang"") && Slash::IsAvailable(player);
-    }
-
-    virtual const Card *viewAs() const{
-        return Sanguosha->cloneSkillCard("JijiangCard");
-    }
-};*/
-
 class Xiaofang: public TriggerSkill{
 public:
     Xiaofang():TriggerSkill("xiaofang"){
@@ -379,57 +363,71 @@ public:
     }
 };
 
-class Qiaogong: public TriggerSkill{
-public:
-    Qiaogong():TriggerSkill("qiaogong"){
-        events << CardFinished;
-        frequency = Compulsory;
-    }
+QiaogongCard::QiaogongCard(){
+    once = true;
+}
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
+void QiaogongCard::swapEquip(ServerPlayer *first, ServerPlayer *second, int index) const{
+    const EquipCard *e1 = first->getEquip(index);
+    const EquipCard *e2 = second->getEquip(index);
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *turtle = room->findPlayerBySkillName(objectName());
-        CardUseStruct card = data.value<CardUseStruct>();
-        if(!turtle || !card.card->inherits("EquipCard"))
-            return false;
-        int weapon, armor, horseo, horsed;
-        const EquipCard *w, *a, *o, *d;
-        foreach(ServerPlayer *tmp, room->getAllPlayers()){
-            w = tmp->getWeapon();
-            if(w)
-                weapon ++;
-            a = tmp->getArmor();
-            if(a)
-                armor ++;
-            o = tmp->getOffensiveHorse();
-            if(o)
-                horseo ++;
-            d = tmp->getDefensiveHorse();
-            if(d)
-                horsed ++;
+    Room *room = first->getRoom();
+
+    if(e1)
+        first->obtainCard(e1);
+
+    if(e2)
+        room->moveCardTo(e2, first, Player::Equip);
+
+    if(e1)
+        room->moveCardTo(e1, second, Player::Equip);
+}
+
+bool QiaogongCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+bool QiaogongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    switch(targets.length()){
+    case 0: return true;
+    case 1: {
+            int n1 = targets.first()->getEquips().length();
+            int n2 = to_select->getEquips().length();
+            return qAbs(n1-n2) <= Self->getLostHp();
         }
-        if(weapon == 1){
-            const Weapon *e1 = qobject_cast<const Weapon *>(w);
-            turtle->setMark("@qrange", e1->getRange());
-            room->attachSkillToPlayer(turtle, e1->objectName());
-        }
-        if(armor == 1){
-            const Armor *e2 = qobject_cast<const Armor *>(a);
-            room->attachSkillToPlayer(turtle, e2->objectName());
-        }
-        if(horseo == 1){
-            //const OffensiveHorse *e3 = qobject_cast<const OffensiveHorse *>(o);
-            room->setPlayerFlag(turtle, "horseo");
-        }
-        if(horsed == 1){
-            //const DefensiveHorse *e4 = qobject_cast<const DefensiveHorse *>(d);
-            room->setPlayerFlag(turtle, "horsed");
-        }
+
+    default:
         return false;
+    }
+}
+
+void QiaogongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *first = targets.first();
+    ServerPlayer *second = targets.at(1);
+
+    int i;
+    for(i=0; i<4; i++)
+        swapEquip(first, second, i);
+
+    LogMessage log;
+    log.type = "#QiaogongSwap";
+    log.from = source;
+    log.to = targets;
+    room->sendLog(log);
+}
+
+class Qiaogong: public ZeroCardViewAsSkill{
+public:
+    Qiaogong():ZeroCardViewAsSkill("qiaogong"){
+
+    }
+
+    virtual const Card *viewAs() const{
+        return new QiaogongCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("QiaogongCard");
     }
 };
 
@@ -499,6 +497,7 @@ BWQZPackage::BWQZPackage()
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
     addMetaObject<NushaCard>();
+    addMetaObject<QiaogongCard>();
 }
 
 ADD_PACKAGE(BWQZ);
