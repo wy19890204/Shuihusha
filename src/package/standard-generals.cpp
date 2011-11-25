@@ -1415,8 +1415,8 @@ TestPackage::TestPackage()
     :Package("test")
 {    
     General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
-    shenlvbu1->addSkill("mashu");
-    shenlvbu1->addSkill("wushuang");
+    shenlvbu1->addSkill(new Mashu);
+    shenlvbu1->addSkill(new Wushuang);
 
     General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
     shenlvbu2->addSkill("mashu");
@@ -1425,16 +1425,6 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill(new Shenwei);
     shenlvbu2->addSkill(new Skill("shenji"));
 
-    // for test only
-    General *zhiba_sunquan = new General(this, "zhibasunquan$", "min", 4, true, true);
-    zhiba_sunquan->addSkill(new Zhiba);
-    zhiba_sunquan->addSkill("jiuyuan");
-
-    General *wuxing_zhuge = new General(this, "wuxingzhuge", "jiang", 3, true, true);
-    wuxing_zhuge->addSkill(new SuperGuanxing);
-    wuxing_zhuge->addSkill("kongcheng");
-    wuxing_zhuge->addSkill("#kongcheng-effect");
-    
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
 }
