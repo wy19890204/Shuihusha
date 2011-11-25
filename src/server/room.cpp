@@ -582,11 +582,12 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
             log.to << to;
             log.arg = trick_name;
             sendLog(log);
+
+            QString animation_str = QString(card->objectName() + ":%1:%2")
+                                    .arg(player->objectName()).arg(to->objectName());
+            broadcastInvoke("animate", animation_str);
             if(card->objectName() == "counterplot")
                 player->obtainCard(trick);
-
-            broadcastInvoke("animate", QString(card->objectName() + ":%1:%2")
-                            .arg(player->objectName()).arg(to->objectName()));
 
             QVariant decisionData = QVariant::fromValue(use);
             thread->trigger(ChoiceMade, player, decisionData);

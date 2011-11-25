@@ -276,37 +276,15 @@ public:
     }
 };
 
-PeachingCard::PeachingCard(){
-    once = true;
+PeachingCard::PeachingCard()
+    :QingnangCard()
+{
+
 }
 
 bool PeachingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(targets.length() > 0)return false;
     return to_select->isWounded() && (Self->distanceTo(to_select) <= 1);
-}
-
-bool PeachingCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.value(0, Self)->isWounded();
-}
-
-void PeachingCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
-    ServerPlayer *target = targets.value(0, source);
-
-    CardEffectStruct effect;
-    effect.card = this;
-    effect.from = source;
-    effect.to = target;
-
-    room->cardEffect(effect);
-}
-
-void PeachingCard::onEffect(const CardEffectStruct &effect) const{
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = effect.from;
-    effect.to->getRoom()->recover(effect.to, recover);
 }
 
 class Peaching: public OneCardViewAsSkill{
@@ -370,7 +348,7 @@ ZombieScenario::ZombieScenario()
     zombie->addSkill(new Ganran);
     zombie->addSkill(new Zaibian);
 
-    zombie->addSkill(new Skill("paoxiao"));
+    zombie->addSkill("paoxiao");
     zombie->addSkill("wansha");
 
     addMetaObject<PeachingCard>();

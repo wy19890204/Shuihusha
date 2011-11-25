@@ -30,7 +30,7 @@
 Engine *Sanguosha = NULL;
 
 extern "C" {
-    //Package *NewStandard();
+    Package *NewStandard();
     Package *NewWind();
     Package *NewFire();
     Package *NewThicket();
@@ -50,7 +50,7 @@ extern "C" {
     Package *NewJoyEquip();
 
     Scenario *NewCoupleScenario();
-    //Scenario *NewHongyanScenario();
+    Scenario *NewHongyanScenario();
     Scenario *NewZombieScenario();
     Scenario *NewLegendScenario();
     Scenario *NewImpasseScenario();
@@ -70,7 +70,7 @@ Engine::Engine()
     addPackage(NewBWQZ());
     addPackage(NewGod());
 
-    //addPackage(NewStandard());
+    addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
     addPackage(NewThicket());
@@ -84,7 +84,7 @@ Engine::Engine()
     addPackage(NewJoyEquip());
 
     addScenario(NewCoupleScenario());
-    //addScenario(NewHongyanScenario());
+    addScenario(NewHongyanScenario());
     addScenario(NewZombieScenario());
     addScenario(NewLegendScenario());
     addScenario(NewImpasseScenario());

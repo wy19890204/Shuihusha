@@ -210,7 +210,7 @@ int Player::distanceTo(const Player *other) const{
 
     bool mengkang = false;
     foreach(const Player *player, getSiblings()){
-        if(player->hasSkill("mengchong")){
+        if(player->isAlive() && player->hasSkill("mengchong")){
             mengkang = true;
             break;
         }

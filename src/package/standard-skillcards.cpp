@@ -108,49 +108,6 @@ void TuxiCard::onEffect(const CardEffectStruct &effect) const{
     room->setEmotion(effect.from, "good");
 }
 
-FanjianCard::FanjianCard(){
-    once = true;
-}
-
-void FanjianCard::onEffect(const CardEffectStruct &effect) const{
-    ServerPlayer *zhouyu = effect.from;
-    ServerPlayer *target = effect.to;
-    Room *room = zhouyu->getRoom();
-
-    int card_id = zhouyu->getRandomHandCardId();
-    const Card *card = Sanguosha->getCard(card_id);
-    Card::Suit suit = room->askForSuit(target);
-
-    LogMessage log;
-    log.type = "#ChooseSuit";
-    log.from = target;
-    log.arg = Card::Suit2String(suit);
-    room->sendLog(log);
-
-    room->getThread()->delay();
-    target->obtainCard(card);
-    room->showCard(target, card_id);
-
-    if(card->getSuit() != suit){
-        DamageStruct damage;
-        damage.card = NULL;
-        damage.from = zhouyu;
-        damage.to = target;
-
-        room->damage(damage);
-    }
-}
-
-KurouCard::KurouCard(){
-    target_fixed = true;
-}
-
-void KurouCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->loseHp(source);
-    if(source->isAlive())
-        room->drawCards(source, 2);
-}
-
 LijianCard::LijianCard(){
     once = true;
 }
@@ -252,33 +209,6 @@ bool LiuliCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void LiuliCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->getRoom()->setPlayerFlag(effect.to, "liuli_target");
-}
-
-JijiangCard::JijiangCard(){
-
-}
-
-bool JijiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && Self->canSlash(to_select);
-}
-
-void JijiangCard::use(Room *room, ServerPlayer *liubei, const QList<ServerPlayer *> &targets) const{
-    QList<ServerPlayer *> lieges = room->getLieges("jiang", liubei);
-    const Card *slash = NULL;
-
-    QVariant tohelp = QVariant::fromValue((PlayerStar)liubei);
-    foreach(ServerPlayer *liege, lieges){
-        slash = room->askForCard(liege, "slash", "@jijiang-slash:" + liubei->objectName(), tohelp);
-        if(slash){
-            CardUseStruct card_use;
-            card_use.card = slash;
-            card_use.from = liubei;
-            card_use.to << targets.first();
-
-            room->useCard(card_use);
-            return;
-        }
-    }
 }
 
 CheatCard::CheatCard(){
