@@ -1296,7 +1296,7 @@ public:
         ServerPlayer *waste = room->findPlayerBySkillName(objectName());
         const Card *card;
         if(waste)
-            card = room->askForCard(waste, ".", objectName());
+            card = room->askForCard(waste, "..", "@xianji");
         if(!waste || !card)
            return false;
         QString choice = card->getType();
@@ -1310,6 +1310,7 @@ public:
         log.type = "#Xianji";
         log.from = waste;
         log.to << target;
+        log.arg2 = objectName();
         log.arg = choice;
         room->sendLog(log);
 
