@@ -1345,11 +1345,14 @@ public:
                 judge.who = lese;
 
                 room->judge(judge);
-                room->playSkillEffect(objectName());
-                if(!judge.card->inherits("TrickCard"))
+                if(!judge.card->inherits("TrickCard")){
                     lese->obtainCard(card);
-                else
+                    room->playSkillEffect(objectName(), 1);
+                }
+                else{
                     lese->obtainCard(judge.card);
+                    room->playSkillEffect(objectName(), 2);
+                }
             }
         }
         return false;

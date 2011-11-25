@@ -86,10 +86,10 @@ bool Assassinate::targetFilter(const QList<const ClientPlayer *> &targets, const
 
 void Assassinate::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *card1 = room->askForCard(effect.to, "jink", "Assassinate");
+    const Card *card1 = room->askForCard(effect.to, "jink", "@assas1:" + effect.from->objectName());
     const Card *card2;
     if(card1)
-        card2 = room->askForCard(effect.to, "jink", "Assassinate");
+        card2 = room->askForCard(effect.to, "jink", "@assas2:" + effect.from->objectName());
     if(card1 && card2)
         effect.from->turnOver();
     else{
