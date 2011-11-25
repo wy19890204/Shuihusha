@@ -1129,14 +1129,17 @@ StandardCardPackage::StandardCardPackage()
     skills << new SpearSkill << new AxeViewAsSkill;
 }
 
-StandardExCardPackage::StandardExCardPackage()
-    :Package("standard_ex_cards")
+#include "plough.h"
+ExCardPackage::ExCardPackage()
+    :Package("ex_cards")
 {
     QList<Card *> cards;
-    cards << new IceSword(Card::Spade, 2)
+    cards
+            << new IceSword(Card::Spade, 2)
             << new RenwangShield(Card::Club, 2)
             << new Lightning(Card::Heart, 12)
-            << new Nullification(Card::Diamond, 12);
+            << new Nullification(Card::Diamond, 12)
+            << new Tsunami(Card::Diamond, 1);
 
     foreach(Card *card, cards)
         card->setParent(this);
@@ -1145,4 +1148,4 @@ StandardExCardPackage::StandardExCardPackage()
 }
 
 ADD_PACKAGE(StandardCard)
-ADD_PACKAGE(StandardExCard)
+ADD_PACKAGE(ExCard)

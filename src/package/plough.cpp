@@ -284,7 +284,7 @@ PloughPackage::PloughPackage()
             << new Counterplot(Card::Spade, 13)
 
     // diamond
-            << new Tsunami(Card::Diamond, 1)
+            << new Dismantlement(Card::Diamond, 1)
             << new Peach(Card::Diamond, 2)
             << new Peach(Card::Diamond, 3)
             << new FireSlash(Card::Diamond, 4)

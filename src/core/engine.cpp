@@ -43,10 +43,9 @@ extern "C" {
     Package *NewBWQZ();
 
     Package *NewStandardCard();
-    Package *NewStandardExCard();
     Package *NewPlough();
     Package *NewTocheck();
-    Package *NewNostalgia();
+    Package *NewExCard();
     Package *NewJoy();
     Package *NewJoyEquip();
 
@@ -78,10 +77,9 @@ Engine::Engine()
     addPackage(NewGod());
     addPackage(NewTest());
     addPackage(NewStandardCard());
-    addPackage(NewStandardExCard());
     addPackage(NewPlough());
     addPackage(NewTocheck());
-    addPackage(NewNostalgia());
+    addPackage(NewExCard());
     addPackage(NewJoy());
     addPackage(NewJoyEquip());
 

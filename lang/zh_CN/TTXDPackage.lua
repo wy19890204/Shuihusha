@@ -149,7 +149,6 @@ local tt = {
 	["#_gongsunsheng"] = "入云龙",
 	["gongsunsheng"] = "公孙胜",
 	["cv:gongsunsheng"] = "黑马之殇【KA.U】",
-	["coder:gongsunsheng"] = "宇文天启",
 	["yixing"] = "移星",
 	[":yixing"] = "在任意角色的判定牌生效前，你可以用任一角色装备区里的一张牌替换之\
 ★替换后，该角色将获得该判定牌。",
@@ -216,7 +215,7 @@ local tt = {
 }
 
 local gege = {"lujunyi", "zhangqing", "yuehe", "muhong", "zhoutong",
-		"qiaodaoqing", "andaoquan", "husanniang"}
+		"qiaodaoqing", "andaoquan", "gongsunsheng", "husanniang"}
 
 for _, player in ipairs(gege) do
 	tt["coder:" .. player] = tt["coder:TTXD"]

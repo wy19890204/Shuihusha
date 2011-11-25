@@ -1,3 +1,4 @@
+-- the common
 return {
 	["spade"] = "黑桃",
 	["club"] = "梅花",
@@ -29,6 +30,21 @@ return {
 	["cheat"] = "作弊",
 	["yes"] = "是",
 	["no"] = "否",
+
+	["attack_card"] = "进攻牌",
+	["defense_card"] = "防御牌",
+	["recover_card"] = "恢复牌",
+	["disgusting_card"] = "恶心牌",
+	["global_effect"] = "全局效果",
+	["aoe"] = "范围效果",
+	["single_target_trick"] = "单体锦囊",
+	["delayed_trick"] = "延时锦囊",
+	["weapon"] = "武器",
+	["armor"] = "防具",
+	["defensive_horse"] = "防御马",
+	["offensive_horse"] = "进攻马",
+	["buff_card"] = "辅助伤害卡",
+	["damage_spread"] = "伤害传导",
 
 	["guan"] = "官",
 	["jiang"] = "将",
@@ -85,6 +101,7 @@ return {
 	["#IronChainDamage"] = "%from 处于铁锁连环状态，将受到铁锁的传导伤害",
 	["#LoseHp"] = "%from 流失了 %arg 点体力",
 	["#AcquireSkill"] = "%from 获得了技能 【%arg】",
+	["$Dismantlement"] = "%from 被拆掉了 %card",
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
 
 	["3v3:cw"] = "顺时针",
