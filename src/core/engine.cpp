@@ -35,12 +35,12 @@ extern "C" {
     Package *NewFire();
     Package *NewThicket();
     Package *NewMountain();
-    Package *NewGod();
     Package *NewTest();
     Package *NewQJWM();
     Package *NewTTXD();
     Package *NewXZDD();
     Package *NewBWQZ();
+    Package *NewGod();
 
     Package *NewStandardCard();
     Package *NewPlough();
@@ -68,13 +68,13 @@ Engine::Engine()
     addPackage(NewTTXD());
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
+    addPackage(NewGod());
 
     addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
     addPackage(NewThicket());
     addPackage(NewMountain());
-    addPackage(NewGod());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());

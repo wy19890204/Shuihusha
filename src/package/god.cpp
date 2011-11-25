@@ -1245,9 +1245,125 @@ public:
     }
 };
 
+class XianjiClear: public PhaseChangeSkill{
+public:
+    XianjiClear():PhaseChangeSkill("#xianji-clear"){
+
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        if(target->getPhase() == Player::NotActive){
+            Room *room = target->getRoom();
+            QList<ServerPlayer *> players = room->getAllPlayers();
+            foreach(ServerPlayer *player, players){
+                if(player->hasFlag("jilei")){
+                    player->jilei(".");
+                    player->invoke("jilei");
+
+                    LogMessage log;
+                    log.type = "#XianjiClear";
+                    log.from = player;
+                    room->sendLog(log);
+                }
+            }
+        }
+
+        return false;
+    }
+};
+
+class Xianji: public PhaseChangeSkill{
+public:
+    Xianji():PhaseChangeSkill("xianji"){
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        if(target->getPhase() != Player::Start)
+            return false;
+        Room *room = target->getRoom();
+        ServerPlayer *waste = room->findPlayerBySkillName(objectName());
+        const Card *card;
+        if(waste)
+            card = room->askForCard(waste, ".", objectName());
+        if(!waste || !card)
+           return false;
+        QString choice = card->getType();
+        room->playSkillEffect(objectName());
+
+        target->jilei(choice);
+        target->invoke("jilei", choice);
+        target->setFlags("jilei");
+
+        LogMessage log;
+        log.type = "#Xianji";
+        log.from = waste;
+        log.to << target;
+        log.arg = choice;
+        room->sendLog(log);
+
+        return false;
+    }
+};
+
+class Houlue: public TriggerSkill{
+public:
+    Houlue():TriggerSkill("houlue"){
+        events << CardLost;
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *lese = room->findPlayerBySkillName(objectName());
+        if(!lese)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->to_place == Player::DiscardedPile){
+            const Card *card = Sanguosha->getCard(move->card_id);
+            if(card->isNDTrick() && lese->askForSkillInvoke(objectName())){
+                JudgeStruct judge;
+                judge.pattern = QRegExp("(.*):(.*):(.*)");
+                judge.good = true;
+                judge.reason = objectName();
+                judge.who = lese;
+
+                room->judge(judge);
+                room->playSkillEffect(objectName());
+                if(!judge.card->inherits("TrickCard"))
+                    lese->obtainCard(card);
+                else
+                    lese->obtainCard(judge.card);
+            }
+        }
+        return false;
+    }
+};
+
 GodPackage::GodPackage()
     :Package("god")
-{/*
+{
+    General *shenwuyong = new General(this, "shenwuyong", "god", 3);
+    shenwuyong->addSkill(new Xianji);
+    shenwuyong->addSkill(new XianjiClear);
+    shenwuyong->addSkill(new Houlue);
+    related_skills.insertMulti("xianji", "#xianji-clear");
+    /*
     General *shenguanyu = new General(this, "shenguanyu", "god", 5);
     shenguanyu->addSkill(new Wushen);
     shenguanyu->addSkill(new Wuhun);
