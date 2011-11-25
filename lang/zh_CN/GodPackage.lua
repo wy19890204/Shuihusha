@@ -1,7 +1,7 @@
 -- translation for GodPackage
 
 return {
-	["god"] = "神", 
+	["god"] = "神",
 
 	["#_shenwuyong"] = "足智多谋",
 	["shenwuyong"] = "神吴用",
@@ -11,9 +11,8 @@ return {
 	["houlue"] = "后略",
 	[":houlue"] = "其他角色的非延时类锦囊进入弃牌堆时，你可以进行一次判定：若结果不为锦囊牌，你获得该锦囊；若结果为锦囊牌，你获得该判定牌。",
 
-	["#Xianji"] = "%from 发动了【%arg2】，%to 的 %arg 受到影响", 
+	["#Xianji"] = "%from 发动了【%arg2】，%to 的 %arg 受到影响",
 	["#XianjiClear"] = "%from 的先机效果消失",
-
 
 
 
