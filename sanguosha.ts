@@ -1336,7 +1336,7 @@
     <message>
         <location filename="src/dialog/generaloverview.ui" line="62"/>
         <source>MaxHP</source>
-        <translation>体力上限</translation>
+        <translation>初始体力</translation>
     </message>
     <message>
         <location filename="src/dialog/generaloverview.ui" line="67"/>
