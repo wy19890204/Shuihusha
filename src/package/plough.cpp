@@ -13,7 +13,7 @@ Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Ecstasy::isAvailable(const Player *player) const{
-    return !player->hasUsed("Ecstasy");
+    return player->hasSkill("xiayao") || !player->hasUsed("Ecstasy");
 }
 
 QString Ecstasy::getSubtype() const{

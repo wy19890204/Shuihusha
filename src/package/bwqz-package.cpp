@@ -5,6 +5,7 @@
 #include "engine.h"
 #include "standard.h"
 #include "clientplayer.h"
+#include "plough.h"
 #include "tocheck.h"
 
 class Zaochuan: public OneCardViewAsSkill{
@@ -461,6 +462,29 @@ public:
     }
 };
 
+class Xiayao: public OneCardViewAsSkill{
+public:
+    Xiayao():OneCardViewAsSkill("xiayao"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getPhase() == Player::Play;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->getSuit() == Card::Spade;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Ecstasy *ecstasy = new Ecstasy(card->getSuit(), card->getNumber());
+        ecstasy->setSkillName(objectName());
+        ecstasy->addSubcard(card->getId());
+
+        return ecstasy;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -493,6 +517,9 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
+
+    General *baisheng = new General(this, "baisheng", "min", 4);
+    baisheng->addSkill(new Xiayao);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
