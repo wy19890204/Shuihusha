@@ -1294,8 +1294,8 @@ public:
             return false;
         Room *room = target->getRoom();
         ServerPlayer *waste = room->findPlayerBySkillName(objectName());
-        const Card *card;
-        if(waste)
+        const Card *card = NULL;
+        if(waste && !waste->isNude())
             card = room->askForCard(waste, "..", "@xianji");
         if(!waste || !card)
            return false;

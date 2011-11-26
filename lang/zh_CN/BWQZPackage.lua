@@ -13,8 +13,8 @@ return {
 
 	["#_mengkang"] = "玉幡竿",
 	["mengkang"] = "孟康",
-	["zaochuan"] = "造船",
 	["cv:mengkang"] = "烨子",
+	["zaochuan"] = "造船",
 	[":zaochuan"] = "出牌阶段，你可以将你的任一锦囊牌当【铁索连环】使用或重铸。",
 	["mengchong"] = "艨艟",
 	[":mengchong"] = "<b>锁定技</b>，武将牌未处于横置状态的角色计算与武将牌处于横置状态的角色的距离时，始终+1.",

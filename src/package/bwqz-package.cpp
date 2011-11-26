@@ -38,23 +38,22 @@ bool YuanyinCard::targetFilter(const QList<const Player *> &targets, const Playe
         return to_select->getWeapon() && to_select != Self;
     }else if(targets.length() == 1){
         const Player *first = targets.first();
-        return first != Self && first->getWeapon() && Self->canSlash(to_select);
+        return to_select != Self && first->getWeapon() && Self->canSlash(to_select);
     }else
         return false;
 }
 
 void YuanyinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    const Card *weapon = targets.at(0)->getWeapon();
     ServerPlayer *target;
-    if(targets.length() == 1){
-        if(!Self->canSlash(targets.first()))
-            return;
-        else
-            target = targets.first();
+    if(targets.length() > 1)
+        target = targets.at(1);
+    else if(targets.length() == 1 && source->canSlash(targets.first())){
+        target = targets.first();
     }
     else
-        target = targets.at(1);
+        return;
 
+    const Card *weapon = targets.first()->getWeapon();
     if(weapon){
         room->throwCard(weapon->getId());
         Slash *slash = new Slash(weapon->getSuit(), weapon->getNumber());
@@ -124,12 +123,16 @@ public:
                 yuanyin_card->setSkillName(objectName());
                 yuanyin_card->addSubcard(card);
                 room->provide(yuanyin_card);
+                room->setEmotion(player, "good");
+                return true;
             }
             else if(asked == "jink"){
                 Jink *yuanyin_card = new Jink(card->getSuit(), card->getNumber());
                 yuanyin_card->setSkillName(objectName());
                 yuanyin_card->addSubcard(card);
                 room->provide(yuanyin_card);
+                room->setEmotion(player, "good");
+                return true;
             }
         }
         return false;
