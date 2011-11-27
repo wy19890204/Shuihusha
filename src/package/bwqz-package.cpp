@@ -465,9 +465,9 @@ public:
     }
 };
 
-class Xiayao: public OneCardViewAsSkill{
+class Menghan: public OneCardViewAsSkill{
 public:
-    Xiayao():OneCardViewAsSkill("xiayao"){
+    Menghan():OneCardViewAsSkill("menghan"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -485,6 +485,176 @@ public:
         ecstasy->addSubcard(card->getId());
 
         return ecstasy;
+    }
+};
+
+class ShudanClear: public TriggerSkill{
+public:
+    ShudanClear():TriggerSkill("#shudan-clear"){
+        events << PhaseChange;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+        if(player->getPhase() == Player::NotActive)
+            player->getRoom()->setTag("Shudan", QVariant());
+        return false;
+    }
+};
+
+class Shudan: public TriggerSkill{
+public:
+    Shudan():TriggerSkill("shudan"){
+        events << Damaged << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+
+        if(player->getPhase() != Player::NotActive)
+            return false;
+        if(event == Damaged){
+            room->setTag("Shudan", player->objectName());
+            room->playSkillEffect(objectName());
+
+            LogMessage log;
+            log.type = "#ShudanDamaged";
+            log.from = player;
+            room->sendLog(log);
+
+        }else if(event == CardEffected){
+            if(room->getTag("Shudan").toString() != player->objectName())
+                return false;
+            CardEffectStruct effect = data.value<CardEffectStruct>();
+            if(effect.card->inherits("Slash") || effect.card->getTypeId() == Card::Trick){
+                LogMessage log;
+                log.type = "#ShudanAvoid";
+                log.arg = objectName();
+                log.from = player;
+                room->sendLog(log);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+class Aoxiang: public TriggerSkill{
+public:
+    Aoxiang():TriggerSkill("aoxiang"){
+        events << HpChanged;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(player->getGeneralName() != "sujiangf")
+            player->tag["AoxiangStore"] = player->getGeneralName();
+        if(player->isWounded()){
+            room->setPlayerProperty(player, "general", "sujiangf");
+        }
+        else{
+            QString gen_name = player->tag.value("AoxiangStore", "sujiangf").toString();
+            room->setPlayerProperty(player, "general", gen_name);
+        }
+        return false;
+    }
+};
+
+ZhengfaEffectCard::ZhengfaEffectCard(){
+}
+
+bool ZhengfaEffectCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int tarGets = Self->getHp();
+    if(targets.length() >= tarGets)
+        return false;
+    return true;
+}
+
+void ZhengfaEffectCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    DamageStruct damage;
+    damage.from = source;
+    foreach(ServerPlayer *tmp, targets){
+        damage.to = tmp;
+        room->damage(damage);
+    }
+}
+
+class ZhengfaEffectVAS: public ZeroCardViewAsSkill{
+public:
+    ZhengfaEffectVAS():ZeroCardViewAsSkill("#zhengfaeffect"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zhengfaeffect";
+    }
+
+    virtual const Card *viewAs() const{
+        return new ZhengfaEffectCard;
+    }
+};
+
+class ZhengfaEffect: public TriggerSkill{
+public:
+    ZhengfaEffect():TriggerSkill("#zhengfaeffect"){
+        events << Pindian;
+        view_as_skill = new ZhengfaEffectVAS;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        PindianStar pindian = data.value<PindianStar>();
+        if(pindian->reason == "zhengfa" && pindian->isSuccess()){
+            player->getRoom()->askForUseCard(player, "@@zhengfaeffect", "@zhengfa");
+        }
+        return false;
+    }
+};
+
+ZhengfaCard::ZhengfaCard(){
+    once = true;
+    will_throw = false;
+}
+
+bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGender() != Self->getGender()
+            && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
+}
+
+void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
+    bool success = tonguan->pindian(targets.first(), "zhengfa", this);
+    if(!success)
+        tonguan->turnOver();
+}
+
+class Zhengfa: public OneCardViewAsSkill{
+public:
+    Zhengfa():OneCardViewAsSkill("zhengfa"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("ZhengfaCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new ZhengfaCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
@@ -522,12 +692,23 @@ BWQZPackage::BWQZPackage()
     taozongwang->addSkill(new Manli);
 
     General *baisheng = new General(this, "baisheng", "min", 4);
-    baisheng->addSkill(new Xiayao);
+    baisheng->addSkill(new Menghan);
+    baisheng->addSkill(new Shudan);
+    baisheng->addSkill(new ShudanClear);
+    related_skills.insertMulti("shudan", "#shudan-clear");
+
+    General *tongguan = new General(this, "tongguan", "guan", 4);
+    tongguan->addSkill(new Aoxiang);
+    tongguan->addSkill(new Zhengfa);
+    tongguan->addSkill(new ZhengfaEffect);
+    related_skills.insertMulti("zhengfa", "#zhengfaeffect");
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
+    addMetaObject<ZhengfaCard>();
+    addMetaObject<ZhengfaEffectCard>();
 }
 
 ADD_PACKAGE(BWQZ);

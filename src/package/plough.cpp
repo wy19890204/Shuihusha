@@ -13,7 +13,7 @@ Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Ecstasy::isAvailable(const Player *player) const{
-    return player->hasSkill("xiayao") || !player->hasUsed("Ecstasy");
+    return !player->hasUsed("Ecstasy");
 }
 
 QString Ecstasy::getSubtype() const{
@@ -21,7 +21,11 @@ QString Ecstasy::getSubtype() const{
 }
 
 bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
+    int slash_targets = 1;
+    if(Self->hasSkill("menghan")){
+        slash_targets = 2;
+    }
+    if(targets.length() >= slash_targets)
         return false;
     return to_select != Self && Self->inMyAttackRange(to_select);
 }
