@@ -21,7 +21,7 @@ void Slash::setNature(DamageStruct::Nature nature){
 }
 
 bool Slash::IsAvailable(const Player *player){
-    if(player->hasFlag("tianyi_failed") || player->hasFlag("Ecstasy"))
+    if(player->hasFlag("Ecstasy"))
         return false;
 
     return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
@@ -79,11 +79,6 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
 
     if(Self->hasSkill("qinlong") && Self->getEquips().isEmpty())
         slash_targets ++;
-
-    if(Self->hasFlag("tianyi_success")){
-        distance_limit = false;
-        slash_targets ++;
-    }
 
     if(Self->hasWeapon("sun_bow") && this->isRed() && this->getNature() == DamageStruct::Normal){
         slash_targets ++;

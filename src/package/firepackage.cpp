@@ -83,7 +83,7 @@ bool JiemingCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void JiemingCard::onEffect(const CardEffectStruct &effect) const{
-    int upper = qMin(5, effect.to->getMaxHP());
+    int upper = effect.to->getMaxHP();
     int x = upper - effect.to->getHandcardNum();
     if(x <= 0)
         return;
@@ -155,8 +155,7 @@ bool QiangxiCard::targetFilter(const QList<const Player *> &targets, const Playe
     if(!targets.isEmpty())
         return false;
 
-    if(!subcards.isEmpty() && Self->getWeapon() == Sanguosha->getCard(subcards.first())
-        && !Self->hasFlag("tianyi_success"))
+    if(!subcards.isEmpty() && Self->getWeapon() == Sanguosha->getCard(subcards.first()))
         return Self->distanceTo(to_select) <= 1;
 
     return Self->inMyAttackRange(to_select);
@@ -441,94 +440,6 @@ public:
             }else
                 room->setEmotion(wolong, "bad");
         }
-
-        return false;
-    }
-};
-
-class Kanpo: public OneCardViewAsSkill{
-public:
-    Kanpo():OneCardViewAsSkill("kanpo"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack() && !to_select->isEquipped();
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "nullification";
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getFilteredCard();
-        Card *ncard = new Nullification(first->getSuit(), first->getNumber());
-        ncard->addSubcard(first);
-        ncard->setSkillName("kanpo");
-
-        return ncard;
-    }
-};
-
-TianyiCard::TianyiCard(){
-    once = true;
-    will_throw = false;
-}
-
-bool TianyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
-}
-
-void TianyiCard::use(Room *room, ServerPlayer *taishici, const QList<ServerPlayer *> &targets) const{
-    bool success = taishici->pindian(targets.first(), "tianyi", this);
-    if(success){
-        room->setPlayerFlag(taishici, "tianyi_success");
-    }else{
-        room->setPlayerFlag(taishici, "tianyi_failed");
-    }
-}
-
-class TianyiViewAsSkill: public OneCardViewAsSkill{
-public:
-    TianyiViewAsSkill():OneCardViewAsSkill("tianyi"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("TianyiCard") && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new TianyiCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Tianyi: public PhaseChangeSkill{
-public:
-    Tianyi():PhaseChangeSkill("tianyi"){
-        view_as_skill = new TianyiViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        if(target->getPhase() == Player::Finish){
-            Room *room = target->getRoom();
-            if(target->hasFlag("tianyi_failed"))
-                room->setPlayerFlag(target, "-tianyi_failed");
-            if(target->hasFlag("tianyi_success")){
-                room->setPlayerFlag(target, "-tianyi_success");
-            }
-        }
-
         return false;
     }
 };
@@ -536,7 +447,7 @@ public:
 FirePackage::FirePackage()
     :Package("fire")
 {
-    General *xunyu, *dianwei, *wolong, *pangtong, *taishici, *yuanshao, *shuangxiong, *pangde;
+    General *xunyu, *dianwei, *wolong, *pangtong, *yuanshao, *shuangxiong, *pangde;
 
     xunyu = new General(this, "xunyu", "guan", 3);
     xunyu->addSkill(new Quhu);
@@ -547,34 +458,26 @@ FirePackage::FirePackage()
 
     wolong = new General(this, "wolong", "jiang", 3);
     wolong->addSkill(new Huoji);
-    wolong->addSkill(new Kanpo);
     wolong->addSkill(new Bazhen);
 
     pangtong = new General(this, "pangtong", "jiang", 3);
     pangtong->addSkill(new Lianhuan);
-    pangtong->addSkill(new MarkAssignSkill("@nirvana", 1));
     pangtong->addSkill(new Niepan);
 
     related_skills.insertMulti("niepan", "#@nirvana");
 
-    taishici = new General(this, "taishici", "min");
-    taishici->addSkill(new Tianyi);
-
     yuanshao = new General(this, "yuanshao$", "kou");
     yuanshao->addSkill(new Luanji);
-    yuanshao->addSkill(new Skill("xueyi$", Skill::Compulsory));
 
     shuangxiong = new General(this, "shuangxiong", "kou");
     shuangxiong->addSkill(new Shuangxiong);
 
     pangde = new General(this, "pangde", "kou");
     pangde->addSkill(new Mengjin);
-    pangde->addSkill("mashu");
 
     addMetaObject<QuhuCard>();
     addMetaObject<JiemingCard>();
     addMetaObject<QiangxiCard>();
-    addMetaObject<TianyiCard>();
 }
 
 ADD_PACKAGE(Fire);

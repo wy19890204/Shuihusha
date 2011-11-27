@@ -372,12 +372,7 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
-    if(hasSkill("kanpo")){
-        foreach(const Card *card, handcards){
-            if(card->isBlack() || card->objectName() == "nullification")
-                return true;
-        }
-    }else if(hasSkill("wushen")){
+    if(hasSkill("wushen")){
         foreach(const Card *card, handcards){
             if(card->objectName() == "nullification" && card->getSuit() != Card::Heart)
                 return true;

@@ -185,32 +185,6 @@ void GuicaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
 
 }
 
-LiuliCard::LiuliCard()
-{
-}
-
-
-bool LiuliCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-
-    if(to_select->hasFlag("slash_source"))
-        return false;
-
-    if(!Self->canSlash(to_select))
-        return false;
-
-    int card_id = subcards.first();
-    if(Self->getWeapon() && Self->getWeapon()->getId() == card_id)
-        return Self->distanceTo(to_select) <= 1;
-    else
-        return true;
-}
-
-void LiuliCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->getRoom()->setPlayerFlag(effect.to, "liuli_target");
-}
-
 CheatCard::CheatCard(){
     target_fixed = true;
     will_throw = false;
@@ -220,4 +194,3 @@ void CheatCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     if(Config.FreeChoose)
         room->obtainCard(source, subcards.first());
 }
-

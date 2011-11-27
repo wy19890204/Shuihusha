@@ -552,13 +552,12 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        if(player->getGeneralName() != "sujiangf")
-            player->tag["AoxiangStore"] = player->getGeneralName();
+        player->tag["AoxiangStore"] = player->getGeneralName();
         if(player->isWounded()){
-            room->setPlayerProperty(player, "general", "sujiangf");
+            room->setPlayerProperty(player, "general", "tongguanf");
         }
         else{
-            QString gen_name = player->tag.value("AoxiangStore", "sujiangf").toString();
+            QString gen_name = player->tag.value("AoxiangStore", "tongguanf").toString();
             room->setPlayerProperty(player, "general", gen_name);
         }
         return false;
@@ -566,6 +565,7 @@ public:
 };
 
 ZhengfaEftCard::ZhengfaEftCard(){
+    mute = true;
 }
 
 bool ZhengfaEftCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -603,6 +603,7 @@ public:
 ZhengfaCard::ZhengfaCard(){
     once = true;
     will_throw = false;
+    mute = true;
 }
 
 bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -614,10 +615,19 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
     bool success = tonguan->pindian(targets.first(), "zhengfa", this);
     if(success){
         room->acquireSkill(tonguan, "zhengfaeft");
+        if(tonguan->getGeneral()->isMale())
+            room->playSkillEffect("zhengfa", qrand() % 2 + 1);
+        else
+            room->playSkillEffect("zhengfa", qrand() % 2 + 3);
         room->askForUseCard(tonguan, "@@zhengFa", "@zhengfa-effect");
         room->detachSkillFromPlayer(tonguan, "zhengfaeft");
-    }else
+    }else{
+        if(tonguan->getGeneral()->isMale())
+            room->playSkillEffect("zhengfa", 5);
+        else
+            room->playSkillEffect("zhengfa", 6);
         tonguan->turnOver();
+    }
 }
 
 class Zhengfa: public OneCardViewAsSkill{
@@ -683,6 +693,8 @@ BWQZPackage::BWQZPackage()
     tongguan->addSkill(new Aoxiang);
     tongguan->addSkill(new Zhengfa);
     skills << new ZhengfaEffect;
+
+    General *tongguanf = new General(this, "tongguanf", "guan", 4, false, true);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();

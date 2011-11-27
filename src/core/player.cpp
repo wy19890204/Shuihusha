@@ -145,9 +145,6 @@ int Player::getAttackRange() const{
     if(hasFlag("Longest"))
         return 1234;
 
-    if(hasFlag("tianyi_success"))
-        return 1000;
-
     if(weapon)
         return weapon->getRange();
     else if(hasSkill("zhengfeng"))
@@ -518,20 +515,11 @@ int Player::getMaxCards() const{
 
     int juejing = hasSkill("juejing") ? 2 : 0;
 
-    int xueyi = 0;
-    if(hasLordSkill("xueyi")){
-        QList<const Player *> players = getSiblings();
-        foreach(const Player *player, players){
-            if(player->isAlive() && player->getKingdom() == "kou")
-                xueyi += 2;
-        }
-    }
-
     int shenwei = 0;
     if(hasSkill("shenwei"))
         shenwei = 2;
 
-    return qMax(hp,0) + extra + juejing + xueyi + shenwei;
+    return qMax(hp,0) + extra + juejing + shenwei;
 }
 
 QString Player::getKingdom() const{
@@ -762,10 +750,7 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
 
     int slash_count = getSlashCount();
-    if(hasFlag("tianyi_success"))
-        return slash_count < 2;
-    else
-        return slash_count < 1;
+    return slash_count < 1;
 }
 
 void Player::jilei(const QString &type){
