@@ -564,27 +564,27 @@ public:
     }
 };
 
-ZhengfaEftCard::ZhengfaEftCard(){
+JiaomieCard::JiaomieCard(){
     mute = true;
 }
 
-bool ZhengfaEftCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool JiaomieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     int tarGets = Self->getHp();
     if(targets.length() >= tarGets)
         return false;
     return Self->canSlash(to_select);
 }
 
-void ZhengfaEftCard::onEffect(const CardEffectStruct &effect) const{
+void JiaomieCard::onEffect(const CardEffectStruct &effect) const{
     DamageStruct damage;
     damage.from = effect.from;
     damage.to = effect.to;
     effect.from->getRoom()->damage(damage);
 }
 
-class ZhengfaEffect: public ZeroCardViewAsSkill{
+class Jiaomie: public ZeroCardViewAsSkill{
 public:
-    ZhengfaEffect():ZeroCardViewAsSkill("zhengfaeft"){
+    Jiaomie():ZeroCardViewAsSkill("jiaomie"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -596,7 +596,7 @@ public:
     }
 
     virtual const Card *viewAs() const{
-        return new ZhengfaEftCard;
+        return new JiaomieCard;
     }
 };
 
@@ -614,18 +614,16 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
     bool success = tonguan->pindian(targets.first(), "zhengfa", this);
     if(success){
-        room->acquireSkill(tonguan, "zhengfaeft");
         if(tonguan->getGeneral()->isMale())
-            room->playSkillEffect("zhengfa", qrand() % 2 + 1);
+            room->playSkillEffect("jiaomie", qrand() % 2 + 1);
         else
-            room->playSkillEffect("zhengfa", qrand() % 2 + 3);
-        room->askForUseCard(tonguan, "@@zhengFa", "@zhengfa-effect");
-        room->detachSkillFromPlayer(tonguan, "zhengfaeft");
+            room->playSkillEffect("jiaomie", qrand() % 2 + 3);
+        room->askForUseCard(tonguan, "@@zhengFa", "@jiaomie-effect");
     }else{
         if(tonguan->getGeneral()->isMale())
-            room->playSkillEffect("zhengfa", 5);
+            room->playSkillEffect("zhengfa", 1);
         else
-            room->playSkillEffect("zhengfa", 6);
+            room->playSkillEffect("zhengfa", 2);
         tonguan->turnOver();
     }
 }
@@ -692,7 +690,7 @@ BWQZPackage::BWQZPackage()
     General *tongguan = new General(this, "tongguan", "guan", 4);
     tongguan->addSkill(new Aoxiang);
     tongguan->addSkill(new Zhengfa);
-    skills << new ZhengfaEffect;
+    tongguan->addSkill(new Jiaomie);
 
     General *tongguanf = new General(this, "tongguanf", "guan", 4, false, true);
 
@@ -701,7 +699,7 @@ BWQZPackage::BWQZPackage()
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
-    addMetaObject<ZhengfaEftCard>();
+    addMetaObject<JiaomieCard>();
 }
 
 ADD_PACKAGE(BWQZ);
