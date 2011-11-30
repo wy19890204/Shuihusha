@@ -297,20 +297,6 @@ public:
     }
 };
 
-class Feiying: public DistanceSkill{
-public:
-    Feiying():DistanceSkill("feiying"){
-
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(to->hasSkill(objectName()))
-            return +1;
-        else
-            return 0;
-    }
-};
-
 class Kuangbao: public TriggerSkill{
 public:
     Kuangbao():TriggerSkill("kuangbao"){

@@ -759,6 +759,46 @@ public:
     }
 };
 
+class Kongying: public TriggerSkill{
+public:
+    Kongying():TriggerSkill("kongying"){
+        events << CardResponsed;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardStar card_star = data.value<CardStar>();
+        if(!card_star->inherits("Jink"))
+            return false;
+
+        if(player->askForSkillInvoke(objectName())){
+            Room *room = player->getRoom();
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getAlivePlayers(), objectName());
+            if(!room->askForCard(target, "jink", "@kongying:" + player->objectName())){
+                DamageStruct damage;
+                damage.from = player;
+                damage.to = target;
+                room->damage(damage);
+            }
+        }
+        return false;
+    }
+};
+
+class Jibu: public DistanceSkill{
+public:
+    Jibu():DistanceSkill("jibu"){
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        if(to->hasSkill(objectName()))
+            return +1;
+        else if(from->hasSkill(objectName()))
+            return -1;
+        else
+            return 0;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -812,6 +852,10 @@ BWQZPackage::BWQZPackage()
     panjinlian->addSkill(new Shengui);
     panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
     related_skills.insertMulti("zhensha", "#@vi");
+
+    General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
+    wangdingliu->addSkill(new Kongying);
+    wangdingliu->addSkill(new Jibu);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
