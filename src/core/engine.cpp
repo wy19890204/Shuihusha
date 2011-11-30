@@ -40,6 +40,7 @@ extern "C" {
     Package *NewTTXD();
     Package *NewXZDD();
     Package *NewBWQZ();
+    Package *NewQLFD();
     Package *NewGod();
 
     Package *NewStandardCard();
@@ -68,6 +69,7 @@ Engine::Engine()
     addPackage(NewTTXD());
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
+    addPackage(NewQLFD());
     addPackage(NewGod());
 
     addPackage(NewStandard());

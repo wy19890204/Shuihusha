@@ -4,7 +4,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "nostalgia.h"
+#include "qlfd-package.h"
 
 class MoonSpearSkill: public WeaponSkill{
 public:
@@ -42,13 +42,12 @@ public:
     }
 };
 
-NostalgiaPackage::NostalgiaPackage()
-    :Package("nostalgia")
-{
-    type = CardPack;
+QLFDPackage::QLFDPackage()
+    :Package("QLFD")
+{/*
 
     Card *moon_spear = new MoonSpear;
-    moon_spear->setParent(this);
+    moon_spear->setParent(this);*/
 }
 
-ADD_PACKAGE(Nostalgia);
+ADD_PACKAGE(QLFD);
