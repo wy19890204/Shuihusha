@@ -5,18 +5,6 @@
 #include "settings.h"
 #include "tocheck.h"
 
-GongxinCard::GongxinCard(){
-    once = true;
-}
-
-bool GongxinCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && !to_select->isKongcheng();
-}
-
-void GongxinCard::onEffect(const CardEffectStruct &effect) const{
-    effect.from->getRoom()->doGongxin(effect.from, effect.to);
-}
-
 class Wuhun: public TriggerSkill{
 public:
     Wuhun():TriggerSkill("wuhun"){
@@ -153,21 +141,6 @@ public:
     }
 };
 
-class Gongxin: public ZeroCardViewAsSkill{
-public:
-    Gongxin():ZeroCardViewAsSkill("gongxin"){
-        default_choice = "discard";
-    }
-
-    virtual const Card *viewAs() const{
-        return new GongxinCard;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("GongxinCard");
-    }
-};
-
 void YeyanCard::damage(ServerPlayer *shenzhouyu, ServerPlayer *target, int point) const{
     DamageStruct damage;
 
@@ -178,24 +151,6 @@ void YeyanCard::damage(ServerPlayer *shenzhouyu, ServerPlayer *target, int point
     damage.nature = DamageStruct::Fire;
 
     shenzhouyu->getRoom()->damage(damage);
-}
-
-GreatYeyanCard::GreatYeyanCard(){
-
-}
-
-bool GreatYeyanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
-}
-
-void GreatYeyanCard::use(Room *room, ServerPlayer *shenzhouyu, const QList<ServerPlayer *> &targets) const{
-    room->broadcastInvoke("animate", "lightbox:$greatyeyan");
-
-    shenzhouyu->loseMark("@flame");
-    room->throwCard(this);
-    room->loseHp(shenzhouyu, 3);
-
-    damage(shenzhouyu, targets.first(), 3);
 }
 
 MediumYeyanCard::MediumYeyanCard(){
@@ -240,59 +195,6 @@ void SmallYeyanCard::use(Room *room, ServerPlayer *shenzhouyu, const QList<Serve
 void SmallYeyanCard::onEffect(const CardEffectStruct &effect) const{
     damage(effect.from, effect.to, 1);
 }
-
-class GreatYeyan: public ViewAsSkill{
-public:
-    GreatYeyan(): ViewAsSkill("greatyeyan"){
-        frequency = Limited;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@flame") >= 1;
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() >= 4)
-            return false;
-
-        if(to_select->isEquipped())
-            return false;
-
-        foreach(CardItem *item, selected){
-            if(to_select->getFilteredCard()->getSuit() == item->getFilteredCard()->getSuit())
-                return false;
-        }
-
-        return true;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 4)
-            return NULL;
-
-        GreatYeyanCard *card = new GreatYeyanCard;
-        card->addSubcards(cards);
-
-        return card;
-    }
-};
-
-class MediumYeyan: public GreatYeyan{
-public:
-    MediumYeyan(){
-        setObjectName("mediumyeyan");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 4)
-            return NULL;
-
-        MediumYeyanCard *card = new MediumYeyanCard;
-        card->addSubcards(cards);
-
-        return card;
-    }
-};
 
 class SmallYeyan: public ZeroCardViewAsSkill{
 public:
@@ -1359,6 +1261,99 @@ public:
     }
 };
 
+FeihuangCard::FeihuangCard(){
+    target_fixed = true;
+    will_throw = false;
+}
+
+void FeihuangCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    foreach(int card_id, this->getSubcards())
+        source->addToPile("stone", card_id);
+}
+
+class FeihuangViewAsSkill: public ViewAsSkill{
+public:
+    FeihuangViewAsSkill(): ViewAsSkill("feihuang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        int n = Self->getHandcardNum() - Self->getHp();
+        if(selected.length() >= n)
+            return false;
+
+        if(to_select->isEquipped())
+            return false;
+
+        return true;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != Self->getHandcardNum() - Self->getHp())
+            return NULL;
+
+        FeihuangCard *card = new FeihuangCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@feihuang";
+    }
+};
+
+class Feihuang: public PhaseChangeSkill{
+public:
+    Feihuang():PhaseChangeSkill("feihuang"){
+        view_as_skill = new FeihuangViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *vq) const{
+        if(vq->getPhase() != Player::Discard)
+            return false;
+        Room *room = vq->getRoom();
+        if(vq->getHandcardNum() > vq->getHp() && room->askForUseCard(vq, "@@feihuang", "@feihuang"))
+            return true;
+        return false;
+    }
+};
+
+MeiyuCard::MeiyuCard(){
+}
+
+bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->canSlash(to_select, false);
+}
+
+void MeiyuCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    room->throwCard(effect.from->getPile("stone").last());
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->setSkillName("meiyu");
+    CardUseStruct use;
+    use.card = slash;
+    use.from = effect.from;
+    use.to << effect.to;
+    room->useCard(use, false);
+}
+
+class Meiyu: public ZeroCardViewAsSkill{
+public:
+    Meiyu():ZeroCardViewAsSkill("meiyu"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new MeiyuCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->getPile("stone").isEmpty();
+    }
+};
+
 GodPackage::GodPackage()
     :Package("god")
 {
@@ -1367,31 +1362,25 @@ GodPackage::GodPackage()
     shenwuyong->addSkill(new XianjiClear);
     shenwuyong->addSkill(new Houlue);
     related_skills.insertMulti("xianji", "#xianji-clear");
-    /*
-    General *shenguanyu = new General(this, "shenguanyu", "god", 5);
-    shenguanyu->addSkill(new Wushen);
-    shenguanyu->addSkill(new Wuhun);
-    shenguanyu->addSkill(new WuhunRevenge);
 
+    General *shenzhangqing = new General(this, "shenzhangqing", "god", 4);
+    shenzhangqing->addSkill(new Feihuang);
+    shenzhangqing->addSkill(new Meiyu);
+    //shenzhangqing->addSkill(new WuhunRevenge);
+/*
     related_skills.insertMulti("wuhun", "#wuhun");
 
     General *shenlumeng = new General(this, "shenlumeng", "god", 3);
     shenlumeng->addSkill(new Shelie);
-    shenlumeng->addSkill(new Gongxin);
+    shenlumeng->addSkill(new Meiyu);
 
     General *shenzhouyu = new General(this, "shenzhouyu", "god");
     shenzhouyu->addSkill(new Qinyin);
-    shenzhouyu->addSkill(new MarkAssignSkill("@flame", 1));
-    shenzhouyu->addSkill(new GreatYeyan);
-    shenzhouyu->addSkill(new MediumYeyan);
     shenzhouyu->addSkill(new SmallYeyan);
 
     General *shenzhugeliang = new General(this, "shenzhugeliang", "god", 3);
     shenzhugeliang->addSkill(new Qixing);
     shenzhugeliang->addSkill(new QixingStart);
-    shenzhugeliang->addSkill(new QixingAsk);
-    shenzhugeliang->addSkill(new QixingClear);
-    shenzhugeliang->addSkill(new Kuangfeng);
     shenzhugeliang->addSkill(new Dawu);
 
     related_skills.insertMulti("qixing", "#qixing");
@@ -1406,37 +1395,13 @@ GodPackage::GodPackage()
     shenlubu->addSkill(new Kuangbao);
     shenlubu->addSkill(new MarkAssignSkill("@wrath", 2));
     shenlubu->addSkill(new Wumou);
-    shenlubu->addSkill(new Wuqian);
-    shenlubu->addSkill(new Shenfen);
-
-    related_skills.insertMulti("kuangbao", "#@wrath");
-
-    General *shenzhaoyun = new General(this, "shenzhaoyun", "god", 2);
-    shenzhaoyun->addSkill(new Juejing);
-    shenzhaoyun->addSkill(new Longhun);
-
-    General *shensimayi = new General(this, "shensimayi", "god", 4);
-    shensimayi->addSkill(new Renjie);
-    shensimayi->addSkill(new Baiyin);
-    shensimayi->addSkill(new Lianpo);
-    shensimayi->addSkill(new LianpoCount);
-
-    related_skills.insertMulti("jilve", "#jilve-clear");
-    related_skills.insertMulti("lianpo", "#lianpo-count");
-
-    addMetaObject<GongxinCard>();
-    addMetaObject<GreatYeyanCard>();
-    addMetaObject<ShenfenCard>();
-    addMetaObject<GreatYeyanCard>();
     addMetaObject<MediumYeyanCard>();
     addMetaObject<SmallYeyanCard>();
     addMetaObject<WushenSlash>();
     addMetaObject<KuangfengCard>();
-    addMetaObject<DawuCard>();
-    addMetaObject<WuqianCard>();
-    addMetaObject<JilveCard>();
-
-    skills << new Jilve << new JilveClear;*/
+    addMetaObject<DawuCard>();*/
+    addMetaObject<FeihuangCard>();
+    addMetaObject<MeiyuCard>();
 }
 
 ADD_PACKAGE(God)

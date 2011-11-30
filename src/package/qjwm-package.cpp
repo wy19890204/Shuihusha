@@ -639,7 +639,7 @@ public:
     }
 
     virtual int getPriority() const{
-        return 4;
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
@@ -690,7 +690,6 @@ public:
                 log.type = "#Tengfei";
                 log.from = opt;
                 log.arg = objectName();
-                log.arg2 = QString::number(1);
                 room->sendLog(log);
 
                 room->setCurrent(opt);

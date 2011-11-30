@@ -550,11 +550,15 @@ public:
         frequency = Compulsory;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         if(player->getGeneralName() != "tongguanf")
             player->tag["AoxiangStore"] = player->getGeneralName();
-        if(player->getHp() != player->getMaxHP())
+        if(player->isWounded())
             room->setPlayerProperty(player, "general", "tongguanf");
         else{
             QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
@@ -742,6 +746,13 @@ public:
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data)){
             xing->loseMark("@vi");
+
+            LogMessage log;
+            log.type = "#Zhensha";
+            log.from = xing;
+            log.to << use.from;
+            log.arg = objectName();
+            room->sendLog(log);
             room->killPlayer(use.from);
         }
         return false;
@@ -792,7 +803,8 @@ BWQZPackage::BWQZPackage()
     tongguan->addSkill(new Zhengfa);
     tongguan->addSkill(new Jiaomie);
 
-    new General(this, "tongguanf", "yan", 4, false, true);
+    tongguan = new General(this, "tongguanf", "yan", 4, false, true);
+    tongguan->addSkill("aoxiang");
 
     General *panjinlian = new General(this, "panjinlian", "min", 3, false);
     panjinlian->addSkill(new Yushui);
