@@ -552,12 +552,12 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        player->tag["AoxiangStore"] = player->getGeneralName();
-        if(player->isWounded()){
+        if(player->getGeneralName() != "tongguanf")
+            player->tag["AoxiangStore"] = player->getGeneralName();
+        if(player->getHp() != player->getMaxHP())
             room->setPlayerProperty(player, "general", "tongguanf");
-        }
         else{
-            QString gen_name = player->tag.value("AoxiangStore", "tongguanf").toString();
+            QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
             room->setPlayerProperty(player, "general", gen_name);
         }
         return false;
@@ -569,8 +569,7 @@ JiaomieCard::JiaomieCard(){
 }
 
 bool JiaomieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int tarGets = Self->getHp();
-    if(targets.length() >= tarGets)
+    if(targets.length() >= Self->getHp())
         return false;
     return Self->canSlash(to_select);
 }
@@ -579,6 +578,7 @@ void JiaomieCard::onEffect(const CardEffectStruct &effect) const{
     DamageStruct damage;
     damage.from = effect.from;
     damage.to = effect.to;
+    damage.card = this;
     effect.from->getRoom()->damage(damage);
 }
 
@@ -648,17 +648,117 @@ public:
     }
 };
 
+YushuiCard::YushuiCard(){
+    once = true;
+//    mute = true;
+}
+
+bool YushuiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+
+    return to_select->getGeneral()->isMale() && to_select->isWounded();
+}
+
+void YushuiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+
+    RecoverStruct recover;
+    recover.card = this;
+    recover.who = effect.from;
+
+    room->recover(effect.from, recover, true);
+    room->recover(effect.to, recover, true);
+/*
+    int index = -1;
+    if(effect.from->getGeneral()->isMale()){
+        if(effect.from == effect.to)
+            index = 5;
+        else if(effect.from->getHp() >= effect.to->getHp())
+            index = 3;
+        else
+            index = 4;
+    }else{
+        index = 1 + qrand() % 2;
+    }
+
+    room->playSkillEffect("Yushui", index);
+*/
+    effect.from->drawCards(2);
+    effect.to->drawCards(2);
+    effect.from->turnOver();
+    effect.to->turnOver();
+}
+
+class Yushui: public OneCardViewAsSkill{
+public:
+    Yushui():OneCardViewAsSkill("yushui"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("YushuiCard");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        YushuiCard *card = new YushuiCard;
+        card->addSubcard(card_item->getCard()->getId());
+
+        return card;
+    }
+};
+
+class Shengui: public ProhibitSkill{
+public:
+    Shengui():ProhibitSkill("shengui"){
+
+    }
+
+    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
+        return !to->faceUp() && from->getGeneral()->isMale() && card->inherits("TrickCard") && !card->inherits("Collateral");
+    }
+};
+
+class Zhensha:public TriggerSkill{
+public:
+    Zhensha():TriggerSkill("zhensha"){
+        frequency = Limited;
+        events << CardUsed;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *xing = room->findPlayerBySkillName(objectName());
+        if(!xing || xing->getMark("@vi") < 1)
+            return false;
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data)){
+            xing->loseMark("@vi");
+            room->killPlayer(use.from);
+        }
+        return false;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
     General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 
-    General *mengkang = new General(this, "mengkang", "kou", 4);
+    General *mengkang = new General(this, "mengkang", "kou");
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
 
-    General *jiaoting = new General(this, "jiaoting", "kou", 4);
+    General *jiaoting = new General(this, "jiaoting", "kou");
     jiaoting->addSkill(new Skill("qinlong"));
 
     General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
@@ -681,18 +781,25 @@ BWQZPackage::BWQZPackage()
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 
-    General *baisheng = new General(this, "baisheng", "min", 4);
+    General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);
     baisheng->addSkill(new Shudan);
     baisheng->addSkill(new ShudanClear);
     related_skills.insertMulti("shudan", "#shudan-clear");
 
-    General *tongguan = new General(this, "tongguan", "guan", 4);
+    General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
     tongguan->addSkill(new Zhengfa);
     tongguan->addSkill(new Jiaomie);
 
-    General *tongguanf = new General(this, "tongguanf", "guan", 4, false, true);
+    new General(this, "tongguanf", "yan", 4, false, true);
+
+    General *panjinlian = new General(this, "panjinlian", "min", 3, false);
+    panjinlian->addSkill(new Yushui);
+    panjinlian->addSkill(new Zhensha);
+    panjinlian->addSkill(new Shengui);
+    panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
+    related_skills.insertMulti("zhensha", "#@vi");
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
@@ -700,6 +807,7 @@ BWQZPackage::BWQZPackage()
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
     addMetaObject<JiaomieCard>();
+    addMetaObject<YushuiCard>();
 }
 
 ADD_PACKAGE(BWQZ);
