@@ -331,12 +331,12 @@ PloughPackage::PloughPackage()
             << new Counterplot(Card::Heart, 11)
             << new Drivolt(Card::Heart, 13);
 
-    DefensiveHorse *white = new DefensiveHorse(Card::Heart, 12);
-    white->setObjectName("white");
+    DefensiveHorse *jade = new DefensiveHorse(Card::Heart, 12);
+    jade->setObjectName("jade");
     OffensiveHorse *brown = new OffensiveHorse(Card::Spade, 4);
     brown->setObjectName("brown");
 
-    cards << white << brown;
+    cards << jade << brown;
     foreach(Card *card, cards)
         card->setParent(this);
 }

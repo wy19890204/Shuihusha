@@ -1074,12 +1074,12 @@ StandardCardPackage::StandardCardPackage()
                 << new OffensiveHorse(Card::Spade, 13)
                 << new OffensiveHorse(Card::Diamond, 13);
 
-        horses.at(0)->setObjectName("jueying");
-        horses.at(1)->setObjectName("dilu");
-        horses.at(2)->setObjectName("zhuahuangfeidian");
+        horses.at(0)->setObjectName("lhh");
+        horses.at(1)->setObjectName("kirin");
+        horses.at(2)->setObjectName("silver");
         horses.at(3)->setObjectName("chitu");
-        horses.at(4)->setObjectName("dayuan");
-        horses.at(5)->setObjectName("zixing");
+        horses.at(4)->setObjectName("snow");
+        horses.at(5)->setObjectName("white");
 
         cards << horses;
 
