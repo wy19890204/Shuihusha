@@ -33,7 +33,7 @@ extern "C" {
     Package *NewStandard();
     Package *NewWind();
     Package *NewFire();
-    Package *NewThicket();
+    Package *NewEvents();
     Package *NewMountain();
     Package *NewTest();
     Package *NewQJWM();
@@ -73,7 +73,7 @@ Engine::Engine()
     addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
-    addPackage(NewThicket());
+    addPackage(NewEvents());
     addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());

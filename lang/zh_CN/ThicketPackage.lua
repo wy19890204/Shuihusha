@@ -1,6 +1,11 @@
 -- translation for ThicketPackage
 
 return {
+	["events"] = "事件牌",
+	["events_package"] = "事件卡牌包",
+	["jiefachang"] = "梁山好汉劫法场",
+	[":jiefachang"] = "回合结束时，对任一武将牌背面朝上的角色使用。将目标角色的武将牌翻回正面。<br />拔刀相助：出牌阶段，你可以弃置这张牌，然后弃掉任一角色判定区里的一张牌。",
+
 	["thicket"] = "林包", 
 	["caopi"] = "曹丕", 
 	["xuhuang"] = "徐晃", 

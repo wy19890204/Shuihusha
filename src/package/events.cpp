@@ -1,4 +1,4 @@
-#include "thicket.h"
+#include "events.h"
 #include "general.h"
 #include "skill.h"
 #include "room.h"
@@ -867,8 +867,42 @@ public:
     }
 };
 
-ThicketPackage::ThicketPackage()
-    :Package("thicket")
+QString EventsCard::getType() const{
+    return "events";
+}
+
+QString EventsCard::getSubtype() const{
+    return "events";
+}
+
+Card::CardType EventsCard::getTypeId() const{
+    return Events;
+}
+
+Jiefachang::Jiefachang(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("jiefachang");
+}
+
+bool Jiefachang::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(Self->getPhase() == Player::Play){
+        return !to_select->getJudgingArea().isEmpty();
+    }
+    return !to_select->faceUp();
+}
+
+void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    ServerPlayer *target = targets.first();
+    if(source->getPhase() == Player::Play)
+        room->throwCard(room->askForCardChosen(source, target, "j", "jiefachang"));
+    else
+        target->turnOver();
+}
+
+EventsPackage::EventsPackage()
+    :Package("events_package")
 {
     General *caopi, *xuhuang, *menghuo, *zhurong, *sunjian, *lusu, *jiaxu, *dongzhuo;
 
@@ -925,6 +959,17 @@ ThicketPackage::ThicketPackage()
     addMetaObject<YinghunCard>();
     addMetaObject<FangzhuCard>();
     addMetaObject<HaoshiCard>();
+
+    QList<Card *> cards;
+    cards
+            //<< new IceSword(Card::Spade, 2)
+            //<< new RenwangShield(Card::Club, 2)
+            //<< new Lightning(Card::Heart, 12)
+            //<< new Nullification(Card::Diamond, 12)
+            << new Jiefachang(Card::Diamond, 1);
+
+    foreach(Card *card, cards)
+        card->setParent(this);
 }
 
-ADD_PACKAGE(Thicket)
+ADD_PACKAGE(Events)

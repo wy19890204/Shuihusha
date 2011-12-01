@@ -463,6 +463,9 @@ StandardPackage::StandardPackage()
     patterns["nulliplot"] = new NCPattern;
     patterns["peach+analeptic"] = new PAPattern;
     patterns[".basic"] = new BasicPattern;
+
+    //eventcard
+    patterns["jiefachang"] = new NamePattern("jiefachang");
 }
 
 ADD_PACKAGE(Standard)

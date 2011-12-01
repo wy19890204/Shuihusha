@@ -3,6 +3,7 @@
 #include "room.h"
 #include "standard.h"
 #include "engine.h"
+#include "settings.h"
 
 #include <QTime>
 
@@ -121,6 +122,14 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             player->clearFlags();
 
+            if(!Config.BanPackages.contains("events")){
+                foreach(const Card *cd, player->getHandcards()){
+                    if(cd->objectName() == "jiefachang"){
+                        room->askForUseCard(player, "jiefachang", "jiefachang");
+                        break;
+                    }
+                }
+            }
             return;
         }
     }

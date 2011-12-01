@@ -47,7 +47,7 @@ SOURCES += src/main.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
-	src/package/thicket.cpp \
+	src/package/events.cpp \
 	src/package/wind.cpp \
 	src/package/plough.cpp \
 	src/package/tocheck.cpp \
@@ -124,7 +124,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
-	src/package/thicket.h \
+	src/package/events.h \
 	src/package/wind.h \
 	src/package/plough.h \
 	src/package/tocheck.h \

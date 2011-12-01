@@ -1,14 +1,14 @@
-#ifndef THICKET_H
-#define THICKET_H
+#ifndef EVENTS_H
+#define EVENTS_H
 
 #include "package.h"
 #include "card.h"
 
-class ThicketPackage: public Package{
+class EventsPackage: public Package{
     Q_OBJECT
 
 public:
-    ThicketPackage();
+    EventsPackage();
 };
 
 class YinghunCard: public SkillCard{
@@ -59,4 +59,24 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-#endif // THICKET_H
+class EventsCard:public Card{
+    Q_OBJECT
+
+public:
+    EventsCard(Suit suit, int number):Card(suit, number){}
+    virtual QString getType() const;
+    virtual CardType getTypeId() const;
+    virtual QString getSubtype() const;
+};
+
+class Jiefachang:public EventsCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Jiefachang(Card::Suit suit, int number);
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+};
+
+#endif // EVENTS_H
