@@ -33,7 +33,6 @@ extern "C" {
     Package *NewStandard();
     Package *NewWind();
     Package *NewFire();
-    Package *NewEvents();
     Package *NewMountain();
     Package *NewTest();
     Package *NewQJWM();
@@ -46,6 +45,7 @@ extern "C" {
     Package *NewPlough();
     Package *NewTocheck();
     Package *NewExCard();
+    Package *NewEvents();
     Package *NewJoy();
     Package *NewJoyEquip();
 
@@ -73,13 +73,13 @@ Engine::Engine()
     addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
-    addPackage(NewEvents());
     addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());
     addPackage(NewTocheck());
     addPackage(NewExCard());
+    addPackage(NewEvents());
     addPackage(NewJoy());
     addPackage(NewJoyEquip());
 

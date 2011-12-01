@@ -867,6 +867,7 @@ public:
     }
 };
 
+//events card
 QString EventsCard::getType() const{
     return "events";
 }
@@ -933,7 +934,7 @@ void Daojia::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &
 
 EventsPackage::EventsPackage()
     :Package("events_package")
-{
+{/*
     General *caopi, *xuhuang, *menghuo, *zhurong, *sunjian, *lusu, *jiaxu, *dongzhuo;
 
     caopi = new General(this, "caopi$", "guan", 3);
@@ -989,7 +990,7 @@ EventsPackage::EventsPackage()
     addMetaObject<YinghunCard>();
     addMetaObject<FangzhuCard>();
     addMetaObject<HaoshiCard>();
-
+*/
     QList<Card *> cards;
     cards
             //<< new IceSword(Card::Spade, 2)
@@ -1000,6 +1001,8 @@ EventsPackage::EventsPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
+
+    type = CardPack;
 }
 
 ADD_PACKAGE(Events)

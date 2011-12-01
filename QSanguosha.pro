@@ -47,10 +47,10 @@ SOURCES += src/main.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
-	src/package/events.cpp \
 	src/package/wind.cpp \
 	src/package/plough.cpp \
 	src/package/tocheck.cpp \
+	src/package/events.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
 	src/package/ttxd-package.cpp \
@@ -124,10 +124,10 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
-	src/package/events.h \
 	src/package/wind.h \
 	src/package/plough.h \
 	src/package/tocheck.h \
+	src/package/events.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
 	src/package/ttxd-package.h \
