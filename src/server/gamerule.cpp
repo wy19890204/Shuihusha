@@ -12,7 +12,7 @@ GameRule::GameRule(QObject *parent)
 {
     setParent(parent);
 
-    events << GameStart << TurnStart << PhaseChange << CardUsed
+    events << GameStart << TurnStart << PhaseChange << CardUsed << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
@@ -125,7 +125,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             if(!Config.BanPackages.contains("events")){
                 foreach(const Card *cd, player->getHandcards()){
                     if(cd->objectName() == "jiefachang"){
-                        room->askForUseCard(player, "jiefachang", "jiefachang");
+                        room->askForUseCard(player, "jiefachang", "@jiefachang");
                         break;
                     }
                 }
@@ -212,7 +212,30 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             break;
         }
+    case CardFinished: {
+            if(data.canConvert<CardEffectStruct>()){
+                CardEffectStruct effect = data.value<CardEffectStruct>();
+                if(!effect.card->inherits("Snatch"))
+                    break;
+                if(!Config.BanPackages.contains("events")){
+                    bool invoke = false;
+                    foreach(ServerPlayer *source, room->getAllPlayers()){
+                        foreach(const Card *cd, source->getHandcards()){
+                            if(cd->objectName() == "daojia"){
+                                invoke = true;
+                                break;
+                            }
+                        }
+                        if(invoke){
+                            room->askForUseCard(source, "daojia", "@daojia");
+                            break;
+                        }
+                    }
+                }
+            }
 
+            break;
+        }
     case HpRecover:{
             RecoverStruct recover_struct = data.value<RecoverStruct>();
             int recover = recover_struct.recover;

@@ -901,6 +901,36 @@ void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
         target->turnOver();
 }
 
+Daojia::Daojia(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("daojia");
+}
+
+bool Daojia::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(Self->getPhase() == Player::Play){
+        return true;
+    }
+    return targets.isEmpty() && to_select != Self && to_select->getArmor();
+}
+
+bool Daojia::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    if(Self->getPhase() == Player::Play)
+        return targets.length() == 0;
+    else
+        return targets.length() == 1;
+}
+
+void Daojia::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = targets.first();
+    if(source->getPhase() == Player::Play){
+        source->drawCards(1);
+        room->moveCardTo(this, NULL, Player::DrawPile, true);
+    }
+    else{
+        room->throwCard(this);
+        source->obtainCard(target->getArmor());
+    }
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {
@@ -965,7 +995,7 @@ EventsPackage::EventsPackage()
             //<< new IceSword(Card::Spade, 2)
             //<< new RenwangShield(Card::Club, 2)
             //<< new Lightning(Card::Heart, 12)
-            //<< new Nullification(Card::Diamond, 12)
+            << new Daojia(Card::Diamond, 12)
             << new Jiefachang(Card::Diamond, 1);
 
     foreach(Card *card, cards)
