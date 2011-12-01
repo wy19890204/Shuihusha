@@ -13,31 +13,11 @@ public:
     GodPackage();
 };
 
-class GongxinCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE GongxinCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class YeyanCard: public SkillCard{
     Q_OBJECT
 
 public:
     void damage(ServerPlayer *shenzhouyu, ServerPlayer *target, int point) const;
-};
-
-class GreatYeyanCard: public YeyanCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE GreatYeyanCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class MediumYeyanCard: public YeyanCard{
@@ -114,6 +94,25 @@ public:
     Q_INVOKABLE JilveCard();
 
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class FeihuangCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE FeihuangCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class MeiyuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE MeiyuCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
 #endif // GOD_H

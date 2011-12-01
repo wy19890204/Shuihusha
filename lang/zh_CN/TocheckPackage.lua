@@ -8,7 +8,7 @@ return {
 	["fire_slash"] = "火杀",
 	["analeptic"] = "酒",
 	["fan"] = "诸葛白羽扇",
-	["hualiu"] = "桃花",
+	["momohana"] = "桃花",
 	["guding_blade"] = "劈风刀",
 	["vine"] = "天蚕丝衣",
 	["silver_lion"] = "麒麟黄金盾",

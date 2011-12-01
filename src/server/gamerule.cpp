@@ -426,24 +426,27 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
     case SlashHit:{
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-            DamageStruct damage;
-            damage.card = effect.slash;
+            if(effect.slash->getSkillName() == "meiyu"){
+                room->loseMaxHp(effect.to);
+            }
+            else{
+                DamageStruct damage;
+                damage.card = effect.slash;
 
-            damage.damage = 1;
-            if(effect.drank)
-                damage.damage ++;
+                damage.damage = 1;
+                if(effect.drank)
+                    damage.damage ++;
 
-            if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
-                damage.damage ++;
+                if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
+                    damage.damage ++;
+                damage.from = effect.from;
+                damage.to = effect.to;
+                damage.nature = effect.nature;
 
-            damage.from = effect.from;
-            damage.to = effect.to;
-            damage.nature = effect.nature;
-
-            room->damage(damage);
+                room->damage(damage);
+            }
 
             effect.to->removeMark("qinggang");
-
             break;
         }
 

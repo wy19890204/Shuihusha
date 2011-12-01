@@ -16,12 +16,12 @@ local t = {
 	["kylin_bow"] = "钩镰枪",
 	["eight_diagram"] = "甲马",
 	["horse"] = "马",
-	["jueying"] = "连环马",
-	["dilu"] = "麒麟兽",
-	["zhuahuangfeidian"] = "拳色银花",
+	["lhh"] = "连环马",
+	["kirin"] = "麒麟兽",
+	["silver"] = "拳色银花",
 	["chitu"] = "赤兔",
-	["dayuan"] = "雪豹",
-	["zixing"] = "雪白卷毛",
+	["snow"] = "雪豹",
+	["white"] = "雪白卷毛",
 	["amazing_grace"] = "五谷丰登",
 	["god_salvation"] = "梁山聚义",
 	["savage_assault"] = "猛虎下山",
@@ -383,8 +383,8 @@ local t = {
 	[":super_guanxing"] = "回合开始阶段，你可以观看牌堆顶的5张牌，将其中任意数量的牌以任意顺序置于牌堆顶，其余则以任意顺序置于牌堆底。",
 }
 
-local ohorses = {"chitu", "dayuan", "zixing", "brown"}
-local dhorses = {"zhuahuangfeidian", "dilu", "jueying", "hualiu", "white"}
+local ohorses = {"chitu", "snow", "white", "brown"}
+local dhorses = {"silver", "kirin", "lhh", "momohana", "jade"}
 
 for _, horse in ipairs(ohorses) do
 	t[":" .. horse] = t[":-1 horse"]

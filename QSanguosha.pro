@@ -41,8 +41,6 @@ SOURCES += src/main.cpp \
 	src/package/god.cpp \
 	src/package/joypackage.cpp \
 	src/package/mountainpackage.cpp \
-	src/package/nostalgia.cpp \
-	src/package/bwqz-package.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
@@ -54,6 +52,8 @@ SOURCES += src/main.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
 	src/package/ttxd-package.cpp \
+	src/package/bwqz-package.cpp \
+	src/package/qlfd-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -118,9 +118,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/god.h \
 	src/package/joypackage.h \
 	src/package/mountainpackage.h \
-	src/package/nostalgia.h \
 	src/package/package.h \
-	src/package/bwqz-package.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
@@ -131,6 +129,8 @@ HEADERS += src/client/aux-skills.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
 	src/package/ttxd-package.h \
+	src/package/bwqz-package.h \
+	src/package/qlfd-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \

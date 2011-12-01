@@ -1111,8 +1111,10 @@ public:
                 room->playSkillEffect(objectName(), 1);
                 room->throwCard(room->askForCardChosen(hu3niang, damage.to, "he", objectName()));
             }
-            else
+            else{
+                room->playSkillEffect(objectName(), 2);
                 hu3niang->drawCards(1);
+            }
         }
         return false;
     }

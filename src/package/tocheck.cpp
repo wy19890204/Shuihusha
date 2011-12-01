@@ -429,10 +429,10 @@ TocheckPackage::TocheckPackage()
             << new Jink(Card::Diamond, 11)
             << new FireAttack(Card::Diamond, 12);
 
-    DefensiveHorse *hualiu = new DefensiveHorse(Card::Diamond, 13);
-    hualiu->setObjectName("hualiu");
+    DefensiveHorse *momohana = new DefensiveHorse(Card::Diamond, 13);
+    momohana->setObjectName("momohana");
 
-    cards << hualiu;
+    cards << momohana;
 
     foreach(Card *card, cards)
         card->setParent(this);

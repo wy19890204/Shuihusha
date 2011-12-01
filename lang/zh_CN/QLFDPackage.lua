@@ -1,7 +1,7 @@
--- translation for NostalgiaPackage
+-- translation for QLFDPackage
 
 return {
-	["nostalgia"] = "怀旧", 
+	["QLFD"] = "绮罗粉黛", 
 	["xiaoqiao"] = "小乔", 
 	["hongyan"] = "红颜", 
 	["tianxiang"] = "天香", 

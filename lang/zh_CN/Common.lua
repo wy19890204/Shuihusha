@@ -100,6 +100,7 @@ return {
 	["#SkipPhase"] = "%from 跳过了 %arg 阶段",
 	["#IronChainDamage"] = "%from 处于铁锁连环状态，将受到铁锁的传导伤害",
 	["#LoseHp"] = "%from 流失了 %arg 点体力",
+	["#LoseMaxHp"] = "%from 流失了 %arg 点体力上限",
 	["#AcquireSkill"] = "%from 获得了技能 【%arg】",
 	["$Dismantlement"] = "%from 被拆掉了 %card",
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
