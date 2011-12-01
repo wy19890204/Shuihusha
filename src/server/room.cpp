@@ -998,6 +998,21 @@ ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool includ
     return NULL;
 }
 
+ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
+    const QList<ServerPlayer *> &list = alive_players;
+
+    foreach(ServerPlayer *player, list){
+        if(player->isKongcheng())
+            continue;
+        foreach(const Card *cd, player->getHandcards()){
+            if(cd->objectName() == event){
+                return player;
+            }
+        }
+    }
+    return NULL;
+}
+
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
     if(player == NULL)
         return;

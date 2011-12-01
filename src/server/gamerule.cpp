@@ -213,27 +213,17 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             break;
         }
     case CardFinished: {
-            if(data.canConvert<CardEffectStruct>()){
-                CardEffectStruct effect = data.value<CardEffectStruct>();
-                if(!effect.card->inherits("Snatch"))
-                    break;
-                if(!Config.BanPackages.contains("events")){
-                    bool invoke = false;
-                    foreach(ServerPlayer *source, room->getAllPlayers()){
-                        foreach(const Card *cd, source->getHandcards()){
-                            if(cd->objectName() == "daojia"){
-                                invoke = true;
-                                break;
-                            }
-                        }
-                        if(invoke){
-                            room->askForUseCard(source, "daojia", "@daojia");
-                            break;
-                        }
+            if(data.canConvert<CardUseStruct>()){
+                CardUseStruct use = data.value<CardUseStruct>();
+                if(use.card->inherits("Snatch") && !Config.BanPackages.contains("events")){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
+                    if(source){
+                        room->setPlayerFlag(source, "Daojia");
+                        room->askForUseCard(source, "daojia", "@daojia");
+                        room->setPlayerFlag(source, "-Daojia");
                     }
                 }
             }
-
             break;
         }
     case HpRecover:{
