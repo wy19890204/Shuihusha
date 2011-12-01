@@ -552,12 +552,12 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        player->tag["AoxiangStore"] = player->getGeneralName();
-        if(player->isWounded()){
+        if(player->getGeneralName() != "tongguanf")
+            player->tag["AoxiangStore"] = player->getGeneralName();
+        if(player->getHp() != player->getMaxHP())
             room->setPlayerProperty(player, "general", "tongguanf");
-        }
         else{
-            QString gen_name = player->tag.value("AoxiangStore", "tongguanf").toString();
+            QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
             room->setPlayerProperty(player, "general", gen_name);
         }
         return false;
@@ -569,8 +569,7 @@ JiaomieCard::JiaomieCard(){
 }
 
 bool JiaomieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int tarGets = Self->getHp();
-    if(targets.length() >= tarGets)
+    if(targets.length() >= Self->getHp())
         return false;
     return Self->canSlash(to_select);
 }
@@ -579,6 +578,7 @@ void JiaomieCard::onEffect(const CardEffectStruct &effect) const{
     DamageStruct damage;
     damage.from = effect.from;
     damage.to = effect.to;
+    damage.card = this;
     effect.from->getRoom()->damage(damage);
 }
 
@@ -654,11 +654,11 @@ BWQZPackage::BWQZPackage()
     General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 
-    General *mengkang = new General(this, "mengkang", "kou", 4);
+    General *mengkang = new General(this, "mengkang", "kou");
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
 
-    General *jiaoting = new General(this, "jiaoting", "kou", 4);
+    General *jiaoting = new General(this, "jiaoting", "kou");
     jiaoting->addSkill(new Skill("qinlong"));
 
     General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
@@ -681,18 +681,18 @@ BWQZPackage::BWQZPackage()
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 
-    General *baisheng = new General(this, "baisheng", "min", 4);
+    General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);
     baisheng->addSkill(new Shudan);
     baisheng->addSkill(new ShudanClear);
     related_skills.insertMulti("shudan", "#shudan-clear");
 
-    General *tongguan = new General(this, "tongguan", "guan", 4);
+    General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
     tongguan->addSkill(new Zhengfa);
     tongguan->addSkill(new Jiaomie);
 
-    General *tongguanf = new General(this, "tongguanf", "guan", 4, false, true);
+    new General(this, "tongguanf", "yan", 4, false, true);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();

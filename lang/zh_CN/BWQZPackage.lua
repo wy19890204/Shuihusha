@@ -118,6 +118,7 @@ return {
 	["#_tongguanf"] = "广阳郡王",
 	["tongguanf"] = "童贯",
 	["cv:tongguanf"] = "烨子",
+	["yan"] = "阉",
 
 -- last words
 	["~mengkang"] = "火炮突袭，快撤！",
