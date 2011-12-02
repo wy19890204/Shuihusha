@@ -67,6 +67,7 @@ void Room::initCallbacks(){
     callbacks["trustCommand"] = &Room::trustCommand;
     callbacks["kickCommand"] = &Room::kickCommand;
     callbacks["surrenderCommand"] = &Room::surrenderCommand;
+    callbacks["msgCommand"] = &Room::commonCommand;
 }
 
 QString Room::createLuaState(){
@@ -3166,4 +3167,14 @@ Room* Room::duplicate()
     room->fillRobotsCommand(NULL, 0);
     room->copyFrom(this);
     return room;
+}
+
+void Room::showMsgbox(ServerPlayer *player, const QString &title, const QString &explanation){
+    QString msg_str;
+    if(explanation.isNull())
+        msg_str = QString("%1:%2").arg(title).arg(explanation);
+    else
+        msg_str = title;
+    player->invoke("msgBox", msg_str);
+    getResult("msgCommand", player);
 }
