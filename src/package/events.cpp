@@ -709,8 +709,8 @@ EventsPackage::EventsPackage()
             //<< new IceSword(Card::Spade, 2)
             //<< new RenwangShield(Card::Club, 2)
             //<< new Lightning(Card::Heart, 12)
-            << new Daojia(Card::Diamond, 12)
-            << new Jiefachang(Card::Diamond, 1);
+            << new Daojia(Card::Club, 12)
+            << new Jiefachang(Card::Diamond, 4);
 
     foreach(Card *card, cards)
         card->setParent(this);

@@ -61,6 +61,14 @@ extern "C" {
     int luaopen_sgs(lua_State *);
 }
 
+QString Engine::getVersion() const{
+    return "20111201";
+}
+
+QString Engine::getVersionName() const{
+    return tr("V1.5.5");
+}
+
 Engine::Engine()
 {
     Sanguosha = this;
@@ -344,14 +352,6 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
         return card;
     }else
         return NULL;
-}
-
-QString Engine::getVersion() const{
-    return "20111113";
-}
-
-QString Engine::getVersionName() const{
-    return tr("Chibi");
 }
 
 QStringList Engine::getExtensions() const{

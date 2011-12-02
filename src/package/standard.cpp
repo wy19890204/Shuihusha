@@ -163,7 +163,10 @@ QString SingleTargetTrick::getSubtype() const{
 }
 
 bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return true;
+    if(to_select == Self)
+        return false;
+
+    return targets.isEmpty();
 }
 
 DelayedTrick::DelayedTrick(Suit suit, int number, bool movable)

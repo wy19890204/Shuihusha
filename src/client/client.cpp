@@ -1366,6 +1366,7 @@ void Client::doGongxin(const QString &gongxin_str){
     who->setCards(card_ids);
 
     emit gongxin(card_ids, enable_heart);
+    //refusable = false;
     setStatus(AskForGongxin);
 }
 

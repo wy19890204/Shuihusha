@@ -391,6 +391,13 @@ public:
     Fuqin():MasochismSkill("fuqin"){
     }
 
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 2)
+            return "qing";
+        else
+            return "yan";
+    }
+
     virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
         Room *room = yan->getRoom();
         int lstn = yan->getLostHp();
@@ -401,6 +408,8 @@ public:
             return;
         if(choice == "yan"){
             room->playSkillEffect(objectName(), 1);
+            if(!damage.from || damage.from->isNude())
+                return;
             for(int i = 0; i < lstn; i++){
                 room->throwCard(room->askForCardChosen(yan, damage.from, "he", objectName()));
                 if(damage.from->isNude())

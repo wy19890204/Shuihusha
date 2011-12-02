@@ -31,7 +31,6 @@ class Wiretap: public SingleTargetTrick{
 public:
     Q_INVOKABLE Wiretap(Card::Suit suit, int number);
 
-    virtual bool targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
@@ -41,7 +40,6 @@ class Assassinate: public SingleTargetTrick{
 public:
     Q_INVOKABLE Assassinate(Card::Suit suit, int number);
 
-    virtual bool targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
