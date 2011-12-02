@@ -1,4 +1,4 @@
--- translation for ThicketPackage
+-- translation for EventsPackage
 
 return {
 	["events"] = "事件牌",
