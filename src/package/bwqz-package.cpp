@@ -851,7 +851,7 @@ BWQZPackage::BWQZPackage()
     panjinlian->addSkill(new Zhensha);
     panjinlian->addSkill(new Shengui);
     panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
-    related_skills.insertMulti("zhensha", "#@vi");
+    related_skills.insertMulti("zhensha", "#@vi-1");
 
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);
