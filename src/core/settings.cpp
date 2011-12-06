@@ -83,7 +83,7 @@ void Settings::init(){
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
-    UserAvatar = value("UserAvatar", "zhangliao").toString();
+    UserAvatar = value("UserAvatar", "wusong").toString();
     HistoryIPs = value("HistoryIPs").toStringList();
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
@@ -104,7 +104,7 @@ void Settings::init(){
 
     if(!contains("1v1/Banlist")){
         QStringList banlist;
-        banlist << "sunquan" << "huatuo" << "zhangliao" << "liubei";
+        banlist << "sunquan" << "huatuo" << "wusong" << "liubei";
         setValue("1v1/Banlist", banlist);
     }
 }
