@@ -763,7 +763,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
     if(to_select == Self)
         return false;
 
-    return to_select->getMark("Xiaozai") == 0;
+    return !to_select->hasFlag("Xiaozai");
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
@@ -810,16 +810,19 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
         if(damage.from)
-            room->setPlayerMark(damage.from, "Xiaozai", 1);
+            room->setPlayerFlag(damage.from, "Xiaozai");
         if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
-            ServerPlayer *cup = player->tag.value("Xiaozai", NULL).value<ServerPlayer *>();
-            damage.to = cup;
-            room->damage(damage);
-
-            return true;
+            ServerPlayer *cup = player->tag["Xiaozai"].value<ServerPlayer *>();
+            if(cup){
+                damage.to = cup;
+                room->damage(damage);
+                return true;
+            }
         }
-        if(damage.from)
-            room->setPlayerMark(damage.from, "Xiaozai", 0);
+        if(damage.from){
+            room->setPlayerFlag(damage.from, "-Xiaozai");
+            player->tag["Xiaozai"] = QVariant::fromValue(player);
+        }
         return false;
     }
 };
