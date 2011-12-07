@@ -30,7 +30,9 @@ YuanyinCard::YuanyinCard(){
 }
 
 bool YuanyinCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2 || targets.length() == 1;
+    if(targets.length() == 2)
+        return true;
+    return targets.length() == 1 && Self->canSlash(targets.first());
 }
 
 bool YuanyinCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
