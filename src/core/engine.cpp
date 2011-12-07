@@ -51,7 +51,6 @@ extern "C" {
     Package *NewJoyEquip();
 
     Scenario *NewCoupleScenario();
-    Scenario *NewHongyanScenario();
     Scenario *NewZombieScenario();
     Scenario *NewLegendScenario();
     Scenario *NewImpasseScenario();
@@ -94,7 +93,6 @@ Engine::Engine()
     addPackage(NewJoyEquip());
 
     addScenario(NewCoupleScenario());
-    addScenario(NewHongyanScenario());
     addScenario(NewZombieScenario());
     addScenario(NewLegendScenario());
     addScenario(NewImpasseScenario());

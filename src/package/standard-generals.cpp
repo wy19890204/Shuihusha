@@ -271,31 +271,6 @@ public:
     }
 };
 
-class Zhiheng:public ViewAsSkill{
-public:
-    Zhiheng():ViewAsSkill("zhiheng"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        ZhihengCard *zhiheng_card = new ZhihengCard;
-        zhiheng_card->addSubcards(cards);
-
-        return zhiheng_card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("ZhihengCard");
-    }
-};
-
 class Qixi: public OneCardViewAsSkill{
 public:
     Qixi():OneCardViewAsSkill("qixi"){
@@ -365,61 +340,6 @@ public:
     }
 };
 
-class Wushuang: public TriggerSkill{
-public:
-    Wushuang():TriggerSkill("wushuang"){
-        events << SlashProceed;
-
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *lubu, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        Room *room = lubu->getRoom();
-        room->playSkillEffect(objectName());
-
-        QString slasher = lubu->objectName();
-
-        const Card *first_jink = NULL, *second_jink = NULL;
-        first_jink = room->askForCard(effect.to, "jink", "@wushuang-jink-1:" + slasher);
-        if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@wushuang-jink-2:" + slasher);
-
-        Card *jink = NULL;
-        if(first_jink && second_jink){
-            jink = new DummyCard;
-            jink->addSubcard(first_jink);
-            jink->addSubcard(second_jink);
-        }
-
-        room->slashResult(effect, jink);
-
-        return true;
-    }
-};
-
-class Lijian: public OneCardViewAsSkill{
-public:
-    Lijian():OneCardViewAsSkill("lijian"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("LijianCard");
-    }
-
-    virtual bool viewFilter(const CardItem *) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        LijianCard *lijian_card = new LijianCard;
-        lijian_card->addSubcard(card_item->getCard()->getId());
-
-        return lijian_card;
-    }
-};
-
 class Qingnang: public OneCardViewAsSkill{
 public:
     Qingnang():OneCardViewAsSkill("qingnang"){
@@ -485,9 +405,7 @@ void StandardPackage::addGenerals(){
     zhenji = new General(this, "zhenji", "guan", 3, false);
     zhenji->addSkill(new Qingguo);
 
-    General *liubei, *zhangfei, *machao, *huangyueying;
-    liubei = new General(this, "liubei$", "jiang");
-    liubei->addSkill(new Rende);
+    General *zhangfei, *machao, *huangyueying;
 
     zhangfei = new General(this, "zhangfei", "jiang");
     zhangfei->addSkill(new Skill("paoxiao"));
@@ -499,9 +417,7 @@ void StandardPackage::addGenerals(){
     huangyueying->addSkill(new Jizhi);
     huangyueying->addSkill(new Skill("qicai", Skill::Compulsory));
 
-    General *sunquan, *ganning, *sunshangxiang;
-    sunquan = new General(this, "sunquan$", "min");
-    sunquan->addSkill(new Zhiheng);
+    General *ganning, *sunshangxiang;
 
     ganning = new General(this, "ganning", "min");
     ganning->addSkill(new Qixi);
@@ -510,23 +426,13 @@ void StandardPackage::addGenerals(){
     sunshangxiang->addSkill(new Jieyin);
     sunshangxiang->addSkill(new Xiaoji);
 
-    General *lubu, *huatuo, *diaochan;
-
-    huatuo = new General(this, "huatuo", "kou", 3);
+    General *huatuo = new General(this, "huatuo", "kou", 3);
     huatuo->addSkill(new Qingnang);
     huatuo->addSkill(new Jijiu);
 
-    lubu = new General(this, "lubu", "kou");
-    lubu->addSkill(new Wushuang);
-
-    diaochan = new General(this, "diaochan", "kou", 3, false);
-    diaochan->addSkill(new Lijian);
-
     // for skill cards
-    addMetaObject<ZhihengCard>();
     addMetaObject<RendeCard>();
     addMetaObject<JieyinCard>();
-    addMetaObject<LijianCard>();
     addMetaObject<GuicaiCard>();
     addMetaObject<QingnangCard>();
     addMetaObject<CheatCard>();
@@ -579,10 +485,13 @@ TestPackage::TestPackage()
     :Package("test")
 {    
     General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
-    shenlvbu1->addSkill("wushuang");
+    shenlvbu1->addSkill("cuju");
+    shenlvbu1->addSkill("wubang");
+    shenlvbu1->addSkill("huanshu");
 
     General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
-    shenlvbu2->addSkill("wushuang");
+    shenlvbu2->addSkill("cuju");
+    shenlvbu2->addSkill("huanshu");
     shenlvbu2->addSkill(new Xiuluo);
     shenlvbu2->addSkill(new Shenwei);
     shenlvbu2->addSkill(new Skill("shenji"));
