@@ -172,48 +172,6 @@ public:
     }
 };
 
-class RendeViewAsSkill:public ViewAsSkill{
-public:
-    RendeViewAsSkill():ViewAsSkill("rende"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(ServerInfo.GameMode == "04_1v3"
-           && selected.length() + Self->getMark("rende") >= 2)
-           return false;
-        else
-            return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        RendeCard *rende_card = new RendeCard;
-        rende_card->addSubcards(cards);
-        return rende_card;
-    }
-};
-
-class Rende: public PhaseChangeSkill{
-public:
-    Rende():PhaseChangeSkill("rende"){
-        view_as_skill = new RendeViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::NotActive
-                && target->hasUsed("RendeCard");
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "rende", 0);
-
-        return false;
-    }
-};
-
 class Tieji:public SlashBuffSkill{
 public:
     Tieji():SlashBuffSkill("tieji"){
@@ -287,34 +245,6 @@ public:
         dismantlement->addSubcard(first->getId());
         dismantlement->setSkillName(objectName());
         return dismantlement;
-    }
-};
-
-class Jieyin: public ViewAsSkill{
-public:
-    Jieyin():ViewAsSkill("jieyin"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("JieyinCard");
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() > 2)
-            return false;
-
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
-            return NULL;
-
-        JieyinCard *jieyin_card = new JieyinCard();
-        jieyin_card->addSubcards(cards);
-
-        return jieyin_card;
     }
 };
 
@@ -423,7 +353,6 @@ void StandardPackage::addGenerals(){
     ganning->addSkill(new Qixi);
 
     sunshangxiang = new General(this, "sunshangxiang", "min", 3, false);
-    sunshangxiang->addSkill(new Jieyin);
     sunshangxiang->addSkill(new Xiaoji);
 
     General *huatuo = new General(this, "huatuo", "kou", 3);
@@ -431,8 +360,6 @@ void StandardPackage::addGenerals(){
     huatuo->addSkill(new Jijiu);
 
     // for skill cards
-    addMetaObject<RendeCard>();
-    addMetaObject<JieyinCard>();
     addMetaObject<GuicaiCard>();
     addMetaObject<QingnangCard>();
     addMetaObject<CheatCard>();
