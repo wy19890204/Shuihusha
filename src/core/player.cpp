@@ -781,11 +781,6 @@ bool Player::isJilei(const Card *card) const{
         return jilei_set.contains(type);
 }
 
-bool Player::isCaoCao() const{
-    QString general_name = getGeneralName();
-    return general_name == "caocao" || general_name == "shencaocao" || general_name == "shencc";
-}
-
 void Player::copyFrom(Player* p)
 {
     Player *b = this;

@@ -205,7 +205,6 @@ public:
     void jilei(const char *type);
     bool isJilei(const Card *card) const;
 
-    bool isCaoCao() const;
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;

@@ -112,7 +112,7 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "caocao";
+    lord = "gaoqiu";
     renegades << "lubu" << "diaochan";
     rule = new CoupleScenarioRule(this);
 

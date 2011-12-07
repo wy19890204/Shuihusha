@@ -2238,7 +2238,7 @@ void RoomScene::onGameOver(){
     QString win_effect;
     if(victory){
         win_effect = "win";
-        foreach(const Player *player, ClientInstance->getPlayers()){
+        /*foreach(const Player *player, ClientInstance->getPlayers()){
             if(player->property("win").toBool() && player->isCaoCao()){
 
 #ifdef Q_OS_WIN
@@ -2249,7 +2249,7 @@ void RoomScene::onGameOver(){
                 win_effect = "win-cc";
                 break;
             }
-        }
+        }*/
     }else
         win_effect = "lose";
 

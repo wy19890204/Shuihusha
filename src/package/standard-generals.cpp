@@ -9,25 +9,6 @@
 #include "standard-skillcards.h"
 #include "ai.h"
 
-class Jianxiong:public MasochismSkill{
-public:
-    Jianxiong():MasochismSkill("jianxiong"){
-    }
-
-    virtual void onDamaged(ServerPlayer *caocao, const DamageStruct &damage) const{
-        Room *room = caocao->getRoom();
-        const Card *card = damage.card;
-        if(!room->obtainable(card, caocao))
-            return;
-
-        QVariant data = QVariant::fromValue(card);
-        if(room->askForSkillInvoke(caocao, "jianxiong", data)){
-            room->playSkillEffect(objectName());
-            caocao->obtainCard(card);
-        }
-    }
-};
-
 class Yiji:public MasochismSkill{
 public:
     Yiji():MasochismSkill("yiji"){
@@ -228,10 +209,7 @@ public:
 };
 
 void StandardPackage::addGenerals(){
-    General *caocao, *guojia, *simayi, *zhenji;
-
-    caocao = new General(this, "caocao$", "guan");
-    caocao->addSkill(new Jianxiong);
+    General *guojia, *simayi, *zhenji;
 
     simayi = new General(this, "simayi", "guan", 3);
     simayi->addSkill(new Fankui);

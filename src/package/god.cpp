@@ -263,40 +263,6 @@ public:
     }
 };
 
-class Guixin: public MasochismSkill{
-public:
-    Guixin():MasochismSkill("guixin"){
-
-    }
-
-    virtual void onDamaged(ServerPlayer *shencc, const DamageStruct &damage) const{
-        Room *room = shencc->getRoom();
-        int i, x = damage.damage;
-        for(i=0; i<x; i++){
-            if(shencc->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-
-                QList<ServerPlayer *> players = room->getOtherPlayers(shencc);
-                if(players.length() >=5)
-                    room->broadcastInvoke("animate", "lightbox:$guixin");
-
-                foreach(ServerPlayer *player, players){
-                    if(!player->isAllNude()){
-                        int card_id = room->askForCardChosen(shencc, player, "hej", objectName());
-                        if(room->getCardPlace(card_id) == Player::Hand)
-                            room->moveCardTo(Sanguosha->getCard(card_id), shencc, Player::Hand, false);
-                        else
-                            room->obtainCard(shencc, card_id);
-                    }
-                }
-
-                shencc->turnOver();
-            }else
-                break;
-        }
-    }
-};
-
 class Kuangbao: public TriggerSkill{
 public:
     Kuangbao():TriggerSkill("kuangbao"){
@@ -1352,7 +1318,7 @@ GodPackage::GodPackage()
     General *shenzhangqing = new General(this, "shenzhangqing", "god", 4);
     shenzhangqing->addSkill(new Feihuang);
     shenzhangqing->addSkill(new Meiyu);
-    //shenzhangqing->addSkill(new WuhunRevenge);
+
 /*
     related_skills.insertMulti("wuhun", "#wuhun");
 
@@ -1372,10 +1338,6 @@ GodPackage::GodPackage()
     related_skills.insertMulti("qixing", "#qixing");
     related_skills.insertMulti("qixing", "#qixing-ask");
     related_skills.insertMulti("qixing", "#qixing-clear");
-
-    General *shencaocao = new General(this, "shencaocao", "god", 3);
-    shencaocao->addSkill(new Guixin);
-    shencaocao->addSkill(new Feiying);
 
     General *shenlubu = new General(this, "shenlubu", "god", 5);
     shenlubu->addSkill(new Kuangbao);
