@@ -75,76 +75,6 @@ public:
     }
 };
 
-class GuicaiViewAsSkill:public OneCardViewAsSkill{
-public:
-    GuicaiViewAsSkill():OneCardViewAsSkill(""){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "@guicai";
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new GuicaiCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
-    }
-};
-
-class Guicai: public TriggerSkill{
-public:
-    Guicai():TriggerSkill("guicai"){
-        view_as_skill = new GuicaiViewAsSkill;
-
-        events << AskForRetrial;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->isKongcheng();
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        JudgeStar judge = data.value<JudgeStar>();
-
-        QStringList prompt_list;
-        prompt_list << "@guicai-card" << judge->who->objectName()
-                << "" << judge->reason << judge->card->getEffectIdString();
-        QString prompt = prompt_list.join(":");
-
-        player->tag["Judge"] = data;
-        const Card *card = room->askForCard(player, "@guicai", prompt, data);
-
-        if(card){
-            // the only difference for Guicai & Guidao
-            room->throwCard(judge->card);
-
-            judge->card = Sanguosha->getCard(card->getEffectiveId());
-            room->moveCardTo(judge->card, NULL, Player::Special);
-
-            LogMessage log;
-            log.type = "$ChangedJudge";
-            log.from = player;
-            log.to << judge->who;
-            log.card_str = card->getEffectIdString();
-            room->sendLog(log);
-
-            room->sendJudgeResult(judge);
-        }
-
-        return false;
-    }
-};
-
 class Qingguo:public OneCardViewAsSkill{
 public:
     Qingguo():OneCardViewAsSkill("qingguo"){
@@ -169,48 +99,6 @@ public:
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
         return  pattern == "jink";
-    }
-};
-
-class RendeViewAsSkill:public ViewAsSkill{
-public:
-    RendeViewAsSkill():ViewAsSkill("rende"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(ServerInfo.GameMode == "04_1v3"
-           && selected.length() + Self->getMark("rende") >= 2)
-           return false;
-        else
-            return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        RendeCard *rende_card = new RendeCard;
-        rende_card->addSubcards(cards);
-        return rende_card;
-    }
-};
-
-class Rende: public PhaseChangeSkill{
-public:
-    Rende():PhaseChangeSkill("rende"){
-        view_as_skill = new RendeViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::NotActive
-                && target->hasUsed("RendeCard");
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "rende", 0);
-
-        return false;
     }
 };
 
@@ -290,34 +178,6 @@ public:
     }
 };
 
-class Jieyin: public ViewAsSkill{
-public:
-    Jieyin():ViewAsSkill("jieyin"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("JieyinCard");
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() > 2)
-            return false;
-
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
-            return NULL;
-
-        JieyinCard *jieyin_card = new JieyinCard();
-        jieyin_card->addSubcards(cards);
-
-        return jieyin_card;
-    }
-};
-
 class Xiaoji: public TriggerSkill{
 public:
     Xiaoji():TriggerSkill("xiaoji"){
@@ -337,28 +197,6 @@ public:
         }
 
         return false;
-    }
-};
-
-class Qingnang: public OneCardViewAsSkill{
-public:
-    Qingnang():OneCardViewAsSkill("qingnang"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("QingnangCard");
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        QingnangCard *qingnang_card = new QingnangCard;
-        qingnang_card->addSubcard(card_item->getCard()->getId());
-
-        return qingnang_card;
     }
 };
 
@@ -397,7 +235,6 @@ void StandardPackage::addGenerals(){
 
     simayi = new General(this, "simayi", "guan", 3);
     simayi->addSkill(new Fankui);
-    simayi->addSkill(new Guicai);
 
     guojia = new General(this, "guojia", "guan", 3);
     guojia->addSkill(new Yiji);
@@ -415,7 +252,6 @@ void StandardPackage::addGenerals(){
 
     huangyueying = new General(this, "huangyueying", "jiang", 3, false);
     huangyueying->addSkill(new Jizhi);
-    huangyueying->addSkill(new Skill("qicai", Skill::Compulsory));
 
     General *ganning, *sunshangxiang;
 
@@ -423,18 +259,12 @@ void StandardPackage::addGenerals(){
     ganning->addSkill(new Qixi);
 
     sunshangxiang = new General(this, "sunshangxiang", "min", 3, false);
-    sunshangxiang->addSkill(new Jieyin);
     sunshangxiang->addSkill(new Xiaoji);
 
     General *huatuo = new General(this, "huatuo", "kou", 3);
-    huatuo->addSkill(new Qingnang);
     huatuo->addSkill(new Jijiu);
 
     // for skill cards
-    addMetaObject<RendeCard>();
-    addMetaObject<JieyinCard>();
-    addMetaObject<GuicaiCard>();
-    addMetaObject<QingnangCard>();
     addMetaObject<CheatCard>();
 }
 

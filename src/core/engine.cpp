@@ -80,9 +80,9 @@ Engine::Engine()
     addPackage(NewGod());
 
     addPackage(NewStandard());
-    addPackage(NewWind());
-    addPackage(NewFire());
-    addPackage(NewMountain());
+    //addPackage(NewWind());
+    //addPackage(NewFire());
+    //addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());
