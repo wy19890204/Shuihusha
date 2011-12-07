@@ -410,61 +410,6 @@ public:
     }
 };
 
-class Wushuang: public TriggerSkill{
-public:
-    Wushuang():TriggerSkill("wushuang"){
-        events << SlashProceed;
-
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *lubu, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        Room *room = lubu->getRoom();
-        room->playSkillEffect(objectName());
-
-        QString slasher = lubu->objectName();
-
-        const Card *first_jink = NULL, *second_jink = NULL;
-        first_jink = room->askForCard(effect.to, "jink", "@wushuang-jink-1:" + slasher);
-        if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@wushuang-jink-2:" + slasher);
-
-        Card *jink = NULL;
-        if(first_jink && second_jink){
-            jink = new DummyCard;
-            jink->addSubcard(first_jink);
-            jink->addSubcard(second_jink);
-        }
-
-        room->slashResult(effect, jink);
-
-        return true;
-    }
-};
-
-class Lijian: public OneCardViewAsSkill{
-public:
-    Lijian():OneCardViewAsSkill("lijian"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("LijianCard");
-    }
-
-    virtual bool viewFilter(const CardItem *) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        LijianCard *lijian_card = new LijianCard;
-        lijian_card->addSubcard(card_item->getCard()->getId());
-
-        return lijian_card;
-    }
-};
-
 class Qingnang: public OneCardViewAsSkill{
 public:
     Qingnang():OneCardViewAsSkill("qingnang"){
@@ -558,24 +503,15 @@ void StandardPackage::addGenerals(){
     sunshangxiang->addSkill(new Jieyin);
     sunshangxiang->addSkill(new Xiaoji);
 
-    General *lubu, *huatuo, *diaochan;
-
-    huatuo = new General(this, "huatuo", "kou", 3);
+    General *huatuo = new General(this, "huatuo", "kou", 3);
     huatuo->addSkill(new Qingnang);
     huatuo->addSkill(new Jijiu);
-
-    lubu = new General(this, "lubu", "kou");
-    lubu->addSkill(new Wushuang);
-
-    diaochan = new General(this, "diaochan", "kou", 3, false);
-    diaochan->addSkill(new Lijian);
 
     // for skill cards
     addMetaObject<ZhihengCard>();
     addMetaObject<RendeCard>();
     addMetaObject<TuxiCard>();
     addMetaObject<JieyinCard>();
-    addMetaObject<LijianCard>();
     addMetaObject<GuicaiCard>();
     addMetaObject<QingnangCard>();
     addMetaObject<CheatCard>();

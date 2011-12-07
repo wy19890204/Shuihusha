@@ -108,42 +108,6 @@ void TuxiCard::onEffect(const CardEffectStruct &effect) const{
     room->setEmotion(effect.from, "good");
 }
 
-LijianCard::LijianCard(){
-    once = true;
-}
-
-bool LijianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!to_select->getGeneral()->isMale())
-        return false;
-
-    if(targets.isEmpty() && to_select->hasSkill("kongcheng") && to_select->isKongcheng()){
-        return false;
-    }
-
-    return true;
-}
-
-bool LijianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
-void LijianCard::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
-    ServerPlayer *to = targets.at(0);
-    ServerPlayer *from = targets.at(1);
-
-    Duel *duel = new Duel(Card::NoSuit, 0);
-    duel->setSkillName("lijian");
-    duel->setCancelable(false);
-
-    CardUseStruct use;
-    use.from = from;
-    use.to << to;
-    use.card = duel;
-    room->useCard(use);
-}
-
 QingnangCard::QingnangCard(){
     once = true;
 }

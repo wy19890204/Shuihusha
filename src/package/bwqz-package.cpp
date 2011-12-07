@@ -55,10 +55,10 @@ void YuanyinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
 
     const Card *weapon = targets.first()->getWeapon();
     if(weapon){
-        room->throwCard(weapon->getId());
         Slash *slash = new Slash(weapon->getSuit(), weapon->getNumber());
         slash->setSkillName("yuanyin");
         slash->addSubcard(weapon);
+        room->throwCard(weapon->getId());
         CardUseStruct use;
         use.card = slash;
         use.from = source;
@@ -123,17 +123,15 @@ public:
                 yuanyin_card->setSkillName(objectName());
                 yuanyin_card->addSubcard(card);
                 room->provide(yuanyin_card);
-                room->setEmotion(player, "good");
-                return true;
             }
-            else if(asked == "jink"){
+            else{
                 Jink *yuanyin_card = new Jink(card->getSuit(), card->getNumber());
                 yuanyin_card->setSkillName(objectName());
                 yuanyin_card->addSubcard(card);
                 room->provide(yuanyin_card);
-                room->setEmotion(player, "good");
-                return true;
             }
+            room->setEmotion(player, "good");
+            return true;
         }
         return false;
     }
