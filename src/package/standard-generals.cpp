@@ -217,48 +217,6 @@ public:
     }
 };
 
-class RendeViewAsSkill:public ViewAsSkill{
-public:
-    RendeViewAsSkill():ViewAsSkill("rende"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(ServerInfo.GameMode == "04_1v3"
-           && selected.length() + Self->getMark("rende") >= 2)
-           return false;
-        else
-            return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        RendeCard *rende_card = new RendeCard;
-        rende_card->addSubcards(cards);
-        return rende_card;
-    }
-};
-
-class Rende: public PhaseChangeSkill{
-public:
-    Rende():PhaseChangeSkill("rende"){
-        view_as_skill = new RendeViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::NotActive
-                && target->hasUsed("RendeCard");
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "rende", 0);
-
-        return false;
-    }
-};
-
 class Tieji:public SlashBuffSkill{
 public:
     Tieji():SlashBuffSkill("tieji"){
@@ -313,31 +271,6 @@ public:
         }
 
         return false;
-    }
-};
-
-class Zhiheng:public ViewAsSkill{
-public:
-    Zhiheng():ViewAsSkill("zhiheng"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-
-        ZhihengCard *zhiheng_card = new ZhihengCard;
-        zhiheng_card->addSubcards(cards);
-
-        return zhiheng_card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("ZhihengCard");
     }
 };
 
@@ -478,9 +411,7 @@ void StandardPackage::addGenerals(){
     zhenji = new General(this, "zhenji", "guan", 3, false);
     zhenji->addSkill(new Qingguo);
 
-    General *liubei, *zhangfei, *machao, *huangyueying;
-    liubei = new General(this, "liubei$", "jiang");
-    liubei->addSkill(new Rende);
+    General *zhangfei, *machao, *huangyueying;
 
     zhangfei = new General(this, "zhangfei", "jiang");
     zhangfei->addSkill(new Skill("paoxiao"));
@@ -492,9 +423,7 @@ void StandardPackage::addGenerals(){
     huangyueying->addSkill(new Jizhi);
     huangyueying->addSkill(new Skill("qicai", Skill::Compulsory));
 
-    General *sunquan, *ganning, *sunshangxiang;
-    sunquan = new General(this, "sunquan$", "min");
-    sunquan->addSkill(new Zhiheng);
+    General *ganning, *sunshangxiang;
 
     ganning = new General(this, "ganning", "min");
     ganning->addSkill(new Qixi);
@@ -508,8 +437,6 @@ void StandardPackage::addGenerals(){
     huatuo->addSkill(new Jijiu);
 
     // for skill cards
-    addMetaObject<ZhihengCard>();
-    addMetaObject<RendeCard>();
     addMetaObject<TuxiCard>();
     addMetaObject<JieyinCard>();
     addMetaObject<GuicaiCard>();

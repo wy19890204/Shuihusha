@@ -4,22 +4,6 @@
 #include "skill.h"
 #include "card.h"
 
-class ZhihengCard:public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE ZhihengCard();
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
-class RendeCard:public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE RendeCard();
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
 class JieyinCard:public SkillCard{
     Q_OBJECT
 

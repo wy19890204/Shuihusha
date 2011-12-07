@@ -134,7 +134,6 @@ HEADERS += src/client/aux-skills.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \
-	src/scenario/hongyan-scenario.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
