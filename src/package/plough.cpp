@@ -64,28 +64,14 @@ Wiretap::Wiretap(Suit suit, int number)
     setObjectName("wiretap");
 }
 
-bool Wiretap::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
-    if(!targets.isEmpty())
-        return false;
-    return true;
-}
-
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     room->showAllCards(effect.to, effect.from);
-    room->getThread()->delay(3210);
-    room->broadcastInvoke("clearAG");
 }
 
 Assassinate::Assassinate(Suit suit, int number)
     :SingleTargetTrick(suit, number, false) {
     setObjectName("assassinate");
-}
-
-bool Assassinate::targetFilter(const QList<const ClientPlayer *> &targets, const ClientPlayer *to_select) const{
-    if(!targets.isEmpty())
-        return false;
-    return true;
 }
 
 void Assassinate::onEffect(const CardEffectStruct &effect) const{

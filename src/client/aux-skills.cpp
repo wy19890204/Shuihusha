@@ -102,35 +102,6 @@ const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
         return NULL;
 }
 
-// -------------------------------------------
-
-YijiViewAsSkill::YijiViewAsSkill()
-    :ViewAsSkill("yiji")
-{
-    card = new RendeCard;
-}
-
-void YijiViewAsSkill::setCards(const QString &card_str){
-    QStringList cards = card_str.split("+");
-    ids = Card::StringsToIds(cards);
-}
-
-bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-    return ids.contains(to_select->getCard()->getId());
-}
-
-const Card *YijiViewAsSkill::viewAs(const QList<CardItem *> &cards) const{
-    if(cards.isEmpty())
-        return NULL;
-
-    card->clearSubcards();
-    card->addSubcards(cards);
-
-    return card;
-}
-
-// ------------------------------------------------
-
 class ChoosePlayerCard: public DummyCard{
 public:
     ChoosePlayerCard(){

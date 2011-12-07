@@ -28,51 +28,6 @@ public:
     }
 };
 
-class TuxiViewAsSkill: public ZeroCardViewAsSkill{
-public:
-    TuxiViewAsSkill():ZeroCardViewAsSkill("tuxi"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new TuxiCard;
-    }
-
-protected:
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "@@tuxi";
-    }
-};
-
-class Tuxi:public PhaseChangeSkill{
-public:
-    Tuxi():PhaseChangeSkill("tuxi"){
-        view_as_skill = new TuxiViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *zhangliao) const{
-        if(zhangliao->getPhase() == Player::Draw){
-            Room *room = zhangliao->getRoom();
-            bool can_invoke = false;
-            QList<ServerPlayer *> other_players = room->getOtherPlayers(zhangliao);
-            foreach(ServerPlayer *player, other_players){
-                if(!player->isKongcheng()){
-                    can_invoke = true;
-                    break;
-                }
-            }
-
-            if(can_invoke && room->askForUseCard(zhangliao, "@@tuxi", "@tuxi-card"))
-                return true;
-        }
-
-        return false;
-    }
-};
-
 class Yiji:public MasochismSkill{
 public:
     Yiji():MasochismSkill("yiji"){
@@ -393,7 +348,7 @@ public:
 };
 
 void StandardPackage::addGenerals(){
-    General *caocao, *zhangliao, *guojia, *simayi, *zhenji;
+    General *caocao, *guojia, *simayi, *zhenji;
 
     caocao = new General(this, "caocao$", "guan");
     caocao->addSkill(new Jianxiong);
@@ -401,9 +356,6 @@ void StandardPackage::addGenerals(){
     simayi = new General(this, "simayi", "guan", 3);
     simayi->addSkill(new Fankui);
     simayi->addSkill(new Guicai);
-
-    zhangliao = new General(this, "zhangliao", "guan");
-    zhangliao->addSkill(new Tuxi);
 
     guojia = new General(this, "guojia", "guan", 3);
     guojia->addSkill(new Yiji);
@@ -437,7 +389,6 @@ void StandardPackage::addGenerals(){
     huatuo->addSkill(new Jijiu);
 
     // for skill cards
-    addMetaObject<TuxiCard>();
     addMetaObject<JieyinCard>();
     addMetaObject<GuicaiCard>();
     addMetaObject<QingnangCard>();

@@ -121,6 +121,8 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["revealGeneral"] = &Client::revealGeneral;
 
     callbacks["askForAssign"] = &Client::askForAssign;
+    //msg
+    callbacks["msgBox"] = &Client::msgBox;
 
     ask_dialog = NULL;
     use_card = false;
@@ -1366,6 +1368,7 @@ void Client::doGongxin(const QString &gongxin_str){
     who->setCards(card_ids);
 
     emit gongxin(card_ids, enable_heart);
+    //refusable = false;
     setStatus(AskForGongxin);
 }
 
@@ -1779,4 +1782,24 @@ void Client::selectOrder(){
 void Client::updateStateItem(const QString &state_str)
 {
     emit role_state_changed(state_str);
+}
+
+void Client::msgBox(const QString &msg_str){
+    QString head, foot;
+    if(msg_str.contains(QChar(':'))){
+        QStringList texts = msg_str.split(":");
+        head = texts.first();
+        foot = texts.last();
+    }else
+        head = msg_str;
+    //skill_to_invoke = msg_str;
+
+    QString text = Sanguosha->translate(head);
+    if(foot.isNull())
+        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(":" + head)));
+    else
+        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(foot)));
+
+    prompt_doc->setHtml(text);
+    setStatus(MsgBox);
 }

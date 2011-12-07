@@ -13,15 +13,6 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class TuxiCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE TuxiCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class QingnangCard: public SkillCard{
     Q_OBJECT
 

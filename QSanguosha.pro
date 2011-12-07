@@ -45,10 +45,10 @@ SOURCES += src/main.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
-	src/package/thicket.cpp \
 	src/package/wind.cpp \
 	src/package/plough.cpp \
 	src/package/tocheck.cpp \
+	src/package/events.cpp \
 	src/package/qjwm-package.cpp \
 	src/package/xzzd-package.cpp \
 	src/package/ttxd-package.cpp \
@@ -57,7 +57,6 @@ SOURCES += src/main.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
-	src/scenario/hongyan-scenario.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
@@ -122,10 +121,10 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
-	src/package/thicket.h \
 	src/package/wind.h \
 	src/package/plough.h \
 	src/package/tocheck.h \
+	src/package/events.h \
 	src/package/qjwm-package.h \
 	src/package/xzzd-package.h \
 	src/package/ttxd-package.h \

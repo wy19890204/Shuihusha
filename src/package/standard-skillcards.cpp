@@ -43,29 +43,6 @@ void JieyinCard::onEffect(const CardEffectStruct &effect) const{
     room->playSkillEffect("jieyin", index);
 }
 
-TuxiCard::TuxiCard(){
-}
-
-bool TuxiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() >= 2)
-        return false;
-
-    if(to_select == Self)
-        return false;
-
-    return !to_select->isKongcheng();
-}
-
-void TuxiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    int card_id = room->askForCardChosen(effect.from, effect.to, "h", "tuxi");
-    const Card *card = Sanguosha->getCard(card_id);
-    room->moveCardTo(card, effect.from, Player::Hand, false);
-
-    room->setEmotion(effect.to, "bad");
-    room->setEmotion(effect.from, "good");
-}
-
 QingnangCard::QingnangCard(){
     once = true;
 }

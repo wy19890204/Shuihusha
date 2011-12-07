@@ -1169,7 +1169,7 @@ public:
 
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
-{ //guan == wei, jiang == shu, min == wu, kou == qun
+{
     General *songjiang = new General(this, "songjiang$", "kou");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);
@@ -1205,7 +1205,7 @@ TTXDPackage::TTXDPackage()
     andaoquan->addSkill(new Jishi);
     andaoquan->addSkill(new Yanshou);
     andaoquan->addSkill(new MarkAssignSkill("@life", 1));
-    related_skills.insertMulti("yanshou", "#@life");
+    related_skills.insertMulti("yanshou", "#@life-1");
     andaoquan->addSkill(new Fengyue);
 
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);

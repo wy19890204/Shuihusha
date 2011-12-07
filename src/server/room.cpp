@@ -67,6 +67,7 @@ void Room::initCallbacks(){
     callbacks["trustCommand"] = &Room::trustCommand;
     callbacks["kickCommand"] = &Room::kickCommand;
     callbacks["surrenderCommand"] = &Room::surrenderCommand;
+    callbacks["msgCommand"] = &Room::commonCommand;
 }
 
 QString Room::createLuaState(){
@@ -998,6 +999,21 @@ ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool includ
     return NULL;
 }
 
+ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
+    const QList<ServerPlayer *> &list = alive_players;
+
+    foreach(ServerPlayer *player, list){
+        if(player->isKongcheng())
+            continue;
+        foreach(const Card *cd, player->getHandcards()){
+            if(cd->objectName() == event){
+                return player;
+            }
+        }
+    }
+    return NULL;
+}
+
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
     if(player == NULL)
         return;
@@ -1836,7 +1852,8 @@ void Room::damage(const DamageStruct &damage_data){
             return;
     }
 
-    if(damage_data.chain && damage_data.from && damage_data.from->hasSkill("yixian")){
+    if(damage_data.chain && damage_data.from &&
+       (damage_data.from->hasSkill("yixian") || damage_data.from->hasSkill("liba"))){
         if(thread->trigger(Predamage, damage_data.from, data))
             return;
     }
@@ -3150,4 +3167,14 @@ Room* Room::duplicate()
     room->fillRobotsCommand(NULL, 0);
     room->copyFrom(this);
     return room;
+}
+
+void Room::showMsgbox(ServerPlayer *player, const QString &title, const QString &explanation){
+    QString msg_str;
+    if(explanation.isNull())
+        msg_str = QString("%1:%2").arg(title).arg(explanation);
+    else
+        msg_str = title;
+    player->invoke("msgBox", msg_str);
+    getResult("msgCommand", player);
 }

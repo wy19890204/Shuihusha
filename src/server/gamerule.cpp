@@ -3,6 +3,7 @@
 #include "room.h"
 #include "standard.h"
 #include "engine.h"
+#include "settings.h"
 
 #include <QTime>
 
@@ -11,7 +12,7 @@ GameRule::GameRule(QObject *parent)
 {
     setParent(parent);
 
-    events << GameStart << TurnStart << PhaseChange << CardUsed
+    events << GameStart << TurnStart << PhaseChange << CardUsed << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
@@ -121,6 +122,14 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             player->clearFlags();
 
+            if(!Config.BanPackages.contains("events")){
+                foreach(const Card *cd, player->getHandcards()){
+                    if(cd->objectName() == "jiefachang"){
+                        room->askForUseCard(player, "jiefachang", "@jiefachang");
+                        break;
+                    }
+                }
+            }
             return;
         }
     }
@@ -203,7 +212,20 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             break;
         }
-
+    case CardFinished: {
+            if(data.canConvert<CardUseStruct>()){
+                CardUseStruct use = data.value<CardUseStruct>();
+                if(use.card->inherits("Snatch") && !Config.BanPackages.contains("events")){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
+                    if(source){
+                        room->setPlayerFlag(source, "Daojia");
+                        room->askForUseCard(source, "daojia", "@daojia");
+                        room->setPlayerFlag(source, "-Daojia");
+                    }
+                }
+            }
+            break;
+        }
     case HpRecover:{
             RecoverStruct recover_struct = data.value<RecoverStruct>();
             int recover = recover_struct.recover;

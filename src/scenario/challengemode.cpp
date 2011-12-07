@@ -18,12 +18,12 @@ ChallengeModeSet::ChallengeModeSet(QObject *parent)
 
     addMode("@4lords", "caocao+liubei+sunquan+zhangjiao");
     addMode("@disaster4fr", "guojia+simayi+wolong+luxun");
-    addMode("@p4luoyi","xuchu+liubei+ganning+zhangliao");
+    addMode("@p4luoyi","xuchu+liubei+ganning+wusong");
     addMode("@test4pile", "sunshangxiang+huangyueying+luxun+zhenji");
     addMode("@mythology", "shencaocao+shenzhugeliang+shenzhouyu+shenlumeng");
     addMode("@2strike", "diaochan+zhouyu+dianwei+xiahouyuan");
     addMode("@tortoise", "liubei+huatuo+sunshangxiang+guojia");
-    addMode("@manshow", "liubei+lumeng+zhangliao+daqiao");
+    addMode("@manshow", "liubei+lumeng+wusong+daqiao");
     addMode("@greatrange", "machao+pangde+xiahouyuan+taishici");
     addMode("@p4cure", "liubei+menghuo+huatuo+weiyan");
 

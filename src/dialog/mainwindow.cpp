@@ -597,7 +597,7 @@ MeleeDialog::MeleeDialog(QWidget *parent)
     layout->addWidget(record_view);
     setLayout(layout);
 
-    setGeneral(Config.value("MeleeGeneral", "zhangliao").toString());
+    setGeneral(Config.value("MeleeGeneral", "wusong").toString());
 }
 
 QGroupBox *MeleeDialog::createGeneralBox(){

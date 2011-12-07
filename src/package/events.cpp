@@ -1,4 +1,4 @@
-#include "thicket.h"
+#include "events.h"
 #include "general.h"
 #include "skill.h"
 #include "room.h"
@@ -329,288 +329,6 @@ public:
     }
 };
 
-
-YinghunCard::YinghunCard(){
-    mute = true;
-}
-
-void YinghunCard::onEffect(const CardEffectStruct &effect) const{
-    int x = effect.from->getLostHp();
-    Room *room = effect.from->getRoom();
-
-    bool good = false;
-    if(x == 1){
-        room->playSkillEffect("yinghun", 1);
-
-        effect.to->drawCards(1);
-        room->askForDiscard(effect.to, "yinghun", 1, false, true);
-        good = true;
-    }else{
-        QString choice = room->askForChoice(effect.from, "yinghun", "d1tx+dxt1");
-        if(choice == "d1tx"){
-            room->playSkillEffect("yinghun", 2);
-
-            effect.to->drawCards(1);
-            x = qMin(x, effect.to->getCardCount(true));
-            room->askForDiscard(effect.to, "yinghun", x, false, true);
-            good = false;
-        }else{
-            room->playSkillEffect("yinghun", 1);
-
-            effect.to->drawCards(x);
-            room->askForDiscard(effect.to, "yinghun", 1, false, true);
-            good = true;
-        }
-    }
-
-    if(good)
-        room->setEmotion(effect.to, "good");
-    else
-        room->setEmotion(effect.to, "bad");
-}
-
-class YinghunViewAsSkill: public ZeroCardViewAsSkill{
-public:
-    YinghunViewAsSkill():ZeroCardViewAsSkill("yinghun"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new YinghunCard;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern == "@@yinghun";
-    }
-};
-
-class Yinghun: public PhaseChangeSkill{
-public:
-    Yinghun():PhaseChangeSkill("yinghun"){
-        default_choice = "d1tx";
-
-        view_as_skill = new YinghunViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::Start
-                && target->isWounded();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *sunjian) const{
-        Room *room = sunjian->getRoom();
-        room->askForUseCard(sunjian, "@@yinghun", "@yinghun");
-
-        return false;
-    }
-};
-
-HaoshiCard::HaoshiCard(){
-    will_throw = false;
-}
-
-bool HaoshiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-
-    if(to_select == Self)
-        return false;
-
-    return to_select->getHandcardNum() == Self->getMark("haoshi");
-}
-
-void HaoshiCard::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *beggar = targets.first();
-
-    room->moveCardTo(this, beggar, Player::Hand, false);
-    room->setEmotion(beggar, "draw-card");
-}
-
-class HaoshiViewAsSkill: public ViewAsSkill{
-public:
-    HaoshiViewAsSkill():ViewAsSkill("haoshi"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(to_select->isEquipped())
-            return false;
-
-        int length = Self->getHandcardNum() / 2;
-        return selected.length() < length;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != Self->getHandcardNum() / 2)
-            return NULL;
-
-        HaoshiCard *card = new HaoshiCard;
-        card->addSubcards(cards);
-        return card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern == "@@haoshi!";
-    }
-};
-
-class HaoshiGive: public PhaseChangeSkill{
-public:
-    HaoshiGive():PhaseChangeSkill("#haoshi-give"){
-
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *lusu) const{
-        if(lusu->getPhase() == Player::Draw && lusu->hasFlag("haoshi")){
-            lusu->setFlags("-haoshi");
-
-            Room *room = lusu->getRoom();
-            if(lusu->getHandcardNum() <= 5){
-                room->playSkillEffect("haoshi");
-                return false;
-            }
-
-            QList<ServerPlayer *> other_players = room->getOtherPlayers(lusu);
-            int least = 1000;
-            foreach(ServerPlayer *player, other_players)
-                least = qMin(player->getHandcardNum(), least);
-            room->setPlayerMark(lusu, "haoshi", least);
-            bool used = room->askForUseCard(lusu, "@@haoshi!", "@haoshi");
-
-            if(!used){
-                // force lusu to give his half cards
-                ServerPlayer *beggar = NULL;
-                foreach(ServerPlayer *player, other_players){
-                    if(player->getHandcardNum() == least){
-                        beggar = player;
-                        break;
-                    }
-                }
-
-                int n = lusu->getHandcardNum()/2;
-                QList<int> to_give = lusu->handCards().mid(0, n);
-                HaoshiCard *haoshi_card = new HaoshiCard;
-                foreach(int card_id, to_give)
-                    haoshi_card->addSubcard(card_id);
-                QList<ServerPlayer *> targets;
-                targets << beggar;
-                haoshi_card->use(room, lusu, targets);
-                delete haoshi_card;
-            }
-        }
-
-        return false;
-    }
-};
-
-class Haoshi: public DrawCardsSkill{
-public:
-    Haoshi():DrawCardsSkill("#haoshi"){
-
-    }
-
-    virtual int getDrawNum(ServerPlayer *lusu, int n) const{
-        Room *room = lusu->getRoom();
-        if(room->askForSkillInvoke(lusu, "haoshi")){
-            lusu->setFlags("haoshi");
-            return n + 2;
-        }else
-            return n;
-    }
-};
-
-DimengCard::DimengCard(){
-    once = true;
-}
-
-bool DimengCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(to_select == Self)
-        return false;
-
-    if(targets.isEmpty())
-        return true;
-
-    if(targets.length() == 1){
-        int max_diff = Self->getCardCount(true);
-        return max_diff >= qAbs(to_select->getHandcardNum() - targets.first()->getHandcardNum());
-    }
-
-    return false;
-}
-
-bool DimengCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
-void DimengCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *a = targets.at(0);
-    ServerPlayer *b = targets.at(1);
-
-    int n1 = a->getHandcardNum();
-    int n2 = b->getHandcardNum();
-
-    // make sure a is front of b
-    if(room->getFront(a, b) != a){
-        qSwap(a, b);
-        qSwap(n1, n2);
-    }
-
-    int diff = qAbs(n1 - n2);
-    if(diff != 0){
-        room->askForDiscard(source, "dimeng", diff, false, true);
-    }
-
-    DummyCard *card1 = a->wholeHandCards();
-    DummyCard *card2 = b->wholeHandCards();
-
-    if(card1){
-        room->moveCardTo(card1, b, Player::Hand, false);
-        delete card1;
-    }
-
-    room->getThread()->delay();
-
-    if(card2){
-        room->moveCardTo(card2, a, Player::Hand, false);
-        delete card2;
-    }
-
-    LogMessage log;
-    log.type = "#Dimeng";
-    log.from = a;
-    log.to << b;
-    log.arg = QString::number(n1);
-    log.arg2 = QString::number(n2);
-    room->sendLog(log);
-}
-
-class Dimeng: public ZeroCardViewAsSkill{
-public:
-    Dimeng():ZeroCardViewAsSkill("dimeng"){
-
-    }
-
-    virtual const Card *viewAs() const{
-        return new DimengCard;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("DimengCard");
-    }
-};
-
 class Luanwu: public ZeroCardViewAsSkill{
 public:
     Luanwu():ZeroCardViewAsSkill("luanwu"){
@@ -867,9 +585,78 @@ public:
     }
 };
 
-ThicketPackage::ThicketPackage()
-    :Package("thicket")
-{
+//events card
+QString EventsCard::getType() const{
+    return "events";
+}
+
+QString EventsCard::getSubtype() const{
+    return "events";
+}
+
+Card::CardType EventsCard::getTypeId() const{
+    return Events;
+}
+
+Jiefachang::Jiefachang(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("jiefachang");
+}
+
+bool Jiefachang::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(Self->getPhase() == Player::Play){
+        return !to_select->getJudgingArea().isEmpty();
+    }
+    return !to_select->faceUp();
+}
+
+void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    ServerPlayer *target = targets.first();
+    if(source->getPhase() == Player::Play){
+        if(target->getJudgingArea().length() > 1)
+            room->throwCard(room->askForCardChosen(source, target, "j", "jiefachang"));
+        else
+            room->throwCard(target->getJudgingArea().last());
+    }
+    else
+        target->turnOver();
+}
+
+Daojia::Daojia(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("daojia");
+}
+
+bool Daojia::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!Self->hasFlag("Daojia")){
+        return !targets.isEmpty();
+    }
+    return targets.isEmpty() && to_select != Self && to_select->getArmor();
+}
+
+bool Daojia::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    if(Self->hasFlag("Daojia"))
+        return targets.length() == 1;
+    else
+        return targets.length() == 0;
+}
+
+void Daojia::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    if(targets.isEmpty()){
+        source->drawCards(1);
+        room->moveCardTo(this, NULL, Player::DrawPile, true);
+    }
+    else{
+        ServerPlayer *target = targets.first();
+        source->obtainCard(target->getArmor());
+    }
+}
+
+EventsPackage::EventsPackage()
+    :Package("events_package")
+{/*
     General *caopi, *xuhuang, *menghuo, *zhurong, *sunjian, *lusu, *jiaxu, *dongzhuo;
 
     caopi = new General(this, "caopi$", "guan", 3);
@@ -894,15 +681,6 @@ ThicketPackage::ThicketPackage()
 
     related_skills.insertMulti("juxiang", "#sa_avoid_juxiang");
 
-    sunjian = new General(this, "sunjian", "min");
-    sunjian->addSkill(new Yinghun);
-
-    lusu = new General(this, "lusu", "min", 3);
-    lusu->addSkill(new Haoshi);
-    lusu->addSkill(new HaoshiViewAsSkill);
-    lusu->addSkill(new HaoshiGive);
-    lusu->addSkill(new Dimeng);
-
     related_skills.insertMulti("haoshi", "#haoshi");
     related_skills.insertMulti("haoshi", "#haoshi-give");
 
@@ -925,6 +703,19 @@ ThicketPackage::ThicketPackage()
     addMetaObject<YinghunCard>();
     addMetaObject<FangzhuCard>();
     addMetaObject<HaoshiCard>();
+*/
+    QList<Card *> cards;
+    cards
+            //<< new IceSword(Card::Spade, 2)
+            //<< new RenwangShield(Card::Club, 2)
+            //<< new Lightning(Card::Heart, 12)
+            << new Daojia(Card::Club, 12)
+            << new Jiefachang(Card::Diamond, 4);
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
 }
 
-ADD_PACKAGE(Thicket)
+ADD_PACKAGE(Events)

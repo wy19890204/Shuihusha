@@ -163,7 +163,10 @@ QString SingleTargetTrick::getSubtype() const{
 }
 
 bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return true;
+    if(to_select == Self)
+        return false;
+
+    return targets.isEmpty();
 }
 
 DelayedTrick::DelayedTrick(Suit suit, int number, bool movable)
@@ -463,6 +466,10 @@ StandardPackage::StandardPackage()
     patterns["nulliplot"] = new NCPattern;
     patterns["peach+analeptic"] = new PAPattern;
     patterns[".basic"] = new BasicPattern;
+
+    //eventcard
+    patterns["jiefachang"] = new NamePattern("jiefachang");
+    patterns["daojia"] = new NamePattern("daojia");
 }
 
 ADD_PACKAGE(Standard)

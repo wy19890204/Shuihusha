@@ -33,7 +33,6 @@ extern "C" {
     Package *NewStandard();
     Package *NewWind();
     Package *NewFire();
-    Package *NewThicket();
     Package *NewMountain();
     Package *NewTest();
     Package *NewQJWM();
@@ -47,11 +46,11 @@ extern "C" {
     Package *NewPlough();
     Package *NewTocheck();
     Package *NewExCard();
+    Package *NewEvents();
     Package *NewJoy();
     Package *NewJoyEquip();
 
     Scenario *NewCoupleScenario();
-    Scenario *NewHongyanScenario();
     Scenario *NewZombieScenario();
     Scenario *NewLegendScenario();
     Scenario *NewImpasseScenario();
@@ -59,6 +58,14 @@ extern "C" {
 
 extern "C" {
     int luaopen_sgs(lua_State *);
+}
+
+QString Engine::getVersion() const{
+    return "20111201";
+}
+
+QString Engine::getVersionName() const{
+    return tr("V1.5.5");
 }
 
 Engine::Engine()
@@ -75,18 +82,17 @@ Engine::Engine()
     addPackage(NewStandard());
     addPackage(NewWind());
     addPackage(NewFire());
-    addPackage(NewThicket());
     addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());
     addPackage(NewTocheck());
     addPackage(NewExCard());
+    addPackage(NewEvents());
     addPackage(NewJoy());
     addPackage(NewJoyEquip());
 
     addScenario(NewCoupleScenario());
-    addScenario(NewHongyanScenario());
     addScenario(NewZombieScenario());
     addScenario(NewLegendScenario());
     addScenario(NewImpasseScenario());
@@ -344,14 +350,6 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
         return card;
     }else
         return NULL;
-}
-
-QString Engine::getVersion() const{
-    return "20111113";
-}
-
-QString Engine::getVersionName() const{
-    return tr("Chibi");
 }
 
 QStringList Engine::getExtensions() const{
