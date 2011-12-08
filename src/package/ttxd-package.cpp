@@ -873,7 +873,7 @@ public:
         }
         room->setPlayerProperty(player, "kingdom", Qimen_data.kingdom);
 
-        player->tag["QimenStore"] = NULL;
+        player->tag.remove("QimenStore");
     }
 
     virtual bool onPhaseChange(ServerPlayer *target) const{

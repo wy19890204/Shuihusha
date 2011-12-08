@@ -821,7 +821,7 @@ public:
         }
         if(damage.from){
             room->setPlayerFlag(damage.from, "-Xiaozai");
-            player->tag["Xiaozai"] = QVariant::fromValue(player);
+            player->tag.remove("Xiaozai");
         }
         return false;
     }
