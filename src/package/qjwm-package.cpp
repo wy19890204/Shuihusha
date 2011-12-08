@@ -282,13 +282,13 @@ public:
 
         if(damage.nature == DamageStruct::Normal && damage.to->isAlive() && damage.damage > 0){
             bool caninvoke = false;
-            foreach(const Card *cd, jiuwenlong->getHandcards()){
+            foreach(const Card *cd, jiuwenlong->getCards("he")){
                 if(cd->getTypeId() == Card::Equip){
                     caninvoke = true;
                     break;
                 }
             }
-            if(caninvoke && room->askForSkillInvoke(jiuwenlong, objectName(), data)){
+            if(caninvoke){
                 const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
                 if(card){
                     LogMessage log;

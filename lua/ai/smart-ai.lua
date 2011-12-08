@@ -2592,11 +2592,14 @@ function SmartAI:askForCard(pattern, prompt, data)
 		for _, card in sgs.qlist(hand_card) do
 			if card:getSuitString() == parsedPrompt[2] then return "$"..card:getEffectiveId() end
 		end
-	elseif parsedPrompt[1] == "@enyuan" then
-		local cards = self.player:getHandcards()
-		for _, card in sgs.qlist(cards) do
-			if card:getSuit() == sgs.Card_Heart and not (card:inherits("Peach") or card:inherits("ExNihio")) then 
-				return card:getEffectiveId()
+	elseif parsedPrompt[1] == "@xiagu" then
+		local damage = data:toDamage()
+		if self:isFriend(damage.to) then
+			local allcards = self.player:getCards("he")
+			for _, card in sgs.qlist(allcards) do
+				if card:inherits("EquipCard") then
+					return card:getEffectiveId()
+				end
 			end
 		end	
 		return "."	
@@ -3360,7 +3363,7 @@ end
 -- load other ai scripts
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard-skill-ai.lua"
-dofile "lua/ai/wind-ai.lua"
+dofile "lua/ai/qjwm-ai.lua"
 dofile "lua/ai/fire-ai.lua"
 dofile "lua/ai/thicket-ai.lua"
 dofile "lua/ai/mountain-ai.lua"
