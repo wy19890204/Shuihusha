@@ -733,6 +733,27 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     return skills;
 }
 
+QStringList Player::getVisSkist(const QString &exclude) const{
+    QList<const Skill *> skills;
+    if(general)
+        skills << general->getVisibleSkillList();
+    if(general2)
+        skills << general2->getVisibleSkillList();
+    foreach(QString skill_name, acquired_skills){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill->isVisible())
+            skills << skill;
+    }
+
+    QStringList skis;
+    foreach(const Skill *skill, skills){
+        if(skill->parent() && !skill->objectName().startsWith(exclude))
+            skis << skill->objectName();
+    }
+
+    return skis;
+}
+
 QSet<QString> Player::getAcquiredSkills() const{
     return acquired_skills;
 }

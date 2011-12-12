@@ -58,16 +58,12 @@ bool UbundCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.isEmpty() || targets.length() == 1;
+    return targets.length() <= 1;
 }
 
 void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.isEmpty()){
-        QStringList skills;
-        foreach(const Skill *skill, source->getVisibleSkillList()){
-            if(skill->parent() && !skill->objectName().startsWith("ubun"))
-                skills << skill->objectName();
-        }
+        QStringList skills = source->getVisSkist("ubun");
         if(skills.isEmpty())
             return;
         QString ski = room->askForChoice(source, "ubund", skills.join("+"));
@@ -75,14 +71,10 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }
     else{
         ServerPlayer *target = targets.first();
-        QStringList skills;
-        foreach(const Skill *skill, target->getVisibleSkillList()){
-            if(skill->parent())
-                skills << skill->objectName();
-        }
+        QStringList skills = target->getVisSkist("ubun");
         if(!skills.isEmpty()){
             QString ski = room->askForChoice(source, "ubund", skills.join("+"));
-            room->attachSkillToPlayer(source, ski);
+            room->acquireSkill(source, ski);
         }
     }
 }
