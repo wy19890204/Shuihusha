@@ -177,16 +177,14 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         addLines(skill);
     }
 
-    if(general_name != "luzhishen"){
-        QString last_word = Sanguosha->translate("~" + general->objectName());
-        if(!last_word.startsWith("~")){
-            QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
-            button_layout->addWidget(death_button);
+    QString last_word = Sanguosha->translate("~" + general->objectName());
+    if(!last_word.startsWith("~")){
+        QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
+        button_layout->addWidget(death_button);
 
-            connect(death_button, SIGNAL(clicked()), general, SLOT(lastWord()));
+        connect(death_button, SIGNAL(clicked()), general, SLOT(lastWord()));
 
-            addCopyAction(death_button);
-        }
+        addCopyAction(death_button);
     }
 /*
     if(general_name == "caocao" || general_name == "shencc" || general_name == "shencaocao"){

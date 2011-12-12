@@ -289,6 +289,65 @@ public:
     }
 };
 
+class Ubuna:public ZeroCardViewAsSkill{
+public:
+    Ubuna():ZeroCardViewAsSkill("ubuna"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new UbunaCard;
+    }
+};
+
+class Ubunb:public ZeroCardViewAsSkill{
+public:
+    Ubunb():ZeroCardViewAsSkill("ubunb"){
+    }
+
+    virtual const Card *viewAs() const{
+        return Sanguosha->cloneSkillCard("BuzhenCard");
+    }
+};
+
+class Ubunc:public ZeroCardViewAsSkill{
+public:
+    Ubunc():ZeroCardViewAsSkill("ubunc"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new UbuncCard;
+    }
+};
+
+class Ubund:public ZeroCardViewAsSkill{
+public:
+    Ubund():ZeroCardViewAsSkill("ubund"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new UbundCard;
+    }
+};
+
+class Ubune: public TriggerSkill{
+public:
+    Ubune():TriggerSkill("ubune"){
+        events << Dying;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        DyingStruct dying = data.value<DyingStruct>();
+        if(dying.who == player && player->askForSkillInvoke(objectName())){
+            RecoverStruct rev;
+            rev.who = player;
+            rev.recover = player->getMaxHP();
+            player->getRoom()->recover(player, rev);
+            player->getRoom()->setPlayerProperty(player, "hp", player->getMaxHP());
+        }
+        return false;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {    
@@ -303,6 +362,16 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill(new Xiuluo);
     shenlvbu2->addSkill(new Shenwei);
     shenlvbu2->addSkill(new Skill("shenji"));
+
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
+    ubuntenkei->addSkill(new Ubuna);
+    addMetaObject<UbunaCard>();
+    ubuntenkei->addSkill(new Ubunb);
+    ubuntenkei->addSkill(new Ubunc);
+    addMetaObject<UbuncCard>();
+    ubuntenkei->addSkill(new Ubund);
+    addMetaObject<UbundCard>();
+    ubuntenkei->addSkill(new Ubune);
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);

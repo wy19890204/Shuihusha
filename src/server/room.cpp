@@ -217,6 +217,8 @@ QString Room::getRoleStateString()
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+    if(victim->getHp() > 0 && victim->hasSkill("ubune"))
+        return;
     ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.ContestMode && killer){
         killer->addVictim(victim);
