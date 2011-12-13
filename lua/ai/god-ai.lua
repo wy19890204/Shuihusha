@@ -32,12 +32,6 @@ sgs.ai_skill_use_func["GongxinCard"]=function(card,use,self)
 	end
 end
 
---function shenlubu_ai:useTrickCard(card, use)
---	if self.player:getMark("@wrath") > 0 then
-		--return super.useTrickCard(self, card, use)
-	--end
---end
-
 sgs.ai_skill_choice.wumou = "discard"
 
 
