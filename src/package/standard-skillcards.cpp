@@ -78,3 +78,25 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         }
     }
 }
+
+UbuneCard::UbuneCard(){
+}
+
+bool UbuneCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    const Card *card = Sanguosha->getCard(this->getSubcards().first());
+    if(card->inherits("DelayedTrick"))
+        if(to_select->getJudgingArea().contains(Sanguosha->getCard(this->getSubcards().first())))
+            return false;
+    return targets.isEmpty();
+}
+
+void UbuneCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    if(effect.card->inherits("DelayedTrick")){
+        room->moveCardTo(Sanguosha->getCard(this->getSubcards().first()), effect.to, Player::Judging);
+    }
+    else{
+        const EquipCard *equipped = qobject_cast<const EquipCard *>(effect.card);
+        equipped->use(room, effect.to, QList<ServerPlayer *>());
+    }
+}

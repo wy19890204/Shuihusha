@@ -329,9 +329,25 @@ public:
     }
 };
 
-class Ubune: public TriggerSkill{
+class Ubune: public OneCardViewAsSkill{
 public:
-    Ubune():TriggerSkill("ubune"){
+    Ubune():OneCardViewAsSkill("ubune"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->isDTE();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        UbuneCard *card = new UbuneCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class Ubunf: public TriggerSkill{
+public:
+    Ubunf():TriggerSkill("ubunf"){
         events << Dying;
     }
 
@@ -372,6 +388,8 @@ TestPackage::TestPackage()
     ubuntenkei->addSkill(new Ubund);
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubune);
+    addMetaObject<UbuneCard>();
+    ubuntenkei->addSkill(new Ubunf);
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);

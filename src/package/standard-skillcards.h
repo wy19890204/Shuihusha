@@ -41,4 +41,13 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class UbuneCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE UbuneCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 #endif // STANDARDSKILLCARDS_H
