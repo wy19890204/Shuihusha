@@ -158,7 +158,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(skill_acquired(const ClientPlayer*,QString)), this, SLOT(acquireSkill(const ClientPlayer*,QString)));
     connect(ClientInstance, SIGNAL(animated(QString,QStringList)), this, SLOT(doAnimation(QString,QStringList)));
     connect(ClientInstance, SIGNAL(judge_result(QString,QString)), this, SLOT(showJudgeResult(QString,QString)));
-    connect(ClientInstance, SIGNAL(role_state_changed(QString)),this, SLOT(update_state_item(QString)));
+    connect(ClientInstance, SIGNAL(role_state_changed(QString)),this, SLOT(updateStateItem(QString)));
 
     connect(ClientInstance, SIGNAL(game_started()), this, SLOT(onGameStart()));
     connect(ClientInstance, SIGNAL(game_over()), this, SLOT(onGameOver()));
@@ -3529,36 +3529,33 @@ void RoomScene::finishArrange(){
     ClientInstance->request("arrange " + names.join("+"));
 }
 
-void RoomScene::update_state_item(const QString &qstr)
-{
-    char *c_str2 = qstr.toLocal8Bit().data();
-    updateStateItem(c_str2);
+static inline void AddRoleIcon(QMap<QChar, QPixmap> &map, char c, const QString &role){
+    QPixmap pixmap(QString("image/system/roles/small-%1.png").arg(role));
+
+    QChar qc(c);
+    map[qc.toUpper()] = pixmap;
+
+    Pixmap::MakeGray(pixmap);
+    map[qc.toLower()] = pixmap;
 }
 
-void RoomScene::updateStateItem(char* roles)
+void RoomScene::updateStateItem(const QString &roles)
 {
     foreach(QGraphicsItem *item, role_items)
         removeItem(item);
     role_items.clear();
 
-    for(char *role = roles; *role!='\0'; role++){
-        static QPixmap lord("image/system/roles/small-lord.png");
-        static QPixmap loyalist("image/system/roles/small-loyalist.png");
-        static QPixmap rebel("image/system/roles/small-rebel.png");
-        static QPixmap renegade("image/system/roles/small-renegade.png");
+    static QMap<QChar, QPixmap> map;
+    if(map.isEmpty()){
+        AddRoleIcon(map, 'Z', "lord");
+        AddRoleIcon(map, 'C', "loyalist");
+        AddRoleIcon(map, 'F', "rebel");
+        AddRoleIcon(map, 'N', "renegade");
+    }
 
-        QPixmap *to_add = NULL;
-        switch(*role){
-        case 'Z': to_add = &lord; break;
-        case 'C': to_add = &loyalist; break;
-        case 'N': to_add = &renegade; break;
-        case 'F': to_add = &rebel; break;
-        default:
-            break;
-        }
-
-        if(to_add){
-            QGraphicsPixmapItem *item = addPixmap(*to_add);
+    foreach(QChar c, roles){
+        if(map.contains(c)){
+            QGraphicsPixmapItem *item = addPixmap(map.value(c));
             item->setPos(21*role_items.length(), 6);
             item->setParentItem(state_item);
 

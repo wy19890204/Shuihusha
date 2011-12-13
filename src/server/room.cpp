@@ -187,33 +187,32 @@ void Room::revivePlayer(ServerPlayer *player){
     }
 
     broadcastInvoke("revivePlayer", player->objectName());
+    updateStateItem();
 }
 
-QString Room::getRoleStateString()
-{
-    int lords=0,rebels=0,loyals=0,renes=0;
-    foreach(ServerPlayer * player,getAlivePlayers())
-    {
-        switch(player->getRoleEnum())
-        {
-        case Player::Lord:
-            lords++;break;
-            case Player::Renegade:
-            renes++;break;
-            case Player::Rebel:
-            rebels++;break;
-            case Player::Loyalist:
-            loyals++;break;
-        default:
-            break;
-        }
+static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){
+    int role1 = player1->getRoleEnum();
+    int role2 = player2->getRoleEnum();
+
+    if(role1 != role2)
+        return role1 < role2;
+    else
+        return player1->isAlive();
+}
+
+void Room::updateStateItem(){
+    QList<ServerPlayer *> players = this->players;
+    qSort(players.begin(), players.end(), CompareByRole);
+    QString roles;
+    foreach(ServerPlayer *p, players){
+        QChar c = "ZCFN"[p->getRoleEnum()];
+        if(p->isDead())
+            c = c.toLower();
+
+        roles.append(c);
     }
-    QString op="";
-    for(int i=0;i<lords;i++)op+="Z";
-    for(int i=0;i<loyals;i++)op+="C";
-    for(int i=0;i<rebels;i++)op+="F";
-    for(int i=0;i<renes;i++)op+="N";
-    return op;
+
+    broadcastInvoke("updateStateItem", roles);
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
@@ -246,7 +245,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
     log.arg = victim->getRole();
     log.from = killer;
 
-    broadcastInvoke("updateStateItem", getRoleStateString());
+    updateStateItem();
 
     if(killer){
         if(killer == victim)
