@@ -60,4 +60,15 @@ public:
     virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
 };
 
+class Tifanshi:public EventsCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Tifanshi(Card::Suit suit, int number);
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+};
+
 #endif // EVENTS_H

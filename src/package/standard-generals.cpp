@@ -329,9 +329,9 @@ public:
     }
 };
 
-class Ubune: public OneCardViewAsSkill{
+class UbuneVAS: public OneCardViewAsSkill{
 public:
-    Ubune():OneCardViewAsSkill("ubune"){
+    UbuneVAS():OneCardViewAsSkill("ubune"){
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
@@ -342,6 +342,32 @@ public:
         UbuneCard *card = new UbuneCard;
         card->addSubcard(card_item->getCard()->getId());
         return card;
+    }
+};
+
+class Ubune: public PhaseChangeSkill{
+public:
+    Ubune():PhaseChangeSkill("ubune"){
+        view_as_skill = new UbuneVAS;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *p) const{
+        Room *room = p->getRoom();
+        if(p->getPhase() == Player::Judge && !p->getJudgingArea().isEmpty() &&
+           p->askForSkillInvoke(objectName())){
+            ServerPlayer *target = room->askForPlayerChosen(p, room->getOtherPlayers(p), objectName());
+            DummyCard *dummy1 = new DummyCard;
+            foreach(const Card *card, target->getJudgingArea())
+                dummy1->addSubcard(card->getId());
+            DummyCard *dummy2 = new DummyCard;
+            foreach(const Card *card, p->getJudgingArea())
+                dummy2->addSubcard(card->getId());
+            room->moveCardTo(dummy2, target, Player::Judging);
+            delete dummy2;
+            room->moveCardTo(dummy1, p, Player::Judging);
+            delete dummy1;
+        }
+        return false;
     }
 };
 
