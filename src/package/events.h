@@ -11,24 +11,6 @@ public:
     EventsPackage();
 };
 
-class LuanwuCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE LuanwuCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class FangzhuCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE FangzhuCard();
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class EventsCard:public Card{
     Q_OBJECT
 
