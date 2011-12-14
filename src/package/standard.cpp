@@ -470,6 +470,8 @@ StandardPackage::StandardPackage()
     //eventcard
     patterns["jiefachang"] = new NamePattern("jiefachang");
     patterns["daojia"] = new NamePattern("daojia");
+    patterns["tifanshi"] = new NamePattern("tifanshi");
+    patterns["ninedaygirl"] = new NamePattern("ninedaygirl");
 }
 
 ADD_PACKAGE(Standard)

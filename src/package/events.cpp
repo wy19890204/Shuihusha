@@ -8,46 +8,6 @@
 #include "client.h"
 #include "engine.h"
 
-class Xingshang: public TriggerSkill{
-public:
-    Xingshang():TriggerSkill("xingshang"){
-        events << Death;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        if(player->isNude())
-            return false;
-
-        Room *room = player->getRoom();
-        ServerPlayer *caopi = room->findPlayerBySkillName(objectName());
-        if(caopi && caopi->isAlive() && room->askForSkillInvoke(caopi, objectName(), data)){
-            if(player){
-                room->playSkillEffect(objectName(), 3);
-            }else if(player->getGeneral()->isMale())
-                room->playSkillEffect(objectName(), 1);
-            else
-                room->playSkillEffect(objectName(), 2);
-
-            caopi->obtainCard(player->getWeapon());
-            caopi->obtainCard(player->getArmor());
-            caopi->obtainCard(player->getDefensiveHorse());
-            caopi->obtainCard(player->getOffensiveHorse());
-
-            DummyCard *all_cards = player->wholeHandCards();
-            if(all_cards){
-                room->moveCardTo(all_cards, caopi, Player::Hand, false);
-                delete all_cards;
-            }
-        }
-
-        return false;
-    }
-};
-
 FangzhuCard::FangzhuCard(){
     mute = true;
 }
@@ -98,85 +58,6 @@ public:
         Room *room = caopi->getRoom();
         room->askForUseCard(caopi, "@@fangzhu", "@fangzhu");
     }
-};
-
-class Songwei: public TriggerSkill{
-public:
-    Songwei():TriggerSkill("songwei$"){
-        events << FinishJudge;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan";
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        JudgeStar judge = data.value<JudgeStar>();
-        CardStar card = judge->card;
-
-        if(card->isBlack()){
-            Room *room = player->getRoom();
-            QList<ServerPlayer *> players = room->getOtherPlayers(player);
-            foreach(ServerPlayer *p, players){
-                QVariant who = QVariant::fromValue(p);
-                if(p->hasLordSkill("songwei") && player->askForSkillInvoke("songwei", who)){
-                    room->playSkillEffect(objectName(), 1);
-                    p->drawCards(1);
-                }
-            }
-        }
-
-        return false;
-    }
-};
-
-class Duanliang: public OneCardViewAsSkill{
-public:
-    Duanliang():OneCardViewAsSkill("duanliang"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        const Card *card = to_select->getFilteredCard();
-        return card->isBlack() && !card->inherits("TrickCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-
-        SupplyShortage *shortage = new SupplyShortage(card->getSuit(), card->getNumber());
-        shortage->setSkillName(objectName());
-        shortage->addSubcard(card);
-
-        return shortage;
-    }
-};
-
-class SavageAssaultAvoid: public TriggerSkill{
-public:
-    SavageAssaultAvoid(const QString &avoid_skill)
-        :TriggerSkill("#sa_avoid_" + avoid_skill), avoid_skill(avoid_skill)
-    {
-        events << CardEffected;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.card->inherits("SavageAssault")){
-            LogMessage log;
-            log.type = "#SkillNullify";
-            log.from = player;
-            log.arg = avoid_skill;
-            log.arg2 = "savage_assault";
-            player->getRoom()->sendLog(log);
-
-            return true;
-        }else
-            return false;
-    }
-
-private:
-    QString avoid_skill;
 };
 
 class Huoshou: public TriggerSkill{
@@ -266,24 +147,6 @@ public:
 
                 room->playSkillEffect(objectName(), 1);
                 bool has_heart = false;
-
-                for(i=0; i<x; i++){
-                    int card_id = room->drawCard();
-                    room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
-
-                    room->getThread()->delay();
-
-                    const Card *card = Sanguosha->getCard(card_id);
-                    if(card->getSuit() == Card::Heart){
-                        RecoverStruct recover;
-                        recover.card = card;
-                        recover.who = menghuo;
-                        room->recover(menghuo, recover);
-                        room->throwCard(card_id);
-                        has_heart = true;
-                    }else
-                        room->obtainCard(menghuo, card_id);
-                }
 
                 if(has_heart)
                     room->playSkillEffect(objectName(), 2);
@@ -430,66 +293,6 @@ public:
     }
 };
 
-class Roulin: public TriggerSkill{
-public:
-    Roulin():TriggerSkill("roulin"){
-        events << SlashProceed;
-
-        frequency = Compulsory;
-    }
-
-    const Card *askForDoubleJink(ServerPlayer *player, const QString &reason) const{
-        Room *room = player->getRoom();
-
-        const Card *first_jink = NULL, *second_jink = NULL;
-        first_jink = room->askForCard(player, "jink", QString("@%1-jink-1").arg(reason));
-        if(first_jink)
-            second_jink = room->askForCard(player, "jink", QString("@%1-jink-2").arg(reason));
-
-        Card *jink = NULL;
-        if(first_jink && second_jink){
-            jink = new DummyCard;
-            jink->addSubcard(first_jink);
-            jink->addSubcard(second_jink);
-        }
-
-        return jink;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill(objectName()) || target->getGeneral()->isFemale();
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(effect.from->hasSkill(objectName()) && effect.to->getGeneral()->isFemale()){
-            // dongzhuo slash female
-            ServerPlayer *dongzhuo = effect.from;
-            ServerPlayer *female = effect.to;
-            Room *room = dongzhuo->getRoom();
-
-            room->playSkillEffect(objectName(), 1);
-
-            room->slashResult(effect, askForDoubleJink(female, "roulin1"));
-            return true;
-
-        }else if(effect.from->getGeneral()->isFemale() && effect.to->hasSkill(objectName())){
-            // female slash dongzhuo
-
-            ServerPlayer *female = effect.from;
-            ServerPlayer *dongzhuo = effect.to;
-            Room *room = female->getRoom();
-
-            room->playSkillEffect(objectName(), 2);
-            room->slashResult(effect, askForDoubleJink(dongzhuo, "roulin2"));
-
-            return true;
-        }
-
-        return false;
-    }
-};
-
 //events card
 QString EventsCard::getType() const{
     return "events";
@@ -564,7 +367,10 @@ Tifanshi::Tifanshi(Suit suit, int number):EventsCard(suit, number){
 }
 
 bool Tifanshi::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select != Self;
+    if(Self->hasFlag("Tifanshi"))
+        return false;
+    else
+        return targets.isEmpty() && to_select != Self;
 }
 
 bool Tifanshi::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
@@ -590,21 +396,38 @@ void Tifanshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     }
 }
 
+NinedayGirl::NinedayGirl(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("ninedaygirl");
+}
+
+bool NinedayGirl::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(Self->hasFlag("NineGirl"))
+        return false;
+    else
+        return targets.isEmpty() && to_select != Self && !to_select->isKongcheng();
+}
+
+bool NinedayGirl::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    if(Self->hasFlag("NineGirl"))
+        return true;
+    else
+        return !targets.isEmpty();
+}
+
+void NinedayGirl::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    if(!targets.isEmpty()){
+        ServerPlayer *target = targets.first();
+        int card_id = room->askForCardChosen(source, target, "h", "ninedaygirl");
+        room->showCard(target, card_id);
+        room->obtainCard(source, card_id);
+    }
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {/*
-    General *caopi, *xuhuang, *mengjian, *lusu, *jiaxu, *dongzhuo;
-
-    caopi = new General(this, "caopi$", "guan", 3);
-    caopi->addSkill(new Xingshang);
-    caopi->addSkill(new Songwei);
-
-    xuhuang = new General(this, "xuhuang", "guan");
-    xuhuang->addSkill(new Duanliang);
-
-    menghuo = new General(this, "menghuo", "jiang");
-    menghuo->addSkill(new SavageAssaultAvoid("huoshou"));
-    menghuo->addSkill(new Huoshou);
+    General *caopi, *xuhuang,]ou);
     menghuo->addSkill(new Zaiqi);
 
     zhurong = new General(this, "zhurong", "jiang", 4, false);
@@ -626,11 +449,10 @@ EventsPackage::EventsPackage()
 */
     QList<Card *> cards;
     cards
-            //<< new IceSword(Card::Spade, 2)
-            //<< new RenwangShield(Card::Club, 2)
+            << new Jiefachang(Card::Diamond, 4)
             << new Tifanshi(Card::Spade, 7)
             << new Daojia(Card::Club, 12)
-            << new Jiefachang(Card::Diamond, 4);
+            << new NinedayGirl(Card::Heart, 9);
 
     foreach(Card *card, cards)
         card->setParent(this);

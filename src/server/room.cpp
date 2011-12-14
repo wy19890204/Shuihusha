@@ -1864,6 +1864,24 @@ void Room::damage(const DamageStruct &damage_data){
     if(broken)
         return;
 
+    //ninegirl
+    if(!Config.BanPackages.contains("events")){
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.damage > 1){
+            setPlayerFlag(damage.to, "NineGirl");
+            bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+            setPlayerFlag(damage.to, "-NineGirl");
+            if(girl){
+                LogMessage log;
+                log.from = damage.to;
+                log.type = "#NineGirl";
+                log.arg = QString::number(damage.damage);
+                sendLog(log);
+                return;
+            }
+        }
+    }
+
     // damage done, should not cause damage process broken
     thread->trigger(DamageDone, damage_data.to, data);
 
