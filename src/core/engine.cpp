@@ -40,6 +40,7 @@ extern "C" {
     Package *NewXZDD();
     Package *NewBWQZ();
     Package *NewQLFD();
+    Package *NewSP();
     Package *NewGod();
 
     Package *NewStandardCard();
@@ -77,10 +78,10 @@ Engine::Engine()
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
     addPackage(NewQLFD());
+    addPackage(NewSP());
     addPackage(NewGod());
 
     addPackage(NewStandard());
-    //addPackage(NewWind());
     //addPackage(NewFire());
     //addPackage(NewMountain());
     addPackage(NewTest());

@@ -1890,18 +1890,18 @@ void Room::damage(const DamageStruct &damage_data){
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
             ServerPlayer *source = findPlayerWhohasEventCard("ninedaygirl");
-            if(!source || source != damage.to)
-                return;
-            setPlayerFlag(damage.to, "NineGirl");
-            bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
-            setPlayerFlag(damage.to, "-NineGirl");
-            if(girl){
-                LogMessage log;
-                log.from = damage.to;
-                log.type = "#NineGirl";
-                log.arg = QString::number(damage.damage);
-                sendLog(log);
-                return;
+            if(source == damage.to){
+                setPlayerFlag(damage.to, "NineGirl");
+                bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+                setPlayerFlag(damage.to, "-NineGirl");
+                if(girl){
+                    LogMessage log;
+                    log.from = damage.to;
+                    log.type = "#NineGirl";
+                    log.arg = QString::number(damage.damage);
+                    sendLog(log);
+                    return;
+                }
             }
         }
     }
