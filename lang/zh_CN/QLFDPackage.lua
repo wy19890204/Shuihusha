@@ -1,20 +1,20 @@
 -- translation for QLFDPackage
 
 return {
-	["QLFD"] = "绮罗粉黛", 
-	["xiaoqiao"] = "小乔", 
-	["hongyan"] = "红颜", 
-	["tianxiang"] = "天香", 
-	[":hongyan"] = "锁定技，你的黑桃牌均视为红桃花色", 
-	[":tianxiang"] = "每当你受到伤害时，你可以弃一张红桃手牌来转移此伤害给任意一名角色，然后该角色摸X张牌；X为该角色当前已损失的体力值", 
-	["$tianxiang1"] = "替我挡着", 
-	["$tianxiang2"] = "接着哦", 
-	["moon_spear"] = "银月枪", 
-	[":moon_spear"] = "你的回合外，每当你使用或打出了一张黑色手牌（若为使用则在它结算之前），你可以立即对你攻击范围内的任意一名角色使用一张【杀】", 
-	["@moon-spear-slash"] = "银月枪的技能被触发，请打出一张【杀】以攻击", 
-	["@@tianxiang-card"] = "请打出一张红桃牌来转移伤害", 
-	["#HongyanJudge"] = "%from 的锁定技【红颜】触发， 判定牌由黑牌变成了红桃", 
-	
+	["QLFD"] = "绮罗粉黛",
+
+	["#_panjinlian"] = "墙头杏",
+	["panjinlian"] = "潘金莲",
+	["yushui"] = "鱼水",
+	[":yushui"] = "出牌阶段，你可弃置一张红桃牌并指定一名已受伤的男性角色：你和该角色各回复1点体力，各摸两张牌并将各自的武将牌翻面。每回合限一次。",
+	["zhensha"] = "鸩杀",
+	[":zhensha"] = "限定技，当其他角色使用【酒】时（在结算前），你可以弃置一张黑桃手牌，令该角色立即死亡。",
+	["#Zhensha"] = "%from 发动了技能【%arg】，%to 一命归西",
+	["@zhensha"] = "%src 使用了【酒】，你可以趁机弃置一张黑桃手牌，将其毒死。",
+	["@vi"] = "鸩",
+	["shengui"] = "深闺",
+	[":shengui"] = "锁定技，若你的武将牌背面朝上，你不能成为男性角色使用锦囊的目标。",
+
 	["yangxiu"] = "杨修", 
 	["jilei"] = "鸡肋", 
 	["danlao"] = "啖酪", 
@@ -32,20 +32,6 @@ return {
 	["$guhuo2"] = "你信吗?",
 	["~yuji"] = "竟然被猜到了",
 	
-	["#Jilei"] = "%from 鸡肋了 %to 的 %arg", 
-	["#JileiClear"] = "%from 的鸡肋效果消失",
-	["#Guhuo"] = "%from 发动了技能【蛊惑】，蛊惑的牌为 %arg, 指定的目标为 %to",
-	["#GuhuoNoTarget"] = "%from 发动了技能【蛊惑】，蛊惑的牌为 %arg",
-	["#GuhuoCannotQuestion"] = "%from 体力不支(当前体力值=%arg)，无法质疑",
-	["guhuo:question"] = "质疑",
-	["guhuo:noquestion"] = "不质疑",
-	["question"] = "质疑",
-	["noquestion"] = "不质疑",
-	["#GuhuoQuery"] = "%from 表示 %arg",
-	["$GuhuoResult"] = "%from 用来蛊惑的牌是 %card",
-	["guhuo-saveself"] = "自救蛊惑",
-	["guhuo-saveself:peach"] = "桃子",
-	["guhuo-saveself:analeptic"] = "酒",
+-- last words
 	
-	["cv:yangxiu"] = "迷宫",
 }

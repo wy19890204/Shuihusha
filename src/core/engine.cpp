@@ -61,11 +61,11 @@ extern "C" {
 }
 
 QString Engine::getVersion() const{
-    return "20111201";
+    return "20111214";
 }
 
 QString Engine::getVersionName() const{
-    return tr("V1.5.5");
+    return tr("V2.0.0");
 }
 
 Engine::Engine()

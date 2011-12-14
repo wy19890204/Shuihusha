@@ -1889,6 +1889,9 @@ void Room::damage(const DamageStruct &damage_data){
     if(!Config.BanPackages.contains("events")){
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
+            ServerPlayer *source = room->findPlayerWhohasEventCard("ninedaygirl");
+            if(!source || source != damage.to)
+                return;
             setPlayerFlag(damage.to, "NineGirl");
             bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
             setPlayerFlag(damage.to, "-NineGirl");

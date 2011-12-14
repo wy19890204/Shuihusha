@@ -1,14 +1,11 @@
 #include "events.h"
-#include "general.h"
 #include "skill.h"
 #include "room.h"
 #include "carditem.h"
 #include "tocheck.h"
 #include "clientplayer.h"
-#include "client.h"
 #include "engine.h"
 
-//events card
 QString EventsCard::getType() const{
     return "events";
 }
