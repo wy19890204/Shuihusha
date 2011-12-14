@@ -552,6 +552,14 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             room->sendJudgeResult(judge);
 
+            if(!Config.BanPackages.contains("events") && judge->card->getSuit() == Card::Spade){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
+                if(source){
+                    setPlayerFlag(damage.to, "FuckGaolian");
+                    askForUseCard(source, "fuckgaolian", "@fuckgl");
+                    setPlayerFlag(damage.to, "-FuckGaolian");
+                }
+            }
             room->getThread()->delay();
 
             break;
