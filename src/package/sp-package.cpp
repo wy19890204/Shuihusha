@@ -523,17 +523,6 @@ SPPackage::SPPackage()
     sp_sunshangxiang->addSkill("jieyin");
     sp_sunshangxiang->addSkill("xiaoji");
 
-    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
-    shenlvbu1->addSkill("mashu");
-    shenlvbu1->addSkill("wushuang");
-
-    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
-    shenlvbu2->addSkill("mashu");
-    shenlvbu2->addSkill("wushuang");
-    shenlvbu2->addSkill(new Xiuluo);
-    shenlvbu2->addSkill(new Shenwei);
-    shenlvbu2->addSkill(new Skill("shenji"));
-
     General *sp_guanyu = new General(this, "sp_guanyu", "wei", 4);
     sp_guanyu->addSkill("wusheng");
     sp_guanyu->addSkill(new Danji);
