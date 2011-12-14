@@ -1,6 +1,6 @@
 #include "standard.h"
 #include "skill.h"
-#include "wind.h"
+#include "sp-package.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
@@ -411,37 +411,60 @@ public:
         return false;
     }
 };
+SPPackage::SPPackage()
+    :Package("sp")
+{/*
+    General *yangxiu = new General(this, "yangxiu", "wei", 3);
+    yangxiu->addSkill(new Jilei);
+    yangxiu->addSkill(new JileiClear);
+    yangxiu->addSkill(new Danlao);
 
-WindPackage::WindPackage()
-    :Package("wind")
-{
-    General *xiahouyuan, *caoren, *huangzhong, *weiyan, *zhangjiao;
+    related_skills.insertMulti("jilei", "#jilei-clear");
 
-    xiahouyuan = new General(this, "xiahouyuan", "guan");
-    xiahouyuan->addSkill(new Shensu);
+    General *gongsunzan = new General(this, "gongsunzan", "qun");
+    gongsunzan->addSkill(new Yicong);
 
-    caoren = new General(this, "caoren", "guan", 4, true, true);
-    caoren->addSkill(new Jushou);
+    General *yuanshu = new General(this, "yuanshu", "qun");
+    yuanshu->addSkill(new Yongsi);
+    yuanshu->addSkill(new Weidi);
 
-    huangzhong = new General(this, "huangzhong", "jiang");
-    huangzhong->addSkill(new Liegong);
+    General *sp_diaochan = new General(this, "sp_diaochan", "qun", 3, false, true);
+    sp_diaochan->addSkill("lijian");
+    sp_diaochan->addSkill("biyue");
+    sp_diaochan->addSkill(new Xuwei);
 
-    weiyan = new General(this, "weiyan", "jiang");
-    weiyan->addSkill(new Kuanggu);
+    General *sp_sunshangxiang = new General(this, "sp_sunshangxiang", "shu", 3, false, true);
+    sp_sunshangxiang->addSkill("jieyin");
+    sp_sunshangxiang->addSkill("xiaoji");
 
-    zhangjiao = new General(this, "zhangjiao$", "kou", 3);
-    zhangjiao->addSkill(new Guidao);
-    zhangjiao->addSkill(new Leiji);
-    zhangjiao->addSkill(new Huangtian);
+    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
+    shenlvbu1->addSkill("mashu");
+    shenlvbu1->addSkill("wushuang");
 
-    addMetaObject<GuidaoCard>();
-    addMetaObject<HuangtianCard>();
-    addMetaObject<LeijiCard>();
-    addMetaObject<ShensuCard>();
+    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
+    shenlvbu2->addSkill("mashu");
+    shenlvbu2->addSkill("wushuang");
+    shenlvbu2->addSkill(new Xiuluo);
+    shenlvbu2->addSkill(new Shenwei);
+    shenlvbu2->addSkill(new Skill("shenji"));
 
-    skills << new HuangtianViewAsSkill;
+    General *sp_guanyu = new General(this, "sp_guanyu", "wei", 4);
+    sp_guanyu->addSkill("wusheng");
+    sp_guanyu->addSkill(new Danji);
+
+    General *sp_caiwenji = new General(this, "sp_caiwenji", "wei", 3, false, true);
+    sp_caiwenji->addSkill("beige");
+    sp_caiwenji->addSkill("duanchang");
+
+    General *sp_machao = new General(this, "sp_machao", "qun", 4, true, true);
+    sp_machao->addSkill("mashu");
+    sp_machao->addSkill("tieji");
+
+    General *sp_jiaxu = new General(this, "sp_jiaxu", "wei", 3, true, true);
+    sp_jiaxu->addSkill("wansha");
+    sp_jiaxu->addSkill("luanwu");
+    sp_jiaxu->addSkill("weimu");
+    sp_jiaxu->addSkill("#@chaos-1");*/
 }
 
-ADD_PACKAGE(Wind)
-
-
+ADD_PACKAGE(SP);

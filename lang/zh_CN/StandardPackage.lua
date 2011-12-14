@@ -123,7 +123,7 @@ local t = {
 	["renwang_shield"] = "三重铠",
 	[":renwang_shield"] = "防具效果：锁定技，黑色的【杀】对你无效",
 
-	["standard"] = "标准版",
+	["standard"] = "三国杀余孽",
 	["caocao"] = "曹操",
 	["zhangliao"] = "张辽",
 	["guojia"] = "郭嘉",

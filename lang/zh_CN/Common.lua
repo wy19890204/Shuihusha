@@ -52,8 +52,10 @@ return {
 	["kou"] = "寇",
 
 	["test"] = "测试",
-	["sujiang"] = "素将",
-	["sujiangf"] = "素将(女)",
+	["sujiang"] = "稻草男",
+	["sujiangf"] = "稻草女",
+	["#_sujiang"] = "金童",
+	["#_sujiangf"] = "玉女",
 
 	["#Murder"] = "%to【%arg】 挂了，凶手是 %from",
 	["#Suicide"] = "%to【%arg】 自杀身亡",
@@ -113,8 +115,10 @@ return {
 
 -- hulao
 	["hulaopass"] = "虎牢关模式",
-	["shenlvbu1"] = "神吕布(1)",
-	["shenlvbu2"] = "神吕布(2)",
+	["shenlvbu1"] = "凌天翼",
+	["shenlvbu2"] = "烨子风暴",
+	["#_shenlvbu1"] = "",
+	["#_shenlvbu2"] = "",
 	["xiuluo"] = "修罗",
 	[":xiuluo"] = "回合开始阶段，你可以弃一张手牌来弃置你判定区里的一张延时类锦囊(必须花色相同)。",
 	["shenwei"] = "神威",
