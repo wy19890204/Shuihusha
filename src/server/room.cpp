@@ -291,6 +291,27 @@ void Room::judge(JudgeStruct &judge_struct){
 
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
+        if(!Config.BanPackages.contains("events")){
+            ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
+            if(source && source == player){
+                setPlayerFlag(player, "FuckLian");
+                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl");
+                if(fuck){
+                    JudgeStar judge = data.value<JudgeStar>();
+                    source->obtainCard(judge->card);
+                    judge->card = fuck;
+                    moveCardTo(judge->card, NULL, Player::Special);
+                    LogMessage log;
+                    log.type = "$ChangedJudge";
+                    log.from = player;
+                    log.to << judge->who;
+                    log.card_str = QString::number(fuck->getId());
+                    sendLog(log);
+                    sendJudgeResult(judge);
+                }
+                setPlayerFlag(player, "-FuckLian");
+            }
+        }
         if(thread->trigger(AskForRetrial, player, data))
             break;
     }

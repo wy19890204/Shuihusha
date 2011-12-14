@@ -71,6 +71,7 @@ public:
     Q_INVOKABLE FuckGaolian(Card::Suit suit, int number);
 
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual bool isAvailable(const Player *player) const;
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
 };
