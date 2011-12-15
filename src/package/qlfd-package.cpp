@@ -122,6 +122,11 @@ QLFDPackage::QLFDPackage()
     panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
     related_skills.insertMulti("zhensha", "#@vi-1");
 
+    General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
+    panqiaoyun->addSkill(new Fanwu);
+    panqiaoyun->addSkill(new Panxin);
+    panqiaoyun->addSkill(new Foyuan);
+
     addMetaObject<YushuiCard>();
 }
 
