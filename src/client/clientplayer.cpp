@@ -123,7 +123,7 @@ QString ClientPlayer::getDeathPixmapPath() const{
     }else
         basename = getRole();
 
-    if(basename.isEmpty()){
+    if(basename.isEmpty() || property("panxin").toBool()){
         basename = "unknown";
     }
 

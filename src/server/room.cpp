@@ -223,6 +223,8 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
         killer->addVictim(victim);
     }
 
+    thread->trigger(PreDeath, victim);
+
     victim->setAlive(false);
     broadcastProperty(victim, "alive");
 
@@ -242,7 +244,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     LogMessage log;
     log.to << victim;
-    log.arg = victim->getRole();
+    log.arg = victim->property("panxin").toBool() ? "unknown" : victim->getRole();
     log.from = killer;
 
     updateStateItem();
