@@ -1,3 +1,37 @@
+-- haoshen
+sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
+	if prompt == "@haoshen-draw" then
+		self:sort(self.friends_noself)
+		local max_x = 2
+		local target
+		for _, friend in ipairs(self.friends_noself) do
+			local x = friend:getMaxHP() - friend:getHandcardNum()
+			if x > max_x then
+				max_x = x
+				target = friend
+			end
+		end
+		if target then
+			return "@HaoshenCard=.->" .. target:objectName()
+		else
+			return "."
+		end
+	elseif prompt == "@haoshen-play" and self.player:getHandcardNum() > 5 then
+		self:sort(self.friends_noself, "hp")
+		local target = self.friends_noself[1]
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local card_ids = {}
+		for i = 1, math.floor(#cards / 2) do
+			table.insert(card_ids, cards[i]:getEffectiveId())
+		end
+		return "@HaoshenCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
+	else
+		return "."
+	end
+end
+
 -- huxiao
 local huxiao_skill={}
 huxiao_skill.name = "huxiao"
@@ -18,8 +52,15 @@ huxiao_skill.getTurnUseCard = function(self)
 	end
 end
 
--- baoguo
+-- baoguo&yinyu
 sgs.ai_skill_invoke["baoguo"] = true
+sgs.ai_skill_invoke["yinyu"] = true
+
+-- taohui
+sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
+	self:sort(self.friends, "handcard")
+	return self.friends[1]
+end
 
 -- huanshu
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)

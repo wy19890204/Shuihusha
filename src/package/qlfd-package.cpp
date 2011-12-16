@@ -219,7 +219,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
         Room *room = player->getRoom();
         ServerPlayer *qiaoyun = room->findPlayerBySkillName(objectName());
-        if(!qiaoyun || qiaoyun->isLord() || player->isLord())
+        if(!qiaoyun || qiaoyun->isLord() || player->isLord() || qiaoyun == player)
             return false;
         if(qiaoyun->getMark("@pfxl") && qiaoyun->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
@@ -268,7 +268,9 @@ QianxianCard::QianxianCard(){
 bool QianxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(to_select == Self)
         return false;
-    if(!targets.isEmpty()){
+    if(targets.isEmpty())
+        return true;
+    if(targets.length() == 1){
         int max1 = targets.first()->getMaxHP();
         return to_select->getMaxHP() != max1;
     }
@@ -276,7 +278,11 @@ bool QianxianCard::targetFilter(const QList<const Player *> &targets, const Play
 }
 
 bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
+    if(targets.length() != 2)
+        return false;
+    int max1 = targets.first()->getMaxHP();
+    int max2 = targets.last()->getMaxHP();
+    return max1 != max2;
 }
 
 void QianxianCard::onEffect(const CardEffectStruct &effect) const{

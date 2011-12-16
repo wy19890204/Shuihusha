@@ -1125,8 +1125,9 @@ function SmartAI:slashProhibit(card,enemy)
 			return true
 		end
 		
-		if enemy:hasSkill("xiangle") and self:getCardsNum("Slash")+self:getCardsNum("Analpetic")+math.max(self:getCardsNum("Jink")-1,0) < 2 then
-			return true
+		if enemy:hasSkill("danshu") then
+			local x = enemy:getLostHp()
+			return self.player:getHandcardNum() <= x + 1
 		end
 	end
 
@@ -2415,9 +2416,7 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 			return to_discard
 		end
 		
-        if self.player:getHandcardNum() < 2 then return {} end 
-	elseif optional then
-		return {}
+        if self.player:getHandcardNum() < 2 then return {} end
 	end
 	
 	local cards = self.player:getCards("h")
@@ -2432,11 +2431,14 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	local offensive_horse = self.player:getOffensiveHorse()
 	local defensive_horse = self.player:getDefensiveHorse()
 	
-	if reason == "gongmou" then
+	if reason == "danshu" then
 		for _, card in ipairs(cards) do
 			if #to_discard >= discard_num then break end
-			if card:inherits("Shit") then table.insert(to_discard, card:getId()) end
+			table.insert(to_discard, card:getId())
 		end
+		return to_discard
+	elseif optional then
+		return {}
 	end
 	
 	if include_equip and weapon and weapon:inherits("YitianSword") then
