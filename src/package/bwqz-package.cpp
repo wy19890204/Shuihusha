@@ -8,6 +8,18 @@
 #include "plough.h"
 #include "tocheck.h"
 
+class Fushang: public MasochismSkill{
+public:
+    Fushang():MasochismSkill("fushang"){
+        frequency = Compulsory;
+    }
+
+    virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
+        if(hedgehog->getMaxHP() > 3)
+            hedgehog->getRoom()->loseMaxHp(hedgehog);
+    }
+};
+
 class Zaochuan: public OneCardViewAsSkill{
 public:
     Zaochuan():OneCardViewAsSkill("zaochuan"){
@@ -695,6 +707,10 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
+    General *dingdesun = new General(this, "dingdesun", "jiang", 6);
+    dingdesun->addSkill(new Skill("beizhan"));
+    dingdesun->addSkill(new Fushang);
+
     General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 

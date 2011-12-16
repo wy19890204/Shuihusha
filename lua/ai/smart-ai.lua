@@ -2753,36 +2753,13 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end	
 		return "."
-	elseif parsedPrompt[1] == "@xiangle-discard" then
-		local effect = data:toCardEffect()
-		if self:isFriend(effect.to) and not
-			(effect.to:hasSkill("leiji") and (self:getCardsNum("Jink", effect.to)>0 or (not self:isWeak(effect.to) and self:isEquip("EightDiagram",effect.to))))
-			then return "." end
-		local has_peach, has_anal, has_slash, slash_jink
-		for _, card in sgs.qlist(self.player:getHandcards()) do
-			if card:inherits("Peach") then has_peach = card
-			elseif card:inherits("Analeptic") then has_anal = card
-			elseif card:inherits("Slash") then has_slash = card
-			elseif card:inherits("Jink") then has_jink = card
-			end
-		end
-		
-		if has_slash then return "$" .. has_slash:getEffectiveId()
-		elseif has_jink then return "$" .. has_jink:getEffectiveId()
-		elseif has_anal or has_peach then 
-			if self:getCardsNum("Jink", effect.to) == 0 and self.player:hasFlag("drank") and self:getAllPeachNum(effect.to) == 0 then
-				if has_anal then return "$" .. has_anal:getEffectiveId()
-				else return "$" .. has_peach:getEffectiveId()
-				end
-			end
-		else return "." 
+	elseif parsedPrompt[1] == "@baoguo" then
+		local damage = data:toDamage()
+		if self:isFriend(damage.to) then
+			local card = self:getCardRandomly(self.player, "he")
+			return card:getEffectiveId()
 		end	
-	elseif parsedPrompt[1] == "@hujia-jink" then
-		local who = data:toPlayer()
-		if self.player:hasSkill("hujia") and who:hasSkill("hujia") then return "."
-		elseif not self:isFriend(who) then return "."
-		end
-		return self:getCardId("Jink") or "."
+		return "."
 	elseif parsedPrompt[1] == "@jijiang-slash" then
 		local who = data:toPlayer()
 		if self.player:hasSkill("jijiang") and who:hasSkill("jijiang") then return "."
@@ -3525,9 +3502,9 @@ dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard-skill-ai.lua"
 dofile "lua/ai/qjwm-ai.lua"
 --dofile "lua/ai/xzdd-ai.lua"
---dofile "lua/ai/ttxd-ai.lua"
+dofile "lua/ai/ttxd-ai.lua"
 --dofile "lua/ai/bwqz-ai.lua"
---dofile "lua/ai/qlfd-ai.lua"
+dofile "lua/ai/qlfd-ai.lua"
 --dofile "lua/ai/god-ai.lua"
 --dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/joy-ai.lua"

@@ -1,32 +1,30 @@
-jiuchi_skill={}
-jiuchi_skill.name="jiuchi"
-table.insert(sgs.ai_skills,jiuchi_skill)
-jiuchi_skill.getTurnUseCard=function(self)
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
+-- baoguo
+sgs.ai_skill_invoke["baoguo"] = true
 
-	local card
-
-	self:sortByUseValue(cards,true)
-
-	for _,acard in ipairs(cards)  do
-		if (acard:getSuit() == sgs.Card_Spade) then --and (self:getUseValue(acard)<sgs.ai_use_value["Analeptic"]) then
-			card = acard
-			break
-		end
-	end
-
-		if not card then return nil end
-		local number = card:getNumberString()
-		local card_id = card:getEffectiveId()
-		local card_str = ("analeptic:jiuchi[spade:%s]=%d"):format(number, card_id)
-		local analeptic = sgs.Card_Parse(card_str)
-
-		assert(analeptic)
-
-		return analeptic
-
+-- huanshu
+sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
+	self:sort(self.enemies, "hp")
+	local target = self.enemies[1]
+	if target then return "@HuanshuCard=.".."->"..target:objectName() end
+	return "."
 end
+
+-- cuju
+sgs.ai_skill_invoke["cuju"] = true
+sgs.ai_skill_use["@@cuju"] = function(self, prompt)
+	self:sort(self.enemies, "hp")
+	local target = self.enemies[1]
+	local card = self.player:getRandomHandCard()
+	if target then return "@CujuCard="..card:getEffectiveId().."->"..target:objectName() end
+	return "."
+end
+
+-- panquan
+sgs.ai_skill_invoke["panquan"] = function(self, data)
+	local gaoqiu = self.room:getLord()
+	return self:isFriend(gaoqiu)
+end
+
 
 duanliang_skill={}
 duanliang_skill.name="duanliang"

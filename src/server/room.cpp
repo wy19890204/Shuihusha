@@ -1591,19 +1591,13 @@ void Room::run(){
         ServerPlayer *lord = players.first();
         setPlayerProperty(lord, "general", "shenlvbu1");
 
-        const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *windpack = Sanguosha->findChild<const Package *>("wind");
-
-        QList<const General *> generals = stdpack->findChildren<const General *>();
-        generals << windpack->findChildren<const General *>();
-
         QStringList names;
-        foreach(const General *general, generals){
-            names << general->objectName();
+        const QList<const General *> generals = Sanguosha->findChildren<const General *>();
+        foreach(const General *tmp, generals){
+            QString pack = tmp->getPackage();
+            if(!Config.BanPackages.contains(pack) && !tmp->isHidden())
+                names << tmp->objectName();
         }
-
-        names.removeOne("wuxingzhuge");
-        names.removeOne("zhibasunquan");
 
         foreach(ServerPlayer *player, players){
             if(player == lord)
