@@ -4,6 +4,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "qlfd-package.h"
+#include "tocheck.h"
 
 YushuiCard::YushuiCard(){
     once = true;
@@ -234,6 +235,32 @@ public:
     }
 };
 
+class Meicha: public OneCardViewAsSkill{
+public:
+    Meicha():OneCardViewAsSkill("meicha"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Analeptic::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return  pattern.contains("analeptic");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Club;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Analeptic *analeptic = new Analeptic(card->getSuit(), card->getNumber());
+        analeptic->setSkillName(objectName());
+        analeptic->addSubcard(card->getId());
+        return analeptic;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -250,6 +277,9 @@ QLFDPackage::QLFDPackage()
     panqiaoyun->addSkill(new MarkAssignSkill("@pfxl", 1));
     related_skills.insertMulti("panxin", "#@pfxl-1");
     panqiaoyun->addSkill(new Foyuan);
+
+    General *wangpo = new General(this, "wangpo", "min", 3, false);
+    wangpo->addSkill(new Meicha);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();

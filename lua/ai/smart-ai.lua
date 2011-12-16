@@ -952,7 +952,7 @@ function SmartAI:slashIsAvailable(player)
 end
 
 local function prohibitUseDirectly(card, player)
-	if player:hasSkill("jiejiu") then return card:inherits("Analeptic") 
+	if player:hasSkill("zhuying") then return card:inherits("Analeptic")
 	elseif player:hasSkill("wushen") then return card:getSuit() == sgs.Card_Heart
 	elseif player:hasSkill("ganran") then return card:getTypeId() == sgs.Card_Equip
 	end
@@ -1021,8 +1021,8 @@ local function getSkillViewCard(card, class_name, player, card_place)
 		end
 	elseif class_name == "Analeptic" then
 		if card_place ~= sgs.Player_Equip then
-			if player:hasSkill("jiuchi") and card:getSuit() == sgs.Card_Spade then 
-				return ("analeptic:jiuchi[%s:%s]=%d"):format(suit, number, card_id)
+			if player:hasSkill("meicha") and card:getSuit() == sgs.Card_Club then 
+				return ("analeptic:meicha[%s:%s]=%d"):format(suit, number, card_id)
 			end
 		end
 	elseif class_name == "Nullification" then

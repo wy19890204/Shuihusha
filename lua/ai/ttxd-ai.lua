@@ -1,3 +1,23 @@
+-- huxiao
+local huxiao_skill={}
+huxiao_skill.name = "huxiao"
+table.insert(sgs.ai_skills, huxiao_skill)
+huxiao_skill.getTurnUseCard = function(self)
+	if not self.player:isNude() then
+		local cards = self.player:getCards("he")
+		cards = sgs.QList2Table(cards)
+		for _, fcard in ipairs(cards) do
+			if fcard:inherits("EquipCard") then
+				local suit, number, id = fcard:getSuitString(), fcard:getNumberString(), fcard:getId()
+				local card_str = ("savage_assault:huxiao[%s:%s]=%d"):format(suit, number, id)
+				local savage = sgs.Card_Parse(card_str)
+				assert(savage)
+				return savage
+			end
+		end
+	end
+end
+
 -- baoguo
 sgs.ai_skill_invoke["baoguo"] = true
 

@@ -412,6 +412,7 @@ public:
             if(judge->reason == objectName()){
                 if(!judge->card->inherits("BasicCard")){
                     Room *room = yuehe->getRoom();
+                    room->throwCard(judge->card->getId());
                     ServerPlayer *target = room->askForPlayerChosen(yuehe, room->getAllPlayers(), objectName());
                     target->drawCards(1);
                     return true;

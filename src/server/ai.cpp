@@ -319,12 +319,12 @@ const Card *TrustAI::askForSinglePeach(ServerPlayer *dying) {
         }
 
         if(dying == self){
-            if(self->hasSkill("jiuchi")){
+            if(self->hasSkill("meicha")){
                 foreach(const Card *card, cards){
                     if(card->getSuit() == Card::Spade){
                         Analeptic *analeptic = new Analeptic(Card::Spade, card->getNumber());
                         analeptic->addSubcard(card);
-                        analeptic->setSkillName("jiuchi");
+                        analeptic->setSkillName("meicha");
                         return analeptic;
                     }
                 }
