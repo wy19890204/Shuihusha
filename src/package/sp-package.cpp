@@ -516,7 +516,7 @@ SPPackage::SPPackage()
 
 /*
     General *sp_diaochan = new General(this, "sp_diaochan", "qun", 3, false, true);
-    sp_diaochan->addSkill("lijian");
+    sp_diaochan->addSkill("Qianxian");
     sp_diaochan->addSkill("biyue");
     sp_diaochan->addSkill(new Xuwei);
 

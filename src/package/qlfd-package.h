@@ -22,6 +22,17 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class QianxianCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE QianxianCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 class QLFDPackage: public Package{
     Q_OBJECT
 

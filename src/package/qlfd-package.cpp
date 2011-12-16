@@ -261,6 +261,61 @@ public:
     }
 };
 
+QianxianCard::QianxianCard(){
+    once = true;
+}
+
+bool QianxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(to_select == Self)
+        return false;
+    if(!targets.isEmpty()){
+        int max1 = targets.first()->getMaxHP();
+        return to_select->getMaxHP() != max1;
+    }
+    return false;
+}
+
+bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+void QianxianCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect));
+    if(club){
+        effect.from->obtainCard(club);
+        if(!effect.to->faceUp())
+            effect.to->turnOver();
+        room->setPlayerProperty(effect.to, "chained", false);
+    }
+    else{
+        if(effect.to->faceUp())
+            effect.to->turnOver();
+        room->setPlayerProperty(effect.to, "chained", true);
+    }
+}
+
+class Qianxian: public OneCardViewAsSkill{
+public:
+    Qianxian():OneCardViewAsSkill("qianxian"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("QianxianCard");
+    }
+
+    virtual bool viewFilter(const CardItem *blackfeiyanshitrick) const{
+        const Card *card = blackfeiyanshitrick->getCard();
+        return card->isBlack() && card->isNDTrick();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        QianxianCard *card = new QianxianCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -279,10 +334,12 @@ QLFDPackage::QLFDPackage()
     panqiaoyun->addSkill(new Foyuan);
 
     General *wangpo = new General(this, "wangpo", "min", 3, false);
+    wangpo->addSkill(new Qianxian);
     wangpo->addSkill(new Meicha);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
+    addMetaObject<QianxianCard>();
 }
 
 ADD_PACKAGE(QLFD);
