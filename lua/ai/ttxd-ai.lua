@@ -1,6 +1,6 @@
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
-	if prompt == "@haoshen-draw" then
+	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then
 		self:sort(self.friends_noself)
 		local max_x = 2
 		local target

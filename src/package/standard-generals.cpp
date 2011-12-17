@@ -56,63 +56,6 @@ public:
     }
 };
 
-class Qingguo:public OneCardViewAsSkill{
-public:
-    Qingguo():OneCardViewAsSkill("qingguo"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack() && !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        Jink *jink = new Jink(card->getSuit(), card->getNumber());
-        jink->setSkillName(objectName());
-        jink->addSubcard(card->getId());
-        return jink;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "jink";
-    }
-};
-
-class Tieji:public SlashBuffSkill{
-public:
-    Tieji():SlashBuffSkill("tieji"){
-
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *machao = effect.from;
-
-        Room *room = machao->getRoom();
-        if(effect.from->askForSkillInvoke("tieji", QVariant::fromValue(effect))){
-            room->playSkillEffect(objectName());
-
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(heart|diamond):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = machao;
-
-            room->judge(judge);
-            if(judge.isGood()){
-                room->slashResult(effect, NULL);
-                return true;
-            }
-        }
-
-        return false;
-    }
-};
-
 class Jizhi:public TriggerSkill{
 public:
     Jizhi():TriggerSkill("jizhi"){
@@ -181,35 +124,8 @@ public:
     }
 };
 
-class Jijiu: public OneCardViewAsSkill{
-public:
-    Jijiu():OneCardViewAsSkill("jijiu"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern.contains("peach") && player->getPhase() == Player::NotActive;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isRed();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getCard();
-        Peach *peach = new Peach(first->getSuit(), first->getNumber());
-        peach->addSubcard(first->getId());
-        peach->setSkillName(objectName());
-        return peach;
-    }
-};
-
 void StandardPackage::addGenerals(){
-    General *guojia, *simayi, *zhenji;
+    General *guojia, *simayi;
 
     simayi = new General(this, "simayi", "guan", 3);
     simayi->addSkill(new Fankui);
@@ -217,16 +133,10 @@ void StandardPackage::addGenerals(){
     guojia = new General(this, "guojia", "guan", 3);
     guojia->addSkill(new Yiji);
 
-    zhenji = new General(this, "zhenji", "guan", 3, false);
-    zhenji->addSkill(new Qingguo);
-
-    General *zhangfei, *machao, *huangyueying;
+    General *zhangfei, *huangyueying;
 
     zhangfei = new General(this, "zhangfei", "jiang");
     zhangfei->addSkill(new Skill("paoxiao"));
-
-    machao = new General(this, "machao", "jiang");
-    machao->addSkill(new Tieji);
 
     huangyueying = new General(this, "huangyueying", "jiang", 3, false);
     huangyueying->addSkill(new Jizhi);
@@ -238,9 +148,6 @@ void StandardPackage::addGenerals(){
 
     sunshangxiang = new General(this, "sunshangxiang", "min", 3, false);
     sunshangxiang->addSkill(new Xiaoji);
-
-    General *huatuo = new General(this, "huatuo", "kou", 3);
-    huatuo->addSkill(new Jijiu);
 
     // for skill cards
     addMetaObject<CheatCard>();

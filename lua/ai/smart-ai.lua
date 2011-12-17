@@ -2974,7 +2974,7 @@ function SmartAI:askForNullification(trick_name, from, to, positive)
 			end
 		end
 		
-		if self:isFriend(to) then
+		if self:isFriend(to) and not null_card:objectName() == "counterplot" then
 			if trick_name:inherits("Indulgence") or trick_name:inherits("SupplyShortage") then
 				return null_card
 			end	
@@ -2986,7 +2986,7 @@ function SmartAI:askForNullification(trick_name, from, to, positive)
 				end
 			end
 		end
-		if from then
+		if from and not null_card:objectName() == "counterplot" then
 			if self:isEnemy(to) then
 				if trick_name:inherits("GodSalvation") and self:isWeak(to) then
 					return null_card
