@@ -205,7 +205,6 @@ public:
     void jilei(const char *type);
     bool isJilei(const Card *card) const;
 
-    bool isCaoCao() const;
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;
@@ -299,6 +298,7 @@ public:
     void marshal(ServerPlayer *player) const;
 
     void addToPile(const char *pile_name, int card_id, bool open = true);
+    void gainAnExtraTurn();
 };
 
 %extend ServerPlayer{
@@ -750,7 +750,6 @@ public:
     QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
     QList<ServerPlayer *> getAllPlayers() const;
     QList<ServerPlayer *> getAlivePlayers() const;
-    void output(const char *message);
     void enterDying(ServerPlayer *player, DamageStruct *reason);
     void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL);
     void revivePlayer(ServerPlayer *player);
@@ -868,6 +867,11 @@ public:
 	void output(const char *msg){
 		if(Config.value("DebugOutput", false).toBool())
 			$self->output(msg);
+	}
+
+	void outputEventStack(){
+		if(Config.value("DebugOutput", false).toBool())
+			$self->outputEventStack();
 	}
 
 	void writeToConsole(const char *msg){

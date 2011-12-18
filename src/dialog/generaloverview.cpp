@@ -177,18 +177,16 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         addLines(skill);
     }
 
-    if(general_name != "luzhishen"){
-        QString last_word = Sanguosha->translate("~" + general->objectName());
-        if(!last_word.startsWith("~")){
-            QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
-            button_layout->addWidget(death_button);
+    QString last_word = Sanguosha->translate("~" + general->objectName());
+    if(!last_word.startsWith("~")){
+        QCommandLinkButton *death_button = new QCommandLinkButton(tr("Death"), last_word);
+        button_layout->addWidget(death_button);
 
-            connect(death_button, SIGNAL(clicked()), general, SLOT(lastWord()));
+        connect(death_button, SIGNAL(clicked()), general, SLOT(lastWord()));
 
-            addCopyAction(death_button);
-        }
+        addCopyAction(death_button);
     }
-
+/*
     if(general_name == "caocao" || general_name == "shencc" || general_name == "shencaocao"){
         QCommandLinkButton *win_button = new QCommandLinkButton(tr("Victory"), tr(
                 "Six dragons lead my chariot, "
@@ -202,7 +200,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         win_button->setObjectName("audio/system/win-cc.ogg");
         connect(win_button, SIGNAL(clicked()), this, SLOT(playEffect()));
     }
-
+*/
     QString designer_text = Sanguosha->translate("designer:" + general->objectName());
     if(!designer_text.startsWith("designer:"))
         ui->designerLineEdit->setText(designer_text);

@@ -150,6 +150,16 @@ void Room::output(const QString &message){
     emit room_message(message);
 }
 
+void Room::outputEventStack(){
+    QString msg;
+
+    foreach(EventTriplet triplet, *thread->getEventStack()){
+        msg.prepend(triplet.toString());
+    }
+
+    output(msg);
+}
+
 void Room::enterDying(ServerPlayer *player, DamageStruct *reason){
     DyingStruct dying;
     dying.who = player;
@@ -187,40 +197,43 @@ void Room::revivePlayer(ServerPlayer *player){
     }
 
     broadcastInvoke("revivePlayer", player->objectName());
+    updateStateItem();
 }
 
-QString Room::getRoleStateString()
-{
-    int lords=0,rebels=0,loyals=0,renes=0;
-    foreach(ServerPlayer * player,getAlivePlayers())
-    {
-        switch(player->getRoleEnum())
-        {
-        case Player::Lord:
-            lords++;break;
-            case Player::Renegade:
-            renes++;break;
-            case Player::Rebel:
-            rebels++;break;
-            case Player::Loyalist:
-            loyals++;break;
-        default:
-            break;
-        }
+static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){
+    int role1 = player1->getRoleEnum();
+    int role2 = player2->getRoleEnum();
+
+    if(role1 != role2)
+        return role1 < role2;
+    else
+        return player1->isAlive();
+}
+
+void Room::updateStateItem(){
+    QList<ServerPlayer *> players = this->players;
+    qSort(players.begin(), players.end(), CompareByRole);
+    QString roles;
+    foreach(ServerPlayer *p, players){
+        QChar c = "ZCFN"[p->getRoleEnum()];
+        if(p->isDead())
+            c = c.toLower();
+
+        roles.append(c);
     }
-    QString op="";
-    for(int i=0;i<lords;i++)op+="Z";
-    for(int i=0;i<loyals;i++)op+="C";
-    for(int i=0;i<rebels;i++)op+="F";
-    for(int i=0;i<renes;i++)op+="N";
-    return op;
+
+    broadcastInvoke("updateStateItem", roles);
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+    if(victim->getHp() > 0 && victim->hasSkill("ubunf"))
+        return;
     ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.ContestMode && killer){
         killer->addVictim(victim);
     }
+
+    thread->trigger(PreDeath, victim);
 
     victim->setAlive(false);
     broadcastProperty(victim, "alive");
@@ -241,10 +254,10 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     LogMessage log;
     log.to << victim;
-    log.arg = victim->getRole();
+    log.arg = victim->property("panxin").toBool() ? "unknown" : victim->getRole();
     log.from = killer;
 
-    broadcastInvoke("updateStateItem", getRoleStateString());
+    updateStateItem();
 
     if(killer){
         if(killer == victim)
@@ -290,6 +303,27 @@ void Room::judge(JudgeStruct &judge_struct){
 
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
+        if(!Config.BanPackages.contains("events")){
+            ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
+            if(source && source == player){
+                setPlayerFlag(player, "FuckLian");
+                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl");
+                if(fuck){
+                    JudgeStar judge = data.value<JudgeStar>();
+                    source->obtainCard(judge->card);
+                    judge->card = fuck;
+                    moveCardTo(judge->card, NULL, Player::Special);
+                    LogMessage log;
+                    log.type = "$ChangedJudge";
+                    log.from = player;
+                    log.to << judge->who;
+                    log.card_str = QString::number(fuck->getId());
+                    sendLog(log);
+                    sendJudgeResult(judge);
+                }
+                setPlayerFlag(player, "-FuckLian");
+            }
+        }
         if(thread->trigger(AskForRetrial, player, data))
             break;
     }
@@ -1567,19 +1601,13 @@ void Room::run(){
         ServerPlayer *lord = players.first();
         setPlayerProperty(lord, "general", "shenlvbu1");
 
-        const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *windpack = Sanguosha->findChild<const Package *>("wind");
-
-        QList<const General *> generals = stdpack->findChildren<const General *>();
-        generals << windpack->findChildren<const General *>();
-
         QStringList names;
-        foreach(const General *general, generals){
-            names << general->objectName();
+        const QList<const General *> generals = Sanguosha->findChildren<const General *>();
+        foreach(const General *tmp, generals){
+            QString pack = tmp->getPackage();
+            if(!Config.BanPackages.contains(pack) && !tmp->isHidden())
+                names << tmp->objectName();
         }
-
-        names.removeOne("wuxingzhuge");
-        names.removeOne("zhibasunquan");
 
         foreach(ServerPlayer *player, players){
             if(player == lord)
@@ -1862,6 +1890,27 @@ void Room::damage(const DamageStruct &damage_data){
     bool broken = thread->trigger(Predamaged, damage_data.to, data);
     if(broken)
         return;
+
+    //ninegirl
+    if(!Config.BanPackages.contains("events")){
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.damage > 1){
+            ServerPlayer *source = findPlayerWhohasEventCard("ninedaygirl");
+            if(source == damage.to){
+                setPlayerFlag(damage.to, "NineGirl");
+                bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+                setPlayerFlag(damage.to, "-NineGirl");
+                if(girl){
+                    LogMessage log;
+                    log.from = damage.to;
+                    log.type = "#NineGirl";
+                    log.arg = QString::number(damage.damage);
+                    sendLog(log);
+                    return;
+                }
+            }
+        }
+    }
 
     // damage done, should not cause damage process broken
     thread->trigger(DamageDone, damage_data.to, data);

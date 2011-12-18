@@ -32,8 +32,6 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
             itor.remove();
     }
 
-    generals.removeOne(Sanguosha->getGeneral("yuji"));
-
     Q_ASSERT(generals.length() == 32);
 
     QStringList general_names;

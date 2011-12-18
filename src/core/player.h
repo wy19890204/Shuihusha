@@ -43,7 +43,6 @@ class Player : public QObject
     Q_PROPERTY(bool kongcheng READ isKongcheng)
     Q_PROPERTY(bool nude READ isNude)
     Q_PROPERTY(bool all_nude READ isAllNude)
-    Q_PROPERTY(bool caocao READ isCaoCao)
 
     Q_ENUMS(Phase)
     Q_ENUMS(Place)
@@ -188,6 +187,7 @@ public:
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
+    QStringList getVisSkist(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
@@ -197,7 +197,6 @@ public:
     void jilei(const QString &type);
     bool isJilei(const Card *card) const;
 
-    bool isCaoCao() const;
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;

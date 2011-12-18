@@ -123,12 +123,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             player->clearFlags();
 
             if(!Config.BanPackages.contains("events")){
-                foreach(const Card *cd, player->getHandcards()){
-                    if(cd->objectName() == "jiefachang"){
-                        room->askForUseCard(player, "jiefachang", "@jiefachang");
-                        break;
-                    }
-                }
+                ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");
+                if(source && player == source)
+                    room->askForUseCard(player, "jiefachang", "@jiefachang");
             }
             return;
         }
@@ -182,7 +179,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             if(player->isLord())
                 setGameProcess(room);
 
-            player->drawCards(4, false);
+            int init = !player->hasSkill("beizhan") ? 4 : 6;
+            player->drawCards(init, false);
 
             if(room->getMode() == "02_1v1")
                 room->setTag("FirstRound", true);
@@ -552,6 +550,14 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             room->sendJudgeResult(judge);
 
+            if(!Config.BanPackages.contains("events") && judge->card->getSuit() == Card::Spade){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
+                if(source){
+                    room->setPlayerFlag(source, "FuckGao");
+                    room->askForUseCard(source, "fuckgaolian", "@fuckg");
+                    room->setPlayerFlag(source, "-FuckGao");
+                }
+            }
             room->getThread()->delay();
 
             break;

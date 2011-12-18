@@ -339,7 +339,7 @@ bool Player::hasLordSkill(const QString &skill_name) const{
         return true;
 
     QString mode = getGameMode();
-    if(mode == "06_3v3" || mode == "02_1v1" || mode == "02p")
+    if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
     if(isLord())
@@ -733,6 +733,27 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     return skills;
 }
 
+QStringList Player::getVisSkist(const QString &exclude) const{
+    QList<const Skill *> skills;
+    if(general)
+        skills << general->getVisibleSkillList();
+    if(general2)
+        skills << general2->getVisibleSkillList();
+    foreach(QString skill_name, acquired_skills){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill->isVisible())
+            skills << skill;
+    }
+
+    QStringList skis;
+    foreach(const Skill *skill, skills){
+        if(skill->parent() && !skill->objectName().startsWith(exclude))
+            skis << skill->objectName();
+    }
+
+    return skis;
+}
+
 QSet<QString> Player::getAcquiredSkills() const{
     return acquired_skills;
 }
@@ -772,18 +793,13 @@ bool Player::isJilei(const Card *card) const{
 
         foreach(int card_id, card->getSubcards()){
             const Card *c = Sanguosha->getCard(card_id);
-            if(jilei_set.contains(c->getTypeId()))
+            if(jilei_set.contains(c->getTypeId())&&!hasEquip(c))
                 return true;
         }
 
         return false;
     }else
-        return jilei_set.contains(type);
-}
-
-bool Player::isCaoCao() const{
-    QString general_name = getGeneralName();
-    return general_name == "caocao" || general_name == "shencaocao" || general_name == "shencc";
+        return jilei_set.contains(type)&&!hasEquip(card);
 }
 
 void Player::copyFrom(Player* p)

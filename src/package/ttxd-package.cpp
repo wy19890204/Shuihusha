@@ -153,14 +153,13 @@ public:
             }
             duck->setMark("baoguo", 0);
         }
-        else if(duck != player && !duck->isNude() && duck->askForSkillInvoke(objectName())){
-            if(room->askForDiscard(duck, objectName(), 1, false, true)){
-                room->playSkillEffect(objectName(), 2);
-                damage.to = duck;
-                duck->setMark("baoguo", 1);
-                room->damage(damage);
-                return true;
-            }
+        else if(duck != player && !duck->isNude() && damage.damage > 0
+            && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
+            room->playSkillEffect(objectName(), 2);
+            damage.to = duck;
+            duck->setMark("baoguo", 1);
+            room->damage(damage);
+            return true;
         }
         return false;
     }
@@ -413,6 +412,7 @@ public:
             if(judge->reason == objectName()){
                 if(!judge->card->inherits("BasicCard")){
                     Room *room = yuehe->getRoom();
+                    room->throwCard(judge->card->getId());
                     ServerPlayer *target = room->askForPlayerChosen(yuehe, room->getAllPlayers(), objectName());
                     target->drawCards(1);
                     return true;
@@ -873,7 +873,7 @@ public:
         }
         room->setPlayerProperty(player, "kingdom", Qimen_data.kingdom);
 
-        player->tag["QimenStore"] = NULL;
+        player->tag.remove("QimenStore");
     }
 
     virtual bool onPhaseChange(ServerPlayer *target) const{

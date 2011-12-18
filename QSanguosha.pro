@@ -45,7 +45,6 @@ SOURCES += src/main.cpp \
 	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
-	src/package/wind.cpp \
 	src/package/plough.cpp \
 	src/package/tocheck.cpp \
 	src/package/events.cpp \
@@ -54,6 +53,7 @@ SOURCES += src/main.cpp \
 	src/package/ttxd-package.cpp \
 	src/package/bwqz-package.cpp \
 	src/package/qlfd-package.cpp \
+	src/package/sp-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -121,7 +121,6 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
-	src/package/wind.h \
 	src/package/plough.h \
 	src/package/tocheck.h \
 	src/package/events.h \
@@ -130,6 +129,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/ttxd-package.h \
 	src/package/bwqz-package.h \
 	src/package/qlfd-package.h \
+	src/package/sp-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \

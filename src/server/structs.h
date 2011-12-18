@@ -148,6 +148,7 @@ enum TriggerEvent{
     Dying,
     AskForPeaches,
     AskForPeachesDone,
+    PreDeath,
     Death,
     GameOverJudge,
 

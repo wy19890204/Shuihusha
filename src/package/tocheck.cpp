@@ -2,6 +2,7 @@
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
+#include "settings.h"
 
 NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
     :Slash(suit, number)
@@ -83,6 +84,16 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         room->sendLog(log);
 
         room->setPlayerFlag(effect.to, "drank");
+
+
+        if(!Config.BanPackages.contains("events")){
+            ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
+            if(source && source == effect.to){
+                room->setPlayerFlag(effect.to, "Tifanshi");
+                room->askForUseCard(effect.to, "tifanshi", "@tifanshi");
+                room->setPlayerFlag(effect.to, "-Tifanshi");
+            }
+        }
     }
 }
 

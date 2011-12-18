@@ -1,13 +1,13 @@
 #include "standard.h"
 #include "skill.h"
-#include "wind.h"
+#include "sp-package.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
 #include "ai.h"
 
 // skill cards
-
+/*
 GuidaoCard::GuidaoCard(){
     target_fixed = true;
     will_throw = false;
@@ -370,78 +370,173 @@ public:
         return false;
     }
 };
+*/
 
-class Kuanggu: public TriggerSkill{
+class Shuntian: public TriggerSkill{
 public:
-    Kuanggu():TriggerSkill("kuanggu"){
+    Shuntian():TriggerSkill("shuntian"){
+        events << GameStart;
         frequency = Compulsory;
-        events << Damage << DamageDone;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *rom = player->getRoom();
+        QString kim = player->isLord() ?
+                      player->getKingdom() == "sp" ? "guan" : player->getKingdom() :
+                      rom->getLord()->getKingdom();
+        rom->setPlayerProperty(player, "kingdom", kim);
+        return false;
+    }
+};
+
+YuzhongCard::YuzhongCard(){
+
+}
+
+bool YuzhongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int num = Self->getMark("YuZy");
+    return targets.length() < num;
+}
+
+bool YuzhongCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    int num = Self->getMark("YuZy");
+    return targets.length() <= num;
+}
+
+void YuzhongCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->drawCards(1);
+}
+
+class YuzhongViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    YuzhongViewAsSkill():ZeroCardViewAsSkill("Yuzhong"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@yuzhong";
+    }
+
+    virtual const Card *viewAs() const{
+        return new YuzhongCard;
+    }
+};
+
+class Yuzhong: public TriggerSkill{
+public:
+    Yuzhong():TriggerSkill("yuzhong"){
+        events << Death;
+        view_as_skill = new YuzhongViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
+    static int getKingdoms(Room *room){
+        QSet<QString> kingdom_set;
+        foreach(ServerPlayer *p, room->getAlivePlayers()){
+            kingdom_set << p->getKingdom();
+        }
+        return kingdom_set.size();
+    }
 
-        if(event == DamageDone && damage.from && damage.from->hasSkill("kuanggu") && damage.from->isAlive()){
-            ServerPlayer *weiyan = damage.from;
-            weiyan->tag["InvokeKuanggu"] = weiyan->distanceTo(damage.to) <= 1;
-        }else if(event == Damage && player->hasSkill("kuanggu") && player->isAlive()){
-            bool invoke = player->tag.value("InvokeKuanggu", false).toBool();
-            if(invoke){
-                Room *room = player->getRoom();
-
-                room->playSkillEffect(objectName());
-
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        int num = getKingdoms(room);
+        DamageStar damage = data.value<DamageStar>();
+        if(damage->from != damage->to && damage->from->hasSkill(objectName())){
+            ServerPlayer *source = damage->from;
+            QString choice = room->askForChoice(source, objectName(), "hp+card+cancel");
+            if(choice != "cancel"){
                 LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = player;
-                log.arg = objectName();
+                log.type = "#InvokeSkill";
+                log.from = source;
+                log.arg = "yuzhong";
                 room->sendLog(log);
-
-                RecoverStruct recover;
-                recover.who = player;
-                recover.recover = damage.damage;
-                room->recover(player, recover);
+            }
+            if(choice == "hp"){
+                RecoverStruct rev;
+                rev.who = source;
+                rev.recover = num;
+                room->recover(room->getLord(), rev);
+            }
+            else if(choice == "card"){
+                room->getLord()->drawCards(num);
             }
         }
-
         return false;
     }
 };
 
-WindPackage::WindPackage()
-    :Package("wind")
+class Yuzhong2: public TriggerSkill{
+public:
+    Yuzhong2():TriggerSkill("#yuzh0ng"){
+        events << Damage;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        room->setPlayerMark(player, "YuZy", Yuzhong::getKingdoms(room));
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.to->isLord())
+            return false;
+        QString choice = room->askForChoice(player, "yuzhong", "all+me+cancel");
+        if(choice == "cancel")
+            return false;
+        if(choice == "all")
+            if(!room->askForUseCard(player, "@@yuzhong", "@yuzhong"))
+                choice = "me";
+        if(choice == "me"){
+            LogMessage log;
+            log.type = "#InvokeSkill";
+            log.from = player;
+            log.arg = "yuzhong";
+            room->sendLog(log);
+            player->drawCards(2);
+        }
+
+        room->setPlayerMark(player, "YuZy", 0);
+        return false;
+    }
+};
+
+SPPackage::SPPackage()
+    :Package("sp")
 {
-    General *xiahouyuan, *caoren, *huangzhong, *weiyan, *zhangjiao;
+    General *jiangsong = new General(this, "jiangsong", "sp");
+    jiangsong->addSkill(new Shuntian);
+    jiangsong->addSkill(new Yuzhong);
+    jiangsong->addSkill(new Yuzhong2);
+    related_skills.insertMulti("yuzhong", "#yuzh0ng");
 
-    xiahouyuan = new General(this, "xiahouyuan", "guan");
-    xiahouyuan->addSkill(new Shensu);
+/*
+    General *sp_diaochan = new General(this, "sp_diaochan", "qun", 3, false, true);
+    sp_diaochan->addSkill("Qianxian");
+    sp_diaochan->addSkill("biyue");
+    sp_diaochan->addSkill(new Xuwei);
 
-    caoren = new General(this, "caoren", "guan", 4, true, true);
-    caoren->addSkill(new Jushou);
+    General *sp_sunshangxiang = new General(this, "sp_sunshangxiang", "shu", 3, false, true);
+    sp_sunshangxiang->addSkill("jieyin");
+    sp_sunshangxiang->addSkill("xiaoji");
 
-    huangzhong = new General(this, "huangzhong", "jiang");
-    huangzhong->addSkill(new Liegong);
+    General *sp_guanyu = new General(this, "sp_guanyu", "wei", 4);
+    sp_guanyu->addSkill("wusheng");
+    sp_guanyu->addSkill(new Danji);
 
-    weiyan = new General(this, "weiyan", "jiang");
-    weiyan->addSkill(new Kuanggu);
+    General *sp_caiwenji = new General(this, "sp_caiwenji", "wei", 3, false, true);
+    sp_caiwenji->addSkill("beige");
+    sp_caiwenji->addSkill("duanchang");
 
-    zhangjiao = new General(this, "zhangjiao$", "kou", 3);
-    zhangjiao->addSkill(new Guidao);
-    zhangjiao->addSkill(new Leiji);
-    zhangjiao->addSkill(new Huangtian);
-
-    addMetaObject<GuidaoCard>();
-    addMetaObject<HuangtianCard>();
-    addMetaObject<LeijiCard>();
-    addMetaObject<ShensuCard>();
-
-    skills << new HuangtianViewAsSkill;
+    General *sp_machao = new General(this, "sp_machao", "qun", 4, true, true);
+    sp_machao->addSkill("mashu");
+    sp_machao->addSkill("tieji");
+*/
+    addMetaObject<YuzhongCard>();
 }
 
-ADD_PACKAGE(Wind)
-
-
+ADD_PACKAGE(SP);

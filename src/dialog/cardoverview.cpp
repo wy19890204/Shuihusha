@@ -10,7 +10,7 @@ CardOverview::CardOverview(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->tableWidget->setColumnWidth(0, 100);
+    ui->tableWidget->setColumnWidth(0, 110);
     ui->tableWidget->setColumnWidth(1, 60);
     ui->tableWidget->setColumnWidth(2, 30);
     ui->tableWidget->setColumnWidth(3, 60);

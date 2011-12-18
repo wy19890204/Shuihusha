@@ -28,24 +28,20 @@ sgs.ai_skill_invoke.ice_sword=function(self, data)
 	if self.player:hasFlag("drank") then return false end
 	local effect = data:toSlashEffect() 
 	local target = effect.to
-	if self:isFriend(target) then return false end
-	local hasPeach
-	local cards = target:getHandcards()
-	for _, card in sgs.qlist(cards) do
-		if card:inherits("Peach") or card:inherits("Analeptic") then hasPeach = true break end
-	end
-	if hasPeach then return true end
-	if (target:getHandcardNum() > 1 or target:getArmor()) and target:getHp() > 1 then
+	if self:isFriend(target) then
+		if self:isWeak(target) then return true
+		elseif target:getLostHp()<1 then return false end
 		return true
-	end
-	return false
-end
-
-sgs.ai_skill_cardchosen.ice_sword = function(self, who)
-	local hcards = who:getCards("h")
-	hcards = sgs.QList2Table(hcards)
-	for _, peach in ipairs(hcards) do
-		if peach:inherits("Peach") or peach:inherits("Analeptic") then return peach end
+	else
+		if self:isWeak(target) then return false end
+		if target:getArmor() and self:evaluateArmor(target:getArmor(), target)>3 then return true end
+		local num = target:getHandcardNum()
+		if self.player:hasSkill("tieji") or (self.player:hasSkill("liegong")
+			and (num >= self.player:getHp() or num <= self.player:getAttackRange())) then return false end
+		if target:hasSkill("tuntian") then return false end
+		if self:hasSkills(sgs.need_kongcheng, target) then return false end
+		if target:getCards("he"):length()<4 and target:getCards("he"):length()>1 then return true end
+		return false
 	end
 end
 

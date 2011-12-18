@@ -1,63 +1,7 @@
-
--- liegong, same with tieji
-sgs.ai_skill_invoke.liegong = sgs.ai_skill_invoke.tieji
-
--- jushou, allways invoke
-sgs.ai_skill_invoke.jushou = true
-
---leiji
-sgs.ai_skill_use["@@leiji"]=function(self,prompt)
-    self:updatePlayers()
-	self:sort(self.enemies,"hp")
-	for _,enemy in ipairs(self.enemies) do
-		if not self:isEquip("SilverLion", enemy) and not enemy:hasSkill("hongyan") then
-			return "@LeijiCard=.->"..enemy:objectName() 
-		end
-	end
-	return "."
-end
-
---shensu
-
-sgs.ai_skill_use["@@shensu1"]=function(self,prompt)
-        self:updatePlayers(true)
-	self:sort(self.enemies,"defense")
-	if self.player:containsTrick("lightning") and self.player:getCards("j"):length()==1
-		and self:hasWizard(self.friends) and not self:hasWizard(self.enemies,true) then return false end
-	
-	local selfSub = self.player:getHp()-self.player:getHandcardNum()
-	local selfDef = getDefense(self.player)
-	local hasJud = self.player:getJudgingArea()
-	
-	for _,enemy in ipairs(self.enemies) do
-		local def=getDefense(enemy)
-		local amr=enemy:getArmor()
-		local eff=(not amr) or self.player:hasWeapon("qinggang_sword") or not 
-				((amr:inherits("Vine") and not self.player:hasWeapon("fan"))
-				or (amr:objectName()=="eight_diagram"))
-				
-                if enemy:hasSkill("kongcheng") and enemy:isKongcheng() then
-                elseif self:slashProhibit(nil, enemy) then
-                elseif def<6 and eff then return "@ShensuCard=.->"..enemy:objectName()
-		
-                elseif selfSub>=2 then return "."
-                elseif selfDef<6 then return "." end
-		
-	end
-	
-	for _,enemy in ipairs(self.enemies) do
-		local def=getDefense(enemy)
-		local amr=enemy:getArmor()
-		local eff=(not amr) or self.player:hasWeapon("qinggang_sword") or not 
-				((amr:inherits("Vine") and not self.player:hasWeapon("fan"))
-				or (amr:objectName()=="eight_diagram"))
-
-                if enemy:hasSkill("kongcheng") and enemy:isKongcheng() then
-                elseif self:slashProhibit(nil, enemy) then
-                elseif eff and def<8 then return "@ShensuCard=.->"..enemy:objectName()
-		else return "." end 
-	end
-	return "."
+-- longluo
+sgs.ai_skill_playerchosen["longluo"] = function(self, targets)
+	self:sort(self.friends, "hp")
+	return self.friends[1]
 end
 
 sgs.ai_get_cardType=function(card)

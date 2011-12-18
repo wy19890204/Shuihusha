@@ -40,6 +40,7 @@ extern "C" {
     Package *NewXZDD();
     Package *NewBWQZ();
     Package *NewQLFD();
+    Package *NewSP();
     Package *NewGod();
 
     Package *NewStandardCard();
@@ -61,11 +62,11 @@ extern "C" {
 }
 
 QString Engine::getVersion() const{
-    return "20111201";
+    return "20111214";
 }
 
 QString Engine::getVersionName() const{
-    return tr("V1.5.5");
+    return tr("V2.0.0");
 }
 
 Engine::Engine()
@@ -77,12 +78,12 @@ Engine::Engine()
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
     addPackage(NewQLFD());
+    addPackage(NewSP());
     addPackage(NewGod());
 
     addPackage(NewStandard());
-    addPackage(NewWind());
-    addPackage(NewFire());
-    addPackage(NewMountain());
+    //addPackage(NewFire());
+    //addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());
