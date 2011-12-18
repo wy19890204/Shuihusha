@@ -3,6 +3,19 @@
 return {
 	["BWQZ"] = "博闻强识",
 
+	["#_guansheng"] = "大刀",
+	["guansheng"] = "关胜",
+	["tongwu"] = "通武",
+	[":tongwu"] = "当你使用的【杀】被【闪】抵消时，你可以获得该【闪】并交给除目标角色外的任一角色。",
+
+	["#_dingdesun"] = "中箭虎",
+	["dingdesun"] = "丁得孙",
+	["coder:dingdesun"] = "凌天翼",
+	["beizhan"] = "备战",
+	[":beizhan"] = "分发起始手牌时，共发你六张牌作为手牌。",
+	["fushang"] = "负伤",
+	[":fushang"] = "锁定技，你每受到一次伤害，若你的体力上限大于3，你须减1点体力上限。",
+
 	["#_houjian"] = "通臂猿",
 	["houjian"] = "侯健",
 	["designer:houjian"] = "宇文天启",
@@ -118,7 +131,7 @@ return {
 	["$jiaomie4"] = "就此一并剿灭了！",
 	["$zhengfa1"] = "前有伏兵，后有追兵，似此如之奈何？",
 	["$zhengfa2"] = "前有伏兵，后有追兵，似此如之奈何？",
-	["~tongguan"] = "各位好汉，切莫动手啊！",
+	["~tongguanf"] = "各位好汉，切莫动手啊！",
 
 	["#_tongguanf"] = "广阳郡王",
 	["tongguanf"] = "童公公",
@@ -142,6 +155,4 @@ return {
 	["~kongliang"] = "吾不识水性啊！",
 	["~baisheng"] = "我招～我全招了！",
 
-	["#_guansheng"] = "大刀",
-	["guansheng"] = "关胜",
 }

@@ -1,10 +1,10 @@
 #include "standard.h"
 #include "skill.h"
-#include "wind.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
 #include "qlfd-package.h"
+#include "tocheck.h"
 
 YushuiCard::YushuiCard(){
     once = true;
@@ -112,6 +112,216 @@ public:
     }
 };
 
+FanwuCard::FanwuCard(){
+}
+
+bool FanwuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->getGeneral()->isMale();
+}
+
+void FanwuCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    effect.from->tag["Fanwu"] = QVariant::fromValue(effect.to);
+}
+
+class FanwuViewAsSkill: public OneCardViewAsSkill{
+public:
+    FanwuViewAsSkill():OneCardViewAsSkill("fanwu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@fanwu";
+    }
+
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        FanwuCard *card = new FanwuCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class Fanwu: public TriggerSkill{
+public:
+    Fanwu():TriggerSkill("fanwu"){
+        events << Predamage;
+        view_as_skill = new FanwuViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!player->isNude() && damage.to != damage.from){
+            Room *room = player->getRoom();
+            if(room->askForUseCard(player, "@@fanwu", "@fanwu")){
+                ServerPlayer *target = player->tag["Fanwu"].value<PlayerStar>();
+                if(target){
+                    damage.from = target;
+                    data = QVariant::fromValue(damage);
+                }
+                player->tag.remove("Fanwu");
+            }
+        }
+        return false;
+    }
+};
+
+class Foyuan: public TriggerSkill{
+public:
+    Foyuan():TriggerSkill("foyuan"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
+            && (effect.card->isNDTrick() || effect.card->inherits("Slash"))){
+            LogMessage log;
+            log.type = "#Foyuan";
+            log.from = effect.from;
+            Room *room = player->getRoom();
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
+    }
+};
+
+class Panxin: public TriggerSkill{
+public:
+    Panxin():TriggerSkill("panxin"){
+        events << PreDeath;
+        frequency = Limited;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+        Room *room = player->getRoom();
+        ServerPlayer *qiaoyun = room->findPlayerBySkillName(objectName());
+        if(!qiaoyun || qiaoyun->isLord() || player->isLord() || qiaoyun == player)
+            return false;
+        if(qiaoyun->getMark("@pfxl") && qiaoyun->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            room->broadcastInvoke("animate", "lightbox:$panxin");
+            QString role = player->getRole();
+            player->setRole(qiaoyun->getRole());
+            room->setPlayerProperty(player, "panxin", true);
+            qiaoyun->loseMark("@pfxl");
+            qiaoyun->setRole(role);
+            qiaoyun->drawCards(1);
+        }
+        return false;
+    }
+};
+
+class Meicha: public OneCardViewAsSkill{
+public:
+    Meicha():OneCardViewAsSkill("meicha"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Analeptic::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return  pattern.contains("analeptic");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Club;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Analeptic *analeptic = new Analeptic(card->getSuit(), card->getNumber());
+        analeptic->setSkillName(objectName());
+        analeptic->addSubcard(card->getId());
+        return analeptic;
+    }
+};
+
+QianxianCard::QianxianCard(){
+    once = true;
+}
+
+bool QianxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(to_select == Self)
+        return false;
+    if(targets.isEmpty())
+        return true;
+    if(targets.length() == 1){
+        int max1 = targets.first()->getMaxHP();
+        return to_select->getMaxHP() != max1;
+    }
+    return false;
+}
+
+bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    if(targets.length() != 2)
+        return false;
+    int max1 = targets.first()->getMaxHP();
+    int max2 = targets.last()->getMaxHP();
+    return max1 != max2;
+}
+
+void QianxianCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect));
+    if(club){
+        effect.from->obtainCard(club);
+        if(!effect.to->faceUp())
+            effect.to->turnOver();
+        room->setPlayerProperty(effect.to, "chained", false);
+    }
+    else{
+        if(effect.to->faceUp())
+            effect.to->turnOver();
+        room->setPlayerProperty(effect.to, "chained", true);
+    }
+}
+
+class Qianxian: public OneCardViewAsSkill{
+public:
+    Qianxian():OneCardViewAsSkill("qianxian"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("QianxianCard");
+    }
+
+    virtual bool viewFilter(const CardItem *blackfeiyanshitrick) const{
+        const Card *card = blackfeiyanshitrick->getCard();
+        return card->isBlack() && card->isNDTrick();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        QianxianCard *card = new QianxianCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -125,9 +335,17 @@ QLFDPackage::QLFDPackage()
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
     panqiaoyun->addSkill(new Panxin);
+    panqiaoyun->addSkill(new MarkAssignSkill("@pfxl", 1));
+    related_skills.insertMulti("panxin", "#@pfxl-1");
     panqiaoyun->addSkill(new Foyuan);
 
+    General *wangpo = new General(this, "wangpo", "min", 3, false);
+    wangpo->addSkill(new Qianxian);
+    wangpo->addSkill(new Meicha);
+
     addMetaObject<YushuiCard>();
+    addMetaObject<FanwuCard>();
+    addMetaObject<QianxianCard>();
 }
 
 ADD_PACKAGE(QLFD);

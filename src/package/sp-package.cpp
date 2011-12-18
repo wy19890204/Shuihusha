@@ -380,10 +380,11 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        if(!player->isLord()){
-            Room *rom = player->getRoom();
-            rom->setPlayerProperty(player, "kingdom", rom->getLord()->getKingdom());
-        }
+        Room *rom = player->getRoom();
+        QString kim = player->isLord() ?
+                      player->getKingdom() == "sp" ? "guan" : player->getKingdom() :
+                      rom->getLord()->getKingdom();
+        rom->setPlayerProperty(player, "kingdom", kim);
         return false;
     }
 };
@@ -515,7 +516,7 @@ SPPackage::SPPackage()
 
 /*
     General *sp_diaochan = new General(this, "sp_diaochan", "qun", 3, false, true);
-    sp_diaochan->addSkill("lijian");
+    sp_diaochan->addSkill("Qianxian");
     sp_diaochan->addSkill("biyue");
     sp_diaochan->addSkill(new Xuwei);
 

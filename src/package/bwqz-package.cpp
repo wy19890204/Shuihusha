@@ -8,6 +8,43 @@
 #include "plough.h"
 #include "tocheck.h"
 
+class Tongwu: public TriggerSkill{
+public:
+    Tongwu():TriggerSkill("tongwu"){
+        events << SlashMissed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(!effect.to->isNude()){
+            Room *room = erge->getRoom();
+            if(erge->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                erge->obtainCard(effect.jink);
+                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
+                target->obtainCard(effect.jink);
+            }
+        }
+        return false;
+    }
+};
+
+class Fushang: public MasochismSkill{
+public:
+    Fushang():MasochismSkill("fushang"){
+        frequency = Compulsory;
+    }
+
+    virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
+        if(hedgehog->getMaxHP() > 3)
+            hedgehog->getRoom()->loseMaxHp(hedgehog);
+    }
+};
+
 class Zaochuan: public OneCardViewAsSkill{
 public:
     Zaochuan():OneCardViewAsSkill("zaochuan"){
@@ -114,12 +151,19 @@ public:
             ServerPlayer *target = asked == "slash" ?
                                    room->askForPlayerChosen(player, playerAs, objectName()) :
                                    room->askForPlayerChosen(player, playerBs, objectName());
-            int card_id = asked == "slash" ?
-                          target->getWeapon()->getId() :
-                          room->askForCardChosen(player, target, "e", objectName());
-            if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card_id)
+            const Card *card = NULL;
+            if(asked == "slash")
+                card = target->getWeapon();
+            else if(asked == "jink"){
+                if(target->getEquips().length() == 1 && !target->getWeapon())
+                    card = target->getEquips().first();
+                else if(target->getWeapon() && target->getEquips().length() == 2)
+                    card = target->getEquips().at(1);
+                else
+                    card = Sanguosha->getCard(room->askForCardChosen(player, target, "e", objectName()));
+            }
+            if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card->getId())
                 return false;
-            const Card *card = Sanguosha->getCard(card_id);
             if(asked == "slash"){
                 Slash *yuanyin_card = new Slash(card->getSuit(), card->getNumber());
                 yuanyin_card->setSkillName(objectName());
@@ -695,7 +739,14 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
-    General *houjian = new General(this, "houjian", "min", 3);
+    General *guansheng = new General(this, "guansheng", "jiang");
+    guansheng->addSkill(new Tongwu);
+
+    General *dingdesun = new General(this, "dingdesun", "jiang", 6);
+    dingdesun->addSkill(new Skill("beizhan"));
+    dingdesun->addSkill(new Fushang);
+
+    General *houjian = new General(this, "houjian", "min", 2);
     houjian->addSkill(new Yuanyin);
 
     General *mengkang = new General(this, "mengkang", "kou");

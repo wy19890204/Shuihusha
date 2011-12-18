@@ -150,6 +150,16 @@ void Room::output(const QString &message){
     emit room_message(message);
 }
 
+void Room::outputEventStack(){
+    QString msg;
+
+    foreach(EventTriplet triplet, *thread->getEventStack()){
+        msg.prepend(triplet.toString());
+    }
+
+    output(msg);
+}
+
 void Room::enterDying(ServerPlayer *player, DamageStruct *reason){
     DyingStruct dying;
     dying.who = player;
@@ -223,6 +233,8 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
         killer->addVictim(victim);
     }
 
+    thread->trigger(PreDeath, victim);
+
     victim->setAlive(false);
     broadcastProperty(victim, "alive");
 
@@ -242,7 +254,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     LogMessage log;
     log.to << victim;
-    log.arg = victim->getRole();
+    log.arg = victim->property("panxin").toBool() ? "unknown" : victim->getRole();
     log.from = killer;
 
     updateStateItem();
@@ -1589,19 +1601,13 @@ void Room::run(){
         ServerPlayer *lord = players.first();
         setPlayerProperty(lord, "general", "shenlvbu1");
 
-        const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *windpack = Sanguosha->findChild<const Package *>("wind");
-
-        QList<const General *> generals = stdpack->findChildren<const General *>();
-        generals << windpack->findChildren<const General *>();
-
         QStringList names;
-        foreach(const General *general, generals){
-            names << general->objectName();
+        const QList<const General *> generals = Sanguosha->findChildren<const General *>();
+        foreach(const General *tmp, generals){
+            QString pack = tmp->getPackage();
+            if(!Config.BanPackages.contains(pack) && !tmp->isHidden())
+                names << tmp->objectName();
         }
-
-        names.removeOne("wuxingzhuge");
-        names.removeOne("zhibasunquan");
 
         foreach(ServerPlayer *player, players){
             if(player == lord)

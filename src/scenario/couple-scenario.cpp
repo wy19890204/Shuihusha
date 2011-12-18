@@ -113,19 +113,17 @@ CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
     lord = "gaoqiu";
-    renegades << "lubu" << "diaochan";
+    renegades << "wangqing" << "tongguan";
     rule = new CoupleScenarioRule(this);
 
-    map["caopi"] = "zhenji";
-    map["guojia"] = "simayi";
-    map["liubei"] = "sunshangxiang";
-    map["zhugeliang"] = "huangyueying";
-    map["menghuo"] = "zhurong";
-    map["zhouyu"] = "xiaoqiao";
-    map["lubu"] = "diaochan";
-    map["zhangfei"] = "xiahoujuan";
-    map["sunjian"] = "wuguotai";
-    map["sunce"] = "daqiao";
+    map["songjiang"] = "lujunyi";
+    map["gongwang"] = "dingdesun";
+    map["husanniang"] = "zhangqing";
+    map["yanqing"] = "panqiaoyun";
+    map["wusong"] = "wangpo";
+    map["liying"] = "chaijin";
+    map["huarong"] = "taozongwang";
+    map["wangdingliu"] = "jiaoting";
 
     full_map = map;
     full_map["dongzhuo"] = "diaochan";
