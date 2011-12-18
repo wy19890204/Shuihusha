@@ -736,6 +736,30 @@ public:
     }
 };
 
+class Dujian: public TriggerSkill{
+public:
+    Dujian():TriggerSkill("dujian"){
+        events << Predamage;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
+            return false;
+        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
+            && player->askForSkillInvoke(objectName(), data)){
+            player->getRoom()->playSkillEffect(objectName());
+            damage.to->turnOver();
+            return true;
+        }
+        return false;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -793,6 +817,9 @@ BWQZPackage::BWQZPackage()
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);
     wangdingliu->addSkill(new Jibu);
+
+    General *shiwengong = new General(this, "shiwengong", "jiang");
+    shiwengong->addSkill(new Dujian);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
