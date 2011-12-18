@@ -1,1 +1,1 @@
-F:\QT\swigwin-1.3.39\swig -c++ -lua %1
+D:\Qt\swigwin-1.3.39\swig -c++ -lua %1

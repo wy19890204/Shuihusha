@@ -8,6 +8,31 @@
 #include "plough.h"
 #include "tocheck.h"
 
+class Tongwu: public TriggerSkill{
+public:
+    Tongwu():TriggerSkill("tongwu"){
+        events << SlashMissed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(!effect.to->isNude()){
+            Room *room = erge->getRoom();
+            if(erge->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                erge->obtainCard(effect.jink);
+                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
+                target->obtainCard(effect.jink);
+            }
+        }
+        return false;
+    }
+};
+
 class Fushang: public MasochismSkill{
 public:
     Fushang():MasochismSkill("fushang"){
@@ -711,9 +736,36 @@ public:
     }
 };
 
+class Dujian: public TriggerSkill{
+public:
+    Dujian():TriggerSkill("dujian"){
+        events << Predamage;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
+            return false;
+        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
+            && player->askForSkillInvoke(objectName(), data)){
+            player->getRoom()->playSkillEffect(objectName());
+            damage.to->turnOver();
+            return true;
+        }
+        return false;
+    }
+};
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
+    General *guansheng = new General(this, "guansheng", "jiang");
+    guansheng->addSkill(new Tongwu);
+
     General *dingdesun = new General(this, "dingdesun", "jiang", 6);
     dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
@@ -765,6 +817,9 @@ BWQZPackage::BWQZPackage()
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);
     wangdingliu->addSkill(new Jibu);
+
+    General *shiwengong = new General(this, "shiwengong", "jiang");
+    shiwengong->addSkill(new Dujian);
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
