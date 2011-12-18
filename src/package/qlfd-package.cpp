@@ -322,6 +322,36 @@ public:
     }
 };
 
+class Zhongzhen: public TriggerSkill{
+public:
+    Zhongzhen():TriggerSkill("zhongzhen"){
+        events << Predamaged;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *linko, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.from->getGeneral()->isMale() &&
+           damage.damage > 0 &&
+           !linko->isKongcheng() && !damage.from->isKongcheng() &&
+           linko->askForSkillInvoke(objectName())){
+            bool success = linko->pindian(damage.from, objectName());
+            if(success){
+                LogMessage log;
+                log.type = "#Zhongzhen";
+                log.from = damage.from;
+                log.to = linko;
+                log.arg = QString::number(damage.damage);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -342,6 +372,9 @@ QLFDPackage::QLFDPackage()
     General *wangpo = new General(this, "wangpo", "min", 3, false);
     wangpo->addSkill(new Qianxian);
     wangpo->addSkill(new Meicha);
+
+    General *linniangzi = new General(this, "linniangzi", "min", 3, false);
+    linniangzi->addSkill(new Zhongzhen);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
