@@ -334,7 +334,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *linko, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.from->getGeneral()->isMale() &&
+        if(damage.from && damage.from->getGeneral()->isMale() &&
            damage.damage > 0 &&
            !linko->isKongcheng() && !damage.from->isKongcheng() &&
            linko->askForSkillInvoke(objectName())){
@@ -343,12 +343,48 @@ public:
                 LogMessage log;
                 log.type = "#Zhongzhen";
                 log.from = damage.from;
-                log.to = linko;
+                log.to << linko;
                 log.arg = QString::number(damage.damage);
+                linko->getRoom()->sendLog(log);
                 return true;
             }
         }
         return false;
+    }
+};
+
+ZiyiCard::ZiyiCard(){
+}
+
+bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->getGeneral()->isMale() && to_select->isWounded();
+}
+
+void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->loseAllMarks("@ziyi");
+    RecoverStruct r;
+    Room *o = effect.from->getRoom();
+    r.who = effect.from;
+    r.recover = 2;
+    o->recover(effect.to, r);
+    o->getThread()->delay(1500);
+    o->killPlayer(effect.from);
+}
+
+class Ziyi: public ZeroCardViewAsSkill{
+public:
+    Ziyi():ZeroCardViewAsSkill("ziyi"){
+        frequency = Limited;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getMark("@ziyi") > 0 && player->isWounded();
+    }
+
+    virtual const Card *viewAs() const{
+        return new ZiyiCard;
     }
 };
 
@@ -374,11 +410,15 @@ QLFDPackage::QLFDPackage()
     wangpo->addSkill(new Meicha);
 
     General *linniangzi = new General(this, "linniangzi", "min", 3, false);
+    linniangzi->addSkill(new Ziyi);
+    linniangzi->addSkill(new MarkAssignSkill("@ziyi", 1));
+    related_skills.insertMulti("ziyi", "#@ziyi-1");
     linniangzi->addSkill(new Zhongzhen);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
     addMetaObject<QianxianCard>();
+    addMetaObject<ZiyiCard>();
 }
 
 ADD_PACKAGE(QLFD);

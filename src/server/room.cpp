@@ -1881,7 +1881,11 @@ void Room::damage(const DamageStruct &damage_data){
     }
 
     if(damage_data.chain && damage_data.from &&
-       (damage_data.from->hasSkill("yixian") || damage_data.from->hasSkill("liba"))){
+       (damage_data.from->hasSkill("yixian") ||
+        damage_data.from->hasSkill("qiangqu") ||
+        damage_data.from->hasSkill("fanwu") ||
+        damage_data.from->hasSkill("manli") ||
+        damage_data.from->hasSkill("dujian"))){
         if(thread->trigger(Predamage, damage_data.from, data))
             return;
     }

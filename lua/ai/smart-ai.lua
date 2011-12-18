@@ -1100,7 +1100,7 @@ function SmartAI:slashProhibit(card,enemy)
 			if self.player:getHandcardNum()+self.player:getHp() < 5 then return true end
 		end	
 		
-		if enemy:hasSkill("foyuan") and self.player:getGeneral():isMale() and #self.player:getEquips() == 0 then
+		if enemy:hasSkill("foyuan") and self.player:getGeneral():isMale() and self.player:getEquips():isEmpty() then
 			return true
 		end
 		
@@ -1924,8 +1924,7 @@ function SmartAI:useEquipCard(card, use)
 			end
 		end
 		if card:inherits("GaleShell") then self:useGaleShell(card, use) return end
-		if self:evaluateArmor(card) > 0 then use.card = card end
-		return
+		if self:evaluateArmor(card) > self:evaluateArmor() then use.card = card end
 	elseif card:inherits("OffensiveHorse") and self.player:hasSkill("rende") then
 		for _,friend in ipairs(self.friends_noself) do
 			if not friend:getOffensiveHorse() then return end
@@ -2559,6 +2558,32 @@ function SmartAI:askForChoice(skill_name, choices)
 	end
 end
 
+function SmartAI:getUnuseCard()
+	if self:isEquip("SilverLion") and self.player:isWounded() then
+		return card
+	elseif self.player:getHandcardNum() > self.player:getHp() or
+		(not self.player:isKongcheng() and self.player:getHp() > 1) then
+		local cards = self.player:getHandcards()
+		cards=sgs.QList2Table(cards)
+		for _, acard in ipairs(cards) do
+			if (acard:inherits("BasicCard") or acard:inherits("EquipCard") or acard:inherits("AmazingGrace"))
+				and not acard:inherits("Peach") and not acard:inherits("Analeptic") then 
+				return acard
+			elseif acard:inherits("Disaster") or acard:inherits("EventsCard") then
+				return acard
+			end
+		end
+	elseif not self.player:getEquips():isEmpty() then
+		local player=self.player
+		if player:getWeapon() then return player:getWeapon()
+		elseif player:getOffensiveHorse() then return player:getOffensiveHorse()
+		elseif player:getDefensiveHorse() then return player:getDefensiveHorse()
+		elseif player:getArmor() and player:getHandcardNum()<=1 then return player:getArmor()
+		end
+	else
+		return nil
+	end
+end
 
 function SmartAI:getCardRandomly(who, flags)
 	local cards = who:getCards(flags)
@@ -2755,8 +2780,11 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif parsedPrompt[1] == "@baoguo" then
 		local damage = data:toDamage()
 		if self:isFriend(damage.to) then
-			local card = self:getCardRandomly(self.player, "he")
-			return card:getEffectiveId()
+			if self.player:getHp() > 1 or
+				(self.player:getHp() < 2 and (self:getCardId("Peach") or self:getCardId("Analeptic"))) then
+				local card = self:getUnuseCard()
+				if card then return card:getEffectiveId() end
+			end
 		end	
 		return "."
 	elseif parsedPrompt[1] == "@jijiang-slash" then
