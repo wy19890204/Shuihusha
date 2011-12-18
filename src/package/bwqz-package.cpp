@@ -8,6 +8,31 @@
 #include "plough.h"
 #include "tocheck.h"
 
+class Tongwu: public TriggerSkill{
+public:
+    Tongwu():TriggerSkill("tongwu"){
+        events << SlashMissed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(!effect.to->isNude()){
+            Room *room = erge->getRoom();
+            if(erge->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                erge->obtainCard(effect.jink);
+                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
+                target->obtainCard(effect.jink);
+            }
+        }
+        return false;
+    }
+};
+
 class Zaochuan: public OneCardViewAsSkill{
 public:
     Zaochuan():OneCardViewAsSkill("zaochuan"){
@@ -800,6 +825,9 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
+    General *guansheng = new General(this, "guansheng", "jiang");
+    guansheng->addSkill(new Tongwu);
+
     General *houjian = new General(this, "houjian", "min", 3);
     houjian->addSkill(new Yuanyin);
 

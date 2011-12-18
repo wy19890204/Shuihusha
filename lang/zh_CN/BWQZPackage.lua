@@ -3,6 +3,11 @@
 return {
 	["BWQZ"] = "博闻强识",
 
+	["#_guansheng"] = "大刀",
+	["guansheng"] = "关胜",
+	["tongwu"] = "通武",
+	[":tongwu"] = "当你使用的【杀】被【闪】抵消时，你可以获得该【闪】并交给除目标角色外的任一角色。",
+
 	["#_houjian"] = "通臂猿",
 	["houjian"] = "侯健",
 	["designer:houjian"] = "宇文天启",
@@ -154,6 +159,4 @@ return {
 	["~kongliang"] = "吾不识水性啊！",
 	["~baisheng"] = "我招～我全招了！",
 
-	["#_guansheng"] = "大刀",
-	["guansheng"] = "关胜",
 }
