@@ -126,12 +126,19 @@ public:
             ServerPlayer *target = asked == "slash" ?
                                    room->askForPlayerChosen(player, playerAs, objectName()) :
                                    room->askForPlayerChosen(player, playerBs, objectName());
-            int card_id = asked == "slash" ?
-                          target->getWeapon()->getId() :
-                          room->askForCardChosen(player, target, "e", objectName());
-            if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card_id)
+            const Card *card = NULL;
+            if(asked == "slash")
+                card = target->getWeapon();
+            else if(asked == "jink"){
+                if(target->getEquips().length() == 1 && !target->getWeapon())
+                    card = target->getEquips().first();
+                else if(target->getWeapon() && target->getEquips().length() == 2)
+                    card = target->getEquips().at(1);
+                else
+                    card = Sanguosha->getCard(room->askForCardChosen(player, target, "e", objectName()));
+            }
+            if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card->getId())
                 return false;
-            const Card *card = Sanguosha->getCard(card_id);
             if(asked == "slash"){
                 Slash *yuanyin_card = new Slash(card->getSuit(), card->getNumber());
                 yuanyin_card->setSkillName(objectName());
@@ -711,7 +718,7 @@ BWQZPackage::BWQZPackage()
     dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
 
-    General *houjian = new General(this, "houjian", "min", 3);
+    General *houjian = new General(this, "houjian", "min", 2);
     houjian->addSkill(new Yuanyin);
 
     General *mengkang = new General(this, "mengkang", "kou");

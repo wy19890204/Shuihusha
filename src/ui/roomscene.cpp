@@ -3061,6 +3061,7 @@ void RoomScene::doMovingAnimation(const QString &name, const QStringList &args){
 }
 
 void RoomScene::doAppearingAnimation(const QString &name, const QStringList &args){
+
     Pixmap *item = new Pixmap(QString("image/system/animation/%1.png").arg(name));
     addItem(item);
 
