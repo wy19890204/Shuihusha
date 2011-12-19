@@ -7,6 +7,31 @@
 #include "engine.h"
 #include "tocheck.h"
 
+class Tongwu: public TriggerSkill{
+public:
+    Tongwu():TriggerSkill("tongwu"){
+        events << SlashMissed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(!effect.to->isNude()){
+            Room *room = erge->getRoom();
+            if(erge->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                erge->obtainCard(effect.jink);
+                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
+                target->obtainCard(effect.jink);
+            }
+        }
+        return false;
+    }
+};
+
 SixiangCard::SixiangCard(){
 }
 
@@ -328,6 +353,9 @@ public:
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
+    General *guansheng = new General(this, "guansheng", "jiang");
+    guansheng->addSkill(new Tongwu);
+
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 
@@ -339,12 +367,6 @@ ZCYNPackage::ZCYNPackage()
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 /*
-    pangtong = new General(this, "pangtong", "jiang", 3);
-    pangtong->addSkill(new Lianhuan);
-    pangtong->addSkill(new Niepan);
-
-    related_skills.insertMulti("niepan", "#@nirvana");
-
     yuanshao = new General(this, "yuanshao$", "kou");
     yuanshao->addSkill(new Luanji);
 

@@ -8,31 +8,6 @@
 #include "plough.h"
 #include "tocheck.h"
 
-class Tongwu: public TriggerSkill{
-public:
-    Tongwu():TriggerSkill("tongwu"){
-        events << SlashMissed;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude()){
-            Room *room = erge->getRoom();
-            if(erge->askForSkillInvoke(objectName(), data)){
-                room->playSkillEffect(objectName());
-                erge->obtainCard(effect.jink);
-                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
-                target->obtainCard(effect.jink);
-            }
-        }
-        return false;
-    }
-};
-
 class Fushang: public MasochismSkill{
 public:
     Fushang():MasochismSkill("fushang"){
@@ -765,9 +740,6 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
-    General *guansheng = new General(this, "guansheng", "jiang");
-    guansheng->addSkill(new Tongwu);
-
     General *dingdesun = new General(this, "dingdesun", "jiang", 6);
     dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
