@@ -1,7 +1,9 @@
 
 return {
 	["zombie_mode"] = "僵尸模式",
+
 	["zombie"] = "僵尸",
+	["die"] = "屍",
 	["xunmeng"]="迅猛",
 	["#Xunmeng"] = "%from 的【迅猛】效果被触发，伤害从 %arg 点上升至 %arg2 点",
 	[":xunmeng"] ="锁定技，你的杀造成的伤害+1。你的杀造成伤害时若你体力大于1，你流失1点体力。",
@@ -16,6 +18,9 @@ return {
 	["@round"]="退治",
 	["#_zombie"] = "植物大战",
 	["#survive_victory"]="%from 聚集起了足够的退治之力！僵尸被退治！",
+	["designer:zombie"] = "HyperCross",
+	["cv:zombie"] = "网络素材",
+	["coder:zombie"] = "HyperCross",
 
 	["paoxiao"] = "咆哮",
 	[":paoxiao"] = "出牌阶段，你可以使用任意数量的【杀】",

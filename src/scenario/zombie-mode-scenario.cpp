@@ -375,12 +375,12 @@ ZombieScenario::ZombieScenario()
 
     skills<< new Peaching;
 
-    General *zombie = new General(this,"zombie","zombie",3, true, true);
+    General *zombie = new General(this, "zombie", "die", 3, true, true);
     zombie->addSkill(new Xunmeng);
     zombie->addSkill(new Ganran);
     zombie->addSkill(new Zaibian);
 
-    zombie->addSkill("paoxiao");
+    zombie->addSkill(new Skill("paoxiao"));
     zombie->addSkill(new Skill("wansha", Skill::Compulsory));
 
     addMetaObject<PeachingCard>();

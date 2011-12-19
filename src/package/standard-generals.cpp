@@ -133,18 +133,12 @@ void StandardPackage::addGenerals(){
     guojia = new General(this, "guojia", "guan", 3);
     guojia->addSkill(new Yiji);
 
-    General *zhangfei, *huangyueying;
-
-    zhangfei = new General(this, "zhangfei", "jiang");
-    zhangfei->addSkill(new Skill("paoxiao"));
+    General *huangyueying;
 
     huangyueying = new General(this, "huangyueying", "jiang", 3, false);
     huangyueying->addSkill(new Jizhi);
 
-    General *ganning, *sunshangxiang;
-
-    ganning = new General(this, "ganning", "min");
-    ganning->addSkill(new Qixi);
+    General *sunshangxiang;
 
     sunshangxiang = new General(this, "sunshangxiang", "min", 3, false);
     sunshangxiang->addSkill(new Xiaoji);

@@ -56,6 +56,12 @@ return {
 	["sujiangf"] = "稻草女",
 	["#_sujiang"] = "金童",
 	["#_sujiangf"] = "玉女",
+	["designer:sujiang"] = "游卡桌游",
+	["cv:sujiang"] = "",
+	["coder:sujiang"] = "",
+	["designer:sujiangf"] = "游卡桌游",
+	["cv:sujiangf"] = "",
+	["coder:sujiangf"] = "",
 
 	["#Murder"] = "%to【%arg】 挂了，凶手是 %from",
 	["#Suicide"] = "%to【%arg】 自杀身亡",
