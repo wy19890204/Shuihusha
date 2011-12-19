@@ -99,7 +99,7 @@ public:
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data)){
             xing->loseMark("@vi");
-
+            room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
             LogMessage log;
             log.type = "#Zhensha";
             log.from = xing;
@@ -223,13 +223,14 @@ public:
             return false;
         if(qiaoyun->getMark("@pfxl") && qiaoyun->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
-            room->broadcastInvoke("animate", "lightbox:$panxin");
+            room->broadcastInvoke("animate", "lightbox:$panxin:2000");
             QString role = player->getRole();
             player->setRole(qiaoyun->getRole());
             room->setPlayerProperty(player, "panxin", true);
             qiaoyun->loseMark("@pfxl");
             qiaoyun->setRole(role);
             qiaoyun->drawCards(1);
+            room->getThread()->delay(1500);
         }
         return false;
     }
@@ -322,6 +323,112 @@ public:
     }
 };
 
+class Zhongzhen: public TriggerSkill{
+public:
+    Zhongzhen():TriggerSkill("zhongzhen"){
+        events << Predamaged;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *linko, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.from && damage.from->getGeneral()->isMale() &&
+           damage.damage > 0 &&
+           !linko->isKongcheng() && !damage.from->isKongcheng() &&
+           linko->askForSkillInvoke(objectName())){
+            linko->getRoom()->playSkillEffect(objectName());
+            bool success = linko->pindian(damage.from, objectName());
+            if(success){
+                LogMessage log;
+                log.type = "#Zhongzhen";
+                log.from = damage.from;
+                log.to << linko;
+                log.arg = QString::number(damage.damage);
+                linko->getRoom()->sendLog(log);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+ZiyiCard::ZiyiCard(){
+}
+
+bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->getGeneral()->isMale() && to_select->isWounded();
+}
+
+void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->loseAllMarks("@ziyi");
+    RecoverStruct r;
+    Room *o = effect.from->getRoom();
+    o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
+    r.who = effect.from;
+    r.recover = 2;
+    o->recover(effect.to, r);
+    o->getThread()->delay(3000);
+    o->killPlayer(effect.from);
+}
+
+class Ziyi: public ZeroCardViewAsSkill{
+public:
+    Ziyi():ZeroCardViewAsSkill("ziyi"){
+        frequency = Limited;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getMark("@ziyi") > 0 && player->isWounded();
+    }
+
+    virtual const Card *viewAs() const{
+        return new ZiyiCard;
+    }
+};
+
+ShouwangCard::ShouwangCard(){
+    once = true;
+}
+
+bool ShouwangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->getGeneral()->isMale();
+}
+
+void ShouwangCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi") == "tian")
+        effect.to->drawCards(1);
+    else
+        effect.from->drawCards(1);
+}
+
+class Shouwang: public OneCardViewAsSkill{
+public:
+    Shouwang():OneCardViewAsSkill("shouwang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("ShouwangCard");
+    }
+
+    virtual bool viewFilter(const CardItem *watch) const{
+        return watch->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ShouwangCard *card = new ShouwangCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -343,9 +450,18 @@ QLFDPackage::QLFDPackage()
     wangpo->addSkill(new Qianxian);
     wangpo->addSkill(new Meicha);
 
+    General *linniangzi = new General(this, "linniangzi", "min", 3, false);
+    linniangzi->addSkill(new Shouwang);
+    linniangzi->addSkill(new Ziyi);
+    linniangzi->addSkill(new MarkAssignSkill("@ziyi", 1));
+    related_skills.insertMulti("ziyi", "#@ziyi-1");
+    linniangzi->addSkill(new Zhongzhen);
+
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
     addMetaObject<QianxianCard>();
+    addMetaObject<ZiyiCard>();
+    addMetaObject<ShouwangCard>();
 }
 
 ADD_PACKAGE(QLFD);

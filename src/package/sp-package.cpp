@@ -509,10 +509,10 @@ SPPackage::SPPackage()
     :Package("sp")
 {
     General *jiangsong = new General(this, "jiangsong", "sp");
-    jiangsong->addSkill(new Shuntian);
     jiangsong->addSkill(new Yuzhong);
     jiangsong->addSkill(new Yuzhong2);
     related_skills.insertMulti("yuzhong", "#yuzh0ng");
+    jiangsong->addSkill(new Shuntian);
 
 /*
     General *sp_diaochan = new General(this, "sp_diaochan", "qun", 3, false, true);

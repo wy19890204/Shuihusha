@@ -140,7 +140,7 @@ return {
 
 	["#_wangdingliu"] = "活闪婆",
 	["wangdingliu"] = "王定六",
-	["designer:wangdingliu"] = "烨子、宇文天启",
+	["designer:wangdingliu"] = "烨子&宇文天启",
 	["kongying"] = "空影",
 	[":kongying"] = "当你使用或打出一张【闪】时（在结算前），可令任一角色打出一张【闪】，若其无法做到，受到你造成的一点伤害",
 	["@kongying"] = "%src 要求你打出一张【闪】，否则你会受到一点伤害",
