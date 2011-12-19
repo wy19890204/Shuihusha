@@ -160,7 +160,7 @@ public:
 class Shemi: public TriggerSkill{
 public:
     Shemi():TriggerSkill("shemi"){
-        events << PhaseChange;
+        events << PhaseChange << TurnOvered;
     }
 
     virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
