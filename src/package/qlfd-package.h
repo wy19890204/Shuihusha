@@ -51,6 +51,15 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class ZishiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ZishiCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class QLFDPackage: public Package{
     Q_OBJECT
 

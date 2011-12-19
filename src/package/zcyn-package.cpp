@@ -162,7 +162,7 @@ public:
     }
 };
 
-class Tianyan:public PhaseChangeSkill{
+class Tianyan: public PhaseChangeSkill{
 public:
     Tianyan():PhaseChangeSkill("tianyan"){
     }

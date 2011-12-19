@@ -603,6 +603,8 @@ public:
         if(player->getGeneralName() != "tongguanf")
             player->tag["AoxiangStore"] = player->getGeneralName();
         if(player->isWounded())
+            //p:getGeneral():setGender(sgs.General_Female)
+            //player->getGeneral()->setGender(General::Female);
             room->setPlayerProperty(player, "general", "tongguanf");
         else{
             QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();

@@ -429,6 +429,81 @@ public:
     }
 };
 
+ZishiCard::ZishiCard(){
+    target_fixed = true;
+}
+
+void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    int num = this->getSubcards().length();
+    room->throwCard(this);
+    source->tag["ZiShi"] = num;
+}
+
+class ZishiViewAsSkill: public ViewAsSkill{
+public:
+    ZishiViewAsSkill():ViewAsSkill("zishi"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return selected.length() < 3 && to_select->getCard()->isBlack();
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zishi";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() > 2 && !cards.isEmpty())
+            return NULL;
+        ZishiCard *card = new ZishiCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Zishi:public DrawCardsSkill{
+public:
+    Zishi():DrawCardsSkill("zishi"){
+        view_as_skill = new ZishiViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getGeneral()->isMale();
+    }
+
+    virtual int getDrawNum(ServerPlayer *player, int n) const{
+        Room *room = player->getRoom();
+        ServerPlayer *duan3niang = room->findPlayerBySkillName(objectName());
+        if(duan3niang && room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
+            int delta = duan3niang->tag["ZiShi"].toInt();
+            if(delta > 0){
+                QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
+                LogMessage log;
+                log.type = "#Zishi";
+                log.from = duan3niang;
+                log.to << player;
+                log.arg = QString::number(delta);
+                log.arg2 = choice == "duo" ? "duo" : "shao";
+                if(choice == "duo")
+                    n = n + delta;
+                else
+                    n = n - delta;
+                room->sendLog(log);
+            }
+            duan3niang->tag.remove("ZiShi");
+        }
+        return n;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -457,11 +532,15 @@ QLFDPackage::QLFDPackage()
     related_skills.insertMulti("ziyi", "#@ziyi-1");
     linniangzi->addSkill(new Zhongzhen);
 
+    General *duansanniang = new General(this, "duansanniang", "min", 4, false);
+    duansanniang->addSkill(new Zishi);
+
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
     addMetaObject<QianxianCard>();
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();
+    addMetaObject<ZishiCard>();
 }
 
 ADD_PACKAGE(QLFD);

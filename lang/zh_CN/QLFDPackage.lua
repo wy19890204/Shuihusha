@@ -68,8 +68,21 @@ return {
 	["$zhongzhen1"] = "怎可这般无礼？",
 	["$zhongzhen2"] = "你若再上前一步，我便跳下去。",
 
+	["#_duansanniang"] = "大虫窝",
+	["duansanniang"] = "段三娘",
+	["cv:duansanniang"] = "南宫泓「御」",
+	["zishi"] = "自恃",
+	[":zishi"] = "任意男性角色的摸牌阶段开始时，你可以弃置至多两张黑色牌，令该角色在其摸牌阶段多摸或少摸等量的牌。",
+	["@zishi"] = "你可以弃置至多两张黑色牌来发动【自恃】，令 %src 多摸或少摸等量的牌。",
+	["duo"] = "多摸",
+	["shao"] = "少摸",
+	["#Zishi"] = "%from 令 %to %arg2了 %arg 张牌",
+	["$zishi1"] = "老娘替你做主了！",
+	["$zishi2"] = "原银在此，将了去！",
+
 -- last words	
 	["~panqiaoyun"] = "一了百了～",
 	["~wangpo"] = "死到眼前，犹做发财梦～",
 	["~linniangzi"] = "官人，就此～别过！",
+	["~duansanniang"] = "大王！我，此生无悔！",
 }
