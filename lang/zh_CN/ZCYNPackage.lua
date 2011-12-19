@@ -1,7 +1,8 @@
--- translation for FirePackage
+-- ZhechongYannan Shuihusha part 5.
 
 return {
-	["fire"] = "火包", 
+	["ZCYN"] = "折冲厌难", 
+
 	["xunyu"] = "荀彧", 
 	["dianwei"] = "典韦", 
 	["wolong"] = "卧龙", 

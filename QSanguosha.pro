@@ -37,7 +37,6 @@ SOURCES += src/main.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
         src/dialog/halldialog.cpp \
-	src/package/firepackage.cpp \
 	src/package/god.cpp \
 	src/package/joypackage.cpp \
 	src/package/mountainpackage.cpp \
@@ -53,6 +52,7 @@ SOURCES += src/main.cpp \
 	src/package/ttxd-package.cpp \
 	src/package/bwqz-package.cpp \
 	src/package/qlfd-package.cpp \
+	src/package/zcyn-package.cpp \
 	src/package/sp-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
@@ -113,7 +113,6 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/firepackage.h \
 	src/package/god.h \
 	src/package/joypackage.h \
 	src/package/mountainpackage.h \
@@ -129,6 +128,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/ttxd-package.h \
 	src/package/bwqz-package.h \
 	src/package/qlfd-package.h \
+	src/package/zcyn-package.h \
 	src/package/sp-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \

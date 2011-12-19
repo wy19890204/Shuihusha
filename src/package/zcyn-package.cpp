@@ -1,4 +1,4 @@
-#include "firepackage.h"
+#include "zcyn-package.h"
 #include "general.h"
 #include "skill.h"
 #include "standard.h"
@@ -444,8 +444,8 @@ public:
     }
 };
 
-FirePackage::FirePackage()
-    :Package("fire")
+ZCYNPackage::ZCYNPackage()
+    :Package("ZCYN")
 {
     General *xunyu, *dianwei, *wolong, *pangtong, *yuanshao, *shuangxiong, *pangde;
 
@@ -480,4 +480,4 @@ FirePackage::FirePackage()
     addMetaObject<QiangxiCard>();
 }
 
-ADD_PACKAGE(Fire);
+ADD_PACKAGE(ZCYN);

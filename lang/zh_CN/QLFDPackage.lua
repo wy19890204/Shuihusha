@@ -1,4 +1,4 @@
--- translation for QLFDPackage
+-- QiluoFendai Shuihusha part plus.
 
 return {
 	["QLFD"] = "绮罗粉黛",

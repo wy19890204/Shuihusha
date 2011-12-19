@@ -1,14 +1,14 @@
-#ifndef FIREPACKAGE_H
-#define FIREPACKAGE_H
+#ifndef ZCYNPACKAGE_H
+#define ZCYNPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class FirePackage : public Package{
+class ZCYNPackage : public Package{
     Q_OBJECT
 
 public:
-    FirePackage();
+    ZCYNPackage();
 };
 
 class QuhuCard: public SkillCard{
@@ -41,4 +41,4 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-#endif // FIREPACKAGE_H
+#endif // ZCYNPACKAGE_H
