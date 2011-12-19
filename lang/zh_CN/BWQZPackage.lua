@@ -1,4 +1,4 @@
--- TitianXingDao Shuihusha part 4.
+-- TitianXingdao Shuihusha part 4.
 
 return {
 	["BWQZ"] = "博闻强识",

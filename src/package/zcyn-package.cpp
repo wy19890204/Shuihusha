@@ -1,4 +1,4 @@
-#include "firepackage.h"
+#include "zcyn-package.h"
 #include "general.h"
 #include "skill.h"
 #include "standard.h"
@@ -7,67 +7,28 @@
 #include "engine.h"
 #include "tocheck.h"
 
-QuhuCard::QuhuCard(){
-    once = true;
-    mute = true;
-    will_throw = false;
+SixiangCard::SixiangCard(){
 }
 
-bool QuhuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-
-    if(to_select->getHp() <= Self->getHp())
-        return false;
-
-    if(to_select->isKongcheng())
-        return false;
-
-    return true;
+bool SixiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int x = Self->getMark("Sixh");
+    return targets.length() < x;
 }
 
-void QuhuCard::use(Room *room, ServerPlayer *xunyu, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *tiger = targets.first();
+bool SixiangCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    int x = Self->getMark("Sixh");
+    return targets.length() <= x && !targets.isEmpty();
+}
 
-    room->playSkillEffect("quhu", 1);
-
-    bool success = xunyu->pindian(tiger, "quhu", this);
-    if(success){
-        room->playSkillEffect("quhu", 2);
-
-        QList<ServerPlayer *> players = room->getOtherPlayers(tiger), wolves;
-        foreach(ServerPlayer *player, players){
-            if(tiger->inMyAttackRange(player))
-                wolves << player;
-        }
-
-        if(wolves.isEmpty()){
-            LogMessage log;
-            log.type = "#QuhuNoWolf";
-            log.from = xunyu;
-            log.to << tiger;
-            room->sendLog(log);
-
-            return;
-        }
-
-        room->playSkillEffect("#tunlang");
-        ServerPlayer *wolf = room->askForPlayerChosen(xunyu, wolves, "quhu");
-
-        DamageStruct damage;
-        damage.from = tiger;
-        damage.to = wolf;
-
-        room->damage(damage);
-
-    }else{
-        DamageStruct damage;
-        damage.card = NULL;
-        damage.from = tiger;
-        damage.to = xunyu;
-
-        room->damage(damage);
-    }
+void SixiangCard::onEffect(const CardEffectStruct &effect) const{
+    int handcardnum = effect.to->getHandcardNum();
+    int x = effect.from->getMark("Sixh");
+    int delta = handcardnum - x;
+    Room *room = effect.from->getRoom();
+    if(delta > 0)
+        room->askForDiscard(effect.to, "sixiang", delta);
+    else
+        effect.to->drawCards(qAbs(delta));
 }
 
 JiemingCard::JiemingCard(){
@@ -126,24 +87,81 @@ public:
     }
 };
 
-class Quhu: public OneCardViewAsSkill{
+class SixiangViewAsSkill: public OneCardViewAsSkill{
 public:
-    Quhu():OneCardViewAsSkill("quhu"){
+    SixiangViewAsSkill():OneCardViewAsSkill("sixiang"){
 
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("QuhuCard") && !player->isKongcheng();
+        return false;
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
         return !to_select->isEquipped();
     }
 
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@sixiang";
+    }
+
     virtual const Card *viewAs(CardItem *card_item) const{
-        QuhuCard *card = new QuhuCard;
+        SixiangCard *card = new SixiangCard;
         card->addSubcard(card_item->getFilteredCard());
         return card;
+    }
+};
+
+class Sixiang:public PhaseChangeSkill{
+public:
+    Sixiang():PhaseChangeSkill("sixiang"){
+        view_as_skill = new SixiangViewAsSkill;
+    }
+
+    int getKingdoms(ServerPlayer *pp) const{
+        QSet<QString> kingdom_set;
+        Room *room = pp->getRoom();
+        foreach(ServerPlayer *p, room->getAlivePlayers()){
+            kingdom_set << p->getKingdom();
+        }
+
+        return kingdom_set.size();
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *jingmuan) const{
+        Room *room = jingmuan->getRoom();
+        if(jingmuan->getPhase() == Player::Start && !jingmuan->isKongcheng()){
+            int x = getKingdoms(jingmuan);
+            room->setPlayerMark(jingmuan, "Sixh", x);
+            if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang"))
+                jingmuan->setFlags("elephant");
+        }
+        else if(jingmuan->getPhase() == Player::Discard && jingmuan->hasFlag("elephant")){
+            int x = getKingdoms(jingmuan);
+            int total = jingmuan->getEquips().length() + jingmuan->getHandcardNum();
+            Room *room = jingmuan->getRoom();
+
+            if(total <= x){
+                jingmuan->throwAllHandCards();
+                jingmuan->throwAllEquips();
+
+                LogMessage log;
+                log.type = "#SixiangWorst";
+                log.from = jingmuan;
+                log.arg = QString::number(total);
+                room->sendLog(log);
+
+            }else{
+                room->askForDiscard(jingmuan, objectName(), x, false, true);
+
+                LogMessage log;
+                log.type = "#SixiangBad";
+                log.from = jingmuan;
+                log.arg = QString::number(x);
+                room->sendLog(log);
+            }
+        }
+        return false;
     }
 };
 
@@ -444,15 +462,12 @@ public:
     }
 };
 
-FirePackage::FirePackage()
-    :Package("fire")
+ZCYNPackage::ZCYNPackage()
+    :Package("ZCYN")
 {
-    General *xunyu, *dianwei, *wolong, *pangtong, *yuanshao, *shuangxiong, *pangde;
-
-    xunyu = new General(this, "xunyu", "guan", 3);
-    xunyu->addSkill(new Quhu);
-    xunyu->addSkill(new Jieming);
-
+    General *haosiwen = new General(this, "haosiwen", "guan");
+    haosiwen->addSkill(new Sixiang);
+/*
     dianwei = new General(this, "dianwei", "guan");
     dianwei->addSkill(new Qiangxi);
 
@@ -474,10 +489,8 @@ FirePackage::FirePackage()
 
     pangde = new General(this, "pangde", "kou");
     pangde->addSkill(new Mengjin);
-
-    addMetaObject<QuhuCard>();
-    addMetaObject<JiemingCard>();
-    addMetaObject<QiangxiCard>();
+*/
+    addMetaObject<SixiangCard>();
 }
 
-ADD_PACKAGE(Fire);
+ADD_PACKAGE(ZCYN);

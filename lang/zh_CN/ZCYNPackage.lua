@@ -1,23 +1,16 @@
--- translation for FirePackage
+-- ZhechongYannan Shuihusha part 5.
 
 return {
-	["fire"] = "火包", 
-	["xunyu"] = "荀彧", 
-	["dianwei"] = "典韦", 
-	["wolong"] = "卧龙", 
-	["pangtong"] = "庞统", 
-	["taishici"] = "太史慈", 
-	["yuanshao"] = "袁绍", 
-	["shuangxiong"] = "双雄", 
-	["pangde"] = "庞德", 
-	["quhu"] = "驱虎", 
-	["jieming"] = "节命", 
-	["qiangxi"] = "强袭", 
-	["lianhuan"] = "连环", 
-	["niepan"] = "涅槃", 
-	["bazhen"] = "八阵", 
-	["huoji"] = "火计", 
-	["kanpo"] = "看破", 
+	["ZCYN"] = "折冲厌难", 
+
+	["#_haosiwen"] = "井木犴",
+	["haosiwen"] = "郝思文",
+	["sixiang"] = "四象",
+	[":sixiang"] = "回合开始阶段，你可以弃置一张手牌，令至多X名角色（至少一名）依次将手牌调整至X张，X为场上现存势力数。若如此做，弃牌阶段，你至少须弃置等同于场上现存势力数的牌（不足则全弃）。每回合限一次。",
+	["#SixiangBad"] = "%from 受到技能【四象】影响，必须至少弃掉 %arg 张牌",
+	["#SixiangWorst"] = "%from 受到技能【四象】影响，弃掉了所有的装备和手牌（共 %arg 张）",
+	["@sixiang"] = "你可以弃一张手牌发动技能【四象】",
+
 	["tianyi"] = "天义", 
 	["mengjin"] = "猛进", 
 	["luanji"] = "乱击", 
