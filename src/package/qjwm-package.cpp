@@ -886,20 +886,18 @@ public:
         if(card){
             room->throwCard(judge->card);
 
-            room->drawCards(player, 3);
-            QList<int> card_ids = player->handCards().mid(player->getHandcardNum() - 3);
+            QList<int> card_ids = room->getNCards(3);
             room->fillAG(card_ids, player);
             int card_id = room->askForAG(player, card_ids, false, objectName());
             if(card_id == -1)
                 return false;
             int locat = card_ids.indexOf(card_id);
             card_ids.replace(locat, judge->card->getId());
-            room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile);
-
             player->invoke("clearAG");
 
             card_ids.swap(0, 2);
             foreach(int tmp, card_ids){
+                room->throwCard(tmp);
                 room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile);
             }
             room->getThread()->delay();

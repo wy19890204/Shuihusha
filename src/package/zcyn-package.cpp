@@ -31,62 +31,6 @@ void SixiangCard::onEffect(const CardEffectStruct &effect) const{
         effect.to->drawCards(qAbs(delta));
 }
 
-JiemingCard::JiemingCard(){
-
-}
-
-bool JiemingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-
-    int upper = qMin(5, to_select->getMaxHP());
-    return to_select->getHandcardNum() < upper;
-}
-
-void JiemingCard::onEffect(const CardEffectStruct &effect) const{
-    int upper = effect.to->getMaxHP();
-    int x = upper - effect.to->getHandcardNum();
-    if(x <= 0)
-        return;
-
-    effect.to->drawCards(x);
-}
-
-class JiemingViewAsSkill: public ZeroCardViewAsSkill{
-public:
-    JiemingViewAsSkill():ZeroCardViewAsSkill("jieming"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@jieming";
-    }
-
-    virtual const Card *viewAs() const{
-        return new JiemingCard;
-    }
-};
-
-class Jieming: public MasochismSkill{
-public:
-    Jieming():MasochismSkill("jieming"){
-        view_as_skill = new JiemingViewAsSkill;
-    }
-
-    virtual void onDamaged(ServerPlayer *xunyu, const DamageStruct &damage) const{
-        Room *room = xunyu->getRoom();
-        int x = damage.damage, i;
-        for(i=0; i<x; i++){
-            if(!room->askForUseCard(xunyu, "@@jieming", "@jieming"))
-                break;
-        }
-    }
-};
-
 class SixiangViewAsSkill: public OneCardViewAsSkill{
 public:
     SixiangViewAsSkill():OneCardViewAsSkill("sixiang"){
@@ -218,27 +162,50 @@ public:
     }
 };
 
-class Mengjin: public TriggerSkill{
+class Tianyan:public PhaseChangeSkill{
 public:
-    Mengjin():TriggerSkill("mengjin"){
-        events << SlashMissed;
+    Tianyan():PhaseChangeSkill("tianyan"){
     }
 
-    virtual int getPriority() const{
-        return 2;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *pangde, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude()){
-            Room *room = pangde->getRoom();
-            if(pangde->askForSkillInvoke(objectName(), data)){
-                room->playSkillEffect(objectName());
-                int to_throw = room->askForCardChosen(pangde, effect.to, "he", objectName());
-                room->throwCard(to_throw);
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() != Player::Judge || player->getHandcardNum() < 3)
+            return false;
+        Room *room = player->getRoom();
+        ServerPlayer *tianqi = room->findPlayerBySkillName(objectName());
+        if(tianqi && tianqi->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+
+            QList<int> cards = room->getNCards(3);
+            if(!cards.isEmpty()){
+                room->fillAG(cards, tianqi);
+                while(!cards.isEmpty()){
+                    int card_id = room->askForAG(tianqi, cards, true, objectName());
+                    if(card_id == -1)
+                        break;
+                    if(!cards.contains(card_id))
+                        continue;
+                    cards.removeOne(card_id);
+                    room->throwCard(card_id);
+                    room->takeAG(NULL, card_id);
+
+                    LogMessage log;
+                    log.from = tianqi;
+                    log.type = "$DiscardCard";
+                    log.card_str = QString::number(card_id);
+                    room->sendLog(log);
+                }
+                for(int i = cards.length() - 1; i >= 0; i--){
+                    room->throwCard(cards.at(i));
+                    const Card *tmp = Sanguosha->getCard(cards.at(i));
+                    room->moveCardTo(tmp, NULL, Player::DrawPile);
+                }
+                tianqi->invoke("clearAG");
             }
         }
-
         return false;
     }
 };
@@ -368,11 +335,10 @@ ZCYNPackage::ZCYNPackage()
     zhaoji->addSkill(new Shemi);
     zhaoji->addSkill(new Lizheng);
     zhaoji->addSkill(new Nongquan);
-/*
-    wolong = new General(this, "wolong", "jiang", 3);
-    wolong->addSkill(new Huoji);
-    wolong->addSkill(new Bazhen);
 
+    General *pengqi = new General(this, "pengqi", "guan");
+    pengqi->addSkill(new Tianyan);
+/*
     pangtong = new General(this, "pangtong", "jiang", 3);
     pangtong->addSkill(new Lianhuan);
     pangtong->addSkill(new Niepan);
