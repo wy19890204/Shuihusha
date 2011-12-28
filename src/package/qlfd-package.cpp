@@ -504,6 +504,37 @@ public:
     }
 };
 
+EyanCard::EyanCard(){
+}
+
+bool EyanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->getGeneral()->isMale() && to_select->inMyAttackRange(Self);
+}
+
+void EyanCard::onEffect(const CardEffectStruct &effect) const{
+    ServerPlayer *target = effect.to;
+    Room *room = effect.from->getRoom();
+    QString s = room->askForChoice(target, "eyan", "ying+su");
+    if(s == "ying"){
+        对你使用一张【杀】
+    }
+    else{
+        你可以对其使用任意数量的【杀】直到回合结束。
+    }
+}
+
+class Eyan: public ZeroCardViewAsSkill{
+public:
+    Eyan():ZeroCardViewAsSkill("eyan"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new EyanCard;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -535,12 +566,16 @@ QLFDPackage::QLFDPackage()
     General *duansanniang = new General(this, "duansanniang", "min", 4, false);
     duansanniang->addSkill(new Zishi);
 
+    General *baixiuying = new General(this, "baixiuying", "min", 3, false);
+    baixiuying->addSkill(new Eyan);
+
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
     addMetaObject<QianxianCard>();
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();
     addMetaObject<ZishiCard>();
+    addMetaObject<EyanCard>();
 }
 
 ADD_PACKAGE(QLFD);
