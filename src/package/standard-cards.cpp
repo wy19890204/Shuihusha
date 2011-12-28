@@ -90,7 +90,7 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(targets.length() >= slash_targets)
         return false;
 
-    if(inherits("WushenSlash") || Self->tag.value("EyanTarget", NULL) != NULL){
+    if(inherits("WushenSlash")){
         distance_limit = false;
     }
 

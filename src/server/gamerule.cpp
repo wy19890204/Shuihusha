@@ -118,10 +118,13 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(tmp->hasFlag("ecst"))
                     room->setPlayerFlag(tmp, "-ecst");
+                if(tmp->hasFlag("EyanSource"))
+                    room->setPlayerFlag(tmp, "-EyanSource");
+                if(tmp->hasFlag("EyanTarget"))
+                    room->setPlayerFlag(tmp, "-EyanTarget");
             }
 
             player->clearFlags();
-            player->tag.remove("EyanTarget");
 
             if(!Config.BanPackages.contains("events")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");

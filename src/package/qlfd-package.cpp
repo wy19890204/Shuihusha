@@ -526,8 +526,10 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
         use.to << effect.from;
         room->useCard(use);
     }
-    else
-        effect.from->tag["EyanTarget"] = QVariant::fromValue(target);
+    else{
+        room->setPlayerFlag(effect.from, "EyanSource");
+        room->setPlayerFlag(target, "EyanTarget");
+    }
 }
 
 class Eyan: public ZeroCardViewAsSkill{

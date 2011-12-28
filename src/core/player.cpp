@@ -633,14 +633,13 @@ bool Player::canSlash(const Player *other, bool distance_limit) const{
     if(other == this)
         return false;
 
+    if(hasSkill("eyan") && this->hasFlag("EyanSource") && other->hasFlag("EyanTarget"))
+        return true;
+
     if(distance_limit)
         return distanceTo(other) <= getAttackRange();
-    else{
-        if(this->hasSkill("eyan") && this->tag["EyanTarget"].value<PlayerStar>() != other)
-            return false;
-        else
-            return true;
-    }
+    else
+        return true;
 }
 
 int Player::getCardCount(bool include_equip) const{
@@ -773,10 +772,10 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
     if(hasSkill("qinlong") && getEquips().isEmpty())
         return true;
-    if(this->tag.value("EyanTarget", NULL) != NULL)
-        return true;
 
     int slash_count = getSlashCount();
+    if(slash_count > 0 && hasFlag("EyanSource"))
+        return true;
     return slash_count < 1;
 }
 
