@@ -516,13 +516,18 @@ bool EyanCard::targetFilter(const QList<const Player *> &targets, const Player *
 void EyanCard::onEffect(const CardEffectStruct &effect) const{
     ServerPlayer *target = effect.to;
     Room *room = effect.from->getRoom();
-    QString s = room->askForChoice(target, "eyan", "ying+su");
-    if(s == "ying"){
-        对你使用一张【杀】
+    const Card *slash = NULL;
+    if(effect.from->canSlash(target))
+        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), QVariant::fromValue(effect.from));
+    if(slash){
+        CardUseStruct use;
+        use.card = slash;
+        use.from = target;
+        use.to << effect.from;
+        room->useCard(use);
     }
-    else{
-        你可以对其使用任意数量的【杀】直到回合结束。
-    }
+    else
+        effect.from->tag["EyanTarget"] = QVariant::fromValue(target);
 }
 
 class Eyan: public ZeroCardViewAsSkill{

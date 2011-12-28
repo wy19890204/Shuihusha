@@ -121,6 +121,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             }
 
             player->clearFlags();
+            player->tag.remove("EyanTarget");
 
             if(!Config.BanPackages.contains("events")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");
