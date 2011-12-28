@@ -22,7 +22,6 @@ function SmartAI:useCardWiretap(wiretap, use)
 	if use.to then
 		use.to:append(self.player:getNextAlive())
 	end
-	break
 end
 
 -- xing ci
@@ -33,79 +32,61 @@ function SmartAI:useCardAssassinate(assassinate, use)
 	if use.to then
 		use.to:append(self.enemies[1])
 	end
-	break
 end
 
-sgs.ai_skill_use_func["QuhuCard"] = function(card, use, self)
-	local max_card = self:getMaxCard()
-	local max_point = max_card:getNumber()
-	self:sort(self.enemies, "handcard")
-
-	for _, enemy in ipairs(self.enemies) do
-		if enemy:getHp() > self.player:getHp() then
-			local enemy_max_card = self:getMaxCard(enemy)
-			if enemy_max_card and max_point > enemy_max_card:getNumber() then
-				for _, enemy2 in ipairs(self.enemies) do
-					if (enemy:objectName() ~= enemy2:objectName()) and enemy:inMyAttackRange(enemy2) then
-						local card_id = max_card:getEffectiveId()
-						local card_str = "@QuhuCard=" .. card_id
-						if use.to then
-							use.to:append(enemy)
-						end
-						use.card = sgs.Card_Parse(card_str)
-						return
-					end
-				end
-			end
-		end
+-- sheng chen gang
+function SmartAI:useCardTreasury(card, use)
+	if not self.player:containsTrick("treasury") then
+		use.card = card
 	end
-	if not self.player:isWounded() or (self.player:getHp() == 1 and self:getCardsNum("Analeptic") > 0) then
-		local use_quhu
-		for _, friend in ipairs(self.friends) do
-			if math.min(5, friend:getMaxHP()) - friend:getHandcardNum() >= 2 then
-				self:sort(self.enemies, "handcard")
-				if self.enemies[#self.enemies]:getHandcardNum() > 0 then use_quhu = true break end
+end
+
+-- hai xiao
+function SmartAI:useCardTsunami(card, use)
+	if self.player:containsTrick("tsunami") then return end
+--	if self.player:hasSkill("weimu") and card:isBlack() then return end
+
+	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
+		if self:hasWizard(self.friends) then
+			use.card = card
+			return
+		end
+		local players = self.room:getAllPlayers()
+		players = sgs.QList2Table(players)
+
+		local friends = 0
+		local enemies = 0
+
+		for _,player in ipairs(players) do
+			if self:objectiveLevel(player) >= 4 then
+				enemies = enemies + 1
+			elseif self:isFriend(player) then
+				friends = friends + 1
 			end
 		end
-		if use_quhu then
-			for _, enemy in ipairs(self.enemies) do
-				if not enemy:isKongcheng() and self.player:getHp() < enemy:getHp() then
-					local cards = self.player:getHandcards()
-					cards = sgs.QList2Table(cards)
-					self:sortByUseValue(cards, true)
-					local card_id = cards[1]:getEffectiveId()
-					local card_str = "@QuhuCard=" .. card_id
-					if use.to then
-						use.to:append(enemy)
-					end
-					use.card = sgs.Card_Parse(card_str)
-					return
-				end
-			end
+
+		local ratio
+
+		if friends == 0 then ratio = 999
+		else ratio = enemies/friends
+		end
+
+		if ratio > 1.5 then
+			use.card = card
+			return
 		end
 	end
 end
 
-sgs.ai_skill_playerchosen.quhu = sgs.ai_skill_playerchosen.damage
-
-sgs.ai_skill_use["@@jieming"] = function(self, prompt)
-	self:sort(self.friends)
-
-	local max_x = 0
-	local target
+-- ji cao tun liang
+function SmartAI:useCardProvistore(provistore, use)
+--	if self.player:hasSkill("wuyan") then return end
+	self:sort(self.friends, "hp")
 	for _, friend in ipairs(self.friends) do
-		local x = math.min(friend:getMaxHP(), 5) - friend:getHandcardNum()
-
-		if x > max_x then
-			max_x = x
-			target = friend
+		use.card = assassinate
+		if use.to and not friend:containsTrick("provistore") then
+			use.to:append(friend)
 		end
-	end
-
-	if target then
-		return "@JiemingCard=.->" .. target:objectName()
-	else
-		return "."
 	end
 end
 
