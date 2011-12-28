@@ -900,7 +900,7 @@ function SmartAI:damageIsEffective(player, nature, source)
 	player = player or self.player
 	source = source or self.player
 	nature = nature or sgs.DamageStruct_Normal
-	if player:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == player:objectName() then
+	if player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName() then
 		return false
 	end
 
@@ -1012,6 +1012,10 @@ local function getSkillViewCard(card, class_name, player, card_place)
 		if card:getSuit() == sgs.Card_Spade and player:getHp() == 1 and player:hasSkill("longhun") then
 			return ("nullification:longhun[%s:%s]=%d"):format(suit, number, card_id)
 		end
+	elseif class_name == "Ecstasy" then
+		if player:hasSkill("menghan") and card:getSuit() == sgs.Card_Spade then
+			return ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
+		end
  	end
 end
 
@@ -1069,11 +1073,14 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
     cards = sgs.QList2Table(cards)
     self:fillSkillCards(cards)
 
-	if (getDefense(self.player) < getDefense(enemy)) and
-		(self.player:getHandcardNum() < 1+self.player:getHp()) or
-		enemy:hasFlag("ecst") then
+	if getDefense(self.player) < getDefense(enemy) and
+		self.player:getHandcardNum() < self.player:getHp() + 1 then
 			return
     end
+
+	if not self.player:canSlash(enemy) or enemy:hasFlag("ecst") then
+		return
+	end
 
 	local card_str = self:getCardId("Ecstasy")
 	if card_str then return sgs.Card_Parse(card_str) end
@@ -1196,8 +1203,9 @@ function SmartAI:useBasicCard(card, use,no_distance)
 				self:slashIsEffective(card, enemy) then
 					-- fill the card use struct
 					local mi = self:searchForEcstasy(use,enemy,card)
-					if mi and (not use.to or use.to:isEmpty()) then
+					if mi and use.to then
 						use.card = mi
+						use.to:append(enemy)
 						return
 					end
 					local anal = self:searchForAnaleptic(use,enemy,card)
@@ -1303,8 +1311,8 @@ function SmartAI:aoeIsEffective(card, to)
 		end
 	end
 
-	--Chengong's zhichi
-	if (to:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == to:objectName()) then
+	--Baisheng's shudan
+	if (to:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == to:objectName()) then
 		return false
 	end
 
@@ -1913,7 +1921,9 @@ function SmartAI:evaluateArmor(card, player)
 		EightDiagram = 4,
 		RenwangShield = 3,
 		SilverLion = 1,
-		GaleShell = -10
+		GaleShell = -10,
+
+		GoldArmor = 4,
 	}
 	if ecard:inherits("EightDiagram") and (self:hasWizard(self:getFriends(player),true) or player:hasSkill("tiandu")) then return 5 end
 	if ecard:inherits("EightDiagram") and self:hasWizard(self:getEnemies(player),true) then return 2 end
@@ -3228,7 +3238,7 @@ end
 
 function SmartAI:hasTrickEffective(card, player)
 	if player then
-		if (player:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == player:objectName()) or player:hasSkill("wuyan") then
+		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
 		if (player:getMark("@fog") > 0 or (player:hasSkill("shenjun") and self.player:getGender() ~= player:getGender())) and
@@ -3573,8 +3583,9 @@ end
 -- load other ai scripts
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard-skill-ai.lua"
+dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/qjwm-ai.lua"
---dofile "lua/ai/xzdd-ai.lua"
+dofile "lua/ai/xzdd-ai.lua"
 dofile "lua/ai/ttxd-ai.lua"
 dofile "lua/ai/bwqz-ai.lua"
 dofile "lua/ai/qlfd-ai.lua"
