@@ -1,3 +1,9 @@
+-- jishi
+sgs.ai_skill_invoke["jishi"] = function(self, data)
+	local who = data:toPlayer()
+	return self:isFriend(who)
+end
+
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then

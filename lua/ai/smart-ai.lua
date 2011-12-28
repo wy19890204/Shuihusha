@@ -2830,6 +2830,17 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end
 		return "."
+	elseif parsedPrompt[1] == "@fuhu" then
+		local damage = data:toDamage()
+		if self:isEnemy(damage.from) then
+			local cards = self.player:getHandcards()
+			for _, card in sgs.qlist(cards) do
+				if card:inherits("BasicCard") then
+					return card:getEffectiveId()
+				end
+			end
+		end
+		return "."
 	elseif parsedPrompt[1] == "@baoguo" then
 		local damage = data:toDamage()
 		if self:isFriend(damage.to) then

@@ -1,3 +1,21 @@
+-- kaixian
+sgs.ai_skill_invoke["kaixian"] = true
+
+-- liba
+sgs.ai_skill_invoke["liba"] = function(self, data)
+	local damage = data:toDamage()
+	return self:isEnemy(damage.to)
+end
+
+-- zhanchi
+sgs.ai_skill_invoke["zhanchi"] = function(self, data)
+	if self.player:hasWeapon("crossbow") then
+		return true
+	else
+		return false
+	end
+end
+
 -- longluo
 sgs.ai_skill_playerchosen["longluo"] = function(self, targets)
 	self:sort(self.friends, "hp")

@@ -676,12 +676,12 @@ public:
         return target->isWounded();
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
         Room *room = player->getRoom();
         ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
         if(!lingtianyi || lingtianyi->isKongcheng())
             return false;
-        if(lingtianyi->askForSkillInvoke(objectName())){
+        if(lingtianyi->askForSkillInvoke(objectName(), QVariant::fromValue(player))){
             RecoverStruct lty;
             lty.card = room->askForCardShow(lingtianyi, player, objectName());
             lty.who = lingtianyi;
