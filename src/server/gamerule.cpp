@@ -118,10 +118,10 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(tmp->hasFlag("ecst"))
                     room->setPlayerFlag(tmp, "-ecst");
-                if(tmp->hasFlag("EyanSource"))
-                    room->setPlayerFlag(tmp, "-EyanSource");
                 if(tmp->hasFlag("EyanTarget"))
                     room->setPlayerFlag(tmp, "-EyanTarget");
+                if(tmp->hasSkill("eyanslash"))
+                    room->detachSkillFromPlayer(tmp, "eyanslash");
             }
 
             player->clearFlags();
