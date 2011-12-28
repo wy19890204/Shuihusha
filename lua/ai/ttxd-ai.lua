@@ -1,3 +1,29 @@
+-- juyi
+juyi_skill={}
+juyi_skill.name = "jui"
+table.insert(sgs.ai_skills, juyi_skill)
+juyi_skill.getTurnUseCard = function(self)
+	local sj = self.room:getLord()
+	if self.player:getKingdom() ~= "kou" or self.player:hasUsed("JuyiCard") or self:isEnemy(sj) then return end
+	local mycardnum = self.player:getHandcardNum()
+	local sjcardnum = sj:getHandcardNum()
+	if mycardnum - sjcardnum > 1 then
+		card = sgs.Card_Parse("@JuyiCard=.")
+		return card
+	end
+end
+sgs.ai_skill_use_func["JuyiCard"]=function(card,use,self)
+	use.card = card
+end
+sgs.ai_skill_choice["jui"] = function(self, choice)
+	local source = self.room:getCurrent()
+	if self:isFriend(source) then
+		return "agree"
+	else
+		return "deny"
+	end
+end
+
 -- jishi
 sgs.ai_skill_invoke["jishi"] = function(self, data)
 	local who = data:toPlayer()
@@ -92,74 +118,21 @@ sgs.ai_skill_invoke["panquan"] = function(self, data)
 	return self:isFriend(gaoqiu)
 end
 
-
-duanliang_skill={}
-duanliang_skill.name="duanliang"
-table.insert(sgs.ai_skills,duanliang_skill)
-duanliang_skill.getTurnUseCard=function(self)
-	local cards = self.player:getCards("he")
-	cards=sgs.QList2Table(cards)
-
-	local card
-
-	self:sortByUseValue(cards,true)
-
-	for _,acard in ipairs(cards)  do
-		if (acard:isBlack()) and (acard:inherits("BasicCard") or acard:inherits("EquipCard")) then
-			card = acard
-			break
-		end
-	end
-
-		if not card then return nil end
-		local suit = card:getSuitString()
-		local number = card:getNumberString()
-		local card_id = card:getEffectiveId()
-		local card_str = ("supply_shortage:duanliang[%s:%s]=%d"):format(suit, number, card_id)
-		local skillcard = sgs.Card_Parse(card_str)
-
-		assert(skillcard)
-
-		return skillcard
-
-end
-
-dimeng_skill={}
-dimeng_skill.name="dimeng"
-table.insert(sgs.ai_skills,dimeng_skill)
-dimeng_skill.getTurnUseCard=function(self)
-	if self.player:hasUsed("DimengCard") then return nil end
-	card=sgs.Card_Parse("@DimengCard=.")
-	return card
-
-end
-
-sgs.ai_skill_use_func["DimengCard"]=function(card,use,self)
-	local cardNum=self.player:getHandcardNum()
-
-	self:sort(self.enemies,"handcard")
-	self:sort(self.friends_noself,"handcard")
-
-	local lowest_friend=self.friends_noself[1]
-
-	self:sort(self.enemies,"defense")
-	if lowest_friend then
-		for _,enemy in ipairs(self.enemies) do
-			local hand1=enemy:getHandcardNum()
-			local hand2=lowest_friend:getHandcardNum()
-
-			if (hand1 > hand2) then
-				if (hand1-hand2)<=cardNum then
-					use.card=card
-					if use.to then
-						use.to:append(enemy)
-						use.to:append(lowest_friend)
-						return
-					end
-				end
+-- huatian
+sgs.ai_skill_use["@@huatian"] = function(self, prompt)
+	if prompt == "@huatianai" then
+		self:sort(self.friends_noself, "hp")
+		for _, target in ipairs(self.friends_noself) do
+			if target:isWounded() then
+				return "@HuatianCard=.->" .. target:objectName()
 			end
 		end
+	else
+		self:sort(self.enemies, "hp")
+		local target = self.enemies[1]
+		return "@HuatianCard=.->" .. target:objectName()
 	end
+	return "."
 end
 
 luanwu_skill={}

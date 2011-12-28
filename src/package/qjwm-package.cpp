@@ -196,8 +196,7 @@ public:
 
         if(damage.from && damage.card && damage.card->inherits("Slash")
                 && wusong->canSlash(damage.from, false)
-                && !wusong->isKongcheng() && damage.from != wusong
-                && room->askForSkillInvoke(wusong, objectName(), data)){
+                && !wusong->isKongcheng() && damage.from != wusong){
             const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
             if(!card)
                 return false;
@@ -985,7 +984,7 @@ public:
         int x = damage.damage, i;
         for(i=0; i<x; i++){
             if(wangqing->isWounded() && player->getKingdom() == "min"
-               && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName())){
+               && room->askForCard(player, "..H", "@jiachu:" + wangqing->objectName())){
                 RecoverStruct rev;
                 rev.who = player;
                 room->playSkillEffect(objectName());

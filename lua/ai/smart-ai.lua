@@ -2841,6 +2841,17 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end
 		return "."
+	elseif parsedPrompt[1] == "@jiachu" then
+		local target = self.room:getLord()
+		if self:isFriend(target) then
+			local allcards = self.player:getCards("he")
+			for _, card in sgs.qlist(allcards) do
+				if card:getSuit() == sgs.Card_Heart then
+					return card:getEffectiveId()
+				end
+			end
+		end
+		return "."
 	elseif parsedPrompt[1] == "@baoguo" then
 		local damage = data:toDamage()
 		if self:isFriend(damage.to) then
