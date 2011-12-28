@@ -65,13 +65,16 @@ public:
 
 JuyiCard::JuyiCard(){
     once = true;
+    target_fixed = true;
 }
 
-void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *song = targets.first();
+void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    ServerPlayer *song = room->getLord();
+    if(!song->hasLordSkill("juyi") || song == source)
+        return;
     if(song->isKongcheng() && source->isKongcheng())
         return;
-    if(song->hasSkill("juyi") && room->askForChoice(song, "jui", "agree+deny") == "agree"){
+    if(room->askForChoice(song, "jui", "agree+deny") == "agree"){
         DummyCard *card1 = source->wholeHandCards();
         DummyCard *card2 = song->wholeHandCards();
         if(card1){
@@ -90,10 +93,6 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         log.to << song;
         room->sendLog(log);
     }
-}
-
-bool JuyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->hasLordSkill("juyi") && to_select != Self;
 }
 
 class JuyiViewAsSkill: public ZeroCardViewAsSkill{
@@ -504,43 +503,38 @@ public:
     }
 };
 
-HuatianAiCard::HuatianAiCard(){
+HuatianCard::HuatianCard(){
     mute = true;
 }
 
-bool HuatianAiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool HuatianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    return to_select != Self && to_select->isWounded();
+    if(Self->getMark("Huatian") == 1)
+        return to_select != Self && to_select->isWounded();
+    else
+        return to_select != Self;
 }
 
-void HuatianAiCard::onEffect(const CardEffectStruct &effect) const{
+void HuatianCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    RecoverStruct recovvv;
-    recovvv.card = this;
-    recovvv.who = effect.from;
-    room->playSkillEffect("huatian", qrand() % 2 + 1);
-    room->recover(effect.to, recovvv);
-}
-
-HuatianCuoCard::HuatianCuoCard(){
-    mute = true;
-}
-
-bool HuatianCuoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    return to_select != Self;
-}
-
-void HuatianCuoCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    DamageStruct damag;
-    damag.from = effect.from;
-    damag.to = effect.to;
-    damag.card = this;
-    room->playSkillEffect("huatian", qrand() % 2 + 3);
-    room->damage(damag);
+    if(Self->getMark("Huatian") == 1){
+        RecoverStruct recovvv;
+        recovvv.card = this;
+        recovvv.who = effect.from;
+        room->playSkillEffect("huatian", qrand() % 2 + 1);
+        room->recover(effect.to, recovvv);
+    }
+    else if(Self->getMark("Huatian") == 2){
+        DamageStruct damag;
+        damag.from = effect.from;
+        damag.to = effect.to;
+        damag.card = this;
+        room->playSkillEffect("huatian", qrand() % 2 + 3);
+        room->damage(damag);
+    }
+    else
+        return;
 }
 
 class HuatianViewAsSkill: public ZeroCardViewAsSkill{
@@ -552,15 +546,12 @@ public:
         return false;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern.startsWith("@@huatian");
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@huatian";
     }
 
     virtual const Card *viewAs() const{
-        if(ClientInstance->getPattern().endsWith("ai"))
-            return new HuatianAiCard;
-        else
-            return new HuatianCuoCard;
+        return new HuatianCard;
     }
 };
 
@@ -571,21 +562,29 @@ public:
         events << Damaged << HpRecover;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
+            room->setPlayerMark(player, "Huatian", 1);
             for(int i = 0; i < damage.damage; i++){
-                if(!room->askForUseCard(player, "@@huatianai", "@huatianai"))
+                if(!room->askForUseCard(player, "@@huatian", "@huatianai"))
                     break;
             }
+            room->setPlayerMark(player, "Huatian", 0);
         }
         else{
             RecoverStruct rec = data.value<RecoverStruct>();
+            room->setPlayerMark(player, "Huatian", 2);
             for(int i = 0; i < rec.recover; i++){
-                if(!room->askForUseCard(player, "@@huatiancuo", "@huatiancuo"))
+                if(!room->askForUseCard(player, "@@huatian", "@huatiancuo"))
                     break;
             }
+            room->setPlayerMark(player, "Huatian", 0);
         }
         return false;
     }
@@ -1226,8 +1225,7 @@ TTXDPackage::TTXDPackage()
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HaoshenCard>();
-    addMetaObject<HuatianAiCard>();
-    addMetaObject<HuatianCuoCard>();
+    addMetaObject<HuatianCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();

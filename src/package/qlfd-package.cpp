@@ -527,7 +527,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
         room->useCard(use);
     }
     else{
-        room->setPlayerFlag(effect.from, "EyanSource");
+        room->attachSkillToPlayer(effect.from, "eyanslash");
         room->setPlayerFlag(target, "EyanTarget");
     }
 }
@@ -539,6 +539,40 @@ public:
 
     virtual const Card *viewAs() const{
         return new EyanCard;
+    }
+};
+
+EyanSlashCard::EyanSlashCard(){
+}
+
+bool EyanSlashCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->hasFlag("EyanTarget");
+}
+
+void EyanSlashCard::onEffect(const CardEffectStruct &effect) const{
+    CardUseStruct use;
+    use.from = effect.from;
+    use.to << effect.to;
+    use.card = Sanguosha->getCard(this->getSubcards().first());
+    effect.from->getRoom()->useCard(use, false);
+}
+
+class EyanSlash: public OneCardViewAsSkill{
+public:
+    EyanSlash():OneCardViewAsSkill("eyanslash"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        EyanSlashCard *card = new EyanSlashCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
@@ -575,6 +609,7 @@ QLFDPackage::QLFDPackage()
 
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
+    skills << new EyanSlash;
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
@@ -583,6 +618,7 @@ QLFDPackage::QLFDPackage()
     addMetaObject<ShouwangCard>();
     addMetaObject<ZishiCard>();
     addMetaObject<EyanCard>();
+    addMetaObject<EyanSlashCard>();
 }
 
 ADD_PACKAGE(QLFD);

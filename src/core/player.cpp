@@ -633,9 +633,6 @@ bool Player::canSlash(const Player *other, bool distance_limit) const{
     if(other == this)
         return false;
 
-    if(hasSkill("eyan") && this->hasFlag("EyanSource") && other->hasFlag("EyanTarget"))
-        return true;
-
     if(distance_limit)
         return distanceTo(other) <= getAttackRange();
     else
@@ -774,8 +771,6 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
 
     int slash_count = getSlashCount();
-    if(slash_count > 0 && hasFlag("EyanSource"))
-        return true;
     return slash_count < 1;
 }
 
