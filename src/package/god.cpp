@@ -1150,7 +1150,7 @@ public:
         ServerPlayer *waste = room->findPlayerBySkillName(objectName());
         const Card *card = NULL;
         if(waste && !waste->isNude())
-            card = room->askForCard(waste, "..", "@xianji");
+            card = room->askForCard(waste, "..", "@xianji", QVariant::fromValue(target));
         if(!waste || !card)
            return false;
         QString choice = card->getType();

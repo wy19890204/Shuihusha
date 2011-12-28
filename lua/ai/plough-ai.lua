@@ -1,32 +1,39 @@
--- this scripts contains the AI classes for generals of fire package
+-- this scripts contains the AI classes for generals of plough package
 
--- bazhen
-sgs.ai_skill_invoke.bazhen = true
-
--- niepan
-sgs.ai_skill_invoke.niepan = function(self, data)
-	local dying = data:toDying()
-	local peaches = 1 - dying.who:getHp()
-
-	local cards = self.player:getHandcards()
-	local n = 0
-	for _, card in sgs.qlist(cards) do
-		if card:inherits "Peach" or card:inherits "Analeptic" then
-			n = n + 1
+-- bi shang liang shan
+function SmartAI:useCardDrivolt(drivolt, use)
+--	if self.player:hasSkill("wuyan") then return end
+	self:sort(self.friends_noself, "handcard")
+	for _, friend in ipairs(self.friends_noself) do
+		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
+			use.card = drivolt
+			if use.to then
+				use.to:append(friend)
+			end
+			break
 		end
 	end
-
-	return n < peaches
 end
 
-local quhu_skill={}
-quhu_skill.name="quhu"
-table.insert(sgs.ai_skills,quhu_skill)
-quhu_skill.getTurnUseCard=function(self)
-	if not self.player:hasUsed("QuhuCard") and not self.player:isKongcheng() then
-		local max_card = self:getMaxCard()
-		return sgs.Card_Parse("@QuhuCard=" .. max_card:getEffectiveId())
+-- tan ting
+function SmartAI:useCardWiretap(wiretap, use)
+--	if self.player:hasSkill("wuyan") then return end
+	use.card = wiretap
+	if use.to then
+		use.to:append(self.player:getNextAlive())
 	end
+	break
+end
+
+-- xing ci
+function SmartAI:useCardAssassinate(assassinate, use)
+--	if self.player:hasSkill("wuyan") then return end
+	self:sort(self.enemies, "hp")
+	use.card = assassinate
+	if use.to then
+		use.to:append(self.enemies[1])
+	end
+	break
 end
 
 sgs.ai_skill_use_func["QuhuCard"] = function(card, use, self)

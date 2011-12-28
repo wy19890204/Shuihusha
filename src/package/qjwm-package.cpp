@@ -812,7 +812,7 @@ public:
         if(damage.from)
             room->setPlayerFlag(damage.from, "Xiaozai");
         if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
-            ServerPlayer *cup = player->tag["Xiaozai"].value<ServerPlayer *>();
+            ServerPlayer *cup = player->tag["Xiaozai"].value<PlayerStar>();
             if(cup){
                 damage.to = cup;
                 room->damage(damage);

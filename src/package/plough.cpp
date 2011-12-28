@@ -32,7 +32,7 @@ bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *t
 
 void Ecstasy::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->setPlayerFlag(effect.to, "Ecstasy");
+    room->setPlayerFlag(effect.to, "ecst");
 }
 
 Drivolt::Drivolt(Suit suit, int number)

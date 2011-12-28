@@ -677,7 +677,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
-    if(player->hasFlag("Ecstasy") && (asked.toString() == "slash" || asked.toString() == "jink")){
+    if(player->hasFlag("ecst") && (asked.toString() == "slash" || asked.toString() == "jink")){
         LogMessage log;
         log.type = "#EcstasyEffect";
         log.from = player;
@@ -756,7 +756,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
-    if(player->hasFlag("Ecstasy") && answer == "slash"){
+    if(player->hasFlag("ecst") && answer == "slash"){
         LogMessage log;
         log.type = "#EcstasyEffect";
         log.from = player;

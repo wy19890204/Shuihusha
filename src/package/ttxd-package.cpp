@@ -237,13 +237,13 @@ public:
         if(Self->getPhase() == Player::Draw)
             return selected.isEmpty();
         else{
-            int length = Self->getHandcardNum() / 2;
+            int length = (Self->getHandcardNum() + 1) / 2;
             return selected.length() < length;
         }
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->getPhase() == Player::Play && cards.length() != Self->getHandcardNum() / 2)
+        if(Self->getPhase() == Player::Play && cards.length() != (Self->getHandcardNum() + 1) / 2)
             return NULL;
         HaoshenCard *card = new HaoshenCard;
         card->addSubcards(cards);
