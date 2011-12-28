@@ -35,27 +35,6 @@ public:
     }
 };
 
-class Fankui:public MasochismSkill{
-public:
-    Fankui():MasochismSkill("fankui"){
-
-    }
-
-    virtual void onDamaged(ServerPlayer *simayi, const DamageStruct &damage) const{
-        ServerPlayer *from = damage.from;
-        Room *room = simayi->getRoom();
-        QVariant data = QVariant::fromValue(from);
-        if(from && !from->isNude() && room->askForSkillInvoke(simayi, "fankui", data)){
-            int card_id = room->askForCardChosen(simayi, from, "he", "fankui");
-            if(room->getCardPlace(card_id) == Player::Hand)
-                room->moveCardTo(Sanguosha->getCard(card_id), simayi, Player::Hand, false);
-            else
-                room->obtainCard(simayi, card_id);
-            room->playSkillEffect(objectName());
-        }
-    }
-};
-
 class Jizhi:public TriggerSkill{
 public:
     Jizhi():TriggerSkill("jizhi"){
@@ -83,112 +62,16 @@ public:
     }
 };
 
-class Qixi: public OneCardViewAsSkill{
-public:
-    Qixi():OneCardViewAsSkill("qixi"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getCard();
-        Dismantlement *dismantlement = new Dismantlement(first->getSuit(), first->getNumber());
-        dismantlement->addSubcard(first->getId());
-        dismantlement->setSkillName(objectName());
-        return dismantlement;
-    }
-};
-
-class Xiaoji: public TriggerSkill{
-public:
-    Xiaoji():TriggerSkill("xiaoji"){
-        events << CardLost;
-
-        frequency = Frequent;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *sunshangxiang, QVariant &data) const{
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->from_place == Player::Equip){
-            Room *room = sunshangxiang->getRoom();
-            if(room->askForSkillInvoke(sunshangxiang, objectName())){
-                room->playSkillEffect(objectName());
-                sunshangxiang->drawCards(2);
-            }
-        }
-
-        return false;
-    }
-};
-
 void StandardPackage::addGenerals(){
-    General *guojia, *simayi;
-
-    simayi = new General(this, "simayi", "guan", 3);
-    simayi->addSkill(new Fankui);
-
-    guojia = new General(this, "guojia", "guan", 3);
+    General *guojia = new General(this, "guojia", "guan", 3);
     guojia->addSkill(new Yiji);
 
-    General *huangyueying;
-
-    huangyueying = new General(this, "huangyueying", "jiang", 3, false);
+    General *huangyueying = new General(this, "huangyueying", "jiang", 3, false);
     huangyueying->addSkill(new Jizhi);
-
-    General *sunshangxiang;
-
-    sunshangxiang = new General(this, "sunshangxiang", "min", 3, false);
-    sunshangxiang->addSkill(new Xiaoji);
 
     // for skill cards
     addMetaObject<CheatCard>();
 }
-
-class Xiuluo: public PhaseChangeSkill{
-public:
-    Xiuluo():PhaseChangeSkill("xiuluo"){
-
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::Start
-                && !target->isKongcheng()
-                && !target->getJudgingArea().isEmpty();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        if(!target->askForSkillInvoke(objectName()))
-            return false;
-
-        Room *room = target->getRoom();
-        int card_id = room->askForCardChosen(target, target, "j", objectName());
-        const Card *card = Sanguosha->getCard(card_id);
-
-        QString suit_str = card->getSuitString();
-        QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
-        QString prompt = QString("@xiuluo:::%1").arg(suit_str);
-        if(room->askForCard(target, pattern, prompt)){
-            room->throwCard(card);
-        }
-
-        return false;
-    }
-};
-
-class Shenwei: public DrawCardsSkill{
-public:
-    Shenwei():DrawCardsSkill("shenwei"){
-        frequency = Compulsory;
-    }
-
-    virtual int getDrawNum(ServerPlayer *player, int n) const{
-        return n + 2;
-    }
-};
 
 class Ubuna:public ZeroCardViewAsSkill{
 public:
@@ -300,10 +183,9 @@ TestPackage::TestPackage()
     shenlvbu1->addSkill("huanshu");
 
     General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
-    shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("huanshu");
-    shenlvbu2->addSkill(new Xiuluo);
-    shenlvbu2->addSkill(new Shenwei);
+    shenlvbu2->addSkill("shunshui");
+    shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill(new Skill("shenji"));
 
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
