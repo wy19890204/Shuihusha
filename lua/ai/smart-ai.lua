@@ -180,12 +180,11 @@ function SmartAI:updatePlayers(inclusive)
 	table.insert(self.friends, self.player)
 
 	self.friends_noself = sgs.QList2Table(self.lua_ai:getFriends())
-
 	sgs.rebel_target = self.room:getLord()
-
 	self.enemies = sgs.QList2Table(self.lua_ai:getEnemies())
-
 	self.role  = self.player:getRole()
+
+	sgs.zhangshisource = nil
 
 	if isRolePredictable() then
 		if (self.role == "lord") or (self.role == "loyalist") then self:refreshRoyalty(self.player,300)
@@ -509,10 +508,10 @@ function SmartAI:filterEvent(event, player, data)
 	if event==sgs.ChoiceMade then
 		local carduse=data:toCardUse()
 		if carduse and carduse:isValid() then
-			if carduse.card:inherits("JijiangCard") then
-				sgs.jijiangsource = player
+			if carduse.card:inherits("ZhangshiCard") then
+				sgs.zhangshisource = player
 			else
-				sgs.jijiangsource = nil
+				sgs.zhangshisource = nil
 			end
 			if carduse.card:inherits("YisheAskCard") then
 				sgs.yisheasksource = player
@@ -530,8 +529,8 @@ function SmartAI:filterEvent(event, player, data)
 			if promptlist[1] == "cardResponsed" then
 				if promptlist[3] == "@hujia-jink" and promptlist[5] ~= "_nil_" then
 					sgs.hujiasource = nil
-				elseif promptlist[3] == "@jijiang-slash" and promptlist[5] ~= "_nil_" then
-					sgs.jijiangsource = nil
+				elseif promptlist[3] == "@zhangshi-slash" and promptlist[5] ~= "_nil_" then
+					sgs.zhangshisource = nil
 				elseif promptlist[3] == "@lianli-jink" and promptlist[4] ~= "_nil_" then
 					sgs.lianlisource = nil
 				elseif promptlist[3] == "@lianli-slash" and promptlist[4] ~= "_nil_" then
@@ -540,8 +539,8 @@ function SmartAI:filterEvent(event, player, data)
 			elseif promptlist[1] == "skillInvoke" and promptlist[3] == "yes" then
 				if promptlist[2] == "hujia" then
 					sgs.hujiasource = player
-				elseif promptlist[2] == "jijiang" then
-					sgs.jijiangsource = player
+				elseif promptlist[2] == "zhangshi" then
+					sgs.zhangshisource = player
 				elseif promptlist[2] == "lianli-jink" then
 					sgs.lianlisource = player
 				end
@@ -2879,6 +2878,9 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end
 		return "."
+	elseif parsedPrompt[1] == "@zhangshi-slash" then
+		if not self:isFriend(sgs.zhangshisource) then return "." end
+		return self:getCardId("Slash") or "."
 	end
 
 	if parsedPrompt[1] == "double-sword-card" then
@@ -2958,10 +2960,10 @@ function SmartAI:askForCard(pattern, prompt, data)
 				or (target:getHp() > 2 and self.player:getHp() <= 1 and self:getCardsNum("Peach") == 0 and not self.player:hasSkill("buqu")) then
 				return self:getCardId("Slash")
 			else return "." end
-		elseif (parsedPrompt[1] == "@jijiang-slash") then
+		elseif (parsedPrompt[1] == "@zhangshi-slash") then
 			if target and self:isFriend(target) then
 				if (self.player:hasSkill("longdan") and self:getCardsNum("Jink") > 1) then
-					self:speak("jijiang", self.player:getGeneral():isFemale())
+					self:speak("zhangshi", self.player:getGeneral():isFemale())
 					return self:getCardId("Slash")
 				end
 			else return "." end
@@ -3583,6 +3585,14 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
 				if target:getWeapon() then
 					n = n + 1
+				end
+			end
+		end
+		if player:hasSkill("zhangshi") then
+			local lieges = self.room:getMenorWomen("male")
+			for _, liege in sgs.qlist(lieges) do
+				if self:isFriend(liege, player) then
+				n = n + self:getCardsNum("Slash", liege, nil, liege:hasSkill("zhangshi"))
 				end
 			end
 		end
