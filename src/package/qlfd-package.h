@@ -88,6 +88,14 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class RendeCard:public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE RendeCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class QLFDPackage: public Package{
     Q_OBJECT
 

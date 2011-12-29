@@ -98,14 +98,14 @@ sgs.ai_chat.collateral=
 "你妹啊，我的刀！"
 }
 
-sgs.ai_chat.jijiang_female=
+sgs.ai_chat.zhangshi_female=
 {
 "别指望下次我会帮你哦"
 }
 
-sgs.ai_chat.jijiang=
+sgs.ai_chat.zhangshi=
 {
-"主公，我来啦"
+"美人儿莫怕，我来啦~"
 }
 
 --huanggai

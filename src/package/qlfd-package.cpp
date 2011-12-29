@@ -650,8 +650,8 @@ public:
         events << CardLost;
     }
 
-    virtual bool triggerable(const ServerPlayer *) const{
-        return true;
+    virtual bool triggerable(const ServerPlayer *ta) const{
+        return ta->getGeneral()->isMale();
     }
 
     virtual int getPriority() const{
@@ -672,6 +672,78 @@ public:
                 room->loseHp(player);
             }
         }
+        return false;
+    }
+};
+
+RendeCard::RendeCard(){
+    will_throw = false;
+}
+
+void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = NULL;
+    if(targets.isEmpty()){
+        foreach(ServerPlayer *player, room->getAlivePlayers()){
+            if(player != source){
+                target = player;
+                break;
+            }
+        }
+    }else
+        target = targets.first();
+
+    room->moveCardTo(this, target, Player::Hand, false);
+
+    int old_value = source->getMark("rende");
+    int new_value = old_value + subcards.length();
+    room->setPlayerMark(source, "rende", new_value);
+
+    if(old_value < 2 && new_value >= 2){
+        RecoverStruct recover;
+        recover.card = this;
+        recover.who = source;
+        room->recover(source, recover);
+    }
+}
+
+class RendeViewAsSkill:public ViewAsSkill{
+public:
+    RendeViewAsSkill():ViewAsSkill("rende"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(ServerInfo.GameMode == "04_1v3"
+           && selected.length() + Self->getMark("rende") >= 2)
+           return false;
+        else
+            return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+
+        RendeCard *rende_card = new RendeCard;
+        rende_card->addSubcards(cards);
+        return rende_card;
+    }
+};
+
+class Rende: public PhaseChangeSkill{
+public:
+    Rende():PhaseChangeSkill("rende"){
+        view_as_skill = new RendeViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target)
+                && target->getPhase() == Player::NotActive
+                && target->hasUsed("RendeCard");
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        target->getRoom()->setPlayerMark(target, "rende", 0);
+
         return false;
     }
 };
