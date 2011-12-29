@@ -41,7 +41,6 @@ SOURCES += src/main.cpp \
 	src/package/joypackage.cpp \
 	src/package/mountainpackage.cpp \
 	src/package/standard-cards.cpp \
-	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
 	src/package/plough.cpp \

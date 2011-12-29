@@ -779,11 +779,13 @@ sgs.ai_skill_invoke = {
 
 	double_whip = function(self, data)
 		local carduse = data:toCardUse()
-		local target = carduse.to:first()
-		if target:isChained() then
-			return self:isFriend(target)
-		else
-			return self:isEnemy(target)
+		for _, target in sgs.qlist(carduse.to) do
+			if target:isChained() then
+				return self:isFriend(target)
+			else
+				return self:isEnemy(target)
+			end
+			break
 		end
 	end,
 }

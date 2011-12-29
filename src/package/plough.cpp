@@ -158,7 +158,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardUseStruct effect = data.value<CardUseStruct>();
         Room *room = player->getRoom();
-        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip")){
+        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
             foreach(ServerPlayer *effecto, effect.to){
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
