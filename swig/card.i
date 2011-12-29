@@ -4,6 +4,14 @@
 
 %}
 
+class EventsCard:public Card{
+public:
+    EventsCard(Suit suit, int number):Card(suit, number){}
+    virtual QString getType() const;
+    virtual CardType getTypeId() const;
+    virtual QString getSubtype() const;
+};
+
 class BasicCard:public Card{
 public:
     BasicCard(Suit suit, int number):Card(suit, number){}

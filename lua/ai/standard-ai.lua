@@ -4,10 +4,13 @@ sgs.ai_skill_invoke.jianxiong = function(self, data)
 end
 
 sgs.ai_skill_invoke.jijiang = function(self, data)
-	if self:getCardsNum("Slash")<=0 then
-		return true
+	local cards = self.player:getHandcards()
+	for _, card in sgs.qlist(cards) do
+		if card:inherits("Slash") then
+			return false
+		end
 	end
-	return false
+	if sgs.jijiangsource then return false else return true end
 end
 
 sgs.ai_skill_choice.jijiang = function(self , choices)
@@ -115,7 +118,7 @@ sgs.ai_skill_invoke.fankui = function(self, data)
 				end
 			end
 	end
-				--self:updateRoyalty(-0.8*sgs.ai_royalty[target:objectName()],self.player:objectName())
+	--self:updateLoyalty(-0.8*sgs.ai_loyalty[target:objectName()],self.player:objectName())
 	return true
 end
 

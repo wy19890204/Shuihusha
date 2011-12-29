@@ -376,7 +376,7 @@ public:
         ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
         if(zhangqing && target->getPhase() == Player::Finish){
             if(target->getHandcardNum() <= 1 && !target->isNude()
-                && zhangqing->askForSkillInvoke(objectName())){
+                && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());
                 int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
                 room->obtainCard(zhangqing, card_id);
@@ -468,7 +468,7 @@ public:
         Room *room = turtle->getRoom();
         if((reason->inherits("Slash") || reason->inherits("Duel"))
             && turtle->getWeapon() && turtle->getArmor()
-            && turtle->askForSkillInvoke(objectName())){
+            && turtle->askForSkillInvoke(objectName(), data)){
             LogMessage log;
             log.type = "#ManliBuff";
             log.from = turtle;
