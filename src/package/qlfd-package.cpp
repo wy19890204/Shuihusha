@@ -676,11 +676,15 @@ public:
     }
 };
 
-RendeCard::RendeCard(){
+YinlangCard::YinlangCard(){
     will_throw = false;
 }
 
-void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+bool YinlangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isMale();
+}
+
+void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = NULL;
     if(targets.isEmpty()){
         foreach(ServerPlayer *player, room->getAlivePlayers()){
@@ -691,14 +695,20 @@ void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         }
     }else
         target = targets.first();
-
     room->moveCardTo(this, target, Player::Hand, false);
 
-    int old_value = source->getMark("rende");
-    int new_value = old_value + subcards.length();
-    room->setPlayerMark(source, "rende", new_value);
+    int num = 0;
+    foreach(int x, this->getSubcards()){
+        if(Sanguosha->getCard(x)->inherits("Weapon") ||
+           Sanguosha->getCard(x)->inherits("Armor"))
+            num ++;
+    }
 
-    if(old_value < 2 && new_value >= 2){
+    int old_value = source->getMark("Yinlang");
+    int new_value = old_value + num;
+    room->setPlayerMark(source, "Yinlang", new_value);
+
+    if(old_value < 1 && new_value >= 1){
         RecoverStruct recover;
         recover.card = this;
         recover.who = source;
@@ -706,44 +716,38 @@ void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }
 }
 
-class RendeViewAsSkill:public ViewAsSkill{
+class YinlangViewAsSkill:public ViewAsSkill{
 public:
-    RendeViewAsSkill():ViewAsSkill("rende"){
+    YinlangViewAsSkill():ViewAsSkill("yinlang"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(ServerInfo.GameMode == "04_1v3"
-           && selected.length() + Self->getMark("rende") >= 2)
-           return false;
-        else
-            return !to_select->isEquipped();
+        return !to_select->isEquipped() && to_select->getCard()->inherits("EquipCard");
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
         if(cards.isEmpty())
             return NULL;
-
-        RendeCard *rende_card = new RendeCard;
-        rende_card->addSubcards(cards);
-        return rende_card;
+        YinlangCard *ard = new YinlangCard;
+        ard->addSubcards(cards);
+        return ard;
     }
 };
 
-class Rende: public PhaseChangeSkill{
+class Yinlang: public PhaseChangeSkill{
 public:
-    Rende():PhaseChangeSkill("rende"){
-        view_as_skill = new RendeViewAsSkill;
+    Yinlang():PhaseChangeSkill("yinlang"){
+        view_as_skill = new YinlangViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
                 && target->getPhase() == Player::NotActive
-                && target->hasUsed("RendeCard");
+                && target->hasUsed("YinlangCard");
     }
 
     virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "rende", 0);
-
+        target->getRoom()->setPlayerMark(target, "Yinlang", 0);
         return false;
     }
 };
@@ -784,8 +788,9 @@ QLFDPackage::QLFDPackage()
     skills << new EyanSlash;
     baixiuying->addSkill(new Zhangshi);
 
-    General *liruilan = new General(this, "liruilan", "min", 4, false);
+    General *liruilan = new General(this, "liruilan", "min", 3, false);
     liruilan->addSkill(new Chumai);
+    liruilan->addSkill(new Yinlang);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
@@ -796,6 +801,7 @@ QLFDPackage::QLFDPackage()
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
     addMetaObject<ZhangshiCard>();
+    addMetaObject<YinlangCard>();
 }
 
 ADD_PACKAGE(QLFD);
