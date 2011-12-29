@@ -135,55 +135,24 @@ sgs.ai_skill_use["@@huatian"] = function(self, prompt)
 	return "."
 end
 
-luanwu_skill={}
-luanwu_skill.name="luanwu"
-table.insert(sgs.ai_skills, luanwu_skill)
-luanwu_skill.getTurnUseCard=function(self)
-	if self.player:getMark("@chaos") <= 0 then return end
-	local good, bad = 0, 0
-	for _, player in sgs.qlist(self.room:getOtherPlayers(self.player)) do
-		if self:isWeak(player) then
-			if self:isFriend(player) then bad = bad + 1
-			else good = good + 1
-			end
+-- wuji
+wuji_skill={}
+wuji_skill.name = "wuji"
+table.insert(sgs.ai_skills, wuji_skill)
+wuji_skill.getTurnUseCard = function(self)
+--	if self:slashIsAvailable() then return end
+	local cards = self.player:getCards("h")
+	local slashs = {}
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards,true)
+	for _,card in ipairs(cards)  do
+		if card:inherits("Slash") then
+		    table.insert(slashs, card:getId())
 		end
 	end
-	if good == 0 then return end
-
-	for _, player in sgs.qlist(self.room:getOtherPlayers(self.player)) do
-		if self:getCardsNum("Analeptic", player) > 0 then
-			if self:isFriend(player) then good = good + 1.0/player:getHp()
-			else bad = bad + 1.0/player:getHp()
-			end
-		end
-
-		local has_slash = self:getCard("Slash", player)
-		local can_slash = false
-		if not can_slash then
-			for _, p in sgs.qlist(self.room:getOtherPlayers(player)) do
-				if player:inMyAttackRange(p) then can_slash = true break end
-			end
-		end
-		if not has_slash or not can_slash then
-			if self:isFriend(player) then good = good + math.max(self:getCardsNum("Peach", player), 1)
-			else bad = bad + math.max(self:getCardsNum("Peach", player), 1)
-			end
-		end
-
-		if self:getCardsNum("Jink", player) == 0 then
-			local lost_value = 0
-			if self:hasSkills(sgs.masochism_skill, player) then lost_value = player:getHp()/2 end
-			if self:isFriend(player) then bad = bad + (lost_value+1)/player:getHp()
-			else good = good + (lost_value+1)/player:getHp()
-			end
-		end
-	end
-
-	if good > bad then return sgs.Card_Parse("@LuanwuCard=.") end
+	if #slashs == 0 then return end
+	return sgs.Card_Parse("@WujiCard=" .. table.concat(slashs, "+"))
 end
-
-sgs.ai_skill_use_func["LuanwuCard"]=function(card,use,self)
+sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 	use.card = card
 end
-
-sgs.ai_skill_playerchosen.luanwu = sgs.ai_skill_playerchosen.zero_card_as_slash
