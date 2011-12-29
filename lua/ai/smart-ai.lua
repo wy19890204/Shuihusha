@@ -776,6 +776,16 @@ sgs.ai_skill_invoke = {
 
 		return self:isEnemy(effect.to)
 	end,
+
+	double_whip = function(self, data)
+		local carduse = data:toCardUse()
+		local target = carduse.to:first()
+		if target:isChained() then
+			return self:isFriend(target)
+		else
+			return self:isEnemy(target)
+		end
+	end,
 }
 
 function SmartAI:askForSkillInvoke(skill_name, data)
@@ -1357,7 +1367,7 @@ function SmartAI:aoeIsEffective(card, to)
 
 	-- the vine
 	local armor = to:getArmor()
-	if armor and armor:inherits("Vine") then
+	if armor and armor:inherits("Vine") and not self.player:hasSkill("wuzu") then
 		return false
 	end
 
@@ -1932,7 +1942,11 @@ sgs.weapon_range  =
 	GudingBlade = 2,
 	YitianSword = 2,
 	SPMoonSpear = 3,
-	YxSword = 3
+	YxSword = 3,
+
+	DoubleWhip = 2,
+	MeteorSword = 3,
+	SunBow = 5
 }
 
 function SmartAI:evaluateEquip(card)
@@ -2967,6 +2981,17 @@ function SmartAI:askForCard(pattern, prompt, data)
 			if fcard:getSuit() == sgs.Card_Spade then
 				if carduse.from:isLord() or carduse.from:getHp() > 1 then
 					return fcard:getEffectiveId()
+				end
+			end
+		end
+		return "."
+	elseif parsedPrompt[1] == "@chumai" then
+		local target = data:toPlayer()
+		if self:isEnemy(target) then
+			local cards = self.player:getHandcards()
+			for _, card in sgs.qlist(cards) do
+				if card:isBlack() then
+					return card:getEffectiveId()
 				end
 			end
 		end

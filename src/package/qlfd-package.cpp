@@ -667,8 +667,13 @@ public:
         if(move->to_place == Player::DiscardedPile){
             const Card *equ = Sanguosha->getCard(move->card_id);
             if((equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".black", "@chumai:" + player->objectName())){
+               room->askForCard(ran, ".black", "@chumai:" + player->objectName(), QVariant::fromValue(player))){
                 room->playSkillEffect(objectName());
+                LogMessage log;
+                log.type = "#InvokeSkill";
+                log.from = ran;
+                log.arg = objectName();
+                room->sendLog(log);
                 room->loseHp(player);
             }
         }
