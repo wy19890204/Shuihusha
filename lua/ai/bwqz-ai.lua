@@ -1,3 +1,27 @@
+-- zaochuan
+local zaochuan_skill = {}
+zaochuan_skill.name = "zaochuan"
+table.insert(sgs.ai_skills, zaochuan_skill)
+zaochuan_skill.getTurnUseCard = function(self)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local card
+	self:sortByUseValue(cards,true)
+	for _,acard in ipairs(cards)  do
+		if (acard:getSuit() == sgs.Card_Club) then
+			card = acard
+			break
+		end
+	end
+	if not card then return nil end
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	local card_str = ("iron_chain:zaochuan[club:%s]=%d"):format(number, card_id)
+	local skillcard = sgs.Card_Parse(card_str)
+	assert(skillcard)
+	return skillcard
+end
+
 -- yuanyin
 local yuanyin_skill = {}
 yuanyin_skill.name = "yuanyin"
@@ -83,6 +107,12 @@ sgs.ai_skill_cardchosen["yuanyin"] = function(self, who)
 	end
 end
 
+-- qiongtu
+sgs.ai_skill_invoke["qiongtu"] = function(self, data)
+	local target = data:toPlayer()
+	return self:isEnemy(target)
+end
+
 -- menghan
 local menghan_skill={}
 menghan_skill.name = "menghan"
@@ -104,6 +134,51 @@ menghan_skill.getTurnUseCard = function(self, inclusive)
 	end
 end
 
+-- nusha
+nusha_skill={}
+nusha_skill.name = "nusha"
+table.insert(sgs.ai_skills, nusha_skill)
+nusha_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("NushaCard") then return end
+	local enum = self.enemies[1]:getHandcardNum()
+	local fnum = self.friends_noself[1]:getHandcardNum()
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:getHandcardNum() > enum then
+			enum = enemy:getHandcardNum()
+		end
+	end
+	for _, friend in ipairs(self.friends_noself) do
+		if friend:getHandcardNum() > fnum then
+			fnum = friend:getHandcardNum()
+		end
+	end
+	if enum >= fnum then
+		local slash = self:getCardId("Slash")
+		if slash > -1 then
+			return sgs.Card_Parse("@NushaCard=" .. slash)
+		end
+	end
+	return
+end
+sgs.ai_skill_use_func["NushaCard"] = function(card, use, self)
+	local enum = self.enemies[1]
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:getHandcardNum() > enum:getHandcardNum() then
+			enum = enemy
+		end
+	end
+	use.card = card
+	if use.to then
+		use.to:append(enum)
+	end
+end
+
+-- manli
+sgs.ai_skill_invoke["manli"] = function(self, data)
+	local d = data:toDamage()
+	return self:isEnemy(d.to)
+end
+
 -- qiaogong
 qiaogong_skill={}
 qiaogong_skill.name = "qiaogong"
@@ -113,52 +188,10 @@ qiaogong_skill.getTurnUseCard=function(self)
 		return sgs.Card_Parse("@QiaogongCard=.")
 	end
 end
-
 sgs.ai_skill_use_func["QiaogongCard"] = function(card, use, self)
 	local lost_hp = self.player:getLostHp()
 	local enemy_equip = 0
 	local target
-
---[[local has_xiaoji = false
-	local xiaoji_equip = 0
-	local sunshangxiang
-	for _, friend in ipairs(self.friends) do
-		if friend:hasSkill("xiaoji") then
-			has_xiaoji = true
-			xiaoji_equip = self:getCardsNum(".", friend, "e")
-			sunshangxiang = friend
-			break
-		end
-	end
-	if has_xiaoji then
-		local max_equip, max_friend = 0
-		local min_equip, min_friend = 5
-		for _, friend in ipairs(self.friends) do
-			if not friend:hasSkill("xiaoji") then
-				if (self:getCardsNum(".", friend, "e") > max_equip) and (self:getCardsNum(".", friend, "e")-xiaoji_equip<=lost_hp) then
-					max_equip = self:getCardsNum(".", friend, "e")
-					max_friend = friend
-				elseif (self:getCardsNum(".", friend, "e") < min_equip) and (xiaoji_equip-self:getCardsNum(".", friend, "e")<=lost_hp) then
-					min_equip = self:getCardsNum(".", friend, "e")
-					min_friend = friend
-				end
-			end
-		end
-
-		local equips  = {}
-		if sunshangxiang and (max_equip~=0 or min_equip~=5) then
-			if (max_equip ~= 0) and ((max_equip-self:getCardsNum(".", sunshangxiang, "e"))>=0) then
-				use.card = sgs.Card_Parse("@QiaogongCard=.")
-				if use.to then use.to:append(sunshangxiang) use.to:append(max_friend) end
-				return
-			elseif(min_equip ~= 5) and ((self:getCardsNum(".", sunshangxiang, "e")-min_equip)>=0) then
-				use.card = sgs.Card_Parse("@QiaogongCard=.")
-				if use.to then use.to:append(sunshangxiang) use.to:append(min_friend) end
-				return
-			end
-		end
-	end]]
-
 	for _, friend in ipairs(self.friends) do
 		for _, enemy in ipairs(self.enemies) do
 			if not self:hasSkills(sgs.lose_equip_skill, enemy) then
