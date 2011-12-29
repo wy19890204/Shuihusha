@@ -576,6 +576,74 @@ public:
     }
 };
 
+ZhangshiCard::ZhangshiCard(){
+
+}
+
+bool ZhangshiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->canSlash(to_select);
+}
+
+void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer *> &targets) const{
+    QList<ServerPlayer *> men = room->getMenorWomen("male");
+    const Card *slash = NULL;
+    QVariant tohelp = QVariant::fromValue((PlayerStar)white);
+    foreach(ServerPlayer *man, men){
+        slash = room->askForCard(man, "slash", "@zhangshi-slash:" + white->objectName(), tohelp);
+        if(slash){
+            CardUseStruct card_use;
+            card_use.card = slash;
+            card_use.from = white;
+            card_use.to << targets.first();
+            room->useCard(card_use);
+            return;
+        }
+    }
+}
+
+class ZhangshiViewAsSkill:public ZeroCardViewAsSkill{
+public:
+    ZhangshiViewAsSkill():ZeroCardViewAsSkill("zhangshi$"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual const Card *viewAs() const{
+        return new ZhangshiCard;
+    }
+};
+
+class Zhangshi: public TriggerSkill{
+public:
+    Zhangshi():TriggerSkill("zhangshi"){
+        events << CardAsked;
+        view_as_skill = new ZhangshiViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *white, QVariant &data) const{
+        QString pattern = data.toString();
+        if(pattern != "slash")
+            return false;
+        Room *room = white->getRoom();
+        QList<ServerPlayer *> men = room->getMenorWomen("male");
+        if(men.isEmpty() || !white->askForSkillInvoke(objectName()))
+            return false;
+        room->playSkillEffect(objectName());
+        QVariant tohelp = QVariant::fromValue((PlayerStar)white);
+        foreach(ServerPlayer *man, men){
+            const Card *slash = room->askForCard(man, "slash", "@zhangshi-slash:" + white->objectName(), tohelp);
+            if(slash){
+                room->provide(slash);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -610,6 +678,7 @@ QLFDPackage::QLFDPackage()
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
     skills << new EyanSlash;
+    baixiuying->addSkill(new Zhangshi);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
@@ -619,6 +688,7 @@ QLFDPackage::QLFDPackage()
     addMetaObject<ZishiCard>();
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
+    addMetaObject<ZhangshiCard>();
 }
 
 ADD_PACKAGE(QLFD);

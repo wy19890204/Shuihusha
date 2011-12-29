@@ -842,7 +842,7 @@ public:
             recover.who = liushan;
             room->recover(liushan, recover);
 
-            room->acquireSkill(liushan, "jijiang");
+            room->acquireSkill(liushan, "zhangshi");
         }
 
         return false;

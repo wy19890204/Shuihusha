@@ -3017,6 +3017,18 @@ QList<ServerPlayer *> Room::getLieges(const QString &kingdom, ServerPlayer *lord
     return lieges;
 }
 
+QList<ServerPlayer *> Room::getMenorWomen(const QString &gender, ServerPlayer *except) const{
+    QList<ServerPlayer *> targets;
+    foreach(ServerPlayer *player, alive_players){
+        if(except && player == except)
+            continue;
+        if((player->getGeneral()->isMale() && gender == "male") ||
+           (player->getGeneral()->isFemale() && gender == "female"))
+            targets << player;
+    }
+    return targets;
+}
+
 void Room::sendLog(const LogMessage &log){
     if(log.type.isEmpty())
         return;

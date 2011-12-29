@@ -78,6 +78,7 @@ public:
     void takeAG(ServerPlayer *player, int card_id);
     void provide(const Card *card);
     QList<ServerPlayer *> getLieges(const QString &kingdom, ServerPlayer *lord) const;
+    QList<ServerPlayer *> getMenorWomen(const QString &gender, ServerPlayer *except = NULL) const;
     void sendLog(const LogMessage &log);
     void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
     void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);

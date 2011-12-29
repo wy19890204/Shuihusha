@@ -124,6 +124,7 @@ CoupleScenario::CoupleScenario()
     map["liying"] = "chaijin";
     map["huarong"] = "taozongwang";
     map["wangdingliu"] = "jiaoting";
+    map["shantinggui"] = "weidingguo";
 
     full_map = map;
     full_map["dongzhuo"] = "diaochan";
