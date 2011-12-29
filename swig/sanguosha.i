@@ -484,10 +484,11 @@ public:
 	
 	// card types
     enum CardType{
-        Skill,
-        Basic,
-        Trick,
-        Equip,
+		Skill,
+		Basic,
+		Trick,
+		Equip,
+		Events,
     };
 
     // constructor

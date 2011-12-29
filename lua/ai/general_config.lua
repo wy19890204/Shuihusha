@@ -17,6 +17,14 @@ sgs.ai_keep_value = {
 	AmazingGrace=-1,
 	Lightning=-1,
 
+	Ecstasy = 1.5,
+	Drivolt = 1,
+	Counterplot = 3.2,
+	Wiretap = -1,
+	Assassinate = 1.8,
+	Provistore = 0,
+	Treasury = -1,
+	Tsunami = -1,
 }
 
 sgs.ai_use_value =
@@ -67,13 +75,22 @@ sgs.ai_use_value =
 	SavageAssault=3.9,
 	Duel=3.7,
 
-
 	AmazingGrace=3,
 
 	--special
 	Analeptic = 5.98,
 	Jink=8.9,
 	Shit=-10,
+
+	Ecstasy = 5,
+	Drivolt = 5.2,
+--	Counterplot = NULL,
+	Wiretap = 9,
+	Assassinate = 8.8,
+	Provistore = 6.7,
+	Treasury = 2,
+	Tsunami = 2,
+	Events = 5,
 }
 
 sgs.ai_use_priority = {
@@ -101,7 +118,6 @@ sgs.ai_use_priority = {
 	SmallYeyanCard = 2.3,
 	JilveCard = 0.4,
 --
-
 
 	Peach = 4.1,
 
@@ -153,7 +169,20 @@ sgs.ai_use_priority = {
 
 	DefensiveHorse = 0,
 
+	Ecstasy = 2.7,
+	Drivolt = 3,
+--	Counterplot = NULL,
+	Wiretap = 4,
+	Assassinate = 2.8,
+	Provistore = 4.2,
+	Treasury = 1,
+	Tsunami = 1,
+	Events = 3,
 
+	DoubleWhip = 2.64,
+	MeteorSword = 2.668,
+	SunBow = 2.567,
+	GoldArmor = 2.555,
 	--god_salvation
 	--deluge
 	--supply_shortage

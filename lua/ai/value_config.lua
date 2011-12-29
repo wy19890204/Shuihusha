@@ -6,6 +6,8 @@ sgs.dynamic_value = {
 		Slash = true,
 		FireAttack = true,
 		SavageAssault = true,
+		Drivolt = true,
+		Assassinate = true,
 		
 		QiangxiCard = true,
 		FanjianCard = true,
@@ -17,12 +19,15 @@ sgs.dynamic_value = {
 	{
 		Indulgence = true,
 		SupplyShortage = true,
+		Provistore = true,
 	},
 	control_card = 
 	{
 		Snatch = true,
 		Dismantlement = true,
 		Collateral = true,
+		Ecstasy = true,
+		Drivolt = true,
 		
 		GaleShell = true,
 		
@@ -37,6 +42,8 @@ sgs.dynamic_value = {
 	lucky_chance = 
 	{
 		Lightning = true,
+		Treasury = true,
+		Tsunami = true,
 	},
 	benefit = 
 	{
@@ -45,6 +52,9 @@ sgs.dynamic_value = {
 		IronChain = true,
 		Exnihilo = true,
 		GodSalvation = true,
+		Counterplot = true,
+		Wiretap = true,
+		Provistore = true,
 		
 		RendeCard = true,
 		JieyinCard = true,
@@ -159,9 +169,14 @@ sgs.shenzhaoyun_suit_value =
 	diamond = 3.9,
 }
 
-sgs.dongzhuo_suit_value = 
+sgs.panjinlian_suit_value = 
 {
 	spade = 5,
+}
+
+sgs.wangpo_suit_value = 
+{
+club = 5,
 }
 
 sgs.xiaoqiao_suit_value = 

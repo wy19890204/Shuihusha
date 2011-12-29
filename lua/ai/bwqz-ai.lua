@@ -233,3 +233,37 @@ sgs.ai_skill_use_func["QiaogongCard"] = function(card, use, self)
 		end
 	end
 end
+
+-- shouge
+sgs.ai_skill_invoke["shouge"] = true
+shouge_skill={}
+shouge_skill.name = "shouge"
+table.insert(sgs.ai_skills, shouge_skill)
+shouge_skill.getTurnUseCard = function(self)
+	if not self.player:isWounded() then
+		local cards = self.player:getCards("h")
+		cards = sgs.QList2Table(cards)
+		for _, acard in ipairs(cards)  do
+			if acard:inherits("Peach") or acard:inherits("Analeptic") then
+				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
+			end
+		end
+	end
+	return
+end
+sgs.ai_skill_use_func["ShougeCard"] = function(card, use, self)
+	use.card = card
+end
+
+-- kongying
+sgs.ai_skill_invoke["kongying"] = true
+sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
+	self:sort(self.enemies, "hp")
+	return self.enemies[1]
+end
+
+-- dujian
+sgs.ai_skill_invoke["dujian"] = function(self, data)
+	local rand = math.random(1, 2)
+	return rand == 2
+end
