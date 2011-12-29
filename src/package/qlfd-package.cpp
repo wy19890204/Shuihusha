@@ -644,6 +644,38 @@ public:
     }
 };
 
+class Chumai: public TriggerSkill{
+public:
+    Chumai():TriggerSkill("chumai"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *ran = room->findPlayerBySkillName(objectName());
+        if(!ran || room->getCurrent() == ran)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->to_place == Player::DiscardedPile){
+            const Card *equ = Sanguosha->getCard(move->card_id);
+            if((equ->inherits("Weapon") || equ->inherits("Armor")) &&
+               room->askForCard(ran, ".black", "@chumai:" + player->objectName())){
+                room->playSkillEffect(objectName());
+                room->loseHp(player);
+            }
+        }
+        return false;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -679,6 +711,9 @@ QLFDPackage::QLFDPackage()
     baixiuying->addSkill(new Eyan);
     skills << new EyanSlash;
     baixiuying->addSkill(new Zhangshi);
+
+    General *liruilan = new General(this, "liruilan", "min", 4, false);
+    liruilan->addSkill(new Chumai);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
