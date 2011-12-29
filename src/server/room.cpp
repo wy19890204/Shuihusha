@@ -307,7 +307,7 @@ void Room::judge(JudgeStruct &judge_struct){
             ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
             if(source && source == player){
                 setPlayerFlag(player, "FuckLian");
-                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl");
+                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl", data);
                 if(fuck){
                     JudgeStar judge = data.value<JudgeStar>();
                     source->obtainCard(judge->card);

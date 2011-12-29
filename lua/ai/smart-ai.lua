@@ -2156,8 +2156,10 @@ function SmartAI:activate(use)
 				self:useTrickCard(card, use)
 			elseif type == sgs.Card_Skill then
 				self:useSkillCard(card, use)
-			else
+			elseif type == sgs.Card_Equip then
 				self:useEquipCard(card, use)
+			else
+				self:useEventsCard(card, use)
 			end
 
 			if use:isValid() then
@@ -2304,6 +2306,8 @@ function SmartAI:getDynamicUsePriority(card)
 		self:useBasicCard(card, dummy_use)
 	elseif type == sgs.Card_Equip then
 		self:useEquipCard(card, dummy_use)
+	elseif type == sgs.Card_Events then
+		self:useEventsCard(card, dummy_use)
 	else
 		self:useSkillCard(card, dummy_use)
 	end
@@ -3118,6 +3122,18 @@ function SmartAI:askForCard(pattern, prompt, data)
 		
 		if self:getDamagedEffects(self) then return "." end
 		return self:getCardId("Jink") or "."
+	elseif pattern == "fuckgaolian" then
+		local judge = data:toJudge()
+		local fuck = self:getCard("FuckGaolian")
+		if self:needRetrial(judge) then
+			local cards = {}
+			table.insert(cards, fuck)
+			local card_id = self:getRetrialCardId(cards, judge)
+			if card_id ~= -1 then
+				return fuck:getEffectiveId()
+			end
+		end
+		return "."
 	end
 end
 
