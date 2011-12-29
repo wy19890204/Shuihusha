@@ -67,3 +67,40 @@ zhuying_skill.getTurnUseCard = function(self)
 	end
 end
 
+-- zhangshi
+local zhangshi_skill={}
+zhangshi_skill.name="zhangshi"
+table.insert(sgs.ai_skills,zhangshi_skill)
+zhangshi_skill.getTurnUseCard=function(self)
+	if self.player:hasUsed("ZhangshiCard") or not self:slashIsAvailable() then return end
+	local card_str = "@ZhangshiCard=."
+	local slash = sgs.Card_Parse(card_str)
+	assert(slash)
+	return slash
+end
+sgs.ai_skill_use_func["ZhangshiCard"]=function(card,use,self)
+	self:sort(self.enemies, "defense")
+	local target_count=0
+	for _, enemy in ipairs(self.enemies) do
+		if ((self.player:canSlash(enemy, not no_distance)) or
+			(use.isDummy and (self.player:distanceTo(enemy)<=self.predictedRange))) and
+			self:objectiveLevel(enemy)>3 and
+			self:slashIsEffective(card, enemy) then
+			use.card=card
+			if use.to then
+				use.to:append(enemy)
+			end
+			target_count=target_count+1
+			if self.slash_targets<=target_count then return end
+		end
+	end
+end
+sgs.ai_skill_invoke["zhangshi"] = function(self, data)
+	local cards = self.player:getHandcards()
+	for _, card in sgs.qlist(cards) do
+		if card:inherits("Slash") then
+			return false
+		end
+	end
+	if sgs.zhangshisource then return false else return true end
+end

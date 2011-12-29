@@ -442,6 +442,21 @@ public:
     }
 };
 
+class ColorPattern: public CardPattern{
+public:
+    ColorPattern(const QString &color)
+        :color(color){
+    }
+
+    virtual bool match(const Player *player, const Card *card) const{
+        return ! player->hasEquip(card) &&
+                ((card->isBlack() && color == "black") ||
+                (card->isRed() && color == "red"));
+    }
+private:
+    QString color;
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -452,6 +467,9 @@ StandardPackage::StandardPackage()
     patterns[".C"] = new SuitPattern(Card::Club);
     patterns[".H"] = new SuitPattern(Card::Heart);
     patterns[".D"] = new SuitPattern(Card::Diamond);
+
+    patterns[".black"] = new ColorPattern("black");
+    patterns[".red"] = new ColorPattern("red");
 
     patterns[".."] = new AllcardPattern;
     patterns["..S"] = new AllsuitPattern(Card::Spade);

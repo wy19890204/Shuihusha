@@ -698,14 +698,14 @@ public:
         frequency = Frequent;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *yinzei) const{
         if(yinzei->getPhase() == Player::Finish){
             Room *room = yinzei->getRoom();
-            int girl = 0;
-            foreach(ServerPlayer *t, room->getAlivePlayers()){
-                if(t->getGeneral()->isFemale())
-                    girl ++;
-            }
+            int girl = room->getMenorWomen("female").length();
             if(girl > 0 && room->askForSkillInvoke(yinzei, objectName())){
                 room->playSkillEffect(objectName());
                 yinzei->drawCards(qMin(girl, 2));
