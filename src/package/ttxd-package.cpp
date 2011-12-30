@@ -503,62 +503,9 @@ public:
     }
 };
 
-HuatianCard::HuatianCard(){
-    mute = true;
-}
-
-bool HuatianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    if(Self->getMark("Huatian") == 1)
-        return to_select != Self && to_select->isWounded();
-    else
-        return to_select != Self;
-}
-
-void HuatianCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    if(Self->getMark("Huatian") == 1){
-        RecoverStruct recovvv;
-        recovvv.card = this;
-        recovvv.who = effect.from;
-        room->playSkillEffect("huatian", qrand() % 2 + 1);
-        room->recover(effect.to, recovvv);
-    }
-    else if(Self->getMark("Huatian") == 2){
-        DamageStruct damag;
-        damag.from = effect.from;
-        damag.to = effect.to;
-        damag.card = this;
-        room->playSkillEffect("huatian", qrand() % 2 + 3);
-        room->damage(damag);
-    }
-    else
-        return;
-}
-
-class HuatianViewAsSkill: public ZeroCardViewAsSkill{
-public:
-    HuatianViewAsSkill():ZeroCardViewAsSkill("huatian"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern == "@@huatian";
-    }
-
-    virtual const Card *viewAs() const{
-        return new HuatianCard;
-    }
-};
-
 class Huatian:public TriggerSkill{
 public:
     Huatian():TriggerSkill("huatian"){
-        view_as_skill = new HuatianViewAsSkill;
         events << Damaged << HpRecover;
     }
 
@@ -570,21 +517,42 @@ public:
         Room *room = player->getRoom();
         if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
-            room->setPlayerMark(player, "Huatian", 1);
             for(int i = 0; i < damage.damage; i++){
-                if(!room->askForUseCard(player, "@@huatian", "@huatianai"))
-                    break;
+                QList<ServerPlayer *> wounders;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to)){
+                    if(tmp->isWounded())
+                        wounders << tmp;
+                }
+                if(!wounders.isEmpty()){
+                    room->setPlayerMark(player, "HBTJ", 1);
+                    if(!damage.to->askForSkillInvoke(objectName())){
+                        room->setPlayerMark(player, "HBTJ", 0);
+                        break;
+                    }
+                    ServerPlayer *target = room->askForPlayerChosen(player, wounders, objectName());
+                    room->setPlayerMark(player, "HBTJ", 0);
+                    RecoverStruct recovvv;
+                    recovvv.who = player;
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                    room->recover(target, recovvv);
+                }
             }
-            room->setPlayerMark(player, "Huatian", 0);
         }
         else{
             RecoverStruct rec = data.value<RecoverStruct>();
-            room->setPlayerMark(player, "Huatian", 2);
             for(int i = 0; i < rec.recover; i++){
-                if(!room->askForUseCard(player, "@@huatian", "@huatiancuo"))
+                if(!player->askForSkillInvoke(objectName()))
                     break;
+                room->setPlayerMark(player, "HBTJ", 2);
+                ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
+                room->setPlayerMark(player, "HBTJ", 0);
+
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                DamageStruct damage;
+                damage.from = player;
+                damage.to = target;
+                room->damage(damage);
             }
-            room->setPlayerMark(player, "Huatian", 0);
         }
         return false;
     }
@@ -1225,7 +1193,6 @@ TTXDPackage::TTXDPackage()
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HaoshenCard>();
-    addMetaObject<HuatianCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();
