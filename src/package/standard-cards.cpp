@@ -859,8 +859,9 @@ bool Indulgence::targetFilter(const QList<const Player *> &targets, const Player
     return true;
 }
 
-void Indulgence::takeEffect(ServerPlayer *target) const{
-    target->skip(Player::Play);
+void Indulgence::takeEffect(ServerPlayer *target, bool good) const{
+    if(!good)
+        target->skip(Player::Play);
 }
 
 Disaster::Disaster(Card::Suit suit, int number)
@@ -884,15 +885,17 @@ Lightning::Lightning(Suit suit, int number):Disaster(suit, number){
     judge.reason = objectName();
 }
 
-void Lightning::takeEffect(ServerPlayer *target) const{
-    DamageStruct damage;
-    damage.card = this;
-    damage.damage = 3;
-    damage.from = NULL;
-    damage.to = target;
-    damage.nature = DamageStruct::Thunder;
+void Lightning::takeEffect(ServerPlayer *target, bool good) const{
+    if(!good){
+        DamageStruct damage;
+        damage.card = this;
+        damage.damage = 3;
+        damage.from = NULL;
+        damage.to = target;
+        damage.nature = DamageStruct::Thunder;
 
-    target->getRoom()->damage(damage);
+        target->getRoom()->damage(damage);
+    }
 }
 
 

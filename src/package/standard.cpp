@@ -201,10 +201,18 @@ void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
     judge_struct.who = effect.to;
     room->judge(judge_struct);
 
-    if(judge_struct.isBad()){
+    bool burst = false;
+    if(judge_struct.reason == "treasury" ||
+        judge_struct.reason == "provistore")
+        burst = judge_struct.isGood();
+    else
+        burst = judge_struct.isBad();
+
+    if(burst){
         room->throwCard(this);
-        takeEffect(effect.to);
-    }else if(movable){
+        takeEffect(effect.to, judge_struct.isGood());
+    }
+    else if(movable){
         onNullified(effect.to);
     }
 }
