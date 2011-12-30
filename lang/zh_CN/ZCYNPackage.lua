@@ -3,6 +3,11 @@
 return {
 	["ZCYN"] = "折冲厌难", 
 
+	["#_guansheng"] = "大刀",
+	["guansheng"] = "关胜",
+	["tongwu"] = "通武",
+	[":tongwu"] = "当你使用的【杀】被【闪】抵消时，你可以获得该【闪】并交给除目标角色外的任一角色。",
+
 	["#_haosiwen"] = "井木犴",
 	["haosiwen"] = "郝思文",
 	["cv:haosiwen"] = "烨子",

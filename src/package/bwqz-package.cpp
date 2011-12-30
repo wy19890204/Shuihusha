@@ -767,8 +767,8 @@ BWQZPackage::BWQZPackage()
     kongliang->addSkill(new Wanku);
 
     General *jiashi = new General(this, "jiashi", "min", 3, false);
-    jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
+    jiashi->addSkill(new Zhuying);
 
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);

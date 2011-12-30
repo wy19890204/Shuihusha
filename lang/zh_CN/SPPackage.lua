@@ -14,5 +14,5 @@ return {
 	["yuzhong:me"] = "自己摸两张牌",
 	["yuzhong:cancel"] = "不发动",
 	["shuntian"] = "顺天",
-	[":shuntian"] = "锁定技，你的势力视为当前主公的势力",
+	[":shuntian"] = "<b>锁定技</b>，你的势力视为当前主公的势力",
 }
