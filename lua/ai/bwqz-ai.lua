@@ -8,7 +8,7 @@ zaochuan_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards,true)
 	for _,acard in ipairs(cards)  do
-		if (acard:getSuit() == sgs.Card_Club) then
+		if acard:getSuit() == sgs.Card_Club then
 			card = acard
 			break
 		end
@@ -140,13 +140,13 @@ nusha_skill.name = "nusha"
 table.insert(sgs.ai_skills, nusha_skill)
 nusha_skill.getTurnUseCard = function(self)
 	if self.player:hasUsed("NushaCard") then return end
-	local enum = self.enemies[1]:getHandcardNum()
-	local fnum = self.friends_noself[1]:getHandcardNum()
+	local enum = 0
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:getHandcardNum() > enum then
 			enum = enemy:getHandcardNum()
 		end
 	end
+	local fnum = 0
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:getHandcardNum() > fnum then
 			fnum = friend:getHandcardNum()
@@ -154,7 +154,7 @@ nusha_skill.getTurnUseCard = function(self)
 	end
 	if enum >= fnum then
 		local slash = self:getCardId("Slash")
-		if slash > -1 then
+		if slash then
 			return sgs.Card_Parse("@NushaCard=" .. slash)
 		end
 	end

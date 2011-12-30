@@ -25,13 +25,17 @@ function SmartAI:useCardWiretap(wiretap, use)
 end
 
 -- xing ci
-function SmartAI:useCardAssassinate(assassinate, use)
+function SmartAI:useCardAssassinate(ass, use)
 --	if self.player:hasSkill("wuyan") then return end
-	self:sort(self.enemies, "hp")
-	use.card = assassinate
-	if use.to then
-		use.to:append(self.enemies[1])
+	self:sort(self.enemies, "threat")
+	use.card = ass
+	for _, enemy in ipairs(self.enemies) do
+		if enemy ~= self.player and use.to then
+			use.to:append(enemy)
+			return
+		end
 	end
+	return
 end
 
 -- sheng chen gang

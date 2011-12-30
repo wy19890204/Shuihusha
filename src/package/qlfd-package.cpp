@@ -187,7 +187,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
+        if(effect.from && effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
             && (effect.card->isNDTrick() || effect.card->inherits("Slash"))){
             LogMessage log;
             log.type = "#Foyuan";
