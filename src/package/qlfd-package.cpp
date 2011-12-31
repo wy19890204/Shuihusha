@@ -505,6 +505,7 @@ public:
 };
 
 EyanCard::EyanCard(){
+    once = true;
 }
 
 bool EyanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -535,6 +536,10 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
 class Eyan: public ZeroCardViewAsSkill{
 public:
     Eyan():ZeroCardViewAsSkill("eyan"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("EyanCard");
     }
 
     virtual const Card *viewAs() const{
