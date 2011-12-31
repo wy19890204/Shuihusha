@@ -307,7 +307,7 @@ void Room::judge(JudgeStruct &judge_struct){
             ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
             if(source && source == player){
                 setPlayerFlag(player, "FuckLian");
-                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl");
+                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl", data);
                 if(fuck){
                     JudgeStar judge = data.value<JudgeStar>();
                     source->obtainCard(judge->card);
@@ -1833,6 +1833,7 @@ void Room::recover(ServerPlayer *player, const RecoverStruct &recover, bool set_
     if(set_emotion){
         setEmotion(player, "recover");
     }
+    thread->trigger(HpRecovered, player, data);
 }
 
 void Room::playCardEffect(const QString &card_name, bool is_male){

@@ -135,14 +135,17 @@ public:
     virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
         //Room *room = emperor->getRoom();
         if(e == PhaseChange){
-            if(emperor->getPhase() != Player::Draw)
-                return false;
-            if(emperor->askForSkillInvoke(objectName(), data)){
+            if(emperor->getPhase() == Player::Discard &&
+               emperor->askForSkillInvoke(objectName(), data)){
                 emperor->turnOver();
                 return true;
             }
         }
         else{
+            if(!emperor->hasFlag("NongQ")){
+                int index = emperor->faceUp() ? 2: 1;
+                emperor->getRoom()->playSkillEffect(objectName(), index);
+            }
             int x = emperor->getLostHp();
             x = qMax(qMin(x,2),1);
             emperor->drawCards(x);
@@ -175,12 +178,15 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *otherguan) const{
         Room *room = otherguan->getRoom();
-        if(otherguan->getPhase() != Player::Discard)
+        if(otherguan->getPhase() != Player::Draw)
             return false;
         ServerPlayer *head = room->getLord();
         if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
            && otherguan->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            room->setPlayerFlag(head, "NongQ");
             head->turnOver();
+            room->setPlayerFlag(head, "-NongQ");
             return true;
         }
         return false;

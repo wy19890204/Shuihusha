@@ -50,7 +50,7 @@ void Settings::init(){
 
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "test" << "wind" << "fire" << "thicket" << "mountain"
+        banlist << "test" << "god"
                 << "disaster" << "standard"
                 << "joy" << "joy_equip";
 
@@ -83,7 +83,7 @@ void Settings::init(){
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
-    UserAvatar = value("UserAvatar", "wusong").toString();
+    UserAvatar = value("UserAvatar", "zhaoji").toString();
     HistoryIPs = value("HistoryIPs").toStringList();
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
@@ -104,7 +104,7 @@ void Settings::init(){
 
     if(!contains("1v1/Banlist")){
         QStringList banlist;
-        banlist << "andaoquan" << "huarong" << "wangdingliu" << "panjinlian";
+        banlist << "andaoquan" << "shenwuyong" << "wangdingliu" << "baisheng";
         setValue("1v1/Banlist", banlist);
     }
 }

@@ -488,6 +488,7 @@ public:
         Basic,
         Trick,
         Equip,
+	Events,
     };
 
     // constructor
@@ -748,6 +749,7 @@ public:
     void setCurrent(ServerPlayer *current);
     int alivePlayerCount() const;
     QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
+    QList<ServerPlayer *> getPlayers() const;
     QList<ServerPlayer *> getAllPlayers() const;
     QList<ServerPlayer *> getAlivePlayers() const;
     void enterDying(ServerPlayer *player, DamageStruct *reason);
@@ -797,6 +799,7 @@ public:
     int getCardFromPile(const char *card_name);
     ServerPlayer *findPlayer(const char *general_name, bool include_dead = false) const;
     ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;
+    ServerPlayer *findPlayerWhohasEventCard(const char *event) const;
     void installEquip(ServerPlayer *player, const char *equip_name);
     void resetAI(ServerPlayer *player);
     void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);

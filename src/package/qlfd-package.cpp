@@ -187,7 +187,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
+        if(effect.from && effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
             && (effect.card->isNDTrick() || effect.card->inherits("Slash"))){
             LogMessage log;
             log.type = "#Foyuan";
@@ -669,9 +669,9 @@ public:
         if(!ran || room->getCurrent() == ran)
             return false;
         CardMoveStar move = data.value<CardMoveStar>();
-        if(move->to_place == Player::DiscardedPile){
+        if(move->from->isAlive() && move->to_place == Player::DiscardedPile){
             const Card *equ = Sanguosha->getCard(move->card_id);
-            if((equ->inherits("Weapon") || equ->inherits("Armor")) &&
+            if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
                room->askForCard(ran, ".black", "@chumai:" + player->objectName(), QVariant::fromValue(player))){
                 room->playSkillEffect(objectName());
                 LogMessage log;

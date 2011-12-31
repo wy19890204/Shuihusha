@@ -181,7 +181,7 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
     virtual QString getSubtype() const;
     virtual void onEffect(const CardEffectStruct &effect) const;
-    virtual void takeEffect(ServerPlayer *target) const = 0;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const = 0;
 
     static const DelayedTrick *CastFrom(const Card *card);
 
@@ -199,7 +199,7 @@ public:
     Q_INVOKABLE Indulgence(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void takeEffect(ServerPlayer *target) const;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
 class Disaster: public DelayedTrick{
@@ -216,7 +216,7 @@ class Lightning: public Disaster{
 
 public:
     Q_INVOKABLE Lightning(Card::Suit suit, int number);
-    virtual void takeEffect(ServerPlayer *target) const;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
 class Nullification:public SingleTargetTrick{

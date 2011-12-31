@@ -57,7 +57,7 @@ public:
     Q_INVOKABLE Provistore(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void takeEffect(ServerPlayer *target) const;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
 class Treasury: public Disaster{
@@ -65,7 +65,7 @@ class Treasury: public Disaster{
 
 public:
     Q_INVOKABLE Treasury(Card::Suit suit, int number);
-    virtual void takeEffect(ServerPlayer *target) const;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
 class Tsunami: public Disaster{
@@ -73,7 +73,7 @@ class Tsunami: public Disaster{
 
 public:
     Q_INVOKABLE Tsunami(Card::Suit suit, int number);
-    virtual void takeEffect(ServerPlayer *target) const;
+    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
 class DoubleWhip:public Weapon{

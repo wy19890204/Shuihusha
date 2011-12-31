@@ -15,8 +15,15 @@ public:
     }
 
     virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
-        if(hedgehog->getMaxHP() > 3)
+        if(hedgehog->getMaxHP() > 3){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = hedgehog;
+            log.arg = objectName();
+            hedgehog->getRoom()->sendLog(log);
+
             hedgehog->getRoom()->loseMaxHp(hedgehog);
+        }
     }
 };
 
@@ -376,7 +383,7 @@ public:
         ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
         if(zhangqing && target->getPhase() == Player::Finish){
             if(target->getHandcardNum() <= 1 && !target->isNude()
-                && zhangqing->askForSkillInvoke(objectName())){
+                && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());
                 int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
                 room->obtainCard(zhangqing, card_id);
@@ -468,7 +475,7 @@ public:
         Room *room = turtle->getRoom();
         if((reason->inherits("Slash") || reason->inherits("Duel"))
             && turtle->getWeapon() && turtle->getArmor()
-            && turtle->askForSkillInvoke(objectName())){
+            && turtle->askForSkillInvoke(objectName(), data)){
             LogMessage log;
             log.type = "#ManliBuff";
             log.from = turtle;
@@ -767,8 +774,8 @@ BWQZPackage::BWQZPackage()
     kongliang->addSkill(new Wanku);
 
     General *jiashi = new General(this, "jiashi", "min", 3, false);
-    jiashi->addSkill(new Zhuying);
     jiashi->addSkill(new Banzhuang);
+    jiashi->addSkill(new Zhuying);
 
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);

@@ -104,7 +104,7 @@ Provistore::Provistore(Suit suit, int number)
     target_fixed = false;
 
     judge.pattern = QRegExp("(.*):(diamond):(.*)");
-    judge.good = true;
+    judge.good = false;
     judge.reason = objectName();
 }
 
@@ -117,22 +117,25 @@ bool Provistore::targetFilter(const QList<const Player *> &targets, const Player
     return true;
 }
 
-void Provistore::takeEffect(ServerPlayer *target) const{
-    target->skip(Player::Discard);
+void Provistore::takeEffect(ServerPlayer *target, bool good) const{
+    if(good)
+        target->skip(Player::Discard);
 }
 
 Treasury::Treasury(Suit suit, int number):Disaster(suit, number){
     setObjectName("treasury");
 
     judge.pattern = QRegExp("(.*):(heart|diamond):([JQKA])");
-    judge.good = false;
+    judge.good = true;
     judge.reason = objectName();
 }
 
-void Treasury::takeEffect(ServerPlayer *target) const{
-    //room->broadcastInvoke("animate", "treasury:" + target->objectName());
-    target->getRoom()->broadcastInvoke("playAudio", "treasury");
-    target->drawCards(5);
+void Treasury::takeEffect(ServerPlayer *target, bool good) const{
+    if(good){
+        //room->broadcastInvoke("animate", "treasury:" + target->objectName());
+        target->getRoom()->broadcastInvoke("playAudio", "treasury");
+        target->drawCards(5);
+    }
 }
 
 Tsunami::Tsunami(Suit suit, int number):Disaster(suit, number){
@@ -143,10 +146,12 @@ Tsunami::Tsunami(Suit suit, int number):Disaster(suit, number){
     judge.reason = objectName();
 }
 
-void Tsunami::takeEffect(ServerPlayer *target) const{
-    //room->broadcastInvoke("animate", "tsunami:" + target->objectName());
-    target->getRoom()->broadcastInvoke("playAudio", "tsunami");
-    target->throwAllCards();
+void Tsunami::takeEffect(ServerPlayer *target, bool good) const{
+    if(!good){
+        //room->broadcastInvoke("animate", "tsunami:" + target->objectName());
+        target->getRoom()->broadcastInvoke("playAudio", "tsunami");
+        target->throwAllCards();
+    }
 }
 
 class DoubleWhipSkill : public WeaponSkill{

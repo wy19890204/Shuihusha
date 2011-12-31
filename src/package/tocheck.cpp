@@ -372,8 +372,9 @@ bool SupplyShortage::targetFilter(const QList<const Player *> &targets, const Pl
         return distance <= 1;
 }
 
-void SupplyShortage::takeEffect(ServerPlayer *target) const{
-    target->skip(Player::Draw);
+void SupplyShortage::takeEffect(ServerPlayer *target, bool good) const{
+    if(!good)
+        target->skip(Player::Draw);
 }
 
 TocheckPackage::TocheckPackage()

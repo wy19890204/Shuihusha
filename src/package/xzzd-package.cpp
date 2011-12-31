@@ -543,7 +543,7 @@ public:
         Room *room = player->getRoom();
         JudgeStar judge = data.value<JudgeStar>();
 
-        if(player->askForSkillInvoke(objectName())){
+        if(player->askForSkillInvoke(objectName(), data)){
             player->obtainCard(judge->card);
             room->playSkillEffect(objectName());
             int card_id = room->drawCard();
