@@ -480,7 +480,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
+        if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
             && damage.to->isWounded() && player->askForSkillInvoke(objectName())){
             Room *room = player->getRoom();
             int card = room->askForCardChosen(damage.from, damage.to, "he", objectName());
@@ -506,11 +506,7 @@ public:
 class Huatian:public TriggerSkill{
 public:
     Huatian():TriggerSkill("huatian"){
-        events << Damaged << HpRecover;
-    }
-
-    virtual int getPriority() const{
-        return -1;
+        events << Damaged << HpRecovered;
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
@@ -537,22 +533,21 @@ public:
                     room->recover(target, recovvv);
                 }
             }
+            return false;
         }
-        else{
-            RecoverStruct rec = data.value<RecoverStruct>();
-            for(int i = 0; i < rec.recover; i++){
-                if(!player->askForSkillInvoke(objectName()))
-                    break;
-                room->setPlayerMark(player, "HBTJ", 2);
-                ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
-                room->setPlayerMark(player, "HBTJ", 0);
+        RecoverStruct rec = data.value<RecoverStruct>();
+        for(int i = rec.recover; i > 0; i--){
+            if(!player->askForSkillInvoke(objectName()))
+                break;
+            room->setPlayerMark(player, "HBTJ", 2);
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
+            room->setPlayerMark(player, "HBTJ", 0);
 
-                room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                DamageStruct damage;
-                damage.from = player;
-                damage.to = target;
-                room->damage(damage);
-            }
+            room->playSkillEffect(objectName(), qrand() % 2 + 3);
+            DamageStruct damage;
+            damage.from = player;
+            damage.to = target;
+            room->damage(damage);
         }
         return false;
     }

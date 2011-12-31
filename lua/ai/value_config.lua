@@ -176,7 +176,7 @@ sgs.panjinlian_suit_value =
 
 sgs.wangpo_suit_value = 
 {
-club = 5,
+	club = 5,
 }
 
 sgs.xiaoqiao_suit_value = 
