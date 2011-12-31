@@ -119,20 +119,27 @@ sgs.ai_skill_invoke["panquan"] = function(self, data)
 end
 
 -- huatian
-sgs.ai_skill_use["@@huatian"] = function(self, prompt)
-	if prompt == "@huatianai" then
+sgs.ai_skill_invoke["huatian"] = function(self, data)
+	if not self.friends_noself[1] then return false
+	self:sort(self.friends_noself, "hp")
+	if self.player:getMark("HBTJ") == 1 then
+		return self.friends_noself[1]:isWounded()
+	end
+	return true
+end
+sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
+	local mark = self.player:getMark("HBTJ")
+	if mark == 1 then
 		self:sort(self.friends_noself, "hp")
-		for _, target in ipairs(self.friends_noself) do
-			if target:isWounded() then
-				return "@HuatianCard=.->" .. target:objectName()
+		for _, friend in ipairs(self.friends_noself) do
+			if friend:isWounded() then
+				return friend
 			end
 		end
-	else
+	elseif mark == 2 then
 		self:sort(self.enemies, "hp")
-		local target = self.enemies[1]
-		return "@HuatianCard=.->" .. target:objectName()
+		return self.enemies[1]
 	end
-	return "."
 end
 
 -- wuji

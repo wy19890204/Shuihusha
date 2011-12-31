@@ -1833,6 +1833,7 @@ void Room::recover(ServerPlayer *player, const RecoverStruct &recover, bool set_
     if(set_emotion){
         setEmotion(player, "recover");
     }
+    thread->trigger(HpRecovered, player, data);
 }
 
 void Room::playCardEffect(const QString &card_name, bool is_male){

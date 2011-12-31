@@ -1,7 +1,7 @@
 -- translation for JoyPackage
 
 return {
-	["joy"] = "重口味包",
+	["kuso"] = "重口味包",
 
 	["shit"] = "屎",
 	[":shit"] = "当此牌在<font color='red'><b>你的回合</b></font>内从你的<font color='red'>手牌</font>进入<font color='red'>弃牌堆</font>时，\
@@ -10,8 +10,12 @@ return {
 	["$ShitLostHp"] = "%from 吃了 %card, 将流失1点体力",
 	["$ShitDamage"] = "%from 吃了 %card, 将受到自己对自己的1点伤害",
 
+	["stink"] = "屁",
+	[":stink"] = "出牌阶段对下家使用，除非目标角色打出一张【闪】，否则必须和自己的下家（你的下下家）交换位置",
+	["haochou"] = "你的上家对你放了一个臭屁，除非你能【闪】开，否则就完蛋了……",
+
 -- equips
-	["joy_equip"] = "欢乐包",
+	["joy"] = "欢乐包",
 
 	["monkey"] = "猴子",
 	[":monkey"] = "装备后，当场上有其他角色使用【桃】时，你可以弃掉【猴子】，阻止【桃】的结算并将其收为手牌",

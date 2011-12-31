@@ -66,6 +66,28 @@ bool Shit::HasShit(const Card *card){
         return card->objectName() == "shit";
 }
 
+Stink::Stink(Suit suit, int number):BasicCard(suit, number){
+    setObjectName("stink");
+    target_fixed = true;
+}
+
+QString Stink::getSubtype() const{
+    return "disgusting_card";
+}
+
+QString Stink::getEffectPath(bool is_male) const{
+    return "audio/card/common/stink.ogg";
+}
+
+void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
+    room->setEmotion(nextfriend, "bad");
+    if(!room->askForCard(nextfriend, "jink", "haochou", true)){
+        room->swapSeat(nextfriend, nextfriend->getNextAlive());
+    }
+    else room->setEmotion(nextfriend, "good");
+}
 class GrabPeach: public TriggerSkill{
 public:
     GrabPeach():TriggerSkill("grab_peach"){
@@ -158,15 +180,16 @@ void GaleShell::onUse(Room *room, const CardUseStruct &card_use) const{
     Card::onUse(room, card_use);
 }
 
-JoyPackage::JoyPackage()
-    :Package("joy")
+KusoPackage::KusoPackage()
+    :Package("kuso")
 {
     QList<Card *> cards;
 
     cards << new Shit(Card::Club, 1)
             << new Shit(Card::Heart, 8)
             << new Shit(Card::Diamond, 13)
-            << new Shit(Card::Spade, 10);
+            << new Shit(Card::Spade, 10)
+            << new Stink(Card::Diamond, 1);
 
     foreach(Card *card, cards)
         card->setParent(this);
@@ -174,8 +197,8 @@ JoyPackage::JoyPackage()
     type = CardPack;
 }
 
-JoyEquipPackage::JoyEquipPackage()
-    :Package("joy_equip")
+JoyPackage::JoyPackage()
+    :Package("joy")
 {
     (new Monkey(Card::Diamond, 5))->setParent(this);
     (new GaleShell(Card::Heart, 1))->setParent(this);
@@ -183,5 +206,5 @@ JoyEquipPackage::JoyEquipPackage()
     type = CardPack;
 }
 
+ADD_PACKAGE(Kuso)
 ADD_PACKAGE(Joy)
-ADD_PACKAGE(JoyEquip)

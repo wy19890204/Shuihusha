@@ -4,18 +4,18 @@
 #include "package.h"
 #include "standard.h"
 
+class KusoPackage: public Package{
+    Q_OBJECT
+
+public:
+    KusoPackage();
+};
+
 class JoyPackage: public Package{
     Q_OBJECT
 
 public:
     JoyPackage();
-};
-
-class JoyEquipPackage: public Package{
-    Q_OBJECT
-
-public:
-    JoyEquipPackage();
 };
 
 class Shit:public BasicCard{
@@ -29,6 +29,15 @@ public:
     static bool HasShit(const Card *card);
 };
 
+class Stink: public BasicCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Stink(Card::Suit suit, int number);
+    virtual QString getSubtype() const;
+    virtual QString getEffectPath(bool is_male) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
 class Monkey: public OffensiveHorse{
     Q_OBJECT
 
