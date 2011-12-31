@@ -63,8 +63,6 @@ return {
 	["~xunyu"] = "身为汉臣，至死不渝",
 	["~yuanshao"] = "天不助袁哪！",
 	["~taishici"] = "今所志未遂，奈何死乎",
-	["~pangde"] = "宁做国家鬼，不为贼将也",
-	["~shuangxiong"] = "生不逢时啊……",
 	
 	["@nirvana"] = "涅槃",	
 	

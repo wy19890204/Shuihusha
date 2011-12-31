@@ -2930,6 +2930,8 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif parsedPrompt[1] == "@xiagu" then
 		local damage = data:toDamage()
 		if self:isFriend(damage.to) then
+			if damage.to:hasSkill("fushang") and
+				damage.to:getMaxHP() > 3 and damage.damage < 2 then return "." end
 			local allcards = self.player:getCards("he")
 			for _, card in sgs.qlist(allcards) do
 				if card:inherits("EquipCard") then
