@@ -62,11 +62,11 @@ extern "C" {
 }
 
 QString Engine::getVersion() const{
-    return "20111214";
+    return "20111231";
 }
 
 QString Engine::getVersionName() const{
-    return tr("V2.0.0");
+    return tr("V2.7.9");
 }
 
 Engine::Engine()
@@ -107,6 +107,7 @@ Engine::Engine()
     modes["05p"] = tr("5 players");
     modes["06p"] = tr("6 players");
     modes["06pd"] = tr("6 players (2 renegades)");
+    //modes["06basara"] = tr("6 players(Basara Mode)");
     modes["06_3v3"] = tr("6 players (3v3)");
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
@@ -397,6 +398,8 @@ QString Engine::getSetupString() const{
         flags.append("S");
     if(Config.EnableScene)
         flags.append("C");
+    if(Config.EnableBasara)
+        flags.append("B");
     if(Config.EnableAI)
         flags.append("A");
     if(Config.DisableChat)

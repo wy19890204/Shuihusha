@@ -539,7 +539,28 @@ void MainWindow::on_actionBroadcast_triggered()
 
 void MainWindow::on_actionAcknowledgement_triggered()
 {
+    QStringList contents;
+    contents.append(tr("QSanguosha staff:"));
 
+    contents.append(tr("AI Maintainance: William915, donle"));
+    contents.append(tr("Game Design: Moligaloo, Ubun Tenkei"));
+    contents.append(tr("Miscellaneous: Hypercross"));
+    contents.append(tr("Founder: Moligaloo"));
+
+    QString content;
+    foreach(QString string, contents)
+    {
+        content.append(QString("<p align='right'><i>%1</i></p>").arg(string));
+    }
+
+    Window *window = new Window(tr("About QSanguosha"), QSize(365, 411));
+    scene->addItem(window);
+
+    window->addContent(content);
+    window->addCloseButton(tr("OK"));
+    window->shift();
+
+    window->appear();
 }
 
 void MainWindow::on_actionPC_Console_Start_triggered()

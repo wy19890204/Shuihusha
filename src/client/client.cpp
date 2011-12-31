@@ -562,7 +562,7 @@ QString Client::getPlayerName(const QString &str){
         ClientPlayer *player = getPlayer(str);
         general_name = player->getGeneralName();
         general_name = Sanguosha->translate(general_name);
-        if(ServerInfo.GameMode == "08same")
+        if(ServerInfo.GameMode == "08same" || player->getGeneralName() == "anjiang")
             general_name = QString("%1[%2]").arg(general_name).arg(player->getSeat());
         return general_name;
 
@@ -1044,7 +1044,7 @@ void Client::killPlayer(const QString &player_name){
 
     player->loseAllSkills();
 
-    if(!Self->hasFlag("marshalling") && !Self->hasSkill("zuohua")){
+    if(!Self->hasFlag("marshalling")){
         QString general_name = player->getGeneralName();
         QString last_word = Sanguosha->translate(QString("~%1").arg(general_name));
 
@@ -1368,7 +1368,6 @@ void Client::doGongxin(const QString &gongxin_str){
     who->setCards(card_ids);
 
     emit gongxin(card_ids, enable_heart);
-    //refusable = false;
     setStatus(AskForGongxin);
 }
 
@@ -1457,7 +1456,7 @@ void Client::speak(const QString &speak_data){
 
     if(who == "."){
         QString line = tr("<font color='red'>System: %1</font>").arg(text);
-        emit line_spoken(line);
+        emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
         return;
     }
 
@@ -1475,7 +1474,7 @@ void Client::speak(const QString &speak_data){
     QString line = tr("<font color='%1'>[%2] said: %3 </font>")
                    .arg(Config.TextEditColor.name()).arg(title).arg(text);
 
-    emit line_spoken(line);
+    emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
 }
 
 void Client::moveFocus(const QString &focus){
