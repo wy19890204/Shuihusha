@@ -368,20 +368,17 @@
     <message>
         <location filename="src/client/client.cpp" line="385"/>
         <source>Game will start in &lt;b&gt;%1&lt;/b&gt; seconds</source>
-        <oldsource>Game will start in %1 seconds</oldsource>
         <translation>游戏将在 &lt;b&gt;%1&lt;/b&gt; 秒后开始</translation>
     </message>
     <message>
         <location filename="src/client/client.cpp" line="423"/>
         <source>Your role is %1</source>
-        <oldsource>Your role is </oldsource>
         <translation>您的角色是 %1</translation>
     </message>
     <message>
         <location filename="src/client/client.cpp" line="425"/>
         <source>
  wait for the lord player choosing general, please</source>
-        <oldsource>, wait for the lord player choosing general, please</oldsource>
         <translation>
 请等待主公选择武将</translation>
     </message>
@@ -409,7 +406,6 @@
         <location filename="src/client/client.cpp" line="632"/>
         <location filename="src/client/client.cpp" line="668"/>
         <source>&lt;br/&gt;&lt;br/&gt; &lt;b&gt;Notice&lt;/b&gt;: %1&lt;br/&gt;</source>
-        <oldsource>&lt;br/&gt;&lt;br/&gt; Notice: %1</oldsource>
         <translation>&lt;br/&gt;&lt;br/&gt; &lt;b&gt;温馨提示&lt;/b&gt;: %1&lt;br/&gt;</translation>
     </message>
     <message>
@@ -475,7 +471,7 @@
     <message>
         <location filename="src/client/client.cpp" line="1076"/>
         <source>Your level is not enough</source>
-        <translation>你的等级不够</translation>
+        <translation>您的等级不够</translation>
     </message>
     <message>
         <location filename="src/client/client.cpp" line="1078"/>
@@ -495,7 +491,6 @@
     <message>
         <location filename="src/client/client.cpp" line="1232"/>
         <source>You are dying, please provide %1 peach(es)(or analeptic) to save yourself</source>
-        <oldsource>You are dying, please provide %2 peach(es)(or analeptic) to save yourself</oldsource>
         <translation>您正在死亡线上挣扎，请提供 %1 块【肉】（或【酒】）来救您自己</translation>
     </message>
     <message>
@@ -712,7 +707,6 @@
     <message>
         <location filename="src/ui/clientlogbox.cpp" line="135"/>
         <source>Log string is not well formatted: %1</source>
-        <oldsource>Log string is not well formatted: %1, error string is %2</oldsource>
         <translation>提示信息没有格式化好: %1</translation>
     </message>
 </context>
@@ -778,7 +772,6 @@
     <message>
         <location filename="src/dialog/configdialog.ui" line="192"/>
         <source>Background</source>
-        <oldsource>GroupBox</oldsource>
         <translation>背景</translation>
     </message>
     <message>
@@ -869,7 +862,6 @@
     <message>
         <location filename="src/dialog/configdialog.ui" line="515"/>
         <source>The sender&apos;s email address</source>
-        <oldsource>The user name of SMTP server</oldsource>
         <translation>发送者的邮件地址</translation>
     </message>
     <message>
@@ -1085,7 +1077,6 @@
     <message>
         <location filename="src/ui/dashboard.cpp" line="64"/>
         <source>Trusting ...</source>
-        <oldsource>Trusting</oldsource>
         <translation>托管中 ...</translation>
     </message>
 </context>
@@ -1552,7 +1543,6 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="155"/>
         <source>Ctrl+R</source>
-        <oldsource>Ctrl+C</oldsource>
         <translation>Ctrl+R</translation>
     </message>
     <message>
@@ -1613,7 +1603,6 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="190"/>
         <source>Ctrl+I</source>
-        <oldsource>Ctrl+V</oldsource>
         <translation>Ctrl+I</translation>
     </message>
     <message>
@@ -1714,7 +1703,6 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="336"/>
         <source>Package manager ...</source>
-        <oldsource>Packaging ...</oldsource>
         <translation>DIY 包管理器 ...</translation>
     </message>
     <message>
@@ -1841,7 +1829,6 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="338"/>
         <source>Compilation time: %1 %2 &lt;br/&gt;</source>
-        <oldsource>Compilation time: %1 %2</oldsource>
         <translation>编译时间: %1 %2 &lt;br/&gt;</translation>
     </message>
     <message>
@@ -1877,6 +1864,31 @@
         <translation>服务器尚未启动!</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.cpp" line="543"/>
+        <source>QSanguosha staff:</source>
+        <translation>三国杀开发组成员:</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="545"/>
+        <source>AI Maintainance: William915, donle</source>
+        <translation>AI维护: William915, donle</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="546"/>
+        <source>Game Design: Moligaloo, Ubun Tenkei</source>
+        <translation>程序设计:太阳神上,宇文天启</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="547"/>
+        <source>Miscellaneous: Hypercross</source>
+        <translation>杂项: Hypercross</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="548"/>
+        <source>Founder: Moligaloo</source>
+        <translation>创始人: 太阳神上</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.cpp" line="567"/>
         <source>This function is not implemented yet!</source>
         <translation>此功能尚未实现!</translation>
@@ -1904,8 +1916,17 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="331"/>
         <source>Current version: %1 %2 (%3)&lt;br/&gt;</source>
-        <oldsource>Current version: %1 %2&lt;br/&gt;</oldsource>
         <translation>当前版本: %1 %2 (%3)&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="341"/>
+        <source>Project home: &lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;</source>
+        <translation>项目主页: &lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="344"/>
+        <source>Forum: &lt;a href=&apos;%1&apos; style = &quot;color:white; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;</source>
+        <translation>论坛: &lt;a href=&apos;%1&apos; style = &quot;color:white; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="408"/>
@@ -1967,7 +1988,6 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="319"/>
         <source>This is the open source clone of the popular &lt;b&gt;Sanguosha&lt;/b&gt; game,totally written in C++ Qt GUI framework &lt;br /&gt;My Email: moligaloo@gmail.com &lt;br/&gt;</source>
-        <oldsource>This is the open source clone of the popular &lt;b&gt;Sanguosha&lt;/b&gt; game,totally written in C++ Qt GUI framework &lt;br /&gt;My Email: moligaloo@gmail.com</oldsource>
         <translation>这是 &lt;b&gt;三国杀&lt;/b&gt; 的开源克隆，完全基于 C++ Qt GUI 框架&lt;br /&gt; 我的电子邮件：moligaloo@gmail.com &lt;br/&gt;</translation>
     </message>
 </context>
@@ -1989,7 +2009,12 @@
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.cpp" line="620"/>
+        <location filename="src/dialog/mainwindow.cpp" line="654"/>
+        <source>LOOP</source>
+        <translation>循环</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="657"/>
         <source>Test times</source>
         <translation>测试次数</translation>
     </message>
@@ -2222,6 +2247,14 @@
     </message>
 </context>
 <context>
+    <name>Photo</name>
+    <message>
+        <location filename="src/ui/photo.cpp" line="586"/>
+        <source>Multiple</source>
+        <translation>多个牌堆</translation>
+    </message>
+</context>
+<context>
     <name>Pixmap</name>
     <message>
         <location filename="src/ui/pixmap.cpp" line="15"/>
@@ -2377,7 +2410,6 @@
     <message>
         <location filename="src/server/room.cpp" line="1234"/>
         <source>&lt;font color=#000000&gt;Player &lt;b&gt;%1&lt;/b&gt; left the game&lt;/font&gt;</source>
-        <oldsource>&lt;font color=#000000&gt;Player &lt;b&gt;%1&lt;/b&gt; leave the game&lt;/font&gt;</oldsource>
         <translation>&lt;font color=#000000&gt;玩家 %1 离开了游戏&lt;/font&gt;</translation>
     </message>
     <message>
@@ -2399,8 +2431,6 @@
         <location filename="src/server/room.cpp" line="2412"/>
         <source>Card can not parse:
  %1</source>
-        <oldsource>Card can not parse:
- %s</oldsource>
         <translation>卡牌字符串无法解析:
 %1</translation>
     </message>
@@ -2661,7 +2691,11 @@
         <translation>选择技能</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="2860"/>
+        <location filename="src/ui/roomscene.cpp" line="2939"/>
+        <source>&lt;font color=&apos;white&apos;&gt;------- Game Start --------&lt;/font&gt;</source>
+        <translation>&lt;font color=&apos;white&apos;&gt;------- 游戏开始 --------&lt;/font&gt;</translation>
+    </message>
+    <message>
         <source>------- Game Start --------</source>
         <translation>------- 游戏开始 --------</translation>
     </message>
@@ -2787,7 +2821,6 @@
     <message>
         <location filename="src/server/server.cpp" line="844"/>
         <source>%1 connected</source>
-        <oldsource>%1 connected, port = %2</oldsource>
         <translation>%1 已连接</translation>
     </message>
     <message>
@@ -2839,7 +2872,17 @@
         <translation>卡牌包</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="330"/>
+        <location filename="src/server/server.cpp" line="141"/>
+        <source>This option enables the cheat menu</source>
+        <translation>本选项启用作弊菜单</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="175"/>
+        <source>Enable Basara</source>
+        <translation>启用暗将模式</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="338"/>
         <source>Standard mode</source>
         <translation>标准模式</translation>
     </message>
@@ -2896,7 +2939,6 @@
     <message>
         <location filename="src/server/server.cpp" line="138"/>
         <source>Requires password to login, hide screen name and disable kicking</source>
-        <oldsource>Requires password to login, hide screen name and disable kicking and </oldsource>
         <translation>需要密码才能登录，隐藏玩家昵称且禁止主公T人</translation>
     </message>
     <message>
@@ -3028,7 +3070,6 @@
     <message>
         <location filename="src/server/server.cpp" line="140"/>
         <source>Choose generals and cards freely</source>
-        <oldsource>Free choose generals</oldsource>
         <translation>自由选择武将与卡牌</translation>
     </message>
     <message>
@@ -3209,8 +3250,7 @@
     <message>
         <location filename="src/core/settings.cpp" line="83"/>
         <source>Sanguosha-fans</source>
-        <oldsource>Sanguosha-lover</oldsource>
-        <translation>天启姐fans</translation>
+        <translation>三国杀fans</translation>
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="84"/>
@@ -3338,6 +3378,16 @@
     </message>
     <message>
         <location filename="src/ui/startscene.cpp" line="166"/>
+        <source>Basara Mode is enabled</source>
+        <translation>暗将模式已开启</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="167"/>
+        <source>Basara Mode is disabled</source>
+        <translation>暗将模式已关闭</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="170"/>
         <source>This server is AI enabled, AI delay is %1 milliseconds</source>
         <translation>服务器启用了 AI，AI 的延迟是 %1 毫秒</translation>
     </message>
