@@ -120,7 +120,7 @@ end
 
 -- huatian
 sgs.ai_skill_invoke["huatian"] = function(self, data)
-	if not self.friends_noself[1] then return false
+	if not self.friends_noself[1] then return false end
 	self:sort(self.friends_noself, "hp")
 	if self.player:getMark("HBTJ") == 1 then
 		return self.friends_noself[1]:isWounded()

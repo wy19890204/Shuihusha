@@ -597,6 +597,7 @@ TestPackage::TestPackage()
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
+    new General(this, "anjiang", "god", 4, true, true);
 
     addMetaObject<CheatCard>();
     patterns["."] = new HandcardPattern;
