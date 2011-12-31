@@ -531,8 +531,6 @@ function SmartAI:filterEvent(event, player, data)
 				elseif promptlist[2] == "lianli-jink" then
 					sgs.lianlisource = player
 				end
-			elseif data:toString() == "skillChoice:guhuo:question" then
-				sgs.questioner = player
 			end
 		end
 	elseif event == sgs.CardUsed then
@@ -1329,6 +1327,10 @@ function SmartAI:useBasicCard(card, use, no_distance)
 				end
 			end
 		end
+	elseif card:inherits("Stink") then
+		local next_player = self.player:getNextAlive()
+		if self:isFriend(next_player) then return end
+		use.card = card
 	end
 end
 
@@ -3452,7 +3454,7 @@ function SmartAI:getCardId(class_name, player)
 	local cards = player:getCards("he")
 	cards = sgs.QList2Table(cards)
 	self:sortByUsePriority(cards)
-	local card_str = self:getGuhuoCard(class_name, player) or zeroCardView(class_name, player)
+	local card_str = zeroCardView(class_name, player)
 	if card_str then return card_str end
 
 	for _, card in ipairs(cards) do
@@ -3770,7 +3772,7 @@ dofile "lua/ai/xzdd-ai.lua"
 dofile "lua/ai/ttxd-ai.lua"
 dofile "lua/ai/bwqz-ai.lua"
 dofile "lua/ai/qlfd-ai.lua"
---dofile "lua/ai/zcyn-ai.lua"
+dofile "lua/ai/zcyn-ai.lua"
 --dofile "lua/ai/god-ai.lua"
 dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/joy-ai.lua"

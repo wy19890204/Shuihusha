@@ -48,8 +48,8 @@ extern "C" {
     Package *NewTocheck();
     Package *NewExCard();
     Package *NewEvents();
+    Package *NewKuso();
     Package *NewJoy();
-    Package *NewJoyEquip();
 
     Scenario *NewCoupleScenario();
     Scenario *NewZombieScenario();
@@ -89,8 +89,8 @@ Engine::Engine()
     addPackage(NewTocheck());
     addPackage(NewExCard());
     addPackage(NewEvents());
+    addPackage(NewKuso());
     addPackage(NewJoy());
-    addPackage(NewJoyEquip());
 
     addScenario(NewCoupleScenario());
     addScenario(NewZombieScenario());
