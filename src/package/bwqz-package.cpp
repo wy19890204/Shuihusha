@@ -596,6 +596,21 @@ public:
     }
 };
 
+class AoxiangChange: public TriggerSkill{
+public:
+    AoxiangChange():TriggerSkill("#aox_cg"){
+        events << GameStart;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+        if(player->getGeneral2Name() == "tongguan"){
+            player->getRoom()->setPlayerProperty(player, "general2", player->getGeneralName());
+            player->getRoom()->setPlayerProperty(player, "general", "tongguan");
+        }
+        return false;
+    }
+};
+
 JiaomieCard::JiaomieCard(){
     mute = true;
 }
@@ -789,6 +804,8 @@ BWQZPackage::BWQZPackage()
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
+    tongguan->addSkill(new AoxiangChange);
+    related_skills.insertMulti("aoxiang", "#aox_cg");
     tongguan->addSkill(new Zhengfa);
     tongguan->addSkill(new Jiaomie);
 

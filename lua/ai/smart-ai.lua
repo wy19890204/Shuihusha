@@ -2939,9 +2939,11 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif parsedPrompt[1] == "@baoguo" then
 		if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end 
 		local damage = data:toDamage()
-		if self:isFriend(damage.to) then
-			if self.player:getHp() > 1 or
-				(self.player:getHp() < 2 and (self:getCardId("Peach") or self:getCardId("Analeptic"))) then
+		if self:isFriend(damage.to) and not self.player:isKongcheng() then
+			local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
+			local dmgnum = damage.damage
+			if self.player:getHp() + pile - dmgnum > 0 then
+				if self.player:getHp() + pile - dmgnum == 1 and pile > 0 then return "." end
 				local card = self:getUnuseCard()
 				if card then return card:getEffectiveId() end
 			end
@@ -3082,7 +3084,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 		return self:getCardId("Slash") or "."
 	elseif pattern == "jink" then
-		if (parsedPrompt[1] == "@wushuang-jink-1" or parsedPrompt[1] == "@roulin1-jink-1" or parsedPrompt[1] == "@roulin2-jink-1")
+		if (parsedPrompt[1] == "@assas1" or parsedPrompt[1] == "@roulin1-jink-1" or parsedPrompt[1] == "@roulin2-jink-1")
 			and self:getCardsNum("Jink") < 2 then return "." end
 		if parsedPrompt[1] == "archery-attack-jink" or parsedPrompt[1]=="@moon-spear-jink" then
 			if not self:damageIsEffective(nil, nil, target) then return "." end
