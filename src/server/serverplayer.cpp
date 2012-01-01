@@ -752,7 +752,7 @@ void ServerPlayer::gainAnExtraTurn(){
     ServerPlayer *current = room->getCurrent();
 
     room->setCurrent(this);
-    room->setTag("Shudan", NULL);
+    room->removeTag("Shudan");
     room->getThread()->trigger(TurnStart, this);
     room->setCurrent(current);
 }
