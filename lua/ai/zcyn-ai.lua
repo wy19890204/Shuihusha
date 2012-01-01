@@ -1,5 +1,14 @@
 -- tongwu
 sgs.ai_skill_invoke["tongwu"] = true
+sgs.ai_skill_playerchosen["tongwu"] = function(self, targets)
+	self:sort(targets, "handcard")
+	for _, target in ipairs(targets) do
+		if self:isFriend(target) then
+			return target
+		end
+	end
+	return self.player
+end
 
 -- shemi
 sgs.ai_skill_invoke["shemi"] = function(self, data)

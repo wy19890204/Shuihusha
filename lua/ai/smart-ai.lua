@@ -897,7 +897,7 @@ function SmartAI:damageIsEffective(player, nature, source)
 		return false
 	end
 
-	if player:hasSkill("shenjun") and player:getGender() ~= source:getGender() and nature ~= sgs.DamageStruct_Thunder then
+	if player:hasSkill("fenhui") and nature == sgs.DamageStruct_Fire then
 		return false
 	end
 
@@ -909,16 +909,12 @@ end
 
 function SmartAI:slashIsAvailable(player)
 	player = player or self.player
-	if player:hasFlag("tianyi_failed") or player:hasFlag("xianzhen_failed") then return false end
+--	if player:hasFlag("tianyi_failed") or player:hasFlag("xianzhen_failed") then return false end
 
-	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") then
+	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or
+		(player:hasSkill("shalu") and player:getMark("shalu") > 0) or
+		player:hasFlag("SlashbySlash") or (player:hasSkill("qinlong") && player:getEquips():isEmpty()) then
 		return true
-	end
-
-	if player:hasFlag("tianyi_success") then
-		return (player:usedTimes("Slash") + player:usedTimes("FireSlash") + player:usedTimes("ThunderSlash")) < 2
-	else
-		return (player:usedTimes("Slash") + player:usedTimes("FireSlash") + player:usedTimes("ThunderSlash")) < 1
 	end
 end
 
@@ -1564,7 +1560,10 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 			end
 
 			if success then
-				if self:isEquip("Vine", enemy) then
+				if enemy:hasSkill("fushang") and enemy:getHp() > 3 and not enemy:hasSkill("fenhui") then
+					table.insert(targets_succ, 1, enemy)
+					break
+				elseif self:isEquip("Vine", enemy) then
 					table.insert(targets_succ, 1, enemy)
 					break
 				else
@@ -2938,6 +2937,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 		return "."
 	elseif parsedPrompt[1] == "@baoguo" then
+		if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end 
 		local damage = data:toDamage()
 		if self:isFriend(damage.to) then
 			if self.player:getHp() > 1 or
@@ -3389,8 +3389,12 @@ function SmartAI:hasTrickEffective(card, player)
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
-		if (player:getMark("@fog") > 0 or (player:hasSkill("shenjun") and self.player:getGender() ~= player:getGender())) and
-			sgs.dynamic_value.damage_card[card:className()] then return false end
+		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and self.player:getEquips():isEmpty() then
+			return false
+		end
+		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:inherits("FireAttack") or card:inherits("FireSlash")) then
+			return false
+		end
 	else
 		if self.player:hasSkill("wuyan") then
 			if card:inherits("TrickCard") and not
