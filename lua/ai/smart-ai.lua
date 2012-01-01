@@ -911,9 +911,9 @@ function SmartAI:slashIsAvailable(player)
 	player = player or self.player
 --	if player:hasFlag("tianyi_failed") or player:hasFlag("xianzhen_failed") then return false end
 
-	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or
+	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or player:hasFlag("SlashbySlash") or
 		(player:hasSkill("shalu") and player:getMark("shalu") > 0) or
-		player:hasFlag("SlashbySlash") or (player:hasSkill("qinlong") && player:getEquips():isEmpty()) then
+		(player:hasSkill("qinlong") and player:getEquips():isEmpty()) then
 		return true
 	end
 end
@@ -2586,7 +2586,7 @@ end
 -- @return True if it is needed to retrial
 function SmartAI:needRetrial(judge)
 	local reason = judge.reason
-	if reason == "typhoon" or reason == "earthquake" or reason == "volcano" or reason == "mudslide" then return false end
+--	if reason == "tsunami" or reason == "lightning" then return false end
 	if self:isFriend(judge.who) then
 		return not judge:isGood()
 	elseif self:isEnemy(judge.who) then

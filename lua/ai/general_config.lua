@@ -52,7 +52,7 @@ sgs.ai_use_value =
 	ExNihilo=10,
 
 	Snatch=9,
-	Collateral=8.8,
+	Collateral=7.8,
 
 
 	Indulgence=8,
@@ -76,6 +76,7 @@ sgs.ai_use_value =
 	Duel=3.7,
 
 	AmazingGrace=3,
+	Nullification = 8.2,
 
 	--special
 	Analeptic = 5.98,
@@ -84,7 +85,7 @@ sgs.ai_use_value =
 
 	Ecstasy = 5,
 	Drivolt = 5.2,
---	Counterplot = NULL,
+	Counterplot = 9,
 --	Wiretap = 9,
 	Assassinate = 8.8,
 	Provistore = 1,

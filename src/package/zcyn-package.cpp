@@ -19,7 +19,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude()){
+        if(!effect.to->isNude() && effect.jink){
             Room *room = erge->getRoom();
             if(erge->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName());

@@ -13,6 +13,17 @@ function SmartAI:useCardDrivolt(drivolt, use)
 			break
 		end
 	end
+	self:sort(self.enemies, "hp")
+	for _, enemy in ipairs(self.enemies) do
+--		if not self:hasSkills(sgs.masochism_skill, enemy) then
+		if enemy:getKingdom() ~= self.player:getKingdom() then
+			use.card = drivolt
+			if use.to then
+				use.to:append(friend)
+			end
+			break
+		end
+	end
 end
 
 -- tan ting
