@@ -254,13 +254,12 @@ sgs.ai_chaofeng = {
 	zhangqing = 0,
 	shiwengong = 0,
 
-	zhaoji = -1,
-
 	zhuwu = -2,
 	guansheng = -2,
 	yanqing = -2,
 	chaijin = -2,
 
+	zhaoji = -3,
 	panqiaoyun = -3,
 	lizhong = -3,
 	linniangzi = -4,
