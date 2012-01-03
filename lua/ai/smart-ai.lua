@@ -328,7 +328,13 @@ function SmartAI:objectiveLevel(player)
 				end
 			end
 			table.sort(players, comp_func)
-			if player:objectName() == players[1]:objectName() then return 5 else return -2 end
+			if (sgs.ai_anti_lord[players[1]:objectName()] or 0) > 0 or (sgs.ai_renegade_suspect[players[1]:objectName()]  or 0) > 2 then
+				if player:objectName() == players[1]:objectName() then return 5 else return -2 end
+			elseif self:isWeak(player) then
+				return -1
+			else
+				return 0
+			end
 		end
 
 		if sgs.ai_explicit[player:objectName()] == "rebel" then return 5-modifier
@@ -364,6 +370,10 @@ function SmartAI:objectiveLevel(player)
 			then return 3
 		else return 0 end
 	elseif self.role == "renegade" then
+		if SmartAI.GetValue(self.room:getLord()) < 6 and hasRebel then
+			if sgs.ai_loyalty[player:objectName()] < 0 then return 5
+			elseif player:isLord() then return -3 end
+		end
 		local loyalish_hp, rebel_hp, loyalish_count, rebel_count = 0, 0
 		for _, aplayer in ipairs(players) do
 			if (sgs.ai_explicit[aplayer:objectName()] or ""):match("rebel") then
@@ -489,9 +499,9 @@ function SmartAI:filterEvent(event, player, data)
 				elseif selfexp == "rebelish" then selfexp = "rebel"
 				end
 				sgs.ai_explicit[player:objectName()] = nil
-				sgs.ai_assumed[selfexp] = sgs.ai_assumed[selfexp]+1
+				sgs.ai_assumed[selfexp] = (sgs.ai_assumed[selfexp] or 0)+1
 			end
-			sgs.ai_assumed[player:getRole()] = sgs.ai_assumed[player:getRole()]-1
+			sgs.ai_assumed[player:getRole()] = (sgs.ai_assumed[player:getRole()] or 0)-1
 		end
 	end
 
@@ -542,7 +552,7 @@ function SmartAI:filterEvent(event, player, data)
 				intention = sgs.ai_card_intention.general(to, 100) 
 			end
 			
-			if from:objectName() == to:objectName() then intention = 0 end
+			if from and from:objectName() == to:objectName() then intention = 0 end
 			self:refreshLoyalty(from, intention)
 			if to:isLord() and intention < 0 then
 				sgs.ai_anti_lord[from:objectName()] = (sgs.ai_anti_lord[from:objectName()] or 0)+1
@@ -591,7 +601,7 @@ function SmartAI:filterEvent(event, player, data)
 			sgs.ai_snat_disma_effect = false
 			local intention = sgs.ai_card_intention.general(from,70)
 			if place == sgs.Player_Judging then
-				if card:inherits("Indulgence") or card:inherits("SupplyShortage") then intention = -intention else intention = 0 end
+				if not card:inherits("Lightning") and not card:inherits("Disaster") then intention = -intention else intention = 0 end
 			elseif place == sgs.Player_Equip then
 				if player:getLostHp() > 1 and card:inherits("SilverLion") then intention = -intention end
 				if self:hasSkills(sgs.lose_equip_skill, player) then intention = 0 end
@@ -2587,14 +2597,14 @@ end
 function SmartAI:needRetrial(judge)
 	local reason = judge.reason
 --	if reason == "tsunami" or reason == "lightning" then return false end
-	if reason == "houlue" or reason == "qimen" then return false end
+	if reason == "houlue" or reason == "qimen" or reason == "huanshu1" then return false end
 	if reason == "taohui" then
 		if (self:isFriend(judge.who) and judge.card:inherits("BasicCard")) or
 			(self:isEnemy(judge.who) and not judge.card:inherits("BasicCard")) then
 			return true
 		end
 	end
-	if reason == "yinyu" and judge.who:getCardsNum("Slash") > 1 then
+	if reason == "yinyu" and self:getCardsNum("Slash", judge.who) > 1 then
 		if (judge.card:getSuit() == sgs.Card_Spade and self:isEnemy(judge.who)) or
 			(judge.card:getSuit() ~= sgs.Card_Spade and self:isFriend(judge.who)) then
 			return true
@@ -2676,20 +2686,6 @@ function SmartAI:askForChoice(skill_name, choices)
 			local r = math.random(1, #choice_table)
 			return choice_table[r]
 		end
-	end
-end
-
-sgs.ai_skill_choice.RevealGeneral = function(self, choices)
-	local anjiang = 0
-	for _, player in sgs.qlist(self.room:getOtherPlayers(self.player)) do
-		if player:getGeneralName() == "anjiang" then
-			anjiang = anjiang + 1
-		end
-	end
-	if math.random() > (anjiang + 1)/(self.room:alivePlayerCount() + 1) then
-		return "yes"
-	else
-		return "no"
 	end
 end
 
@@ -2850,10 +2846,6 @@ function SmartAI:askForCardChosen(who, flags, reason)
 			if self:hasWizard(self.enemies,true) and lightning then
 				return lightning
 			end
-		end
-
-		if (who:getHandcardNum() < 2) and (not who:isKongcheng()) and
-			not self:hasSkills(sgs.need_kongcheng, who) then return -1
 		end
 
 		if flags:match("e") then

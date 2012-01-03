@@ -165,41 +165,47 @@ sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 end
 
 -- yixing
-sgs.ai_skill_invoke["yixing"] = function(self, data)
-	local judge = data:toJudge()
+sgs.ai_skill_invoke["@@yixing"] = function(self, prompt)
+	local judge = self.player:getTag("Judge"):toJudge()
 	local equips = {}
 	if self:needRetrial(judge) then
-		for _, player in sgs.qlist(room:getAllPlayers()) do
+		local players = self.room:getAllPlayers()
+		players = sgs.QList2Table(players)
+		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
-			for _, equip in sgs.qlist(pequips) do
+			pequips = sgs.QList2Table(pequips)
+			for _, equip in ipairs(pequips) do
 				table.insert(equips, equip)
 			end
 		end
 		local card_id = self:getRetrialCardId(equips, judge)
-		for _, player in sgs.qlist(room:getAllPlayers()) do
+		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
-			for _, equip in sgs.qlist(pequips) do
+			pequips = sgs.QList2Table(pequips)
+			for _, equip in ipairs(pequips) do
 				if equip:getId() == card_id then
 					self.yixingcid = card_id
-					self.yixingtarget = player
+					return "@YixingCard=.->" .. player:objectName()
 				end
 			end
 		end
-		return card_id ~= -1
 	end
-end
-sgs.ai_skill_playerchosen["yixing"] = function(self, targets)
-	return self.yixingtarget
+	return "."
 end
 
 -- qimen
 sgs.ai_skill_invoke["qimen"] = function(self, data)
-	local target = data:toPlayer()
-	self.qimentarget = target
-	if self:isFriend(target) then return false end
+	local player = self.room:getCurrent()
+	if player == self.player then return false end
+--	local player = data:toPlayer()
+--	self.qimentarget = player
+	if self:isFriend(player) then return false end
 	local rm = math.random(1, 3)
 	return rm ~= 2
 end
-sgs.ai_skill_playerchosen["yixing"] = function(self, targets)
-	return self.qimentarget
+sgs.ai_skill_playerchosen["qimen"] = function(self, targets)
+--	return targets[1]
+	local target = self.room:getCurrent()
+	return target
+--	return self.qimentarget
 end

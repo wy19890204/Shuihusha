@@ -3062,6 +3062,8 @@ void Room::showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer
 }
 
 void Room::showAllCards(ServerPlayer *player, ServerPlayer *to){
+    if(player->isKongcheng())
+        return;
     QStringList handcards_str;
     foreach(const Card *card, player->getHandcards())
         handcards_str << QString::number(card->getId());
