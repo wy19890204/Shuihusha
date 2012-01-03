@@ -781,6 +781,13 @@ public:
         for(int i = rec.recover; i > 0; i--){
             if(!room->askForCard(anu, "..", "@chiyuan", data))
                 break;
+            LogMessage age;
+            age.type = "#Chiyuan";
+            age.from = anu;
+            age.arg = objectName();
+            age.to << player;
+            room->sendLog(age);
+
             JudgeStruct jd;
             jd.reason = objectName();
             jd.who = rec.who;
