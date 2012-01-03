@@ -2587,6 +2587,19 @@ end
 function SmartAI:needRetrial(judge)
 	local reason = judge.reason
 --	if reason == "tsunami" or reason == "lightning" then return false end
+	if reason == "houlue" or reason == "qimen" then return false end
+	if reason == "taohui" then
+		if (self:isFriend(judge.who) and judge.card:inherits("BasicCard")) or
+			(self:isEnemy(judge.who) and not judge.card:inherits("BasicCard")) then
+			return true
+		end
+	end
+	if reason == "yinyu" and judge.who:getCardsNum("Slash") > 1 then
+		if (judge.card:getSuit() == sgs.Card_Spade and self:isEnemy(judge.who)) or
+			(judge.card:getSuit() ~= sgs.Card_Spade and self:isFriend(judge.who)) then
+			return true
+		end
+	end
 	if self:isFriend(judge.who) then
 		return not judge:isGood()
 	elseif self:isEnemy(judge.who) then
@@ -2603,7 +2616,17 @@ end
 function SmartAI:getRetrialCardId(cards, judge)
 	local can_use = {}
 	for _, card in ipairs(cards) do
-		if self:isFriend(judge.who) and judge:isGood(card) then
+		if judge.reason == "yinyu" then
+			if (self:isEnemy(judge.who) and card:getSuit() ~= sgs.Card_Spade) or
+				(self:isFriend(judge.who) and card:getSuit() == sgs.Card_Spade) then
+				table.insert(can_use, card)
+			end
+		elseif judge.reason == "taohui" then
+			if (self:isFriend(judge.who) and not card:inherits("BasicCard")) or
+				(self:isEnemy(judge.who) and card:inherits("BasicCard")) then
+				table.insert(can_use, card)
+			end
+		elseif self:isFriend(judge.who) and judge:isGood(card) then
 			table.insert(can_use, card)
 		elseif self:isEnemy(judge.who) and not judge:isGood(card) then
 			table.insert(can_use, card)
@@ -2743,6 +2766,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 		return card:getId()
 	end
 
+	if reason == "yixing" then return self.yixingcid end
 	if self:isFriend(who) then
 		if flags:match("j") then
 			local tricks = who:getCards("j")
@@ -3425,7 +3449,7 @@ end
 sgs.lose_equip_skill = ""
 sgs.need_kongcheng = ""
 sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian"
-sgs.wizard_skill = "butian|shenpan|yixing|yueli"
+sgs.wizard_skill = "butian|shenpan|yixing|yueli|houlue"
 sgs.wizard_harm_skill = "butian|shenpan|yixing"
 
 function SmartAI:hasSkills(skill_names, player)

@@ -163,3 +163,43 @@ end
 sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 	use.card = card
 end
+
+-- yixing
+sgs.ai_skill_invoke["yixing"] = function(self, data)
+	local judge = data:toJudge()
+	local equips = {}
+	if self:needRetrial(judge) then
+		for _, player in sgs.qlist(room:getAllPlayers()) do
+			local pequips = player:getEquips()
+			for _, equip in sgs.qlist(pequips) do
+				table.insert(equips, equip)
+			end
+		end
+		local card_id = self:getRetrialCardId(equips, judge)
+		for _, player in sgs.qlist(room:getAllPlayers()) do
+			local pequips = player:getEquips()
+			for _, equip in sgs.qlist(pequips) do
+				if equip:getId() == card_id then
+					self.yixingcid = card_id
+					self.yixingtarget = player
+				end
+			end
+		end
+		return card_id ~= -1
+	end
+end
+sgs.ai_skill_playerchosen["yixing"] = function(self, targets)
+	return self.yixingtarget
+end
+
+-- qimen
+sgs.ai_skill_invoke["qimen"] = function(self, data)
+	local target = data:toPlayer()
+	self.qimentarget = target
+	if self:isFriend(target) then return false end
+	local rm = math.random(1, 3)
+	return rm ~= 2
+end
+sgs.ai_skill_playerchosen["yixing"] = function(self, targets)
+	return self.qimentarget
+end

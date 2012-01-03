@@ -572,6 +572,9 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
     judge.who = effect.to;
     room->judge(judge);
     ichi = judge.card->isRed();
+
+    judge.pattern = ichi ? QRegExp("(.*):(heart|diamond):(.*)"): QRegExp("(.*):(club|spade):(.*)");
+    judge.good = true;
     room->judge(judge);
     me = judge.card->isRed();
 
@@ -579,12 +582,12 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
     damage.damage = 2;
     damage.from = effect.from;
     damage.to = effect.to;
-    if(ichi == true && me == true){
+    if(ichi && me){
         damage.nature = DamageStruct::Fire;
         room->playSkillEffect("huanshu", qrand() % 2 + 1);
         room->damage(damage);
     }
-    else if(ichi == false && me == false){
+    else if(!ichi && !me){
         room->playSkillEffect("huanshu", qrand() % 2 + 1);
         damage.nature = DamageStruct::Thunder;
         room->damage(damage);
@@ -747,7 +750,7 @@ public:
         }
         if(targets.isEmpty())
             return false;
-        if(player->askForSkillInvoke(objectName())){
+        if(player->askForSkillInvoke(objectName(), data)){
             ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
             int card_id = room->askForCardChosen(player, target, "e", objectName());
             const Card *card = Sanguosha->getCard(card_id);
@@ -861,11 +864,10 @@ public:
             return false;
         }
         else if(target->getPhase() == Player::Start){
-            if(dragon->askForSkillInvoke(objectName())){
+            if(dragon->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
-                judge.good = true;
                 judge.reason = objectName();
                 judge.who = superman;
 
