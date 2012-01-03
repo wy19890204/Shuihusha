@@ -893,6 +893,9 @@ function SmartAI:slashIsEffective(slash, to)
 			return not slash:isBlack()
 		elseif armor:objectName() == "vine" then
 			return slash:inherits("NatureSlash") or self.player:hasWeapon("fan")
+		elseif armor:objectName() == "gold_armor" then
+			if self.player:getWeapon() then return false
+			else return not slash:inherits("NatureSlash") end
 		end
 	end
 
@@ -1108,25 +1111,13 @@ function SmartAI:slashProhibit(card,enemy)
 		if (enemy:hasSkill("duanchang") or enemy:hasSkill("huilei") or enemy:hasSkill("dushi")) and self:isWeak(enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
 	else
-		if enemy:hasSkill("liuli") then
-			if enemy:getHandcardNum() < 1 then return false end
-			for _, friend in ipairs(self.friends_noself) do
-				if enemy:canSlash(friend,true) and self:slashIsEffective(card, friend) then return true end
-			end
+		if card:inherits("NatureSlash") and self:isEquip("GoldArmor", enemy) then
+			return true
 		end
 
-		if enemy:hasSkill("leiji") then
-			local hcard = enemy:getHandcardNum()
-			if self.player:hasSkill("tieji") or
-				(self.player:hasSkill("liegong") and (hcard>=self.player:getHp() or hcard<=self.player:getAttackRange())) then return false end
-
-			if enemy:getHandcardNum() >= 2 then return true end
-			if self:isEquip("EightDiagram", enemy) then
-				local equips = enemy:getEquips()
-				for _,equip in sgs.qlist(equips) do
-					if equip:getSuitString() == "spade" then return true end
-				end
-			end
+		if enemy:hasSkill("huanshu") then
+			if self.player:hasSkill("pohuanshu") or	self:isEquip("MeteorSword") then return false end
+			return true
 		end
 
 		if enemy:hasSkill("tiandu") then
@@ -1136,7 +1127,6 @@ function SmartAI:slashProhibit(card,enemy)
 		if enemy:hasSkill("ganglie") then
 			if self.player:getHandcardNum()+self.player:getHp() < 5 then return true end
 		end
-
 
 		if enemy:isChained() and #(self:getChainedFriends()) > #(self:getChainedEnemies()) and self:slashIsEffective(card,enemy) then
 			return true
