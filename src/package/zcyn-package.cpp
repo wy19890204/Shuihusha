@@ -241,62 +241,30 @@ public:
     }
 };
 
-class Lianhuan: public OneCardViewAsSkill{
+class Dujian: public TriggerSkill{
 public:
-    Lianhuan():OneCardViewAsSkill("lianhuan"){
+    Dujian():TriggerSkill("dujian"){
+        events << Predamage;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->getSuit() == Card::Club;
+    virtual int getPriority() const{
+        return 2;
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
-        chain->addSubcard(card);
-        chain->setSkillName(objectName());
-        return chain;
-    }
-};
-
-class Niepan: public TriggerSkill{
-public:
-    Niepan():TriggerSkill("niepan"){
-        events << AskForPeaches;
-        frequency = Limited;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && target->getMark("@nirvana") > 0;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *pangtong, QVariant &data) const{
-        DyingStruct dying_data = data.value<DyingStruct>();
-        if(dying_data.who != pangtong)
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
             return false;
-
-        Room *room = pangtong->getRoom();
-        if(pangtong->askForSkillInvoke(objectName(), data)){
-            room->broadcastInvoke("animate", "lightbox:$niepan");
-            room->playSkillEffect(objectName());
-
-            pangtong->loseMark("@nirvana");
-
-            room->setPlayerProperty(pangtong, "hp", qMin(3, pangtong->getMaxHP()));
-            pangtong->throwAllCards();
-            pangtong->drawCards(3);
-
-            if(pangtong->isChained()){
-                if(dying_data.damage == NULL || dying_data.damage->nature == DamageStruct::Normal)
-                    room->setPlayerProperty(pangtong, "chained", false);
-            }
-            if(!pangtong->faceUp())
-                pangtong->turnOver();
+        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
+            && player->askForSkillInvoke(objectName(), data)){
+            player->getRoom()->playSkillEffect(objectName());
+            damage.to->turnOver();
+            return true;
         }
-
         return false;
     }
 };
+
 
 class Huoji: public OneCardViewAsSkill{
 public:
@@ -372,10 +340,10 @@ ZCYNPackage::ZCYNPackage()
 
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
-/*
-    yuanshao = new General(this, "yuanshao$", "kou");
-    yuanshao->addSkill(new Luanji);
 
+    General *shiwengong = new General(this, "shiwengong", "jiang");
+    shiwengong->addSkill(new Dujian);
+/*
     shuangxiong = new General(this, "shuangxiong", "kou");
     shuangxiong->addSkill(new Shuangxiong);
 

@@ -735,25 +735,91 @@ public:
     }
 };
 
-class Dujian: public TriggerSkill{
+YongleCard::YongleCard(){
+}
+
+int YongleCard::getKingdoms(const Player *Self) const{
+    QSet<QString> kingdom_set;
+    QList<const Player *> players = Self->getSiblings();
+    players << Self;
+    foreach(const Player *player, players)
+        kingdom_set << player->getKingdom();
+    return kingdom_set.size();
+}
+
+bool YongleCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int x = getKingdoms(Self);
+    return targets.length() < x && !to_select->isKongcheng();
+}
+
+bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    int x = getKingdoms(Self);
+    return targets.length() <= x && !targets.isEmpty();
+}
+
+void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
+    foreach(ServerPlayer *tmp, targets){
+        const Card *card = tmp->getRandomHandCard();
+        fangla->obtainCard(card);
+    }
+    foreach(ServerPlayer *tmp, targets){
+        const Card *card = room->askForCardShow(fangla, tmp, "yongle");
+        tmp->obtainCard(card);
+    }
+}
+
+class Yongle: public ZeroCardViewAsSkill{
 public:
-    Dujian():TriggerSkill("dujian"){
-        events << Predamage;
+    Yongle():ZeroCardViewAsSkill("yongle"){
+
     }
 
-    virtual int getPriority() const{
-        return 2;
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("YongleCard");
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
-            return false;
-        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
-            && player->askForSkillInvoke(objectName(), data)){
-            player->getRoom()->playSkillEffect(objectName());
-            damage.to->turnOver();
-            return true;
+    virtual const Card *viewAs() const{
+        return new YongleCard;
+    }
+};
+
+class ZhiYPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card);
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class Zhiyuan: public TriggerSkill{
+public:
+    Zhiyuan():TriggerSkill("zhiyuan$"){
+        events << CardLost;
+        //frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
+        if(fang1a->isKongcheng()){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand){
+                Room *room = fang1a->getRoom();
+                QList<ServerPlayer *> lieges = room->getLieges("jiang", fang1a);
+                foreach(ServerPlayer *tmp, lieges){
+                    const Card *card = room->askForCard(tmp, ".Zy", "@zhiyuan:" + fang1a->objectName(), data);
+                    if(card){
+                        room->playSkillEffect(objectName());
+                        LogMessage lo;
+                        lo.type = "#InvokeSkill";
+                        lo.from = tmp;
+                        lo.arg = objectName();
+                        room->sendLog(lo);
+                        room->moveCardTo(card, fang1a, Player::Hand, false);
+                        break;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -816,8 +882,10 @@ BWQZPackage::BWQZPackage()
     wangdingliu->addSkill(new Kongying);
     wangdingliu->addSkill(new Jibu);
 
-    General *shiwengong = new General(this, "shiwengong", "jiang");
-    shiwengong->addSkill(new Dujian);
+    General *fangla = new General(this, "fangla$", "jiang");
+    fangla->addSkill(new Yongle);
+    fangla->addSkill(new Zhiyuan);
+    patterns[".Zy"] = new ZhiYPattern;
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
@@ -825,6 +893,7 @@ BWQZPackage::BWQZPackage()
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
     addMetaObject<JiaomieCard>();
+    addMetaObject<YongleCard>();
 }
 
 ADD_PACKAGE(BWQZ);
