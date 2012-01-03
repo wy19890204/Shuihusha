@@ -333,27 +333,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *target) const{
         if(target->getPhase() == Player::Finish){
             Room *room = target->getRoom();
-            if(room->askForSkillInvoke(target, objectName())){
-                target->drawCards(15);
-                target->turnOver();
-
-                room->playSkillEffect(objectName());
-            }
-        }
-
-        return false;
-    }
-};
-
-class Liegong: public SlashBuffSkill{
-public:
-    Liegong():SlashBuffSkill("liegong"){
-
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *huangzhong = effect.from;
-        Room *room = huangzhong->getRoom();
+            if(room->askForong->getRoom();
         if(huangzhong->getPhase() != Player::Play)
             return false;
 

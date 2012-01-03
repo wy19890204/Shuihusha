@@ -568,10 +568,14 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
     bool ichi, me;
 
     JudgeStruct judge;
-    judge.reason = "huanshu";
+    judge.reason = "huanshu1";
     judge.who = effect.to;
     room->judge(judge);
     ichi = judge.card->isRed();
+
+    judge.reason = "huanshu2";
+    judge.pattern = ichi ? QRegExp("(.*):(heart|diamond):(.*)"): QRegExp("(.*):(club|spade):(.*)");
+    judge.good = false;
     room->judge(judge);
     me = judge.card->isRed();
 
@@ -579,12 +583,12 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
     damage.damage = 2;
     damage.from = effect.from;
     damage.to = effect.to;
-    if(ichi == true && me == true){
+    if(ichi && me){
         damage.nature = DamageStruct::Fire;
         room->playSkillEffect("huanshu", qrand() % 2 + 1);
         room->damage(damage);
     }
-    else if(ichi == false && me == false){
+    else if(!ichi && !me){
         room->playSkillEffect("huanshu", qrand() % 2 + 1);
         damage.nature = DamageStruct::Thunder;
         room->damage(damage);
@@ -723,10 +727,44 @@ public:
     }
 };
 
+YixingCard::YixingCard(){
+}
+
+bool YixingCard::targetFilter(const QList<const Player *> &targets, const Player *to, const Player *Self) const{
+    return targets.isEmpty() && !to->getEquips().isEmpty();
+}
+
+void YixingCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    ServerPlayer *target = effect.to;
+    int card_id = room->askForCardChosen(effect.from, target, "e", "yixing");
+    effect.from->tag["YixingCard"] = card_id;
+    effect.from->tag["YixingTarget"] = QVariant::fromValue(effect.to);
+}
+
+class YixingViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    YixingViewAsSkill():ZeroCardViewAsSkill("yixing"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new YixingCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@yixing";
+    }
+};
+
 class Yixing: public TriggerSkill{
 public:
     Yixing():TriggerSkill("yixing"){
         events << AskForRetrial;
+        view_as_skill = new YixingViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -747,12 +785,16 @@ public:
         }
         if(targets.isEmpty())
             return false;
-        if(player->askForSkillInvoke(objectName())){
-            ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
-            int card_id = room->askForCardChosen(player, target, "e", objectName());
+        QStringList prompt_list;
+        prompt_list << "@yixing" << judge->who->objectName()
+                        << "" << judge->reason << judge->card->getEffectIdString();
+        QString prompt = prompt_list.join(":");
+        if(room->askForUseCard(player, "@@yixing", prompt)){
+            int card_id = player->tag["YixingCard"].toInt();
+            ServerPlayer *target = player->tag["YixingTarget"].value<PlayerStar>();
             const Card *card = Sanguosha->getCard(card_id);
             target->obtainCard(judge->card);
-            room->playSkillEffect(objectName());
+            //room->playSkillEffect(objectName());
             judge->card = card;
             room->moveCardTo(judge->card, NULL, Player::Special);
 
@@ -861,11 +903,10 @@ public:
             return false;
         }
         else if(target->getPhase() == Player::Start){
-            if(dragon->askForSkillInvoke(objectName())){
+            if(room->askForSkillInvoke(dragon, objectName(), QVariant::fromValue(target))){
                 ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
-                judge.good = true;
                 judge.reason = objectName();
                 judge.who = superman;
 
@@ -1190,6 +1231,7 @@ TTXDPackage::TTXDPackage()
     addMetaObject<HaoshenCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
+    addMetaObject<YixingCard>();
     addMetaObject<WujiCard>();
     addMetaObject<YanshouCard>();
 }

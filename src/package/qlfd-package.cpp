@@ -775,7 +775,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *anu = room->findPlayerBySkillName(objectName());
-        if(!anu)
+        if(!anu || anu->isKongcheng())
             return false;
         RecoverStruct rec = data.value<RecoverStruct>();
         for(int i = rec.recover; i > 0; i--){
