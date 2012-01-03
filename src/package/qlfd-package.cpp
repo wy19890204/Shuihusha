@@ -762,6 +762,48 @@ public:
     }
 };
 
+class Chiyuan:public TriggerSkill{
+public:
+    Chiyuan():TriggerSkill("chiyuan"){
+        events << HpRecovered;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getGeneral()->isMale();
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *anu = room->findPlayerBySkillName(objectName());
+        if(!anu)
+            return false;
+        RecoverStruct rec = data.value<RecoverStruct>();
+        for(int i = rec.recover; i > 0; i--){
+            if(!room->askForCard(anu, "..", "@chiyuan", data))
+                break;
+            JudgeStruct jd;
+            jd.reason = objectName();
+            jd.who = rec.who;
+            room->judge(jd);
+
+            if(jd.card->isBlack()){
+                room->playSkillEffect(objectName(), 2);
+                room->askForDiscard(player, objectName(), 2, false, true);
+            }
+            else{
+                room->playSkillEffect(objectName(), 1);
+                if(room->askForChoice(anu, objectName(), "qiao+nu") == "qiao"){
+                    RecoverStruct r;
+                    room->recover(anu, r);
+                }
+                else
+                    anu->drawCards(2);
+            }
+        }
+        return false;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -801,6 +843,10 @@ QLFDPackage::QLFDPackage()
     General *liruilan = new General(this, "liruilan", "min", 3, false);
     liruilan->addSkill(new Chumai);
     liruilan->addSkill(new Yinlang);
+
+    General *liqiaonu = new General(this, "liqiaonu", "min", 3, false);
+    liqiaonu->addSkill(new Chiyuan);
+    //liqiaonu->addSkill(new Yinlang);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
