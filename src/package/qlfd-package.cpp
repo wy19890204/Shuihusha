@@ -804,6 +804,27 @@ public:
     }
 };
 
+#include "plough.h"
+class Huoshui: public FilterSkill{
+public:
+    Huoshui():FilterSkill("huoshui"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Weapon") ||
+                to_select->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Drivolt *drive = new Drivolt(c->getSuit(), c->getNumber());
+        drive->setSkillName(objectName());
+        drive->addSubcard(card_item->getCard());
+
+        return drive;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -846,7 +867,7 @@ QLFDPackage::QLFDPackage()
 
     General *liqiaonu = new General(this, "liqiaonu", "min", 3, false);
     liqiaonu->addSkill(new Chiyuan);
-    //liqiaonu->addSkill(new Yinlang);
+    liqiaonu->addSkill(new Huoshui);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
