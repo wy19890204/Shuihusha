@@ -126,73 +126,6 @@ public:
     }
 };
 
-class Shemi: public TriggerSkill{
-public:
-    Shemi():TriggerSkill("shemi"){
-        events << PhaseChange << TurnOvered;
-    }
-
-    virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
-        //Room *room = emperor->getRoom();
-        if(e == PhaseChange){
-            if(emperor->getPhase() == Player::Discard &&
-               emperor->askForSkillInvoke(objectName(), data)){
-                emperor->turnOver();
-                return true;
-            }
-        }
-        else{
-            if(!emperor->hasFlag("NongQ")){
-                int index = emperor->faceUp() ? 2: 1;
-                emperor->getRoom()->playSkillEffect(objectName(), index);
-            }
-            int x = emperor->getLostHp();
-            x = qMax(qMin(x,2),1);
-            emperor->drawCards(x);
-        }
-        return false;
-    }
-};
-
-class Lizheng: public DistanceSkill{
-public:
-    Lizheng():DistanceSkill("lizheng"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(!to->faceUp())
-            return +1;
-        else
-            return 0;
-    }
-};
-
-class Nongquan:public PhaseChangeSkill{
-public:
-    Nongquan():PhaseChangeSkill("nongquan$"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan" && !target->hasLordSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *otherguan) const{
-        Room *room = otherguan->getRoom();
-        if(otherguan->getPhase() != Player::Draw)
-            return false;
-        ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
-           && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            room->setPlayerFlag(head, "NongQ");
-            head->turnOver();
-            room->setPlayerFlag(head, "-NongQ");
-            return true;
-        }
-        return false;
-    }
-};
-
 class Tianyan: public PhaseChangeSkill{
 public:
     Tianyan():PhaseChangeSkill("tianyan"){
@@ -365,11 +298,6 @@ ZCYNPackage::ZCYNPackage()
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 
-    General *zhaoji = new General(this, "zhaoji$", "guan", 3);
-    zhaoji->addSkill(new Shemi);
-    zhaoji->addSkill(new Lizheng);
-    zhaoji->addSkill(new Nongquan);
-
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 /*
@@ -377,7 +305,6 @@ ZCYNPackage::ZCYNPackage()
     yuanshao->addSkill(new Luanji);
 
     shuangxiong = new General(this, "shuangxiong", "kou");
-    shuangxiong->addSkill(new Shuangxiong);
 
     pangde = new General(this, "pangde", "kou");
     pangde->addSkill(new Mengjin);
