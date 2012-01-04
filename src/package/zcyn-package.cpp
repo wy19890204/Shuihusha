@@ -32,6 +32,70 @@ public:
     }
 };
 
+#include "plough.h"
+class Fuji:public PhaseChangeSkill{
+public:
+    Fuji():PhaseChangeSkill("fuji"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *p) const{
+        if(p->getPhase() != Player::Judge || p->getJudgingArea().isEmpty())
+            return false;
+        Room *room = p->getRoom();
+        ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
+        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p))){
+            Assassinate *ass = new Assassinate(Card::NoSuit, 2);
+            ass->setSkillName(objectName());
+            ass->setCancelable(false);
+            CardUseStruct use;
+            use.card = ass;
+            use.from = ruan2;
+            use.to << p;
+            room->useCard(use);
+        }
+        return false;
+    }
+};
+
+class Guizi: public TriggerSkill{
+public:
+    Guizi():TriggerSkill("guizi"){
+        events << Dying;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *poolguy, QVariant &data) const{
+        Room *room = poolguy->getRoom();
+        ServerPlayer *bear = room->findPlayerBySkillName(objectName());
+        DyingStruct dying = data.value<DyingStruct>();
+        if(!bear || !dying.who)
+            return false;
+        if(dying.who == poolguy && room->askForCard(bear, "..S", "@guizi:" + poolguy->objectName(), data)){
+            room->playSkillEffect(objectName());
+            DamageStruct damage;
+            damage.from = bear;
+
+            LogMessage log;
+            log.type = "#Guizi";
+            log.from = bear;
+            log.to << poolguy;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->killPlayer(poolguy, &damage);
+            return true;
+        }
+        return false;
+    }
+};
+
 SixiangCard::SixiangCard(){
 }
 
@@ -174,118 +238,46 @@ public:
     }
 };
 
-class Lianhuan: public OneCardViewAsSkill{
+class Dujian: public TriggerSkill{
 public:
-    Lianhuan():OneCardViewAsSkill("lianhuan"){
+    Dujian():TriggerSkill("dujian"){
+        events << Predamage;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
+            return false;
+        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
+            && player->askForSkillInvoke(objectName(), data)){
+            player->getRoom()->playSkillEffect(objectName());
+            damage.to->turnOver();
+            return true;
+        }
+        return false;
+    }
+};
+
+class Paohong: public FilterSkill{
+public:
+    Paohong():FilterSkill("paohong"){
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->getSuit() == Card::Club;
+        const Card *card = to_select->getCard();
+        return card->objectName() == "slash" && card->isBlack();
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
-        chain->addSubcard(card);
-        chain->setSkillName(objectName());
-        return chain;
-    }
-};
-
-class Niepan: public TriggerSkill{
-public:
-    Niepan():TriggerSkill("niepan"){
-        events << AskForPeaches;
-        frequency = Limited;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && target->getMark("@nirvana") > 0;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *pangtong, QVariant &data) const{
-        DyingStruct dying_data = data.value<DyingStruct>();
-        if(dying_data.who != pangtong)
-            return false;
-
-        Room *room = pangtong->getRoom();
-        if(pangtong->askForSkillInvoke(objectName(), data)){
-            room->broadcastInvoke("animate", "lightbox:$niepan");
-            room->playSkillEffect(objectName());
-
-            pangtong->loseMark("@nirvana");
-
-            room->setPlayerProperty(pangtong, "hp", qMin(3, pangtong->getMaxHP()));
-            pangtong->throwAllCards();
-            pangtong->drawCards(3);
-
-            if(pangtong->isChained()){
-                if(dying_data.damage == NULL || dying_data.damage->nature == DamageStruct::Normal)
-                    room->setPlayerProperty(pangtong, "chained", false);
-            }
-            if(!pangtong->faceUp())
-                pangtong->turnOver();
-        }
-
-        return false;
-    }
-};
-
-class Huoji: public OneCardViewAsSkill{
-public:
-    Huoji():OneCardViewAsSkill("huoji"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->isRed();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        FireAttack *fire_attack = new FireAttack(card->getSuit(), card->getNumber());
-        fire_attack->addSubcard(card->getId());
-        fire_attack->setSkillName(objectName());
-        return fire_attack;
-    }
-};
-
-class Bazhen: public TriggerSkill{
-public:
-    Bazhen():TriggerSkill("bazhen"){
-        frequency = Compulsory;
-        events << CardAsked;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0 && target->getMark("wuqian") == 0;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *wolong, QVariant &data) const{
-        QString pattern = data.toString();
-
-        if(pattern != "jink")
-            return false;
-
-        Room *room = wolong->getRoom();
-        if(wolong->askForSkillInvoke(objectName())){
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(heart|diamond):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = wolong;
-
-            room->judge(judge);
-
-            if(judge.isGood()){
-                Jink *jink = new Jink(Card::NoSuit, 0);
-                jink->setSkillName(objectName());
-                room->provide(jink);
-                room->setEmotion(wolong, "good");
-                return true;
-            }else
-                room->setEmotion(wolong, "bad");
-        }
-        return false;
+        const Card *c = card_item->getCard();
+        ThunderSlash *bs = new ThunderSlash(c->getSuit(), c->getNumber());
+        bs->setSkillName(objectName());
+        bs->addSubcard(card_item->getCard());
+        return bs;
     }
 };
 
@@ -295,20 +287,24 @@ ZCYNPackage::ZCYNPackage()
     General *guansheng = new General(this, "guansheng", "jiang");
     guansheng->addSkill(new Tongwu);
 
+    General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
+    ruanxiaoer->addSkill(new Fuji);
+
+    General *yangxiong = new General(this, "yangxiong", "jiang");
+    yangxiong->addSkill(new Guizi);
+
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
-/*
-    yuanshao = new General(this, "yuanshao$", "kou");
-    yuanshao->addSkill(new Luanji);
 
-    shuangxiong = new General(this, "shuangxiong", "kou");
+    General *shiwengong = new General(this, "shiwengong", "jiang");
+    shiwengong->addSkill(new Dujian);
 
-    pangde = new General(this, "pangde", "kou");
-    pangde->addSkill(new Mengjin);
-*/
+    General *lingzhen = new General(this, "lingzhen", "jiang");
+    lingzhen->addSkill(new Paohong);
+
     addMetaObject<SixiangCard>();
 }
 

@@ -262,8 +262,3 @@ sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
 	return self.enemies[1]
 end
 
--- dujian
-sgs.ai_skill_invoke["dujian"] = function(self, data)
-	local rand = math.random(1, 2)
-	return rand == 2
-end

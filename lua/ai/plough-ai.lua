@@ -41,7 +41,7 @@ function SmartAI:useCardAssassinate(ass, use)
 	self:sort(self.enemies, "threat")
 	use.card = ass
 	for _, enemy in ipairs(self.enemies) do
-		if enemy:hasSkill("fushang") and enemy:getHp() > 3 then
+		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			if enemy ~= self.player and use.to then
 				use.to:append(enemy)
 				return

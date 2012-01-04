@@ -6,18 +6,21 @@ QWidget#skill_bar_container{
 
 #skill_bar_container QPushButton{
 	background-image: url(image/system/button/back.png);
-	border: 1px solid gray;
+        border: 1px solid gray;
+        border-radius: 4px;
 	color: yellow;
 	font: 12px;
 	padding: 6px 12px 6px 12px;
 }
 #skill_bar_container QPushButton:disabled{
 	background-image: url(image/system/button/back_shade.png);
+        border-radius: 4px;
 	color: white;
 	font: 12px;
 }
 #skill_bar_container QCheckBox{
 	border: 1px solid gray;
+        border-radius: 4px;
 	color: yellow;
 	font: 12px;
 	padding: 1px 12px 1px 8px;

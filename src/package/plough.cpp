@@ -86,6 +86,16 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
         DamageStruct dmae;
         dmae.card = this;
         dmae.from = effect.from;
+        if(effect.to->hasSkill("huoshui")){
+            //room->playSkillEffect("huoshui", 3);
+            LogMessage ogg;
+            ogg.type = "#Huoshui";
+            ogg.from = effect.to;
+            ogg.arg = "huoshui";
+            ogg.arg2 = objectName();
+            room->sendLog(ogg);
+            dmae.damage = 2;
+        }
         dmae.to = effect.to;
         room->damage(dmae);
     }

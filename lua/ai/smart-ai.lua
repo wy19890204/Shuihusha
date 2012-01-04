@@ -893,6 +893,9 @@ function SmartAI:slashIsEffective(slash, to)
 			return not slash:isBlack()
 		elseif armor:objectName() == "vine" then
 			return slash:inherits("NatureSlash") or self.player:hasWeapon("fan")
+		elseif armor:objectName() == "gold_armor" then
+			if self.player:getWeapon() then return false
+			else return not slash:inherits("NatureSlash") end
 		end
 	end
 
@@ -930,7 +933,7 @@ end
 
 local function prohibitUseDirectly(card, player)
 	if player:hasSkill("zhuying") then return card:inherits("Analeptic")
-	elseif player:hasSkill("wushen") then return card:getSuit() == sgs.Card_Heart
+	elseif player:hasSkill("huoshui") then return card:inherits("Weapon") or card:inherits("Slash")
 	elseif player:hasSkill("ganran") then return card:getTypeId() == sgs.Card_Equip
 	end
 end
@@ -950,6 +953,10 @@ local function isCompulsoryView(card, class_name, player, card_place)
 	if class_name == "Slash" and card_place ~= sgs.Player_Equip then
 		if player:hasSkill("wushen") and card:getSuit() == sgs.Card_Heart then return ("slash:wushen[%s:%s]=%d"):format(suit, number, card_id) end
 		if player:hasSkill("jiejiu") and card:inherits("Analeptic") then return ("slash:jiejiu[%s:%s]=%d"):format(suit, number, card_id) end
+	elseif class_name == "Drivolt" then
+		if player:hasSkill("huoshui") and (card:inherits("Weapon") or card:inherits("Slash")) then
+			return ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id)
+		end
 	end
 end
 
@@ -1108,25 +1115,13 @@ function SmartAI:slashProhibit(card,enemy)
 		if (enemy:hasSkill("duanchang") or enemy:hasSkill("huilei") or enemy:hasSkill("dushi")) and self:isWeak(enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
 	else
-		if enemy:hasSkill("liuli") then
-			if enemy:getHandcardNum() < 1 then return false end
-			for _, friend in ipairs(self.friends_noself) do
-				if enemy:canSlash(friend,true) and self:slashIsEffective(card, friend) then return true end
-			end
+		if card:inherits("NatureSlash") and self:isEquip("GoldArmor", enemy) then
+			return true
 		end
 
-		if enemy:hasSkill("leiji") then
-			local hcard = enemy:getHandcardNum()
-			if self.player:hasSkill("tieji") or
-				(self.player:hasSkill("liegong") and (hcard>=self.player:getHp() or hcard<=self.player:getAttackRange())) then return false end
-
-			if enemy:getHandcardNum() >= 2 then return true end
-			if self:isEquip("EightDiagram", enemy) then
-				local equips = enemy:getEquips()
-				for _,equip in sgs.qlist(equips) do
-					if equip:getSuitString() == "spade" then return true end
-				end
-			end
+		if enemy:hasSkill("huanshu") then
+			if self.player:hasSkill("pohuanshu") or	self:isEquip("MeteorSword") then return false end
+			return true
 		end
 
 		if enemy:hasSkill("tiandu") then
@@ -1136,7 +1131,6 @@ function SmartAI:slashProhibit(card,enemy)
 		if enemy:hasSkill("ganglie") then
 			if self.player:getHandcardNum()+self.player:getHp() < 5 then return true end
 		end
-
 
 		if enemy:isChained() and #(self:getChainedFriends()) > #(self:getChainedEnemies()) and self:slashIsEffective(card,enemy) then
 			return true
@@ -2965,6 +2959,11 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end
 		return "."
+	elseif parsedPrompt[1] == "@chiyuan" then
+		local rv = data:toRecover()
+		local card = self:getUnuseCard()
+		if self:isFriend(rv.who) or not card then return "." end
+		return card:getEffectiveId()
 	elseif parsedPrompt[1] == "@xianji" then
 		local who = data:toPlayer()
 		if self:isFriend(who) or self.player:isKongcheng() then return "." end

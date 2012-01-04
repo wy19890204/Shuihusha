@@ -762,6 +762,83 @@ public:
     }
 };
 
+class Chiyuan:public TriggerSkill{
+public:
+    Chiyuan():TriggerSkill("chiyuan"){
+        events << HpRecovered;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getGeneral()->isMale();
+    }
+
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 1)
+            return "qiao";
+        else
+            return "nu";
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *anu = room->findPlayerBySkillName(objectName());
+        if(!anu || anu->isKongcheng())
+            return false;
+        RecoverStruct rec = data.value<RecoverStruct>();
+        for(int i = rec.recover; i > 0; i--){
+            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), data))
+                break;
+            LogMessage age;
+            age.type = "#Chiyuan";
+            age.from = anu;
+            age.arg = objectName();
+            age.to << player;
+            room->sendLog(age);
+
+            JudgeStruct jd;
+            jd.reason = objectName();
+            jd.who = rec.who;
+            room->judge(jd);
+
+            if(jd.card->isBlack()){
+                room->playSkillEffect(objectName(), 2);
+                room->askForDiscard(player, objectName(), 2, false, true);
+            }
+            else{
+                room->playSkillEffect(objectName(), 1);
+                if(room->askForChoice(anu, objectName(), "qiao+nu") == "qiao"){
+                    RecoverStruct r;
+                    room->recover(anu, r);
+                }
+                else
+                    anu->drawCards(2);
+            }
+        }
+        return false;
+    }
+};
+
+#include "plough.h"
+class Huoshui: public FilterSkill{
+public:
+    Huoshui():FilterSkill("huoshui"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Weapon") ||
+                to_select->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Drivolt *drive = new Drivolt(c->getSuit(), c->getNumber());
+        drive->setSkillName(objectName());
+        drive->addSubcard(card_item->getCard());
+
+        return drive;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -801,6 +878,10 @@ QLFDPackage::QLFDPackage()
     General *liruilan = new General(this, "liruilan", "min", 3, false);
     liruilan->addSkill(new Chumai);
     liruilan->addSkill(new Yinlang);
+
+    General *liqiaonu = new General(this, "liqiaonu", "min", 3, false);
+    liqiaonu->addSkill(new Chiyuan);
+    liqiaonu->addSkill(new Huoshui);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();

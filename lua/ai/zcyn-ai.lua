@@ -23,3 +23,9 @@ sgs.ai_skill_invoke["nongquan"] = function(self, data)
 		return self:isFriend(lord)
 	end
 end
+
+-- dujian
+sgs.ai_skill_invoke["dujian"] = function(self, data)
+	local rand = math.random(1, 2)
+	return rand == 2
+end
