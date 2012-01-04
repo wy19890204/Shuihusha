@@ -548,12 +548,30 @@ void MainWindow::on_actionAcknowledgement_triggered()
     contents.append(tr("Founder: Moligaloo"));
 
     QString content;
-    foreach(QString string, contents)
-    {
-        content.append(QString("<p align='right'><i>%1</i></p>").arg(string));
+    content.append(QString("<p align='left'>"));
+    foreach(QString string, contents){
+        content.append(QString("<font size='4'>%1</font><br />").arg(string));
     }
+    content.append(QString("</p>"));
 
-    Window *window = new Window(tr("About QSanguosha"), QSize(365, 411));
+    contents.clear();
+    contents.append(tr("Shuihusha staff:"));
+
+    contents.append(tr("Design/Plan/Art: Nicholas"));
+    contents.append(tr("Coder: Ubun Tenkei, Roxiel"));
+    contents.append(tr("Voice: Tianzihui Club"));
+    contents.append(tr("Chores: LTY"));
+    contents.append(tr("QQ Group: 88873329"));
+    contents.append(tr("Url: shuihusha.5d6d.com"));
+
+    content.append(QString("<br /><br />"));
+    content.append(QString("<p align='left'>"));
+    foreach(QString string, contents){
+        content.append(QString("<font size='4'>%1</font><br />").arg(string));
+    }
+    content.append(QString("</p>"));
+
+    Window *window = new Window(tr("Thanks for play"), QSize(365, 411));
     scene->addItem(window);
 
     window->addContent(content);
