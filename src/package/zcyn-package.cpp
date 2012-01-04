@@ -32,6 +32,35 @@ public:
     }
 };
 
+#include "plough.h"
+class Fuji:public PhaseChangeSkill{
+public:
+    Fuji():PhaseChangeSkill("fuji"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *p) const{
+        if(p->getPhase() != Player::Judge || p->getJudgingArea().isEmpty())
+            return false;
+        Room *room = p->getRoom();
+        ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
+        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p))){
+            Assassinate *ass = new Assassinate(Card::NoSuit, 2);
+            ass->setSkillName(objectName());
+            ass->setCancelable(false);
+            CardUseStruct use;
+            use.card = ass;
+            use.from = ruan2;
+            use.to << p;
+            room->useCard(use);
+        }
+        return false;
+    }
+};
+
 SixiangCard::SixiangCard(){
 }
 
@@ -329,6 +358,9 @@ ZCYNPackage::ZCYNPackage()
 {
     General *guansheng = new General(this, "guansheng", "jiang");
     guansheng->addSkill(new Tongwu);
+
+    General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
+    ruanxiaoer->addSkill(new Fuji);
 
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);

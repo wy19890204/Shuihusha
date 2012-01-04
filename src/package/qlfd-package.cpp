@@ -772,6 +772,13 @@ public:
         return target->getGeneral()->isMale();
     }
 
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 1)
+            return "qiao";
+        else
+            return "nu";
+    }
+
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *anu = room->findPlayerBySkillName(objectName());
@@ -779,7 +786,7 @@ public:
             return false;
         RecoverStruct rec = data.value<RecoverStruct>();
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(anu, "..", "@chiyuan", data))
+            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), data))
                 break;
             JudgeStruct jd;
             jd.reason = objectName();
