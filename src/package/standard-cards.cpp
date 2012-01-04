@@ -90,7 +90,7 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(targets.length() >= slash_targets)
         return false;
 
-    if(inherits("WushenSlash")){
+    if(Self->hasSkill("paohong") && this->getNature() == DamageStruct::Thunder){
         distance_limit = false;
     }
 
