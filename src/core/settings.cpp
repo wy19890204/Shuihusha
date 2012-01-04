@@ -93,6 +93,7 @@ void Settings::init(){
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
     EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
+    SPOpen = value("SPOpen", false).toBool();
     OperationTimeout = value("OperationTimeout", 15).toInt();
     OperationNoLimit = value("OperationNoLimit", false).toBool();
     EnableEffects = value("EnableEffects", true).toBool();

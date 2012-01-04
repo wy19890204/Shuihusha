@@ -113,12 +113,6 @@ function SmartAI:useCardProvistore(provistore, use)
 	end
 end
 
--- mengjin
-sgs.ai_skill_invoke.mengjin = function(self, data)
-	local effect = data:toSlashEffect()
-	return not self:isFriend(effect.to)
-end
-
 local qiangxi_skill={}
 qiangxi_skill.name="qiangxi"
 table.insert(sgs.ai_skills,qiangxi_skill)

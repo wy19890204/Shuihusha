@@ -56,6 +56,7 @@ public:
     bool NeverNullifyMyTrick;
     bool EnableAutoTarget;
     int NullificationCountDown;
+    bool SPOpen;
     int OperationTimeout;
     bool OperationNoLimit;
     bool EnableEffects;

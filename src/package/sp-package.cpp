@@ -9,7 +9,7 @@
 class Shemi: public TriggerSkill{
 public:
     Shemi():TriggerSkill("shemi"){
-        events << PhaseChange << TurnOvered;
+        events << PhaseChange << TurnedOver;
     }
 
     virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
@@ -69,6 +69,77 @@ public:
             room->setPlayerFlag(head, "-NongQ");
             return true;
         }
+        return false;
+    }
+};
+
+JiebaoCard::JiebaoCard(){
+}
+
+bool JiebaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() >= 2)
+        return false;
+
+    if(to_select == Self)
+        return false;
+
+    return !to_select->isNude();
+}
+
+void JiebaoCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    int card_id = room->askForCardChosen(effect.from, effect.to, "he", "jiebao");
+    const Card *card = Sanguosha->getCard(card_id);
+    room->moveCardTo(card, effect.from, Player::Hand, false);
+
+    room->setEmotion(effect.to, "bad");
+    room->setEmotion(effect.from, "good");
+}
+
+class JiebaoViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    JiebaoViewAsSkill():ZeroCardViewAsSkill("jiebao"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new JiebaoCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return  pattern == "@@jiebao";
+    }
+};
+
+class Jiebao: public TriggerSkill{
+public:
+    Jiebao():TriggerSkill("jiebao"){
+        events << Death;
+        view_as_skill = new JiebaoViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *tianwang = room->findPlayerBySkillName(objectName());
+        if(!tianwang)
+            return false;
+        bool can_invoke = false;
+        QList<ServerPlayer *> other_players = room->getOtherPlayers(tianwang);
+        foreach(ServerPlayer *player, other_players){
+            if(!player->isNude()){
+                can_invoke = true;
+                break;
+            }
+        }
+        if(can_invoke)
+            room->askForUseCard(tianwang, "@@jiebao", "@jiebao:" + player->objectName());
         return false;
     }
 };
@@ -214,6 +285,11 @@ SPPackage::SPPackage()
     zhaoji->addSkill(new Lizheng);
     zhaoji->addSkill(new Nongquan);
 
+    General *chaogai = new General(this, "chaogai$", "kou", 3);
+    chaogai->addSkill(new Jiebao);
+    //chaogai->addSkill(new Dushi);
+    //chaogai->addSkill(new Xieru);
+
     General *jiangsong = new General(this, "jiangsong", "guan");
     jiangsong->addSkill(new Yuzhong);
     jiangsong->addSkill(new Yuzhong2);
@@ -221,6 +297,7 @@ SPPackage::SPPackage()
     jiangsong->addSkill(new Shuntian);
 
     addMetaObject<YuzhongCard>();
+    addMetaObject<JiebaoCard>();
 }
 
 ADD_PACKAGE(SP);
