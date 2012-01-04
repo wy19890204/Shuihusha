@@ -329,22 +329,22 @@ public:
     }
 };
 
-
-class Huoji: public OneCardViewAsSkill{
+class Paohong: public FilterSkill{
 public:
-    Huoji():OneCardViewAsSkill("huoji"){
+    Paohong():FilterSkill("paohong"){
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->isRed();
+        const Card *card = to_select->getCard();
+        return card->objectName() == "slash" && card->isBlack();
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        FireAttack *fire_attack = new FireAttack(card->getSuit(), card->getNumber());
-        fire_attack->addSubcard(card->getId());
-        fire_attack->setSkillName(objectName());
-        return fire_attack;
+        const Card *c = card_item->getCard();
+        ThunderSlash *bs = new ThunderSlash(c->getSuit(), c->getNumber());
+        bs->setSkillName(objectName());
+        bs->addSubcard(card_item->getCard());
+        return bs;
     }
 };
 
@@ -413,10 +413,10 @@ ZCYNPackage::ZCYNPackage()
 
     General *shiwengong = new General(this, "shiwengong", "jiang");
     shiwengong->addSkill(new Dujian);
-/*
-    shuangxiong = new General(this, "shuangxiong", "kou");
-    shuangxiong->addSkill(new Shuangxiong);
 
+    General *lingzhen = new General(this, "lingzhen", "jiang");
+    lingzhen->addSkill(new Paohong);
+/*
     pangde = new General(this, "pangde", "kou");
     pangde->addSkill(new Mengjin);
 */
