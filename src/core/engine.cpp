@@ -62,11 +62,11 @@ extern "C" {
 }
 
 QString Engine::getVersion() const{
-    return "20111231";
+    return "20110104";
 }
 
 QString Engine::getVersionName() const{
-    return tr("V2.7.9");
+    return tr("V2.8.7");
 }
 
 Engine::Engine()
@@ -542,6 +542,10 @@ QStringList Engine::getLords() const{
     // add intrinsic lord
     foreach(QString lord, lord_list){
         const General *general = generals.value(lord);
+
+        if(general->getPackage() == "sp" && !Config.SPOpen)
+            continue;
+
         if(!ban_package.contains(general->getPackage()))
             lords << lord;
     }

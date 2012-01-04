@@ -9,6 +9,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 			use.card = drivolt
 			if use.to then
 				use.to:append(friend)
+				return
 			end
 			break
 		end
@@ -20,10 +21,12 @@ function SmartAI:useCardDrivolt(drivolt, use)
 			use.card = drivolt
 			if use.to then
 				use.to:append(friend)
+				return
 			end
 			break
 		end
 	end
+	return "."
 end
 
 -- tan ting
@@ -42,19 +45,19 @@ function SmartAI:useCardAssassinate(ass, use)
 	use.card = ass
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
-			if enemy ~= self.player and use.to then
+			if use.to then
 				use.to:append(enemy)
 				return
 			end
 		end
 	end
 	for _, enemy in ipairs(self.enemies) do
-		if enemy ~= self.player and use.to then
+		if use.to then
 			use.to:append(enemy)
 			return
 		end
 	end
-	return
+	return "."
 end
 
 -- sheng chen gang
@@ -109,6 +112,7 @@ function SmartAI:useCardProvistore(provistore, use)
 		use.card = assassinate
 		if use.to and not friend:containsTrick("provistore") then
 			use.to:append(friend)
+			return
 		end
 	end
 end

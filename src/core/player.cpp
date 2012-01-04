@@ -512,13 +512,20 @@ int Player::getMaxCards() const{
     if(hasSkill("linse"))
         return max_hp;
 
-    int juejing = hasSkill("juejing") ? 2 : 0;
+    int shaxue = 0;
+    if(hasLordSkill("shaxue")){
+        QList<const Player *> players = getSiblings();
+        foreach(const Player *player, players){
+            if(player->isDead() && player->getKingdom() == "kou")
+                shaxue += 2;
+        }
+    }
 
     int shenwei = 0;
     if(hasSkill("shenwei"))
         shenwei = 2;
 
-    return qMax(hp,0) + extra + juejing + shenwei;
+    return qMax(hp,0) + extra + shaxue + shenwei;
 }
 
 QString Player::getKingdom() const{
