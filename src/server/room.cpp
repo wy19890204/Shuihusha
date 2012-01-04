@@ -1777,6 +1777,9 @@ void Room::commonCommand(ServerPlayer *, const QString &arg){
 void Room::useCard(const CardUseStruct &card_use, bool add_history){
     const Card *card = card_use.card;
 
+    if(card->inherits("ThunderSlash") && card->getSkillName() != "paohong" && card_use.from->hasSkill("paohong"))
+        playSkillEffect("paohong");
+
     if(card_use.from->getPhase() == Player::Play && add_history){
         QString key;
         if(card->inherits("LuaSkillCard"))

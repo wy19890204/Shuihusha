@@ -17,10 +17,14 @@ return {
 	["yangxiong"] = "杨雄",
 	["#_yangxiong"] = "病关索",
 	["designer:yangxiong"] = "裁之刃•散",
+	["cv:yangxiong"] = "爪子",
 	["guizi"] = "刽子",
 	[":guizi"] = "每当其他角色进入濒死状态时，你可以弃置一张黑桃牌，令该角色立即死亡。若如此做，则视为你杀死该角色。",
 	["#Guizi"] = "%from 发动了技能【%arg】，将 %to 拖出去宰掉了",
 	["@guizi"] = "%src 正在死亡线上挣扎，你可以发动【刽子】，弃一张黑桃牌将其拖出去宰掉",
+	["$guizi1"] = "午时已到，行刑！",
+	["$guizi2"] = "斩！",
+	["~yangxiong"] = "背疮疼痛，恨不能战死沙场～",
 
 	["#_haosiwen"] = "井木犴",
 	["haosiwen"] = "郝思文",
@@ -46,27 +50,12 @@ return {
 
 	["lingzhen"] = "凌振",
 	["#_lingzhen"] = "轰天雷",
+	["cv:lingzhen"] = "专业",
 	["coder:lingzhen"] = "凌天翼",
 	["paohong"] = "炮轰",
 	[":paohong"] = "<b>锁定技</b>，你的黑色普通【杀】均视为具雷电属性的【杀】；你使用具雷电属性的【杀】时无距离限制。",
-
-	["$niepan"] = "凤凰涅盘，浴火重生！",
-	["$qiangxi"] = "五步之内，汝命休矣！",
-	["~pangtong"] = "落凤坡？此地不利于吾。",
-	["~wolong"] = "悠悠苍天，曷此其极",
-	["~dianwei"] = "主公，我就到这了",
-	["~xunyu"] = "身为汉臣，至死不渝",
-	["~yuanshao"] = "天不助袁哪！",
-	["~taishici"] = "今所志未遂，奈何死乎",
-
-	["@nirvana"] = "涅槃",
-
-	-- CV
-	["cv:xunyu"] = "听雨",
-	["cv:dianwei"] = "褪色",
-	["cv:wolong"] = "彗星",
-	["cv:yuanshao"] = "耗子王",
-	["cv:pangde"] = "Glory",
-	["cv:shuangxiong"] = "墨染の爷们",
+	["$paohong1"] = "一炮就送你归天！",
+	["$paohong2"] = "不投降就去死吧！",
+	["~lingzhen"] = "啊！我不会倒下～",
 }
 
