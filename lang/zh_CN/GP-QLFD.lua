@@ -35,7 +35,7 @@ return {
 	["$foyuan1"] = "待我血盆还愿。",
 	["$foyuan2"] = "佛牙可否借妹妹一观。",
 	["unknown"] = "未知",
-	
+
 	["#_wangpo"] = "枯藤蔓",
 	["wangpo"] = "王婆",
 	["cv:wangpo"] = "九辨（重华剧社）",
@@ -128,7 +128,7 @@ return {
 	["$huoshui1"] = "你若去那梁山，再也休上我门！",
 	["$huoshui2"] = "哼！你去便是了！",
 
--- last words	
+-- last words
 	["~panqiaoyun"] = "一了百了～",
 	["~wangpo"] = "死到眼前，犹做发财梦～",
 	["~linniangzi"] = "官人，就此～别过！",

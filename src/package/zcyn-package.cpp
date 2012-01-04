@@ -190,73 +190,6 @@ public:
     }
 };
 
-class Shemi: public TriggerSkill{
-public:
-    Shemi():TriggerSkill("shemi"){
-        events << PhaseChange << TurnOvered;
-    }
-
-    virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
-        //Room *room = emperor->getRoom();
-        if(e == PhaseChange){
-            if(emperor->getPhase() == Player::Discard &&
-               emperor->askForSkillInvoke(objectName(), data)){
-                emperor->turnOver();
-                return true;
-            }
-        }
-        else{
-            if(!emperor->hasFlag("NongQ")){
-                int index = emperor->faceUp() ? 2: 1;
-                emperor->getRoom()->playSkillEffect(objectName(), index);
-            }
-            int x = emperor->getLostHp();
-            x = qMax(qMin(x,2),1);
-            emperor->drawCards(x);
-        }
-        return false;
-    }
-};
-
-class Lizheng: public DistanceSkill{
-public:
-    Lizheng():DistanceSkill("lizheng"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(!to->faceUp())
-            return +1;
-        else
-            return 0;
-    }
-};
-
-class Nongquan:public PhaseChangeSkill{
-public:
-    Nongquan():PhaseChangeSkill("nongquan$"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan" && !target->hasLordSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *otherguan) const{
-        Room *room = otherguan->getRoom();
-        if(otherguan->getPhase() != Player::Draw)
-            return false;
-        ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
-           && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            room->setPlayerFlag(head, "NongQ");
-            head->turnOver();
-            room->setPlayerFlag(head, "-NongQ");
-            return true;
-        }
-        return false;
-    }
-};
-
 class Tianyan: public PhaseChangeSkill{
 public:
     Tianyan():PhaseChangeSkill("tianyan"){
@@ -329,62 +262,22 @@ public:
     }
 };
 
-
-class Huoji: public OneCardViewAsSkill{
+class Paohong: public FilterSkill{
 public:
-    Huoji():OneCardViewAsSkill("huoji"){
+    Paohong():FilterSkill("paohong"){
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->isRed();
+        const Card *card = to_select->getCard();
+        return card->objectName() == "slash" && card->isBlack();
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        FireAttack *fire_attack = new FireAttack(card->getSuit(), card->getNumber());
-        fire_attack->addSubcard(card->getId());
-        fire_attack->setSkillName(objectName());
-        return fire_attack;
-    }
-};
-
-class Bazhen: public TriggerSkill{
-public:
-    Bazhen():TriggerSkill("bazhen"){
-        frequency = Compulsory;
-        events << CardAsked;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0 && target->getMark("wuqian") == 0;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *wolong, QVariant &data) const{
-        QString pattern = data.toString();
-
-        if(pattern != "jink")
-            return false;
-
-        Room *room = wolong->getRoom();
-        if(wolong->askForSkillInvoke(objectName())){
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(heart|diamond):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = wolong;
-
-            room->judge(judge);
-
-            if(judge.isGood()){
-                Jink *jink = new Jink(Card::NoSuit, 0);
-                jink->setSkillName(objectName());
-                room->provide(jink);
-                room->setEmotion(wolong, "good");
-                return true;
-            }else
-                room->setEmotion(wolong, "bad");
-        }
-        return false;
+        const Card *c = card_item->getCard();
+        ThunderSlash *bs = new ThunderSlash(c->getSuit(), c->getNumber());
+        bs->setSkillName(objectName());
+        bs->addSubcard(card_item->getCard());
+        return bs;
     }
 };
 
@@ -403,23 +296,15 @@ ZCYNPackage::ZCYNPackage()
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 
-    General *zhaoji = new General(this, "zhaoji$", "guan", 3);
-    zhaoji->addSkill(new Shemi);
-    zhaoji->addSkill(new Lizheng);
-    zhaoji->addSkill(new Nongquan);
-
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
     General *shiwengong = new General(this, "shiwengong", "jiang");
     shiwengong->addSkill(new Dujian);
-/*
-    shuangxiong = new General(this, "shuangxiong", "kou");
-    shuangxiong->addSkill(new Shuangxiong);
 
-    pangde = new General(this, "pangde", "kou");
-    pangde->addSkill(new Mengjin);
-*/
+    General *lingzhen = new General(this, "lingzhen", "jiang");
+    lingzhen->addSkill(new Paohong);
+
     addMetaObject<SixiangCard>();
 }
 
