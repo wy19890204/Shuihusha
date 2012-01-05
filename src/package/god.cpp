@@ -168,52 +168,42 @@ public:
     }
 };
 
-class Shenfen:public ZeroCardViewAsSkill{
+class Shenfen: public TriggerSkill{
 public:
-    Shenfen():ZeroCardViewAsSkill("shenfen"){
+    Shenfen():TriggerSkill("shenfen"){
+        events << CardEffected;
+        frequency = Compulsory;
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@wrath") >= 6 && !player->hasUsed("ShenfenCard");
-    }
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
+            QStringList suits;
+            foreach(const Card *rmp, player->getEquips()){
+                if(!suits.contains(rmp->getSuitString()))
+                    suits << rmp->getSuitString();
+            }
+            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
+                return false;
+            QString suit = effect.card->getSuitString();
+            if(!suits.contains(suit))
+                return false;
 
-    virtual const Card *viewAs() const{
-        return new ShenfenCard;
+            LogMessage log;
+            log.type = "#Caiquan";
+            log.from = effect.from;
+            Room *room = player->getRoom();
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
     }
 };
-
-
-ShenfenCard::ShenfenCard(){
-    target_fixed = true;
-    once = true;
-}
-
-void ShenfenCard::use(Room *room, ServerPlayer *shenlubu, const QList<ServerPlayer *> &) const{
-    shenlubu->loseMark("@wrath", 6);
-
-    QList<ServerPlayer *> players = room->getOtherPlayers(shenlubu);
-    foreach(ServerPlayer *player, players){
-        DamageStruct damage;
-        damage.card = this;
-        damage.from = shenlubu;
-        damage.to = player;
-
-        room->damage(damage);
-    }
-
-    foreach(ServerPlayer *player, players){
-        player->throwAllEquips();
-    }
-
-    foreach(ServerPlayer *player, players){
-        if(player->getHandcardNum() <= 4)
-            player->throwAllHandCards();
-        else
-            room->askForDiscard(player, "shenfen", 4);
-    }
-
-    shenlubu->turnOver();
-}
 
 WuqianCard::WuqianCard(){
     once = true;
@@ -1263,11 +1253,9 @@ GodPackage::GodPackage()
     shenluzhishen->addSkill(new HuafoSlash);
     shenluzhishen->addSkill(new HuafoAnale);
 
+    General *shentest = new General(this, "shentest", "god");
+    shentest->addSkill(new Shenfen);
 /*
-    General *shenzhouyu = new General(this, "shenzhouyu", "god");
-    shenzhouyu->addSkill(new Qinyin);
-    shenzhouyu->addSkill(new SmallYeyan);
-
     General *shenzhugeliang = new General(this, "shenzhugeliang", "god", 3);
     shenzhugeliang->addSkill(new Qixing);
     shenzhugeliang->addSkill(new QixingStart);
