@@ -806,12 +806,12 @@ public:
             }
             else{
                 room->playSkillEffect(objectName(), 1);
-                if(room->askForChoice(anu, objectName(), "qiao+nu") == "qiao"){
+                if(!anu->isWounded() || room->askForChoice(anu, objectName(), "qiao+nu") == "nu")
+                    anu->drawCards(2);
+                else{
                     RecoverStruct r;
                     room->recover(anu, r);
                 }
-                else
-                    anu->drawCards(2);
             }
         }
         return false;
@@ -836,6 +836,77 @@ public:
         drive->addSubcard(card_item->getCard());
 
         return drive;
+    }
+};
+
+class Baoen:public TriggerSkill{
+public:
+    Baoen():TriggerSkill("baoen"){
+        events << HpRecover;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *cuilian, QVariant &data) const{
+        Room *room = cuilian->getRoom();
+        RecoverStruct rec = data.value<RecoverStruct>();
+        if(!rec.who || rec.who == cuilian)
+            return false;
+        for(int i = rec.recover; i > 0; i--){
+            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName()))
+                break;
+            room->playSkillEffect(objectName(), qrand() % 2 + 3);
+            LogMessage s;
+            s.type = "#Baoen";
+            s.from = cuilian;
+            s.to << rec.who;
+            s.arg = objectName();
+            room->sendLog(s);
+
+            rec.who->drawCards(qMin(3, rec.who->getHp()));
+        }
+        return false;
+    }
+};
+
+class Zhiyu: public MasochismSkill{
+public:
+    Zhiyu():MasochismSkill("zhiyu"){
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getGeneral()->isMale();
+    }
+
+    virtual void onDamaged(ServerPlayer *masata, const DamageStruct &damage) const{
+        Room *room = masata->getRoom();
+        ServerPlayer *loli = room->findPlayerBySkillName(objectName());
+        if(loli){
+            if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName()))
+                return false;
+            QList<int> card_ids;
+            foreach(const Card *tmp, masata->getHandcards()){
+                card_ids << tmp->getId();
+            }
+            room->fillAG(card_ids, loli);
+            int card_id = room->askForAG(loli, card_ids, false, objectName());
+            card_ids.removeOne(card_id);
+            room->takeAG(loli, card_id);
+            room->obtainCard(loli, card_id);
+            room->broadcastInvoke("clearAG");
+            masata->obtainCard(room->askForCardShow(loli, masata, objectName()));
+
+            LogMessage log;
+            log.type = "#Zhiyu";
+            log.from = loli;
+            log.to << masata;
+            log.arg = objectName();
+            log.arg2 = QString::number(1);
+            room->sendLog(log);
+        }
     }
 };
 
@@ -882,6 +953,10 @@ QLFDPackage::QLFDPackage()
     General *liqiaonu = new General(this, "liqiaonu", "min", 3, false);
     liqiaonu->addSkill(new Chiyuan);
     liqiaonu->addSkill(new Huoshui);
+
+    General *jincuilian = new General(this, "jincuilian", "min", 3, false);
+    jincuilian->addSkill(new Baoen);
+    jincuilian->addSkill(new Zhiyu);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();

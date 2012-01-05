@@ -175,11 +175,11 @@ EventsPackage::EventsPackage()
 {
     QList<Card *> cards;
     cards
-            << new Jiefachang(Card::Diamond, 4)
+            << new Jiefachang(Card::Diamond, 13)
             << new Tifanshi(Card::Spade, 7)
             << new Daojia(Card::Club, 12)
-            << new NinedayGirl(Card::Heart, 9)
-            << new FuckGaolian(Card::Spade, 5);
+            << new NinedayGirl(Card::Heart, 2)
+            << new FuckGaolian(Card::Heart, 8);
 
     foreach(Card *card, cards)
         card->setParent(this);

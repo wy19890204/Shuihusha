@@ -1904,7 +1904,7 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="562"/>
         <source>Voice: Tianzihui Club</source>
-        <translation>配音：天子会话剧社</translation>
+        <translation>配音：天子会配音小组</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="563"/>
