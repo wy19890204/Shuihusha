@@ -1,4 +1,4 @@
-#include "ttxd-package.h"
+#include "ttxd.h"
 #include "skill.h"
 #include "client.h"
 #include "engine.h"

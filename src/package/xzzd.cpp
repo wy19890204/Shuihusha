@@ -1,4 +1,4 @@
-#include "xzzd-package.h"
+#include "xzzd.h"
 #include "general.h"
 #include "skill.h"
 #include "room.h"

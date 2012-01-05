@@ -1,4 +1,4 @@
-#include "bwqz-package.h"
+#include "bwqz.h"
 #include "general.h"
 #include "skill.h"
 #include "carditem.h"

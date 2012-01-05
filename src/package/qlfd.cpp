@@ -3,7 +3,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "qlfd-package.h"
+#include "qlfd.h"
 #include "tocheck.h"
 
 YushuiCard::YushuiCard(){

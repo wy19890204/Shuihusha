@@ -1,6 +1,6 @@
 #include "standard.h"
 #include "skill.h"
-#include "sp-package.h"
+#include "sp.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"

@@ -37,8 +37,6 @@ SOURCES += src/main.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
         src/dialog/halldialog.cpp \
-	src/package/god.cpp \
-	src/package/joypackage.cpp \
 	src/package/mountainpackage.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-skillcards.cpp \
@@ -46,13 +44,15 @@ SOURCES += src/main.cpp \
 	src/package/plough.cpp \
 	src/package/tocheck.cpp \
 	src/package/events.cpp \
-	src/package/qjwm-package.cpp \
-	src/package/xzzd-package.cpp \
-	src/package/ttxd-package.cpp \
-	src/package/bwqz-package.cpp \
-	src/package/qlfd-package.cpp \
-	src/package/zcyn-package.cpp \
-	src/package/sp-package.cpp \
+	src/package/qjwm.cpp \
+	src/package/xzzd.cpp \
+	src/package/ttxd.cpp \
+	src/package/bwqz.cpp \
+	src/package/qlfd.cpp \
+	src/package/zcyn.cpp \
+	src/package/sp.cpp \
+	src/package/god.cpp \
+	src/package/joy.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/challengemode.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -112,8 +112,6 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/god.h \
-	src/package/joypackage.h \
 	src/package/mountainpackage.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
@@ -122,13 +120,15 @@ HEADERS += src/client/aux-skills.h \
 	src/package/plough.h \
 	src/package/tocheck.h \
 	src/package/events.h \
-	src/package/qjwm-package.h \
-	src/package/xzzd-package.h \
-	src/package/ttxd-package.h \
-	src/package/bwqz-package.h \
-	src/package/qlfd-package.h \
-	src/package/zcyn-package.h \
-	src/package/sp-package.h \
+	src/package/qjwm.h \
+	src/package/xzzd.h \
+	src/package/ttxd.h \
+	src/package/bwqz.h \
+	src/package/qlfd.h \
+	src/package/zcyn.h \
+	src/package/sp.h \
+	src/package/god.h \
+	src/package/joy.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/challengemode.h \
 	src/scenario/couple-scenario.h \

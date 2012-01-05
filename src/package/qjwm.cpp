@@ -1,4 +1,4 @@
-#include "qjwm-package.h"
+#include "qjwm.h"
 #include "skill.h"
 #include "standard.h"
 #include "tocheck.h"

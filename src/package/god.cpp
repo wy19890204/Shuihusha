@@ -1319,13 +1319,11 @@ GodPackage::GodPackage()
     shenzhangqing->addSkill(new Feihuang);
     shenzhangqing->addSkill(new Meiyu);
 
+    General *shenluzhishen = new General(this, "shenluzhishen", "god", 5);
+    shenluzhishen->addSkill(new Shelie);
+    shenluzhishen->addSkill(new Meiyu);
+
 /*
-    related_skills.insertMulti("wuhun", "#wuhun");
-
-    General *shenlumeng = new General(this, "shenlumeng", "god", 3);
-    shenlumeng->addSkill(new Shelie);
-    shenlumeng->addSkill(new Meiyu);
-
     General *shenzhouyu = new General(this, "shenzhouyu", "god");
     shenzhouyu->addSkill(new Qinyin);
     shenzhouyu->addSkill(new SmallYeyan);

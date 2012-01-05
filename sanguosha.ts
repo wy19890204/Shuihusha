@@ -1624,7 +1624,7 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="261"/>
         <source>Scenario overview</source>
-        <translation>剧情一览</translation>
+        <translation>扩展模式</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="266"/>
@@ -2795,7 +2795,7 @@
     <message>
         <location filename="src/dialog/scenario-overview.cpp" line="14"/>
         <source>Scenario overview</source>
-        <translation>剧情一览</translation>
+        <translation>扩展模式</translation>
     </message>
 </context>
 <context>
