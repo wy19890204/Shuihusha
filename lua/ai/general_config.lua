@@ -211,6 +211,8 @@ sgs.ai_chaofeng = {
 	houjian = 5,
 	kongliang = 5,
 	haosiwen = 5,
+	liqiaonu = 5,
+	jincuilian = 5,
 
 	peixuan = 4,
 	wangqing = 4,
@@ -222,6 +224,8 @@ sgs.ai_chaofeng = {
 	wangdingliu = 4,
 	panjinlian = 4,
 	duansanniang = 4,
+	liruilan = 4,
+	ruanxiaoer = 4,
 
 	luozhenren = 3,
 	linchong = 3,
@@ -234,6 +238,8 @@ sgs.ai_chaofeng = {
 	pengqi = 3,
 	jiangsong = 3,
 	shenzhangqing = 3,
+	yangxiong = 3,
+	caifu = 3,
 
 	luzhishen = 2,
 	wusong = 2,
@@ -242,7 +248,9 @@ sgs.ai_chaofeng = {
 	oupeng = 2,
 	yanshun = 2,
 	dingdesun = 2,
+	lingzhen = 2,
 
+	fangla = 1,
 	mengkang = 1,
 	taozongwang = 1,
 	zhutong = 1,
@@ -253,6 +261,8 @@ sgs.ai_chaofeng = {
 	liying = 0,
 	zhangqing = 0,
 	shiwengong = 0,
+
+	yanxijiao = -1,
 
 	zhuwu = -2,
 	guansheng = -2,
@@ -268,5 +278,7 @@ sgs.ai_chaofeng = {
 	zhangshun = -4,
 	zhoutong = -5,
 	shien = -5,
+
+	chaogai = -6,
 }
 

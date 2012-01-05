@@ -1,5 +1,9 @@
 wangqing 9
 shenwuyong 9
+yanxijiao 9
+liqiaonu 9
+ruanxiaoer 8
+yangxiong 8
 oupeng 8 *
 yuehe 8
 gaoqiu 8
@@ -11,6 +15,7 @@ baisheng 8
 yanqing 8
 qiaodaoqing 8
 gongsunsheng 8
+caifu 8
 shijin 7
 zhuwu 7
 shien 7
@@ -58,5 +63,10 @@ mengkang 4
 panjinlian 4
 linniangzi 4
 shiwengong 3
+lingzhen 3
 songjiang 3
+jincuilian 2
+liruilan 2
 jiangsong 1
+fangla 1
+chaogai 1
