@@ -77,8 +77,8 @@ Engine::Engine()
     addPackage(NewTTXD());
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
-    addPackage(NewQLFD());
     addPackage(NewZCYN());
+    addPackage(NewQLFD());
     addPackage(NewSP());
     addPackage(NewGod());
     //addPackage(NewFire());

@@ -301,14 +301,21 @@ public:
 
         if(room->askForSkillInvoke(zou, objectName(), data)){
             QList<int> card_ids = room->getNCards(2);
-            room->obtainCard(zou, card_ids.first());
-            room->obtainCard(zou, card_ids.last());
-            QStringList c;
-            c << Sanguosha->getCard(card_ids.first())->getEffectIdString();
-            c << Sanguosha->getCard(card_ids.last())->getEffectIdString();
-            if(room->askForChoice(zou, objectName(), c.join("+")) == c.at(0)){
-
-            }
+            //room->obtainCard(zou, card_ids.first());
+            //room->obtainCard(zou, card_ids.last());
+            room->fillAG(card_ids, zou);
+            int card_id = room->askForAG(zou, card_ids, false, objectName());
+            card_ids.removeOne(card_id);
+            room->takeAG(zou, card_id);
+            int card_id2 = card_ids.first();
+            room->throwCard(card_id2);
+            room->broadcastInvoke("clearAG");
+            room->moveCardTo(Sanguosha->getCard(card_id), zou, Player::Hand, false);
+            room->moveCardTo(Sanguosha->getCard(card_id2), NULL, Player::DrawPile);
+            LogMessage log;
+            log.type = "#PutCard";
+            log.from = zou;
+            room->sendLog(log);
         }
         return false;
     }
