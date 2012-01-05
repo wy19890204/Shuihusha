@@ -504,6 +504,77 @@ public:
     }
 };
 
+SuocaiCard::SuocaiCard(){
+    will_throw = false;
+}
+
+bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && !to_select->isKongcheng() && to_select->getGeneral()->isMale();
+}
+
+void SuocaiCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *yanp = targets.first();
+    source->pindian(yanp, "suocai", this);
+}
+
+class SuocaiPindian: public OneCardViewAsSkill{
+public:
+    SuocaiPindian():OneCardViewAsSkill("suocai"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("SuocaiCard") && !player->isKongcheng();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        SuocaiCard *card = new SuocaiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Suocai: public TriggerSkill{
+public:
+    Suocai():TriggerSkill("suocai"){
+        events << Pindian;
+        view_as_skill = new SuocaiPindian;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        PindianStar pindian = data.value<PindianStar>();
+        if(player == pindian->from && pindian->reason == objectName() &&
+           pindian->isSuccess()){
+            player->obtainCard(pindian->from_card);
+            player->obtainCard(pindian->to_card);
+        }
+        return false;
+    }
+};
+
+class Huakui: public MasochismSkill{
+public:
+    Huakui():MasochismSkill("huakui"){
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
+        Room *room = other->getRoom();
+        ServerPlayer *loli = room->findPlayerBySkillName(objectName());
+        if(loli){
+            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
+                loli->drawCards(1);
+        }
+    }
+};
+
 EyanCard::EyanCard(){
     once = true;
 }
@@ -941,6 +1012,10 @@ QLFDPackage::QLFDPackage()
     General *duansanniang = new General(this, "duansanniang", "min", 4, false);
     duansanniang->addSkill(new Zishi);
 
+    General *yanxijiao = new General(this, "yanxijiao", "min", 3, false);
+    yanxijiao->addSkill(new Suocai);
+    yanxijiao->addSkill(new Huakui);
+
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
     skills << new EyanSlash;
@@ -964,6 +1039,7 @@ QLFDPackage::QLFDPackage()
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();
     addMetaObject<ZishiCard>();
+    addMetaObject<SuocaiCard>();
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
     addMetaObject<ZhangshiCard>();
