@@ -960,7 +960,7 @@ public:
         Room *room = masata->getRoom();
         ServerPlayer *loli = room->findPlayerBySkillName(objectName());
         if(loli){
-            if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName()))
+            if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName(), QVariant::fromValue(masata)))
                 return;
             room->playSkillEffect(objectName());
             QList<int> card_ids;

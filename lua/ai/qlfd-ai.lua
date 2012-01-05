@@ -134,9 +134,14 @@ end
 sgs.ai_skill_invoke["huakui"] = true
 
 -- zhiyu
-sgs.ai_skill_invoke["zhiyu"] = function(self, data)
-	local damage = data:toDamage()
-	return self:isEnemy(damage.to)
+sgs.ai_skill_invoke["zhiyu"] = sgs.ai_skill_invoke["qiongtu"]
+sgs.ai_skill_askforag["zhiyu"] = function(self, card_ids)
+	local cards = {}
+	for _, card_id in ipairs(card_ids)  do
+		table.insert(cards, sgs.Sanguosha:getCard(card_id))
+	end
+	self:sortByUseValue(cards)
+	return cards[1]:getId()
 end
 sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 	local card = self:getUnuseCard()

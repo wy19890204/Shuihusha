@@ -191,7 +191,7 @@ end
 function useDefaultStrategy()
 	local mode = sgs.GetConfig("GameMode", "")
 	if (mode == "06_3v3") or (not mode:find("0")) then return true end
-	if (mode:find("02_1v1") or mode:find("03p")) then return true end
+	if mode:find("02_1v1") or mode:find("03p") or mode:find("04_1v3") then return true end
 end
 
 -- this function create 2 tables contains the friends and enemies, respectively
@@ -285,6 +285,7 @@ function SmartAI:objectiveLevel(player)
 		elseif player:isLord() then return 5
 		else return 4.5 end
 	end
+	
 
 	if player:objectName() == self.player:objectName() then return -2 end
 
@@ -463,9 +464,7 @@ function SmartAI:filterEvent(event, player, data)
 		elseif data:toString() then
 			promptlist = data:toString():split(":")
 			if promptlist[1] == "cardResponsed" then
-				if promptlist[3] == "@hujia-jink" and promptlist[5] ~= "_nil_" then
-					sgs.hujiasource = nil
-				elseif promptlist[3] == "@zhangshi" and promptlist[5] ~= "_nil_" then
+				if promptlist[3] == "@zhangshi" and promptlist[5] ~= "_nil_" then
 					local intention = sgs.ai_card_intention["general"](sgs.zhangshisource, -40)
 					self:refreshLoyalty(player, intention)
 					sgs.zhangshisource = nil
@@ -516,8 +515,8 @@ function SmartAI:filterEvent(event, player, data)
 		sgs.recorder = self
 	end
 
-	if self~= sgs.recorder then return end
-
+	if self ~= sgs.recorder then return end
+	
 	if event == sgs.CardEffect then
 		local struct = data:toCardEffect()
 		local card = struct.card

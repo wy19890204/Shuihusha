@@ -6,8 +6,8 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	self:sort(self.friends_noself, "handcard")
 	for _, friend in ipairs(self.friends_noself) do
 		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
-			use.card = drivolt
 			if use.to then
+				use.card = drivolt
 				use.to:append(friend)
 				return
 			end
@@ -18,8 +18,8 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	for _, enemy in ipairs(self.enemies) do
 --		if not self:hasSkills(sgs.masochism_skill, enemy) then
 		if enemy:getKingdom() ~= self.player:getKingdom() then
-			use.card = drivolt
 			if use.to then
+				use.card = drivolt
 				use.to:append(friend)
 				return
 			end
@@ -32,8 +32,8 @@ end
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
 --	if self.player:hasSkill("wuyan") then return end
-	use.card = wiretap
 	if use.to then
+		use.card = wiretap
 		use.to:append(self.player:getNextAlive())
 	end
 end
@@ -42,10 +42,10 @@ end
 function SmartAI:useCardAssassinate(ass, use)
 --	if self.player:hasSkill("wuyan") then return end
 	self:sort(self.enemies, "threat")
-	use.card = ass
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			if use.to then
+				use.card = ass
 				use.to:append(enemy)
 				return
 			end
@@ -53,6 +53,7 @@ function SmartAI:useCardAssassinate(ass, use)
 	end
 	for _, enemy in ipairs(self.enemies) do
 		if use.to then
+			use.card = ass
 			use.to:append(enemy)
 			return
 		end
@@ -109,88 +110,10 @@ function SmartAI:useCardProvistore(provistore, use)
 --	if self.player:hasSkill("wuyan") then return end
 	self:sort(self.friends, "hp")
 	for _, friend in ipairs(self.friends) do
-		use.card = assassinate
 		if use.to and not friend:containsTrick("provistore") then
+			use.card = assassinate
 			use.to:append(friend)
 			return
 		end
 	end
-end
-
-local qiangxi_skill={}
-qiangxi_skill.name="qiangxi"
-table.insert(sgs.ai_skills,qiangxi_skill)
-qiangxi_skill.getTurnUseCard=function(self)
-	if not self.player:hasUsed("QiangxiCard") then
-		return sgs.Card_Parse("@QiangxiCard=.")
-	end
-end
-
-sgs.ai_skill_use_func["QiangxiCard"] = function(card, use, self)
-	local weapon = self.player:getWeapon()
-	if weapon then
-		local hand_weapon, cards
-		cards = self.player:getHandcards()
-		for _, card in sgs.qlist(cards) do
-			if card:inherits("Weapon") then
-				hand_weapon = card
-				break
-			end
-		end
-		self:sort(self.enemies)
-		for _, enemy in ipairs(self.enemies) do
-			if hand_weapon and self.player:inMyAttackRange(enemy) then
-				use.card = sgs.Card_Parse("@QiangxiCard=" .. hand_weapon:getId())
-				if use.to then
-					use.to:append(enemy)
-				end
-				break
-			end
-			if self.player:distanceTo(enemy) <= 1 then
-				use.card = sgs.Card_Parse("@QiangxiCard=" .. weapon:getId())
-				if use.to then
-					use.to:append(enemy)
-				end
-				return
-			end
-		end
-	else
-		self:sort(self.enemies, "hp")
-		for _, enemy in ipairs(self.enemies) do
-			if self.player:inMyAttackRange(enemy) and self.player:getHp() > enemy:getHp() and self.player:getHp() > 2 then
-				use.card = sgs.Card_Parse("@QiangxiCard=.")
-				if use.to then
-					use.to:append(enemy)
-				end
-				return
-			end
-		end
-	end
-end
-
---shuangxiong
-
-sgs.ai_skill_invoke["shuangxiong"]=function(self,data)
-	if self.player:isSkipped(sgs.Player_Play) or self.player:getHp() < 2 then
-		return false
-	end
-
-	local cards=self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-
-	local handnum=0
-
-	for _,card in ipairs(cards) do
-		if self:getUseValue(card)<8 then
-			handnum=handnum+1
-		end
-	end
-
-	handnum=handnum/2
-	self:sort(self.enemies, "hp")
-	for _, enemy in ipairs(self.enemies) do
-		if (self:getCardsNum("Slash", enemy)+enemy:getHp()<=handnum) and (self:getCardsNum("Slash")>=self:getCardsNum("Slash", enemy)) then return true end
-	end
-
-	return self.player:getHandcardNum()>=self.player:getHp()
 end
