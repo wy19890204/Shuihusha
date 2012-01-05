@@ -282,6 +282,38 @@ public:
     }
 };
 
+class Longjiao:public TriggerSkill{
+public:
+    Longjiao():TriggerSkill("longjiao"){
+        events << CardEffected;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *zou, QVariant &data) const{
+        Room *room = zou->getRoom();
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(!effect.card->isNDTrick())
+            return false;
+
+        if(room->askForSkillInvoke(zou, objectName(), data)){
+            QList<int> card_ids = room->getNCards(2);
+            room->obtainCard(zou, card_ids.first());
+            room->obtainCard(zou, card_ids.last());
+            QStringList c;
+            c << Sanguosha->getCard(card_ids.first())->getEffectIdString();
+            c << Sanguosha->getCard(card_ids.last())->getEffectIdString();
+            if(room->askForChoice(zou, objectName(), c.join("+")) == c.at(0)){
+
+            }
+        }
+        return false;
+    }
+};
+
 class Juesi: public TriggerSkill{
 public:
     Juesi():TriggerSkill("juesi"){
@@ -332,6 +364,9 @@ ZCYNPackage::ZCYNPackage()
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
+
+    General *zourun = new General(this, "zourun", "min");
+    zourun->addSkill(new Longjiao);
 
     General *caifu = new General(this, "caifu", "jiang");
     caifu->addSkill(new Juesi);
