@@ -465,7 +465,7 @@ function SmartAI:filterEvent(event, player, data)
 			if promptlist[1] == "cardResponsed" then
 				if promptlist[3] == "@hujia-jink" and promptlist[5] ~= "_nil_" then
 					sgs.hujiasource = nil
-				elseif promptlist[3] == "@zhangshi-slash" and promptlist[5] ~= "_nil_" then
+				elseif promptlist[3] == "@zhangshi" and promptlist[5] ~= "_nil_" then
 					local intention = sgs.ai_card_intention["general"](sgs.zhangshisource, -40)
 					self:refreshLoyalty(player, intention)
 					sgs.zhangshisource = nil
@@ -933,6 +933,7 @@ end
 
 local function prohibitUseDirectly(card, player)
 	if player:hasSkill("zhuying") then return card:inherits("Analeptic")
+	elseif player:hasSkill("paohong") then return card:objectName() == "slash" and card:isBlack()
 	elseif player:hasSkill("huoshui") then return card:inherits("Weapon") or card:inherits("Slash")
 	elseif player:hasSkill("ganran") then return card:getTypeId() == sgs.Card_Equip
 	end
@@ -2964,7 +2965,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		local card = self:getUnuseCard()
 		if self:isFriend(rv.who) or not card then return "." end
 		return card:getEffectiveId()
-	elseif parsedPrompt[1] == "@xianji" then
+	elseif parsedPrompt[1] == "@xianji" or parsedPrompt[1] == "@fuji" then
 		local who = data:toPlayer()
 		if self:isFriend(who) or self.player:isKongcheng() then return "." end
 		return self.player:getRandomHandCard() or "."
@@ -2992,9 +2993,28 @@ function SmartAI:askForCard(pattern, prompt, data)
 			end
 		end
 		return "."
-	elseif parsedPrompt[1] == "@zhangshi-slash" then
+	elseif parsedPrompt[1] == "@zhangshi" then
 		if not self:isFriend(sgs.zhangshisource) then return "." end
 		return self:getCardId("Slash") or "."
+	elseif parsedPrompt[1] == "@guizi" then
+		local dy = data:toDying()
+		if self:isEnemy(dy.who) then
+			local cards = self.player:getCards("he")
+			for _, card in sgs.qlist(cards) do
+				if card:getSuit() == sgs.Card_Spade then
+					return card:getEffectiveId()
+				end
+			end
+		end
+		return "."
+	elseif parsedPrompt[1] == "@zhiyuan" then
+		local cm = data:toCardMove()
+		local lord = cm.from
+		if lord = self.room:getLord() and self:isFriend(lord) and lord:hasLordSkill("zhiyuan")
+			and not self.player:isKongcheng() then
+			return self.player:getRandomHandCard() or "."
+		end
+		return "."
 	end
 
 	if parsedPrompt[1] == "double-sword-card" then
@@ -3074,7 +3094,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 				or (target:getHp() > 2 and self.player:getHp() <= 1 and self:getCardsNum("Peach") == 0 and not self.player:hasSkill("buqu")) then
 				return self:getCardId("Slash")
 			else return "." end
-		elseif (parsedPrompt[1] == "@zhangshi-slash") then
+		elseif (parsedPrompt[1] == "@zhangshi") then
 			if target and self:isFriend(target) then
 				if (self.player:hasSkill("longdan") and self:getCardsNum("Jink") > 1) then
 					self:speak("zhangshi", self.player:getGeneral():isFemale())

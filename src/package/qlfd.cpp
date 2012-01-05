@@ -669,7 +669,7 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
     const Card *slash = NULL;
     QVariant tohelp = QVariant::fromValue((PlayerStar)white);
     foreach(ServerPlayer *man, men){
-        slash = room->askForCard(man, "slash", "@zhangshi-slash:" + white->objectName(), tohelp);
+        slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
         if(slash){
             CardUseStruct card_use;
             card_use.card = slash;
@@ -714,7 +714,7 @@ public:
         room->playSkillEffect(objectName());
         QVariant tohelp = QVariant::fromValue((PlayerStar)white);
         foreach(ServerPlayer *man, men){
-            const Card *slash = room->askForCard(man, "slash", "@zhangshi-slash:" + white->objectName(), tohelp);
+            const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
             if(slash){
                 room->provide(slash);
                 return true;

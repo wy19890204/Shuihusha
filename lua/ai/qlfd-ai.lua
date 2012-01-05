@@ -104,3 +104,28 @@ sgs.ai_skill_invoke["zhangshi"] = function(self, data)
 	end
 	if sgs.zhangshisource then return false else return true end
 end
+
+-- huoshui
+local huoshui_skill={}
+huoshui_skill.name = "huoshui"
+table.insert(sgs.ai_skills, huoshui_skill)
+huoshui_skill.getTurnUseCard = function(self)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local driver_card
+	self:sortByUseValue(cards, true)
+	for _,card in ipairs(cards)  do
+		if card:inherits("Weapon") or card:inherits("Slash") then
+			driver_card = card
+			break
+		end
+	end
+	if driver_card then
+		local suit = driver_card:getSuitString()
+		local number = driver_card:getNumberString()
+		local card_id = driver_card:getEffectiveId()
+		local card_str = ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id)
+		local driver = sgs.Card_Parse(card_str)
+		return driver
+	end
+end

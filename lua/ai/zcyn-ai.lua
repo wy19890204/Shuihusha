@@ -16,3 +16,27 @@ sgs.ai_skill_invoke["dujian"] = function(self, data)
 	local rand = math.random(1, 2)
 	return rand == 2
 end
+
+-- paohong
+local paohong_skill={}
+paohong_skill.name = "paohong"
+table.insert(sgs.ai_skills, paohong_skill)
+paohong_skill.getTurnUseCard = function(self)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local thunder_card
+	self:sortByUseValue(cards, true)
+	for _,card in ipairs(cards)  do
+		if card:objectName() == "slash" and card:isBlack() then
+			thunder_card = card
+			break
+		end
+	end
+	if thunder_card then
+		local suit = thunder_card:getSuitString()
+		local number = thunder_card:getNumberString()
+		local card_id = thunder_card:getEffectiveId()
+		local card_str = ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id)
+		return sgs.Card_Parse(card_str)
+	end
+end
