@@ -89,6 +89,7 @@ public:
             log.arg = objectName();
             room->sendLog(log);
 
+            room->getThread()->delay(1500);
             room->killPlayer(poolguy, &damage);
             return true;
         }
@@ -281,6 +282,33 @@ public:
     }
 };
 
+class Juesi: public TriggerSkill{
+public:
+    Juesi():TriggerSkill("juesi"){
+        events << Predamage;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *caifu, QVariant &data) const{
+        Room *room = caifu->getRoom();
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.to->isAlive() && damage.to->getHp() <= 1){
+            LogMessage log;
+            log.type = "#JuesiBuff";
+            log.from = caifu;
+            log.to << damage.to;
+            log.arg = QString::number(damage.damage);
+            log.arg2 = QString::number(damage.damage + 1);
+            room->sendLog(log);
+
+            damage.damage ++;
+            data = QVariant::fromValue(damage);
+        }
+        return false;
+    }
+};
+
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
@@ -304,6 +332,9 @@ ZCYNPackage::ZCYNPackage()
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
+
+    General *caifu = new General(this, "caifu", "jiang");
+    caifu->addSkill(new Juesi);
 
     addMetaObject<SixiangCard>();
 }
