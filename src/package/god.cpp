@@ -86,131 +86,6 @@ public:
     }
 };
 
-static bool CompareBySuit(int card1, int card2){
-    const Card *c1 = Sanguosha->getCard(card1);
-    const Card *c2 = Sanguosha->getCard(card2);
-
-    int a = static_cast<int>(c1->getSuit());
-    int b = static_cast<int>(c2->getSuit());
-
-    return a < b;
-}
-
-class Shelie: public PhaseChangeSkill{
-public:
-    Shelie():PhaseChangeSkill("shelie"){
-
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *shenlumeng) const{
-        if(shenlumeng->getPhase() != Player::Draw)
-            return false;
-
-        Room *room = shenlumeng->getRoom();
-        if(!shenlumeng->askForSkillInvoke(objectName()))
-            return false;
-
-        room->playSkillEffect(objectName());
-
-        QList<int> card_ids = room->getNCards(5);
-        qSort(card_ids.begin(), card_ids.end(), CompareBySuit);
-        room->fillAG(card_ids);
-
-        while(!card_ids.isEmpty()){
-            int card_id = room->askForAG(shenlumeng, card_ids, false, "shelie");
-            card_ids.removeOne(card_id);
-            room->takeAG(shenlumeng, card_id);
-
-            // throw the rest cards that matches the same suit
-            const Card *card = Sanguosha->getCard(card_id);
-            Card::Suit suit = card->getSuit();
-            QMutableListIterator<int> itor(card_ids);
-            while(itor.hasNext()){
-                const Card *c = Sanguosha->getCard(itor.next());
-                if(c->getSuit() == suit){
-                    itor.remove();
-
-                    room->takeAG(NULL, c->getId());
-                }
-            }
-        }
-
-        room->broadcastInvoke("clearAG");
-
-        return true;
-    }
-};
-
-void YeyanCard::damage(ServerPlayer *shenzhouyu, ServerPlayer *target, int point) const{
-    DamageStruct damage;
-
-    damage.card = NULL;
-    damage.from = shenzhouyu;
-    damage.to = target;
-    damage.damage = point;
-    damage.nature = DamageStruct::Fire;
-
-    shenzhouyu->getRoom()->damage(damage);
-}
-
-MediumYeyanCard::MediumYeyanCard(){
-
-}
-
-bool MediumYeyanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.length() < 2;
-}
-
-void MediumYeyanCard::use(Room *room, ServerPlayer *shenzhouyu, const QList<ServerPlayer *> &targets) const{
-    room->broadcastInvoke("animate", "lightbox:$mediumyeyan");
-
-    shenzhouyu->loseMark("@flame");
-    room->throwCard(this);
-    room->loseHp(shenzhouyu, 3);
-
-    ServerPlayer *first = targets.first();
-    ServerPlayer *second = targets.value(1, NULL);
-
-    damage(shenzhouyu, first, 2);
-
-    if(second)
-        damage(shenzhouyu, second, 1);
-}
-
-SmallYeyanCard::SmallYeyanCard(){
-
-}
-
-bool SmallYeyanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.length() < 3;
-}
-
-void SmallYeyanCard::use(Room *room, ServerPlayer *shenzhouyu, const QList<ServerPlayer *> &targets) const{
-    room->broadcastInvoke("animate", "lightbox:$smallyeyan");
-    shenzhouyu->loseMark("@flame");
-
-    Card::use(room, shenzhouyu, targets);
-}
-
-void SmallYeyanCard::onEffect(const CardEffectStruct &effect) const{
-    damage(effect.from, effect.to, 1);
-}
-
-class SmallYeyan: public ZeroCardViewAsSkill{
-public:
-    SmallYeyan():ZeroCardViewAsSkill("smallyeyan"){
-        frequency = Limited;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@flame") >= 1;
-    }
-
-    virtual const Card *viewAs() const{
-        return new SmallYeyanCard;
-    }
-};
-
 class Qinyin: public TriggerSkill{
 public:
     Qinyin():TriggerSkill("qinyin"){
@@ -1306,6 +1181,42 @@ public:
     }
 };
 
+class HuafoSlash: public OneCardViewAsSkill{
+public:
+    HuafoSlash():OneCardViewAsSkill("hua1fo"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("BasicCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        Slash *s = new Slash(card->getSuit(), card->getNumber());
+        s->addSubcard(card);
+        s->setSkillName(objectName());
+        return s;
+    }
+};
+
+class HuafoAnale: public OneCardViewAsSkill{
+public:
+    HuafoAnale():OneCardViewAsSkill("hua2fo"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("BasicCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        Analeptic *a = new Analeptic(card->getSuit(), card->getNumber());
+        a->addSubcard(card);
+        a->setSkillName(objectName());
+        return a;
+    }
+};
+
 GodPackage::GodPackage()
     :Package("god")
 {
@@ -1320,8 +1231,8 @@ GodPackage::GodPackage()
     shenzhangqing->addSkill(new Meiyu);
 
     General *shenluzhishen = new General(this, "shenluzhishen", "god", 5);
-    shenluzhishen->addSkill(new Shelie);
-    shenluzhishen->addSkill(new Meiyu);
+    shenluzhishen->addSkill(new HuafoSlash);
+    shenluzhishen->addSkill(new HuafoAnale);
 
 /*
     General *shenzhouyu = new General(this, "shenzhouyu", "god");
@@ -1333,7 +1244,6 @@ GodPackage::GodPackage()
     shenzhugeliang->addSkill(new QixingStart);
     shenzhugeliang->addSkill(new Dawu);
 
-    related_skills.insertMulti("qixing", "#qixing");
     related_skills.insertMulti("qixing", "#qixing-ask");
     related_skills.insertMulti("qixing", "#qixing-clear");
 
