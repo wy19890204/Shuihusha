@@ -46,6 +46,7 @@ public:
 };
 
 YuanyinCard::YuanyinCard(){
+    mute = true;
 }
 
 bool YuanyinCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{

@@ -1230,6 +1230,12 @@ public:
                 player->addToPile("jiyan", card_id);
 
             if(player->getPile("jiyan").length() >= 4){
+                LogMessage log;
+                log.type = "#DunwuB";
+                log.from = player;
+                log.arg = "jiyan";
+                room->sendLog(log);
+
                 foreach(int i, player->getPile("jiyan"))
                     room->throwCard(i);
                 room->loseMaxHp(player);

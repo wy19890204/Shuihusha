@@ -14,6 +14,7 @@ return {
 	["#_houjian"] = "通臂猿",
 	["houjian"] = "侯健",
 	["designer:houjian"] = "宇文天启",
+	["cv:houjian"] = "卜音悠扬",
 	["yuanyin"] = "飞针",
 	[":yuanyin"] = "你可以将其他角色装备区里的武器当【杀】、非武器当【闪】使用或打出。",
 	["yuanyin:slash"] = "你想发动技能【飞针·杀】吗？",
