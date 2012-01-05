@@ -3008,10 +3008,8 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 		return "."
 	elseif parsedPrompt[1] == "@zhiyuan" then
-		local cm = data:toCardMove()
-		local lord = cm.from
-		if lord = self.room:getLord() and self:isFriend(lord) and lord:hasLordSkill("zhiyuan")
-			and not self.player:isKongcheng() then
+		local lord = self.room:getLord()
+		if self:isFriend(lord) and not self.player:isKongcheng() then
 			return self.player:getRandomHandCard() or "."
 		end
 		return "."
@@ -3101,7 +3099,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 					return self:getCardId("Slash")
 				end
 			else return "." end
-		elseif parsedPrompt[1] == "savage-assault-slash"  then
+		elseif parsedPrompt[1] == "savage-assault-slash" then
 			if not self:damageIsEffective(nil, nil, target) then return "." end
 			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
 			if ((self.player:hasSkill("jianxiong") and self:getAoeValue(aoe) > -10) and

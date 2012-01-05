@@ -324,7 +324,7 @@ SPPackage::SPPackage()
     zhaoji->addSkill(new Lizheng);
     zhaoji->addSkill(new Nongquan);
 
-    General *chaogai = new General(this, "chaogai", "kou", 3);
+    General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
     chaogai->addSkill(new Skill("shaxue$", Skill::Compulsory));

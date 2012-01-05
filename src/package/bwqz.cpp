@@ -705,8 +705,11 @@ int YongleCard::getKingdoms(const Player *Self) const{
     QSet<QString> kingdom_set;
     QList<const Player *> players = Self->getSiblings();
     players << Self;
-    foreach(const Player *player, players)
+    foreach(const Player *player, players){
+        if(player->isDead())
+            continue;
         kingdom_set << player->getKingdom();
+    }
     return kingdom_set.size();
 }
 
@@ -761,6 +764,10 @@ public:
     Zhiyuan():TriggerSkill("zhiyuan$"){
         events << CardLost;
         //frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasLordSkill(objectName());
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
