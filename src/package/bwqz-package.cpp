@@ -261,44 +261,6 @@ public:
     }
 };
 
-class Zhuying: public FilterSkill{
-public:
-    Zhuying():FilterSkill("zhuying"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->objectName() == "analeptic";
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *c = card_item->getCard();
-        Peach *peach = new Peach(c->getSuit(), c->getNumber());
-        peach->setSkillName(objectName());
-        peach->addSubcard(card_item->getCard());
-
-        return peach;
-    }
-};
-
-class Banzhuang: public OneCardViewAsSkill{
-public:
-    Banzhuang():OneCardViewAsSkill("banzhuang"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        ExNihilo *ex_nihilo = new ExNihilo(card->getSuit(), card->getNumber());
-        ex_nihilo->addSubcard(card->getId());
-        ex_nihilo->setSkillName(objectName());
-        return ex_nihilo;
-    }
-};
-
 ShougeCard::ShougeCard(){
     will_throw = false;
     target_fixed = true;
@@ -853,10 +815,6 @@ BWQZPackage::BWQZPackage()
     General *kongliang = new General(this, "kongliang", "kou", 3);
     kongliang->addSkill(new Nusha);
     kongliang->addSkill(new Wanku);
-
-    General *jiashi = new General(this, "jiashi", "min", 3, false);
-    jiashi->addSkill(new Banzhuang);
-    jiashi->addSkill(new Zhuying);
 
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);

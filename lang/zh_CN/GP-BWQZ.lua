@@ -77,19 +77,6 @@ return {
 	["$wanku1"] = "吾出身富家，性喜玩乐。",
 	["$wanku2"] = "鼠目寸光，如何了却我的心思？！",
 
-	["#_jiashi"] = "毒蔷薇",
-	["jiashi"] = "贾氏",
-	["cv:jiashi"] = "呼呼",
-	["coder:jiashi"] = "凌天翼",
-	["banzhuang"] = "半妆",
-	[":banzhuang"] = "出牌阶段，你可以将你的任一红桃手牌当【无中生有】使用。",
-	["$banzhuang1"] = "一顾倾人城，再顾倾人国。",
-	["$banzhuang2"] = "虚事难入公门，实事难以抵对。",
-	["zhuying"] = "朱樱",
-	[":zhuying"] = "<b>锁定技</b>，你的【酒】均视为【肉】。",
-	["$zhuying1"] = "奴家这厢有礼了～",
-	["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
-
 	["#_taozongwang"] = "九尾龟",
 	["taozongwang"] = "陶宗旺",
 	["qiaogong"] = "巧工",
@@ -156,7 +143,6 @@ return {
 -- last words
 	["~mengkang"] = "火炮突袭，快撤！",
 	["~jiaoting"] = "绝技不复代代相传矣！",
-	["~jiashi"] = "员外，饶了奴家吧～",
 	["~qingzhang"] = "日头落了。",
 	["~kongliang"] = "吾不识水性啊！",
 	["~baisheng"] = "我招～我全招了！",

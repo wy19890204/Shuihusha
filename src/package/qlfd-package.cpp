@@ -531,6 +531,10 @@ public:
         card->addSubcard(card_item->getFilteredCard());
         return card;
     }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return ! to_select->isEquipped();
+    }
 };
 
 class Suocai: public TriggerSkill{
@@ -928,7 +932,7 @@ public:
         for(int i = rec.recover; i > 0; i--){
             if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName()))
                 break;
-            room->playSkillEffect(objectName(), qrand() % 2 + 3);
+            room->playSkillEffect(objectName());
             LogMessage s;
             s.type = "#Baoen";
             s.from = cuilian;
@@ -957,7 +961,8 @@ public:
         ServerPlayer *loli = room->findPlayerBySkillName(objectName());
         if(loli){
             if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName()))
-                return false;
+                return;
+            room->playSkillEffect(objectName());
             QList<int> card_ids;
             foreach(const Card *tmp, masata->getHandcards()){
                 card_ids << tmp->getId();
@@ -978,6 +983,44 @@ public:
             log.arg2 = QString::number(1);
             room->sendLog(log);
         }
+    }
+};
+
+class Zhuying: public FilterSkill{
+public:
+    Zhuying():FilterSkill("zhuying"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getCard()->objectName() == "analeptic";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Peach *peach = new Peach(c->getSuit(), c->getNumber());
+        peach->setSkillName(objectName());
+        peach->addSubcard(card_item->getCard());
+
+        return peach;
+    }
+};
+
+class Banzhuang: public OneCardViewAsSkill{
+public:
+    Banzhuang():OneCardViewAsSkill("banzhuang"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        ExNihilo *ex_nihilo = new ExNihilo(card->getSuit(), card->getNumber());
+        ex_nihilo->addSubcard(card->getId());
+        ex_nihilo->setSkillName(objectName());
+        return ex_nihilo;
     }
 };
 
@@ -1032,6 +1075,10 @@ QLFDPackage::QLFDPackage()
     General *jincuilian = new General(this, "jincuilian", "min", 3, false);
     jincuilian->addSkill(new Baoen);
     jincuilian->addSkill(new Zhiyu);
+
+    General *jiashi = new General(this, "jiashi", "min", 3, false);
+    jiashi->addSkill(new Banzhuang);
+    jiashi->addSkill(new Zhuying);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
