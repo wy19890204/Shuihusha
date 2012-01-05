@@ -3015,6 +3015,11 @@ function SmartAI:askForCard(pattern, prompt, data)
 			return self.player:getRandomHandCard() or "."
 		end
 		return "."
+	elseif parsedPrompt[1] == "@baoen" then
+		local rev = data:toRecover()
+		local card = self:getUnuseCard()
+		if self:isEnemy(rev.who) or not card then return "." end
+		return card:getEffectiveId()
 	end
 
 	if parsedPrompt[1] == "double-sword-card" then

@@ -129,3 +129,16 @@ huoshui_skill.getTurnUseCard = function(self)
 		return driver
 	end
 end
+
+-- huakui
+sgs.ai_skill_invoke["huakui"] = true
+
+-- zhiyu
+sgs.ai_skill_invoke["zhiyu"] = function(self, data)
+	local damage = data:toDamage()
+	return self:isEnemy(damage.to)
+end
+sgs.ai_cardshow["zhiyu"] = function(self, requestor)
+	local card = self:getUnuseCard()
+	return card
+end

@@ -930,7 +930,7 @@ public:
         if(!rec.who || rec.who == cuilian)
             return false;
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName()))
+            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName(), data))
                 break;
             room->playSkillEffect(objectName());
             LogMessage s;
