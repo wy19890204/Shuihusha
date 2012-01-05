@@ -206,60 +206,37 @@ public:
 };
 
 WuqianCard::WuqianCard(){
-    once = true;
+    target_fixed = true;
 }
 
-bool WuqianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
+void WuqianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<int> card_ids;
+    QList<const Card *> cards = source->getCards("he");
+    foreach(const Card *tmp, cards)
+        card_ids << tmp->getId();
+    room->fillAG(card_ids, source);
+    int card_id = room->askForAG(source, card_ids, false, objectName());
+    card_ids.removeOne(card_id);
+    room->takeAG(source, card_id);
+    room->broadcastInvoke("clearAG");
+    room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
+    source->drawCards(1);
+    room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
+    //room->throwCard(card_id);
 }
 
-void WuqianCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.to->getRoom();
-
-    effect.from->loseMark("@wrath", 2);
-    room->acquireSkill(effect.from, "wushuang", false);
-    effect.from->setFlags("wuqian_used");
-
-    effect.to->addMark("wuqian");
-}
-
-class WuqianViewAsSkill: public ZeroCardViewAsSkill{
+class Wuqian: public ZeroCardViewAsSkill{
 public:
-    WuqianViewAsSkill():ZeroCardViewAsSkill("wuqian"){
+    Wuqian():ZeroCardViewAsSkill("wuqian"){
 
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@wrath") >= 2 && !player->hasUsed("WuqianCard");
+        return !player->isNude();
     }
 
     virtual const Card *viewAs() const{
         return new WuqianCard;
-    }
-};
-
-class Wuqian: public PhaseChangeSkill{
-public:
-    Wuqian():PhaseChangeSkill("wuqian"){
-        view_as_skill = new WuqianViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *shenlubu) const{
-        if(shenlubu->getPhase() == Player::NotActive){
-            Room *room = shenlubu->getRoom();
-            if(shenlubu->hasFlag("wuqian_used")){
-                shenlubu->setFlags("-wuqian_used");
-                QList<ServerPlayer *> players = room->getAllPlayers();
-                foreach(ServerPlayer *player, players){
-                    player->removeMark("wuqian");
-                }
-
-                if(!shenlubu->hasInnateSkill("wushuang"))
-                    shenlubu->loseSkill("wushuang");
-            }
-        }
-
-        return false;
     }
 };
 
@@ -1255,6 +1232,8 @@ GodPackage::GodPackage()
 
     General *shentest = new General(this, "shentest", "god");
     shentest->addSkill(new Shenfen);
+    shentest->addSkill(new Wuqian);
+    addMetaObject<WuqianCard>();
 /*
     General *shenzhugeliang = new General(this, "shenzhugeliang", "god", 3);
     shenzhugeliang->addSkill(new Qixing);
@@ -1271,7 +1250,6 @@ GodPackage::GodPackage()
     addMetaObject<MediumYeyanCard>();
     addMetaObject<SmallYeyanCard>();
     addMetaObject<WushenSlash>();
-    addMetaObject<KuangfengCard>();
     addMetaObject<DawuCard>();*/
     addMetaObject<FeihuangCard>();
     addMetaObject<MeiyuCard>();
