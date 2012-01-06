@@ -969,11 +969,11 @@ public:
             }
             room->fillAG(card_ids, loli);
             int card_id = room->askForAG(loli, card_ids, false, objectName());
-            card_ids.removeOne(card_id);
-            room->takeAG(loli, card_id);
-            room->obtainCard(loli, card_id);
+            //card_ids.removeOne(card_id);
+            //room->takeAG(loli, card_id);
             room->broadcastInvoke("clearAG");
-            masata->obtainCard(room->askForCardShow(loli, masata, objectName()));
+            room->moveCardTo(Sanguosha->getCard(card_id), loli, Player::Hand, false);
+            room->moveCardTo(room->askForCardShow(loli, masata, objectName()), masata, Player::Hand, false);
 
             LogMessage log;
             log.type = "#Zhiyu";

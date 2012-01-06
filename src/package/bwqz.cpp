@@ -794,7 +794,7 @@ public:
         return false;
     }
 };
-/*
+
 class Qiaogongplus: public TriggerSkill{
 public:
     Qiaogongplus():TriggerSkill("qiaog"){
@@ -859,7 +859,7 @@ public:
         else if(event == CardFinished){
             CardUseStruct card_use = data.value<CardUseStruct>();
             const Card *equ = card_use.card;
-            if(!equ->inherits("Weapon"))
+            if(!equ->inherits("EquipCard"))
                 return false;
             int card_id = card_use.card->getId();
             bool tao = false;
@@ -874,26 +874,26 @@ public:
                     break;
             }
             if(!tao){ //场上只存在一个同类装备
-                room->moveCardTo(equ, gui, Player::Equip, false);
+                //room->moveCardTo(equ, gui, Player::Equip, false);
                 QList<int> card_ids;
-                QList<const Card *> cards = gui->getCards("e");
+                QList<const Card *> cards = player->getEquips();
                 foreach(const Card *tmp, cards)
-                    //if(tmp->getId() == card_id)
+                    if(tmp->getId() == card_id)
                         card_ids << tmp->getId();
                 room->fillAG(card_ids, gui);
                 //card_id = room->askForAG(gui, card_ids, false, objectName());
                 room->takeAG(gui, card_id);
                 card_ids.removeOne(card_id);
                 room->broadcastInvoke("clearAG");
-                gui->obtainCard(Sanguosha->getCard(card_id));
-                room->moveCardTo(Sanguosha->getCard(card_id), player, Player::Equip, false);
+                gui->obtainCard(equ);
+                room->moveCardTo(equ, gui, Player::Equip, false);
                 //room->throwCard(card_id);
             }
         }
         return false;
     }
 };
-*/
+
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -926,7 +926,7 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-    //taozongwang->addSkill(new Qiaogongplus);
+    taozongwang->addSkill(new Qiaogongplus);
 
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);

@@ -219,9 +219,9 @@ void WuqianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     card_ids.removeOne(card_id);
     room->takeAG(source, card_id);
     room->broadcastInvoke("clearAG");
-    room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
-    source->drawCards(1);
-    room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
+    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
+    //source->drawCards(1);
+    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
     //room->throwCard(card_id);
 }
 
@@ -1201,6 +1201,7 @@ public:
                 log.type = "#DunwuB";
                 log.from = player;
                 log.arg = "jiyan";
+                log.arg2 = QString::number(4);
                 room->sendLog(log);
 
                 foreach(int i, player->getPile("jiyan"))
