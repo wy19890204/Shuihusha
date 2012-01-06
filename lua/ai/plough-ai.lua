@@ -6,24 +6,22 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	self:sort(self.friends_noself, "handcard")
 	for _, friend in ipairs(self.friends_noself) do
 		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
+			use.card = drivolt
 			if use.to then
-				use.card = drivolt
 				use.to:append(friend)
-				return
 			end
-			break
+			return
 		end
 	end
 	self:sort(self.enemies, "hp")
 	for _, enemy in ipairs(self.enemies) do
 --		if not self:hasSkills(sgs.masochism_skill, enemy) then
 		if enemy:getKingdom() ~= self.player:getKingdom() then
+			use.card = drivolt
 			if use.to then
-				use.card = drivolt
 				use.to:append(friend)
-				return
 			end
-			break
+			return
 		end
 	end
 	return "."
@@ -32,8 +30,8 @@ end
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
 --	if self.player:hasSkill("wuyan") then return end
+	use.card = wiretap
 	if use.to then
-		use.card = wiretap
 		use.to:append(self.player:getNextAlive())
 	end
 end
@@ -44,21 +42,17 @@ function SmartAI:useCardAssassinate(ass, use)
 	self:sort(self.enemies, "threat")
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
-			if use.to then
-				use.card = ass
-				use.to:append(enemy)
-				return
-			end
-		end
-	end
-	for _, enemy in ipairs(self.enemies) do
-		if use.to then
 			use.card = ass
-			use.to:append(enemy)
+			if use.to then
+				use.to:append(enemy)
+			end
 			return
 		end
 	end
-	return "."
+	use.card = ass
+	if use.to then
+		use.to:append(self.enemies[1])
+	end
 end
 
 -- sheng chen gang
@@ -110,9 +104,11 @@ function SmartAI:useCardProvistore(provistore, use)
 --	if self.player:hasSkill("wuyan") then return end
 	self:sort(self.friends, "hp")
 	for _, friend in ipairs(self.friends) do
-		if use.to and not friend:containsTrick("provistore") then
+		if not friend:containsTrick("provistore") then
 			use.card = assassinate
-			use.to:append(friend)
+			if use.to then
+				use.to:append(friend)
+			end
 			return
 		end
 	end

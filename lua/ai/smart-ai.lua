@@ -468,18 +468,10 @@ function SmartAI:filterEvent(event, player, data)
 					local intention = sgs.ai_card_intention["general"](sgs.zhangshisource, -40)
 					self:refreshLoyalty(player, intention)
 					sgs.zhangshisource = nil
-				elseif promptlist[3] == "@lianli-jink" and promptlist[4] ~= "_nil_" then
-					sgs.lianlisource = nil
-				elseif promptlist[3] == "@lianli-slash" and promptlist[4] ~= "_nil_" then
-					sgs.lianlislash=true
 				end
 			elseif promptlist[1] == "skillInvoke" and promptlist[3] == "yes" then
-				if promptlist[2] == "hujia" then
-					sgs.hujiasource = player
-				elseif promptlist[2] == "zhangshi" then
+				if promptlist[2] == "zhangshi" then
 					sgs.zhangshisource = player
-				elseif promptlist[2] == "lianli-jink" then
-					sgs.lianlisource = player
 				end
 			end
 		end
@@ -923,11 +915,19 @@ function SmartAI:slashIsAvailable(player)
 	player = player or self.player
 --	if player:hasFlag("tianyi_failed") or player:hasFlag("xianzhen_failed") then return false end
 
-	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or player:hasFlag("SlashbySlash") or
-		(player:hasSkill("shalu") and player:getMark("shalu") > 0) or
-		(player:hasSkill("qinlong") and player:getEquips():isEmpty()) then
+	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or player:hasFlag("SlashbySlash") then
 		return true
 	end
+	if player:hasSkill("shalu") and player:getMark("shalu") > 0 then
+		return true
+	end
+	if player:hasSkill("qinlong") and player:getEquips():isEmpty() then
+		return true
+	end
+	if player:hasSkill("hua1fo") then
+		return true
+	end
+	return (player:usedTimes("Slash") + player:usedTimes("FireSlash") + player:usedTimes("ThunderSlash")) < 1
 end
 
 local function prohibitUseDirectly(card, player)
@@ -1057,12 +1057,12 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 	local card_str = self:getCardId("Analeptic")
 	if card_str then return sgs.Card_Parse(card_str) end
 
-    for _, anal in ipairs(cards) do
-        if (anal:className() == "Analeptic") and not (anal:getEffectiveId() == slash:getEffectiveId()) and
+	for _, anal in ipairs(cards) do
+		if (anal:className() == "Analeptic") and not (anal:getEffectiveId() == slash:getEffectiveId()) and
 			not isCompulsoryView(anal, "Slash", self.player, sgs.Player_Hand) then
-            return anal
-        end
-    end
+			return anal
+		end
+	end
 end
 
 function SmartAI:searchForEcstasy(use,enemy,slash)
@@ -1072,17 +1072,17 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 		if card:getId()~= slash:getId() then return nil end
 	end
 
-    if not use.to then return nil end
-    if self.player:hasUsed("Ecstasy") then return nil end
+	if not use.to then return nil end
+	if self.player:hasUsed("Ecstasy") then return nil end
 
-    local cards = self.player:getHandcards()
-    cards = sgs.QList2Table(cards)
-    self:fillSkillCards(cards)
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	self:fillSkillCards(cards)
 
 	if getDefense(self.player) < getDefense(enemy) and
 		self.player:getHandcardNum() < self.player:getHp() + 1 then
 			return
-    end
+	end
 
 	if not self.player:canSlash(enemy) or enemy:hasFlag("ecst") then
 		return
@@ -1091,12 +1091,12 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	local card_str = self:getCardId("Ecstasy")
 	if card_str then return sgs.Card_Parse(card_str) end
 
-    for _, mi in ipairs(cards) do
-        if (mi:className() == "Ecstasy") and not (mi:getEffectiveId() == slash:getEffectiveId()) and
+	for _, mi in ipairs(cards) do
+		if (mi:className() == "Ecstasy") and not (mi:getEffectiveId() == slash:getEffectiveId()) and
 			not isCompulsoryView(mi, "Slash", self.player, sgs.Player_Hand) then
-            return mi
-        end
-    end
+			return mi
+		end
+	end
 end
 
 function SmartAI:slashProhibit(card,enemy)
@@ -1156,7 +1156,7 @@ end
 
 function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("chengxiang") and self.player:getHandcardNum() < 8 and card:getNumber() < 7 then return end
-	if card:getSkillName() == "wushen" then no_distance = true end
+	if card:getSkillName() == "paohong" then no_distance = true end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()
@@ -1206,15 +1206,15 @@ function SmartAI:useBasicCard(card, use, no_distance)
 				self:objectiveLevel(enemy) > 3 and
 				self:slashIsEffective(card, enemy) then
 					-- fill the card use struct
+					local mi = self:searchForEcstasy(use,enemy,card)
+					if mi and self:getCardsNum("Jink", enemy) > 0 then
+						use.card = mi
+						if use.to then use.to:append(enemy) end
+						return
+					end
 					if not use.to or use.to:isEmpty() then
-						local mi = self:searchForEcstasy(use,enemy,card)
-						if mi and use.to and self:getCardsNum("Jink", enemy) > 0 then
-							use.card = mi
-							use.to:append(enemy)
-							return
-						end
 						local anal = self:searchForAnaleptic(use,enemy,card)
-						if anal and self:isNoZhenshaMark() and not self:isEquip("SilverLion", enemy) and (not use.to or use.to:isEmpty()) and not self:isWeak() then
+						if anal and self:isNoZhenshaMark() and not self:isEquip("SilverLion", enemy) and not self:isWeak() then
 							use.card = anal
 							return
 						end
@@ -2794,8 +2794,8 @@ function SmartAI:askForCardChosen(who, flags, reason)
 		end
 
 		if flags:match("e") then
-			local zhangjiao = self.room:findPlayerBySkillName("leiji")
-			if who:isWounded() and self:isEquip("SilverLion", who) and (not zhangjiao or self:isFriend(zhangjiao))
+			local qiaodaoqing = self.room:findPlayerBySkillName("huanshu")
+			if who:isWounded() and self:isEquip("SilverLion", who) and (not qiaodaoqing or self:isFriend(qiaodaoqing))
 				then return who:getArmor():getId() end
 			if self:isEquip("GaleShell", who) then return who:getArmor():getId() end
 			if self:hasSkills(sgs.lose_equip_skill, who) then
