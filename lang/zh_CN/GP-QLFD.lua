@@ -163,6 +163,8 @@ return {
 	["$zhuying1"] = "奴家这厢有礼了～",
 	["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
 
+	["#_ximenqing"] = "大官人",
+
 -- last words
 	["~panqiaoyun"] = "一了百了～",
 	["~wangpo"] = "死到眼前，犹做发财梦～",

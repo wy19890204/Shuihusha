@@ -1,15 +1,41 @@
--- translation for MountainPackage
+-- ZhechongYannan Shuihusha part 8.
 
 return {
-	["mountain"] = "山包",
-	["zhanghe"] = "张郃",
-	["qiaobian"] = "巧变",
-	[":qiaobian"] = "你可以弃一张手牌来跳过自己的一个阶段（回合开始阶段和回合结束阶段除外）；若以此法跳过摸牌阶段，你从其他至多两名角色手里各抽取一张牌；若以此法跳过出牌阶段，你可以将场上的一张牌移动到另一个合理的位置。",
-	["@qiaobian-judge"] = "你可弃1张手牌跳过判定阶段",
-	["@qiaobian-draw"] = "你可弃1张手牌跳过摸牌阶段，并从其他至多两名角色手里各抽取一张牌",
-	["@qiaobian-play"] = "你可弃1张手牌跳过出牌阶段，并将场上的一张牌移动到另一个合理的位置",
-	["@qiaobian-discard"] = "你可弃1张手牌跳过弃牌阶段",
-	
+	["CGDK"] = "义薄云天",
+
+	["#_qiongying"] = "琼矢镞",
+	["qiongying"] = "琼英",
+
+	["#_xuning"] = "金枪手",
+	["xuning"] = "徐宁",
+
+	["#_baoxu"] = "丧门神",
+	["baoxu"] = "鲍旭",
+
+	["#_xiangchong"] = "八臂哪吒",
+	["xiangchong"] = "项充",
+
+	["#_jindajian"] = "玉臂匠",
+	["jindajian"] = "金大坚",
+
+	["#_yangchun"] = "白花蛇",
+	["yangchun"] = "杨春",
+
+	["#_songqing"] = "铁扇子",
+	["songqing"] = "宋清",
+
+	["#_xueyong"] = "病大虫",
+	["xueyong"] = "薛永",
+
+	["#_zouyuan"] = "出林龙",
+	["zouyuan"] = "邹渊",
+
+	["#_zhufu"] = "笑面虎",
+	["zhufu"] = "朱富",
+
+	["#_gaolian"] = "高唐魔君",
+	["gaolian"] = "高廉",
+
 	["dengai"] = "邓艾",
 	["tuntian"] = "屯田",
 	[":tuntian"] = "每次当你于回合外失去牌时，可进行一次判定，将非红桃结果的判定牌置于你的武将牌上，称为“田”；每有一张田，你计算与其他角色的距离便-1",
