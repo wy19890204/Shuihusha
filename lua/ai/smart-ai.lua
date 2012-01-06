@@ -1208,9 +1208,9 @@ function SmartAI:useBasicCard(card, use, no_distance)
 					-- fill the card use struct
 					if not use.to or use.to:isEmpty() then
 						local mi = self:searchForEcstasy(use,enemy,card)
-						if mi and use.to and self:getCardsNum("Jink", enemy) > 0 then
+						if mi and self:getCardsNum("Jink", enemy) > 0 then
 							use.card = mi
-							use.to:append(enemy)
+							if use.to then use.to:append(enemy) end
 							return
 						end
 						local anal = self:searchForAnaleptic(use,enemy,card)
