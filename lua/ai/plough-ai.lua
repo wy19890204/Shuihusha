@@ -19,7 +19,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 		if enemy:getKingdom() ~= self.player:getKingdom() then
 			use.card = drivolt
 			if use.to then
-				use.to:append(friend)
+				use.to:append(enemy)
 			end
 			return
 		end
