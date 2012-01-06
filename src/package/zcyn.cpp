@@ -315,6 +315,7 @@ public:
             LogMessage log;
             log.type = "#PutCard";
             log.from = zou;
+            log.arg = QString::number(1);
             room->sendLog(log);
         }
         return false;

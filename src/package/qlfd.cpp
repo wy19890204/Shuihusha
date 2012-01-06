@@ -735,7 +735,7 @@ public:
     }
 
     virtual int getPriority() const{
-        return 3;
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
