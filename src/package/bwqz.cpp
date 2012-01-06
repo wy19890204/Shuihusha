@@ -907,8 +907,8 @@ public:
             }
             bool flag = false; //标记，false为该类型装备在场上只有一件
             foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
-                if(tmp == gui) //不考虑阿龟装备情况
-                    continue;
+                //if(tmp == gui) //不考虑阿龟装备情况
+                //    continue;
                 QList<const Card*> equipos;
                 foreach(const Card *e, tmp->getEquips()){
                     if(e->getSubtype() == equ->getSubtype()){
@@ -981,7 +981,7 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-    taozongwang->addSkill(new Qiaogongplus);
+    //taozongwang->addSkill(new Qiaogongplus);
 
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);
