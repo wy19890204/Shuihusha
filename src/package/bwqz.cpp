@@ -794,7 +794,106 @@ public:
         return false;
     }
 };
+/*
+class Qiaogongplus: public TriggerSkill{
+public:
+    Qiaogongplus():TriggerSkill("qiaog"){
+        events << CardLost << CardFinished;
+    }
 
+    virtual bool triggerable(const ServerPlayer *ta) const{
+        return !ta->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *gui = room->findPlayerBySkillName(objectName());
+        if(!gui)
+            return false;
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            QList<ServerPlayer *> hasweapon;
+            bool tao = false;
+            if(move->from->isAlive() && move->from_place == Player::Equip){
+                int card_id = move->card_id;
+                const Card *equ = Sanguosha->getCard(card_id);
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
+                    foreach(const Card *e, tmp->getEquips()){
+                        if(e->getSubtype() == equ->getSubtype()){
+                            if(tmp != gui && !hasweapon.contains(tmp))
+                                hasweapon << tmp; //将除了陶宗旺外还有该类装备的人存储
+                            else if(tmp == gui)
+                                tao = true; //陶宗旺有该类装备
+                        }
+                    }
+                }
+                if(hasweapon.isEmpty() && tao){ // 场上是否只有陶宗旺有该类装备
+                    room->moveCardTo(equ, gui, Player::Equip, false);
+                    room->throwCard(card_id);
+                }
+                else if(hasweapon.length() == 1 && !gui->getEquips().contains(equ)){
+                    //场上除了陶宗旺是否有且只有一人有该类装备
+                    ServerPlayer *target = hasweapon.first();
+                    const Card *bequ = NULL;
+                    foreach(const Card *e, target->getEquips()){
+                        if(e->getSubtype() == equ->getSubtype()){
+                            bequ = e;
+                            break;
+                        }
+                    }
+                    room->moveCardTo(bequ, gui, Player::Equip, false);
+                    QList<int> card_ids;
+                    card_ids << bequ->getId();
+                    int card_id = bequ->getId();
+                    room->fillAG(card_ids, gui);
+                    //card_ids.removeOne(card_id);
+                    room->takeAG(gui, card_id);
+                    room->broadcastInvoke("clearAG");
+                    room->moveCardTo(equ, NULL, Player::DrawPile);
+                    gui->drawCards(1);
+                    room->moveCardTo(equ, target, Player::Equip, false);
+                    //room->throwCard(card_id);
+                }
+            }
+        }
+        else if(event == CardFinished){
+            CardUseStruct card_use = data.value<CardUseStruct>();
+            const Card *equ = card_use.card;
+            if(!equ->inherits("Weapon"))
+                return false;
+            int card_id = card_use.card->getId();
+            bool tao = false;
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
+                foreach(const Card *e, tmp->getEquips()){
+                    if(e->getSubtype() == equ->getSubtype()){
+                        tao = true; //除自己外还有人有同类装备，中止
+                        break;
+                    }
+                }
+                if(tao)
+                    break;
+            }
+            if(!tao){ //场上只存在一个同类装备
+                room->moveCardTo(equ, gui, Player::Equip, false);
+                QList<int> card_ids;
+                QList<const Card *> cards = gui->getCards("e");
+                foreach(const Card *tmp, cards)
+                    //if(tmp->getId() == card_id)
+                        card_ids << tmp->getId();
+                room->fillAG(card_ids, gui);
+                //card_id = room->askForAG(gui, card_ids, false, objectName());
+                room->takeAG(gui, card_id);
+                card_ids.removeOne(card_id);
+                room->broadcastInvoke("clearAG");
+                gui->obtainCard(Sanguosha->getCard(card_id));
+                room->moveCardTo(Sanguosha->getCard(card_id), player, Player::Equip, false);
+                //room->throwCard(card_id);
+            }
+        }
+        return false;
+    }
+};
+*/
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -827,6 +926,7 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
+    //taozongwang->addSkill(new Qiaogongplus);
 
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);
