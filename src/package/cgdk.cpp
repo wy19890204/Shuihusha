@@ -1,13 +1,9 @@
-#include "mountainpackage.h"
-
-#include "general.h"
-#include "skill.h"
-#include "engine.h"
+#include "cgdk.h"
 #include "standard.h"
-#include "carditem.h"
-#include "generaloverview.h"
-#include "clientplayer.h"
+#include "skill.h"
 #include "client.h"
+#include "carditem.h"
+#include "engine.h"
 
 #include <QCommandLinkButton>
 
@@ -1047,8 +1043,8 @@ public:
     }
 };
 
-MountainPackage::MountainPackage()
-    :Package("mountain")
+CGDKPackage::CGDKPackage()
+    :Package("CGDK")
 {
     General *zhanghe = new General(this, "zhanghe", "guan");
     zhanghe->addSkill(new Qiaobian);
@@ -1112,4 +1108,4 @@ MountainPackage::MountainPackage()
     skills << new ZhibaPindian << new Jixi;
 }
 
-ADD_PACKAGE(Mountain);
+ADD_PACKAGE(CGDK)

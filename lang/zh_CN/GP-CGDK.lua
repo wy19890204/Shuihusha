@@ -1,7 +1,8 @@
--- translation for WindPackage
+-- ZhechongYannan Shuihusha part 7.
 
 return {
-	["wind"] = "风包", 
+	["CGDK"] = "长歌当哭",
+
 	["xiahouyuan"] = "夏侯渊", 
 	["caoren"] = "曹仁", 
 	["huangzhong"] = "黄忠", 

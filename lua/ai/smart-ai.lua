@@ -1156,7 +1156,7 @@ end
 
 function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("chengxiang") and self.player:getHandcardNum() < 8 and card:getNumber() < 7 then return end
-	if card:getSkillName() == "paohong" then no_distance = true end
+	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()

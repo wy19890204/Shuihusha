@@ -1,5 +1,5 @@
-#ifndef MOUNTAINPACKAGE_H
-#define MOUNTAINPACKAGE_H
+#ifndef CGDKPACKAGE_H
+#define CGDKPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -65,12 +65,12 @@ public slots:
     void popup();
 };
 
-class MountainPackage : public Package
+class CGDKPackage : public Package
 {
     Q_OBJECT
 
 public:
-    MountainPackage();
+    CGDKPackage();
 };
 
-#endif // MOUNTAINPACKAGE_H
+#endif // CGDKPACKAGE_H

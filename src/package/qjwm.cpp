@@ -978,8 +978,8 @@ public:
 
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
-        ServerPlayer *wangqing = room->findPlayerBySkillName(objectName());
-        if(!wangqing || !wangqing->isLord() || wangqing == player)
+        ServerPlayer *wangqing = room->getLord();
+        if(!wangqing || !wangqing->hasLordSkill(objectName()))
             return;
         int x = damage.damage, i;
         for(i=0; i<x; i++){

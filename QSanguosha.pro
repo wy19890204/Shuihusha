@@ -37,7 +37,6 @@ SOURCES += src/main.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
         src/dialog/halldialog.cpp \
-	src/package/mountainpackage.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
@@ -50,6 +49,7 @@ SOURCES += src/main.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
 	src/package/zcyn.cpp \
+	src/package/cgdk.cpp \
 	src/package/sp.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
@@ -112,7 +112,6 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/mountainpackage.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
@@ -126,6 +125,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \
 	src/package/zcyn.h \
+	src/package/cgdk.h \
 	src/package/sp.h \
 	src/package/god.h \
 	src/package/joy.h \
