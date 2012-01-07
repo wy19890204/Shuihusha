@@ -79,8 +79,8 @@ Engine::Engine()
     addPackage(NewXZDD());
     addPackage(NewBWQZ());
     addPackage(NewZCYN());
-    addPackage(NewCGDK());
     addPackage(NewQLFD());
+    addPackage(NewCGDK());
     addPackage(NewSP());
     addPackage(NewGod());
     //addPackage(NewMountain());

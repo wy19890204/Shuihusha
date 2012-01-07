@@ -734,19 +734,14 @@ public:
     }
 };
 
-class Xinsheng: public MasochismSkill{
+class Qiaodou: public MasochismSkill{
 public:
-    Xinsheng():MasochismSkill("xinsheng"){
-        frequency = Frequent;
+    Qiaodou():MasochismSkill("qiaodou"){
     }
 
-    virtual void onDamaged(ServerPlayer *zuoci, const DamageStruct &damage) const{
-        int n = damage.damage;
-        if(n == 0)
-            return;
-
-        if(zuoci->getRoom()->askForSkillInvoke(zuoci, objectName()))
-            Huashen::AcquireGenerals(zuoci, n);
+    virtual void onDamaged(ServerPlayer *malin, const DamageStruct &damage) const{
+        if(damage.from && malin->askForSkillInvoke(objectName()))
+            damage.from->turnOver();
     }
 };
 
@@ -775,6 +770,10 @@ CGDKPackage::CGDKPackage()
     General *fanrui = new General(this, "fanrui", "kou", 3);
     fanrui->addSkill(new Kongmen);
     fanrui->addSkill(new Wudao);
+
+    General *malin = new General(this, "malin", "kou", 3);
+    malin->addSkill(new Lingdi);
+    malin->addSkill(new Qiaodou);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();
