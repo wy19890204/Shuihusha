@@ -424,9 +424,66 @@ public:
     }
 };
 
+CihuCard::CihuCard(){
+}
+
+bool CihuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isFemale() && to_select->isWounded();
+}
+
+bool CihuCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() < 2;
+}
+
+void CihuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    ServerPlayer *ogami = source->tag["CihuOgami"].value<PlayerStar>();
+    DamageStruct damage;
+    damage.from = source;
+    damage.to = ogami;
+    room->damage(damage);
+    if(!targets.isEmpty()){
+        RecoverStruct recover;
+        recover.who = source;
+        room->recover(targets.first(), recover);
+    }
+}
+
+class CihuViewAsSkill: public ViewAsSkill{
+public:
+    CihuViewAsSkill(): ViewAsSkill("Cihu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        int n = Self->getMark("CihuNum");
+        if(selected.length() >= n)
+            return false;
+        return true;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        int n = Self->getMark("CihuNum");
+        if(cards.length() != n)
+            return NULL;
+
+        CihuCard *card = new CihuCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@cihu";
+    }
+};
+
 class Cihu: public MasochismSkill{
 public:
     Cihu():MasochismSkill("cihu"){
+        view_as_skill = new CihuViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -441,17 +498,12 @@ public:
         ServerPlayer *ogami = damage.from;
         if(!ogami || !ogami->getGeneral()->isMale())
             return;
-        if(tiger->getCardCount(true) >= akaziki->getHp() &&
-           tiger->askForSkillInvoke(objectName())){
-            room->askForDiscard(tiger, objectName(), akaziki->getHp(), false, true);
-            DamageStruct damage;
-            damage.from = tiger;
-            damage.to = ogami;
-            room->damage(damage);
-            ServerPlayer *target = room->askForPlayerChosen(tiger, room->getMenorWomen("female"), objectName());
-            RecoverStruct recover;
-            recover.who = tiger;
-            room->recover(target, recover);
+        if(tiger->getCardCount(true) >= akaziki->getHp()){
+            room->setPlayerMark(tiger, "CihuNum", akaziki->getHp());
+            tiger->tag["CihuOgami"] = QVariant::fromValue(ogami);
+            QString prompt = QString("@cihu:%1::%2").arg(ogami->getGeneralName()).arg(akaziki->getGeneralName());
+            room->askForUseCard(tiger, "@@cihu", prompt);
+
             /*
             LogMessage log;
             log.type = "#Zhiyu";
@@ -505,6 +557,7 @@ ZCYNPackage::ZCYNPackage()
     gudasao->addSkill(new Cihu);
 
     addMetaObject<SixiangCard>();
+    addMetaObject<CihuCard>();
 }
 
 ADD_PACKAGE(ZCYN);

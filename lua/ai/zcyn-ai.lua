@@ -54,3 +54,31 @@ end
 
 -- tuzai
 sgs.ai_skill_invoke["tuzai"] = true
+
+-- cihu
+sgs.ai_skill_invoke["@cihu"]=function(self, prompt)
+	local num = self.player:getMark("CihuNum")
+	local ogami = self.player:getTag("CihuOgami"):toPlayer()
+	if self:isFriend(ogami) then return "." end
+	local caninvoke = false
+	local women = {}
+	local players = self.room:getMenorWomen("female")
+	players = sgs.QList2Table(players)
+	for _, woman in ipairs(players) do
+		if woman:isWounded() and self:isFriend(woman) then
+			caninvoke = true
+			table.insert(women, woman)
+		end
+	end
+	if self.player:getHp() > 2 and caninvoke then
+		self:sort(women, "hp")
+		local cards = self.player:getCards("he")
+		cards = sgs.QList2Table(cards)
+		local card_ids = {}
+		for i = 1, num do
+			table.insert(card_ids, cards[i]:getEffectiveId())
+		end
+		return "@CihuCard=" .. table.concat(card_ids, "+") .. "->" .. women[1]:objectName()
+	end
+	return "."
+end
