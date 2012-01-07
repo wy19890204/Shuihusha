@@ -398,6 +398,7 @@ class Tuzai: public TriggerSkill{
 public:
     Tuzai():TriggerSkill("tuzai"){
         events << Damage;
+        frequency = Frequent;
     }
 
     virtual int getPriority() const{
@@ -413,12 +414,6 @@ public:
             room->playSkillEffect(objectName());
             int dust = damage.to->getRandomHandCardId();
             room->showCard(damage.to, dust);
-
-            LogMessage log;
-            log.type = "$ShowCard";
-            log.from = damage.to;
-            log.card_str = QString::number(dust);
-            room->sendLog(log);
 
             if(Sanguosha->getCard(dust)->isRed()){
                 room->throwCard(dust);

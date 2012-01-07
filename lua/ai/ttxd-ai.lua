@@ -48,14 +48,15 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 		else
 			return "."
 		end
-	elseif prompt == "@haoshen-play" and self.player:getHandcardNum() > 5 then
-		self:sort(self.friends_noself, "hp")
+	elseif prompt == "@haoshen-play" and self.player:getHandcardNum() > 6 then
+		self:sort(self.friends_noself, "handcard")
 		local target = self.friends_noself[1]
+		if not target then return "." end
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
 		local card_ids = {}
-		for i = 1, math.floor(#cards / 2) do
+		for i = 1, math.floor((#cards + 1) / 2) do
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
 		return "@HaoshenCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()

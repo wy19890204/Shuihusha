@@ -87,6 +87,8 @@ return {
 	["$RecycleCard"] = "%from 从弃牌堆回收了 %card",
 	["$ShowCard"] = "%from 展示了 %card",
 	["$PutCard"] = "%from 的 %card 被放置在了摸牌堆",
+	["#GetMark"] = "%from 得到了 %arg2 枚 %arg 标记",
+	["#LoseMark"] = "%from 失去了 %arg2 枚 %arg 标记",
 	["normal_nature"] = "无属性",
 	["fire_nature"] = "火焰属性",
 	["thunder_nature"] = "雷电属性",

@@ -135,72 +135,16 @@ public:
     }
 };
 
-class Beige: public TriggerSkill{
+class Jueming: public ProhibitSkill{
 public:
-    Beige():TriggerSkill("beige"){
-        events << Damaged;
+    Jueming():ProhibitSkill("jueming"){
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card == NULL || !damage.card->inherits("Slash") || damage.to->isDead())
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        if(to->getPhase() == Player::NotActive && to->getHp() == 1)
+            return card->inherits("Slash") || card->inherits("Duel") || card->inherits("Assassinate");
+        else
             return false;
-
-        Room *room = player->getRoom();
-        ServerPlayer *caiwenji = room->findPlayerBySkillName(objectName());
-        if(caiwenji && !caiwenji->isNude() && caiwenji->askForSkillInvoke(objectName(), data)){
-            room->askForDiscard(caiwenji, "beige", 1, false, true);
-
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(.*):(.*)");
-            judge.good = true;
-            judge.who = player;
-            judge.reason = objectName();
-
-            room->judge(judge);
-
-            switch(judge.card->getSuit()){
-            case Card::Heart:{
-                    RecoverStruct recover;
-                    recover.who = caiwenji;
-                    room->recover(player, recover);
-
-                    break;
-                }
-
-            case Card::Diamond:{
-                    player->drawCards(2);
-
-                    break;
-                }
-
-            case Card::Club:{
-                    if(damage.from && damage.from->isAlive()){
-                        int to_discard = qMin(2, damage.from->getCardCount(true));
-                        if(to_discard != 0)
-                            room->askForDiscard(damage.from, "beige", to_discard, false, true);
-                    }
-
-                    break;
-                }
-
-            case Card::Spade:{
-                    if(damage.from && damage.from->isAlive())
-                        damage.from->turnOver();
-
-                    break;
-                }
-
-            default:
-                break;
-            }
-        }
-
-        return false;
     }
 };
 
@@ -1081,8 +1025,9 @@ CGDKPackage::CGDKPackage()
 
     related_skills.insertMulti("guzheng", "#guzheng-get");
 
-    General *caiwenji = new General(this, "caiwenji", "kou", 3, false);
-    caiwenji->addSkill(new Beige);
+    General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
+    ruanxiaoqi->addSkill(new Jueming);
+    ruanxiaoqi->addSkill(new Skill("jiuhan"));
 
     General *zuoci = new General(this, "zuoci", "kou", 3);
     zuoci->addSkill(new Huashen);
