@@ -238,13 +238,29 @@ QList<int> TrustAI::askForDiscard(const QString &reason, int discard_num, bool o
         return self->forceToDiscard(discard_num, include_equip);
 }
 
+#include "plough.h"
 const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *, ServerPlayer *to, bool positive){
     if(self == to && trick->isAggressive() && positive){
-        QList<const Card *> cards = self->getHandcards();
+        QList<const Card *> cards = self->getCards("he");
 
         foreach(const Card *card, cards){
             if(card->inherits("Nullification"))
                 return card;
+        }
+
+        if(self->hasSkill("zhiqu-n") || self->hasSkill("zhiqu-c")){
+            QString type = trick->inherits("SingleTargetTrick") ?
+                               "nullification" : "nulliplot";
+            foreach(const Card *card, cards){
+                if(card->inherits("EquipCard")){
+                    Card *ncard = type == "nullification" ?
+                                  new Nullification(card->getSuit(), card->getNumber()) :
+                                  new Counterplot(card->getSuit(), card->getNumber());
+                    ncard->addSubcard(card);
+                    ncard->setSkillName("zhiqu");
+                    return ncard;
+                }
+            }
         }
     }
 

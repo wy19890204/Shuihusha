@@ -503,16 +503,8 @@ public:
             tiger->tag["CihuOgami"] = QVariant::fromValue(ogami);
             QString prompt = QString("@cihu:%1::%2").arg(ogami->getGeneralName()).arg(akaziki->getGeneralName());
             room->askForUseCard(tiger, "@@cihu", prompt);
-
-            /*
-            LogMessage log;
-            log.type = "#Zhiyu";
-            log.from = loli;
-            log.to << masata;
-            log.arg = objectName();
-            log.arg2 = QString::number(1);
-            room->sendLog(log);
-            */
+            tiger->tag.remove("CihuOgami");
+            room->setPlayerMark(tiger, "CihuNum", 0);
         }
     }
 };

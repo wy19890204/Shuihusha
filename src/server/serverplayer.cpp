@@ -372,9 +372,9 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
-    if(hasSkill("wushen")){
-        foreach(const Card *card, handcards){
-            if(card->objectName() == "nullification" && card->getSuit() != Card::Heart)
+    if(hasSkill("zhiqu-c") || hasSkill("zhiqu-n")){
+        foreach(const Card *card, getCards("he")){
+            if(card->inherits("EquipCard") || card->inherits("Nullification"))
                 return true;
         }
     }else if(hasSkill("guhuo")){

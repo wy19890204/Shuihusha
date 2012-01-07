@@ -200,106 +200,114 @@ public:
         log.arg = QString::number(dengai->getPile("field").length());
         room->sendLog(log);
 
-        room->acquireSkill(dengai, "jixi");
+        room->acquireSkill(dengai, "Yunchou");
 
         return false;
     }
 };
 
-JixiCard::JixiCard(){
+YunchouCard::YunchouCard(){
     target_fixed = true;
 }
 
-void JixiCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    ServerPlayer *dengai = card_use.from;
-
-    QList<int> fields = dengai->getPile("field");
-    if(fields.isEmpty())
-        return ;
-
-    int card_id;
-    if(fields.length() == 1)
-        card_id = fields.first();
-    else{
-        room->fillAG(fields, dengai);
-        card_id = room->askForAG(dengai, fields, true, "jixi");
-        dengai->invoke("clearAG");
-
-        if(card_id == -1)
-            return;
+void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *nouse = card_use.from;
+    QStringList ndtricks;
+    QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
+    foreach(const Card *card, cards){
+        if(card->isNDTrick() && !ndtricks.contains(card->objectName()))
+            ndtricks << card->objectName();
     }
-
-    const Card *card = Sanguosha->getCard(card_id);
-    Snatch *snatch = new Snatch(card->getSuit(), card->getNumber());
-    snatch->setSkillName("jixi");
-    snatch->addSubcard(card_id);
-
-    QList<ServerPlayer *> targets;
-    QList<const Player *> empty_list;
-    foreach(ServerPlayer *p, room->getAlivePlayers()){
-        if(!snatch->targetFilter(empty_list, p, dengai))
-            continue;
-
-        if(dengai->isProhibited(p, snatch))
-            continue;
-
-        targets << p;
-    }
-
-    if(targets.isEmpty())
-        return;
-
-    ServerPlayer *target = room->askForPlayerChosen(dengai, targets, "jixi");
-
-    CardUseStruct use;
-    use.card = snatch;
-    use.from = dengai;
-    use.to << target;
-
-    room->useCard(use);
+    QString name = room->askForChoice(nouse, "yunchou", ndtricks.join("+"));
+    room->setPlayerProperty(nouse, "yunchoustore", name);
 }
 
-class Jixi:public ZeroCardViewAsSkill{
+class YunchouSelect: public ZeroCardViewAsSkill{
 public:
-    Jixi():ZeroCardViewAsSkill("jixi"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->getPile("field").isEmpty();
+    YunchouSelect():ZeroCardViewAsSkill("yunchou-select"){
     }
 
     virtual const Card *viewAs() const{
-        return new JixiCard;
+        return new YunchouCard;
     }
 };
 
-class Jiang: public TriggerSkill{
+class Yunchou:public OneCardViewAsSkill{
 public:
-    Jiang():TriggerSkill("Jiang"){
-        events << CardUsed << CardEffected;
-
-        frequency = Frequent;
+    Yunchou():OneCardViewAsSkill("yunchou"){
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *sunce, QVariant &data) const{
-        const Card *card = NULL;
-        if(event == CardUsed){
-            CardUseStruct use = data.value<CardUseStruct>();
-            card = use.card;
-        }else if(event == CardEffected){
-            CardEffectStruct effect = data.value<CardEffectStruct>();
-            card = effect.card;
-        }
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard");
+    }
 
-        if(card == NULL)
-            return false;
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        QString name = Self->property("yunchoustore").toString();
+        Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+        new_card->addSubcard(card);
+        new_card->setSkillName("yunchou");
+        Self->setFlags("Yunchou_used");
+        return new_card;
+    }
 
-        if(card->inherits("Duel") || (card->inherits("Slash") && card->isRed())){
-            if(sunce->askForSkillInvoke(objectName(), data))
-                sunce->drawCards(1);
-        }
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->property("yunchoustore").isNull() && !player->hasFlag("Yunchou_used");
+    }
+};
 
+class ZhiquN: public OneCardViewAsSkill{
+public:
+    ZhiquN():OneCardViewAsSkill("zhiqu-n"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("EquipCard");
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
         return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "nullification";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *first = card_item->getFilteredCard();
+        Card *ncard = new Nullification(first->getSuit(), first->getNumber());
+        ncard->addSubcard(first);
+        ncard->setSkillName("zhiqu");
+
+        return ncard;
+    }
+};
+
+#include "plough.h"
+class ZhiquC: public OneCardViewAsSkill{
+public:
+    ZhiquC():OneCardViewAsSkill("zhiqu-c"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("EquipCard");
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "nulliplot";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *first = card_item->getFilteredCard();
+        Card *ncard = new Counterplot(first->getSuit(), first->getNumber());
+        ncard->addSubcard(first);
+        ncard->setSkillName("zhiqu");
+
+        return ncard;
     }
 };
 
@@ -977,7 +985,6 @@ CGDKPackage::CGDKPackage()
     related_skills.insertMulti("zhiji", "guanxing");
 
     General *sunce = new General(this, "sunce$", "min");
-    sunce->addSkill(new Jiang);
     sunce->addSkill(new Hunzi);
     sunce->addSkill(new SunceZhiba);
 
@@ -989,6 +996,12 @@ CGDKPackage::CGDKPackage()
     erzhang->addSkill(new GuzhengGet);
 
     related_skills.insertMulti("guzheng", "#guzheng-get");
+
+    General *wuyong = new General(this, "wuyong", "kou", 3);
+    wuyong->addSkill(new YunchouSelect);
+    wuyong->addSkill(new Yunchou);
+    wuyong->addSkill(new ZhiquN);
+    wuyong->addSkill(new ZhiquC);
 
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);
@@ -1013,9 +1026,9 @@ CGDKPackage::CGDKPackage()
     addMetaObject<TiaoxinCard>();
     addMetaObject<ZhijianCard>();
     addMetaObject<ZhibaCard>();
-    addMetaObject<JixiCard>();
+    addMetaObject<YunchouCard>();
 
-    skills << new ZhibaPindian << new Jixi;
+    skills << new ZhibaPindian;
 }
 
 ADD_PACKAGE(CGDK)

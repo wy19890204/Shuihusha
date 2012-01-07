@@ -46,11 +46,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class JixiCard: public SkillCard{
+class YunchouCard: public SkillCard{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE JixiCard();
+    Q_INVOKABLE YunchouCard();
 
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };

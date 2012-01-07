@@ -247,7 +247,7 @@ public:
             }
         }else if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
-            if(damage.card->inherits("Slash")){
+            if(damage.card && damage.card->inherits("Slash")){
                 LogMessage log;
                 log.type = "#ThrowWeapon";
                 log.from = player;
