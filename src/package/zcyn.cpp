@@ -349,6 +349,59 @@ public:
     }
 };
 
+class Hengchong: public TriggerSkill{
+public:
+    Hengchong():TriggerSkill("hengchong"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        if(player->getWeapon())
+            return false;
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        Room *room = player->getRoom();
+        QString suit_str = effect.slash->getSuitString();
+        QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
+        QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
+        CardStar card = room->askForCard(player, pattern, prompt);
+        if(card){
+            QList<int> card_ids = card->getSubcards();
+            foreach(int card_id, card_ids){
+                LogMessage log;
+                log.type = "$DiscardCard";
+                log.from = player;
+                log.card_str = QString::number(card_id);
+                room->sendLog(log);
+            }
+            QList<ServerPlayer *> targets;
+            targets << effect.to->getNextAlive();
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(effect.to)){
+                if(tmp->getNextAlive() == effect.to){
+                    targets << tmp;
+                    break;
+                }
+            }
+            room->slashResult(effect, NULL);
+            ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+            DamageStruct damage;
+            damage.from = player;
+            damage.to = target;
+            room->damage(damage);
+
+            LogMessage log;
+            log.type = "#Hengchong";
+            log.from = player;
+            log.to << effect.to << target;
+            log.arg = objectName();
+            log.arg2 = card->getEffectIdString();
+            room->sendLog(log);
+
+            return true;
+        }
+        return false;
+    }
+};
+
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
@@ -372,6 +425,9 @@ ZCYNPackage::ZCYNPackage()
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
+
+    General *ligun = new General(this, "ligun", "jiang");
+    ligun->addSkill(new Hengchong);
 
     General *zourun = new General(this, "zourun", "min");
     zourun->addSkill(new Longjiao);
