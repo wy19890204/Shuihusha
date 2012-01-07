@@ -40,3 +40,17 @@ paohong_skill.getTurnUseCard = function(self)
 		return sgs.Card_Parse(card_str)
 	end
 end
+
+-- hengchong
+sgs.ai_skill_playerchosen["hengchong"] = function(self, targets)
+	local targetlist = sgs.QList2Table(targets)
+	for _, target in ipairs(targetlist) do
+		if self:isEnemy(target) then
+			return target
+		end
+	end
+	return targetlist[1]
+end
+
+-- tuzai
+sgs.ai_skill_invoke["tuzai"] = true

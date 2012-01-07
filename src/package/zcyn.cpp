@@ -435,15 +435,15 @@ public:
 
     virtual void onDamaged(ServerPlayer *akaziki, const DamageStruct &damage) const{
         Room *room = akaziki->getRoom();
-        if(!damage.card || !damage.card->inherits("Slash"))
+        ServerPlayer *tiger = room->findPlayerBySkillName(objectName());
+        if(!tiger || !damage.card || !damage.card->inherits("Slash"))
             return;
         ServerPlayer *ogami = damage.from;
         if(!ogami || !ogami->getGeneral()->isMale())
             return;
-        ServerPlayer *tiger = room->findPlayerBySkillName(objectName());
-        if(tiger && tiger->getCardCount(true) >= akaziki->getHp() &&
+        if(tiger->getCardCount(true) >= akaziki->getHp() &&
            tiger->askForSkillInvoke(objectName())){
-            room->askForDiscard(tiger, objectName(), false, true);
+            room->askForDiscard(tiger, objectName(), akaziki->getHp(), false, true);
             DamageStruct damage;
             damage.from = tiger;
             damage.to = ogami;
@@ -501,7 +501,7 @@ ZCYNPackage::ZCYNPackage()
     General *caifu = new General(this, "caifu", "jiang");
     caifu->addSkill(new Juesi);
 
-    General *gudasao = new General(this, "gudasao", "min");
+    General *gudasao = new General(this, "gudasao", "min", 4, false);
     gudasao->addSkill(new Cihu);
 
     addMetaObject<SixiangCard>();

@@ -1143,6 +1143,10 @@ function SmartAI:slashProhibit(card,enemy)
 			local x = enemy:getLostHp()
 			return self.player:getHandcardNum() <= x + 1
 		end
+
+		if enemy ~= self.room:getCurrent() and enemy:hasSkill("jueming") and enemy:getHp() == 1 then
+			return true
+		end
 	end
 
 	return not self:slashIsEffective(card, enemy)
@@ -3024,6 +3028,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		local card = self:getUnuseCard()
 		if self:isEnemy(rev.who) or not card then return "." end
 		return card:getEffectiveId()
+--	elseif parsedPrompt[1] == "@hengchong" then
 	end
 
 	if parsedPrompt[1] == "double-sword-card" then
@@ -3441,6 +3446,9 @@ function SmartAI:hasTrickEffective(card, player)
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:inherits("FireAttack") or card:inherits("FireSlash")) then
 			return false
 		end
+		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:inherits("Duel") or card:inherits("Assassinate") then
+			return false
+		end
 	else
 		if self.player:hasSkill("wuyan") then
 			if card:inherits("TrickCard") and not
@@ -3752,10 +3760,10 @@ function SmartAI:cardProhibit(card, to)
 	if card:inherits("Slash") then return self:slashProhibit(card, to) end
 	if card:getTypeId() == sgs.Card_Trick then
 		if to:hasSkill("shengui") and not to:faceUp() and self.player:getGeneral():isMale() then return true end
-	--	if card:isBlack() and to:hasSkill("weimu") then return true end
 		if card:inherits("Dismantlement") or card:inherits("Snatch") and to:hasSkill("linse") then return true end
 		if card:inherits("SupplyShortage") or card:inherits("Snatch") and to:hasSkill("feiyan") then return true end
 		if card:inherits("Duel") and to:hasSkill("fangzhen") and self.player:getHp() > to:getHp() then return true end
+		if to ~= self.room:getCurrent() and card:inherits("Duel") or card:inherits("Assassinate") and to:hasSkill("jueming") and to:getHp() == 1 then return true end
 	end
 	return false
 end

@@ -16,6 +16,30 @@ sgs.ai_skill_invoke["zhanchi"] = function(self, data)
 	end
 end
 
+-- fuqin
+sgs.ai_skill_choice["fuqin"] = function(self, choice)
+	local source = self.player:getTag("FuqinSource"):toPlayer()
+	if self:isFriend(source) then
+		return "qing"
+	else
+		local rand = math.random(1, 2)
+		if rand == 1 then
+			return "yan"
+		else
+			return "qing"
+		end
+	end
+end
+sgs.ai_skill_playerchosen["fuqin"] = function(self, targets)
+	self:sort(self.friends, "handcard")
+	if self.friends[1]:getHandcardNum() > 2 then
+		self:sort(self.friends, "hp")
+		if self.friends[1]:getHp() > 2 then return self.player
+		else return self.friends[1] end
+	end
+	return self.friends[1]
+end
+
 -- butian
 sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
 	judge = judge or self.player:getTag("Judge"):toJudge()

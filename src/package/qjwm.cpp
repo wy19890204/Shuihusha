@@ -400,6 +400,8 @@ public:
     virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
         Room *room = yan->getRoom();
         int lstn = yan->getLostHp();
+        if(damage.from)
+            yan->tag["FuqinSource"] = QVariant::fromValue(damage.from);
         QString choice = damage.from ?
                          room->askForChoice(yan, objectName(), "yan+qing+nil"):
                          room->askForChoice(yan, objectName(), "qing+nil");
@@ -420,6 +422,7 @@ public:
             ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
             target->drawCards(lstn);
         }
+        yan->tag.remove("FuqinSource");
     }
 };
 
