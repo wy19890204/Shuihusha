@@ -877,7 +877,8 @@ public:
 
             if(jd.card->isBlack()){
                 room->playSkillEffect(objectName(), 2);
-                room->askForDiscard(player, objectName(), 2, false, true);
+                int cardnum = player->getCardCount(true);
+                room->askForDiscard(player, objectName(), qMin(2, cardnum), false, true);
             }
             else{
                 room->playSkillEffect(objectName(), 1);
