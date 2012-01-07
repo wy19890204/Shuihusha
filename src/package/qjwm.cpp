@@ -275,7 +275,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
-        if(!jiuwenlong || jiuwenlong->isKongcheng())
+        if(!jiuwenlong || jiuwenlong->isNude())
             return false;
         DamageStruct damage = data.value<DamageStruct>();
 

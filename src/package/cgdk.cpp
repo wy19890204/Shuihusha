@@ -224,12 +224,12 @@ BingjiCard::BingjiCard(){
 }
 
 bool BingjiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int x = Self->getLostHp();
+    int x = qMax(1, Self->getLostHp());
     return targets.length() < x;
 }
 
 bool BingjiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    int x = Self->getLostHp();
+    int x = qMax(1, Self->getLostHp());
     return targets.length() <= x && !targets.isEmpty();
 }
 
