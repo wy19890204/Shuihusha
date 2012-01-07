@@ -883,7 +883,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *target) const{
         Room *room = target->getRoom();
         ServerPlayer *dragon = room->findPlayerBySkillName(objectName());
-        if(!dragon)
+        if(!dragon || dragon->isNude())
             return false;
         if(target->getPhase() == Player::NotActive){
             foreach(ServerPlayer *tmp, room->getOtherPlayers(dragon)){

@@ -182,34 +182,38 @@ public:
     }
 };
 
-class Hunzi: public PhaseChangeSkill{
+class Citan: public PhaseChangeSkill{
 public:
-    Hunzi():PhaseChangeSkill("hunzi"){
-        frequency = Wake;
+    Citan():PhaseChangeSkill("citan"){
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getMark("hunzi") == 0
-                && target->getPhase() == Player::Start
-                && target->getHp() == 1;
+        return !target->hasSkill(objectName());
     }
 
-    virtual bool onPhaseChange(ServerPlayer *sunce) const{
-        Room *room = sunce->getRoom();
-
-        LogMessage log;
-        log.type = "#HunziWake";
-        log.from = sunce;
-        room->sendLog(log);
-
-        room->loseMaxHp(sunce);
-
-        room->acquireSkill(sunce, "yinghun");
-        room->acquireSkill(sunce, "yingzi");
-
-        room->setPlayerMark(sunce, "hunzi", 1);
-
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        ServerPlayer *yanglin = room->findPlayerBySkillName(objectName());
+        if(!yanglin)
+            return false;
+        if(player->getPhase() == Player::Discard)
+            player->setMark("Cit", player->getHandcardNum());
+        else if(player->getPhase() == Player::Finish){
+            int old = player->getMark("Cit");
+            if(old - player->getHandcardNum() >= 2 &&
+               yanglin->askForSkillInvoke(objectName())){
+                //room->showAllCards(player, yanglin);
+                QList<int> card_ids;
+                foreach(const Card *a, player->getHandcards())
+                    card_ids << a->getId();
+                room->fillAG(card_ids, yanglin);
+                int to_move = room->askForAG(yanglin, card_ids, false, objectName());
+                ServerPlayer *target = room->askForPlayerChosen(yanglin, room->getOtherPlayers(player), objectName());
+                target->obtainCard(Sanguosha->getCard(to_move));
+                card_ids.removeOne(to_move);
+                yanglin->invoke("clearAG");
+            }
+        }
         return false;
     }
 };
@@ -788,11 +792,8 @@ CGDKPackage::CGDKPackage()
     General *xiebao = new General(this, "xiebao", "min");
     xiebao->addSkill(new Liehuo);
 
-    General *zuoci = new General(this, "zuoci", "kou", 3);
-    zuoci->addSkill(new Huashen);
-    zuoci->addSkill(new HuashenBegin);
-    zuoci->addSkill(new HuashenEnd);
-    zuoci->addSkill(new Xinsheng);
+    General *yanglin = new General(this, "yanglin", "kou", 3);
+    yanglin->addSkill(new Citan);
 
     General *fanrui = new General(this, "fanrui", "kou", 3);
     fanrui->addSkill(new Kongmen);

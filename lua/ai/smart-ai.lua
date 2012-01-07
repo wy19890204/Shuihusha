@@ -3471,7 +3471,7 @@ function SmartAI:hasSameEquip(card, player)
 end
 
 sgs.lose_equip_skill = ""
-sgs.need_kongcheng = ""
+sgs.need_kongcheng = "kongmen"
 sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian"
 sgs.wizard_skill = "butian|shenpan|yixing|yueli|houlue"
 sgs.wizard_harm_skill = "butian|shenpan|yixing"
