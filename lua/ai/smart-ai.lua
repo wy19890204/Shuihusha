@@ -1157,12 +1157,13 @@ end
 function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("chengxiang") and self.player:getHandcardNum() < 8 and card:getNumber() < 7 then return end
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
+	if hasFlag("Longest") then no_distance = true end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()
 	and self.player:getWeapon():inherits("Halberd"))
-	or (self.player:hasSkill("shenji") and not self.player:getWeapon()) then
-		self.slash_targets = 3
+	or (self.player:hasSkill("qinlong") and self.player:getEquips():isEmpty() then
+		self.slash_targets = 2
 	end
 
 	self.predictedRange = self.player:getAttackRange()
