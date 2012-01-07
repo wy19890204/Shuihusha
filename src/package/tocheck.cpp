@@ -75,16 +75,6 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         // recover hp
         RecoverStruct recover;
         recover.card = this;
-        if(effect.from == effect.to && effect.to->hasSkill("jiuhan") && effect.to->askForSkillInvoke("jiuhan")){
-            room->playSkillEffect("jiuhan");
-            LogMessage log;
-            log.type = "#Jiuhan";
-            log.from = effect.to;
-            log.arg = "jiuhan";
-            log.arg2 = QString::number(1);
-            room->sendLog(log);
-            recover.recover = 2;
-        }
         recover.who = effect.from;
         room->recover(effect.to, recover);
     }else{

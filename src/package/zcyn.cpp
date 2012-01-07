@@ -424,6 +424,47 @@ public:
     }
 };
 
+class Cihu: public MasochismSkill{
+public:
+    Cihu():MasochismSkill("cihu"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getGeneral()->isFemale();
+    }
+
+    virtual void onDamaged(ServerPlayer *akaziki, const DamageStruct &damage) const{
+        Room *room = akaziki->getRoom();
+        if(!damage.card || !damage.card->inherits("Slash"))
+            return;
+        ServerPlayer *ogami = damage.from;
+        if(!ogami || !ogami->getGeneral()->isMale())
+            return;
+        ServerPlayer *tiger = room->findPlayerBySkillName(objectName());
+        if(tiger && tiger->getCardCount(true) >= akaziki->getHp() &&
+           tiger->askForSkillInvoke(objectName())){
+            room->askForDiscard(tiger, objectName(), false, true);
+            DamageStruct damage;
+            damage.from = tiger;
+            damage.to = ogami;
+            room->damage(damage);
+            ServerPlayer *target = room->askForPlayerChosen(tiger, room->getMenorWomen("female"), objectName());
+            RecoverStruct recover;
+            recover.who = tiger;
+            room->recover(target, recover);
+            /*
+            LogMessage log;
+            log.type = "#Zhiyu";
+            log.from = loli;
+            log.to << masata;
+            log.arg = objectName();
+            log.arg2 = QString::number(1);
+            room->sendLog(log);
+            */
+        }
+    }
+};
+
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
@@ -459,6 +500,9 @@ ZCYNPackage::ZCYNPackage()
 
     General *caifu = new General(this, "caifu", "jiang");
     caifu->addSkill(new Juesi);
+
+    General *gudasao = new General(this, "gudasao", "min");
+    gudasao->addSkill(new Cihu);
 
     addMetaObject<SixiangCard>();
 }

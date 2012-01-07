@@ -1,7 +1,7 @@
 -- ZhechongYannan Shuihusha part 8.
 
 return {
-	["CGDK"] = "义薄云天",
+	["YBYT"] = "义薄云天",
 
 	["#_qiongying"] = "琼矢镞",
 	["qiongying"] = "琼英",

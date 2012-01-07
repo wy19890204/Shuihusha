@@ -148,60 +148,29 @@ public:
     }
 };
 
-class Tuntian: public DistanceSkill{
+class Jiuhan:public TriggerSkill{
 public:
-    Tuntian():DistanceSkill("tuntian"){
-        frequency = NotFrequent;
+    Jiuhan():TriggerSkill("jiuhan"){
+        events << HpRecover;
+        frequency = Frequent;
     }
 
-    virtual int getCorrect(const Player *from, const Player *) const{
-        if(from->hasSkill(objectName()))
-            return -from->getPile("field").length();
-        else
-            return 0;
-    }
-};
+    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
+        Room *room = nana->getRoom();
+        RecoverStruct rec = data.value<RecoverStruct>();
+        if(rec.who == nana && rec.card->inherits("Analeptic") &&
+           nana->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Jiuhan";
+            log.from = nana;
+            log.arg = objectName();
+            log.arg2 = QString::number(1);
+            room->sendLog(log);
+            rec.recover ++;
 
-class TuntianGet: public TriggerSkill{
-public:
-    TuntianGet():TriggerSkill("#tuntian-get"){
-        events << CardLost << CardLostDone << FinishJudge;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && target->getPhase() == Player::NotActive;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        if(event == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-
-            if((move->from_place == Player::Hand || move->from_place == Player::Equip) && move->to!=player)
-                player->tag["InvokeTuntian"] = true;
-        }else if(event == CardLostDone){
-            if(!player->tag.value("InvokeTuntian", false).toBool())
-                return false;
-            player->tag.remove("InvokeTuntian");
-
-            if(player->askForSkillInvoke("tuntian", data)){
-                Room *room = player->getRoom();
-
-                JudgeStruct judge;
-                judge.pattern = QRegExp("(.*):(heart):(.*)");
-                judge.good = false;
-                judge.reason = "tuntian";
-                judge.who = player;
-
-                room->judge(judge);
-            }
-        }else if(event == FinishJudge){
-            JudgeStar judge = data.value<JudgeStar>();
-            if(judge->reason == "tuntian" && judge->isGood()){
-                player->addToPile("field", judge->card->getEffectiveId());
-                return true;
-            }
+            data = QVariant::fromValue(rec);
         }
-
         return false;
     }
 };
@@ -994,11 +963,7 @@ CGDKPackage::CGDKPackage()
     zhanghe->addSkill(new Qiaobian);
 
     General *dengai = new General(this, "dengai", "guan", 4);
-    dengai->addSkill(new Tuntian);
-    dengai->addSkill(new TuntianGet);
     dengai->addSkill(new Zaoxian);
-
-    related_skills.insertMulti("tuntian", "#tuntian-get");
 
     General *liushan = new General(this, "liushan$", "jiang", 3);
     liushan->addSkill(new Xiangle);
@@ -1027,7 +992,7 @@ CGDKPackage::CGDKPackage()
 
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);
-    ruanxiaoqi->addSkill(new Skill("jiuhan"));
+    ruanxiaoqi->addSkill(new Jiuhan);
 
     General *zuoci = new General(this, "zuoci", "kou", 3);
     zuoci->addSkill(new Huashen);
