@@ -7,130 +7,31 @@
 
 #include <QCommandLinkButton>
 
-QiaobianCard::QiaobianCard(){
-
-}
-
-bool QiaobianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    if(Self->getPhase() == Player::Draw)
-        return targets.length() <= 2 && !targets.isEmpty();
-    else if(Self->getPhase() == Player::Play)
-        return targets.length() == 1;
-    else
-        return targets.isEmpty();
-}
-
-bool QiaobianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(Self->getPhase() == Player::Draw)
-        return targets.length() < 2 && to_select != Self && !to_select->isKongcheng();
-    else if(Self->getPhase() == Player::Play){
-        return targets.isEmpty() &&
-                (!to_select->getJudgingArea().isEmpty() || !to_select->getEquips().isEmpty());
-    }else
-        return false;
-}
-
-void QiaobianCard::use(Room *room, ServerPlayer *zhanghe, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
-    if(zhanghe->getPhase() == Player::Draw){
-        foreach(ServerPlayer *target, targets){
-            int card_id = room->askForCardChosen(zhanghe, target, "h", "qiaobian");
-            room->moveCardTo(Sanguosha->getCard(card_id), zhanghe, Player::Hand, false);
-        }
-    }else if(zhanghe->getPhase() == Player::Play){
-        PlayerStar from = targets.first();
-        if(!from->hasEquip() && from->getJudgingArea().isEmpty())
-            return;
-
-        int card_id = room->askForCardChosen(zhanghe, from , "ej", "qiaobian");
-        const Card *card = Sanguosha->getCard(card_id);
-        Player::Place place = room->getCardPlace(card_id);
-
-        int equip_index = -1;
-        const DelayedTrick *trick = NULL;
-        if(place == Player::Equip){
-            const EquipCard *equip = qobject_cast<const EquipCard *>(card);
-            equip_index = static_cast<int>(equip->location());
-        }else{
-            trick = DelayedTrick::CastFrom(card);
-        }
-
-        QList<ServerPlayer *> tos;
-        foreach(ServerPlayer *p, room->getAlivePlayers()){
-            if(equip_index != -1){
-                if(p->getEquip(equip_index) == NULL)
-                    tos << p;
-            }else{
-                if(!zhanghe->isProhibited(p, trick) && !p->containsTrick(trick->objectName()))
-                    tos << p;
-            }
-        }
-
-        if(trick && trick->isVirtualCard())
-            delete trick;
-
-        room->setTag("QiaobianTarget", QVariant::fromValue(from));
-        ServerPlayer *to = room->askForPlayerChosen(zhanghe, tos, "qiaobian");
-        if(to)
-            room->moveCardTo(card, to, place);
-        room->removeTag("QiaobianTarget");
-    }
-}
-
-class QiaobianViewAsSkill: public OneCardViewAsSkill{
+class Liehuo: public TriggerSkill{
 public:
-    QiaobianViewAsSkill():OneCardViewAsSkill(""){
-
+    Liehuo():TriggerSkill("liehuo"){
+        events << SlashMissed << Damage;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        QiaobianCard *card = new QiaobianCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@qiaobian";
-    }
-};
-
-class Qiaobian: public PhaseChangeSkill{
-public:
-    Qiaobian():PhaseChangeSkill("qiaobian"){
-        view_as_skill = new QiaobianViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return 3;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target) && !target->isKongcheng();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *zhanghe) const{
-        Room *room = zhanghe->getRoom();
-
-        switch(zhanghe->getPhase()){
-        case Player::Start:
-        case Player::Finish:
-        case Player::NotActive: return false;
-
-        case Player::Judge: return room->askForUseCard(zhanghe, "@qiaobian", "@qiaobian-judge");
-        case Player::Draw: return room->askForUseCard(zhanghe, "@qiaobian", "@qiaobian-draw");
-        case Player::Play: return room->askForUseCard(zhanghe, "@qiaobian", "@qiaobian-play");
-        case Player::Discard: return room->askForUseCard(zhanghe, "@qiaobian", "@qiaobian-discard");
+    virtual bool trigger(TriggerEvent event, ServerPlayer *bao, QVariant &data) const{
+        Room *room = bao->getRoom();
+        ServerPlayer *target;
+        if(event == SlashMissed){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            target = effect.to;
         }
-
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.to && damage.card->inherits("Slash"))
+                target = damage.to;
+            else
+                return false;
+        }
+        if(target && !target->isKongcheng() &&
+           target->getHandcardNum() > bao->getHandcardNum() &&
+           room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
+            bao->obtainCard(target->getRandomHandCard());
+        }
         return false;
     }
 };
@@ -215,7 +116,8 @@ void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
     QStringList ndtricks;
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
-        if(card->isNDTrick() && !ndtricks.contains(card->objectName()))
+        if(card->isNDTrick() && !card->inherits("Nullification") &&
+           !ndtricks.contains(card->objectName()))
             ndtricks << card->objectName();
     }
     QString name = room->askForChoice(nouse, "yunchou", ndtricks.join("+"));
@@ -270,7 +172,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "nullification";
+        return pattern == "nullification" || pattern == "nulliplot";
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -340,47 +242,6 @@ public:
         room->setPlayerMark(sunce, "hunzi", 1);
 
         return false;
-    }
-};
-
-ZhibaCard::ZhibaCard(){
-    will_throw = false;
-}
-
-bool ZhibaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->hasLordSkill("sunce_zhiba") && to_select != Self && !to_select->isKongcheng();
-}
-
-void ZhibaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *sunce = targets.first();
-    if(sunce->getMark("hunzi") > 0 &&
-       room->askForChoice(sunce, "zhiba_pindian", "accept+reject") == "reject")
-    {
-        return;
-    }
-
-    source->pindian(sunce, "zhiba", this);
-}
-
-class ZhibaPindian: public OneCardViewAsSkill{
-public:
-    ZhibaPindian():OneCardViewAsSkill("zhiba_pindian"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("ZhibaCard") && player->getKingdom() == "min" && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return ! to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ZhibaCard *card = new ZhibaCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
     }
 };
 
@@ -967,36 +828,6 @@ public:
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
-    General *zhanghe = new General(this, "zhanghe", "guan");
-    zhanghe->addSkill(new Qiaobian);
-
-    General *dengai = new General(this, "dengai", "guan", 4);
-    dengai->addSkill(new Zaoxian);
-
-    General *liushan = new General(this, "liushan$", "jiang", 3);
-    liushan->addSkill(new Xiangle);
-    liushan->addSkill(new Fangquan);
-    liushan->addSkill(new Ruoyu);
-
-    General *jiangwei = new General(this, "jiangwei", "jiang");
-    jiangwei->addSkill(new Tiaoxin);
-    jiangwei->addSkill(new Zhiji);
-
-    related_skills.insertMulti("zhiji", "guanxing");
-
-    General *sunce = new General(this, "sunce$", "min");
-    sunce->addSkill(new Hunzi);
-    sunce->addSkill(new SunceZhiba);
-
-    related_skills.insertMulti("hunzi", "yinghun");
-
-    General *erzhang = new General(this, "erzhang", "min", 3);
-    erzhang->addSkill(new Zhijian);
-    erzhang->addSkill(new Guzheng);
-    erzhang->addSkill(new GuzhengGet);
-
-    related_skills.insertMulti("guzheng", "#guzheng-get");
-
     General *wuyong = new General(this, "wuyong", "kou", 3);
     wuyong->addSkill(new YunchouSelect);
     wuyong->addSkill(new Yunchou);
@@ -1006,6 +837,9 @@ CGDKPackage::CGDKPackage()
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);
     ruanxiaoqi->addSkill(new Jiuhan);
+
+    General *xiebao = new General(this, "xiebao", "min");
+    xiebao->addSkill(new Liehuo);
 
     General *zuoci = new General(this, "zuoci", "kou", 3);
     zuoci->addSkill(new Huashen);
@@ -1022,13 +856,9 @@ CGDKPackage::CGDKPackage()
     related_skills.insertMulti("huashen", "#huashen-begin");
     related_skills.insertMulti("huashen", "#huashen-end");
 
-    addMetaObject<QiaobianCard>();
     addMetaObject<TiaoxinCard>();
     addMetaObject<ZhijianCard>();
-    addMetaObject<ZhibaCard>();
     addMetaObject<YunchouCard>();
-
-    skills << new ZhibaPindian;
 }
 
 ADD_PACKAGE(CGDK)

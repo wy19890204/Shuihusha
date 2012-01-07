@@ -1010,13 +1010,9 @@ local function getSkillViewCard(card, class_name, player, card_place)
 			end
 		end
 	elseif class_name == "Nullification" then
-		if card_place ~= sgs.Player_Equip then
-			if card:isBlack() and player:hasSkill("kanpo") then
-				return ("nullification:kanpo[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-		if card:getSuit() == sgs.Card_Spade and player:getHp() == 1 and player:hasSkill("longhun") then
-			return ("nullification:longhun[%s:%s]=%d"):format(suit, number, card_id)
+		if card:inherits("EquipCard") and player:hasSkill("zhiqu") then
+		-- card:inherits("SingleTargetTrick")
+			return ("nullification:zhiqu[%s:%s]=%d"):format(suit, number, card_id)
 		end
 	elseif class_name == "Ecstasy" then
 		if player:hasSkill("menghan") and card:getSuit() == sgs.Card_Spade then

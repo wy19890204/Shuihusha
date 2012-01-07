@@ -56,7 +56,7 @@ end
 sgs.ai_skill_invoke["tuzai"] = true
 
 -- cihu
-sgs.ai_skill_invoke["@cihu"]=function(self, prompt)
+sgs.ai_skill_invoke["@cihu"] = function(self, prompt)
 	local num = self.player:getMark("CihuNum")
 	local ogami = self.player:getTag("CihuOgami"):toPlayer()
 	if self:isFriend(ogami) then return "." end
