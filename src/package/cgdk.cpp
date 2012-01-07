@@ -76,37 +76,6 @@ public:
     }
 };
 
-class Zaoxian: public PhaseChangeSkill{
-public:
-    Zaoxian():PhaseChangeSkill("zaoxian"){
-        frequency = Wake;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::Start
-                && target->getMark("zaoxian") == 0
-                && target->getPile("field").length() >= 3;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *dengai) const{
-        Room *room = dengai->getRoom();
-
-        room->setPlayerMark(dengai, "zaoxian", 1);
-        room->loseMaxHp(dengai);
-
-        LogMessage log;
-        log.type = "#ZaoxianWake";
-        log.from = dengai;
-        log.arg = QString::number(dengai->getPile("field").length());
-        room->sendLog(log);
-
-        room->acquireSkill(dengai, "Yunchou");
-
-        return false;
-    }
-};
-
 YunchouCard::YunchouCard(){
     target_fixed = true;
 }
@@ -284,87 +253,65 @@ public:
     }
 };
 
-TiaoxinCard::TiaoxinCard(){
-    once = true;
-    mute = true;
-}
-
-bool TiaoxinCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->canSlash(Self);
-}
-
-void TiaoxinCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-
-    if(effect.from->hasArmorEffect("eight_diagram") || effect.from->hasSkill("bazhen"))
-        room->playSkillEffect("tiaoxin", 3);
-    else
-        room->playSkillEffect("tiaoxin", qrand() % 2 + 1);
-
-    const Card *slash = room->askForCard(effect.to, "slash", "@tiaoxin-slash:" + effect.from->objectName());
-
-    if(slash){
-        CardUseStruct use;
-        use.card = slash;
-        use.to << effect.from;
-        use.from = effect.to;
-        room->useCard(use);
-    }else if(!effect.to->isNude()){
-        room->throwCard(room->askForCardChosen(effect.from, effect.to, "he", "tiaoxin"));
-    }
-}
-
-class Tiaoxin: public ZeroCardViewAsSkill{
+class Kongmen: public TriggerSkill{
 public:
-    Tiaoxin():ZeroCardViewAsSkill("tiaoxin"){
-
+    Kongmen():TriggerSkill("kongmen"){
+        events << CardLost;
+        frequency = Compulsory;
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("TiaoxinCard");
-    }
-
-    virtual const Card *viewAs() const{
-        return new TiaoxinCard;
+    virtual bool trigger(TriggerEvent , ServerPlayer *mowang, QVariant &data) const{
+        if(mowang->isKongcheng()){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand){
+                Room *room = mowang->getRoom();
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = mowang;
+                log.arg = objectName();
+                room->playSkillEffect(objectName());
+                room->sendLog(log);
+                RecoverStruct o;
+                o.card = Sanguosha->getCard(move->card_id);
+                room->recover(mowang, o);
+            }
+        }
+        return false;
     }
 };
 
-class Zhiji: public PhaseChangeSkill{
+class Wudao: public PhaseChangeSkill{
 public:
-    Zhiji():PhaseChangeSkill("zhiji"){
+    Wudao():PhaseChangeSkill("wudao"){
         frequency = Wake;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getMark("zhiji") == 0
-                && target->getPhase() == Player::Start
-                && target->isKongcheng();
+        ServerPlayer *fanrui = target->getRoom()->findPlayerBySkillName(objectName());
+        return target->getPhase() == Player::Start
+                && fanrui && fanrui->getMark("wudao") == 0
+                && fanrui->isKongcheng();
     }
 
-    virtual bool onPhaseChange(ServerPlayer *jiangwei) const{
-        Room *room = jiangwei->getRoom();
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        ServerPlayer *fanrui = room->findPlayerBySkillName(objectName());
+        if(!fanrui)
+            return false;
 
         LogMessage log;
-        log.type = "#ZhijiWake";
-        log.from = jiangwei;
+        log.type = "#WudaoWake";
+        log.from = fanrui;
         room->sendLog(log);
+        room->playSkillEffect(objectName());
+        room->broadcastInvoke("animate", "lightbox:$wudao:5000");
+        room->getThread()->delay(2500);
 
-        room->playSkillEffect("zhiji");
-        room->broadcastInvoke("animate", "lightbox:$zhiji:5000");
-        room->getThread()->delay(5000);
-
-        if(room->askForChoice(jiangwei, objectName(), "recover+draw") == "recover"){
-            RecoverStruct recover;
-            recover.who = jiangwei;
-            room->recover(jiangwei, recover);
-        }else
-            room->drawCards(jiangwei, 2);
-
-        room->setPlayerMark(jiangwei, "zhiji", 1);
-        room->acquireSkill(jiangwei, "guanxing");
-
-        room->loseMaxHp(jiangwei);
+        room->drawCards(fanrui, 2);
+        room->setPlayerMark(fanrui, objectName(), 1);
+        room->loseMaxHp(fanrui);
+        room->acquireSkill(fanrui, "butian");
+        room->acquireSkill(fanrui, "qimen");
 
         return false;
     }
@@ -847,16 +794,10 @@ CGDKPackage::CGDKPackage()
     zuoci->addSkill(new HuashenEnd);
     zuoci->addSkill(new Xinsheng);
 
-    General *zuocif = new General(this, "zuocif", "kou", 3, false, true);
-    zuocif->addSkill("huashen");
-    zuocif->addSkill("#huashen-begin");
-    zuocif->addSkill("#huashen-end");
-    zuocif->addSkill("xinsheng");
+    General *fanrui = new General(this, "fanrui", "kou", 3);
+    fanrui->addSkill(new Kongmen);
+    fanrui->addSkill(new Wudao);
 
-    related_skills.insertMulti("huashen", "#huashen-begin");
-    related_skills.insertMulti("huashen", "#huashen-end");
-
-    addMetaObject<TiaoxinCard>();
     addMetaObject<ZhijianCard>();
     addMetaObject<YunchouCard>();
 }
