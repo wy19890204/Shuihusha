@@ -207,10 +207,12 @@ public:
                 foreach(const Card *a, player->getHandcards())
                     card_ids << a->getId();
                 room->fillAG(card_ids, yanglin);
-                int to_move = room->askForAG(yanglin, card_ids, false, objectName());
-                ServerPlayer *target = room->askForPlayerChosen(yanglin, room->getOtherPlayers(player), objectName());
-                target->obtainCard(Sanguosha->getCard(to_move));
-                card_ids.removeOne(to_move);
+                int to_move = room->askForAG(yanglin, card_ids, true, objectName());
+                if(to_move > -1){
+                    ServerPlayer *target = room->askForPlayerChosen(yanglin, room->getOtherPlayers(player), objectName());
+                    target->obtainCard(Sanguosha->getCard(to_move));
+                    card_ids.removeOne(to_move);
+                }
                 yanglin->invoke("clearAG");
             }
         }
@@ -218,42 +220,51 @@ public:
     }
 };
 
-class SunceZhiba: public TriggerSkill{
+BingjiCard::BingjiCard(){
+}
+
+bool BingjiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int x = Self->getLostHp();
+    return targets.length() < x;
+}
+
+bool BingjiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    int x = Self->getLostHp();
+    return targets.length() <= x && !targets.isEmpty();
+}
+
+void BingjiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    SlashEffectStruct eff;
+    eff.from = effect.from;
+    //eff.slash = this;
+    eff.to = effect.to;
+    eff.drank = effect.from->hasFlag("drank");
+    room->slashEffect(eff);
+}
+
+class Bingji: public ViewAsSkill{
 public:
-    SunceZhiba():TriggerSkill("sunce_zhiba$"){
-        events << GameStart << Pindian;
+    Bingji():ViewAsSkill("bingji"){
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return true;
+        else if(selected.length() == 1){
+            QString type1 = selected.first()->getFilteredCard()->getType();
+            return to_select->getFilteredCard()->getType() == type1;
+        }else
+            return false;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        if(event == GameStart){
-            if(!player->hasLordSkill(objectName()))
-                return false;
-
-            Room *room = player->getRoom();
-            foreach(ServerPlayer *p, room->getOtherPlayers(player)){
-                if(!p->hasSkill("zhiba_pindian"))
-                    room->attachSkillToPlayer(p, "zhiba_pindian");
-            }
-        }else if(event == Pindian){
-            PindianStar pindian = data.value<PindianStar>();
-            if(pindian->reason == "zhiba" &&
-               pindian->to->hasLordSkill(objectName()) &&
-               !pindian->isSuccess())
-            {
-                pindian->to->obtainCard(pindian->from_card);
-                pindian->to->obtainCard(pindian->to_card);
-            }
-        }
-
-        return false;
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            BingjiCard *card = new BingjiCard();
+            card->addSubcards(cards);
+            return card;
+        }else
+            return NULL;
     }
 };
 
@@ -318,43 +329,6 @@ public:
         room->acquireSkill(fanrui, "qimen");
 
         return false;
-    }
-};
-
-ZhijianCard::ZhijianCard(){
-    will_throw = false;
-}
-
-bool ZhijianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty() || to_select == Self)
-        return false;
-
-    const Card *card = Sanguosha->getCard(subcards.first());
-    const EquipCard *equip = qobject_cast<const EquipCard *>(card);
-    int equip_index = static_cast<int>(equip->location());
-    return to_select->getEquip(equip_index) == NULL;
-}
-
-void ZhijianCard::onEffect(const CardEffectStruct &effect) const{
-    ServerPlayer *erzhang = effect.from;
-    erzhang->getRoom()->moveCardTo(this, effect.to, Player::Equip);
-    erzhang->drawCards(1);
-}
-
-class Zhijian: public OneCardViewAsSkill{
-public:
-    Zhijian():OneCardViewAsSkill("zhijian"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getTypeId() == Card::Equip;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ZhijianCard *zhijian_card = new ZhijianCard();
-        zhijian_card->addSubcard(card_item->getFilteredCard());
-        return zhijian_card;
     }
 };
 
@@ -792,14 +766,17 @@ CGDKPackage::CGDKPackage()
     General *xiebao = new General(this, "xiebao", "min");
     xiebao->addSkill(new Liehuo);
 
-    General *yanglin = new General(this, "yanglin", "kou", 3);
+    General *yanglin = new General(this, "yanglin", "kou");
     yanglin->addSkill(new Citan);
+
+    General *guosheng = new General(this, "guosheng", "jiang");
+    guosheng->addSkill(new Bingji);
 
     General *fanrui = new General(this, "fanrui", "kou", 3);
     fanrui->addSkill(new Kongmen);
     fanrui->addSkill(new Wudao);
 
-    addMetaObject<ZhijianCard>();
+    addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();
 }
 
