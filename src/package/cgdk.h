@@ -25,14 +25,13 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class HuashenDialog: public GeneralOverview{
+class LingdiCard:public SkillCard{
     Q_OBJECT
 
 public:
-    HuashenDialog();
-
-public slots:
-    void popup();
+    Q_INVOKABLE LingdiCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
 class CGDKPackage : public Package
