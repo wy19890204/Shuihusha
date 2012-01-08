@@ -761,6 +761,41 @@ public:
     }
 };
 
+class Renrou: public TriggerSkill{
+public:
+    Renrou():TriggerSkill("renrou"){
+        events << Death;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        if(player->isNude())
+            return false;
+        Room *room = player->getRoom();
+        ServerPlayer *erniang = room->findPlayerBySkillName(objectName());
+        if(erniang && erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), data)){
+            room->playSkillEffect(objectName(), 2);
+            int cardnum = player->getCardCount(true);
+            erniang->obtainCard(player->getWeapon());
+            erniang->obtainCard(player->getArmor());
+            erniang->obtainCard(player->getDefensiveHorse());
+            erniang->obtainCard(player->getOffensiveHorse());
+            DummyCard *all_cards = player->wholeHandCards();
+            if(all_cards){
+                room->moveCardTo(all_cards, erniang, Player::Hand, false);
+                delete all_cards;
+            }
+            QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);
+            while(room->askForYiji(erniang, yiji_cards))
+                ; // empty loop
+        }
+        return false;
+    }
+};
+
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -809,6 +844,10 @@ CGDKPackage::CGDKPackage()
     General *lili = new General(this, "lili", "kou", 3);
     lili->addSkill(new Duoming);
     lili->addSkill(new Moucai);
+
+    General *sunerniang = new General(this, "sunerniang", "kou", 3);
+    //sunerniang->addSkill(new Duoming);
+    sunerniang->addSkill(new Renrou);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();
