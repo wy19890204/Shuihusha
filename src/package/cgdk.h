@@ -34,6 +34,23 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class LinmoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LinmoCard();
+
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class ZhaixingCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ZhaixingCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class CGDKPackage : public Package
 {
     Q_OBJECT

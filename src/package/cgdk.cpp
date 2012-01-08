@@ -381,6 +381,188 @@ public:
     }
 };
 
+LinmoCard::LinmoCard(){
+    target_fixed = true;
+}
+
+void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *xiao = card_use.from;
+    QList<int> card_ids = xiao->getPile("zi");
+    room->fillAG(card_ids, xiao);
+    int zid = room->askForAG(xiao, card_ids, false, objectName());
+    QString zi = Sanguosha->getCard(zid)->objectName();
+    card_ids.removeOne(zid);
+    xiao->invoke("clearAG");
+
+    room->setPlayerProperty(xiao, "linmostore", zi);
+}
+
+class LinmoSelect: public ZeroCardViewAsSkill{
+public:
+    LinmoSelect():ZeroCardViewAsSkill("linmo-select"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->getPile("zi").isEmpty();
+    }
+
+    virtual const Card *viewAs() const{
+        return new LinmoCard;
+    }
+};
+
+class LinmoViewAsSkill:public OneCardViewAsSkill{
+public:
+    LinmoViewAsSkill():OneCardViewAsSkill("linmo"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        QString name = Self->property("linmostore").toString();
+        Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+        new_card->addSubcard(card);
+        new_card->setSkillName("linmo");
+        Self->setFlags("Linmo_used");
+        return new_card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->property("linmostore").isNull() && !player->hasFlag("Linmo_used");
+    }
+};
+
+class Linmo: public TriggerSkill{
+public:
+    Linmo():TriggerSkill("linmo"){
+        view_as_skill = new LinmoViewAsSkill;
+        events << CardFinished;
+        //frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *writer = room->findPlayerBySkillName(objectName());
+        if(!writer)
+            return false;
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.to.contains(writer) && (use.card->inherits("BasicCard") || use.card->isNDTrick())
+            && room->getCardPlace(use.card->getEffectiveId() == Player::DiscardedPile)){
+            bool hassamezi = false;
+            foreach(int x, writer->getPile("zi")){
+                if(Sanguosha->getCard(x)->objectName() == use.card->objectName()){
+                    hassamezi = true;
+                    break;
+                }
+            }
+            if(!hassamezi && writer->askForSkillInvoke(objectName()))
+                writer->addToPile("zi", use.card->getEffectiveId());
+        }
+        return false;
+    }
+};
+
+class LinmoClear: public PhaseChangeSkill{
+public:
+    LinmoClear():PhaseChangeSkill("#linmo-clear"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::NotActive){
+            player->property("linmostore") = "";
+            foreach(int a, player->getPile("zi"))
+                player->getRoom()->throwCard(a);
+        }
+        return false;
+    }
+};
+
+ZhaixingCard::ZhaixingCard(){
+    target_fixed = true;
+    will_throw = false;
+}
+
+void ZhaixingCard::use(Room *room, ServerPlayer *zhangjiao, const QList<ServerPlayer *> &targets) const{
+
+}
+
+class ZhaixingViewAsSkill:public OneCardViewAsSkill{
+public:
+    ZhaixingViewAsSkill():OneCardViewAsSkill(""){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return  pattern == "@zhaixing";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->isBlack();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ZhaixingCard *card = new ZhaixingCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Zhaixing: public TriggerSkill{
+public:
+    Zhaixing():TriggerSkill("zhaixing"){
+        view_as_skill = new ZhaixingViewAsSkill;
+        events << AskForRetrial;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        if(!TriggerSkill::triggerable(target))
+            return false;
+        return !target->isNude();
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        JudgeStar judge = data.value<JudgeStar>();
+        if(judge->card->getSuit() != Card::Diamond)
+            return false;
+
+        QStringList prompt_list;
+        prompt_list << "@zhaixing-card" << judge->who->objectName()
+                << "" << judge->reason << judge->card->getEffectIdString();
+        QString prompt = prompt_list.join(":");
+
+        player->tag["Judge"] = data;
+        const Card *card = room->askForCard(player, "@zhaixing", prompt, data);
+
+        if(card){
+            player->obtainCard(judge->card);
+            player->drawCards(1);
+            judge->card = Sanguosha->getCard(card->getEffectiveId());
+            room->moveCardTo(judge->card, NULL, Player::Special);
+
+            LogMessage log;
+            log.type = "$ChangedJudge";
+            log.from = player;
+            log.to << judge->who;
+            log.card_str = card->getEffectIdString();
+            room->sendLog(log);
+
+            room->sendJudgeResult(judge);
+        }
+        return false;
+    }
+};
+
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -396,6 +578,13 @@ CGDKPackage::CGDKPackage()
 
     General *xiebao = new General(this, "xiebao", "min");
     xiebao->addSkill(new Liehuo);
+
+    General *xiaorang = new General(this, "xiaorang", "min", 3);
+    xiaorang->addSkill(new LinmoSelect);
+    xiaorang->addSkill(new Linmo);
+    xiaorang->addSkill(new LinmoClear);
+    related_skills.insertMulti("linmo", "#linmo-clear");
+    xiaorang->addSkill(new Zhaixing);
 
     General *yanglin = new General(this, "yanglin", "kou");
     yanglin->addSkill(new Citan);
@@ -414,6 +603,8 @@ CGDKPackage::CGDKPackage()
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();
     addMetaObject<LingdiCard>();
+    addMetaObject<LinmoCard>();
+    addMetaObject<ZhaixingCard>();
 }
 
 ADD_PACKAGE(CGDK)
