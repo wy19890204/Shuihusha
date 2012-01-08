@@ -5,8 +5,6 @@
 #include "carditem.h"
 #include "engine.h"
 
-#include <QCommandLinkButton>
-
 class Liehuo: public TriggerSkill{
 public:
     Liehuo():TriggerSkill("liehuo"){
@@ -643,6 +641,85 @@ public:
     }
 };
 
+class Wugou:public ViewAsSkill{
+public:
+    Wugou():ViewAsSkill("wugou"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return to_select->getCard()->inherits("BasicCard");
+        else if(selected.length() == 1){
+            const Card *card = selected.first()->getFilteredCard();
+            return to_select->getCard()->inherits("BasicCard") && to_select->getFilteredCard()->isRed() == card->isRed();
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            const Card *first = cards.first()->getCard();
+            int secondnum = cards.last()->getCard()->getNumber();
+            Assassinate *a = new Assassinate(first->getSuit(), qMin(13, first->getNumber() + secondnum));
+            a->addSubcards(cards);
+            a->setSkillName(objectName());
+            return a;
+        }else
+            return NULL;
+    }
+};
+
+class Qiaojiang:public OneCardViewAsSkill{
+public:
+    Qiaojiang():OneCardViewAsSkill("qiaojiang"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getFilteredCard();
+
+        switch(ClientInstance->getStatus()){
+        case Client::Playing:{
+                // black trick as slash
+                return card->inherits("TrickCard") && card->isBlack();
+            }
+        case Client::Responsing:{
+                QString pattern = ClientInstance->getPattern();
+                if(pattern == "slash")
+                    return card->inherits("TrickCard") && card->isBlack();
+                else if(pattern == "jink")
+                    return card->inherits("TrickCard") && card->isRed();
+            }
+        default:
+            return false;
+        }
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "jink" || pattern == "slash";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        if(!card->inherits("TrickCard"))
+            return NULL;
+        if(card->isRed()){
+            Jink *jink = new Jink(card->getSuit(), card->getNumber());
+            jink->addSubcard(card);
+            jink->setSkillName(objectName());
+            return jink;
+        }else{
+            Slash *slash = new Slash(card->getSuit(), card->getNumber());
+            slash->addSubcard(card);
+            slash->setSkillName(objectName());
+            return slash;
+        }
+    }
+};
+
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -683,6 +760,10 @@ CGDKPackage::CGDKPackage()
     General *tongwei = new General(this, "tongwei", "min", 3);
     tongwei->addSkill(new Dalang);
     tongwei->addSkill(new Qianshui);
+
+    General *zhengtianshou = new General(this, "zhengtianshou", "kou", 3);
+    zhengtianshou->addSkill(new Wugou);
+    zhengtianshou->addSkill(new Qiaojiang);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();

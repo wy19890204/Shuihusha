@@ -48,7 +48,7 @@ public:
         Room *room = p->getRoom();
         ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
         if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p))){
-            Assassinate *ass = new Assassinate(Card::NoSuit, 2);
+            Assassinate *ass = new Assassinate(Card::NoSuit, 0);
             ass->setSkillName(objectName());
             ass->setCancelable(false);
             CardUseStruct use;

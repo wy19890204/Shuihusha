@@ -73,7 +73,7 @@ return {
 
 	["#_zhengtianshou"] = "白面郎君",
 	["zhengtianshou"] = "郑天寿",
--- 体力值3 烨子KOU 074
+	["coder:zhengtianshou"] = "凌天翼",
 	["wugou"] = "吴钩",
 	[":wugou"] = "出牌阶段，你可以将两张相同颜色的基本牌当一张【行刺】使用。",
 	["qiaojiang"] = "巧匠",
