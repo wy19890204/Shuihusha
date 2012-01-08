@@ -1,76 +1,28 @@
--- jiuhan
+-- jiuhan&linmo
 sgs.ai_skill_invoke["jiuhan"] = true
+sgs.ai_skill_invoke["linmo"] = true
 
-local function card_for_qiaobian(self, who, return_prompt)
-	local card, target
-	if self:isFriend(who) then
-		local judges = who:getCards("j")
-		if not judges:isEmpty() then
-			for _, judge in sgs.qlist(judges) do
-				card = judge
+-- zhaixing
+sgs.ai_skill_invoke["@zhaixing"]=function(self,prompt)
+	local judge = self.player:getTag("Judge"):toJudge()
+	local all_cards = self.player:getCards("he")
+	local cards = sgs.QList2Table(all_cards)
 
-				if return_prompt:match("target") then
-					for _, enemy in ipairs(self.enemies) do
-						if not enemy:containsTrick(card:objectName()) and not self:cardProhibit(card, enemy) then target = enemy break end
-					end
-				end
-				if target then break end
+	if #cards == 0 then return "." end
+	local card_id = self:getRetrialCardId(cards, judge)
+	if card_id == -1 then
+		if self:needRetrial(judge) then
+			self:sortByUseValue(cards, true)
+			if self:getUseValue(judge.card) > self:getUseValue(cards[1]) then
+				return "@ZhaixingCard=" .. cards[1]:getId()
 			end
 		end
-
-		local equips = who:getCards("e")
-		if not target and not equips:isEmpty() then
-			for _, equip in sgs.qlist(equips) do
-				if equip:inherits("OffensiveHorse") then card = equip break
-				elseif equip:inherits("DefensiveHorse") then card = equip break
-				elseif equip:inherits("Weapon") then card = equip break
-				elseif equip:inherits("Armor") then card = equip break
-				end
-			end
-
-			if card and return_prompt:match("target") then
-				for _, friend in ipairs(self.friends) do
-					if friend == who then
-					elseif friend:getCards("e"):isEmpty() or not self:hasSameEquip(card, friend) then
-						target = friend
-						break
-					end
-				end
-			end
-		end
-	else
-		local equips = who:getCards("e")
-		if equips:isEmpty() then return end
-		for _, equip in sgs.qlist(equips) do
-			if equip:inherits("Armor") then card = equip break
-			elseif equip:inherits("DefensiveHorse") then card = equip break
-			elseif equip:inherits("Weapon") then card = equip break
-			elseif equip:inherits("OffensiveHorse") then card = equip break
-			end
-		end
-
-		if card and return_prompt:match("target") then
-			for _, friend in ipairs(self.friends) do
-				if friend:getCards("e"):isEmpty() or not self:hasSameEquip(card, friend) then
-					target = friend
-					break
-				end
-			end
-		end
+	elseif self:needRetrial(judge) or self:getUseValue(judge.card) > self:getUseValue(sgs.Sanguosha:getCard(card_id)) then
+		return "@ZhaixingCard=" .. card_id
 	end
-
-	if return_prompt == "card" then return card
-	elseif return_prompt == "target" then return target
-	else
-		return (card and target)
-	end
+	return "."
 end
 
-sgs.ai_skill_cardchosen.qiaobian = function(self, who, flags)
-	if flags == "ej" then
-		return card_for_qiaobian(self, who, "card")
-	end
-end
 
 sgs.ai_skill_playerchosen.qiaobian = function(self, targets)
 	local who = self.room:getTag("QiaobianTarget"):toPlayer()

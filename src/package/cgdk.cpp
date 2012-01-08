@@ -506,8 +506,8 @@ public:
         return  pattern == "@zhaixing";
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack();
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -533,7 +533,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         JudgeStar judge = data.value<JudgeStar>();
-        if(judge->card->getSuit() != Card::Diamond)
+        if(judge->card->getSuit() != Card::Diamond || player->isNude())
             return false;
 
         QStringList prompt_list;
@@ -560,6 +560,59 @@ public:
             room->sendJudgeResult(judge);
         }
         return false;
+    }
+};
+
+class Dalang: public PhaseChangeSkill{
+public:
+    Dalang():PhaseChangeSkill("dalang"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() != Player::Judge)
+            return false;
+        Room *room = player->getRoom();
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *tmp, room->getAllPlayers())
+            if(!tmp->getJudgingArea().isEmpty())
+                targets << tmp;
+        if(targets.isEmpty() || !player->askForSkillInvoke(objectName()))
+            return false;
+        PlayerStar from = room->askForPlayerChosen(player, targets, objectName());
+        if(from->getJudgingArea().isEmpty())
+            return false;
+        while(!from->getJudgingArea().isEmpty()){
+            QList<int> card_ids;
+            foreach(const Card *c, from->getJudgingArea())
+                card_ids << c->getId();
+            room->fillAG(card_ids, player);
+            int card_id = room->askForAG(player, card_ids, true, objectName());
+            if(card_id > -1){
+                const Card *card = Sanguosha->getCard(card_id);
+                const DelayedTrick *trick = DelayedTrick::CastFrom(card);
+                QList<ServerPlayer *> tos;
+                foreach(ServerPlayer *p, room->getAlivePlayers()){
+                    if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName()))
+                        tos << p;
+                }
+                if(trick && trick->isVirtualCard())
+                    delete trick;
+                room->setTag("DalangTarget", QVariant::fromValue(from));
+                ServerPlayer *to = room->askForPlayerChosen(player, tos, objectName());
+                if(to)
+                    room->moveCardTo(card, to, Player::Judging);
+                room->removeTag("DalangTarget");
+
+                card_ids.removeOne(card_id);
+
+                //room->takeAG(NULL, card_id);
+            }
+            else
+                break;
+        }
+        player->invoke("clearAG");
+        player->skip(Player::Draw);
+        return true;
     }
 };
 
@@ -599,6 +652,10 @@ CGDKPackage::CGDKPackage()
     General *malin = new General(this, "malin", "kou", 3);
     malin->addSkill(new Lingdi);
     malin->addSkill(new Qiaodou);
+
+    General *tongwei = new General(this, "tongwei", "min", 3);
+    tongwei->addSkill(new Dalang);
+    //tongwei->addSkill(new Qianshui);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();

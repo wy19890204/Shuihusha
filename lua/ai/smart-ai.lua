@@ -3473,8 +3473,8 @@ end
 sgs.lose_equip_skill = ""
 sgs.need_kongcheng = "kongmen"
 sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian"
-sgs.wizard_skill = "butian|shenpan|yixing|yueli|houlue"
-sgs.wizard_harm_skill = "butian|shenpan|yixing"
+sgs.wizard_skill = "zhaixing|butian|shenpan|yixing|yueli|houlue"
+sgs.wizard_harm_skill = "zhaixing|butian|shenpan|yixing"
 
 function SmartAI:hasSkills(skill_names, player)
 	player = player or self.player
@@ -3819,6 +3819,7 @@ dofile "lua/ai/ttxd-ai.lua"
 dofile "lua/ai/bwqz-ai.lua"
 dofile "lua/ai/qlfd-ai.lua"
 dofile "lua/ai/zcyn-ai.lua"
+dofile "lua/ai/cgdk-ai.lua"
 dofile "lua/ai/sp-ai.lua"
 --dofile "lua/ai/god-ai.lua"
 dofile "lua/ai/events-ai.lua"
