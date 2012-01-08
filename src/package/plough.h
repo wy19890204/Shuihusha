@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE Provistore(Card::Suit suit, int number);
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
     virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 

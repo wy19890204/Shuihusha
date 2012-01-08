@@ -742,11 +742,12 @@ public:
                 room->playSkillEffect(objectName());
             while(!card_ids.isEmpty()){
                 int card_id = room->askForAG(shien, card_ids, false, objectName());
-                card_ids.removeOne(card_id);
                 ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
                 if(!target)
                     target = shien;
-                room->takeAG(target, card_id);
+                card_ids.removeOne(card_id);
+                room->broadcastInvoke("clearAG");
+                room->fillAG(card_ids);
             }
             room->broadcastInvoke("clearAG");
         }

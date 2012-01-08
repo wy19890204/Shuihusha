@@ -305,12 +305,12 @@ public:
             //room->obtainCard(zou, card_ids.last());
             room->fillAG(card_ids, zou);
             int card_id = room->askForAG(zou, card_ids, false, objectName());
+            //room->takeAG(zou, card_id);
             card_ids.removeOne(card_id);
-            room->takeAG(zou, card_id);
             int card_id2 = card_ids.first();
             room->throwCard(card_id2);
             room->broadcastInvoke("clearAG");
-            room->moveCardTo(Sanguosha->getCard(card_id), zou, Player::Hand, false);
+            zou->obtainCard(Sanguosha->getCard(card_id));
             room->moveCardTo(Sanguosha->getCard(card_id2), NULL, Player::DrawPile);
             LogMessage log;
             log.type = "#PutCard";

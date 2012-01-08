@@ -127,6 +127,10 @@ bool Provistore::targetFilter(const QList<const Player *> &targets, const Player
     return true;
 }
 
+bool Provistore::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() <= 1;
+}
+
 void Provistore::takeEffect(ServerPlayer *target, bool good) const{
     if(good)
         target->skip(Player::Discard);

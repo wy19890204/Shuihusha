@@ -20,6 +20,12 @@ sgs.ai_skill_invoke["@zhaixing"]=function(self,prompt)
 	elseif self:needRetrial(judge) or self:getUseValue(judge.card) > self:getUseValue(sgs.Sanguosha:getCard(card_id)) then
 		return "@ZhaixingCard=" .. card_id
 	end
+-- zhaixing can draw card
+	for _, card in ipairs(cards) do
+		if card:getSuit() == sgs.Card_Diamond then
+			return "@ZhaixingCard=" .. card:getId()
+		end
+	end
 	return "."
 end
 

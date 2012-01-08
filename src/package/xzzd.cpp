@@ -485,12 +485,11 @@ public:
             room->playSkillEffect(objectName());
 
             while(!card_ids.isEmpty()){
-                int card_id = room->askForAG(hx, card_ids, false, "shelie");
-                card_ids.removeOne(card_id);
+                int card_id = room->askForAG(hx, card_ids, false, "tongxia");
                 ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
                 if(!target)
                     target = hx;
-                room->takeAG(target, card_id);
+                //room->takeAG(target, card_id);
                 const Card *card = Sanguosha->getCard(card_id);
                 if(card->inherits("EquipCard")){
                     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
@@ -498,9 +497,12 @@ public:
                     targets << target;
                     equipped->use(room, hx, targets);
                 }
-                else{
-                    room->moveCardTo(card, target, Player::Hand);
-                }
+                else
+                    target->obtainCard(card);
+
+                card_ids.removeOne(card_id);
+                room->broadcastInvoke("clearAG");
+                room->fillAG(card_ids);
             }
             room->broadcastInvoke("clearAG");
 
