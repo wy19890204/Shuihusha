@@ -364,6 +364,14 @@ public:
         events << Dying;
     }
 
+    static int GetCard(ServerPlayer *from, ServerPlayer *to){
+        int first = to->getEquips().isEmpty()?
+                    to->getRandomHandCardId():
+                    from->getRoom()->askForCardChosen(from, to, "he", "lihun");
+        from->obtainCard(Sanguosha->getCard(first));
+        return first;
+    }
+
     virtual bool trigger(TriggerEvent , ServerPlayer *shun, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
         DamageStruct *damage = dying.damage;
@@ -371,13 +379,13 @@ public:
             Room *room = shun->getRoom();
             room->playSkillEffect(objectName());
             DummyCard *dummy = new DummyCard;
-            int first = room->askForCardChosen(shun, damage->from, "he", objectName());
-            shun->obtainCard(Sanguosha->getCard(first));
-            dummy->addSubcard(first);
+            //int first = room->askForCardChosen(shun, damage->from, "he", objectName());
+            //shun->obtainCard(Sanguosha->getCard(first));
+            dummy->addSubcard(GetCard(shun, damage->from));
             if(!damage->from->isNude() && shun->askForSkillInvoke(objectName())){
-                first = room->askForCardChosen(shun, damage->from, "he", objectName());
-                shun->obtainCard(Sanguosha->getCard(first));
-                dummy->addSubcard(first);
+                //first = room->askForCardChosen(shun, damage->from, "he", objectName());
+                //shun->obtainCard(Sanguosha->getCard(first));
+                dummy->addSubcard(GetCard(shun, damage->from));
             }
             ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(damage->from), objectName());
             room->moveCardTo(dummy, target, Player::Hand);

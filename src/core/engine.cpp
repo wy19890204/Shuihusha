@@ -30,10 +30,6 @@
 Engine *Sanguosha = NULL;
 
 extern "C" {
-    Package *NewWind();
-    Package *NewFire();
-    Package *NewMountain();
-    Package *NewTest();
     Package *NewQJWM();
     Package *NewTTXD();
     Package *NewXZDD();
@@ -41,8 +37,10 @@ extern "C" {
     Package *NewQLFD();
     Package *NewZCYN();
     Package *NewCGDK();
+    Package *NewYBYT();
     Package *NewSP();
     Package *NewGod();
+    Package *NewTest();
 
     Package *NewStandardCard();
     Package *NewPlough();
@@ -81,9 +79,9 @@ Engine::Engine()
     addPackage(NewZCYN());
     addPackage(NewQLFD());
     addPackage(NewCGDK());
+    addPackage(NewYBYT());
     addPackage(NewSP());
     addPackage(NewGod());
-    //addPackage(NewMountain());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());

@@ -50,6 +50,7 @@ SOURCES += src/main.cpp \
 	src/package/qlfd.cpp \
 	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
+	src/package/ybyt.cpp \
 	src/package/sp.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
@@ -126,6 +127,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/qlfd.h \
 	src/package/zcyn.h \
 	src/package/cgdk.h \
+	src/package/ybyt.h \
 	src/package/sp.h \
 	src/package/god.h \
 	src/package/joy.h \

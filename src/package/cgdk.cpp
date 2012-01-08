@@ -313,8 +313,9 @@ public:
             return false;
 
         LogMessage log;
-        log.type = "#WudaoWake";
+        log.type = "#WakeUp";
         log.from = fanrui;
+        log.arg = objectName();
         room->sendLog(log);
         room->playSkillEffect(objectName());
         room->broadcastInvoke("animate", "lightbox:$wudao:5000");
