@@ -5,6 +5,7 @@ return {
 
 	["#_panjinlian"] = "墙头杏",
 	["panjinlian"] = "潘金莲",
+	["designer:panjinlian"] = "烨子&凌天翼",
 	["yushui"] = "鱼水",
 	[":yushui"] = "出牌阶段，你可弃置一张红桃牌并指定一名已受伤的男性角色：你和该角色各回复1点体力，各摸两张牌并将各自的武将牌翻面。每回合限一次。",
 	["zhensha"] = "鸩杀",
@@ -51,6 +52,7 @@ return {
 
 	["#_linniangzi"] = "腊梅傲雪",
 	["linniangzi"] = "林娘子",
+	["designer:linniangzi"] = "烨子&大Ｒ",
 	["cv:linniangzi"] = "蒲小猫",
 	["shouwang"] = "守望",
 	[":shouwang"] = "出牌阶段，你可以将一张【杀】交给任一男性角色，然后你摸一张牌或令该角色摸一张牌。每回合限一次。",
@@ -137,6 +139,7 @@ return {
 
 	["#_jincuilian"] = "四叶草",
 	["jincuilian"] = "金翠莲",
+	["designer:jincuilian"] = "烨子&仙道",
 	["cv:jincuilian"] = "Paddy（№第④声）",
 	["baoen"] = "报恩",
 	[":baoen"] = "其他角色每令你回复1点体力，你可以弃置一张牌，令该角色摸X张牌，X为该角色的当前体力值且至多为3。",

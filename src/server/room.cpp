@@ -226,20 +226,24 @@ void Room::updateStateItem(){
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+    ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.EnableEndless){
         if(victim->getMaxHP() <= 0)
             this->setPlayerProperty(victim, "maxhp", victim->getGeneral()->getMaxHp());
         if(victim->getHp() <= 0)
             this->setPlayerProperty(victim, "hp", 1);
+        if(killer && !reason->to->isKongcheng())
+            killer->gainMark("@endless", qMin(3, reason->to->getHandcardNum()));
+        if(reason->to->getMark("@endless") > 0)
+            reason->to->loseMark("@endless", reason->to->getMark("@endless") / 2);
         return;
     }
     if(victim->getHp() > 0 && victim->hasSkill("ubunf"))
         return;
-    ServerPlayer *killer = reason ? reason->from : NULL;
+
     if(Config.ContestMode && killer){
         killer->addVictim(victim);
     }
-
     thread->trigger(PreDeath, victim);
 
     victim->setAlive(false);
@@ -1979,8 +1983,11 @@ void Room::damage(const DamageStruct &damage_data){
 
     thread->trigger(DamageComplete, damage_data.to, data);
     if(Config.EnableEndless){
-        if(damage_data.from)
+        if(damage_data.from){
             damage_data.from->gainMark("@endless", damage_data.damage);
+            if(damage_data.from != damage_data.to)
+                damage_data.to->loseMark("@endless", damage_data.damage);
+        }
         else
             damage_data.to->gainMark("@endless", damage_data.damage);
     }

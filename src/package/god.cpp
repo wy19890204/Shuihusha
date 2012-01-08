@@ -5,83 +5,21 @@
 #include "settings.h"
 #include "tocheck.h"
 
-class Wuhun: public TriggerSkill{
+class Jinqiang:public TriggerSkill{
 public:
-    Wuhun():TriggerSkill("wuhun"){
-        events << DamageDone;
+    Jinqiang():TriggerSkill("jinqiang"){
+        events << Predamage;
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *xuning, QVariant &data) const{
+        //Room *room = xuning->getRoom();
         DamageStruct damage = data.value<DamageStruct>();
-
-        if(damage.from && damage.from != player){
-            damage.from->gainMark("@nightmare", damage.damage);
-            damage.from->getRoom()->playSkillEffect(objectName(), 1);
-        }
-
-        return false;
-    }
-};
-
-class WuhunRevenge: public TriggerSkill{
-public:
-    WuhunRevenge():TriggerSkill("#wuhun"){
-        events << Death;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill("wuhun");
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *shenguanyu, QVariant &) const{
-        Room *room = shenguanyu->getRoom();
-        QList<ServerPlayer *> players = room->getOtherPlayers(shenguanyu);
-
-        int max = 0;
-        foreach(ServerPlayer *player, players){
-            max = qMax(max, player->getMark("@nightmare"));
-        }
-
-        if(max == 0)
+        if((damage.chain) &&(damage.nature == DamageStruct::Normal)){
+            damage.damage = damage.damage + 1;
+            data = QVariant::fromValue(damage);
             return false;
-
-        QList<ServerPlayer *> foes;
-        foreach(ServerPlayer *player, players){
-            if(player->getMark("@nightmare") == max)
-                foes << player;
         }
-
-        if(foes.isEmpty())
-            return false;
-
-        ServerPlayer *foe;
-        if(foes.length() == 1)
-            foe = foes.first();
-        else
-            foe = room->askForPlayerChosen(shenguanyu, foes, "wuhun");
-
-        JudgeStruct judge;
-        judge.pattern = QRegExp("(Peach|GodSalvation):(.*):(.*)");
-        judge.good = true;
-        judge.reason = "wuhun";
-        judge.who = foe;
-
-        room->judge(judge);
-
-        if(judge.isBad()){
-            LogMessage log;
-            log.type = "#WuhunRevenge";
-            log.from = shenguanyu;
-            log.to << foe;
-            log.arg = QString::number(max);
-            room->sendLog(log);
-
-            room->killPlayer(foe);
-            room->playSkillEffect("wuhun", 2);
-        }else
-            room->playSkillEffect("wuhun", 3);
-
         return false;
     }
 };
