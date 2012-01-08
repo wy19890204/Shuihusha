@@ -604,8 +604,8 @@ public:
                 room->removeTag("DalangTarget");
 
                 card_ids.removeOne(card_id);
-
-                //room->takeAG(NULL, card_id);
+                player->invoke("clearAG");
+                room->fillAG(card_ids, player);
             }
             else
                 break;
@@ -613,6 +613,33 @@ public:
         player->invoke("clearAG");
         player->skip(Player::Draw);
         return true;
+    }
+};
+
+class Qianshui: public TriggerSkill{
+public:
+    Qianshui():TriggerSkill("qianshui"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && !effect.from->getWeapon() &&
+            (effect.card->inherits("Assassinate") || effect.card->inherits("Slash"))){
+            LogMessage log;
+            log.type = "#Foyuan";
+            log.from = effect.from;
+            Room *room = player->getRoom();
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
     }
 };
 
@@ -655,7 +682,7 @@ CGDKPackage::CGDKPackage()
 
     General *tongwei = new General(this, "tongwei", "min", 3);
     tongwei->addSkill(new Dalang);
-    //tongwei->addSkill(new Qianshui);
+    tongwei->addSkill(new Qianshui);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();
