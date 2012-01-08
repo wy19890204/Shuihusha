@@ -318,7 +318,7 @@ public:
         log.arg = objectName();
         room->sendLog(log);
         room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$wudao:5000");
+        room->broadcastInvoke("animate", "lightbox:$wudao:2500");
         room->getThread()->delay(2500);
 
         room->drawCards(fanrui, 2);
@@ -721,6 +721,46 @@ public:
     }
 };
 
+class Duoming: public TriggerSkill{
+public:
+    Duoming(): TriggerSkill("duoming"){
+        events << Damage;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.card && damage.card->inherits("Slash") &&
+            damage.to->isKongcheng() && player->askForSkillInvoke(objectName())){
+            Room *room = damage.to->getRoom();
+            room->loseMaxHp(damage.to);
+        }
+        return false;
+    }
+};
+
+class Moucai: public MasochismSkill{
+public:
+    Moucai():MasochismSkill("moucai"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        PlayerStar lili = room->findPlayerBySkillName(objectName());
+        if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
+            const Card *wolegequ = player->getRandomHandCard();
+            lili->obtainCard(wolegequ);
+        }
+    }
+};
+
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -765,6 +805,10 @@ CGDKPackage::CGDKPackage()
     General *zhengtianshou = new General(this, "zhengtianshou", "kou", 3);
     zhengtianshou->addSkill(new Wugou);
     zhengtianshou->addSkill(new Qiaojiang);
+
+    General *lili = new General(this, "lili", "kou", 3);
+    lili->addSkill(new Duoming);
+    lili->addSkill(new Moucai);
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();

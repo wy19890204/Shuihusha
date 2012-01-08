@@ -34,9 +34,8 @@ void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
         effect.from->drawCards(1);
         effect.to->drawCards(1);
     }
-    else{
-        effect.from->acquireSkill("yuanpei-slash");
-    }
+    else
+        room->acquireSkill(effect.from, "yuanpei_slash");
 }
 
 class Yuanpei: public ZeroCardViewAsSkill{
@@ -55,7 +54,7 @@ public:
 
 class YuanpeiS1ash:public OneCardViewAsSkill{
 public:
-    YuanpeiS1ash():OneCardViewAsSkill("yuanpei-slash"){
+    YuanpeiS1ash():OneCardViewAsSkill(""){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -81,14 +80,14 @@ public:
 
 class YuanpeiSlash: public PhaseChangeSkill{
 public:
-    YuanpeiSlash():PhaseChangeSkill("yuanpei-slash"){
+    YuanpeiSlash():PhaseChangeSkill("yuanpei_slash"){
         view_as_skill = new YuanpeiS1ash;
     }
 
     virtual bool onPhaseChange(ServerPlayer *p) const{
         if(p->getPhase() == Player::NotActive){
-            p->getRoom()->detachSkillFromPlayer(p, "yuanpei-slash");
-            p->loseSkill("yuanpei-slash");
+            p->getRoom()->detachSkillFromPlayer(p, "yuanpei_slash");
+            p->loseSkill("yuanpei_slash");
         }
         return false;
     }
@@ -104,7 +103,7 @@ public:
         return PhaseChangeSkill::triggerable(target)
                 && target->getMark("mengshi") == 0
                 && target->getPhase() == Player::Start
-                && target->getHandcardNum() > target->getAttackRange();
+                && target->getHandcardNum() < target->getAttackRange();
     }
 
     virtual bool onPhaseChange(ServerPlayer *qyyy) const{
@@ -116,7 +115,7 @@ public:
         log.arg = objectName();
         room->sendLog(log);
         room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$mengshi:5000");
+        room->broadcastInvoke("animate", "lightbox:$mengshi:1500");
         room->getThread()->delay(1500);
 
         qyyy->drawCards(3);
