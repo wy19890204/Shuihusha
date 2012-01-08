@@ -226,6 +226,13 @@ void Room::updateStateItem(){
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+    if(Config.EnableEndless){
+        if(victim->getMaxHP() <= 0)
+            this->setPlayerProperty(victim, "maxhp", victim->getGeneral()->getMaxHp());
+        if(victim->getHp() <= 0)
+            this->setPlayerProperty(victim, "hp", 1);
+        return;
+    }
     if(victim->getHp() > 0 && victim->hasSkill("ubunf"))
         return;
     ServerPlayer *killer = reason ? reason->from : NULL;
@@ -982,12 +989,28 @@ void Room::swapPile(){
 
     int times = tag.value("SwapPile", 0).toInt();
     tag.insert("SwapPile", ++times);
-    if(times == 6)
-        gameOver(".");
-    if(mode == "04_1v3"){
-        int limit = Config.BanPackages.contains("tocheck") ? 3 : 2;
-        if(times == limit)
+    if(Config.EnableEndless){
+        int time = Config.value("EndlessTimes", 3).toInt();
+        if(times == time){
+            QList<int> winners;
+            foreach(ServerPlayer *player, getAllPlayers())
+                winners << player->getMark("@endless");
+            qSort(winners.begin(), winners.end(), qGreater<int>());
+            QStringList winner_names;
+            foreach(ServerPlayer *player, getAllPlayers())
+                if(player->getMark("@endless") == winners.first())
+                    winner_names << player->objectName();
+            gameOver(winner_names.join("+"));
+        }
+    }
+    else{
+        if(times == 6)
             gameOver(".");
+        if(mode == "04_1v3"){
+            int limit = Config.BanPackages.contains("tocheck") ? 3 : 2;
+            if(times == limit)
+                gameOver(".");
+        }
     }
 
     qSwap(draw_pile, discard_pile);
@@ -1809,6 +1832,9 @@ void Room::useCard(const CardUseStruct &card_use, bool add_history){
 void Room::loseHp(ServerPlayer *victim, int lose){
     QVariant data = lose;
     thread->trigger(HpLost, victim, data);
+    if(Config.EnableEndless){
+        victim->gainMark("@endless", lose);
+    }
 }
 
 void Room::loseMaxHp(ServerPlayer *victim, int lose){
@@ -1952,6 +1978,12 @@ void Room::damage(const DamageStruct &damage_data){
         return;
 
     thread->trigger(DamageComplete, damage_data.to, data);
+    if(Config.EnableEndless){
+        if(damage_data.from)
+            damage_data.from->gainMark("@endless", damage_data.damage);
+        else
+            damage_data.to->gainMark("@endless", damage_data.damage);
+    }
 }
 
 void Room::sendDamageLog(const DamageStruct &data){

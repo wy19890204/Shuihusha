@@ -155,11 +155,17 @@ QWidget *ServerDialog::createAdvancedTab(){
     disable_chat_checkbox->setChecked(Config.DisableChat);
 
     second_general_checkbox = new QCheckBox(tr("Enable second general"));
+    second_general_checkbox->setChecked(Config.Enable2ndGeneral);
 
-    scene_checkbox  = new QCheckBox(tr("Enable Scene"));
-
+    scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
-    //changjing
+
+    endless_checkbox  = new QCheckBox(tr("Endless Mode"));
+    endless_checkbox->setChecked(Config.EnableEndless);
+    endless_timebox = new QSpinBox;
+    endless_timebox->setRange(1, 100);
+    endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
+    endless_timebox->setToolTip(tr("This box set the swap times"));
 
     max_hp_scheme_combobox = new QComboBox;
     max_hp_scheme_combobox->addItem(tr("Sum - 3"));
@@ -168,9 +174,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     max_hp_scheme_combobox->setCurrentIndex(Config.MaxHpScheme);
     max_hp_scheme_combobox->setEnabled(Config.Enable2ndGeneral);
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setEnabled(bool)));
-
-    second_general_checkbox->setChecked(Config.Enable2ndGeneral);
-
 
     basara_checkbox = new QCheckBox(tr("Enable Basara"));
     basara_checkbox->setChecked(Config.EnableBasara);
@@ -207,13 +210,13 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addWidget(contest_mode_checkbox);
     layout->addWidget(forbid_same_ip_checkbox);
     layout->addWidget(disable_chat_checkbox);
-    layout->addWidget(free_choose_checkbox);
-    layout->addWidget(free_assign_checkbox);
+    layout->addLayout(HLay(free_choose_checkbox, free_assign_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addLayout(HLay(second_general_checkbox, banpair_button));
     layout->addLayout(HLay(new QLabel(tr("Max HP scheme")), max_hp_scheme_combobox));
     layout->addWidget(basara_checkbox);
     layout->addWidget(scene_checkbox);		//changjing
+    layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
@@ -724,6 +727,7 @@ bool ServerDialog::config(){
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
     Config.EnableScene = scene_checkbox->isChecked();		//changjing
+    Config.EnableEndless = endless_checkbox->isChecked();
     Config.EnableBasara= basara_checkbox->isChecked() && basara_checkbox->isEnabled();
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
     Config.AnnounceIP = announce_ip_checkbox->isChecked();
@@ -753,6 +757,8 @@ bool ServerDialog::config(){
     Config.setValue("DisableChat", Config.DisableChat);
     Config.setValue("Enable2ndGeneral", Config.Enable2ndGeneral);
     Config.setValue("EnableScene", Config.EnableScene);	//changjing
+    Config.setValue("EnableEndless", Config.EnableEndless);
+    Config.setValue("EndlessTimes", endless_timebox->value());
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
     Config.setValue("EnableAI", Config.EnableAI);

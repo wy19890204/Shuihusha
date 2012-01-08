@@ -14,8 +14,9 @@ struct ServerInfoStruct{
     int OperationTimeout;
     QStringList Extensions;
     bool FreeChoose;
-    bool Enable2ndGeneral;   
+    bool Enable2ndGeneral;
     bool EnableScene;
+    bool EnableEndless;
     bool EnableBasara;
     bool EnableAI;
     bool DisableChat;
@@ -44,6 +45,7 @@ private:
     QLabel *player_count_label;
     QLabel *two_general_label;
     QLabel *scene_label;
+    QLabel *endless_label;
     QLabel *max_hp_label;
     QLabel *free_choose_label;
     QLabel *enable_ai_label;

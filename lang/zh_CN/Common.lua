@@ -122,6 +122,9 @@ return {
 	["ccw"] = "逆时针",
 	["#TrickDirection"] = "%from 选择了 %arg 作为锦囊的顺序",
 
+-- endless
+	["endlessmode"] = "无尽模式",
+
 -- hulao
 	["hulaopass"] = "虎牢关模式",
 	["shenlvbu1"] = "凌天翼",
