@@ -80,6 +80,7 @@ return {
 
 	["#_taozongwang"] = "九尾龟",
 	["taozongwang"] = "陶宗旺",
+	["coder:taozongwang"] = "太阳神上、宇文天启",
 	["qiaogong"] = "巧工",
 	[":qiaogong"] = "出牌阶段，你可以选择两名角色，交换他们装备区里的所有牌。以此法交换的装备牌数差不能超过X（X为你已损失的体力值）。每回合限一次。",
 	["#QiaogongSwap"] = "%from 交换了 %to 之间的装备",
@@ -90,6 +91,7 @@ return {
 	["#_baisheng"] = "白日鼠",
 	["baisheng"] = "白胜",
 	["cv:baisheng"] = "声声melody猎狐",
+	["coder:baisheng"] = "太阳神上",
 	["menghan"] = "蒙汗",
 	[":menghan"] = "出牌阶段，你可以将你的任一黑桃牌当【迷】使用；你使用【迷】时可以额外指定一名角色。",
 	["shudan"] = "鼠胆",
@@ -121,7 +123,7 @@ return {
 
 	["#_tongguanf"] = "广阳郡王",
 	["tongguanf"] = "童公公",
-	["cv:tongguanf"] = "烨子",
+	["cv:tongguanf"] = "椰子",
 	["yan"] = "阉",
 
 	["#_wangdingliu"] = "活闪婆",

@@ -3,43 +3,55 @@
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
-	self:sort(self.friends_noself, "handcard")
+	use.card = drivolt
+	self:sort(self.enemies, "hp")
+	if self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
+		if use.to then use.to:append(self.enemies[1]) end
+		return
+	end
 	for _, friend in ipairs(self.friends_noself) do
 		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
-			use.card = drivolt
-			if use.to then
-				use.to:append(friend)
-			end
+			if use.to then use.to:append(friend) end
 			return
 		end
 	end
-	self:sort(self.enemies, "hp")
 	for _, enemy in ipairs(self.enemies) do
---		if not self:hasSkills(sgs.masochism_skill, enemy) then
-		if enemy:getKingdom() ~= self.player:getKingdom() then
-			use.card = drivolt
-			if use.to then
-				use.to:append(enemy)
-			end
+		if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
+			if use.to then use.to:append(enemy) end
 			return
 		end
 	end
-	return "."
+	local players = {}
+	for _, player in ipairs(sgs.QList2Table(self.room:getOtherPlayers(self.player))) do
+		if player:getKingdom() ~= self.player:getKingdom() then table.insert(players, player) end
+	end
+	local r = math.random(1, #players)
+	if use.to then use.to:append(players[r]) end
 end
 
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
 --	if self.player:hasSkill("wuyan") then return end
+	local targets = {}
+	if #self.friends_noself > 0 then
+		self:sort(self.friends_noself, "handcard")
+		table.insert(targets, self.friends_noself[#self.friends_noself])
+	end
+	if #self.enemies > 0 then
+		self:sort(self.enemies, "handcard")
+		table.insert(targets, self.enemies[#self.enemies])
+	end
 	use.card = wiretap
 	if use.to then
-		use.to:append(self.player:getNextAlive())
+		local r = math.random(1, 2)
+		use.to:append(targets[r])
 	end
 end
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
 --	if self.player:hasSkill("wuyan") then return end
-	self:sort(self.enemies, "threat")
+	if not self.enemies[1] then return end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			use.card = ass
@@ -49,9 +61,21 @@ function SmartAI:useCardAssassinate(ass, use)
 			return
 		end
 	end
+	self:sort(self.enemies, "hp")
+	local target
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:hasFlag("ecst") or
+			(not self:isEquip("EightDiagram", enemy) and enemy:getHandcardNum() < 6) then
+			target = enemy
+		end
+	end
 	use.card = ass
 	if use.to then
-		use.to:append(self.enemies[1])
+		if target then
+			use.to:append(target)
+		else
+			use.to:append(self.enemies[1])
+		end
 	end
 end
 
@@ -102,14 +126,17 @@ end
 -- ji cao tun liang
 function SmartAI:useCardProvistore(provistore, use)
 --	if self.player:hasSkill("wuyan") then return end
-	self:sort(self.friends, "hp")
+	use.card = provistore
 	for _, friend in ipairs(self.friends) do
-		if not friend:containsTrick("provistore") then
-			use.card = assassinate
+		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 then
 			if use.to then
 				use.to:append(friend)
 			end
 			return
 		end
+	end
+	self:sort(self.friends, "hp")
+	if use.to then
+		use.to:append(self.friends[1])
 	end
 end

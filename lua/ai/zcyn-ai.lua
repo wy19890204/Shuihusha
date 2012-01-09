@@ -52,8 +52,9 @@ sgs.ai_skill_playerchosen["hengchong"] = function(self, targets)
 	return targetlist[1]
 end
 
--- tuzai
+-- tuzai&longjiao
 sgs.ai_skill_invoke["tuzai"] = true
+sgs.ai_skill_invoke["longjiao"] = true
 
 -- cihu
 sgs.ai_skill_invoke["@cihu"] = function(self, prompt)

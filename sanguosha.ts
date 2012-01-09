@@ -2881,7 +2881,7 @@
     <message>
         <location filename="src/server/server.cpp" line="163"/>
         <source>Endless Mode</source>
-        <translation>开启无尽模式</translation>
+        <translation>无尽模式</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="168"/>
@@ -2891,7 +2891,7 @@
     <message>
         <location filename="src/server/server.cpp" line="178"/>
         <source>Enable Basara</source>
-        <translation>启用暗将模式</translation>
+        <translation>暗将模式</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="341"/>
@@ -2966,12 +2966,12 @@
     <message>
         <location filename="src/server/server.cpp" line="157"/>
         <source>Enable second general</source>
-        <translation>启用双将</translation>
+        <translation>双将模式</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="160"/>
         <source>Enable Scene</source>
-        <translation>启用场景模式</translation>
+        <translation>场景模式</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="171"/>
