@@ -285,7 +285,7 @@ public:
 class Longjiao:public TriggerSkill{
 public:
     Longjiao():TriggerSkill("longjiao"){
-        events << CardEffected;
+        events << CardUsed;
         frequency = Frequent;
     }
 
@@ -293,13 +293,20 @@ public:
         return 3;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *zou, QVariant &data) const{
-        Room *room = zou->getRoom();
-        CardEffectStruct effect = data.value<CardEffectStruct>();
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *zou = room->findPlayerBySkillName(objectName());
+        if(!zou)
+            return false;
+        CardUseStruct effect = data.value<CardUseStruct>();
         if(!effect.card->isNDTrick())
             return false;
-
-        if(room->askForSkillInvoke(zou, objectName(), data)){
+        if((effect.to.contains(zou) || effect.card->inherits("AOE") || effect.card->inherits("GlobalEffect"))
+            && room->askForSkillInvoke(zou, objectName(), data)){
             QList<int> card_ids = room->getNCards(2);
             //room->obtainCard(zou, card_ids.first());
             //room->obtainCard(zou, card_ids.last());
