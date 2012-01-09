@@ -286,7 +286,6 @@ class Longjiao:public TriggerSkill{
 public:
     Longjiao():TriggerSkill("longjiao"){
         events << CardUsed;
-        frequency = Frequent;
     }
 
     virtual int getPriority() const{
@@ -303,27 +302,24 @@ public:
         if(!zou)
             return false;
         CardUseStruct effect = data.value<CardUseStruct>();
-        if(!effect.card->isNDTrick())
-            return false;
-        if((effect.to.contains(zou) || effect.card->inherits("AOE") || effect.card->inherits("GlobalEffect"))
-            && room->askForSkillInvoke(zou, objectName(), data)){
-            QList<int> card_ids = room->getNCards(2);
-            //room->obtainCard(zou, card_ids.first());
-            //room->obtainCard(zou, card_ids.last());
+        bool caninvoke = false;
+        if(effect.card->isNDTrick()){
+            if(effect.to.contains(zou))
+                caninvoke = true; //指定自己为目标
+            //if(effect.card->inherits("GlobalEffect"))
+            //    caninvoke = true; //指定所有人为目标
+            //if(effect.card->inherits("AOE") && effect.from != zou)
+            //    caninvoke = true; //其他人使用的AOE
+            if(effect.from == zou && effect.to.isEmpty() && effect.card->inherits("ExNihilo"))
+                caninvoke = true; //自己使用的无中生有
+        }
+        if(caninvoke && room->askForSkillInvoke(zou, objectName(), data)){
+            zou->drawCards(2);
+            QList<int> card_ids = zou->handCards().mid(zou->getHandcardNum() - 2);
             room->fillAG(card_ids, zou);
             int card_id = room->askForAG(zou, card_ids, false, objectName());
-            //room->takeAG(zou, card_id);
-            card_ids.removeOne(card_id);
-            int card_id2 = card_ids.first();
-            room->throwCard(card_id2);
             room->broadcastInvoke("clearAG");
-            zou->obtainCard(Sanguosha->getCard(card_id));
-            room->moveCardTo(Sanguosha->getCard(card_id2), NULL, Player::DrawPile);
-            LogMessage log;
-            log.type = "#PutCard";
-            log.from = zou;
-            log.arg = QString::number(1);
-            room->sendLog(log);
+            room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
         }
         return false;
     }

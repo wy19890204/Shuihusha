@@ -12,11 +12,17 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *xuning, QVariant &data) const{
-        //Room *room = xuning->getRoom();
+    virtual bool trigger(TriggerEvent, ServerPlayer *xuning, QVariant &data) const{
+        Room *room = xuning->getRoom();
         DamageStruct damage = data.value<DamageStruct>();
-        if((damage.chain) &&(damage.nature == DamageStruct::Normal)){
-            damage.damage = damage.damage + 1;
+        if(xuning != damage.to && damage.chain && damage.nature == DamageStruct::Normal){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = xuning;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            damage.damage ++;
             data = QVariant::fromValue(damage);
             return false;
         }

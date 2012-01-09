@@ -166,6 +166,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     endless_timebox->setRange(1, 100);
     endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
     endless_timebox->setToolTip(tr("This box set the swap times"));
+    endless_timebox->setVisible(false);
+    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
 
     max_hp_scheme_combobox = new QComboBox;
     max_hp_scheme_combobox->addItem(tr("Sum - 3"));

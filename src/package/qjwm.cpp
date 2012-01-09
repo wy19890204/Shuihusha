@@ -114,9 +114,8 @@ public:
             int count = 0;
             while(!card_ids.isEmpty() && count < 2){
                 int card_id = room->askForAG(liying, card_ids, false, objectName());
-                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile);
+                room->throwCard(card_id);
                 card_ids.removeOne(card_id);
-                //room->takeAG(NULL, card_id);
 
                 // throw the rest cards that matches the same suit
                 const Card *card = Sanguosha->getCard(card_id);
@@ -125,9 +124,8 @@ public:
                 while(itor.hasNext()){
                     const Card *c = Sanguosha->getCard(itor.next());
                     if(c->getSuit() == suit){
-                        room->moveCardTo(c, NULL, Player::DiscardedPile);
+                        room->throwCard(itor.next());
                         itor.remove();
-                        //room->takeAG(NULL, c->getId());
                     }
                 }
                 count ++;
