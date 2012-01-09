@@ -773,6 +773,7 @@ class Heidian: public TriggerSkill{
 public:
     Heidian():TriggerSkill("heidian"){
         events << Damaged << CardLost;
+        frequency = Compulsory;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -795,19 +796,21 @@ public:
 
                 room->playSkillEffect(objectName());
                 room->sendLog(log);
-                room->throwCard(room->askForCardShow(damage.from, sun, objectName()));
+                if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
+                    room->throwCard(damage.from->getRandomHandCardId());
+                //room->throwCard(room->askForCardShow(damage.from, sun, objectName()));
             }
         }
         else if(v == CardLost){
             if(player == sun)
                 return false;
-            if(player->isKongcheng() && !player->getEquips().isEmpty()){
+            if(player->isKongcheng()){
                 CardMoveStar move = data.value<CardMoveStar>();
                 if(move->from_place == Player::Hand){
                     room->playSkillEffect(objectName());
                     room->sendLog(log);
 
-                    const Card *card = room->askForCard(player, ".Equi", "@heidian", data);
+                    const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data);
                     if(card)
                         sun->obtainCard(card);
                     else

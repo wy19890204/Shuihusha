@@ -30,84 +30,61 @@ public:
     }
 };
 
-class Qinyin: public TriggerSkill{
+class Jiebei: public TriggerSkill{
 public:
-    Qinyin():TriggerSkill("qinyin"){
-        events << CardLost << PhaseChange;
-        default_choice = "down";
+    Jiebei():TriggerSkill("jiebei"){
+        events << CardLost << FinishJudge;
+        frequency = Frequent;
     }
 
-    void perform(ServerPlayer *shenzhouyu) const{
-        Room *room = shenzhouyu->getRoom();
-        QString result = room->askForChoice(shenzhouyu, objectName(), "up+down");
-        QList<ServerPlayer *> all_players = room->getAllPlayers();
-        if(result == "up"){
-            room->playSkillEffect(objectName(), 2);
-            foreach(ServerPlayer *player, all_players){
-                RecoverStruct recover;
-                recover.who = shenzhouyu;
-                room->recover(player, recover);
-            }
-        }else if(result == "down"){
-            foreach(ServerPlayer *player, all_players){
-                room->loseHp(player);
-            }
-
-            int index = 1;
-            if(room->findPlayer("caocao+shencaocao+shencc"))
-                index = 3;
-
-            room->playSkillEffect(objectName(), index);
-        }
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *shenzhouyu, QVariant &data) const{
-        if(shenzhouyu->getPhase() != Player::Discard)
-            return false;
-
-        if(event == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->to_place == Player::DiscardedPile){
-                shenzhouyu->addMark("qinyin");
-                if(shenzhouyu->getMark("qinyin") == 2){
-                    if(shenzhouyu->askForSkillInvoke(objectName()))
-                        perform(shenzhouyu);
-                }
-            }
-        }else if(event == PhaseChange){
-            shenzhouyu->setMark("qinyin", 0);
-        }
-
-        return false;
-    }
-};
-
-class Wumou:public TriggerSkill{
-public:
-    Wumou():TriggerSkill("wumou"){
-        frequency = Compulsory;
-        events << CardUsed << CardResponsed;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getRoom()->findPlayerBySkillName(objectName());
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        CardStar card = NULL;
-        if(event == CardUsed){
-            CardUseStruct use = data.value<CardUseStruct>();
-            card = use.card;
-        }else if(event == CardResponsed)
-            card = data.value<CardStar>();
-
-        if(card->inherits("TrickCard") && !card->inherits("DelayedTrick")){
-            Room *room = player->getRoom();
-            room->playSkillEffect(objectName());
-
-            int num = player->getMark("@wrath");
-            if(num >= 1 && room->askForChoice(player, objectName(), "discard+losehp") == "discard"){
-                player->loseMark("@wrath");
-            }else
-                room->loseHp(player);
+        Room *room = player->getRoom();
+        ServerPlayer *xuning = room->findPlayerBySkillName(objectName());
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            const Card *armor = Sanguosha->getCard(move->card_id);
+            if(!armor->inherits("Armor"))
+                return false;
+            if(move->from_place == Player::Equip && move->from == xuning){
+                if(room->askForSkillInvoke(xuning, objectName())){
+                    room->playSkillEffect(objectName());
+                    xuning->drawCards(2);
+                }
+            }else if(room->getCardPlace(move->card_id) == Player::DiscardedPile){
+                QList<ServerPlayer *> tos;
+                foreach(ServerPlayer *p, room->getOtherPlayers(move->from)){
+                    if(!p->getArmor())
+                        tos << p;
+                }
+                if(!tos.isEmpty() && room->askForDiscard(xuning, objectName(), 1, false, false)){
+                    xuning->obtainCard(armor);
+                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
+                    room->moveCardTo(armor, to, Player::Equip);
+                }
+                return false;
+            }
+            return false;
+        }else if(event == FinishJudge){
+            JudgeStar judge = data.value<JudgeStar>();
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile && judge->card->inherits("Armor")){
+                QList<ServerPlayer *> tos;
+                foreach(ServerPlayer *p, room->getAllPlayers()){
+                    if(!p->getArmor())
+                        tos << p;
+                }
+                if(!tos.isEmpty() && room->askForDiscard(xuning, objectName(), 1, false, false)){
+                    xuning->obtainCard(judge->card);
+                    //tos.removeOne(move->from);
+                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
+                    room->moveCardTo(judge->card, to, Player::Equip);
+                }
+                return false;
+            }
         }
-
         return false;
     }
 };
@@ -1179,23 +1156,11 @@ GodPackage::GodPackage()
     shentest->addSkill(new Shenfen);
     shentest->addSkill(new Wuqian);
     addMetaObject<WuqianCard>();
-/*
-    General *shenzhugeliang = new General(this, "shenzhugeliang", "god", 3);
-    shenzhugeliang->addSkill(new Qixing);
-    shenzhugeliang->addSkill(new QixingStart);
-    shenzhugeliang->addSkill(new Dawu);
 
-    related_skills.insertMulti("qixing", "#qixing-ask");
-    related_skills.insertMulti("qixing", "#qixing-clear");
+    General *shenxuning = new General(this, "shenxuning", "god");
+    shenxuning->addSkill(new Jiebei);
+    shenxuning->addSkill(new Jinqiang);
 
-    General *shenlubu = new General(this, "shenlubu", "god", 5);
-    shenlubu->addSkill(new Kuangbao);
-    shenlubu->addSkill(new MarkAssignSkill("@wrath", 2));
-    shenlubu->addSkill(new Wumou);
-    addMetaObject<MediumYeyanCard>();
-    addMetaObject<SmallYeyanCard>();
-    addMetaObject<WushenSlash>();
-    addMetaObject<DawuCard>();*/
     addMetaObject<FeihuangCard>();
     addMetaObject<MeiyuCard>();
 }
