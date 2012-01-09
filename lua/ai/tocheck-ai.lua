@@ -2,19 +2,27 @@
 
 -- tie suo lian huan
 function SmartAI:useCardIronChain(card, use)
+	local mengkang = self.room:findPlayerBySkillName("mengchong")
+	local mk = mengkang and self:isFriend(mengkang)
 	local targets = {}
 	self:sort(self.friends,"defense")
 	for _, friend in ipairs(self.friends) do
-		if friend:isChained() then
+		if friend:isChained() and not mk then
+			table.insert(targets, friend)
+		elseif not friend:isChained() and mk then
 			table.insert(targets, friend)
 		end
 	end
 
 	self:sort(self.enemies,"defense")
 	for _, enemy in ipairs(self.enemies) do
-		if not enemy:isChained() and not self.room:isProhibited(self.player, enemy, card) and not enemy:hasSkill("danlao")
+		if not self.room:isProhibited(self.player, enemy, card) and not enemy:hasSkill("longjiao")
 			and self:hasTrickEffective(card, enemy) and not (self:objectiveLevel(enemy) <= 3) then
-			table.insert(targets, enemy)
+			if not enemy:isChained() and not mk then
+				table.insert(targets, enemy)
+			elseif enemy:isChained() and mk then
+				table.insert(targets, enemy)
+			end
 		end
 	end
 

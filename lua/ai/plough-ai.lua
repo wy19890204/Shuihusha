@@ -25,6 +25,10 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	for _, player in ipairs(sgs.QList2Table(self.room:getOtherPlayers(self.player))) do
 		if player:getKingdom() ~= self.player:getKingdom() then table.insert(players, player) end
 	end
+	if #players < 1 then
+		use.card = nil
+		return "."
+	end
 	local r = math.random(1, #players)
 	if use.to then use.to:append(players[r]) end
 end

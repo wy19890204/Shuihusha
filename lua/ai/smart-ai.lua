@@ -725,11 +725,14 @@ sgs.ai_skill_invoke = {
 
 	double_whip = function(self, data)
 		local carduse = data:toCardUse()
-		for _, target in sgs.qlist(carduse.to) do
+		local tos = sgs.QList2Table(carduse.to)
+		local mengkang = self.room:findPlayerBySkillName("mengchong")
+		local mk = mengkang and self:isFriend(mengkang)
+		for _, target in ipairs(tos) do
 			if target:isChained() then
-				return self:isFriend(target)
+				return self:isFriend(target) and not mk
 			else
-				return self:isEnemy(target)
+				return self:isEnemy(target) and not mk
 			end
 			break
 		end
