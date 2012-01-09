@@ -201,9 +201,7 @@ public:
             if(old - player->getHandcardNum() >= 2 &&
                yanglin->askForSkillInvoke(objectName())){
                 //room->showAllCards(player, yanglin);
-                QList<int> card_ids;
-                foreach(const Card *a, player->getHandcards())
-                    card_ids << a->getId();
+                QList<int> card_ids = player->handCards();
                 room->fillAG(card_ids, yanglin);
                 int to_move = room->askForAG(yanglin, card_ids, true, objectName());
                 if(to_move > -1){
@@ -761,6 +759,66 @@ public:
     }
 };
 
+class EquiPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return player->hasEquip(card);
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class Heidian: public TriggerSkill{
+public:
+    Heidian():TriggerSkill("heidian"){
+        events << Damaged << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent v, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        PlayerStar sun = room->findPlayerBySkillName(objectName());
+        if(!sun)
+            return false;
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = sun;
+        log.arg = objectName();
+        if(v == Damaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.to == sun && damage.from && damage.from != damage.to &&
+               !damage.from->isKongcheng()){
+
+                room->playSkillEffect(objectName());
+                room->sendLog(log);
+                room->throwCard(room->askForCardShow(damage.from, sun, objectName()));
+            }
+        }
+        else if(v == CardLost){
+            if(player == sun)
+                return false;
+            if(player->isKongcheng() && !player->getEquips().isEmpty()){
+                CardMoveStar move = data.value<CardMoveStar>();
+                if(move->from_place == Player::Hand){
+                    room->playSkillEffect(objectName());
+                    room->sendLog(log);
+
+                    const Card *card = room->askForCard(player, ".Equi", "@heidian", data);
+                    if(card)
+                        sun->obtainCard(card);
+                    else
+                        room->loseHp(player);
+                }
+            }
+        }
+        return false;
+    }
+};
+
 class Renrou: public TriggerSkill{
 public:
     Renrou():TriggerSkill("renrou"){
@@ -846,8 +904,9 @@ CGDKPackage::CGDKPackage()
     lili->addSkill(new Moucai);
 
     General *sunerniang = new General(this, "sunerniang", "kou", 3, false);
-    //sunerniang->addSkill(new Duoming);
+    sunerniang->addSkill(new Heidian);
     sunerniang->addSkill(new Renrou);
+    patterns[".Equi"] = new EquiPattern;
 
     addMetaObject<BingjiCard>();
     addMetaObject<YunchouCard>();

@@ -105,10 +105,7 @@ public:
             room->playSkillEffect(objectName());
             liying->drawCards(liying->getMaxHP() + liying->getLostHp());
 
-            QList<int> card_ids;
-            foreach(const Card *tmp, liying->getHandcards()){
-                card_ids << tmp->getId();
-            }
+            QList<int> card_ids = liying->handCards();
             qSort(card_ids.begin(), card_ids.end(), CompareBySuit);
             room->fillAG(card_ids);
             int count = 0;

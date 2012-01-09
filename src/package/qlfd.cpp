@@ -964,17 +964,14 @@ public:
             if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName(), QVariant::fromValue(masata)))
                 return;
             room->playSkillEffect(objectName());
-            QList<int> card_ids;
-            foreach(const Card *tmp, masata->getHandcards()){
-                card_ids << tmp->getId();
-            }
+            QList<int> card_ids = masata->handCards();
             room->fillAG(card_ids, loli);
             int card_id = room->askForAG(loli, card_ids, false, objectName());
             //card_ids.removeOne(card_id);
             //room->takeAG(loli, card_id);
             room->broadcastInvoke("clearAG");
-            room->moveCardTo(Sanguosha->getCard(card_id), loli, Player::Hand, false);
-            room->moveCardTo(room->askForCardShow(loli, masata, objectName()), masata, Player::Hand, false);
+            room->obtainCard(loli, card_id);
+            room->obtainCard(masata, room->askForCardShow(loli, masata, objectName()));
 
             LogMessage log;
             log.type = "#Zhiyu";
