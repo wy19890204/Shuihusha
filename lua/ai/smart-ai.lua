@@ -2871,6 +2871,10 @@ function SmartAI:askForCard(pattern, prompt, data)
 		local who = data:toPlayer()
 		if self:isFriend(who) or self.player:isKongcheng() then return "." end
 		return self.player:getRandomHandCard() or "."
+	elseif parsedPrompt[1] == "@jishi" then
+		local who = data:toPlayer()
+		if self:isEnemy(who) or self.player:isKongcheng() then return "." end
+		return self.player:getRandomHandCard() or "."
 	elseif parsedPrompt[1] == "@zhensha" then
 		local carduse = data:toCardUse()
 		if self:isFriend(carduse.from) then return "." end

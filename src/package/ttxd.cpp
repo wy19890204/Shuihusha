@@ -648,14 +648,20 @@ public:
         ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
         if(!lingtianyi || lingtianyi->isKongcheng())
             return false;
-        if(lingtianyi->askForSkillInvoke(objectName(), QVariant::fromValue(player))){
-            RecoverStruct lty;
-            lty.card = room->askForCardShow(lingtianyi, player, objectName());
-            lty.who = lingtianyi;
-            room->throwCard(lty.card);
-            room->playSkillEffect(objectName());
-            room->recover(player, lty);
-        }
+        RecoverStruct lty;
+        lty.card = room->askForCard(lingtianyi, ".", "@jishi:" + target->objectName(), QVariant::fromValue(player));
+        lty.who = lingtianyi;
+
+        room->playSkillEffect(objectName());
+        LogMessage log;
+        log.from = lingtianyi;
+        log.to << target;
+        log.type = "#Jishi";
+        log.arg = objectName();
+        log.arg2 = QString::number(1);
+        room->sendLog(log);
+
+        room->recover(player, lty);
         return false;
     }
 };

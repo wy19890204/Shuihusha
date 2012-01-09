@@ -656,9 +656,10 @@ void Select3v3GeneralDialog::fillListWidget(QListWidget *list, const Package *pa
         item->setIcon(QIcon(general->getPixmapPath("tiny")));
 
         bool checked = false;
+        QStringList default_package;
+        default_package << "QJWM" << "TTXD" << "XZDD";
         if(ex_generals.isEmpty()){
-            checked = (pack->objectName() == "standard" || pack->objectName() == "wind")
-                      && general->objectName() != "yuji";
+            checked = default_package.contains(pack->objectName());
         }else
             checked = ex_generals.contains(general->objectName());
 
