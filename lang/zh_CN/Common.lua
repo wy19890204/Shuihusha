@@ -124,6 +124,7 @@ return {
 
 -- endless
 	["endlessmode"] = "无尽模式",
+	["@endless"] = "铜板",
 
 -- hulao
 	["hulaopass"] = "虎牢关模式",

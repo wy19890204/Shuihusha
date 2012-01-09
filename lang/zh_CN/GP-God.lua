@@ -16,6 +16,7 @@ return {
 
 	["#_shenwuyong"] = "足智多谋",
 	["shenwuyong"] = "神吴用",
+	["designer:shenwuyong"] = "烨子&凌天翼",
 	["cv:shenwuyong"] = "烨子",
 	["xianji"] = "先机",
 	[":xianji"] = "其他角色的回合开始时，你可以弃置一张牌，该角色不能使用、打出或弃置与该牌同类别的牌直到回合结束。",
