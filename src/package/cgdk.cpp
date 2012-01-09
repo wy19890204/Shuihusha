@@ -13,7 +13,7 @@ public:
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *bao, QVariant &data) const{
         Room *room = bao->getRoom();
-        ServerPlayer *target;
+        PlayerStar target;
         if(event == SlashMissed){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             target = effect.to;

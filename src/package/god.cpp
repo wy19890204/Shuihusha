@@ -880,7 +880,8 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        PlayerStar target = player;
         if(target->getPhase() != Player::Start)
             return false;
         Room *room = target->getRoom();

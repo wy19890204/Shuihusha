@@ -42,7 +42,8 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool onPhaseChange(ServerPlayer *p) const{
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        PlayerStar p = player;
         if(p->getPhase() != Player::Judge || p->getJudgingArea().isEmpty())
             return false;
         Room *room = p->getRoom();
@@ -498,7 +499,7 @@ public:
         ServerPlayer *tiger = room->findPlayerBySkillName(objectName());
         if(!tiger || !damage.card || !damage.card->inherits("Slash"))
             return;
-        ServerPlayer *ogami = damage.from;
+        PlayerStar ogami = damage.from;
         if(!ogami || !ogami->getGeneral()->isMale())
             return;
         if(tiger->getCardCount(true) >= akaziki->getHp()){

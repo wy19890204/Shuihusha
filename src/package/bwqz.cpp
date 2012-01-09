@@ -341,8 +341,9 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        Room *room = target->getRoom();
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        PlayerStar target = player;
         ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
         if(zhangqing && target->getPhase() == Player::Finish){
             if(target->getHandcardNum() <= 1 && !target->isNude()

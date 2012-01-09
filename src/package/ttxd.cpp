@@ -642,7 +642,8 @@ public:
         return target->isWounded();
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *target, QVariant &) const{
+        PlayerStar player = target;
         Room *room = player->getRoom();
         ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
         if(!lingtianyi || lingtianyi->isKongcheng())
@@ -736,10 +737,10 @@ bool YixingCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void YixingCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    ServerPlayer *target = effect.to;
+    PlayerStar target = effect.to;
     int card_id = room->askForCardChosen(effect.from, target, "e", "yixing");
     effect.from->tag["YixingCard"] = card_id;
-    effect.from->tag["YixingTarget"] = QVariant::fromValue(effect.to);
+    effect.from->tag["YixingTarget"] = QVariant::fromValue(target);
 }
 
 class YixingViewAsSkill: public ZeroCardViewAsSkill{
@@ -880,7 +881,8 @@ public:
         player->tag.remove("QimenStore");
     }
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        PlayerStar target = player;
         Room *room = target->getRoom();
         ServerPlayer *dragon = room->findPlayerBySkillName(objectName());
         if(!dragon || dragon->isNude())

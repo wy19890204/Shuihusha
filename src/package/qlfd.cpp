@@ -123,7 +123,8 @@ bool FanwuCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void FanwuCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this);
-    effect.from->tag["Fanwu"] = QVariant::fromValue(effect.to);
+    QVariant target = QVariant::fromValue((PlayerStar)effect.to);
+    effect.from->tag["Fanwu"] = target;
 }
 
 class FanwuViewAsSkill: public OneCardViewAsSkill{
@@ -593,8 +594,10 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
     ServerPlayer *target = effect.to;
     Room *room = effect.from->getRoom();
     const Card *slash = NULL;
-    if(effect.from->canSlash(target))
-        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), QVariant::fromValue(effect.from));
+    if(effect.from->canSlash(target)){
+        QVariant source = QVariant::fromValue((PlayerStar)effect.from);
+        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source);
+    }
     if(slash){
         CardUseStruct use;
         use.card = slash;
@@ -746,8 +749,9 @@ public:
         CardMoveStar move = data.value<CardMoveStar>();
         if(move->from->isAlive() && move->to_place == Player::DiscardedPile){
             const Card *equ = Sanguosha->getCard(move->card_id);
+            QVariant chu = QVariant::fromValue((PlayerStar)player);
             if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".black", "@chumai:" + player->objectName(), QVariant::fromValue(player))){
+               room->askForCard(ran, ".black", "@chumai:" + player->objectName(), chu)){
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#InvokeSkill";
@@ -961,7 +965,8 @@ public:
         Room *room = masata->getRoom();
         ServerPlayer *loli = room->findPlayerBySkillName(objectName());
         if(loli){
-            if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName(), QVariant::fromValue(masata)))
+            QVariant whiter = QVariant::fromValue((PlayerStar)masata);
+            if(masata->isKongcheng() || !loli->askForSkillInvoke(objectName(), whiter))
                 return;
             room->playSkillEffect(objectName());
             QList<int> card_ids = masata->handCards();

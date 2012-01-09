@@ -397,8 +397,10 @@ public:
     virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
         Room *room = yan->getRoom();
         int lstn = yan->getLostHp();
-        if(damage.from)
-            yan->tag["FuqinSource"] = QVariant::fromValue(damage.from);
+        if(damage.from){
+            PlayerStar from = damage.from;
+            yan->tag["FuqinSource"] = QVariant::fromValue(from);
+        }
         QString choice = damage.from ?
                          room->askForChoice(yan, objectName(), "yan+qing+nil"):
                          room->askForChoice(yan, objectName(), "qing+nil");
@@ -770,7 +772,8 @@ void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
     foreach(int card_id, this->getSubcards()){
         effect.to->getRoom()->obtainCard(effect.to, card_id);
     }
-    effect.from->tag["Xiaozai"] = QVariant::fromValue(effect.to);
+    PlayerStar target = effect.to;
+    effect.from->tag["Xiaozai"] = QVariant::fromValue(target);
 }
 
 class XiaozaiViewAsSkill: public ViewAsSkill{
