@@ -15,7 +15,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *xuning, QVariant &data) const{
         Room *room = xuning->getRoom();
         DamageStruct damage = data.value<DamageStruct>();
-        if(xuning != damage.to && damage.chain && damage.nature == DamageStruct::Normal){
+        if(xuning != damage.to && damage.to->isChained() && damage.nature == DamageStruct::Normal){
             LogMessage log;
             log.type = "#TriggerSkill";
             log.from = xuning;
@@ -41,6 +41,21 @@ public:
         return target->getRoom()->findPlayerBySkillName(objectName());
     }
 
+    static void Callback(QVariant &data, ServerPlayer *xuning, ServerPlayer *from, const Card *armor){
+        Room *room = xuning->getRoom();
+        QList<ServerPlayer *> tos;
+        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+            if(!tmp->getArmor())
+                tos << tmp;
+        }
+        QString prompt = QString("@jiebei:%1::%2").arg(from->objectName()).arg(armor->objectName());
+        if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, data)){
+            xuning->obtainCard(armor);
+            ServerPlayer *to = room->askForPlayerChosen(xuning, tos, "jiebei");
+            room->moveCardTo(armor, to, Player::Equip);
+        }
+    }
+
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *xuning = room->findPlayerBySkillName(objectName());
@@ -54,34 +69,16 @@ public:
                     room->playSkillEffect(objectName());
                     xuning->drawCards(2);
                 }
-            }else if(room->getCardPlace(move->card_id) == Player::DiscardedPile){
-                QList<ServerPlayer *> tos;
-                foreach(ServerPlayer *p, room->getOtherPlayers(move->from)){
-                    if(!p->getArmor())
-                        tos << p;
-                }
-                if(!tos.isEmpty() && room->askForDiscard(xuning, objectName(), 1, false, false)){
-                    xuning->obtainCard(armor);
-                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
-                    room->moveCardTo(armor, to, Player::Equip);
-                }
+            }
+            if(room->getCardPlace(move->card_id) == Player::DiscardedPile){
+                Callback(data, xuning, move->from, armor);
                 return false;
             }
             return false;
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
             if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile && judge->card->inherits("Armor")){
-                QList<ServerPlayer *> tos;
-                foreach(ServerPlayer *p, room->getAllPlayers()){
-                    if(!p->getArmor())
-                        tos << p;
-                }
-                if(!tos.isEmpty() && room->askForDiscard(xuning, objectName(), 1, false, false)){
-                    xuning->obtainCard(judge->card);
-                    //tos.removeOne(move->from);
-                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
-                    room->moveCardTo(judge->card, to, Player::Equip);
-                }
+                Callback(data, xuning, judge->who, judge->card);
                 return false;
             }
         }

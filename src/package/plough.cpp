@@ -66,7 +66,11 @@ Wiretap::Wiretap(Suit suit, int number)
 
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+    QList<int> all = effect.to->handCards();
     room->showAllCards(effect.to, effect.from);
+    room->fillAG(all, effect.from);
+    room->askForAG(effect.from, all, true, "wiretap");
+    effect.from->invoke("clearAG");
 }
 
 Assassinate::Assassinate(Suit suit, int number)
