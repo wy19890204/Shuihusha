@@ -522,6 +522,7 @@ void AmazingGrace::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     }
 
     room->broadcastInvoke("clearAG");
+    room->removeTag("Jiayao");
 }
 
 void AmazingGrace::onEffect(const CardEffectStruct &effect) const{

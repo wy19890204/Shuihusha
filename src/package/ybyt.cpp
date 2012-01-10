@@ -485,7 +485,7 @@ public:
         if(player->hasUsed("WeizaoCard")){
             int card_id = player->getMark("weizao");
             const Card *card = Sanguosha->getCard(card_id);
-            return  pattern.contains(card->objectName());
+            return pattern.contains(card->objectName());
         }else
             return false;
     }
@@ -640,6 +640,44 @@ public:
         amazingGrace->setSkillName(objectName());
         Self->setFlags("sheyan");
         return amazingGrace;
+    }
+};
+
+class Jiayao:public TriggerSkill{
+public:
+    Jiayao():TriggerSkill("jiayao"){
+        events << CardEffect;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(!effect.card->inherits("AmazingGrace"))
+            return false;
+        ServerPlayer *sq = room->findPlayerBySkillName(objectName());
+        if(!sq || room->getTag("Jiayao").toInt() == 1 || !sq->askForSkillInvoke(objectName()))
+            return false;
+        room->setTag("Jiayao", 1);
+        sq->drawCards(1);
+        QVariantList ag_list = room->getTag("AmazingGrace").toList();
+        int a = 0;
+        foreach(QVariant card_id, ag_list){
+            const Card *card = Sanguosha->getCard(card_id.toInt());
+            if(card->inherits("Peach") || card->inherits("Analeptic"))
+                a ++;
+        }
+        RecoverStruct rev;
+        rev.recover = a;
+        room->recover(sq, rev);
+        return false;
     }
 };
 
@@ -910,7 +948,7 @@ YBYTPackage::YBYTPackage()
 
     General *songqing = new General(this, "songqing", "min", 3);
     songqing->addSkill(new Sheyan);
-    songqing->addSkill(new Skill("jiayao"));
+    songqing->addSkill(new Jiayao);
 
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill(new Maiyi);
