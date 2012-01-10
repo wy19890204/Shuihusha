@@ -8,7 +8,6 @@ local tt = {
 	["qiongying"] = "琼英",
 	["designer:qiongying"] = "烨子&凌天翼",
 	["cv:qiongying"] = "蒲小猫",
-	["coder:qiongying"] = "宇文天启",
 	["yuanpei"] = "缘配",
 	[":yuanpei"] = "出牌阶段，你可以指定任一男性角色。若该角色交给你一张【杀】或武器牌，你和该角色各摸一张牌，否则你可以将你的任一手牌当【杀】使用或打出直到回合结束。每回合限一次。",
 	["@yuanpei"] = "%src 对你发动了【缘配】，请给其一张【杀】或武器牌",
@@ -56,6 +55,7 @@ local tt = {
 
 	["#_songqing"] = "铁扇子",
 	["songqing"] = "宋清",
+	["coder:songqing"] = "战栗贵公子、宇文天启",
 	["sheyan"] = "设宴",
 	[":sheyan"] = "出牌阶段，你可以将你的任一红桃手牌当【五谷丰登】使用。每回合限一次。",
 	["jiayao"] = "佳肴",
@@ -69,10 +69,11 @@ local tt = {
 
 	["#_tanglong"] = "金钱豹子",
 	["tanglong"] = "汤隆",
+	["designer:tanglong"] = "宇文天启",
 	["cuihuo"] = "淬火",
 	[":cuihuo"] = "当你失去装备区里的一张牌时，可以摸两张牌",
 	["jintang"] = "金汤",
-	[":jintang"] = "当你受到装备有武器的角色造成的伤害时，有四分之一的反伤几率",
+	[":jintang"] = "<b>锁定技</b>，当你受到装备有武器的角色造成的伤害时，有25%的反伤几率；你每装备一件装备，反伤几率增加10%",
 
 	["#_zouyuan"] = "出林龙",
 	["zouyuan"] = "邹渊",
@@ -101,7 +102,7 @@ local tt = {
 }
 
 local gongzi = {"xuning", "baoxu", "xiangchong", "jindajian", "yangchun",
-		"songqing", "xueyong", "zouyuan", "zhufu", "gaolian"}
+		"xueyong", "zouyuan", "zhufu", "gaolian"}
 
 for _, player in ipairs(gongzi) do
 	tt["coder:" .. player] = tt["coder:YBYT"]

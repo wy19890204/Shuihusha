@@ -316,6 +316,77 @@ public:
     }
 };
 
+class Chengfu: public TriggerSkill{
+public:
+    Chengfu():TriggerSkill("chengfu"){
+        events << CardLost;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName()) && target->getPhase() == Player::NotActive;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *conan, QVariant &data) const{
+        Room *room = conan->getRoom();
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(conan->isDead())
+            return false;
+        if(move->from_place == Player::Hand){
+            //room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = conan;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            conan->drawCards(1);
+        }
+        return false;
+    }
+};
+
+#include "qjwm.h"
+class Xiaduo: public TriggerSkill{
+public:
+    Xiaduo():TriggerSkill("xiaduo"){
+        events << DamageComplete;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || !damage.from->hasSkill(objectName()))
+            return false;
+        if(damage.from->distanceTo(damage.to) != 1)
+            return false;
+        ServerPlayer *wanglun = damage.from;
+        Room *room = wanglun->getRoom();
+        QList<ServerPlayer *> ones;
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to))
+            if(wanglun->distanceTo(tmp) == 1)
+                ones << tmp;
+        if(!ones.isEmpty() && room->askForCard(wanglun, ".equip", "@xiaduo", data)){
+            ServerPlayer *target = room->askForPlayerChosen(wanglun, ones, objectName());
+            LogMessage log;
+            log.type = "#UseSkill";
+            log.from = wanglun;
+            log.to << target;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            DamageStruct dama;
+            dama.from = wanglun;
+            dama.to = target;
+            room->damage(dama);
+        }
+        return false;
+    }
+};
+
 SPPackage::SPPackage()
     :Package("sp")
 {
@@ -334,6 +405,10 @@ SPPackage::SPPackage()
     jiangsong->addSkill(new Yuzhong2);
     related_skills.insertMulti("yuzhong", "#yuzh0ng");
     jiangsong->addSkill(new Shuntian);
+
+    General *wanglun = new General(this, "wanglun", "kou", 3);
+    wanglun->addSkill(new Chengfu);
+    wanglun->addSkill(new Xiaduo);
 
     addMetaObject<YuzhongCard>();
     addMetaObject<JiebaoCard>();

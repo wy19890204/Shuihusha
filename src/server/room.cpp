@@ -690,6 +690,15 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
+    if(player->hasSkill("chengfu") && player->getPhase() == Player::NotActive && asked.toString() == "slash"){
+        LogMessage log;
+        log.type = "#ChengfuEffect";
+        log.from = player;
+        log.arg = asked.toString();
+        log.arg2 = "chengfu";
+        sendLog(log);
+        return NULL;
+    }
     if(player->hasFlag("ecst") && (asked.toString() == "slash" || asked.toString() == "jink")){
         LogMessage log;
         log.type = "#EcstasyEffect";
@@ -769,6 +778,15 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
+    if(player->hasSkill("chengfu") && answer == "slash" && player->getPhase() == Player::NotActive){
+        LogMessage log;
+        log.type = "#ChengfuEffect";
+        log.from = player;
+        log.arg = answer;
+        log.arg2 = "chengfu";
+        sendLog(log);
+        return NULL;
+    }
     if(player->hasFlag("ecst") && answer == "slash"){
         LogMessage log;
         log.type = "#EcstasyEffect";

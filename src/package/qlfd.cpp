@@ -247,7 +247,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern.contains("analeptic");
+        return pattern.contains("analeptic");
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{

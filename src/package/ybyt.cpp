@@ -953,9 +953,15 @@ public:
 
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
-        if(!damage.from)
+        if(!damage.from || !damage.from->getWeapon())
             return;
-        if(qrand() % 4 == 1){
+        int percent = 25 + player->getEquips().length() * 10;
+        if(qrand() % 100 < percent){
+            LogMessage log;
+            log.from = player;
+            log.type = "#TriggerSkill";
+            log.arg = objectName();
+            room->sendLog(log);
             DamageStruct damage2 = damage;
             damage2.from = player;
             damage2.to = damage.from;
