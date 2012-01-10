@@ -123,41 +123,6 @@ public:
     }
 };
 
-WuqianCard::WuqianCard(){
-    target_fixed = true;
-}
-
-void WuqianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<int> card_ids;
-    QList<const Card *> cards = source->getCards("he");
-    foreach(const Card *tmp, cards)
-        card_ids << tmp->getId();
-    room->fillAG(card_ids, source);
-    int card_id = room->askForAG(source, card_ids, false, objectName());
-    card_ids.removeOne(card_id);
-    room->takeAG(source, card_id);
-    room->broadcastInvoke("clearAG");
-    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
-    //source->drawCards(1);
-    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
-    //room->throwCard(card_id);
-}
-
-class Wuqian: public ZeroCardViewAsSkill{
-public:
-    Wuqian():ZeroCardViewAsSkill("wuqian"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->isNude();
-    }
-
-    virtual const Card *viewAs() const{
-        return new WuqianCard;
-    }
-};
-
 WushenSlash::WushenSlash(Card::Suit suit, int number)
     :Slash(suit, number)
 {
@@ -1149,11 +1114,6 @@ GodPackage::GodPackage()
     shenluzhishen->addSkill(new Dunwu);
     shenluzhishen->addSkill(new HuafoSlash);
     shenluzhishen->addSkill(new HuafoAnale);
-
-    General *shentest = new General(this, "shentest", "god");
-    shentest->addSkill(new Shenfen);
-    shentest->addSkill(new Wuqian);
-    addMetaObject<WuqianCard>();
 
     General *shenxuning = new General(this, "shenxuning", "god");
     shenxuning->addSkill(new Jiebei);

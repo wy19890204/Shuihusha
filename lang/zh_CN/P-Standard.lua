@@ -144,6 +144,13 @@ local t = {
 ★非正常死亡，指的是被武魂、被鸩杀等",
 	["ubuna:next"] = "增加1点体力上限",
 	["ubuna:back"] = "减少1点体力上限",
+	["qiapai"] = "卡位",
+	[":qiapai"] = "利用BUG，卡住你的一张牌以达到无限使用的目的",
+
+	["#_jiuweigui"] = "陶宗旺",
+	["jiuweigui"] = "九尾龟",
+	["qiaog"] = "初代巧工",
+	[":qiaog"] = "<b>锁定技</b>，若某一种类的装备牌只有一张在场上，则视为你装备着该装备。",
 }
 
 local ohorses = {"chitu", "snow", "white", "brown"}
