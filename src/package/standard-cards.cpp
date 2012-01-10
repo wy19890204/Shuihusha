@@ -357,7 +357,7 @@ public:
 
         Room *room = player->getRoom();
         CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName());
-        if(card){
+        if(card && !player->hasFlag("triggered")){
             QList<int> card_ids = card->getSubcards();
             foreach(int card_id, card_ids){
                 LogMessage log;
