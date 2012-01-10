@@ -67,6 +67,7 @@ return {
 	["#Suicide"] = "%to【%arg】 自杀身亡",
 	["#InvokeSkill"] = "%from 使用了技能【%arg】",
 	["#TriggerSkill"] = "%from 的锁定技【%arg】被触发",
+	["#UseSkill"] = "%from 发动了技能【%arg】，目标是 %to",
 	["#WakeUp"] = "已满足触发条件，%from 的觉醒技【%arg】被触发",
 	["#Pindian"] = "%from 向 %to 发起了拼点",
 	["#PindianSuccess"] = "%from (对 %to) 拼点成功！\\(^o^)/",
@@ -122,9 +123,10 @@ return {
 	["ccw"] = "逆时针",
 	["#TrickDirection"] = "%from 选择了 %arg 作为锦囊的顺序",
 
--- endless
+-- endless&custom
 	["endlessmode"] = "无尽模式",
 	["@endless"] = "铜板",
+	["custom"] = "自定义模式",
 
 -- hulao
 	["hulaopass"] = "虎牢关模式",

@@ -20,6 +20,8 @@
 #include <QMetaEnum>
 #include <QTimerEvent>
 #include <QDateTime>
+#include <QFile>
+#include <QTextStream>
 
 Room::Room(QObject *parent, const QString &mode)
     :QThread(parent), mode(mode), current(NULL), reply_player(NULL), pile1(Sanguosha->getRandomCards()),
@@ -1249,6 +1251,31 @@ void Room::prepareForStart(){
                 player->setRole("rebel");
             broadcastProperty(player, "role");
         }
+    }else if(mode == "custom"){
+        QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\w+)");
+        QFile file("etc/Custom.txt");
+        int i = 0;
+        int j = Sanguosha->getPlayerCount(mode)-1;
+        if(file.open(QIODevice::ReadOnly)){
+            QTextStream stream(&file);
+            while(!stream.atEnd()){
+                QString line = stream.readLine();
+                if(!rx.exactMatch(line))
+                    continue;
+                QStringList texts = rx.capturedTexts();
+                QString rolest = texts.at(1);
+                QString gen1 = texts.at(2);
+                QString gen2 = texts.at(3);
+
+                players.at(j-i)->setRole(rolest);
+                players.at(j-i)->setGeneralName(gen1);
+                players.at(j-i)->setGeneral2Name(gen2);
+                broadcastProperty(players.at(j-i), "role");
+                i ++;
+            }
+            file.close();
+        }
+        return;
     }else if(Config.value("FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
         if(owner && owner->getState() == "online"){
@@ -1663,6 +1690,28 @@ void Room::run(){
             names.removeOne(name);
         }
 
+        startGame();
+    }else if(mode == "custom"){
+        QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\w+)");
+        QFile file("etc/Custom.txt");
+        int i = 0;
+        int j = Sanguosha->getPlayerCount(mode)-1;
+        if(file.open(QIODevice::ReadOnly)){
+            QTextStream stream(&file);
+            while(!stream.atEnd()){
+                QString line = stream.readLine();
+                if(!rx.exactMatch(line))
+                    continue;
+                QStringList texts = rx.capturedTexts();
+                QString gen1 = texts.at(2);
+                QString gen2 = texts.at(3);
+
+                setPlayerProperty(players.at(j-i), "general", gen1);
+                setPlayerProperty(players.at(j-i), "general2", gen2);
+                i ++;
+            }
+            file.close();
+        }
         startGame();
     }else{
         chooseGenerals();

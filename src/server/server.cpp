@@ -448,6 +448,13 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(scenario_button, scenario_combobox);
     }
 
+    QRadioButton *button = new QRadioButton(tr("Custom Mode"));
+    button->setObjectName("custom");
+    mode_group->addButton(button);
+    item_list << button;
+    if(button->objectName() == Config.GameMode)
+        button->setChecked(true);
+
 #if 0
 
     {
