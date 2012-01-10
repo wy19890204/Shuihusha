@@ -686,7 +686,9 @@ MaiyiCard::MaiyiCard(){
 }
 
 bool MaiyiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.length() < 2;
+    if(targets.length() >= 2)
+        return false;
+    return true;
 }
 
 void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -697,15 +699,17 @@ void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         effect.card = this;
         effect.from = source;
         effect.to = target;
-        effect.multiple = true;
+        effect.multiple = targets.length() == 1 ? false :true;
 
         room->cardEffect(effect);
+    }
+}
 
-    if(targets.length() <= 1)
+void MaiyiCard::onEffect(const CardEffectStruct &effect) const{
+    if(!effect.multiple)
         effect.to->addMark("maiyi");
     else
         effect.to->drawCards(2);
-    }
 }
 
 class MaiyiViewAsSkill: public ViewAsSkill{
@@ -723,6 +727,8 @@ public:
             return false;
 
         foreach(CardItem *item, selected){
+            if(selected.length() == 1 && item->getCard()->inherits("EquipCard") && to_select->getCard()->inherits("EquipCard"))
+                return true;
             if(to_select->getFilteredCard()->getSuit() == item->getFilteredCard()->getSuit())
                 return false;
         }
@@ -730,12 +736,18 @@ public:
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 3)
+        bool can = false;
+        if(cards.length() == 3)
+            can = true;
+        if(cards.length() == 2){
+            if(cards.first()->getCard()->inherits("EquipCard") &&
+               cards.last()->getCard()->inherits("EquipCard"))
+                can = true;
+        }
+        if(!can)
             return NULL;
-
         MaiyiCard *card = new MaiyiCard;
         card->addSubcards(cards);
-
         return card;
     }
 };
@@ -754,10 +766,10 @@ public:
         Room *room = xueyong->getRoom();
 
         QList<ServerPlayer *> players = room->getOtherPlayers(xueyong), maiyis;
-            foreach(ServerPlayer *player, players){
-                if(player->getMark("maiyi") > 0)
-                    maiyis << player;
-            }
+        foreach(ServerPlayer *player, players){
+            if(player->getMark("maiyi") > 0)
+                maiyis << player;
+        }
 
         if(maiyis.length() > 0 && xueyong->getPhase() == Player::Finish){
             ServerPlayer *maiyier = room->askForPlayerChosen(xueyong, maiyis, objectName());
@@ -766,11 +778,10 @@ public:
             LogMessage log;
             log.type = "#MaiyiCanInvoke";
             log.from = maiyier;
+            log.arg = "maiyi";
             room->sendLog(log);
 
-            room->setCurrent(maiyier);
-            room->getThread()->trigger(TurnStart, maiyier);
-            room->setCurrent(xueyong);
+            maiyier->gainAnExtraTurn();
         }
         return false;
     }
@@ -914,6 +925,45 @@ public:
     }
 };
 
+class Cuihuo: public TriggerSkill{
+public:
+    Cuihuo():TriggerSkill("cuihuo"){
+        events << CardLost;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *sunshangxiang, QVariant &data) const{
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->from_place == Player::Equip){
+            Room *room = sunshangxiang->getRoom();
+            if(room->askForSkillInvoke(sunshangxiang, objectName())){
+                room->playSkillEffect(objectName());
+                sunshangxiang->drawCards(2);
+            }
+        }
+        return false;
+    }
+};
+
+class Jintang: public MasochismSkill{
+public:
+    Jintang():MasochismSkill("jintang"){
+        frequency = Compulsory;
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        if(!damage.from)
+            return;
+        if(qrand() % 4 == 1){
+            DamageStruct damage2 = damage;
+            damage2.from = player;
+            damage2.to = damage.from;
+            room->damage(damage2);
+        }
+    }
+};
+
 YBYTPackage::YBYTPackage()
     :Package("YBYT")
 {
@@ -922,10 +972,6 @@ YBYTPackage::YBYTPackage()
     patterns[".Yuanp"] = new SWPattern;
     qiongying->addSkill(new Mengshi);
     skills << new YuanpeiSlash;
-
-    General *gaolian = new General(this, "gaolian", "guan", 3);
-    gaolian->addSkill(new Guibing);
-    gaolian->addSkill(new Heiwu);
 
     General *xuning = new General(this, "xuning", "jiang");
     xuning->addSkill(new Goulian);
@@ -953,12 +999,20 @@ YBYTPackage::YBYTPackage()
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill(new Maiyi);
 
+    General *tanglong = new General(this, "tanglong", "kou", 3);
+    tanglong->addSkill(new Cuihuo);
+    tanglong->addSkill(new Jintang);
+
     General *zouyan = new General(this, "zouyuan", "min");
     zouyan->addSkill(new Longao);
 
     General *zhufu = new General(this, "zhufu", "min", 3);
     zhufu->addSkill(new Hunjiu);
     zhufu->addSkill(new Guitai);
+
+    General *gaolian = new General(this, "gaolian", "guan", 3);
+    gaolian->addSkill(new Guibing);
+    gaolian->addSkill(new Heiwu);
 
     addMetaObject<YuanpeiCard>();
     addMetaObject<GuibingCard>();
