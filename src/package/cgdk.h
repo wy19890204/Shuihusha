@@ -22,7 +22,7 @@ class YunchouCard: public SkillCard{
 public:
     Q_INVOKABLE YunchouCard();
 
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 class LingdiCard:public SkillCard{

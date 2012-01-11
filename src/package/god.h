@@ -13,15 +13,6 @@ public:
     GodPackage();
 };
 
-class WuqianCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE WuqianCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
 class WushenSlash: public Slash{
     Q_OBJECT
 

@@ -13,6 +13,7 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual bool isAvailable(const Player *player) const;
+    static bool IsAvailable(const Player *player);
 };
 
 class Drivolt:public SingleTargetTrick{

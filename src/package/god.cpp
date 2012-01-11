@@ -86,78 +86,6 @@ public:
     }
 };
 
-class Shenfen: public TriggerSkill{
-public:
-    Shenfen():TriggerSkill("shenfen"){
-        events << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
-            QStringList suits;
-            foreach(const Card *rmp, player->getEquips()){
-                if(!suits.contains(rmp->getSuitString()))
-                    suits << rmp->getSuitString();
-            }
-            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
-                return false;
-            QString suit = effect.card->getSuitString();
-            if(!suits.contains(suit))
-                return false;
-
-            LogMessage log;
-            log.type = "#Caiquan";
-            log.from = effect.from;
-            Room *room = player->getRoom();
-            log.to << effect.to;
-            log.arg = effect.card->objectName();
-            log.arg2 = objectName();
-
-            room->sendLog(log);
-            room->playSkillEffect(objectName());
-            return true;
-        }
-        return false;
-    }
-};
-
-WuqianCard::WuqianCard(){
-    target_fixed = true;
-}
-
-void WuqianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<int> card_ids;
-    QList<const Card *> cards = source->getCards("he");
-    foreach(const Card *tmp, cards)
-        card_ids << tmp->getId();
-    room->fillAG(card_ids, source);
-    int card_id = room->askForAG(source, card_ids, false, objectName());
-    card_ids.removeOne(card_id);
-    room->takeAG(source, card_id);
-    room->broadcastInvoke("clearAG");
-    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
-    //source->drawCards(1);
-    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
-    //room->throwCard(card_id);
-}
-
-class Wuqian: public ZeroCardViewAsSkill{
-public:
-    Wuqian():ZeroCardViewAsSkill("wuqian"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->isNude();
-    }
-
-    virtual const Card *viewAs() const{
-        return new WuqianCard;
-    }
-};
-
 WushenSlash::WushenSlash(Card::Suit suit, int number)
     :Slash(suit, number)
 {
@@ -1149,11 +1077,6 @@ GodPackage::GodPackage()
     shenluzhishen->addSkill(new Dunwu);
     shenluzhishen->addSkill(new HuafoSlash);
     shenluzhishen->addSkill(new HuafoAnale);
-
-    General *shentest = new General(this, "shentest", "god");
-    shentest->addSkill(new Shenfen);
-    shentest->addSkill(new Wuqian);
-    addMetaObject<WuqianCard>();
 
     General *shenxuning = new General(this, "shenxuning", "god");
     shenxuning->addSkill(new Jiebei);

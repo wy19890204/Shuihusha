@@ -72,7 +72,6 @@ public:
 class Shengui: public ProhibitSkill{
 public:
     Shengui():ProhibitSkill("shengui"){
-
     }
 
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
@@ -247,7 +246,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern.contains("analeptic");
+        return pattern.contains("analeptic");
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
@@ -1028,6 +1027,43 @@ public:
     }
 };
 
+class Caiquan: public TriggerSkill{
+public:
+    Caiquan():TriggerSkill("caiquan"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
+            QStringList suits;
+            foreach(const Card *rmp, player->getEquips()){
+                if(!suits.contains(rmp->getSuitString()))
+                    suits << rmp->getSuitString();
+            }
+            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
+                return false;
+            QString suit = effect.card->getSuitString();
+            if(!suits.contains(suit))
+                return false;
+
+            LogMessage log;
+            log.type = "#Caiquan";
+            log.from = effect.from;
+            Room *room = player->getRoom();
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
+    }
+};
+
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
@@ -1083,6 +1119,9 @@ QLFDPackage::QLFDPackage()
     General *jiashi = new General(this, "jiashi", "min", 3, false);
     jiashi->addSkill(new Banzhuang);
     jiashi->addSkill(new Zhuying);
+
+    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
+    ximenqing->addSkill(new Caiquan);
 
     addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();

@@ -690,6 +690,15 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
+    if(player->hasSkill("chengfu") && player->getPhase() == Player::NotActive && asked.toString() == "slash"){
+        LogMessage log;
+        log.type = "#ChengfuEffect";
+        log.from = player;
+        log.arg = asked.toString();
+        log.arg2 = "chengfu";
+        sendLog(log);
+        return NULL;
+    }
     if(player->hasFlag("ecst") && (asked.toString() == "slash" || asked.toString() == "jink")){
         LogMessage log;
         log.type = "#EcstasyEffect";
@@ -769,6 +778,15 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
+    if(player->hasSkill("chengfu") && answer == "slash" && player->getPhase() == Player::NotActive){
+        LogMessage log;
+        log.type = "#ChengfuEffect";
+        log.from = player;
+        log.arg = answer;
+        log.arg2 = "chengfu";
+        sendLog(log);
+        return NULL;
+    }
     if(player->hasFlag("ecst") && answer == "slash"){
         LogMessage log;
         log.type = "#EcstasyEffect";
@@ -1252,10 +1270,9 @@ void Room::prepareForStart(){
             broadcastProperty(player, "role");
         }
     }else if(mode == "custom"){
-        QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\w+)");
+        QRegExp rx("(\\w+)\\s+(\\w+)\\s*(\\w+)?");
         QFile file("etc/Custom.txt");
         int i = 0;
-        int j = Sanguosha->getPlayerCount(mode)-1;
         if(file.open(QIODevice::ReadOnly)){
             QTextStream stream(&file);
             while(!stream.atEnd()){
@@ -1264,18 +1281,13 @@ void Room::prepareForStart(){
                     continue;
                 QStringList texts = rx.capturedTexts();
                 QString rolest = texts.at(1);
-                QString gen1 = texts.at(2);
-                QString gen2 = texts.at(3);
 
-                players.at(j-i)->setRole(rolest);
-                players.at(j-i)->setGeneralName(gen1);
-                players.at(j-i)->setGeneral2Name(gen2);
-                broadcastProperty(players.at(j-i), "role");
+                players.at(i)->setRole(rolest);
+                broadcastProperty(players.at(i), "role");
                 i ++;
             }
             file.close();
         }
-        return;
     }else if(Config.value("FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
         if(owner && owner->getState() == "online"){
@@ -1692,10 +1704,9 @@ void Room::run(){
 
         startGame();
     }else if(mode == "custom"){
-        QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\w+)");
+        QRegExp rx("(\\w+)\\s+(\\w+)\\s*(\\w+)?");
         QFile file("etc/Custom.txt");
         int i = 0;
-        int j = Sanguosha->getPlayerCount(mode)-1;
         if(file.open(QIODevice::ReadOnly)){
             QTextStream stream(&file);
             while(!stream.atEnd()){
@@ -1706,8 +1717,9 @@ void Room::run(){
                 QString gen1 = texts.at(2);
                 QString gen2 = texts.at(3);
 
-                setPlayerProperty(players.at(j-i), "general", gen1);
-                setPlayerProperty(players.at(j-i), "general2", gen2);
+                setPlayerProperty(players.at(i), "general", gen1);
+                if(!gen2.isEmpty())
+                    setPlayerProperty(players.at(i), "general2", gen2);
                 i ++;
             }
             file.close();

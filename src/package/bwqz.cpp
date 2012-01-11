@@ -1016,6 +1016,7 @@ BWQZPackage::BWQZPackage()
     addMetaObject<ZhengfaCard>();
     addMetaObject<JiaomieCard>();
     addMetaObject<YongleCard>();
+    skills << new Qiaogongplus;
 }
 
 ADD_PACKAGE(BWQZ);

@@ -84,9 +84,6 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
         slash_targets ++;
     }
 
-    if(Self->hasSkill("shenji") && Self->getWeapon() == NULL)
-        slash_targets = 3;
-
     if(targets.length() >= slash_targets)
         return false;
 
@@ -357,7 +354,7 @@ public:
 
         Room *room = player->getRoom();
         CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName());
-        if(card){
+        if(card && !player->hasFlag("triggered")){
             QList<int> card_ids = card->getSubcards();
             foreach(int card_id, card_ids){
                 LogMessage log;
@@ -522,6 +519,7 @@ void AmazingGrace::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     }
 
     room->broadcastInvoke("clearAG");
+    room->removeTag("Jiayao");
 }
 
 void AmazingGrace::onEffect(const CardEffectStruct &effect) const{

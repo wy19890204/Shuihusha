@@ -51,18 +51,6 @@ return {
 	["min"] = "民",
 	["kou"] = "寇",
 
-	["test"] = "测试",
-	["sujiang"] = "稻草男",
-	["sujiangf"] = "稻草女",
-	["#_sujiang"] = "金童",
-	["#_sujiangf"] = "玉女",
-	["designer:sujiang"] = "游卡桌游",
-	["cv:sujiang"] = "",
-	["coder:sujiang"] = "",
-	["designer:sujiangf"] = "游卡桌游",
-	["cv:sujiangf"] = "",
-	["coder:sujiangf"] = "",
-
 	["#Murder"] = "%to【%arg】 挂了，凶手是 %from",
 	["#Suicide"] = "%to【%arg】 自杀身亡",
 	["#InvokeSkill"] = "%from 使用了技能【%arg】",
@@ -146,4 +134,17 @@ return {
 	["#ReformingRevive"] = "%from 从重整状态中复活!",
 	["draw_1v3"] = "重整摸牌",
 	["weapon_recast"] = "武器重铸",
+
+-- test
+	["test"] = "测试",
+	["sujiang"] = "稻草男",
+	["sujiangf"] = "稻草女",
+	["#_sujiang"] = "金童",
+	["#_sujiangf"] = "玉女",
+	["designer:sujiang"] = "游卡桌游",
+	["cv:sujiang"] = "",
+	["coder:sujiang"] = "",
+	["designer:sujiangf"] = "游卡桌游",
+	["cv:sujiangf"] = "",
+	["coder:sujiangf"] = "",
 }

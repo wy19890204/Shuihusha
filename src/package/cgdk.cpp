@@ -78,8 +78,8 @@ YunchouCard::YunchouCard(){
     target_fixed = true;
 }
 
-void YunchouCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    PlayerStar nouse = source;
+void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *nouse = card_use.from;
     QStringList ndtricks;
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){

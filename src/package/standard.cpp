@@ -569,9 +569,48 @@ public:
     }
 };
 
+QiapaiCard::QiapaiCard(){
+    target_fixed = true;
+}
+
+void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<int> card_ids;
+    QList<const Card *> cards = source->getCards("he");
+    foreach(const Card *tmp, cards)
+        card_ids << tmp->getId();
+    room->fillAG(card_ids, source);
+    int card_id = room->askForAG(source, card_ids, false, objectName());
+    card_ids.removeOne(card_id);
+    room->takeAG(source, card_id);
+    room->broadcastInvoke("clearAG");
+    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
+    //source->drawCards(1);
+    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
+    //room->throwCard(card_id);
+}
+
+class Qiapai: public ZeroCardViewAsSkill{
+public:
+    Qiapai():ZeroCardViewAsSkill("qiapai"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->isNude();
+    }
+
+    virtual const Card *viewAs() const{
+        return new QiapaiCard;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
+    General *jiuweigui = new General(this, "jiuweigui", "god", 3, true, true);
+    jiuweigui->addSkill("qiaog");
+    jiuweigui->addSkill("manli");
+
     General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
     shenlvbu1->addSkill("cuju");
     shenlvbu1->addSkill("wubang");
@@ -581,7 +620,7 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill("huanshu");
     shenlvbu2->addSkill("shunshui");
     shenlvbu2->addSkill("qibing");
-    shenlvbu2->addSkill(new Skill("shenji"));
+    shenlvbu2->addSkill("yuanyin");
 
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
@@ -594,6 +633,8 @@ TestPackage::TestPackage()
     ubuntenkei->addSkill(new Ubune);
     addMetaObject<UbuneCard>();
     ubuntenkei->addSkill(new Ubunf);
+    ubuntenkei->addSkill(new Qiapai);
+    addMetaObject<QiapaiCard>();
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
