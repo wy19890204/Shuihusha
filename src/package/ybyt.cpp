@@ -156,7 +156,7 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
         use.card = slash;
         room->useCard(use);
     }else
-        gaolian->setFlags("guibing");
+        Self->setFlags("Guibing");
 }
 
 class GuibingViewAsSkill:public ZeroCardViewAsSkill{
@@ -165,7 +165,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasFlag("guibing") && Slash::IsAvailable(player);
+        return !player->hasFlag("Guibing") && Slash::IsAvailable(player);
     }
 
     virtual const Card *viewAs() const{
