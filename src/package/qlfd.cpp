@@ -976,6 +976,7 @@ public:
             //room->takeAG(loli, card_id);
             room->broadcastInvoke("clearAG");
             room->obtainCard(loli, card_id);
+            room->getThread()->delay(300);
             room->obtainCard(masata, room->askForCardShow(loli, masata, objectName()));
 
             LogMessage log;
