@@ -78,8 +78,8 @@ YunchouCard::YunchouCard(){
     target_fixed = true;
 }
 
-void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    ServerPlayer *nouse = card_use.from;
+void YunchouCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    PlayerStar nouse = source;
     QStringList ndtricks;
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
@@ -91,38 +91,63 @@ void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->setPlayerProperty(nouse, "yunchoustore", name);
 }
 
-class YunchouSelect: public ZeroCardViewAsSkill{
+class Yunchou:public ViewAsSkill{
 public:
-    YunchouSelect():ZeroCardViewAsSkill("yunchou-select"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new YunchouCard;
-    }
-};
-
-class Yunchou:public OneCardViewAsSkill{
-public:
-    Yunchou():OneCardViewAsSkill("yunchou"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("TrickCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        QString name = Self->property("yunchoustore").toString();
-        Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
-        new_card->addSubcard(card);
-        new_card->setSkillName("yunchou");
-        Self->setFlags("Yunchou_used");
-        return new_card;
+    Yunchou():ViewAsSkill("yunchou"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->property("yunchoustore").isNull() && !player->hasFlag("Yunchou_used");
+        if(player->hasUsed("YunchouCard") && !player->hasFlag("yunchou")){
+            QString name = Self->property("yunchoustore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return card->isAvailable(player);
+        }else if(player->hasFlag("yunchou"))
+            return false;
+        else
+            return true;
     }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->hasUsed("YunchouCard") && !Self->hasFlag("yunchou")){
+            return to_select->getCard()->inherits("TrickCard");
+        }else
+            return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        if(player->hasFlag("yunchou"))
+            return false;
+        if(player->hasUsed("YunchouCard")){
+            QString name = Self->property("yunchoustore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return pattern.contains(card->objectName());
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->hasUsed("YunchouCard")){
+            if(Self->hasFlag("yunchou"))
+                return false;
+            if(cards.length() != 1)
+                return NULL;
+            const Card *card = cards.first()->getCard();
+            QString name = Self->property("yunchoustore").toString();
+            Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+            new_card->addSubcard(card);
+            new_card->setSkillName("yunchou");
+            Self->setFlags("yunchou");
+            return new_card;
+        }else{
+            return new YunchouCard;
+        }
+    }
+/*
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->property("yunchoustore").isNull() && !player->hasFlag("Yunchou_used");
+    }*/
 };
 
 class ZhiquN: public OneCardViewAsSkill{
@@ -861,7 +886,6 @@ CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
     General *wuyong = new General(this, "wuyong", "kou", 3);
-    wuyong->addSkill(new YunchouSelect);
     wuyong->addSkill(new Yunchou);
     wuyong->addSkill(new ZhiquN);
     wuyong->addSkill(new ZhiquC);
