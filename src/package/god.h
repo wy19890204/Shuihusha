@@ -13,40 +13,23 @@ public:
     GodPackage();
 };
 
-class WushenSlash: public Slash{
+class ZhushaCard: public SkillCard{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE WushenSlash(Card::Suit suit, int number);
-};
+    Q_INVOKABLE ZhushaCard();
 
-class KuangfengCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE KuangfengCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class DawuCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE DawuCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class JilveCard: public SkillCard{
+class DuanbiCard: public SkillCard{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE JilveCard();
+    Q_INVOKABLE DuanbiCard();
 
-    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class FeihuangCard: public SkillCard{

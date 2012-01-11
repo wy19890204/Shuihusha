@@ -86,18 +86,19 @@ public:
     }
 };
 
-class Shenchou:public TriggerSkill{
+class Shenchou: public MasochismSkill{
 public:
-    Shenchou():TriggerSkill("shenchou"){
-        events << Damage;
+    Shenchou():MasochismSkill("shenchou"){
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *wusong, QVariant &data) const{
+    virtual void onDamaged(ServerPlayer *wusong, const DamageStruct &damage) const{
         Room *room = wusong->getRoom();
-        DamageStruct damage = data.value<DamageStruct>();
+        if(wusong->getMark("shenchou") != 0)
+            return;
         room->playSkillEffect(objectName());
-        if(damage.card && wusong->getMark("shenchou") == 0){
+        const Card *card = damage.card;
+        if(card && room->obtainable(card, wusong)){
             LogMessage log;
             log.type = "#TriggerSkill";
             log.from = wusong;
@@ -105,23 +106,8 @@ public:
             room->playSkillEffect(objectName());
             room->sendLog(log);
 
-            if(wusong->getPile("chou").isEmpty())
-                wusong->addToPile("chou", damage.card->getEffectiveId(), true);
-            else{
-                bool getit = true;
-                foreach(int cdid, wusong->getPile("chou")){
-                    if(damage.card->getEffectiveId() == cdid)
-                        getit = false;
-                }
-                if(getit)
-                    wusong->addToPile("chou", damage.card->getEffectiveId(), true);
-                else
-                    return false;
-            }
+            wusong->addToPile("chou", card->getEffectiveId(), true);
         }
-        else
-            return false;
-        return false;
     }
 };
 
@@ -156,12 +142,10 @@ ZhushaCard::ZhushaCard(){
 }
 
 void ZhushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *wusong = source;
+    PlayerStar wusong = source;
     QList<int> chous = wusong->getPile("chou");
-    if(chous.isEmpty())
-        return ;
 
-    int card_id;
+    int card_id = -1;
     if(chous.length() == 1)
         card_id = chous.first();
     else{
@@ -176,7 +160,7 @@ void ZhushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     const Card *card = Sanguosha->getCard(card_id);
     room->moveCardTo(card, NULL, Player::DiscardedPile, true);
     room->loseMaxHp(wusong, 1);
-    wusong->setFlags("zhusha_effect");
+    Self->setFlags("zhusha_effect");
 }
 
 class ZhushaDiscard: public ZeroCardViewAsSkill{
@@ -186,7 +170,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("ZhushaCard") && player->getPile("chou").length() != 0;
+        return !player->hasUsed("ZhushaCard") && !player->getPile("chou").isEmpty();
     }
 
     virtual const Card *viewAs() const{
@@ -204,14 +188,22 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *wusong, QVariant &data) const{
         Room *room = wusong->getRoom();
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Slash") && wusong->hasFlag("zhusha_effect")){
+        if(use.card->inherits("Slash") && Self->hasFlag("zhusha_effect")){
             room->playSkillEffect(objectName());
-            wusong->setFlags("-zhusha_effect");
-            room->throwCard(use.card);
-            foreach(ServerPlayer *p, room->getOtherPlayers(wusong)){
-                room->cardEffect(use.card, wusong, p);
-            }
-            return true;
+            LogMessage ogg;
+            ogg.type = "#Zhusha";
+            ogg.from = wusong;
+            ogg.arg = objectName();
+
+            Self->setFlags("-zhusha_effect");
+            use.to.clear();
+            foreach(ServerPlayer *p, room->getOtherPlayers(wusong))
+                use.to << p;
+            ogg.to = use.to;
+            room->sendLog(ogg);
+
+            data = QVariant::fromValue(use);
+            return false;
         }
         return false;
     }
@@ -230,7 +222,6 @@ void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     ServerPlayer *target = targets.first();
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;
-    damage.card = NULL;
     damage.from = source;
     damage.to = target;
     damage.damage = 2;

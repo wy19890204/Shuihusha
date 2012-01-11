@@ -932,10 +932,11 @@ public:
             const Card *card = room->askForCard(zhufu, "..H", "@guitai:" + effect.to->objectName(), data);
             if(card){
                 LogMessage log;
-                log.type = "#UseSkill";
+                log.type = "#Guitai";
                 log.from = zhufu;
                 log.to << effect.to;
                 log.arg = objectName();
+                log.arg2 = effect.card->objectName();
                 room->sendLog(log);
 
                 effect.from = effect.from;
