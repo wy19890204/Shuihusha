@@ -165,7 +165,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->hasSkill("guibing") && !player->hasFlag("guibing") && Slash::IsAvailable(player);
+        return !player->hasFlag("guibing") && Slash::IsAvailable(player);
     }
 
     virtual const Card *viewAs() const{
@@ -178,10 +178,6 @@ public:
     Guibing():TriggerSkill("guibing"){
         events << CardAsked;
         view_as_skill = new GuibingViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill("guibing");
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *gaolian, QVariant &data) const{
@@ -837,6 +833,43 @@ public:
     }
 };
 
+HunjiuCard::HunjiuCard(){
+
+}
+
+bool HunjiuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->inMyAttackRange(to_select);
+}
+
+bool HunjiuCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return (targets.isEmpty() && Analeptic::IsAvailable(Self)) ||
+            (targets.length() == 1 && Ecstasy::IsAvailable(Self));
+}
+
+void HunjiuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    int card_id = getSubcards().first();
+    Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
+    int num = Sanguosha->getCard(card_id)->getNumber();
+    CardUseStruct use;
+    use.from = source;
+    if(targets.isEmpty()){
+        Analeptic *a = new Analeptic(suit, num);
+        a->setSkillName("hunjiu");
+        a->addSubcard(card_id);
+        use.card = a;
+        use.to << source;
+    }
+    else{
+        Ecstasy *e = new Ecstasy(suit, num);
+        e->setSkillName("hunjiu");
+        e->addSubcard(card_id);
+        use.card = e;
+        use.to << targets.first();
+    }
+    room->useCard(use);
+}
+
 class Hunjiu:public OneCardViewAsSkill{
 public:
     Hunjiu():OneCardViewAsSkill("hunjiu"){
@@ -854,7 +887,7 @@ public:
         case Client::Responsing:{
                 QString pattern = ClientInstance->getPattern();
                 if(pattern.contains("analeptic"))
-                    return card->inherits("Ecstasy");
+                    return card->inherits("Ecstasy") || card->inherits("Peach");
             }
         default:
             return false;
@@ -866,19 +899,9 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        if(card->inherits("Peach") || card->inherits("Analeptic")){
-            Ecstasy *ecstasy = new Ecstasy(card->getSuit(), card->getNumber());
-            ecstasy->setSkillName(objectName());
-            ecstasy->addSubcard(card->getId());
-            return ecstasy;
-        }else if(card->inherits("Ecstasy")){
-            Analeptic *analeptic = new Analeptic(card->getSuit(), card->getNumber());
-            analeptic->setSkillName(objectName());
-            analeptic->addSubcard(card->getId());
-            return analeptic;
-        }else
-            return NULL;
+        HunjiuCard *card = new HunjiuCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
@@ -1027,6 +1050,7 @@ YBYTPackage::YBYTPackage()
     addMetaObject<WeizaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
+    addMetaObject<HunjiuCard>();
 }
 
 ADD_PACKAGE(YBYT);

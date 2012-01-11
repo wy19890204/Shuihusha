@@ -72,7 +72,6 @@ public:
 class Shengui: public ProhibitSkill{
 public:
     Shengui():ProhibitSkill("shengui"){
-
     }
 
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{

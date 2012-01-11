@@ -12,8 +12,12 @@ Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
     setObjectName("ecstasy");
 }
 
-bool Ecstasy::isAvailable(const Player *player) const{
+bool Ecstasy::IsAvailable(const Player *player){
     return !player->hasUsed("Ecstasy");
+}
+
+bool Ecstasy::isAvailable(const Player *player) const{
+    return IsAvailable(player);
 }
 
 QString Ecstasy::getSubtype() const{
