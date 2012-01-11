@@ -858,7 +858,6 @@ void HunjiuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
         a->setSkillName("hunjiu");
         a->addSubcard(card_id);
         use.card = a;
-        use.to << source;
     }
     else{
         Ecstasy *e = new Ecstasy(suit, num);

@@ -86,43 +86,6 @@ public:
     }
 };
 
-class Shenfen: public TriggerSkill{
-public:
-    Shenfen():TriggerSkill("shenfen"){
-        events << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
-            QStringList suits;
-            foreach(const Card *rmp, player->getEquips()){
-                if(!suits.contains(rmp->getSuitString()))
-                    suits << rmp->getSuitString();
-            }
-            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
-                return false;
-            QString suit = effect.card->getSuitString();
-            if(!suits.contains(suit))
-                return false;
-
-            LogMessage log;
-            log.type = "#Caiquan";
-            log.from = effect.from;
-            Room *room = player->getRoom();
-            log.to << effect.to;
-            log.arg = effect.card->objectName();
-            log.arg2 = objectName();
-
-            room->sendLog(log);
-            room->playSkillEffect(objectName());
-            return true;
-        }
-        return false;
-    }
-};
-
 WushenSlash::WushenSlash(Card::Suit suit, int number)
     :Slash(suit, number)
 {
