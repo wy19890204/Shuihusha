@@ -83,45 +83,65 @@ void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
     QStringList ndtricks;
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
-        if(card->isNDTrick() && !card->inherits("Nullification") &&
-           !ndtricks.contains(card->objectName()))
+        if(card->isNDTrick() && !ndtricks.contains(card->objectName()))
             ndtricks << card->objectName();
     }
     QString name = room->askForChoice(nouse, "yunchou", ndtricks.join("+"));
     room->setPlayerProperty(nouse, "yunchoustore", name);
 }
 
-class YunchouSelect: public ZeroCardViewAsSkill{
+class Yunchou:public ViewAsSkill{
 public:
-    YunchouSelect():ZeroCardViewAsSkill("yunchou-select"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new YunchouCard;
-    }
-};
-
-class Yunchou:public OneCardViewAsSkill{
-public:
-    Yunchou():OneCardViewAsSkill("yunchou"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("TrickCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        QString name = Self->property("yunchoustore").toString();
-        Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
-        new_card->addSubcard(card);
-        new_card->setSkillName("yunchou");
-        Self->setFlags("Yunchou_used");
-        return new_card;
+    Yunchou():ViewAsSkill("yunchou"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->property("yunchoustore").isNull() && !player->hasFlag("Yunchou_used");
+        if(player->hasUsed("YunchouCard") && !player->hasFlag("yunchou")){
+            QString name = Self->property("yunchoustore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return card->isAvailable(player);
+        }else if(player->hasFlag("yunchou"))
+            return false;
+        else
+            return true;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->hasUsed("YunchouCard") && selected.isEmpty() && !Self->hasFlag("yunchou")){
+            return to_select->getCard()->inherits("TrickCard");
+        }else
+            return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        if(player->hasFlag("yunchou"))
+            return false;
+        if(player->hasUsed("YunchouCard")){
+            QString name = Self->property("yunchoustore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return pattern.contains(card->objectName());
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->hasUsed("YunchouCard")){
+            if(Self->hasFlag("yunchou"))
+                return false;
+            if(cards.length() != 1)
+                return NULL;
+            const Card *card = cards.first()->getCard();
+            QString name = Self->property("yunchoustore").toString();
+            Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+            new_card->addSubcard(card);
+            new_card->setSkillName("yunchou");
+            Self->setFlags("yunchou");
+            return new_card;
+        }else{
+            return new YunchouCard;
+        }
     }
 };
 
@@ -394,41 +414,60 @@ void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->setPlayerProperty(xiao, "linmostore", zi);
 }
 
-class LinmoSelect: public ZeroCardViewAsSkill{
+class LinmoViewAsSkill:public ViewAsSkill{
 public:
-    LinmoSelect():ZeroCardViewAsSkill("linmo-select"){
+    LinmoViewAsSkill():ViewAsSkill("linmo"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->hasUsed("LinmoCard") && selected.isEmpty() && !Self->hasFlag("linmo")){
+            return !to_select->isEquipped();
+        }else
+            return false;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->getPile("zi").isEmpty();
+        if(player->getPile("zi").isEmpty())
+            return false;
+        if(player->hasUsed("LinmoCard") && !player->hasFlag("linmo")){
+            QString name = Self->property("linmostore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return card->isAvailable(player);
+        }else if(player->hasFlag("linmo"))
+            return false;
+        else
+            return true;
     }
 
-    virtual const Card *viewAs() const{
-        return new LinmoCard;
-    }
-};
-
-class LinmoViewAsSkill:public OneCardViewAsSkill{
-public:
-    LinmoViewAsSkill():OneCardViewAsSkill("linmo"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        QString name = Self->property("linmostore").toString();
-        Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
-        new_card->addSubcard(card);
-        new_card->setSkillName("linmo");
-        Self->setFlags("Linmo_used");
-        return new_card;
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->hasUsed("LinmoCard")){
+            if(Self->hasFlag("linmo"))
+                return false;
+            if(cards.length() != 1)
+                return NULL;
+            const Card *card = cards.first()->getCard();
+            QString name = Self->property("linmostore").toString();
+            Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+            new_card->addSubcard(card);
+            new_card->setSkillName("linmo");
+            Self->setFlags("linmo");
+            return new_card;
+        }else{
+            return new LinmoCard;
+        }
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->property("linmostore").isNull() && !player->hasFlag("Linmo_used");
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        if(player->hasFlag("linmo"))
+            return false;
+        if(player->hasUsed("LinmoCard")){
+            QString name = Self->property("linmostore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return pattern.contains(card->objectName());
+        }else
+            return false;
     }
 };
 
@@ -436,18 +475,29 @@ class Linmo: public TriggerSkill{
 public:
     Linmo():TriggerSkill("linmo"){
         view_as_skill = new LinmoViewAsSkill;
-        events << CardFinished;
-        //frequency = Frequent;
+        events << CardFinished << PhaseChange;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+        return true;
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *writer = room->findPlayerBySkillName(objectName());
         if(!writer)
+            return false;
+        if(writer == player){
+            if(event == PhaseChange){
+                if(player->getPhase() != Player::NotActive)
+                    return false;
+                player->property("linmostore") = "";
+                foreach(int a, player->getPile("zi"))
+                    room->throwCard(a);
+            }
+            return false;
+        }
+        if(event != CardFinished)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.to.contains(writer) && (use.card->inherits("BasicCard") || use.card->isNDTrick())
@@ -461,21 +511,6 @@ public:
             }
             if(!hassamezi && writer->askForSkillInvoke(objectName()))
                 writer->addToPile("zi", use.card->getEffectiveId());
-        }
-        return false;
-    }
-};
-
-class LinmoClear: public PhaseChangeSkill{
-public:
-    LinmoClear():PhaseChangeSkill("#linmo-clear"){
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->getPhase() == Player::NotActive){
-            player->property("linmostore") = "";
-            foreach(int a, player->getPile("zi"))
-                player->getRoom()->throwCard(a);
         }
         return false;
     }
@@ -861,7 +896,6 @@ CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
     General *wuyong = new General(this, "wuyong", "kou", 3);
-    wuyong->addSkill(new YunchouSelect);
     wuyong->addSkill(new Yunchou);
     wuyong->addSkill(new ZhiquN);
     wuyong->addSkill(new ZhiquC);
@@ -874,10 +908,7 @@ CGDKPackage::CGDKPackage()
     xiebao->addSkill(new Liehuo);
 
     General *xiaorang = new General(this, "xiaorang", "min", 3);
-    xiaorang->addSkill(new LinmoSelect);
     xiaorang->addSkill(new Linmo);
-    xiaorang->addSkill(new LinmoClear);
-    related_skills.insertMulti("linmo", "#linmo-clear");
     xiaorang->addSkill(new Zhaixing);
 
     General *yanglin = new General(this, "yanglin", "kou");

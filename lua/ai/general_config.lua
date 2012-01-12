@@ -56,6 +56,7 @@ sgs.ai_use_value =
 
 
 	Indulgence=8,
+	Nullification = 8,
 	SupplyShortage=7,
 
 	Peach = 6,
@@ -76,7 +77,6 @@ sgs.ai_use_value =
 	Duel=3.7,
 
 	AmazingGrace=3,
-	Nullification = 8.2,
 
 	--special
 	Analeptic = 5.98,
