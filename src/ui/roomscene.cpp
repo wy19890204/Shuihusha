@@ -514,6 +514,12 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
     case 9: nine = 1; break;
     }
 
+    if(ServerInfo.GameMode == "06_3v3" )
+    {
+        six   = 0;
+        nine = 1;
+    }
+
     if(Config.value("CircularView").toBool()){
         cxw=1;
         cxw2=0;
@@ -544,12 +550,12 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
     };
 
     static int indices_table_3v3[][5] = {
-        {0, 3, 4, 5, 8}, // lord
-        {0, 1, 4, 5, 6}, // loyalist (right), same with rebel (right)
-        {2, 3, 4, 7, 8}, // rebel (left), same with loyalist (left)
-        {0, 3, 4, 5, 8}, // renegade, same with lord
-        {0, 1, 4, 5, 6}, // rebel (right)
-        {2, 3, 4, 7, 8}, // loyalist (left)
+        {0, 2, 4, 6, 8}, // lord
+        {0, 1, 5, 6, 7}, // loyalist (right), same with rebel (right)
+        {1, 2, 3, 7, 8}, // rebel (left), same with loyalist (left)
+        {0, 2, 4, 6, 8}, // renegade, same with lord
+        {0, 1, 5, 6, 7}, // rebel (right)
+        {1, 2, 3, 7, 8}, // loyalist (left)
     };
 
     QList<QPointF> positions;
@@ -2305,8 +2311,10 @@ void RoomScene::addRestartButton(QDialog *dialog){
     dialog->resize(main_window->width()/2, dialog->height());
 
     QPushButton *restart_button = new QPushButton(tr("Restart Game"));
+    QPushButton *return_button = new QPushButton(tr("Return to main menu"));
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
+    hlayout->addWidget(return_button);
     hlayout->addWidget(restart_button);
 
     QPushButton *save_button = new QPushButton(tr("Save record"));
@@ -2317,8 +2325,10 @@ void RoomScene::addRestartButton(QDialog *dialog){
         layout->addLayout(hlayout);
 
     connect(restart_button, SIGNAL(clicked()), dialog, SLOT(accept()));
+    connect(return_button, SIGNAL(clicked()), dialog, SLOT(accept()));
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveReplayRecord()));
     connect(dialog, SIGNAL(accepted()), this, SIGNAL(restart()));
+    connect(return_button, SIGNAL(clicked()), this, SIGNAL(return_to_start()));
 }
 
 void RoomScene::saveReplayRecord(){
@@ -2894,14 +2904,10 @@ void RoomScene::onGameStart(){
     foreach(Photo *photo, photos)
         photo->createRoleCombobox();
 
+
 #ifdef AUDIO_SUPPORT
     if(!Config.EnableBgMusic)
-#ifdef Q_OS_WIN32
-        if(SoundEngine == NULL)
-#else
-        if(BackgroundMusic == NULL)
-#endif
-            return;
+        return;
 
     bool play_music = false;
     if(memory->isAttached() || memory->attach()){
@@ -2928,22 +2934,27 @@ void RoomScene::onGameStart(){
         return;
 
     // start playing background music
-    QString bgmusic_path = !Config.EnableBgMusic ? "" :
-                           Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
-#ifdef  Q_OS_WIN32
-    const char *filename = bgmusic_path.toLocal8Bit().data();
-    BackgroundMusic = SoundEngine->play2D(filename, true, false, true);
+    QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
 
-    if(BackgroundMusic)
-        BackgroundMusic->setVolume(Config.Volume);
+#ifdef  Q_OS_WIN32
+    if(SoundEngine) {
+        const char *filename = bgmusic_path.toLocal8Bit().data();
+        BackgroundMusic = SoundEngine->play2D(filename, true, false, true);
+
+        if(BackgroundMusic)
+            BackgroundMusic->setVolume(Config.BGMVolume);
+    }
 #else
-    if (!BackgroundMusic) {
+    if(BackgroundMusic == NULL) {
         SoundOutput = new Phonon::AudioOutput(Phonon::GameCategory, this);
         BackgroundMusic = new Phonon::MediaObject(this);
-        Phonon::createPath(BackgroundMusic, SoundOutput);
-        BackgroundMusic->setCurrentSource(Phonon::MediaSource(bgmusic_path));
-        BackgroundMusic->play();
         connect(BackgroundMusic, SIGNAL(aboutToFinish()), SLOT(onMusicFinish()));
+        Phonon::createPath(BackgroundMusic, SoundOutput);
+    }
+    if(BackgroundMusic) {
+        // This crashes when running twice
+        // BackgroundMusic->setCurrentSource(bgmusic_path);
+        // BackgroundMusic->play();
     }
 #endif
 
@@ -2972,8 +2983,10 @@ void RoomScene::freeze(){
     chat_edit->setEnabled(false);
 
 #ifdef AUDIO_SUPPORT
+#ifdef  Q_OS_WIN32
     if(BackgroundMusic)
         BackgroundMusic->stop();
+#endif
 #endif
 
     progress_bar->hide();

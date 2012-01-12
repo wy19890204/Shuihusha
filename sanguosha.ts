@@ -748,8 +748,8 @@
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="159"/>
-        <source>Volume</source>
-        <translation>音量</translation>
+        <source>BGM    Volume</source>
+        <translation>背景音乐音量</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="120"/>
@@ -772,7 +772,12 @@
         <translation>启用背景音乐</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="192"/>
+        <location filename="src/dialog/configdialog.ui" line="194"/>
+        <source>Effect Volume</source>
+        <translation>声音效果音量</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="227"/>
         <source>Background</source>
         <translation>背景</translation>
     </message>
@@ -2628,6 +2633,11 @@
         <location filename="src/ui/roomscene.cpp" line="2264"/>
         <source>Loser(s)</source>
         <translation>失败者</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2492"/>
+        <source>Return to main menu</source>
+        <translation>返回主菜单</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2312"/>

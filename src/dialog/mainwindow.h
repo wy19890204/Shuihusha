@@ -104,6 +104,7 @@ private slots:
     void networkError(const QString &error_msg);
     void enterRoom();
     void gotoScene(QGraphicsScene *scene);
+    void gotoStartScene();
     void startGameInAnotherInstance();
     void changeBackground();
 };
