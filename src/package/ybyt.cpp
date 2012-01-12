@@ -308,7 +308,6 @@ public:
 };
 
 SinueCard::SinueCard(){
-    once = true;
 }
 
 bool SinueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -319,7 +318,6 @@ bool SinueCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void SinueCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->setPlayerFlag(effect.from, "sinue");
 
     LogMessage log;
     log.type = "#UseSkill";
@@ -381,12 +379,8 @@ public:
             return false;
         Room *room = killer->getRoom();
         if(killer->getPhase() == Player::Play
-            && !killer->hasFlag("sinue")
-            && !killer->isKongcheng()){
+            && !killer->isKongcheng())
             room->askForUseCard(killer, "@@sinue", "@sinue");
-        }
-        else if(killer->getPhase() == Player::Finish)
-            room->setPlayerFlag(killer, "-sinue");
         return false;
     }
 };
