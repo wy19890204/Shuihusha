@@ -168,6 +168,8 @@ return {
 
 	["#_ximenqing"] = "大官人",
 
+	["caiquan"] = "财权",
+
 -- last words
 	["~panqiaoyun"] = "一了百了～",
 	["~wangpo"] = "死到眼前，犹做发财梦～",
