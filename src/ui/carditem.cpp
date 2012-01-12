@@ -79,42 +79,29 @@ QPointF CardItem::homePos() const{
     return home_pos;
 }
 
-void CardItem::goBack(bool kieru,bool fadein,bool fadeout){
+void CardItem::goBack(bool kieru){
     if(home_pos == pos()){
-        if(kieru && home_pos != QPointF(-6, 8))
+        if(kieru)
             setOpacity(0.0);
         return;
     }
 
     QPropertyAnimation *goback = new QPropertyAnimation(this, "pos");
     goback->setEndValue(home_pos);
-    goback->setEasingCurve(QEasingCurve::OutQuad);
-    goback->setDuration(500);
+    goback->setEasingCurve(QEasingCurve::OutQuart);
+    goback->setDuration(300);
 
     if(kieru){
         QParallelAnimationGroup *group = new QParallelAnimationGroup;
 
         QPropertyAnimation *disappear = new QPropertyAnimation(this, "opacity");
-        if(fadein)disappear->setStartValue(0.0);
-        disappear->setEndValue(1.0);
-        if(fadeout)disappear->setEndValue(0.0);
-
+        disappear->setStartValue(0.0);
         disappear->setKeyValueAt(0.2, 1.0);
         disappear->setKeyValueAt(0.8, 1.0);
+        disappear->setEndValue(0.0);
 
-
-        int dx = home_pos.x()-pos().x();
-        int dy = home_pos.y()-pos().y();
-        int length = sqrt(dx*dx+dy*dy);
-
-
-        if(length*3>500)disappear->setStartValue(0.0);
-        else length = 500/3;
-
-        if(length*3>1200)length =400;
-
-        goback->setDuration(length*3);
-        disappear->setDuration(length*3);
+        goback->setDuration(1000);
+        disappear->setDuration(1000);
 
         group->addAnimation(goback);
         group->addAnimation(disappear);
@@ -124,10 +111,7 @@ void CardItem::goBack(bool kieru,bool fadein,bool fadeout){
 
         group->start(QParallelAnimationGroup::DeleteWhenStopped);
     }else
-    {
-        setOpacity(this->isEnabled() ? 1.0 : 0.7);
         goback->start(QPropertyAnimation::DeleteWhenStopped);
-    }
 }
 
 const QPixmap &CardItem::getSuitPixmap() const{
@@ -183,8 +167,7 @@ void CardItem::select(){
         frame->show();
     else{
         home_pos.setY(PendingY);
-        //setY(PendingY);
-        if(!hasFocus())goBack();
+        setY(PendingY);
     }
 }
 
@@ -193,8 +176,7 @@ void CardItem::unselect(){
         frame->hide();
     else{
         home_pos.setY(NormalY);
-        //setY(NormalY);
-        if(!hasFocus())goBack();
+        setY(NormalY);
     }
 }
 
