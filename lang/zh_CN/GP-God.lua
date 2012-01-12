@@ -6,7 +6,7 @@ return {
 	["#_shenwusong"] = "清忠祖师",
 	["shenwusong"] = "神武松",
 	["designer:shenwusong"] = "烨子&裁之刃•散",
-	["coder:shenxuning"] = "皇叔",
+	["coder:shenwusong"] = "皇叔",
 	["shenchou"] = "深仇",
 	[":shenchou"] = "<b>锁定技</b>，你每受到一次伤害，须将对你造成伤害的牌置于你的武将牌上，称为“仇”。",
 	["chou"] = "仇",
