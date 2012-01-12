@@ -12,17 +12,11 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *xuning, QVariant &data) const{
-        Room *room = xuning->getRoom();
-        DamageStruct damage = data.value<DamageStruct>();
-        if(xuning != damage.to && damage.to->isChained() && damage.nature == DamageStruct::Normal){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = xuning;
-            log.arg = objectName();
-            room->sendLog(log);
+    virtual bool trigger(TriggerEvent event, ServerPlayer *xuning, QVariant &data) const{
 
-            damage.damage ++;
+        DamageStruct damage = data.value<DamageStruct>();
+        if((damage.to->isChained()) &&(damage.nature == DamageStruct::Normal)){
+            damage.damage = damage.damage + 1;
             data = QVariant::fromValue(damage);
             return false;
         }
@@ -34,26 +28,12 @@ class Jiebei: public TriggerSkill{
 public:
     Jiebei():TriggerSkill("jiebei"){
         events << CardLost << FinishJudge;
+
         frequency = Frequent;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return target->getRoom()->findPlayerBySkillName(objectName());
-    }
-
-    static void Callback(QVariant &data, ServerPlayer *xuning, ServerPlayer *from, const Card *armor){
-        Room *room = xuning->getRoom();
-        QList<ServerPlayer *> tos;
-        foreach(ServerPlayer *tmp, room->getAllPlayers()){
-            if(!tmp->getArmor())
-                tos << tmp;
-        }
-        QString prompt = QString("@jiebei:%1::%2").arg(from->objectName()).arg(armor->objectName());
-        if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, data)){
-            xuning->obtainCard(armor);
-            ServerPlayer *to = room->askForPlayerChosen(xuning, tos, "jiebei");
-            room->moveCardTo(armor, to, Player::Equip);
-        }
     }
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
@@ -69,45 +49,73 @@ public:
                     room->playSkillEffect(objectName());
                     xuning->drawCards(2);
                 }
-            }
-            if(room->getCardPlace(move->card_id) == Player::DiscardedPile){
-                Callback(data, xuning, move->from, armor);
+            }else if(room->getCardPlace(move->card_id) == Player::DiscardedPile){
+                if(room->askForDiscard(xuning, objectName(), 1, false, false)){
+                    xuning->obtainCard(armor);
+                    QList<ServerPlayer *> tos;
+                    foreach(ServerPlayer *p, room->getAllPlayers()){
+                        if(!p->getArmor())
+                            tos << p;
+                    }
+                    tos.removeOne(move->from);
+                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
+                    room->moveCardTo(armor, to, Player::Equip, true);
+                }
                 return false;
             }
             return false;
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
             if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile && judge->card->inherits("Armor")){
-                Callback(data, xuning, judge->who, judge->card);
+                if(room->askForDiscard(xuning, objectName(), 1, false, false)){
+                    xuning->obtainCard(judge->card);
+                    QList<ServerPlayer *> tos;
+                    foreach(ServerPlayer *p, room->getAllPlayers()){
+                        if(!p->getArmor())
+                            tos << p;
+                    }
+                    //tos.removeOne(move->from);
+                    ServerPlayer *to = room->askForPlayerChosen(xuning, tos, objectName());
+                    room->moveCardTo(judge->card, to, Player::Equip, true);
+
+                }
                 return false;
             }
         }
+
         return false;
     }
 };
 
-class Shenchou: public MasochismSkill{
+class Shenchou:public TriggerSkill{
 public:
-    Shenchou():MasochismSkill("shenchou"){
+    Shenchou():TriggerSkill("shenchou"){
+        events << Damage;
         frequency = Compulsory;
     }
 
-    virtual void onDamaged(ServerPlayer *wusong, const DamageStruct &damage) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *wusong, QVariant &data) const{
         Room *room = wusong->getRoom();
-        if(wusong->getMark("shenchou") != 0)
-            return;
+        DamageStruct damage = data.value<DamageStruct>();
         room->playSkillEffect(objectName());
-        const Card *card = damage.card;
-        if(card && room->obtainable(card, wusong)){
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = wusong;
-            log.arg = objectName();
-            room->playSkillEffect(objectName());
-            room->sendLog(log);
-
-            wusong->addToPile("chou", card->getEffectiveId(), true);
+        if(damage.card && wusong->getMark("shenchou") == 0){
+            if(wusong->getPile("chou_pile").isEmpty())
+                wusong->addToPile("chou_pile", damage.card->getEffectiveId(), true);
+            else{
+                bool getit = true;
+                foreach(int cdid, wusong->getPile("chou_pile")){
+                    if(damage.card->getEffectiveId() == cdid)
+                        getit = false;
+                }
+                if(getit)
+                    wusong->addToPile("chou_pile", damage.card->getEffectiveId(), true);
+                else
+                    return false;
+            }
         }
+        else
+            return false;
+        return false;
     }
 };
 
@@ -121,7 +129,7 @@ public:
         return PhaseChangeSkill::triggerable(target)
                 && target->getPhase() == Player::Start
                 && target->getMark("wujie") == 0
-                && target->getPile("chou").length() >= 3;
+                && target->getPile("chou_pile").length() >= 3;
     }
 
     virtual bool onPhaseChange(ServerPlayer *wusong) const{
@@ -131,6 +139,7 @@ public:
         room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHP() + 1));
 
         room->playSkillEffect(objectName());
+
         room->acquireSkill(wusong, "zhusha");
 
         return false;
@@ -142,10 +151,12 @@ ZhushaCard::ZhushaCard(){
 }
 
 void ZhushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    PlayerStar wusong = source;
-    QList<int> chous = wusong->getPile("chou");
+    ServerPlayer *wusong = source;
+    QList<int> chous = wusong->getPile("chou_pile");
+    if(chous.isEmpty())
+        return ;
 
-    int card_id = -1;
+    int card_id;
     if(chous.length() == 1)
         card_id = chous.first();
     else{
@@ -160,7 +171,7 @@ void ZhushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     const Card *card = Sanguosha->getCard(card_id);
     room->moveCardTo(card, NULL, Player::DiscardedPile, true);
     room->loseMaxHp(wusong, 1);
-    Self->setFlags("zhusha_effect");
+    wusong->setFlags("zhusha_effect");
 }
 
 class ZhushaDiscard: public ZeroCardViewAsSkill{
@@ -170,7 +181,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("ZhushaCard") && !player->getPile("chou").isEmpty();
+        return !player->hasUsed("ZhushaCard") && player->getPile("chou_pile").length() != 0;
     }
 
     virtual const Card *viewAs() const{
@@ -185,25 +196,17 @@ public:
         view_as_skill = new ZhushaDiscard;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *wusong, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *wusong, QVariant &data) const{
         Room *room = wusong->getRoom();
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Slash") && Self->hasFlag("zhusha_effect")){
+        if(use.card->inherits("Slash") && wusong->hasFlag("zhusha_effect")){
             room->playSkillEffect(objectName());
-            LogMessage ogg;
-            ogg.type = "#Zhusha";
-            ogg.from = wusong;
-            ogg.arg = objectName();
-
-            Self->setFlags("-zhusha_effect");
-            use.to.clear();
-            foreach(ServerPlayer *p, room->getOtherPlayers(wusong))
-                use.to << p;
-            ogg.to = use.to;
-            room->sendLog(ogg);
-
-            data = QVariant::fromValue(use);
-            return false;
+            wusong->setFlags("-zhusha_effect");
+            room->throwCard(use.card);
+            foreach(ServerPlayer *p, room->getOtherPlayers(wusong)){
+                room->cardEffect(use.card, wusong, p);
+            }
+            return true;
         }
         return false;
     }
@@ -222,13 +225,14 @@ void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     ServerPlayer *target = targets.first();
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;
+    damage.card = NULL;
     damage.from = source;
     damage.to = target;
     damage.damage = 2;
     room->damage(damage);
     room->detachSkillFromPlayer(source, "shenchou");
     source->addMark("shenchou");
-    source->loseMark("@bi");
+    source->loseMark("@duanbi");
 }
 
 class Duanbi: public ZeroCardViewAsSkill{
@@ -242,9 +246,13 @@ public:
 
 protected:
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@bi") == 1
+        return player->getMark("@duanbi") == 1
                 && player->getHp() == 1
                 && player->getMaxHP() > 1;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return  false;
     }
 };
 

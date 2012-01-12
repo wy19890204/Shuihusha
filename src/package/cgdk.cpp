@@ -450,7 +450,7 @@ public:
             Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
             new_card->addSubcard(card);
             new_card->setSkillName("linmo");
-            Self->setFlags("Linmo_used");
+            Self->setFlags("linmo");
             return new_card;
         }else{
             return new LinmoCard;
@@ -493,7 +493,7 @@ public:
                     return false;
                 player->property("linmostore") = "";
                 foreach(int a, player->getPile("zi"))
-                    player->getRoom()->throwCard(a);
+                    room->throwCard(a);
             }
             return false;
         }
