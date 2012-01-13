@@ -780,7 +780,7 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
 bool Player::canSlashWithoutCrossbow() const{
     if(hasFlag("SlashbySlash"))
         return true;
-    if(hasSkill("paoxiao") || hasSkill("hua1fo"))
+    if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;
     if(hasSkill("qinlong") && getEquips().isEmpty())
         return true;

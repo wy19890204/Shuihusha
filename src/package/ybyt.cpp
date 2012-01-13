@@ -819,7 +819,7 @@ public:
                 data = QVariant::fromValue(effect);
             }
             if(choice == "qi" && !effect.from->isNude()){
-                int to_throw = room->askForCardChosen(zouyuan, effect.from, "hej", objectName());
+                int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
                 room->throwCard(to_throw);
             }
         }

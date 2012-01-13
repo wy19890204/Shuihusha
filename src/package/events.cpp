@@ -130,7 +130,7 @@ void NinedayGirl::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     room->throwCard(this);
     if(!targets.isEmpty()){
         ServerPlayer *target = targets.first();
-        int card_id = room->askForCardChosen(source, target, "h", "ninedaygirl");
+        int card_id = target->getRandomHandCardId();
         room->showCard(target, card_id);
         room->obtainCard(source, card_id);
     }

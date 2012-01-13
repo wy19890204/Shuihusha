@@ -456,39 +456,75 @@ public:
     }
 };
 
-class HuafoSlash: public OneCardViewAsSkill{
+HuafoCard::HuafoCard(){
+
+}
+
+bool HuafoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->inMyAttackRange(to_select);
+            /* && Slash::targetFilter(targets, to_select, Self);*/
+}
+
+bool HuafoCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return (targets.isEmpty() && Analeptic::IsAvailable(Self)) ||
+            (!targets.isEmpty() && Slash::IsAvailable(Self));
+}
+
+void HuafoCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    room->throwCard(this);
+    int card_id = getSubcards().first();
+    Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
+    int num = Sanguosha->getCard(card_id)->getNumber();
+    CardUseStruct use;
+    use.from = card_use.from;
+    if(card_use.to.isEmpty()){
+        Analeptic *a = new Analeptic(suit, num);
+        a->setSkillName("huafo");
+        a->addSubcard(card_id);
+        use.card = a;
+    }
+    else{
+        Slash *e = new Slash(suit, num);
+        e->setSkillName("huafo");
+        e->addSubcard(card_id);
+        use.card = e;
+        use.to = card_use.to;
+    }
+    room->useCard(use);
+}
+
+class Huafo:public OneCardViewAsSkill{
 public:
-    HuafoSlash():OneCardViewAsSkill("hua1fo"){
+    Huafo():OneCardViewAsSkill("huafo"){
+
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("BasicCard");
+        const Card *card = to_select->getFilteredCard();
+
+        switch(ClientInstance->getStatus()){
+        case Client::Playing:{
+                return card->inherits("BasicCard");
+            }
+
+        case Client::Responsing:{
+                QString pattern = ClientInstance->getPattern();
+                if(pattern.contains("analeptic"))
+                    return card->inherits("BasicCard");
+            }
+        default:
+            return false;
+        }
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern.contains("analeptic");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        Slash *s = new Slash(card->getSuit(), card->getNumber());
-        s->addSubcard(card);
-        s->setSkillName(objectName());
-        return s;
-    }
-};
-
-class HuafoAnale: public OneCardViewAsSkill{
-public:
-    HuafoAnale():OneCardViewAsSkill("hua2fo"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("BasicCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        Analeptic *a = new Analeptic(card->getSuit(), card->getNumber());
-        a->addSubcard(card);
-        a->setSkillName(objectName());
-        return a;
+        HuafoCard *card = new HuafoCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
@@ -567,8 +603,7 @@ GodPackage::GodPackage()
 
     General *shenluzhishen = new General(this, "shenluzhishen", "god", 5);
     shenluzhishen->addSkill(new Dunwu);
-    shenluzhishen->addSkill(new HuafoSlash);
-    shenluzhishen->addSkill(new HuafoAnale);
+    shenluzhishen->addSkill(new Huafo);
 
     General *shenxuning = new General(this, "shenxuning", "god");
     shenxuning->addSkill(new Jiebei);
@@ -578,6 +613,7 @@ GodPackage::GodPackage()
     addMetaObject<DuanbiCard>();
     addMetaObject<FeihuangCard>();
     addMetaObject<MeiyuCard>();
+    addMetaObject<HuafoCard>();
 }
 
 ADD_PACKAGE(God)
