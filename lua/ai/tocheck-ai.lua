@@ -109,7 +109,16 @@ function SmartAI:useCardSupplyShortage(card, use)
 
 	local enemies = self:exclude(self.enemies, card)
 	for _, enemy in ipairs(enemies) do
-		if ((#enemies == 1) or not enemy:hasSkill("tiandu")) and not enemy:containsTrick("supply_shortage") then
+		if (self:hasSkills("yongsi|haoshi|tuxi", enemy) or (enemy:hasSkill("zaiqi") and enemy:getLostHp() > 1)) and
+			not enemy:containsTrick("supply_shortage") and enemy:faceUp() then
+			use.card = card
+			if use.to then use.to:append(enemy) end
+
+			return
+		end
+	end
+	for _, enemy in ipairs(enemies) do
+		if ((#enemies == 1) or not enemy:hasSkill("tiandu")) and not enemy:containsTrick("supply_shortage") and enemy:faceUp() then
 			use.card = card
 			if use.to then use.to:append(enemy) end
 

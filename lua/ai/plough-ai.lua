@@ -48,7 +48,11 @@ function SmartAI:useCardWiretap(wiretap, use)
 	use.card = wiretap
 	if use.to then
 		local r = math.random(1, 2)
-		use.to:append(targets[r])
+		if targets[r] ~= self.player then
+			use.to:append(targets[r])
+		else
+			return "."
+		end
 	end
 end
 
