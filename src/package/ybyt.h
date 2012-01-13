@@ -71,6 +71,16 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class HunjiuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE HunjiuCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
 class YBYTPackage: public Package{
     Q_OBJECT
 

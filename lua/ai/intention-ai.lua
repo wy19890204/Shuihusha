@@ -9,6 +9,13 @@ sgs.ai_lord_tolerance={}
 
 sgs.ai_card_intention["general"]=function(to,level)
 	if not to then return 0 end
+	local has_rebel = false
+	for _, aplayer in sgs.qlist(to:getRoom():getAlivePlayers()) do
+		if aplayer:getRole() == "rebel" then has_rebel = true break end
+	end
+	if not has_rebel then
+		if to:isLord() then return -level*3 else return 0 end
+	end
 	if to:isLord() then
 		return -level*2
 	elseif sgs.ai_explicit[to:objectName()]=="loyalist" then
@@ -57,6 +64,7 @@ sgs.ai_card_intention["Slash"]=function(card,from,to,source)
 	local value=sgs.ai_card_intention.general(to,80+modifier)
 
 	if sgs.ai_leiji_effect then
+		if from and from:hasSkill("liegong") then return 0 end
 		sgs.ai_leiji_effect = false
 		return -value/1.5
 	end
@@ -109,11 +117,11 @@ sgs.ai_card_intention["IronChain"]=function(card,from,to,source)
 end
 
 sgs.ai_card_intention["Dismantlement"]=function(card,from,to,source)
-	return sgs.ai_card_intention.general(to,70)
+	return sgs.ai_card_intention.general(to,40)
 end
 
 sgs.ai_card_intention["Snatch"]=function(card,from,to,source)
-	return sgs.ai_card_intention.general(to,70)
+	return sgs.ai_card_intention.general(to,40)
 end
 
 sgs.ai_card_intention["TuxiCard"]=function(card,from,to,source)
@@ -215,6 +223,13 @@ sgs.ai_card_intention["JixiCard"]=function(card,from,to,source, different)
 	return sgs.ai_card_intention.general(to, intention_value)
 end
 
+sgs.ai_card_intention["QiaobianCard"] = function(card, from, to, source)
+	if from:getPhase() == sgs.Player_Draw then
+		return sgs.ai_card_intention["TuxiCard"](card, from, to, source)
+	end
+	return 0
+end
+
 sgs.ai_card_intention["ChengxiangCard"]=sgs.ai_card_intention["QingnangCard"]
 
 sgs.ai_card_intention["JuejiCard"]=sgs.ai_card_intention["TianyiCard"]
@@ -275,7 +290,8 @@ function SmartAI:checkMisjudge(player)
 		or ((sgs.ai_renegade_suspect[name] or 0)> 2 and player:getRole() ~= "renegade")
 		then
 		self.room:writeToConsole("<font color='yellow'>MISJUDGE</font> <font color='white'>" .. player:getGeneralName() .. " " .. 
-			sgs.ai_explicit[name] .. " " .. player:getRole() .. "</font>")
+			sgs.ai_explicit[name] .. " " .. player:getRole() .. " " .. player:getRoom():alivePlayerCount() .. (sgs.ai_renegade_suspect[name] or 0)
+			.. "</font>")
 	end
 end
 
@@ -283,11 +299,21 @@ function SmartAI:refreshLoyalty(player,intention)
 	if player:isLord() or self ~= sgs.recorder then return end
 	local name=player:objectName()
 
-	if (intention>=70) or (intention<=-70) then
+	local has_rebel = false
+	for _, aplayer in sgs.qlist(self.room:getAlivePlayers()) do
+		if aplayer:getRole() == "rebel" then has_rebel = true break end
+	end
+	if not has_rebel then
+		if intention < -80 then
+			sgs.ai_anti_lord[name] = (sgs.ai_anti_lord[name] or 0) + 1
+			sgs.ai_renegade_suspect[name] = (sgs.ai_renegade_suspect[name] or 0) + 1
+		end
+	end
+	if math.abs(intention)>70 and math.abs(sgs.ai_loyalty[name] or 0) > 70 then
 		if sgs.ai_loyalty[name]*intention<0 then
-		sgs.ai_loyalty[name]=sgs.ai_loyalty[name]/2
-		self:refreshLoyalty(player,0)
-		sgs.ai_renegade_suspect[name]=(sgs.ai_renegade_suspect[name] or 0)+1
+			sgs.ai_loyalty[name]=sgs.ai_loyalty[name]/2
+			self:refreshLoyalty(player,0)
+			sgs.ai_renegade_suspect[name]=(sgs.ai_renegade_suspect[name] or 0)+1
 		end
 	end
 	

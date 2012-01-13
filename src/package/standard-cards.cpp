@@ -66,7 +66,10 @@ void Slash::onEffect(const CardEffectStruct &card_effect) const{
 }
 
 bool Slash::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return !targets.isEmpty();
+    if(Self->hasFlag("zhusha_effect"))
+        return targets.isEmpty();
+    else
+        return !targets.isEmpty();
 }
 
 bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -83,9 +86,6 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(Self->hasWeapon("sun_bow") && this->isRed() && this->getNature() == DamageStruct::Normal){
         slash_targets ++;
     }
-
-    if(Self->hasSkill("shenji") && Self->getWeapon() == NULL)
-        slash_targets = 3;
 
     if(targets.length() >= slash_targets)
         return false;

@@ -483,11 +483,12 @@ public:
         if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
             && damage.to->isWounded() && player->askForSkillInvoke(objectName())){
             Room *room = player->getRoom();
-            int card = room->askForCardChosen(damage.from, damage.to, "he", objectName());
+            int card_id = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
+                          room->askForCardChosen(damage.from, damage.to, "he", objectName());
             RecoverStruct re;
-            re.card = Sanguosha->getCard(card);
+            re.card = Sanguosha->getCard(card_id);
             re.who = player;
-            room->obtainCard(player, card);
+            room->obtainCard(player, card_id);
 
             LogMessage log;
             log.from = player;
@@ -746,7 +747,8 @@ bool YixingCard::targetFilter(const QList<const Player *> &targets, const Player
 void YixingCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     PlayerStar target = effect.to;
-    int card_id = room->askForCardChosen(effect.from, target, "e", "yixing");
+    int card_id = target->getEquips().length() == 1 ? target->getEquips().first()->getId() :
+                  room->askForCardChosen(effect.from, target, "e", "yixing");
     effect.from->tag["YixingCard"] = card_id;
     effect.from->tag["YixingTarget"] = QVariant::fromValue(target);
 }
@@ -1111,7 +1113,8 @@ public:
 
         if(damage.to->isAlive() && damage.to->getGeneral()->isMale()){
             Room *room = hu3niang->getRoom();
-            QString ball = room->askForChoice(hu3niang, objectName(), "draw+throw+cancel");
+            QString voly = damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
+            QString ball = room->askForChoice(hu3niang, objectName(), voly);
             if(ball == "cancel")
                 return false;
             LogMessage log;
@@ -1122,7 +1125,9 @@ public:
 
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), 1);
-                room->throwCard(room->askForCardChosen(hu3niang, damage.to, "he", objectName()));
+                int card_id = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
+                              room->askForCardChosen(hu3niang, damage.to, "he", objectName());
+                room->throwCard(card_id);
             }
             else{
                 room->playSkillEffect(objectName(), 2);

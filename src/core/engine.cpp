@@ -552,7 +552,7 @@ void Engine::getRoles(const QString &mode, char *roles) const{
             }
             file.close();
         }
-        role[strlen(role) - 1] = '\0';
+        //role[strlen(role) - 1] = '\0';
         qstrcpy(roles, role);
         delete role;
     }else{

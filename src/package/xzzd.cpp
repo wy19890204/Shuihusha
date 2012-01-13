@@ -93,7 +93,8 @@ public:
         if(!damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
             room->playSkillEffect(objectName());
-            int dust = room->askForCardChosen(player, damage.to, "he", objectName());
+            int dust = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
+                          room->askForCardChosen(player, damage.to, "he", objectName());
             room->throwCard(dust);
 
             LogMessage log;
