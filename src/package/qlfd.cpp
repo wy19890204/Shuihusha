@@ -590,7 +590,7 @@ bool EyanCard::targetFilter(const QList<const Player *> &targets, const Player *
 }
 
 void EyanCard::onEffect(const CardEffectStruct &effect) const{
-    ServerPlayer *target = effect.to;
+    PlayerStar target = effect.to;
     Room *room = effect.from->getRoom();
     const Card *slash = NULL;
     if(effect.from->canSlash(target)){

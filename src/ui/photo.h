@@ -57,6 +57,7 @@ public slots:
     void hideEmotion();
     void hideSkillName();
     void setDrankState();
+    void setEcstState();
     void setActionState();
     void updateRoleComboboxPos();
     void killPlayer();

@@ -143,6 +143,8 @@ void ClientPlayer::setFlags(const QString &flag){
 
     if(flag.endsWith("drank"))
         emit drank_changed();
+    else if(flag.endsWith("ecst"))
+        emit ecst_changed();
     else if(flag.endsWith("actioned"))
         emit action_taken();
 }

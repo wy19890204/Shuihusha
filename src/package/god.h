@@ -48,7 +48,7 @@ public:
     Q_INVOKABLE MeiyuCard();
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 class HuafoCard: public SkillCard{
