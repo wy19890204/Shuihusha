@@ -71,6 +71,14 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
     QString animation_str = QString("analeptic:%1:%2").arg(who).arg(who);
     room->broadcastInvoke("animate", animation_str);
 
+    if(effect.to->hasFlag("poison")){
+        LogMessage log;
+        log.from = effect.to;
+        log.type = "#Poison_ana";
+        room->sendLog(log);
+        room->loseHp(effect.to);
+    }
+
     if(effect.to->hasFlag("dying")){
         // recover hp
         RecoverStruct recover;

@@ -88,6 +88,24 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     }
     else room->setEmotion(nextfriend, "good");
 }
+
+
+KusoPackage::KusoPackage()
+    :Package("kuso"){
+    QList<Card *> cards;
+
+    cards << new Shit(Card::Club, 1)
+            << new Shit(Card::Heart, 8)
+            << new Shit(Card::Diamond, 13)
+            << new Shit(Card::Spade, 10)
+            << new Stink(Card::Diamond, 1);
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
+}
+
 class GrabPeach: public TriggerSkill{
 public:
     GrabPeach():TriggerSkill("grab_peach"){
@@ -180,28 +198,59 @@ void GaleShell::onUse(Room *room, const CardUseStruct &card_use) const{
     Card::onUse(room, card_use);
 }
 
-KusoPackage::KusoPackage()
-    :Package("kuso")
-{
-    QList<Card *> cards;
+Poison::Poison(Suit suit, int number)
+    : BasicCard(suit, number){
+    setObjectName("poison");
+}
 
-    cards << new Shit(Card::Club, 1)
-            << new Shit(Card::Heart, 8)
-            << new Shit(Card::Diamond, 13)
-            << new Shit(Card::Spade, 10)
-            << new Stink(Card::Diamond, 1);
+QString Poison::getSubtype() const{
+    return "attack_card";
+}
 
-    foreach(Card *card, cards)
-        card->setParent(this);
+QString Poison::getEffectPath(bool is_male) const{
+    return "audio/card/common/poison.ogg";
+}
 
-    type = CardPack;
+bool Poison::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->distanceTo(to_select) <= 1;
+}
+
+void Poison::onEffect(const CardEffectStruct &card_effect) const{
+    Room *room = card_effect.from->getRoom();
+
+    LogMessage log;
+    log.from = card_effect.to;
+    if(!card_effect.to->hasFlag("poison")){
+        room->setEmotion(card_effect.from, "good");
+        room->setPlayerFlag(card_effect.to, "poison");
+        room->setEmotion(card_effect.to, "bad");
+
+        log.type = "#Poison_in";
+        room->sendLog(log);
+    }
+    else{
+        room->setPlayerFlag(card_effect.to, "-poison");
+        room->setEmotion(card_effect.to, "good");
+
+        log.type = "#Poison_out";
+        room->sendLog(log);
+    }
 }
 
 JoyPackage::JoyPackage()
     :Package("joy")
 {
-    (new Monkey(Card::Diamond, 5))->setParent(this);
-    (new GaleShell(Card::Heart, 1))->setParent(this);
+    QList<Card *> cards;
+    cards
+                << new Monkey(Card::Diamond, 5)
+                << new GaleShell(Card::Heart, 1)
+                << new Poison(Card::Heart, 7)
+                << new Poison(Card::Club, 9)
+                << new Poison(Card::Diamond, 11)
+                << new Poison(Card::Spade, 13);
+
+    foreach(Card *card, cards)
+            card->setParent(this);
 
     type = CardPack;
 }
