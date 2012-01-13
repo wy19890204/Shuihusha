@@ -8,7 +8,7 @@
 
 #include "mainwindow.h"
 #include "settings.h"
-#include "banpair.h"
+#include "banpairdialog.h"
 #include "server.h"
 
 #ifdef AUDIO_SUPPORT
