@@ -23,6 +23,7 @@ class Player : public QObject
     Q_PROPERTY(int hp READ getHp WRITE setHp)
     Q_PROPERTY(int maxhp READ getMaxHP WRITE setMaxHP)
     Q_PROPERTY(QString kingdom READ getKingdom WRITE setKingdom)
+    Q_PROPERTY(General::Gender gender READ getGender WRITE setGender)
     Q_PROPERTY(bool wounded READ isWounded STORED false)
     Q_PROPERTY(QString role READ getRole WRITE setRole)
     Q_PROPERTY(QString general READ getGeneralName WRITE setGeneralName)
@@ -77,6 +78,7 @@ public:
 
     QString getKingdom() const;
     void setKingdom(const QString &kingdom);
+    void setGender(const General::Gender &gender);
     QString getKingdomIcon() const;
     QString getKingdomFrame() const;
 
@@ -220,6 +222,7 @@ private:
     QString kingdom;
     QString role;
     QString state;
+    General::Gender gender;
     int seat;
     bool alive;
 
@@ -241,6 +244,7 @@ signals:
     void role_changed(const QString &new_role);
     void state_changed();
     void kingdom_changed();
+    void gender_changed();
     void phase_changed();
     void owner_changed(bool owner);
     void ready_changed(bool ready);

@@ -198,6 +198,7 @@ public:
             damage.nature = DamageStruct::Normal;
             data = QVariant::fromValue(damage);
         }
+        player->setGender(General::Female);
         return false;
     }
 };

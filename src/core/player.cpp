@@ -542,6 +542,13 @@ void Player::setKingdom(const QString &kingdom){
     }
 }
 
+void Player::setGender(const General::Gender &gender){
+    if(this->gender != gender){
+        this->gender = gender;
+        emit gender_changed();
+    }
+}
+
 QString Player::getKingdomIcon() const{
     return QString("image/kingdom/icon/%1.png").arg(kingdom);
 }
@@ -831,6 +838,7 @@ void Player::copyFrom(Player* p)
     b->hp               = a->hp;
     b->max_hp           = a->max_hp;
     b->kingdom          = a->kingdom;
+    b->gender           = a->gender;
     b->role             = a->role;
     b->seat             = a->seat;
     b->alive            = a->alive;

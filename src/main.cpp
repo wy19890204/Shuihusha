@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     qApp->installTranslator(&qt_translator);
     qApp->installTranslator(&translator);
 
-    Config.init();
     Sanguosha = new Engine;
+    Config.init();
     BanPair::loadBanPairs();
 
     if(qApp->arguments().contains("-server")){
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 #ifdef  Q_OS_WIN32
     SoundEngine = irrklang::createIrrKlangDevice();
     if(SoundEngine)
-        SoundEngine->setSoundVolume(Config.Volume);
+        SoundEngine->setSoundVolume(Config.EffectVolume);
 #else
     SoundEngine = new Phonon::MediaObject(qApp);
     SoundOutput = new Phonon::AudioOutput(Phonon::GameCategory, qApp);

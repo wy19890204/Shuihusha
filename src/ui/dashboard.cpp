@@ -174,6 +174,7 @@ void Dashboard::addCardItem(CardItem *card_item){
 void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(state_changed()), this, SLOT(refresh()));
     connect(player, SIGNAL(kingdom_changed()), this, SLOT(updateAvatar()));
+    connect(player, SIGNAL(gender_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));

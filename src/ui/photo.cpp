@@ -251,6 +251,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
         connect(player, SIGNAL(general2_changed()), this, SLOT(updateSmallAvatar()));
         connect(player, SIGNAL(kingdom_changed()), this, SLOT(updateAvatar()));
+        connect(player, SIGNAL(gender_changed()), this, SLOT(updateAvatar()));
         connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
         connect(player, SIGNAL(state_changed()), this, SLOT(refresh()));
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
