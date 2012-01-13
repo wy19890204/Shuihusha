@@ -220,16 +220,16 @@ void Poison::onEffect(const CardEffectStruct &card_effect) const{
 
     LogMessage log;
     log.from = card_effect.to;
-    if(!card_effect.to->hasFlag("poison")){
+    if(card_effect.to->getMark("poison") == 0){
         room->setEmotion(card_effect.from, "good");
-        room->setPlayerFlag(card_effect.to, "poison");
+        room->setPlayerMark(card_effect.to, "poison", 1);
         room->setEmotion(card_effect.to, "bad");
 
         log.type = "#Poison_in";
         room->sendLog(log);
     }
     else{
-        room->setPlayerFlag(card_effect.to, "-poison");
+        room->setPlayerMark(card_effect.to, "poison", 0);
         room->setEmotion(card_effect.to, "good");
 
         log.type = "#Poison_out";

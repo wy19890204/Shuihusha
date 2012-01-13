@@ -466,6 +466,17 @@ void ServerPlayer::turnOver(){
 }
 
 void ServerPlayer::play(){
+    if(getMark("poison") > 0 && !isAllNude()){
+        LogMessage log;
+        log.from = this;
+        log.type = "$Poison_lost";
+        int index = qrand() % getCards("hej").length();
+        const Card *card = getCards("hej").at(index);
+        room->throwCard(card->getId());
+        log.card_str = card->getEffectIdString();
+        room->sendLog(log);
+    }
+
     static QList<Phase> all_phases;
     if(all_phases.isEmpty()){
         all_phases << Start << Judge << Draw << Play

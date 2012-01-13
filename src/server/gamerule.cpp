@@ -250,10 +250,10 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             room->setPlayerProperty(player, "hp", new_hp);
             room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(recover));
 
-            if(player->hasFlag("poison")){
-                int index = qrand() % 10;
+            if(player->getMark("poison") > 0){
+                int index = qrand() % 5;
                 if(index == 4){
-                    room->setPlayerFlag(player, "-poison");
+                    room->setPlayerMark(player, "poison", 0);
                     room->setEmotion(player, "good");
                     LogMessage log;
                     log.type = "#Poison_out";
@@ -887,17 +887,6 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
                     player->turnOver();
                 else
                     player->play();
-            }
-
-            if(player->hasFlag("poison") && !player->isAllNude()){
-                LogMessage log;
-                log.from = player;
-                log.type = "$Poison_lost";
-                int index = qrand() % player->getCards("hej").length();
-                const Card *card = player->getCards("hej").at(index);
-                room->throwCard(card->getId());
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
             }
             return false;
         }

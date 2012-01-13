@@ -71,7 +71,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
     QString animation_str = QString("analeptic:%1:%2").arg(who).arg(who);
     room->broadcastInvoke("animate", animation_str);
 
-    if(effect.to->hasFlag("poison")){
+    if(effect.to->getMark("poison") > 0){
         LogMessage log;
         log.from = effect.to;
         log.type = "#Poison_ana";

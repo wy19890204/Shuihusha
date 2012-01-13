@@ -190,13 +190,28 @@ void Photo::hideSkillName(){
 void Photo::setDrankState(){
     if(player->hasFlag("drank"))
         avatar_area->setBrush(QColor(0xFF, 0x00, 0x00, 255 * 0.45));
+    else if(player->getMark("poison") > 0)
+        setPoisonState();
     else
         avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Photo::setEcstState(){
     if(player->hasFlag("ecst"))
-        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.45));
+        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    else if(player->getMark("poison") > 0)
+        setPoisonState();
+    else
+        avatar_area->setBrush(Qt::NoBrush);
+}
+
+void Photo::setPoisonState(){
+    if(player->getMark("poison") > 0)
+        avatar_area->setBrush(QColor(0x00, 0xFF, 0x00, 255 * 0.3));
+    else if(player->hasFlag("drank"))
+        setDrankState();
+    else if(player->hasFlag("ecst"))
+        setEcstState();
     else
         avatar_area->setBrush(Qt::NoBrush);
 }
@@ -241,6 +256,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
         connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+		connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
