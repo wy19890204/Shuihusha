@@ -116,8 +116,14 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 room->setPlayerFlag(player, "-drank");
             }
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(tmp->hasFlag("ecst"))
+                if(tmp->hasFlag("ecst")){
+                    LogMessage log;
+                    log.type = "#UnsetEcstEndOfTurn";
+                    log.from = player;
+                    log.to << tmp;
+                    room->sendLog(log);
                     room->setPlayerFlag(tmp, "-ecst");
+                }
                 if(tmp->hasFlag("EyanTarget"))
                     room->setPlayerFlag(tmp, "-EyanTarget");
                 if(tmp->hasSkill("eyanslash"))
@@ -342,8 +348,14 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             DamageStruct damage = data.value<DamageStruct>();
             room->sendDamageLog(damage);
 
-            if(damage.to->hasFlag("ecst"))
+            if(damage.to->hasFlag("ecst")){
+                LogMessage log;
+                log.type = "#UnsetEcst";
+                log.from = damage.to;
+                room->sendLog(log);
+
                 room->setPlayerFlag(damage.to, "-ecst");
+            }
             room->applyDamage(player, damage);
             if(player->getHp() <= 0){
                 room->enterDying(player, &damage);

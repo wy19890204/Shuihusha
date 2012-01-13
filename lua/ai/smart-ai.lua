@@ -962,7 +962,7 @@ function SmartAI:slashIsAvailable(player)
 	if player:hasSkill("qinlong") and player:getEquips():isEmpty() then
 		return true
 	end
-	if player:hasSkill("hua1fo") then
+	if player:hasSkill("huafo") then
 		return true
 	end
 	return (player:usedTimes("Slash") + player:usedTimes("FireSlash") + player:usedTimes("ThunderSlash")) < 1
