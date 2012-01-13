@@ -430,15 +430,14 @@ bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player 
     return targets.isEmpty() && Self->canSlash(to_select, false);
 }
 
-void MeiyuCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    room->throwCard(effect.from->getPile("stone").last());
+void MeiyuCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    room->throwCard(card_use.from->getPile("stone").last());
     Slash *slash = new Slash(Card::NoSuit, 0);
     slash->setSkillName("meiyu");
     CardUseStruct use;
     use.card = slash;
-    use.from = effect.from;
-    use.to << effect.to;
+    use.from = card_use.from;
+    use.to = card_use.to;
     room->useCard(use, false);
 }
 

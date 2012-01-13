@@ -252,8 +252,8 @@ bool BingjiCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 void BingjiCard::onUse(Room *room, const CardUseStruct &card_use) const{
     Slash *slash = new Slash(Card::NoSuit, 0);
     slash->setSkillName("bingji");
-    slash->addSubcard(this);
-    //room->throwCard(this);
+    foreach(int x, getSubcards())
+        slash->addSubcard(Sanguosha->getCard(x));
     CardUseStruct use;
     use.card = slash;
     use.from = card_use.from;

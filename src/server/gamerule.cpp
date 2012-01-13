@@ -134,8 +134,16 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             if(!Config.BanPackages.contains("events")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");
-                if(source && player == source)
-                    room->askForUseCard(player, "jiefachang", "@jiefachang");
+                if(source && player == source){
+                    bool face = false;
+                    foreach(ServerPlayer *tmp, room->getAlivePlayers())
+                        if(!tmp->faceUp()){
+                            face = true;
+                            break;
+                        }
+                    if(face)
+                        room->askForUseCard(player, "jiefachang", "@jiefachang");
+                }
             }
             return;
         }
