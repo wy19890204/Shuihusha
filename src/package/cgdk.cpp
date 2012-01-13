@@ -229,14 +229,16 @@ bool BingjiCard::targetsFeasible(const QList<const Player *> &targets, const Pla
     return targets.length() <= x && !targets.isEmpty();
 }
 
-void BingjiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    SlashEffectStruct eff;
-    eff.from = effect.from;
-    //eff.slash = this;
-    eff.to = effect.to;
-    eff.drank = effect.from->hasFlag("drank");
-    room->slashEffect(eff);
+void BingjiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->setSkillName("bingji");
+    slash->addSubcard(this);
+    //room->throwCard(this);
+    CardUseStruct use;
+    use.card = slash;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
 }
 
 class Bingji: public ViewAsSkill{

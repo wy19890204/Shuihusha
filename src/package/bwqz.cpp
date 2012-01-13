@@ -67,7 +67,7 @@ bool YuanyinCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YuanyinCard::onUse(Room *room, const CardUseStruct &card_use) const{
     QList<ServerPlayer *> targets = card_use.to;
-    PlayerStar *target;
+    PlayerStar target; PlayerStar source = card_use.from;
     if(targets.length() > 1)
         target = targets.at(1);
     else if(targets.length() == 1 && source->canSlash(targets.first())){
