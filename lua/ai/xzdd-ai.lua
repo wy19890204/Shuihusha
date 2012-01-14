@@ -57,6 +57,9 @@ sgs.ai_skill_invoke["shenpan"] = function(self, data)
 	return self:needRetrial(judge)
 end
 
+-- yixian
+sgs.ai_skill_invoke["yixian"] = sgs.ai_skill_invoke["qiangqu"]
+
 -- feiqiang
 feiqiang_skill={}
 feiqiang_skill.name = "feiqiang"

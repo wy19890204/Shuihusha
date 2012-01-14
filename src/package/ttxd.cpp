@@ -481,7 +481,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
-            && damage.to->isWounded() && player->askForSkillInvoke(objectName())){
+            && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
             int card_id = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
                           room->askForCardChosen(damage.from, damage.to, "he", objectName());
@@ -707,6 +707,7 @@ void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     log.type = "#Yanshou";
     log.from = effect.from;
     log.to << effect.to;
+    log.arg = QString::number(1);
 
     room->sendLog(log);
     room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);

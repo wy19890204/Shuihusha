@@ -14,6 +14,10 @@ sgs.ai_compare_funcs = {
 		return a:getHp() < b:getHp()
 	end,
 
+	maxhp = function(a, b)
+		return a:getMaxHP() < b:getMaxHP()
+	end,
+
 	handcard = function(a, b)
 		return a:getHandcardNum() < b:getHandcardNum()
 	end,
@@ -1171,8 +1175,7 @@ function SmartAI:useBasicCard(card, use, no_distance)
 		for _, friend in ipairs(self.friends_noself) do
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card,friend)
-			if (self.player:hasSkill("pojun") and friend:getHp() > 4 and self:getCardsNum("Jink", friend) == 0
-				and friend:getHandcardNum() < 3)
+			if (self.player:hasSkill("qiangqu") and friend:getGeneral():isFemale() and friend:isWounded() and not friend:isNude())
 			or (friend:hasSkill("kongying") 
 			and (self:getCardsNum("Jink", friend) > 0 or (not self:isWeak(friend) and self:isEquip("EightDiagram",friend)))
 			and (hasExplicitRebel(self.room) or not friend:isLord()))
@@ -3042,7 +3045,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 				end
 				if self.player:hasSkill("jieming") and self:getJiemingChaofeng() <= -6 then return "." end
 				if target:hasSkill("pojun") and not self.player:faceUp() then return "." end
-				if (target:hasSkill("jieyin") and (not self.player:isWounded()) and self.player:getGeneral():isMale()) and not self.player:hasSkill("kongying") then return "." end
+				if target:hasSkill("huatian") then return "." end
 			else
 				if not target:hasFlag("drank") then
 					if target:hasSkill("mengjin") and self.player:hasSkill("jijiu") then return "." end

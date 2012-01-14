@@ -135,7 +135,7 @@ local tt = {
 	["yanshou"] = "延寿",
 	[":yanshou"] = "<font color=purple><b>限定技</b></font>，出牌阶段，你可以弃置两张红桃牌，令任一角色增加1点体力上限。",
 	["@life"] = "命",
-	["#Yanshou"] = "%from 为 %to 增加了 1 点体力上限",
+	["#Yanshou"] = "%from 为 %to 增加了 %arg 点体力上限",
 	["$xuming"] = "伏望天慈，延你之寿。",
 	["fengyue"] = "风月",
 	[":fengyue"] = "回合结束阶段，你可以摸X张牌，X为场上存活的女性角色数且至多为2。每回合限一次。",

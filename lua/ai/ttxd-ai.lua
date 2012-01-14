@@ -113,6 +113,12 @@ sgs.ai_skill_invoke["panquan"] = function(self, data)
 	return self:isFriend(gaoqiu)
 end
 
+-- qiangqu
+sgs.ai_skill_invoke["qiangqu"] = function(self, data)
+	local damage = data:toDamage()
+	return self:isFriend(damage.to)
+end
+
 -- huatian
 sgs.ai_skill_invoke["huatian"] = function(self, data)
 	if not self.friends_noself[1] then return false end
@@ -135,6 +141,41 @@ sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
 		self:sort(self.enemies, "hp")
 		return self.enemies[1]
 	end
+end
+
+-- yanshou
+yanshou_skill={}
+yanshou_skill.name = "yanshou"
+table.insert(sgs.ai_skills, yanshou_skill)
+yanshou_skill.getTurnUseCard = function(self)
+	if self.player:getMark("@life") < 1 then return end
+	local cards = self.player:getHandcards()
+	local hearts = {}
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuit() == sgs.Card_Heart then
+		    table.insert(hearts, card:getId())
+		end
+		if #hearts == 2 then break end
+	end
+	if #hearts ~= 2 then return end
+	return sgs.Card_Parse("@YanshouCard=" .. table.concat(hearts, "+"))
+end
+sgs.ai_skill_use_func["YanshouCard"]=function(card,use,self)
+	self:sort(self.friends, "maxhp")
+	for _, friend in ipairs(self.friends) do
+		if friend:hasSkill("yuanyin") or (friend:hasSkill("yanshou") and not friend:isLord())
+			or friend:hasSkill("wudao") then
+			use.card = card
+			if use.to then
+				use.to:append(friend)
+			end
+			return
+		end
+	end
+	use.card = card
+	if use.to then use.to:append(self.friends[1]) end
 end
 
 -- wuji
