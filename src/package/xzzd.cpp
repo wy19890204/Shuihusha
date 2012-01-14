@@ -496,11 +496,12 @@ public:
 
             while(!card_ids.isEmpty()){
                 int card_id = room->askForAG(hx, card_ids, false, "tongxia");
+                CardStar card = Sanguosha->getCard(card_id);
+                hx->tag["TongxiaCard"] = QVariant::fromValue(card);
                 ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
                 if(!target)
                     target = hx;
                 //room->takeAG(target, card_id);
-                const Card *card = Sanguosha->getCard(card_id);
                 if(card->inherits("EquipCard")){
                     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
                     QList<ServerPlayer *> targets;
@@ -629,12 +630,12 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *pei) const{
         Room *room = pei->getRoom();
-        if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp() &&
-           pei->askForSkillInvoke(objectName())){
+        if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp()){
             int num = pei->getHandcardNum() - pei->getHp();
             room->setPlayerMark(pei, "Bingo", num);
             room->askForUseCard(pei, "@@binggong", "@binggong");
         }
+        room->setPlayerMark(pei, "Bingo", 0);
         return false;
     }
 };

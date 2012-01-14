@@ -174,10 +174,7 @@ sgs.ai_skill_use_func["NushaCard"] = function(card, use, self)
 end
 
 -- manli
-sgs.ai_skill_invoke["manli"] = function(self, data)
-	local d = data:toDamage()
-	return self:isEnemy(d.to)
-end
+sgs.ai_skill_invoke["manli"] = sgs.ai_skill_invoke["liba"]
 
 -- qiaogong
 qiaogong_skill={}
@@ -262,3 +259,46 @@ sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
 	return self.enemies[1]
 end
 
+-- zhengfa
+local zhengfa_skill={}
+zhengfa_skill.name = "zhengfa"
+table.insert(sgs.ai_skills, zhengfa_skill)
+zhengfa_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("ZhengfaCard") or self.player:isKongcheng() then return end
+	local enemies = {}
+	for _, enemy in ipairs(self.enemies) do
+		if self.player:inMyAttackRange(enemy) then
+			table.insert(enemies, enemy)
+		end
+	end
+	if self.player:getHp() >= #enemies and self.player:getHp() >= 2 then
+		local max_card = self:getMaxCard()
+		return sgs.Card_Parse("@ZhengfaCard=" .. max_card:getEffectiveId())
+	end
+end
+sgs.ai_skill_use_func["ZhengfaCard"]=function(card,use,self)
+	self:sort(self.friends_noself, "handcard")
+	for i = #self.friends_noself, 1, -1 do
+		if not self.friends_noself[i]:isKongcheng() then
+		    if use.to then use.to:append(self.friends_noself[i]) end
+            use.card=card
+            break
+		end
+	end
+end
+sgs.ai_skill_use["@@zhengFa"] = function(self, prompt)
+	local enemies = {}
+	local i = 0
+	for _, enemy in ipairs(self.enemies) do
+		if self.player:inMyAttackRange(enemy) then
+			table.insert(enemies, enemy:objectName())
+			i = i + 1
+		end
+		if i >= self.player:getHp() then break end
+	end
+	if self.player:getHp() >= #enemies then
+		return "@JiaomieCard=.->" .. table.concat(enemies, "+")
+	else
+		return "."
+	end
+end

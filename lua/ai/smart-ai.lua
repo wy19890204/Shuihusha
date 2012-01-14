@@ -1903,6 +1903,7 @@ function SmartAI:evaluateArmor(card, player)
 end
 
 function SmartAI:useEquipCard(card, use)
+	if self:hasSkill("qinlong") then return end
 	if self:hasSkills(sgs.lose_equip_skill) and not card:inherits("GaleShell") then
 		use.card = card
 		return
@@ -3199,9 +3200,14 @@ function SmartAI:askForPindian(requestor, reason)
 		if self:getUseValue(card) < 6 then mincard = card break end
 	end
 	for _, card in ipairs(sgs.reverse(cards)) do
-		if self:getUseValue(card) < 6 then maxcard = card break end
+		if self.player:hasSkill("changsheng") and card:getSuit() == sgs.Card_Spade then
+			maxcard = card
+			break
+		end
 	end
-	if reason == "zhiba" and self.player:hasLordSkill("sunce_zhiba") then return maxcard end
+	for _, card in ipairs(sgs.reverse(cards)) do
+		if self:getUseValue(card) < 6 then maxcard = card break	end
+	end
 	self:sortByUseValue(cards, true)
 	minusecard = cards[1]
 	maxcard = maxcard or minusecard

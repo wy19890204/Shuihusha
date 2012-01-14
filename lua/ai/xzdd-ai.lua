@@ -77,6 +77,50 @@ shenhuo_skill.getTurnUseCard = function(self)
 	return skillcard
 end
 
+-- tongxia
+sgs.ai_skill_invoke["tongxia"] = true
+sgs.ai_skill_askforag["tongxia"] = function(self, card_ids)
+	return card_ids[1]
+end
+sgs.ai_skill_playerchosen["tongxia"] = function(self, targets)
+	local card = self.player:getTag("TongxiaCard"):toCard()
+	self:sort(self.enemies, "hp")
+	for _, enemy in ipairs(self.enemies) do
+		if card:inherits("GaleShell") or card:inherits("Shit") then
+			return enemy
+		end
+	end
+	self:sort(self.enemies, "defense")
+	for _, friend in ipairs(self.friends) do
+		if card:inherits("EquipCard") then
+			if (card:inherits("Weapon") and not friend:getWeapon()) or
+				(card:inherits("Armor") and (not friend:getArmor() or self:isEquip("GaleShell", friend))) or
+				(card:inherits("DefensiveHorse") and not friend:getDefensiveHorse()) or
+				(card:inherits("OffensiveHorse") and not friend:getOffensiveHorse()) then
+				return friend
+			end
+		else
+			return self.player
+		end
+	end
+	return self.friends_noself[1]
+end
+
+-- binggong
+sgs.ai_skill_use["@@binggong"] = function(self, prompt)
+	local num = self.player:getMark("Bingo")
+	self:sort(self.friends_noself, "defense")
+	local target = self.friends_noself[1]
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	local card_ids = {}
+	for i = 1, num do
+		table.insert(card_ids, cards[i]:getEffectiveId())
+	end
+	return "@BinggongCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
+end
+
 -- shenpan
 sgs.ai_skill_invoke["shenpan"] = function(self, data)
 	local judge = data:toJudge()
