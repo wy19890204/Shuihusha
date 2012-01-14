@@ -240,7 +240,7 @@ shouge_skill.getTurnUseCard = function(self)
 	if not self.player:isWounded() then
 		local cards = self.player:getCards("h")
 		cards = sgs.QList2Table(cards)
-		for _, acard in ipairs(cards)  do
+		for _, acard in ipairs(cards) do
 			if acard:inherits("Peach") or acard:inherits("Analeptic") then
 				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
 			end
@@ -301,4 +301,35 @@ sgs.ai_skill_use["@@zhengFa"] = function(self, prompt)
 	else
 		return "."
 	end
+end
+
+-- yongle
+local yongle_skill={}
+yongle_skill.name = "yongle"
+table.insert(sgs.ai_skills, yongle_skill)
+yongle_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("YongleCard") then return end
+	return sgs.Card_Parse("@YongleCard=.")
+end
+sgs.ai_skill_use_func["YongleCard"]=function(card,use,self)
+	local king = self.room:getKingdoms()
+	local enemies = {}
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isKongcheng() then
+			table.insert(enemies, enemy)
+			if #enemies >= king then break end
+		end
+	end
+	use.card = card
+	if use.to then
+		for _, enemy in ipairs(enemies) do
+			use.to:append(enemy)
+		end
+	end
+end
+sgs.ai_cardshow["yongle"] = function(self, requestor)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	return cards[1]
 end

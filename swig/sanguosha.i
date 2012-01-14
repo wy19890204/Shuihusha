@@ -788,6 +788,7 @@ public:
     void provide(const Card *card);
     QList<ServerPlayer *> getLieges(const char *kingdom, ServerPlayer *lord) const;
     QList<ServerPlayer *> getMenorWomen(const char *gender, ServerPlayer *except = NULL) const;
+    int getKingdoms() const;
     void sendLog(const LogMessage &log);
     void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
     void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);

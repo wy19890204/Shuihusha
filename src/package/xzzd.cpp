@@ -221,6 +221,7 @@ public:
             room->slashResult(effect, NULL);
             return true;
         }
+        effect.from->tag.remove("Daozi");
         return false;
     }
 };
@@ -519,6 +520,7 @@ public:
 
             return true;
         }
+        hx->tag.remove("TongxiaCard");
         return false;
     }
 };

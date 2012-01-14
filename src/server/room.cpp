@@ -3148,6 +3148,13 @@ QList<ServerPlayer *> Room::getMenorWomen(const QString &gender, ServerPlayer *e
     return targets;
 }
 
+int Room::getKingdoms() const{
+    QSet<QString> kingdom_set;
+    foreach(ServerPlayer *tmp, getAlivePlayers())
+        kingdom_set << tmp->getKingdom();
+    return kingdom_set.size();
+}
+
 void Room::sendLog(const LogMessage &log){
     if(log.type.isEmpty())
         return;

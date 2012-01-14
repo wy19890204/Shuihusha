@@ -11,6 +11,33 @@ sgs.ai_skill_playerchosen["tongwu"] = function(self, targets)
 	return self.player
 end
 
+-- tianyan
+sgs.ai_skill_invoke["tianyan"] = true
+sgs.ai_skill_askforag["tianyan"] = function(self, card_ids)
+	local player = self.player:getTag("TianyanTarget"):toPlayer()
+	local cards = {}
+	for _, card_id in ipairs(card_ids) do
+		local card = sgs.Sanguosha:getCard(card_id)
+		table.insert(cards, card)
+	end
+	self:sortByUseValue(cards, true)
+	if self:isFriend(player) then
+		for _, card in ipairs(cards) do
+			if self:getUseValue(card) < 3 then
+				return card:getEffectiveId()
+			end
+		end
+	else
+		self:sortByUseValue(cards)
+		for _, card in ipairs(cards) do
+			if self:getUseValue(card) > 4 then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return -1
+end
+
 -- dujian
 sgs.ai_skill_invoke["dujian"] = function(self, data)
 	local rand = math.random(1, 2)

@@ -153,23 +153,15 @@ public:
         view_as_skill = new SixiangViewAsSkill;
     }
 
-    int getKingdoms(Room *room) const{
-        QSet<QString> kingdom_set;
-        foreach(ServerPlayer *tmp, room->getAlivePlayers())
-            kingdom_set << tmp->getKingdom();
-        return kingdom_set.size();
-    }
-
     virtual bool onPhaseChange(ServerPlayer *jingmuan) const{
         Room *room = jingmuan->getRoom();
         if(jingmuan->getPhase() == Player::Start && !jingmuan->isKongcheng()){
-            int x = getKingdoms(room);
-            room->setPlayerMark(jingmuan, "Sixh", x);
+            room->setPlayerMark(jingmuan, "Sixh", room->getKingdoms());
             if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang"))
                 jingmuan->setFlags("elephant");
         }
         else if(jingmuan->getPhase() == Player::Discard && jingmuan->hasFlag("elephant")){
-            int x = getKingdoms(room);
+            int x = room->getKingdoms();
             int total = jingmuan->getEquips().length() + jingmuan->getHandcardNum();
 
             LogMessage log;
@@ -209,6 +201,7 @@ public:
         if(tianqi && tianqi->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
 
+            tianqi->tag["TianyanTarget"] = QVariant::fromValue((PlayerStar)player);
             QList<int> cards = room->getNCards(3);
             if(!cards.isEmpty()){
                 room->fillAG(cards, tianqi);
@@ -236,6 +229,7 @@ public:
                 tianqi->invoke("clearAG");
             }
         }
+        tianqi->tag.remove("TianyanTarget");
         return false;
     }
 };

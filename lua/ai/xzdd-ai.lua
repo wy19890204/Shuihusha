@@ -109,6 +109,7 @@ end
 -- binggong
 sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 	local num = self.player:getMark("Bingo")
+	if num < 3 and self.player:isWounded() then return "." end
 	self:sort(self.friends_noself, "defense")
 	local target = self.friends_noself[1]
 	local cards = self.player:getHandcards()

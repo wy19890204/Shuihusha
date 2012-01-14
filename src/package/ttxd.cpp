@@ -1136,6 +1136,7 @@ public:
                 hu3niang->drawCards(1);
             }
         }
+        hu3niang->tag.remove("HongjinTarget");
         return false;
     }
 };
