@@ -41,6 +41,7 @@ extern "C" {
     Package *NewYBYT();
     Package *NewSP();
     Package *NewGod();
+    Package *NewInterChange();
     Package *NewTest();
 
     Package *NewStandardCard();
@@ -83,6 +84,7 @@ Engine::Engine()
     addPackage(NewYBYT());
     addPackage(NewSP());
     addPackage(NewGod());
+    addPackage(NewInterChange());
     addPackage(NewTest());
     addPackage(NewStandardCard());
     addPackage(NewPlough());

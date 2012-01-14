@@ -3757,3 +3757,13 @@ dofile "lua/ai/basara-ai.lua"
 dofile "lua/ai/hegemony-ai.lua"
 
 dofile "lua/ai/guanxing-ai.lua"
+
+sgs.ai_skill_invoke["lianzang"] =  = function(self, data)
+	local damage = data:toDamage()
+	local target = damage.to
+	if self.player:getMaxHP() < 4 then
+		return false
+	end
+	return true
+end
+
