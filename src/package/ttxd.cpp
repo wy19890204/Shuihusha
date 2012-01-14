@@ -1114,6 +1114,7 @@ public:
 
         if(damage.to->isAlive() && damage.to->getGeneral()->isMale()){
             Room *room = hu3niang->getRoom();
+            hu3niang->tag["HongjinTarget"] = QVariant::fromValue((PlayerStar)damage.to);
             QString voly = damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
             QString ball = room->askForChoice(hu3niang, objectName(), voly);
             if(ball == "cancel")

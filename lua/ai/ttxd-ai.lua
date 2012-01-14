@@ -178,6 +178,20 @@ sgs.ai_skill_use_func["YanshouCard"]=function(card,use,self)
 	if use.to then use.to:append(self.friends[1]) end
 end
 
+-- hongjin
+sgs.ai_skill_choice["hongjin"] = function(self, choices)
+	local who = self.player:getTag("HongjinTarget"):toPlayer()
+	if self:isFriend(who) then
+		return "draw"
+	else
+		if who:getHandcardNum() == 1 or (who:isKongcheng() and not who:isNude()) then
+			return "throw"
+		else
+			return "draw"
+		end
+	end
+end
+
 -- wuji
 wuji_skill={}
 wuji_skill.name = "wuji"
