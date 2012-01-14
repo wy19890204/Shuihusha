@@ -147,7 +147,7 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 				table.insert(players, t)
 			end
 		end
-		local r = math.random(1, players:length())
+		local r = math.random(1, #players)
 		local target = players[r]
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
