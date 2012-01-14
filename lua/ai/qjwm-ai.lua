@@ -1,6 +1,28 @@
 -- kaixian
 sgs.ai_skill_invoke["kaixian"] = true
 
+-- kongliang
+sgs.ai_skill_invoke["kong1iang"] = function(self, data)
+	local showcardnum = self.player:getMaxHP() + self.player:getLostHp() + self.player:getHandcardNum()
+	return showcardnum > 8
+end
+sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
+	local final
+	local suitnum = 100
+	for _, card_id in ipairs(card_ids) do
+		local card = sgs.Sanguosha:getCard(card_id)
+		local suit = card:getSuitString()
+		if final and final:getSuitString() ~= suit then
+			local num = self:getSuitNum(suit, false)
+			if num < suitnum then
+				suitnum = num
+				final = card
+			end
+		end
+	end
+	return final:getId()
+end
+
 -- liba
 sgs.ai_skill_invoke["liba"] = function(self, data)
 	local damage = data:toDamage()
@@ -40,6 +62,46 @@ sgs.ai_skill_playerchosen["fuqin"] = function(self, targets)
 	return self.friends[1]
 end
 
+-- taolue
+local taolue_skill={}
+taolue_skill.name = "taolue"
+table.insert(sgs.ai_skills, taolue_skill)
+taolue_skill.getTurnUseCard = function(self)
+    if not self.player:hasUsed("TaolueCard") and not self.player:isKongcheng() then
+		local max_card
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		for _, card in ipairs(cards) do
+			if card:getSuit() == sgs.Card_Spade then
+				max_card = card
+				break
+			end
+		end
+		if not max_card then max_card = self:getMaxCard() end
+		return sgs.Card_Parse("@TaolueCard=" .. max_card:getEffectiveId())
+	end
+end
+sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
+	self:sort(self.enemies, "handcard")
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isKongcheng() and not enemy:getEquips():isEmpty() then
+		    if use.to then use.to:append(enemy) end
+            use.card=card
+            break
+		end
+	end
+end
+sgs.ai_skill_playerchosen["taolue"] = function(self, targets)
+	local friends = sgs.QList2Table(targets)
+	self:sort(friends, "hp")
+	for _, friend in ipairs(friends) do
+		if self:isFriend(friend) then
+		    return friend
+		end
+	end
+	return friends[1]
+end
+
 -- butian
 sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
 	judge = judge or self.player:getTag("Judge"):toJudge()
@@ -75,3 +137,29 @@ sgs.ai_skill_playerchosen["longluo"] = function(self, targets)
 	self:sort(self.friends, "hp")
 	return self.friends[1]
 end
+
+-- xiaozai
+sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
+	if self.player:getHandcardNum() >= 4 then
+		local players = {}
+		for _, t in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+			if not t:hasFlag("Xiaozai") then
+				table.insert(players, t)
+			end
+		end
+		local r = math.random(1, players:length())
+		local target = players[r]
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local card_ids = {}
+		for i = 1, 2 do
+			if self:getUseValue(cards[i]) > 5 then return "." end
+			table.insert(card_ids, cards[i]:getEffectiveId())
+		end
+		return "@XiaozaiCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
+	else
+		return "."
+	end
+end
+

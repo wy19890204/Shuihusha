@@ -1375,6 +1375,8 @@ function SmartAI:getDistanceLimit(card)
 		else
 			return 1
 		end
+	elseif card:inherits("SupplyShortage") then
+		return 1
 	end
 end
 
@@ -3392,7 +3394,7 @@ end
 
 sgs.lose_equip_skill = "cuihuo|jiebei"
 sgs.need_kongcheng = "kongmen"
-sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian|heidian"
+sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian|heidian|cuju|huanshu"
 sgs.wizard_skill = "zhaixing|butian|shenpan|yixing|yueli|houlue"
 sgs.wizard_harm_skill = "zhaixing|butian|shenpan|yixing"
 
