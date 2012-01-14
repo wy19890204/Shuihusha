@@ -95,7 +95,7 @@ sgs.ai_skill_playerchosen["taolue"] = function(self, targets)
 	local friends = sgs.QList2Table(targets)
 	self:sort(friends, "hp")
 	for _, friend in ipairs(friends) do
-		if self:isFriend(friend) then
+		if self:isFriend(friend) and friend ~= self.player then
 		    return friend
 		end
 	end

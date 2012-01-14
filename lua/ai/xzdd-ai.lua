@@ -1,3 +1,21 @@
+-- duijue
+sgs.ai_skill_use["@@duijue"] = function(self, prompt)
+	self:sort(self.enemies, "hp")
+	local n1 = self:getCardsNum("Slash")
+	local final
+	for _, enemy in ipairs(self.enemies) do
+		if n1 + 1 > self:getCardsNum("Slash", enemy) then
+			final = enemy
+			break
+		end
+	end
+	if final then
+		return "@DuijueCard=.->"..final:objectName()
+	else
+		return "."
+	end
+end
+
 -- maidao
 maidao_skill={}
 maidao_skill.name = "maidao"
@@ -24,6 +42,14 @@ sgs.ai_skill_playerchosen["fengmang"] = function(self, targets)
 	self:sort(self.enemies, "hp")
 	return self.enemies[1]
 end
+
+-- shunshui&lihun
+sgs.ai_skill_invoke["shunshui"] = true
+sgs.ai_skill_invoke["lihun"] = function(self, data)
+	local from = data:toPlayer()
+	return self:isEnemy(from)
+end
+sgs.ai_skill_playerchosen["lihun"] = sgs.ai_skill_playerchosen["taolue"]
 
 -- shenhuo
 sgs.ai_skill_invoke["shenhuo"] = true
@@ -112,3 +138,32 @@ shentou_skill.getTurnUseCard = function(self)
 	return skillcard
 end
 
+--[[
+-- maida0
+maida0_skill={}
+maida0_skill.name = "maida0"
+table.insert(sgs.ai_skills, maida0_skill)
+maida0_skill.getTurnUseCard = function(self)
+	local yangzhi = self.room:findPlayerBySkillName("maidao")
+	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and self:isEnemy(yangzhi) then
+		local cards = self.player:getCards("h")
+		cards = sgs.QList2Table(cards)
+		if #cards < 4 then return end
+		self:sortByUseValue(cards, true)
+		local card_ids = {}
+		for i = 1, 2 do
+			if self:getUseValue(cards[i]) > 4 then return end
+			table.insert(card_ids, cards[i]:getEffectiveId())
+		end
+		return "@Maida0Card=" .. table.concat(card_ids, "+")
+	end
+	return
+end
+sgs.ai_skill_use_func["Maida0Card"] = function(card, use, self)
+	local yangzhi = self.room:findPlayerBySkillName("maidao")
+	use.card = card
+	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and use.to then
+		use.to:append(yangzhi)
+	end
+end
+--]]

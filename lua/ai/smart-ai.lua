@@ -2132,7 +2132,7 @@ function SmartAI:getUseValue(card)
 		end
 	elseif card:getTypeId() == sgs.Card_Trick then
 		if self.player:getWeapon() and not self:hasSkills(sgs.lose_equip_skill) and card:inherits("Collateral") then v = 2 end
-		if self.player:getMark("duijue") and card:inherits("Duel") then v = 8 end
+		if self.player:hasSkill("duijue") and card:inherits("Duel") then v = 8 end
 		if self.player:hasSkill("wumou") and card:isNDTrick() and not card:inherits("AOE") then
 			if not (card:inherits("Duel") and self.player:hasUsed("WuqianCard")) then v = 1 end
 		end

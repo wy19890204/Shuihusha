@@ -376,19 +376,20 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *shun, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
         DamageStruct *damage = dying.damage;
-        if(damage->from && !damage->from->isNude() && shun->askForSkillInvoke(objectName())){
+        PlayerStar from = damage->from;
+        if(from && !from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from))){
             Room *room = shun->getRoom();
             room->playSkillEffect(objectName());
             DummyCard *dummy = new DummyCard;
-            //int first = room->askForCardChosen(shun, damage->from, "he", objectName());
+            //int first = room->askForCardChosen(shun, from, "he", objectName());
             //shun->obtainCard(Sanguosha->getCard(first));
-            dummy->addSubcard(GetCard(shun, damage->from));
-            if(!damage->from->isNude() && shun->askForSkillInvoke(objectName())){
-                //first = room->askForCardChosen(shun, damage->from, "he", objectName());
+            dummy->addSubcard(GetCard(shun, from));
+            if(!from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from))){
+                //first = room->askForCardChosen(shun, from, "he", objectName());
                 //shun->obtainCard(Sanguosha->getCard(first));
-                dummy->addSubcard(GetCard(shun, damage->from));
+                dummy->addSubcard(GetCard(shun, from));
             }
-            ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(damage->from), objectName());
+            ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(from), objectName());
             room->moveCardTo(dummy, target, Player::Hand);
             delete dummy;
         }
