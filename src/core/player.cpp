@@ -521,11 +521,11 @@ int Player::getMaxCards() const{
         }
     }
 
-    int shenwei = 0;
-    if(hasSkill("shenwei"))
-        shenwei = 2;
+    int shensuan = 0;
+    if(hasSkill("shensuan"))
+        shensuan = 2;
 
-    return qMax(hp,0) + extra + shaxue + shenwei;
+    return qMax(hp,0) + extra + shaxue + shensuan;
 }
 
 QString Player::getKingdom() const{
