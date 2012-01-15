@@ -19,9 +19,9 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
-                }else if(player->getGeneralName() == "lubu"){
+                }else if(player->getGeneralName() == "zhangsan"){
                     if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "dongzhuo", true);
+                        room->transfigure(player, "lisi", true);
                 }else if(player->getGeneralName() == "zhugeliang"){
                     if(player->askForSkillInvoke("reselect"))
                         room->transfigure(player, "wolong", true);
@@ -112,24 +112,29 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "gaoqiu";
-    renegades << "wangqing" << "tongguan";
+    lord = "zhoutong";
+    renegades << "fangla" << "tongguan";
     rule = new CoupleScenarioRule(this);
 
-    map["songjiang"] = "lujunyi";
-    map["gongwang"] = "dingdesun";
-    map["husanniang"] = "zhangqing";
-    map["yanqing"] = "panqiaoyun";
-    map["wusong"] = "wangpo";
-    map["liying"] = "chaijin";
-    map["huarong"] = "taozongwang";
-    map["wangdingliu"] = "jiaoting";
-    map["shantinggui"] = "weidingguo";
+    //map["ximenqing"] = "panjinlian";
+    map["songjiang"] = "yanxijiao";
+    map["lujunyi"] = "jiashi";
+    map["zhangqing"] = "qiongying";
+    map["linchong"] = "linniangzi";
+    //map["wangying"] = "husanniang";
+    map["qingzhang"] = "sunerniang";
+    //map["sunxin"] = "gudasao";
+    map["wangqing"] = "duansanniang";
+    //map["yanqing"] = "lishishi";
+    map["yangxiong"] = "panqiaoyun";
+    map["shijin"] = "liruilan";
+    map["andaoquan"] = "liqiaonu";
+    //map["chaijin"] = "fangjinzhi";
+    //map["zhengtu"] = "jincuilian";
 
     full_map = map;
-    full_map["dongzhuo"] = "diaochan";
-    full_map["wolong"] = "huangyueying";
-    full_map["caozhi"] = "zhenji";
+    full_map["ximenqing"] = "wuda";
+    full_map["zhangsan"] = "lisi";
 }
 
 void CoupleScenario::marryAll(Room *room) const{
@@ -221,7 +226,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "caocao")
+        if(generals.at(i) == "zhoutong")
             roles << "lord";
         else
             roles << "renegade";

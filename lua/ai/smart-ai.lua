@@ -3106,6 +3106,7 @@ function SmartAI:askForAG(card_ids, refusable, reason)
 		table.insert(cards, sgs.Sanguosha:getCard(id))
 	end
 	self:sortByCardNeed(cards, true)
+	if #cards == 0 then return -1 end
 	return cards[#cards]:getEffectiveId()
 end
 

@@ -101,7 +101,6 @@ Engine::Engine()
 
     // available game modes
     modes["02p"] = tr("2 players");
-    //modes["02pbb"] = tr("2 players (using blance beam)");
     modes["02_1v1"] = tr("2 players (KOF style)");
     modes["03p"] = tr("3 players");
     modes["04p"] = tr("4 players");
@@ -109,13 +108,11 @@ Engine::Engine()
     modes["05p"] = tr("5 players");
     modes["06p"] = tr("6 players");
     modes["06pd"] = tr("6 players (2 renegades)");
-    //modes["06basara"] = tr("6 players(Basara Mode)");
     modes["06_3v3"] = tr("6 players (3v3)");
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
     modes["08pd"] = tr("8 players (2 renegades)");
     modes["08boss"] = tr("8 players (boss mode)");
-    //modes["08same"] = tr("8 players (same mode)");
     modes["09p"] = tr("9 players");
     modes["10p"] = tr("10 players");
 

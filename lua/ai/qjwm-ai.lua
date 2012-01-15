@@ -7,7 +7,8 @@ sgs.ai_skill_invoke["kong1iang"] = function(self, data)
 	return showcardnum > 8
 end
 sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
-	local final
+	if card_ids:isEmpty() then return -1 end
+	local final = sgs.Sanguosha:getCard(card_ids[1])
 	local suitnum = 100
 	for _, card_id in ipairs(card_ids) do
 		local card = sgs.Sanguosha:getCard(card_id)

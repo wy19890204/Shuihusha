@@ -283,7 +283,7 @@ public:
             if(effect.nature != DamageStruct::Normal){
                 LogMessage log;
                 log.from = player;
-                log.type = "#ArmorNullify";
+                log.type = "#JinjiaNullify";
                 log.arg = objectName();
                 log.arg2 = effect.slash->objectName();
                 room->sendLog(log);
@@ -294,7 +294,7 @@ public:
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.card && damage.card->inherits("Slash")){
                 LogMessage log;
-                log.type = "#ThrowWeapon";
+                log.type = "#ThrowJinjiaWeapon";
                 log.from = player;
                 log.arg = objectName();
                 if(damage.from->getWeapon()){
