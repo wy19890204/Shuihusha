@@ -162,6 +162,11 @@ void StartScene::printServerInfo(){
     else
         server_log->append(tr("Scene Mode is disabled"));
 
+    if(Config.EnableSame)
+        server_log->append(tr("Same Mode is enabled"));
+    else
+        server_log->append(tr("Same Mode is disabled"));
+
     if(Config.EnableEndless)
         server_log->append(tr("Endless Mode is enabled"));
     else
