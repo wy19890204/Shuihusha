@@ -58,7 +58,10 @@ public:
             room->loseMaxHp(tenkei);
             QList<const Skill *> skills = player->getVisibleSkillList();
             foreach(const Skill *skill, skills){
-                if(skill->parent()){
+                if(skill->parent() &&
+                   skill->getFrequency() != Skill::Limited &&
+                   skill->getFrequency() != Skill::Wake &&
+                   !skill->isLordSkill()){
                     QString sk = skill->objectName();
                     room->acquireSkill(tenkei, sk);
                     eatdeath_skills << sk;
