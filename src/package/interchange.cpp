@@ -227,7 +227,14 @@ public:
         ServerPlayer *duwei = room->findPlayerBySkillName(objectName());
         if(!duwei)
             return false;
-        const Card *card = room->askForCard(duwei, ".Touxi", "@touxi:" + player->objectName(), data);
+        bool caninvoke = false;
+        foreach(const Card *tp, duwei->getCards("he")){
+            if(tp->inherits("Weapon") || tp->inherits("Armor")){
+                caninvoke = true;
+                break;
+            }
+        }
+        const Card *card = caninvoke ? room->askForCard(duwei, ".Touxi", "@touxi:" + player->objectName(), data): NULL;
         if(card){
             Assassinate *ass = new Assassinate(card->getSuit(), card->getNumber());
             ass->setSkillName(objectName());

@@ -406,23 +406,34 @@ public:
                          room->askForChoice(yan, objectName(), "qing+nil");
         if(choice == "nil")
             return;
+        LogMessage log;
+        log.from = yan;
+        log.arg = objectName();
         if(choice == "yan"){
             room->playSkillEffect(objectName(), 1);
             if(!damage.from || damage.from->isNude())
                 return;
-            for(int i = 0; i < lstn; i++){
+            int i = 0;
+            for(; i < lstn; i++){
                 int card_id = damage.from->getEquips().isEmpty() ? damage.from->getRandomHandCardId() :
                               room->askForCardChosen(yan, damage.from, "he", objectName());
                 room->throwCard(card_id);
                 if(damage.from->isNude())
                     break;
             }
+            log.to << damage.from;
+            log.arg2 = QString::number(i);
+            log.type = "#FuqinYan";
         }
         else{
             room->playSkillEffect(objectName(), 2);
             ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
             target->drawCards(lstn);
+            log.to << target;
+            log.arg2 = QString::number(lstn);
+            log.type = "#FuqinQin";
         }
+        room->sendLog(log);
         yan->tag.remove("FuqinSource");
     }
 };

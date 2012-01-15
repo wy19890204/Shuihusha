@@ -78,6 +78,8 @@ return {
 	["fuqin:yan"] = "弃掉伤害来源的X张牌",
 	["fuqin:qing"] = "令任一角色摸X张牌",
 	["fuqin:nil"] = "不发动",
+	["#FuqinYan"] = "%from 发动了技能【%arg】，弃掉了 %to 的 %arg2 张牌",
+	["#FuqinQin"] = "%from 发动了技能【%arg】，令 %to 摸了 %arg2 张牌",
 	["$dalei1"] = "梁山好汉只需一人，便可溃汝相扑天下！",
 	["$dalei2"] = "来，擂台上见真章！",
 	["$fuqin1"] = "听听最后的旋律吧！",
