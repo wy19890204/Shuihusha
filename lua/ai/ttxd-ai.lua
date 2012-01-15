@@ -215,25 +215,23 @@ sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 end
 
 -- yixing
-sgs.ai_skill_invoke["@@yixing"] = function(self, prompt)
+sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 	local judge = self.player:getTag("Judge"):toJudge()
 	local equips = {}
 	if self:needRetrial(judge) then
-		local players = self.room:getAllPlayers()
-		players = sgs.QList2Table(players)
+		local players = sgs.QList2Table(self.room:getAllPlayers())
 		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
-			pequips = sgs.QList2Table(pequips)
-			for _, equip in ipairs(pequips) do
+			for _, equip in sgs.qlist(pequips) do
 				table.insert(equips, equip)
 			end
 		end
+		if #equips == 0 then return "." end
 		local card_id = self:getRetrialCardId(equips, judge)
 		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
-			pequips = sgs.QList2Table(pequips)
-			for _, equip in ipairs(pequips) do
-				if equip:getId() == card_id then
+			for _, equip in sgs.qlist(pequips) do
+				if equip:getEffectiveId() == card_id then
 					self.yixingcid = card_id
 					return "@YixingCard=.->" .. player:objectName()
 				end

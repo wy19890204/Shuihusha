@@ -21,29 +21,46 @@ sgs.ai_keep_value = {
 	Drivolt = 1,
 	Counterplot = 3.2,
 	Wiretap = -1,
-	Assassinate = 1.8,
+	Assassinate = 2.8,
 	Provistore = 0,
 	Treasury = -1,
 	Tsunami = -1,
+
+	Stink = -1,
+	Poison = 1,
 }
 
 sgs.ai_use_value =
 {
 
 --skill cards
+	-- qjwm
+	DaleiCard = 7.2,
+--	BuzhenCard = 3.3,
+	TaolueCard = 7.5,
+--	XiaozaiCard = 7.7,
+--	ButianCard = 2.0,
+
+	-- ttxd
+	GanlinCard = 8.5,
+	JuyiCard = 3.5,
+--	HaoshenCard = 4,
+--	HuanshuCard = 8.8,
+--	CujuCard = 8.8,
+--	YixingCard = 8.5,
+	WujiCard = 9,
+	YanshouCard = 9.9,
+
 	XinzhanCard = 4.4,
 	TianyiCard = 8.5,
 	XianzhenCard = 9.2,
 	XianzhenSlashCard = 9.2,
-	HuangtianCard = 8.5,
 	JijiangCard=8.5,
 	DimengCard=3.5,
 	JujianCard=6.7,
 	QiangxiCard=2.5,
 	LijianCard=8.5,
-	RendeCard=8.5,
 	MinceCard=5.9,
-	ZhihengCard = 9,
 
 	ShenfenCard = 8,
 	GreatYeyanCard = 8,
@@ -92,24 +109,42 @@ sgs.ai_use_value =
 	Treasury = 1,
 	Tsunami = -2,
 	Events = 3,
+
+	Stink = 2,
+	Poison = 7,
 }
 
 sgs.ai_use_priority = {
 --priority of using an active card
 
 --skill cards
+	-- qjwm
+	DaleiCard = 6.6,
+--	BuzhenCard = 2.5,
+	TaolueCard = 5,
+--	XiaozaiCard = 3,
+--	ButianCard = 2.0,
+
+	-- ttxd
+	GanlinCard = 5.8,
+	JuyiCard = 4.2,
+--	HaoshenCard = 4,
+--	HuanshuCard = 8.8,
+--	CujuCard = 8.8,
+--	YixingCard = 8.5,
+	WujiCard = 3.3,
+	YanshouCard = 5,
+
 	XinzhanCard = 9.2,
 	GuhuoCard = 10,
 	TianyiCard = 4,
 	JieyinCard = 2.5,
-	HuangtianCard = 10,
 	XianzhenCard = 9.2,
 	XianzhenSlashCard = 2.6,
 	JijiangCard = 2.4,
 	DimengCard=2.3,
 	LijianCard = 4,
 	QingnangCard=4.2,
-	RendeCard= 5.8,
 	MingceCard=4,
 	JujianCard = 4.5,
 
@@ -184,14 +219,6 @@ sgs.ai_use_priority = {
 	MeteorSword = 2.668,
 	SunBow = 2.567,
 	GoldArmor = 2.555,
-	--god_salvation
-	--deluge
-	--supply_shortage
-	--earthquake
-	--indulgence
-	--mudslide
-	--lightning
-	--typhoon
 }
 
 

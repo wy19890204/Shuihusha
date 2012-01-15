@@ -1903,7 +1903,15 @@ function SmartAI:evaluateArmor(card, player)
 end
 
 function SmartAI:useEquipCard(card, use)
-	if self:hasSkill("qinlong") then return end
+	if self:hasSkill("qinlong") then
+		local targets = {}
+		for _, player in ipairs(self.enemies) do
+			if self.player:distanceTo(player) == 1 then
+				table.insert(targets, player)
+			end
+		end
+		if #targets >= 2 then return end
+	end
 	if self:hasSkills(sgs.lose_equip_skill) and not card:inherits("GaleShell") then
 		use.card = card
 		return
@@ -2670,7 +2678,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 		return card:getId()
 	end
 
-	if reason == "yixing" then return self.yixingcid end
+	if reason == "yixing" and self.yixingcid then return self.yixingcid end
 	if self:isFriend(who) then
 		if flags:match("j") then
 			local tricks = who:getCards("j")

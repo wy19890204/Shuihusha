@@ -8,6 +8,7 @@ sgs.dynamic_value = {
 		SavageAssault = true,
 		Drivolt = true,
 		Assassinate = true,
+		Poison = true,
 		
 		QiangxiCard = true,
 		FanjianCard = true,
@@ -28,6 +29,8 @@ sgs.dynamic_value = {
 		Collateral = true,
 		Ecstasy = true,
 		Drivolt = true,
+		Stink = true,
+		Poison = true,
 		
 		GaleShell = true,
 		

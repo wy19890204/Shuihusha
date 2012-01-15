@@ -271,6 +271,7 @@ zhengfa_skill.getTurnUseCard = function(self)
 			table.insert(enemies, enemy)
 		end
 	end
+	if #enemies < 2 then return end
 	if self.player:getHp() >= #enemies and self.player:getHp() >= 2 then
 		local max_card = self:getMaxCard()
 		return sgs.Card_Parse("@ZhengfaCard=" .. max_card:getEffectiveId())
