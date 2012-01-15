@@ -1607,7 +1607,7 @@ void Room::chooseGenerals(){
 
     // for lord
     QStringList lord_list;
-    if(mode == "08same")
+    if(Config.EnableSame)
         lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
     else
         lord_list = Sanguosha->getRandomLords();
@@ -1616,7 +1616,7 @@ void Room::chooseGenerals(){
     the_lord->setGeneralName(general);
     broadcastProperty(the_lord, "general", general);
 
-    if(mode == "08same"){
+    if(Config.EnableSame){
         foreach(ServerPlayer *p, players){
             if(!p->isLord())
                 p->setGeneralName(general);
@@ -2302,6 +2302,9 @@ void Room::drawCards(ServerPlayer *player, int n){
         }
     }else
         broadcastInvoke("drawNCards", draw_str, player);
+
+    QVariant data = QVariant::fromValue(n);
+    thread->trigger(CardDrawnDone, player, data);
 }
 
 void Room::throwCard(const Card *card){
@@ -2401,6 +2404,8 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
 
     if(from)
         thread->trigger(CardLostDone, from);
+    if(to)
+        thread->trigger(CardGotDone, to);
 }
 
 void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope){
@@ -2477,7 +2482,11 @@ void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope)
         QVariant data = QVariant::fromValue(move_star);
         thread->trigger(CardLost, move.from, data);
     }
-
+    if(move.to && move.to!=move.from){
+        CardMoveStar move_star = &move;
+        QVariant data = QVariant::fromValue(move_star);
+        thread->trigger(CardGot, move.to, data);
+    }
     Sanguosha->getCard(move.card_id)->onMove(move);
 }
 
@@ -3113,6 +3122,14 @@ void Room::takeAG(ServerPlayer *player, int card_id){
         player->addCard(Sanguosha->getCard(card_id), Player::Hand);
         setCardMapping(card_id, player, Player::Hand);
         broadcastInvoke("takeAG", QString("%1:%2").arg(player->objectName()).arg(card_id));
+        CardMoveStruct move;
+        move.from = NULL;
+        move.from_place = Player::DrawPile;
+        move.to = player;
+        move.to_place = Player::Hand;
+        CardMoveStar move_star = &move;
+        QVariant data = QVariant::fromValue(move_star);
+        thread->trigger(CardGot, player, data);
     }else{
         discard_pile->prepend(card_id);
         setCardMapping(card_id, NULL, Player::DiscardedPile);

@@ -11,7 +11,7 @@ ServerInfoStruct ServerInfo;
 #include <QCheckBox>
 
 bool ServerInfoStruct::parse(const QString &str){
-    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCEBAM12]*)");
+    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEBAM12]*)");
     if(!rx.exactMatch(str)){
         // older version, just take the player count
         int count = str.split(":").at(1).toInt();
@@ -46,6 +46,7 @@ bool ServerInfoStruct::parse(const QString &str){
     FreeChoose = flags.contains("F");
     Enable2ndGeneral = flags.contains("S");
     EnableScene = flags.contains("C");
+    EnableSame = flags.contains("T");
     EnableEndless = flags.contains("E");
     EnableBasara= flags.contains("B");
     EnableAI = flags.contains("A");
@@ -70,6 +71,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     player_count_label = new QLabel;
     two_general_label = new QLabel;
     scene_label = new QLabel;
+    same_label = new QLabel;
     endless_label = new QLabel;
     free_choose_label = new QLabel;
     enable_ai_label = new QLabel;
@@ -88,6 +90,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     layout->addRow(tr("Player count"), player_count_label);
     layout->addRow(tr("2nd general mode"), two_general_label);
     layout->addRow(tr("Scene Mode"), scene_label);
+    layout->addRow(tr("Same Mode"), same_label);
     layout->addRow(tr("Endless Mode"), endless_label);
     layout->addRow(tr("Max HP scheme"), max_hp_label);
     layout->addRow(tr("Free choose"), free_choose_label);
@@ -113,6 +116,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     port_label->setText(QString::number(Config.ServerPort));
     two_general_label->setText(info.Enable2ndGeneral ? tr("Enabled") : tr("Disabled"));
     scene_label->setText(info.EnableScene ? tr("Enabled") : tr("Disabled"));
+    same_label->setText(info.EnableSame ? tr("Enabled") : tr("Disabled"));
     endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
 
     if(info.Enable2ndGeneral){
@@ -167,6 +171,7 @@ void ServerInfoWidget::clear(){
     player_count_label->clear();
     two_general_label->clear();
     scene_label->clear();
+    same_label->clear();
     endless_label->clear();
     free_choose_label->clear();
     time_limit_label->clear();

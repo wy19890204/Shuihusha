@@ -64,6 +64,7 @@ void Settings::init(){
     DisableChat = value("DisableChat", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();
     EnableScene = value("EnableScene", false).toBool();	//changjing
+    EnableSame = value("EnableSame", false).toBool();
     EnableEndless = value("EnableEndless", false).toBool();
     EnableBasara= value("EnableBasara",false).toBool();
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
