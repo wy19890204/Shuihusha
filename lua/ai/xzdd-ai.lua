@@ -43,7 +43,8 @@ sgs.ai_skill_playerchosen["fengmang"] = function(self, targets)
 	return self.enemies[1]
 end
 
--- shunshui&lihun
+-- shalu&shunshui&lihun
+sgs.ai_skill_invoke["shalu"] = true
 sgs.ai_skill_invoke["shunshui"] = true
 sgs.ai_skill_invoke["lihun"] = function(self, data)
 	local from = data:toPlayer()

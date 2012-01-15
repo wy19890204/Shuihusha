@@ -5,6 +5,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "ai.h"
+#include "plough.h"
 
 class Xianxi: public TriggerSkill{
 public:
@@ -201,6 +202,46 @@ public:
     }
 };
 
+class TouxiPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return card->inherits("Weapon") || card->inherits("Armor");
+    }
+};
+
+class Touxi: public TriggerSkill{
+public:
+    Touxi():TriggerSkill("touxi"){
+        events << CardResponsed;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardStar card_star = data.value<CardStar>();
+        if(!card_star->inherits("Jink"))
+            return false;
+        Room *room = player->getRoom();
+        ServerPlayer *duwei = room->findPlayerBySkillName(objectName());
+        if(!duwei)
+            return false;
+        const Card *card = room->askForCard(duwei, ".Touxi", "@touxi:" + player->objectName(), data);
+        if(card){
+            Assassinate *ass = new Assassinate(card->getSuit(), card->getNumber());
+            ass->setSkillName(objectName());
+            ass->addSubcard(card);
+            CardUseStruct use;
+            use.card = ass;
+            use.from = duwei;
+            use.to << player;
+            room->useCard(use);
+        }
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -213,6 +254,10 @@ InterChangePackage::InterChangePackage()
     General *jiangjing = new General(this, "jiangjing", "kou", 3);
     jiangjing->addSkill(new Shensuan);
     jiangjing->addSkill(new Gunzhu);
+
+    General *duwei = new General(this, "duwei", "jiang");
+    duwei->addSkill(new Touxi);
+    patterns[".Touxi"] = new TouxiPattern;
 
     addMetaObject<ShensuanCard>();
 }
