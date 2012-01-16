@@ -112,6 +112,7 @@ public:
 };
 
 FanwuCard::FanwuCard(){
+    will_throw = false;
 }
 
 bool FanwuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -122,8 +123,9 @@ bool FanwuCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void FanwuCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this);
-    QVariant target = QVariant::fromValue((PlayerStar)effect.to);
-    effect.from->tag["Fanwu"] = target;
+    DamageStruct damage = effect.from->tag["FanwuStruct"].value<DamageStruct>();
+    damage.from = effect.to;
+    effect.from->tag["FanwuStruct"] = QVariant::fromValue(damage);
 }
 
 class FanwuViewAsSkill: public OneCardViewAsSkill{
@@ -165,15 +167,16 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(!player->isNude() && damage.to != damage.from){
             Room *room = player->getRoom();
+            player->tag["FanwuStruct"] = data;
             if(room->askForUseCard(player, "@@fanwu", "@fanwu")){
-                ServerPlayer *target = player->tag["Fanwu"].value<PlayerStar>();
-                if(target){
-                    damage.from = target;
+                DamageStruct damage2 = player->tag["FanwuStruct"].value<DamageStruct>();
+                if(damage2.from){
+                    damage.from = damage2.from;
                     data = QVariant::fromValue(damage);
                 }
-                player->tag.remove("Fanwu");
             }
         }
+        player->tag.remove("FanwuStruct");
         return false;
     }
 };
@@ -335,10 +338,10 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *linko, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.from && damage.from->getGeneral()->isMale() &&
-           damage.damage > 0 &&
-           !linko->isKongcheng() && !damage.from->isKongcheng() &&
-           linko->askForSkillInvoke(objectName())){
+        if(!damage.from || !damage.from->getGeneral()->isMale() || damage.damage <= 0)
+            return false;
+        if(!linko->isKongcheng() && !damage.from->isKongcheng() &&
+           linko->askForSkillInvoke(objectName(), data)){
             linko->getRoom()->playSkillEffect(objectName());
             bool success = linko->pindian(damage.from, objectName());
             if(success){

@@ -1,3 +1,29 @@
+-- yushui
+yushui_skill={}
+yushui_skill.name = "yushui"
+table.insert(sgs.ai_skills, yushui_skill)
+yushui_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("YushuiCard") or not self.player:isWounded() then return end
+	local cards = self.player:getCards("he")
+    cards = sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards)  do
+		if card:getSuit() == sgs.Card_Heart then
+		    return sgs.Card_Parse("@YushuiCard=" .. card:getEffectiveId())
+		end
+	end
+	return
+end
+sgs.ai_skill_use_func["YushuiCard"] = function(card, use, self)
+	for _, friend in ipairs(self.friends) do
+		if friend:isWounded() and friend:getGeneral():isMale() then
+			use.card = card
+			if use.to then use.to:append(friend) end
+			return
+		end
+	end
+end
+
 -- meicha
 meicha_skill={}
 meicha_skill.name = "meicha"
@@ -21,6 +47,32 @@ meicha_skill.getTurnUseCard = function(self)
 	assert(analeptic)
 	return analeptic
 end
+
+-- fanwu
+sgs.ai_skill_use["@@fanwu"] = function(self, prompt)
+	if self.player:isKongcheng() then return "." end
+	local card = self.player:getRandomHandCard()
+	local damage = self.player:getTag("FanwuStruct"):toDamage()
+	local dmg = damage.damage
+	if damage.to:getArmor() and damage.to:getArmor():objectName() == "vine" and damage.nature == sgs.DamageStruct_Fire then dmg = dmg + 1 end
+	if damage.to:getArmor() and damage.to:getArmor():objectName() == "silver_lion" then dmg = 1 end
+	if damage.to:getRole() == "loyal" and self:isEnemy(damage.to) and damage.to:getHp() - dmg < 1
+		and self.room:getLord() and self.room:getLord():getGeneral():isMale() then
+		return "@FanwuCard=" .. card:getEffectiveId() .. "->" .. self.room:getLord():objectName()
+	end
+	if damage.to:getRole() == "rebel" and self:isEnemy(damage.from) and damage.to:getHp() - dmg < 1 then
+		self:sort(self.friends, "handcard")
+		for _, t in ipairs(self.friends) do
+			if t:getGeneral():isMale() then
+				return "@FanwuCard=" .. card:getEffectiveId() .. "->" .. t:objectName()
+			end
+		end
+	end
+	return "."
+end
+
+-- panxin
+sgs.ai_skill_invoke["panxin"] = sgs.ai_skill_invoke["dujian"]
 
 -- banzhuang
 local banzhuang_skill={}
@@ -67,6 +119,38 @@ zhuying_skill.getTurnUseCard = function(self)
 	end
 end
 
+-- shouwang
+shouwang_skill={}
+shouwang_skill.name = "shouwang"
+table.insert(sgs.ai_skills, shouwang_skill)
+shouwang_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("ShouwangCard") then return end
+	local slash = self:getCard("Slash")
+	if not slash then return end
+	return sgs.Card_Parse("@ShouwangCard=" .. slash:getEffectiveId())
+end
+sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
+	self:sort(self.friends,"threat")
+	for _, friend in ipairs(self.friends) do
+		if friend:getGeneral():isMale() then
+			use.card = card
+			if use.to then use.to:append(friend) end
+			return
+		end
+	end
+end
+
+-- zhongzhen
+sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
+	local damage = data:toDamage()
+	local max_card = self:getMaxCard()
+	if max_card and max_card:getNumber() > 11 and self:isEnemy(damage.from) then
+		return true
+	else
+		return false
+	end
+end
+
 -- zhangshi
 local zhangshi_skill={}
 zhangshi_skill.name="zhangshi"
@@ -97,11 +181,8 @@ sgs.ai_skill_use_func["ZhangshiCard"]=function(card,use,self)
 end
 sgs.ai_skill_invoke["zhangshi"] = function(self, data)
 	local cards = self.player:getHandcards()
-	for _, card in sgs.qlist(cards) do
-		if card:inherits("Slash") then
-			return false
-		end
-	end
+	local slash = self:getCard("Slash")
+	if slash then return false end
 	if sgs.zhangshisource then return false else return true end
 end
 

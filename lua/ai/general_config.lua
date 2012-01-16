@@ -57,7 +57,16 @@ sgs.ai_use_value =
 	Maida0Card = 3,
 --	BinggongCard = 2.1,
 	FeiqiangCard = 9.2,
-	
+
+	-- bwqz
+	YuanyinCard = 4.3,
+	ShougeCard = 4.4,
+	NushaCard = 6.1,
+	QiaogongCard = 2.3,
+	ZhengfaCard = 5.5,
+	JiaomieCard = 7,
+	YongleCard = 3,
+
 	XinzhanCard = 4.4,
 	TianyiCard = 8.5,
 	XianzhenCard = 9.2,
@@ -148,8 +157,16 @@ sgs.ai_use_priority = {
 	Maida0Card = 2,
 --	BinggongCard = 2.1,
 	FeiqiangCard = 5.4,
-	
-	
+
+	-- bwqz
+	YuanyinCard = 8.3,
+	ShougeCard = 6.4,
+	NushaCard = 7.1,
+	QiaogongCard = 3.3,
+	ZhengfaCard = 5.5,
+	JiaomieCard = 6.6,
+	YongleCard = 2.3,
+
 	XinzhanCard = 9.2,
 	GuhuoCard = 10,
 	TianyiCard = 4,

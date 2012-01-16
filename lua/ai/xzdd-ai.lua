@@ -161,7 +161,7 @@ feiqiang_skill.getTurnUseCard = function(self)
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards)  do
 			if acard:inherits("Weapon") then
-				return sgs.Card_Parse("@FeiqiangCard=" .. acard:getId())
+				return sgs.Card_Parse("@FeiqiangCard=" .. acard:getEffectiveId())
 			end
 		end
 	end
