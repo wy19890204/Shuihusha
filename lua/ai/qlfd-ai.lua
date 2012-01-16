@@ -363,7 +363,7 @@ qianxian_skill.getTurnUseCard = function(self)
 		end
 	end
 end
-sgs.ai_skill_use_func["QianxianCard"]=function(card,use,self)
+sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	local first, second
 	for _, tmp in ipairs(self.enemies) do

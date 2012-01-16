@@ -16,7 +16,7 @@ GameRule::GameRule(QObject *parent)
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete
+            << DamageDone << DamageComplete << CardLostDone
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -617,6 +617,15 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             room->sendLog(log);
             room->getThread()->delay();
 
+            break;
+        }
+    case CardLostDone:{
+            QVariant dat = player->tag["Silver"];
+            if(!dat.isNull()){
+                RecoverStruct recover = dat.value<RecoverStruct>();
+                room->recover(player, recover);
+                player->tag.remove("Silver");
+            }
             break;
         }
 
