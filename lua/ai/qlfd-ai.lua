@@ -348,3 +348,54 @@ sgs.ai_skill_use_func["YinlangCard"] = function(card, use, self)
 		end
 	end
 end
+
+-- qianxian
+local qianxian_skill={}
+qianxian_skill.name = "qianxian"
+table.insert(sgs.ai_skills, qianxian_skill)
+qianxian_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("QianxianCard") then return end
+	local cards = self.player:getCards("h")
+	cards = sgs.QList2Table(cards)
+	for _, acard in ipairs(cards) do
+		if acard:isNDTrick() and acard:isBlack() then
+			return sgs.Card_Parse("@QianxianCard=" .. acard:getEffectiveId())
+		end
+	end
+end
+sgs.ai_skill_use_func["QianxianCard"]=function(card,use,self)
+	self:sort(self.enemies, "handcard")
+	local first, second
+	for _, tmp in ipairs(self.enemies) do
+		if not tmp:isChained() or tmp:faceUp() then
+			if not first then
+				first = tmp
+			elseif tmp:getMaxHP() ~= first:getMaxHP() then
+				second = tmp
+			end
+			if first and second then break end
+		end
+	end
+	if not first then
+		for _, tmp in ipairs(self.friends_noself) do
+			if tmp:getHandcardNum() > 2 and (not tmp:faceUp() or tmp:isChained()) then
+				first = tmp
+			elseif tmp:getMaxHP() ~= first:getMaxHP() then
+				second = tmp
+			end
+			if first and second then break end
+		end
+	elseif not second then
+		for _, tmp in ipairs(self.friends_noself) do
+			if tmp:getHandcardNum() > 2 and (not tmp:faceUp() or tmp:isChained()) then
+				second = tmp
+			end
+			if first and second then break end
+		end
+	end
+	if first and second and use.to then
+		use.card = card
+		use.to:append(first)
+		use.to:append(second)
+	end
+end

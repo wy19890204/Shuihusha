@@ -555,12 +555,24 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         PindianStar pindian = data.value<PindianStar>();
-        if(player == pindian->from && pindian->reason == objectName() &&
-           pindian->isSuccess()){
-            player->obtainCard(pindian->from_card);
-            player->obtainCard(pindian->to_card);
+        if(player == pindian->from && pindian->reason == objectName()){
+           if(pindian->isSuccess()){
+               player->obtainCard(pindian->from_card);
+               player->obtainCard(pindian->to_card);
+           }
+           else{
+               DamageStruct damage;
+               damage.from = pindian->to;
+               damage.to = pindian->from;
+               Card *card = new Card(pindian->from_card->getSuit(), pindian->to_card->getNumber());
+               card->setSkillName(objectName());
+               card->addSubcard(pindian->from_card);
+               card->addSubcard(pindian->to_card);
+               damage.card = card;
+               player->getRoom()->damage(damage);
+           }
         }
         return false;
     }

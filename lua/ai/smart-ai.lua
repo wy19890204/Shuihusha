@@ -3226,7 +3226,7 @@ function SmartAI:askForPindian(requestor, reason)
 	maxcard = maxcard or minusecard
 	mincard = mincard or minusecard
 	if self:isFriend(requestor) then return mincard end
-	if ("tianyi|xianzhen"):match(reason) then
+	if ("dalei|xianzhen"):match(reason) then
 		if requestor:getHandcardNum() > 2 then return maxcard else return minusecard end
 	end
 	return maxcard

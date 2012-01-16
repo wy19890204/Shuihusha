@@ -244,7 +244,7 @@ public:
 
         Room *room = player->getRoom();
         const Card *card = room->askForCard(player, "slash", "blade-slash");
-        if(card){
+        if(card && !player->hasFlag("triggered")){
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
                 room->setPlayerFlag(player, "-drank");
