@@ -113,6 +113,7 @@ sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 	if num < 3 and self.player:isWounded() then return "." end
 	self:sort(self.friends_noself, "defense")
 	local target = self.friends_noself[1]
+	if not target then return "." end
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)

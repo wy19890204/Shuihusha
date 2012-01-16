@@ -88,7 +88,7 @@ sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
 		if not enemy:isKongcheng() and not enemy:getEquips():isEmpty() then
 		    if use.to then use.to:append(enemy) end
             use.card=card
-            break
+            return
 		end
 	end
 end
