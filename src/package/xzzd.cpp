@@ -90,11 +90,11 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to == damage.from || damage.damage < 1)
             return false;
-        if(!damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
+        if(!damage.to->isAllNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
             room->playSkillEffect(objectName());
             int dust = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
-                          room->askForCardChosen(player, damage.to, "he", objectName());
+                          room->askForCardChosen(player, damage.to, "hej", objectName());
             room->throwCard(dust);
 
             LogMessage log;

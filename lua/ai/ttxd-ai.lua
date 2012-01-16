@@ -220,7 +220,13 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 	local equips = {}
 	if self:needRetrial(judge) then
 		local players = sgs.QList2Table(self.room:getAllPlayers())
-		for _, player in ipairs(players) do
+		for _, player in ipairs(self.enemies) do
+			local pequips = player:getEquips()
+			for _, equip in sgs.qlist(pequips) do
+				table.insert(equips, equip)
+			end
+		end
+		for _, player in ipairs(self.friends) do
 			local pequips = player:getEquips()
 			for _, equip in sgs.qlist(pequips) do
 				table.insert(equips, equip)

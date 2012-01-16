@@ -130,7 +130,14 @@ sgs.ai_skill_invoke["shenpan"] = function(self, data)
 end
 
 -- yixian
-sgs.ai_skill_invoke["yixian"] = sgs.ai_skill_invoke["qiangqu"]
+sgs.ai_skill_invoke["yixian"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isFriend(damage.to) then
+		return not self:hasSkills(sgs.masochism_skill, damage.to)
+	elseif self:isEnemy(damage.to) then
+		return self:hasSkills(sgs.masochism_skill, damage.to)
+	end
+end
 
 -- feiqiang
 feiqiang_skill={}
