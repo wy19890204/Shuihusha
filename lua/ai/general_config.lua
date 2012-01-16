@@ -51,6 +51,13 @@ sgs.ai_use_value =
 	WujiCard = 9,
 	YanshouCard = 9.9,
 
+	-- xzdd
+--	DuijueCard = 7,
+	MaidaoCard = 6.5,
+	Maida0Card = 3,
+--	BinggongCard = 2.1,
+	FeiqiangCard = 9.2,
+	
 	XinzhanCard = 4.4,
 	TianyiCard = 8.5,
 	XianzhenCard = 9.2,
@@ -135,6 +142,14 @@ sgs.ai_use_priority = {
 	WujiCard = 3.3,
 	YanshouCard = 5,
 
+	-- xzdd
+--	DuijueCard = 7,
+	MaidaoCard = 5.7,
+	Maida0Card = 2,
+--	BinggongCard = 2.1,
+	FeiqiangCard = 5.4,
+	
+	
 	XinzhanCard = 9.2,
 	GuhuoCard = 10,
 	TianyiCard = 4,

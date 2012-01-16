@@ -215,25 +215,29 @@ sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 end
 
 -- yixing
+function SmartAI:getYixingCard(judge)
+	local equips = {}
+	for _, player in ipairs(self.enemies) do
+		local pequips = player:getEquips()
+		for _, equip in sgs.qlist(pequips) do
+			table.insert(equips, equip)
+		end
+	end
+	for _, player in ipairs(self.friends) do
+		local pequips = player:getEquips()
+		for _, equip in sgs.qlist(pequips) do
+			table.insert(equips, equip)
+		end
+	end
+	if #equips == 0 then return -1 end
+	return self:getRetrialCardId(equips, judge)
+end
 sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 	local judge = self.player:getTag("Judge"):toJudge()
-	local equips = {}
 	if self:needRetrial(judge) then
 		local players = sgs.QList2Table(self.room:getAllPlayers())
-		for _, player in ipairs(self.enemies) do
-			local pequips = player:getEquips()
-			for _, equip in sgs.qlist(pequips) do
-				table.insert(equips, equip)
-			end
-		end
-		for _, player in ipairs(self.friends) do
-			local pequips = player:getEquips()
-			for _, equip in sgs.qlist(pequips) do
-				table.insert(equips, equip)
-			end
-		end
-		if #equips == 0 then return "." end
-		local card_id = self:getRetrialCardId(equips, judge)
+		local card_id = self:getYixingCard(judge)
+		if card_id == -1 then return "." end
 		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
 			for _, equip in sgs.qlist(pequips) do

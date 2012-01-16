@@ -126,7 +126,19 @@ end
 -- shenpan
 sgs.ai_skill_invoke["shenpan"] = function(self, data)
 	local judge = data:toJudge()
-	return self:needRetrial(judge)
+	if not self:needRetrial(judge) then return false end
+	local wizard_friend
+	for _, player in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+		if player == judge.who then break end
+		if self:isFriend(player) then
+			if (player:hasSkill("yixing") and self:getYixingCard(judge) > -1) or
+				player:hasSkill("butian") then
+				wizard_friend = player
+				break
+			end
+		end
+	end
+	return not wizard_friend
 end
 
 -- yixian
