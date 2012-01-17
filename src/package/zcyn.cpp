@@ -361,18 +361,10 @@ public:
         QString suit_str = effect.slash->getSuitString();
         QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
         QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-        CardStar card = room->askForCard(player, pattern, prompt);
+        CardStar card = room->askForCard(player, pattern, prompt, data);
         if(card){
-            QList<ServerPlayer *> targets;
-            targets << effect.to->getNextAlive();
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(effect.to)){
-                if(tmp->getNextAlive() == effect.to){
-                    targets << tmp;
-                    break;
-                }
-            }
             room->slashResult(effect, NULL);
-            ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getNextandPrevious(effect.to), objectName());
             DamageStruct damage;
             damage.from = player;
             damage.to = target;

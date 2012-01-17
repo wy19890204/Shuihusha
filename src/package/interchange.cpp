@@ -324,9 +324,9 @@ InterChangePackage::InterChangePackage()
     General *caiqing = new General(this, "caiqing", "jiang", 5);
     caiqing->addSkill(new Lianzang);
 
-    General *jiangjing = new General(this, "jiangjing", "kou", 3);
-    jiangjing->addSkill(new Shensuan);
-    jiangjing->addSkill(new Gunzhu);
+    General *shenjiangjing = new General(this, "shenjiangjing", "god", 3);
+    shenjiangjing->addSkill(new Shensuan);
+    shenjiangjing->addSkill(new Gunzhu);
 
     General *duwei = new General(this, "duwei", "jiang");
     duwei->addSkill(new Touxi);

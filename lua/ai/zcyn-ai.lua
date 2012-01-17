@@ -1,6 +1,7 @@
 -- tongwu
 sgs.ai_skill_invoke["tongwu"] = true
 sgs.ai_skill_playerchosen["tongwu"] = function(self, targets)
+	if not self:getCard("Jink") then return self.player end
 	local targetlist=sgs.QList2Table(targets)
 	self:sort(targetlist, "handcard")
 	for _, target in ipairs(targetlist) do

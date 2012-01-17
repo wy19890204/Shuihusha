@@ -862,7 +862,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getGeneral()->isMale();
+        return target->getGeneral()->isMale() && !target->hasSkill(objectName());
     }
 
     virtual QString getDefaultChoice(ServerPlayer *player) const{

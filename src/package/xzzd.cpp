@@ -474,7 +474,8 @@ public:
         if(card->inherits("FireAttack")){
             Room *room = weidingguo->getRoom();
             if(room->askForSkillInvoke(weidingguo, objectName())){
-                room->playSkillEffect(objectName());
+                if(card->getSkillName() != "shenhuo")
+                    room->playSkillEffect(objectName());
                 weidingguo->drawCards(2);
             }
         }
