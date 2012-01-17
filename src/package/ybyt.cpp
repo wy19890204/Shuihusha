@@ -395,14 +395,13 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         SlashEffectStruct slash_effect = data.value<SlashEffectStruct>();
-        ServerPlayer *target = slash_effect.to;
-
+/*
         if(target->hasFlag("triggered")){
             target->setFlags("-triggered");
             return true;
         }
-
-        ServerPlayer *next = target->getNextAlive();
+*/
+        PlayerStar next = slash_effect.to->getNextAlive();
         room->playSkillEffect(objectName());
         LogMessage log;
         log.type = "#Xuandao";

@@ -221,7 +221,10 @@ int Player::distanceTo(const Player *other) const{
     if(distance < 1)
         distance = 1;
 
-    return distance;
+    if(other->hasSkill("shuizhan"))
+        return qMax(distance, 2);
+    else
+        return distance;
 }
 
 void Player::setGeneral(const General *new_general){

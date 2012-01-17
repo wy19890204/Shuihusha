@@ -2883,9 +2883,13 @@ function SmartAI:askForCard(pattern, prompt, data)
 		return "."
 	elseif parsedPrompt[1] == "@chiyuan" then
 		local rv = data:toRecover()
-		local card = self:getUnuseCard()
-		if self:isFriend(rv.who) or not card then return "." end
-		return card:getEffectiveId()
+		local cards = self.player:getCards("he")
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		if self:isEnemy(rv.who) then
+			return cards[1]:getEffectiveId()
+		end
+		return "."
 	elseif parsedPrompt[1] == "@xianji" or parsedPrompt[1] == "@fuji" then
 		local who = data:toPlayer()
 		if self:isFriend(who) or self.player:isKongcheng() then return "." end
@@ -3222,7 +3226,7 @@ function SmartAI:askForPindian(requestor, reason)
 	maxcard = maxcard or minusecard
 	mincard = mincard or minusecard
 	if self:isFriend(requestor) then return mincard end
-	if ("tianyi|xianzhen"):match(reason) then
+	if ("dalei|xianzhen"):match(reason) then
 		if requestor:getHandcardNum() > 2 then return maxcard else return minusecard end
 	end
 	return maxcard

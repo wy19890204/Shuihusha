@@ -41,4 +41,12 @@ return {
 	["fanzhan"] = "反战",
 	[":fanzhan"] = "回合结束时，若你未受伤且场上存活武将数大于2，你可以规定：到你下回合开始时，任意角色使用的【杀】和【决斗】均无效",
 	["#FanzhanNullify"] = "受到【%arg2】技能的影响，%from 对 %to 的 %arg 无效",
+
+	["#_tongmeng"] = "翻江蜃",
+	["tongmeng"] = "童猛",
+	["designer:tongmeng"] = "hypercross",
+	["shuilao"] = "水牢",
+	[":shuilao"] = "出牌阶段，你可以将你的任一非延时锦囊牌当【画地为牢】使用。",
+	["shuizhan"] = "水遁",
+	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你；其他角色计算与你的距离时，至少为2",
 }

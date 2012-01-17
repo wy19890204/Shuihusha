@@ -485,7 +485,10 @@ public:
     virtual int getDrawNum(ServerPlayer *player, int n) const{
         Room *room = player->getRoom();
         ServerPlayer *duan3niang = room->findPlayerBySkillName(objectName());
-        if(duan3niang && room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
+        if(!duan3niang || duan3niang->isNude())
+            return false;
+        duan3niang->tag["ZishiSource"] = QVariant::fromValue((PlayerStar)player);
+        if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
             int delta = duan3niang->tag["ZiShi"].toInt();
             if(delta > 0){
                 QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
@@ -503,6 +506,7 @@ public:
             }
             duan3niang->tag.remove("ZiShi");
         }
+        duan3niang->tag.remove("ZishiSource");
         return n;
     }
 };
@@ -551,12 +555,20 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         PindianStar pindian = data.value<PindianStar>();
-        if(player == pindian->from && pindian->reason == objectName() &&
-           pindian->isSuccess()){
-            player->obtainCard(pindian->from_card);
-            player->obtainCard(pindian->to_card);
+        if(player == pindian->from && pindian->reason == objectName()){
+           if(pindian->isSuccess()){
+               player->obtainCard(pindian->from_card);
+               player->obtainCard(pindian->to_card);
+           }
+           else{
+               DamageStruct damage;
+               damage.from = pindian->to;
+               damage.to = pindian->from;
+               damage.card = pindian->to_card;
+               player->getRoom()->damage(damage);
+           }
         }
         return false;
     }
@@ -863,7 +875,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *anu = room->findPlayerBySkillName(objectName());
-        if(!anu || anu->isKongcheng())
+        if(!anu || anu->isNude())
             return false;
         RecoverStruct rec = data.value<RecoverStruct>();
         for(int i = rec.recover; i > 0; i--){
@@ -878,7 +890,7 @@ public:
 
             JudgeStruct jd;
             jd.reason = objectName();
-            jd.who = rec.who;
+            jd.who = player;
             room->judge(jd);
 
             if(jd.card->isBlack()){

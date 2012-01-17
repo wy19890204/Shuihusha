@@ -251,7 +251,8 @@ void SilverLion::onUninstall(ServerPlayer *player) const{
     if(player->isAlive() && player->getMark("qinggang") == 0){
         RecoverStruct recover;
         recover.card = this;
-        player->getRoom()->recover(player, recover);
+        player->tag["Silver"] = QVariant::fromValue(recover);
+        //player->getRoom()->recover(player, recover);
     }
 }
 

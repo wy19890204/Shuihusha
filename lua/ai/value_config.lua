@@ -13,6 +13,7 @@ sgs.dynamic_value = {
 		FeiqiangCard = true,
 		NushaCard = true,
 		JiaomieCard = true,
+		EyanSlashCard = true,
 	},
 	control_usecard = 
 	{
@@ -42,6 +43,12 @@ sgs.dynamic_value = {
 		QiaogongCard = true,
 		ZhengfaCard = true,
 		YongleCard = true,
+		YushuiCard = true,
+		QianxianCard = true,
+		ShouwangCard = true,
+		SuocaiCard = true,
+		EyanCard = true,
+		ZhangshiCard = true,
 	},
 	lucky_chance = 
 	{
@@ -63,6 +70,7 @@ sgs.dynamic_value = {
 		WujiCard = true,
 		YanshouCard = true,
 		ShougeCard = true,
+		YinlangCard = true,
 	},
 }
 
@@ -179,10 +187,9 @@ sgs.wangpo_suit_value =
 	club = 5,
 }
 
-sgs.xiaoqiao_suit_value = 
+sgs.shiqian_suit_value = 
 {
-	spade = 6,
-	heart = 6
+	club = 6
 }
 
 sgs.zhangjiao_suit_value = 

@@ -65,7 +65,20 @@ sgs.ai_use_value =
 	QiaogongCard = 2.3,
 	ZhengfaCard = 5.5,
 	JiaomieCard = 7,
-	YongleCard = 3,
+	YongleCard = 3.4,
+
+	-- qlfd
+	YushuiCard = 3.5,
+--	FanwuCard = 2,
+	QianxianCard = 6.4,
+	ZiyiCard = -2,
+	ShouwangCard = 3,
+--	ZishiCard = 8,
+	SuocaiCard = 3.7,
+	EyanCard = 4,
+	EyanSlashCard = 9,
+	ZhangshiCard = 8.5,
+	YinlangCard = 8.6,
 
 	XinzhanCard = 4.4,
 	TianyiCard = 8.5,
@@ -166,6 +179,19 @@ sgs.ai_use_priority = {
 	ZhengfaCard = 5.5,
 	JiaomieCard = 6.6,
 	YongleCard = 2.3,
+
+	-- qlfd
+	YushuiCard = 2.5,
+--	FanwuCard = 2,
+	QianxianCard = 3.6,
+	ZiyiCard = 1,
+	ShouwangCard = 5,
+--	ZishiCard = 8,
+	SuocaiCard = 5.1,
+	EyanCard = 2.8,
+	EyanSlashCard = 9,
+	ZhangshiCard = 2.4,
+	YinlangCard = 5.9,
 
 	XinzhanCard = 9.2,
 	GuhuoCard = 10,

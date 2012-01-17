@@ -16,7 +16,7 @@ GameRule::GameRule(QObject *parent)
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete
+            << DamageDone << DamageComplete << CardLostDone
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -55,6 +55,16 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             room->getThread()->trigger(DrawNCards, player, num);
             int n = num.toInt();
+            if(player->hasSkill("qibing")){
+                room->playSkillEffect("qibing");
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = player;
+                log.arg = "qibing";
+                room->sendLog(log);
+
+                n = qMin(player->getHp(), 4);
+            }
             if(n > 0)
                 player->drawCards(n, false);
             break;
@@ -620,6 +630,15 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             room->sendLog(log);
             room->getThread()->delay();
 
+            break;
+        }
+    case CardLostDone:{
+            QVariant dat = player->tag["Silver"];
+            if(!dat.isNull()){
+                RecoverStruct recover = dat.value<RecoverStruct>();
+                room->recover(player, recover);
+                player->tag.remove("Silver");
+            }
             break;
         }
 

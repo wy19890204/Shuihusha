@@ -965,25 +965,6 @@ public:
     }
 };
 
-class Qibing:public DrawCardsSkill{
-public:
-    Qibing():DrawCardsSkill("qibing"){
-        frequency = Compulsory;
-    }
-
-    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
-        Room *room = wangq->getRoom();
-        room->playSkillEffect(objectName());
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = wangq;
-        log.arg = objectName();
-        room->sendLog(log);
-
-        return qMin(wangq->getHp(), 4);
-    }
-};
-
 class Jiachu:public MasochismSkill{
 public:
     Jiachu():MasochismSkill("jiachu$"){
@@ -1020,10 +1001,7 @@ public:
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
 
-    //General *guansheng = new General(this, "guansheng", "guan", 4);
-    //guansheng->addSkill("wusheng");
-
-    General *huarong = new General(this, "huarong", "guan", 4); //guan == wei
+    General *huarong = new General(this, "huarong", "guan", 4);
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
     patterns.insert(".kaixian!", new KaixianPattern);
@@ -1031,7 +1009,7 @@ QJWMPackage::QJWMPackage()
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);
 
-    General *luzhishen = new General(this, "luzhishen", "kou"); //kou == qun
+    General *luzhishen = new General(this, "luzhishen", "kou");
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
 
@@ -1043,7 +1021,7 @@ QJWMPackage::QJWMPackage()
     shijin->addSkill(new Xiagu);
     patterns[".equip"] = new EquipPattern;
 
-    General *yanqing = new General(this, "yanqing", "min", 3); //min == wu
+    General *yanqing = new General(this, "yanqing", "min", 3);
     yanqing->addSkill(new Dalei);
     yanqing->addSkill(new Fuqin);
 
@@ -1058,7 +1036,7 @@ QJWMPackage::QJWMPackage()
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
-    General *oupeng = new General(this, "oupeng", "jiang", 5); //jiang == shu
+    General *oupeng = new General(this, "oupeng", "jiang", 5);
     oupeng->addSkill(new Losthp);
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
@@ -1070,7 +1048,7 @@ QJWMPackage::QJWMPackage()
     shien->addSkill(new Xiaozai);
 
     General *wangqing = new General(this, "wangqing$", "min");
-    wangqing->addSkill(new Qibing);
+    wangqing->addSkill(new Skill("qibing", Skill::Compulsory));
     wangqing->addSkill(new Jiachu);
 
     General *luozhenren = new General(this, "luozhenren", "kou", 3);

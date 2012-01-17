@@ -16,6 +16,7 @@ return {
 	["shengui"] = "深闺",
 	[":shengui"] = "<b>锁定技</b>，若你的武将牌背面朝上，你不能成为男性角色使用锦囊的目标。",
 	["$zhensha"] = "永别了，亲爱的……",
+	["~panjinlian"] = "庆哥哥，说好的幸福呢……",
 
 	["#_panqiaoyun"] = "水性杨花",
 	["panqiaoyun"] = "潘巧云",
