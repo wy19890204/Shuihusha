@@ -566,11 +566,7 @@ public:
                DamageStruct damage;
                damage.from = pindian->to;
                damage.to = pindian->from;
-               Card *card = new Card(pindian->from_card->getSuit(), pindian->to_card->getNumber());
-               card->setSkillName(objectName());
-               card->addSubcard(pindian->from_card);
-               card->addSubcard(pindian->to_card);
-               damage.card = card;
+               damage.card = pindian->to_card;
                player->getRoom()->damage(damage);
            }
         }
@@ -894,7 +890,7 @@ public:
 
             JudgeStruct jd;
             jd.reason = objectName();
-            jd.who = rec.who;
+            jd.who = player;
             room->judge(jd);
 
             if(jd.card->isBlack()){

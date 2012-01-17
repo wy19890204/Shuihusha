@@ -252,6 +252,25 @@ public:
     }
 };
 
+class Shuilao: public OneCardViewAsSkill{
+public:
+    Shuilao():OneCardViewAsSkill("shuilao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->isNDTrick();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *first = card_item->getCard();
+        Indulgence *indulgence = new Indulgence(first->getSuit(), first->getNumber());
+        indulgence->addSubcard(first->getId());
+        indulgence->setSkillName(objectName());
+        return indulgence;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -268,6 +287,10 @@ InterChangePackage::InterChangePackage()
     General *duwei = new General(this, "duwei", "jiang");
     duwei->addSkill(new Touxi);
     patterns[".Touxi"] = new TouxiPattern;
+
+    General *tongmeng = new General(this, "tongmeng", "min", 3);
+    tongmeng->addSkill(new Shuilao);
+    tongmeng->addSkill("shuizhan");
 
     addMetaObject<ShensuanCard>();
 }
