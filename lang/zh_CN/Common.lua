@@ -85,6 +85,7 @@ return {
 	["#Contingency"] = "%to【%arg】 挂了，死于天灾",
 	["#DelayedTrick"] = "%from 的延时锦囊【%arg】开始判定",
 	["#SkillNullify"] = "%from 的技能【%arg】被触发，【%arg2】对其无效",
+	["#ComskillNullify"] = "%to 的锁定技【%arg2】被触发，%from 对 %to 的 %arg 无效",
 	["#ArmorNullify"] = "%from 的防具【%arg】技能被触发，【%arg2】对其无效",
 	["#DrawNCards"] = "%from 摸了 %arg 张牌",
 	["#MoveNCards"] = "%to 从 %from 处得到 %arg 张牌",

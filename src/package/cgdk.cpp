@@ -662,7 +662,7 @@ public:
         if(effect.from && !effect.from->getWeapon() &&
             (effect.card->inherits("Assassinate") || effect.card->inherits("Slash"))){
             LogMessage log;
-            log.type = "#Foyuan";
+            log.type = "#ComskillNullify";
             log.from = effect.from;
             Room *room = player->getRoom();
             log.to << effect.to;

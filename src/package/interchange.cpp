@@ -252,6 +252,50 @@ public:
     }
 };
 
+class Guanxing:public PhaseChangeSkill{
+public:
+    Guanxing():PhaseChangeSkill("guanxing"){
+        frequency = Frequent;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *zhuge) const{
+        if(zhuge->getPhase() == Player::Start &&
+           zhuge->askForSkillInvoke(objectName()))
+        {
+            Room *room = zhuge->getRoom();
+            room->playSkillEffect(objectName());
+
+            int n = qMin(5, room->alivePlayerCount());
+            room->doGuanxing(zhuge, room->getNCards(n, false), false);
+        }
+
+        return false;
+    }
+};
+
+class Fanzhan:public PhaseChangeSkill{
+public:
+    Fanzhan():PhaseChangeSkill("fanzhan"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *fuji) const{
+        Room *room = fuji->getRoom();
+        if(fuji->getPhase() == Player::Start){
+            room->setTag("Fanzhan", false);
+            return false;
+        }
+        if(fuji->getPhase() != Player::NotActive)
+            return false;
+        if(fuji->isWounded() || room->getAlivePlayers().length() <= 2)
+            return false;
+        if(fuji->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            room->setTag("Fanzhan", true);
+        }
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -268,6 +312,10 @@ InterChangePackage::InterChangePackage()
     General *duwei = new General(this, "duwei", "jiang");
     duwei->addSkill(new Touxi);
     patterns[".Touxi"] = new TouxiPattern;
+
+    General *puwenying = new General(this, "puwenying", "guan", 3);
+    puwenying->addSkill(new Guanxing);
+    puwenying->addSkill(new Fanzhan);
 
     addMetaObject<ShensuanCard>();
 }

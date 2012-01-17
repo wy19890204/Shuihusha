@@ -132,6 +132,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             player->clearFlags();
 
+            if(!room->findPlayerBySkillName("fanzhan"))
+                room->removeTag("Fanzhan");
+
             if(!Config.BanPackages.contains("events")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");
                 if(source && player == source){

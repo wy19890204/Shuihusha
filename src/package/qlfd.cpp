@@ -193,7 +193,7 @@ public:
         if(effect.from && effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
             && (effect.card->isNDTrick() || effect.card->inherits("Slash"))){
             LogMessage log;
-            log.type = "#Foyuan";
+            log.type = "#ComskillNullify";
             log.from = effect.from;
             Room *room = player->getRoom();
             log.to << effect.to;

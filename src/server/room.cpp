@@ -1972,6 +1972,17 @@ bool Room::cardEffect(const CardEffectStruct &effect){
     if(broken)
         return false;
 
+    if(getTag("Fanzhan").toBool() &&
+       (effect.card->inherits("Slash") || effect.card->inherits("Duel"))){
+        LogMessage log;
+        log.type = "#FanzhanNullify";
+        log.from = effect.from;
+        log.to << effect.to;
+        log.arg = effect.card->objectName();
+        log.arg2 = "fanzhan";
+        sendLog(log);
+        return false;
+    }
     return !thread->trigger(CardEffected, effect.to, data);
 }
 
