@@ -219,7 +219,7 @@ public:
         else if(player->getPhase() == Player::Finish){
             int old = player->getMark("Cit");
             if(old - player->getHandcardNum() >= 2 &&
-               yanglin->askForSkillInvoke(objectName())){
+               yanglin->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 //room->showAllCards(player, yanglin);
                 QList<int> card_ids = player->handCards();
                 room->fillAG(card_ids, yanglin);
@@ -264,6 +264,10 @@ void BingjiCard::onUse(Room *room, const CardUseStruct &card_use) const{
 class Bingji: public ViewAsSkill{
 public:
     Bingji():ViewAsSkill("bingji"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
