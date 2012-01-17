@@ -55,6 +55,16 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
             room->getThread()->trigger(DrawNCards, player, num);
             int n = num.toInt();
+            if(player->hasSkill("qibing")){
+                room->playSkillEffect("qibing");
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = player;
+                log.arg = "qibing";
+                room->sendLog(log);
+
+                n = qMin(player->getHp(), 4);
+            }
             if(n > 0)
                 player->drawCards(n, false);
             break;
