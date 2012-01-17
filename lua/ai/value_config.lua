@@ -10,11 +10,9 @@ sgs.dynamic_value = {
 		Assassinate = true,
 		Poison = true,
 		
-		QiangxiCard = true,
-		FanjianCard = true,
-		LijianCard = true,
-		LuanwuCard = true,
-		ShenfenCard = true,
+		FeiqiangCard = true,
+		NushaCard = true,
+		JiaomieCard = true,
 	},
 	control_usecard = 
 	{
@@ -34,13 +32,16 @@ sgs.dynamic_value = {
 		
 		GaleShell = true,
 		
-		TianyiCard = true,
-		XianzhenCard = true,
-		DimengCard = true,
-		JixiCard = true,
-		GanluCard = true,
-		QuhuCard = true,
-		ShenfenCard = true,
+		DaleiCard = true,
+		TaolueCard = true,
+		GanlinCard = true,
+		JuyiCard = true,
+		MaidaoCard = true,
+		Maida0Card = true,
+		YuanyinCard = true,
+		QiaogongCard = true,
+		ZhengfaCard = true,
+		YongleCard = true,
 	},
 	lucky_chance = 
 	{
@@ -59,11 +60,9 @@ sgs.dynamic_value = {
 		Wiretap = true,
 		Provistore = true,
 		
-		RendeCard = true,
-		JieyinCard = true,
-		QingnangCard = true,
-		JujianCard = true,
-		ZhihengCard = true,
+		WujiCard = true,
+		YanshouCard = true,
+		ShougeCard = true,
 	},
 }
 
@@ -164,12 +163,10 @@ sgs.xiahouyuan_keep_value =
 	OffensiveHorse = 5
 }
 
-sgs.shenzhaoyun_suit_value = 
+sgs.duansanniang_suit_value = 
 {
-	heart = 6.7,
-	spade = 5,
-	club = 4.2,
-	diamond = 3.9,
+	spade = 6,
+	club = 6,
 }
 
 sgs.panjinlian_suit_value = 
