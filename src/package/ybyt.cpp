@@ -56,7 +56,7 @@ public:
 
 class YuanpeiS1ash:public OneCardViewAsSkill{
 public:
-    YuanpeiS1ash():OneCardViewAsSkill(""){
+    YuanpeiS1ash():OneCardViewAsSkill("yuanpei_slash"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{

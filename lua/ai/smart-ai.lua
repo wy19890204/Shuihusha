@@ -1305,6 +1305,7 @@ function SmartAI:useBasicCard(card, use, no_distance)
 			use.card = card
 		end
 	elseif card:inherits("Shit") then
+		if self.player:hasSkill("fushang") and self.player:getMaxHP() > 3 then return end
 		if (card:getSuit() == sgs.Card_Heart or card:getSuit() == sgs.Card_Club) and self.player:isChained() and
 			#(self:getChainedFriends()) > #(self:getChainedEnemies()) then return end
 		if self.player:getHp()>3 and (self.player:hasSkill("huanshu") or self.player:hasSkill("shenchou")) then use.card = card return end
