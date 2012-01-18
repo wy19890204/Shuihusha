@@ -2614,6 +2614,7 @@ function SmartAI:isNoZhenshaMark()
 end
 
 function SmartAI:getUnuseCard()
+	if self.player:isNude() then return nil end
 	if self:isEquip("SilverLion") and self.player:isWounded() then
 		return card
 	elseif self.player:getHandcardNum() > self.player:getHp() or
@@ -2636,7 +2637,10 @@ function SmartAI:getUnuseCard()
 		elseif player:getArmor() and player:getHandcardNum()<=1 then return player:getArmor()
 		end
 	else
-		return nil
+		local cards = self.player:getCards("he")
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		return cards[1]
 	end
 end
 

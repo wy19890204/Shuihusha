@@ -986,8 +986,6 @@ public:
             QList<int> card_ids = masata->handCards();
             room->fillAG(card_ids, loli);
             int card_id = room->askForAG(loli, card_ids, false, objectName());
-            //card_ids.removeOne(card_id);
-            //room->takeAG(loli, card_id);
             room->broadcastInvoke("clearAG");
             room->obtainCard(loli, card_id);
             room->getThread()->delay(300);

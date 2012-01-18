@@ -7,7 +7,6 @@ sgs.ai_skill_invoke["kong1iang"] = function(self, data)
 	return showcardnum > 8
 end
 sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
-	if card_ids:isEmpty() then return -1 end
 	local final = sgs.Sanguosha:getCard(card_ids[1])
 	local suitnum = 100
 	for _, card_id in ipairs(card_ids) do
@@ -21,7 +20,7 @@ sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
 			end
 		end
 	end
-	return final:getId()
+	return final:getEffectiveId()
 end
 
 -- liba
@@ -110,7 +109,7 @@ sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
 	if self:needRetrial(judge) then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		if self:getUnuseCard() then
-			local card_id = self:getUnuseCard():getId()
+			local card_id = self:getUnuseCard():getEffectiveId()
 			return "@ButianCard=" .. card_id
 		end
 	end
