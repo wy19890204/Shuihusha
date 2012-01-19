@@ -67,7 +67,7 @@ QString Engine::getVersion() const{
 }
 
 QString Engine::getVersionName() const{
-    return tr("V2.9.0");
+    return tr("V2.9.4");
 }
 
 Engine::Engine()

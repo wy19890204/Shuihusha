@@ -100,6 +100,7 @@ return {
 	["face_up"] = "面朝上",
 	["face_down"] = "面朝下",
 	["#SkipPhase"] = "%from 跳过了 %arg 阶段",
+	["#SkipAllPhase"] = "%from 中止了当前回合",
 	["#IronChainDamage"] = "%from 处于铁锁连环状态，将受到铁锁的传导伤害",
 	["#LoseHp"] = "%from 流失了 %arg 点体力",
 	["#LoseMaxHp"] = "%from 流失了 %arg 点体力上限",

@@ -155,6 +155,14 @@ public:
         else if(duck != player && !duck->isNude() && damage.damage > 0
             && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
             room->playSkillEffect(objectName(), 2);
+            LogMessage log;
+            log.type = "#Baoguo";
+            log.from = duck;
+            log.to << damage.to;
+            log.arg = objectName();
+            log.arg2 = QString::number(damage.damage);
+            room->sendLog(log);
+
             damage.to = duck;
             duck->setMark("baoguo", 1);
             room->damage(damage);

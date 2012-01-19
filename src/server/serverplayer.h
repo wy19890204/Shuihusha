@@ -53,6 +53,7 @@ public:
 
     QList<Player::Phase> &getPhases();
     void skip(Player::Phase phase);
+    void skip();
 
     void gainMark(const QString &mark, int n = 1);
     void loseMark(const QString &mark, int n = 1);
