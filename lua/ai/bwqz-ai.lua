@@ -289,7 +289,7 @@ end
 sgs.ai_skill_use_func["ZhengfaCard"]=function(card,use,self)
 	self:sort(self.friends_noself, "handcard")
 	for i = #self.friends_noself, 1, -1 do
-		if not self.friends_noself[i]:isKongcheng() then
+		if not self.friends_noself[i]:isKongcheng() and self.player:getGender() ~= self.friends_noself[i]:getGender() then
 		    if use.to then use.to:append(self.friends_noself[i]) end
             use.card=card
             break

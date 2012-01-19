@@ -33,7 +33,6 @@ end
 sgs.ai_skill_invoke["liehuo"] = sgs.ai_skill_invoke["lihun"]
 sgs.ai_skill_invoke["citan"] = sgs.ai_skill_invoke["lihun"]
 sgs.ai_skill_askforag["citan"] = function(self, card_ids)
-	if card_ids:isEmpty() then return -1 end
 	local cards = {}
 	for _, card_id in ipairs(card_ids) do
 		local card = sgs.Sanguosha:getCard(card_id)

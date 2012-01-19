@@ -293,21 +293,30 @@ sgs.ai_skill_invoke["huakui"] = true
 
 -- zhiyu
 sgs.ai_skill_invoke["zhiyu"] = function(self, data)
-	if self.player:isKongcheng() then return false end
-	return sgs.ai_skill_invoke["qiongtu"]
+	local player = data:toPlayer()
+	self.zhiyusource = player
+	return not self.player:isKongcheng()
 end
 sgs.ai_skill_askforag["zhiyu"] = function(self, card_ids)
 	local cards = {}
 	for _, card_id in ipairs(card_ids)  do
 		table.insert(cards, sgs.Sanguosha:getCard(card_id))
 	end
-	self:sortByUseValue(cards)
+	if self:isFriend(self.zhiyusource) then
+		self:sortByUseValue(cards, true)
+	else
+		self:sortByUseValue(cards)
+	end
 	return cards[1]:getEffectiveId()
 end
 sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
+	if self:isFriend(requestor) then
+		self:sortByUseValue(cards)
+	else
+		self:sortByUseValue(cards, true)
+	end
 	return cards[1]
 end
 
