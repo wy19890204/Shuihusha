@@ -641,6 +641,7 @@ TestPackage::TestPackage()
     new General(this, "anjiang", "god", 4, true, true);
 
     addMetaObject<CheatCard>();
+    addMetaObject<ChangeCard>();
     patterns["."] = new HandcardPattern;
     patterns[".S"] = new SuitPattern(Card::Spade);
     patterns[".C"] = new SuitPattern(Card::Club);

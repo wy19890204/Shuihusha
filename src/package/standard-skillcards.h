@@ -13,6 +13,15 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class ChangeCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ChangeCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class UbunaCard: public SkillCard{
     Q_OBJECT
 

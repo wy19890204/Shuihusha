@@ -507,7 +507,7 @@ public:
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.to.contains(writer) && (use.card->inherits("BasicCard") || use.card->isNDTrick())
-            && room->getCardPlace(use.card->getEffectiveId() == Player::DiscardedPile)){
+            && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
             bool hassamezi = false;
             foreach(int x, writer->getPile("zi")){
                 if(Sanguosha->getCard(x)->objectName() == use.card->objectName()){
