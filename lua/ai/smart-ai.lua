@@ -2898,11 +2898,11 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif parsedPrompt[1] == "@xianji" or parsedPrompt[1] == "@fuji" then
 		local who = data:toPlayer()
 		if self:isFriend(who) or self.player:isKongcheng() then return "." end
-		return self.player:getRandomHandCard() or "."
+		return self.player:getRandomHandCard():getEffectiveId() or "."
 	elseif parsedPrompt[1] == "@jishi" then
 		local who = data:toPlayer()
 		if self:isEnemy(who) or self.player:isKongcheng() then return "." end
-		return self.player:getRandomHandCard() or "."
+		return self.player:getRandomHandCard():getEffectiveId() or "."
 	elseif parsedPrompt[1] == "@zhensha" then
 		local carduse = data:toCardUse()
 		if self:isFriend(carduse.from) then return "." end
@@ -2944,14 +2944,14 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif parsedPrompt[1] == "@zhiyuan" then
 		local lord = self.room:getLord()
 		if self:isFriend(lord) and not self.player:isKongcheng() then
-			return self.player:getRandomHandCard() or "."
+			return self.player:getRandomHandCard():getEffectiveId() or "."
 		end
 		return "."
 	elseif parsedPrompt[1] == "@baoen" then
 		local rev = data:toRecover()
 		local card = self:getUnuseCard()
 		if self:isEnemy(rev.who) or not card then return "." end
-		return card:getEffectiveId()
+		return card:getEffectiveId() or "."
 	elseif parsedPrompt[1] == "@hengchong" then
 		local effect = data:toSlashEffect()
 		if self:isFriend(effect.to) and not self:hasSkills(sgs.masochism_skill, effect.to) then
