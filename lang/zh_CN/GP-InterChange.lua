@@ -36,11 +36,13 @@ return {
 	["#_puwenying"] = "司天太监",
 	["puwenying"] = "浦文英",
 	["designer:puwenying"] = "宇文天启",
+	["cv:puwenying"] = "宇文天启",
 	["guanxing"] = "观星",
 	[":guanxing"] = "回合开始阶段，你可以观看牌堆顶的X张牌（X为存活角色的数量且最多为5），将其中任意数量的牌以任意顺序置于牌堆顶，其余以任意顺序置于牌堆底",
 	["fanzhan"] = "反战",
 	[":fanzhan"] = "回合结束时，若你未受伤且场上存活武将数大于2，你可以规定：到你下回合开始时，任意角色使用的【杀】和【决斗】均无效",
 	["#FanzhanNullify"] = "受到【%arg2】技能的影响，%from 对 %to 的 %arg 无效",
+	["$guanxing"] = "罡星侵入吴地，就里为祸不小",
 
 	["#_tongmeng"] = "翻江蜃",
 	["tongmeng"] = "童猛",
