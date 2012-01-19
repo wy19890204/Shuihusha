@@ -315,6 +315,24 @@ public:
     }
 };
 
+class Fangsheng:public PhaseChangeSkill{
+public:
+    Fangsheng():PhaseChangeSkill("fangsheng"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *taiwei) const{
+        if(taiwei->getPhase() == Player::Play && taiwei->askForSkillInvoke(objectName())){
+            Room *room = taiwei->getRoom();
+            room->playSkillEffect(objectName());
+
+            ServerPlayer *target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
+            taiwei->skip();
+            target->gainAnExtraTurn();
+        }
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -339,6 +357,9 @@ InterChangePackage::InterChangePackage()
     General *tongmeng = new General(this, "tongmeng", "min", 3);
     tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill("shuizhan");
+
+    General *hongxin = new General(this, "hongxin", "guan", 3);
+    hongxin->addSkill(new Fangsheng);
 
     addMetaObject<ShensuanCard>();
 }
