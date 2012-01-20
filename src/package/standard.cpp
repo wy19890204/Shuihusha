@@ -542,6 +542,7 @@ public:
             foreach(const Card *card, p->getJudgingArea())
                 dummy2->addSubcard(card->getId());
             room->moveCardTo(dummy2, target, Player::Judging);
+            room->playSkillEffect(objectName(), 2);
             delete dummy2;
             room->moveCardTo(dummy1, p, Player::Judging);
             delete dummy1;
@@ -559,6 +560,7 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
+            player->getRoom()->playSkillEffect(objectName());
             RecoverStruct rev;
             rev.who = player;
             rev.recover = player->getMaxHP();
