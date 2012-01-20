@@ -24,14 +24,14 @@ sgs.ai_skill_askforag["tianyan"] = function(self, card_ids)
 	self:sortByUseValue(cards, true)
 	if self:isFriend(player) then
 		for _, card in ipairs(cards) do
-			if self:getUseValue(card) < 3 then
+			if self:getUseValue(card) < 2.7 then
 				return card:getEffectiveId()
 			end
 		end
 	else
 		self:sortByUseValue(cards)
 		for _, card in ipairs(cards) do
-			if self:getUseValue(card) > 4 then
+			if self:getUseValue(card) > 5.4 then
 				return card:getEffectiveId()
 			end
 		end
