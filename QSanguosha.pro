@@ -55,8 +55,7 @@ SOURCES += src/main.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
-	src/scenario/boss-mode-scenario.cpp \
-	src/scenario/challengemode.cpp \
+        src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
@@ -133,8 +132,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/god.h \
 	src/package/joy.h \
 	src/package/interchange.h \
-	src/scenario/boss-mode-scenario.h \
-	src/scenario/challengemode.h \
+        src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
