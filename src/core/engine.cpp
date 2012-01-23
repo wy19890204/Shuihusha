@@ -4,21 +4,9 @@
 #include "ai.h"
 #include "settings.h"
 #include "scenario.h"
-#include "challengemode.h"
 #include "lua.hpp"
 #include "banpairdialog.h"
-
-#ifdef AUDIO_SUPPORT
-
-#ifdef  Q_OS_WIN32
-    extern irrklang::ISoundEngine *SoundEngine;
-#else
-    #include <phonon/MediaObject>
-    #include <phonon/AudioOutput>
-    extern Phonon::MediaObject *SoundEngine;
-    extern Phonon::AudioOutput *SoundOutput;
-#endif
-#endif
+#include "audio.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -112,15 +100,8 @@ Engine::Engine()
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
     modes["08pd"] = tr("8 players (2 renegades)");
-    modes["08boss"] = tr("8 players (boss mode)");
     modes["09p"] = tr("9 players");
     modes["10p"] = tr("10 players");
-
-    //challenge_mode_set = NULL;
-    challenge_mode_set = new ChallengeModeSet(this);
-    //addPackage(challenge_mode_set);
-
-    translations.insert("bossmode", tr("Boss mode"));
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -167,14 +148,9 @@ Engine::~Engine(){
     lua_close(lua);
 
 #ifdef AUDIO_SUPPORT
-    if(SoundEngine) {
-#ifdef  Q_OS_WIN32
-        SoundEngine->drop();
-        SoundEngine = NULL;
-#else
-        delete SoundEngine;
-#endif
-    }
+
+    Audio::quit();
+
 #endif
 
 }
@@ -191,14 +167,6 @@ void Engine::addScenario(Scenario *scenario){
 
 const Scenario *Engine::getScenario(const QString &name) const{
     return scenarios.value(name, NULL);
-}
-
-const ChallengeModeSet *Engine::getChallengeModeSet() const{
-    return challenge_mode_set;
-}
-
-const ChallengeMode *Engine::getChallengeMode(const QString &name) const{
-    return challenge_mode_set->getMode(name);
 }
 
 void Engine::addSkills(const QList<const Skill *> &all_skills){
@@ -277,11 +245,7 @@ QString Engine::translate(const QString &to_translate) const{
 }
 
 int Engine::getRoleIndex() const{
-    if(ServerInfo.GameMode == "08boss"){
-        return 2;
-    }else if(ServerInfo.GameMode.startsWith("@")){
-        return 3;
-    }else if(ServerInfo.GameMode == "06_3v3"){
+    if(ServerInfo.GameMode == "06_3v3"){
         return 4;
     }else
         return 1;
@@ -362,8 +326,6 @@ QStringList Engine::getExtensions() const{
         extensions << package->objectName();
     }
 
-    extensions.removeOne("challenge_modes");
-
     return extensions;
 }
 
@@ -429,8 +391,6 @@ QMap<QString, QString> Engine::getAvailableModes() const{
 QString Engine::getModeName(const QString &mode) const{
     if(modes.contains(mode))
         return modes.value(mode);
-    else if(mode.startsWith("@"))
-        return tr("%1 [Challenge mode]").arg(translate(mode));
     else
         return tr("%1 [Scenario mode]").arg(translate(mode));
 
@@ -443,11 +403,6 @@ int Engine::getPlayerCount(const QString &mode) const{
         int index = rx.indexIn(mode);
         if(index != -1)
             return rx.capturedTexts().first().toInt();
-    }else if(mode.startsWith("@")){
-        // challenge mode
-        const ChallengeMode *cmode = challenge_mode_set->getMode(mode);
-        if(cmode)
-            return cmode->getGenerals().length() * 2;
     }else if(mode == "custom"){
         // custom mode
         QRegExp rx("(\\w+)\\s+(\\w+)\\s*(\\w+)?");
@@ -698,21 +653,7 @@ void Engine::playEffect(const QString &filename) const{
     if(filename.isNull())
         return;
 
-#ifdef  Q_OS_WIN32
-    if(SoundEngine == NULL)
-        return;
-
-    if(SoundEngine->isCurrentlyPlaying(filename.toAscii()))
-        return;
-    SoundEngine->play2D(filename.toAscii());
-#else
-    if(SoundEngine->currentSource().fileName() == filename.toAscii()) {
-        return;
-    }
-    SoundEngine->setCurrentSource(Phonon::MediaSource(filename));
-    SoundEngine->play();
-#endif
-
+    Audio::play(filename);
 
 #endif
 }

@@ -10,6 +10,7 @@
 #include "cardcontainer.h"
 #include "recorder.h"
 #include "indicatoritem.h"
+#include "audio.h"
 
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
@@ -44,19 +45,6 @@
 
 #include "joystick.h"
 
-#endif
-
-#ifdef AUDIO_SUPPORT
-#ifdef Q_OS_WIN32
-    #include "irrKlang.h"
-    extern irrklang::ISoundEngine *SoundEngine;
-    static irrklang::ISound *BackgroundMusic;
-#else
-    #include <phonon/MediaObject>
-    #include <phonon/AudioOutput>
-    static Phonon::MediaObject *BackgroundMusic;
-    static Phonon::AudioOutput *SoundOutput;
-#endif
 #endif
 
 static QPointF DiscardedPos(-6, -2);
@@ -1327,27 +1315,19 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, boss_mode, challenge_mode, threeV3_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
     normal_mode["renegade"] = tr("Renegade");
-
-    boss_mode["lord"] = tr("Boss");
-    boss_mode["loyalist"] = tr("Hero");
-    boss_mode["rebel"] = tr("Citizen");
-    boss_mode["renegade"] = tr("Guard");
-
-    challenge_mode["lord"] = challenge_mode["loyalist"] = tr("Defense");
-    challenge_mode["rebel"] = challenge_mode["renegade"] = tr("Attack");
 
     threeV3_mode["lord"] = threeV3_mode["renegade"] = tr("Marshal");
     threeV3_mode["loyalist"] = threeV3_mode["rebel"] = tr("Vanguard");
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 2: map = &boss_mode; break;
-    case 3: map = &challenge_mode; break;
+    case 2: break;
+    case 3: break;
     case 4: map = &threeV3_mode; break;
     default:
         map = &normal_mode;
@@ -2246,11 +2226,7 @@ void RoomScene::onGameOver(){
         win_effect = "win";
         /*foreach(const Player *player, ClientInstance->getPlayers()){
             if(player->property("win").toBool() && player->isCaoCao()){
-
-#ifdef Q_OS_WIN
-                if(SoundEngine)
-                    SoundEngine->stopAllSounds();
-#endif
+                Audio::stop();
 
                 win_effect = "win-cc";
                 break;
@@ -2906,6 +2882,7 @@ void RoomScene::onGameStart(){
 
 
 #ifdef AUDIO_SUPPORT
+
     if(!Config.EnableBgMusic)
         return;
 
@@ -2936,38 +2913,12 @@ void RoomScene::onGameStart(){
     // start playing background music
     QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
 
-#ifdef  Q_OS_WIN32
-    if(SoundEngine) {
-        const char *filename = bgmusic_path.toLocal8Bit().data();
-        BackgroundMusic = SoundEngine->play2D(filename, true, false, true);
-
-        if(BackgroundMusic)
-            BackgroundMusic->setVolume(Config.BGMVolume);
-    }
-#else
-    if(BackgroundMusic == NULL) {
-        SoundOutput = new Phonon::AudioOutput(Phonon::GameCategory, this);
-        BackgroundMusic = new Phonon::MediaObject(this);
-        connect(BackgroundMusic, SIGNAL(aboutToFinish()), SLOT(onMusicFinish()));
-        Phonon::createPath(BackgroundMusic, SoundOutput);
-    }
-    if(BackgroundMusic) {
-        // This crashes when running twice
-        // BackgroundMusic->setCurrentSource(bgmusic_path);
-        // BackgroundMusic->play();
-    }
-#endif
+    Audio::playBGM(bgmusic_path);
+    Audio::setBGMVolume(Config.BGMVolume);
 
 #endif
 }
 
-#ifdef AUDIO_SUPPORT
-#ifndef  Q_OS_WIN32
-void RoomScene::onMusicFinish(){
-    BackgroundMusic->seek(0);
-}
-#endif
-#endif
 void RoomScene::freeze(){
 
     ClientInstance->disconnectFromHost();
@@ -2983,10 +2934,9 @@ void RoomScene::freeze(){
     chat_edit->setEnabled(false);
 
 #ifdef AUDIO_SUPPORT
-#ifdef  Q_OS_WIN32
-    if(BackgroundMusic)
-        BackgroundMusic->stop();
-#endif
+
+    Audio::stopBGM();
+
 #endif
 
     progress_bar->hide();

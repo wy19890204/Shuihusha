@@ -290,7 +290,7 @@ public:
 	// 3v3 methods
 	void addToSelected(const char *general);
 	QStringList getSelected() const;
-	QString findReasonable(const QStringList &generals);
+	QString findReasonable(const QStringList &generals, bool no_unreasonable = false);
 	void clearSelected();
 
 	int getGeneralMaxHP() const;
@@ -637,9 +637,6 @@ public:
 	QStringList getScenarioNames() const;
 	void addScenario(Scenario *scenario);
 	const Scenario *getScenario(const char *name) const;
-
-	const ChallengeModeSet *getChallengeModeSet() const;
-	const ChallengeMode *getChallengeMode(const char *name) const;
 
 	const General *getGeneral(const char *name) const;
 	int getGeneralCount(bool include_banned = false) const;
