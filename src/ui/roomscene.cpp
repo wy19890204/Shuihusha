@@ -2520,8 +2520,13 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     static QStringList labels;
-    if(labels.isEmpty())
-        labels << tr("General") << tr("Name") << tr("Alive") << tr("Role");
+    if(labels.isEmpty()){
+        labels << tr("General") << tr("Name") << tr("Alive");
+        if(ServerInfo.EnableHegemony)
+            labels << tr("Nationality");
+        else
+            labels << tr("Role");
+    }
     table->setHorizontalHeaderLabels(labels);
 
     table->setSelectionBehavior(QTableWidget::SelectRows);

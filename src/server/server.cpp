@@ -70,8 +70,16 @@ QWidget *ServerDialog::createBasicTab(){
     connect(edit_button, SIGNAL(clicked()), this, SLOT(edit1v1Banlist()));
 
     QFormLayout *form_layout = new QFormLayout;
+    QHBoxLayout *hlay = new QHBoxLayout;
+    hlay->addWidget(timeout_spinbox);
+    hlay->addWidget(nolimit_checkbox);
+    hlay->addWidget(edit_button);
     form_layout->addRow(tr("Server name"), server_name_edit);
-    form_layout->addRow(tr("Operation timeout"), HLay(timeout_spinbox, nolimit_checkbox));
+    QHBoxLayout * lay = new QHBoxLayout;
+    lay->addWidget(timeout_spinbox);
+    lay->addWidget(nolimit_checkbox);
+    lay->addWidget(edit_button);
+    form_layout->addRow(tr("Operation timeout"), lay);
     form_layout->addRow(createGameModeBox());
 
     QWidget *widget = new QWidget;
