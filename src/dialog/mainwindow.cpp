@@ -964,3 +964,9 @@ void MeleeDialog::updateResultBox(QString role, int win){
 
     server_log->append(tr("End of game %1").arg(totalCount));
 }
+
+void MainWindow::on_actionView_ban_list_triggered()
+{
+    BanlistDialog *dialog = new BanlistDialog(this, true);
+    dialog->exec();
+}

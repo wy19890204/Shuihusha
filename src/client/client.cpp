@@ -7,6 +7,7 @@
 #include "nativesocket.h"
 #include "recorder.h"
 
+#include <QApplication>
 #include <QCryptographicHash>
 #include <QMessageBox>
 #include <QCheckBox>
