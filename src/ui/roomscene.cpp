@@ -10,6 +10,7 @@
 #include "cardcontainer.h"
 #include "recorder.h"
 #include "indicatoritem.h"
+#include "audio.h"
 
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
@@ -44,19 +45,6 @@
 
 #include "joystick.h"
 
-#endif
-
-#ifdef AUDIO_SUPPORT
-#ifdef Q_OS_WIN32
-    #include "irrKlang.h"
-    extern irrklang::ISoundEngine *SoundEngine;
-    static irrklang::ISound *BackgroundMusic;
-#else
-    #include <phonon/MediaObject>
-    #include <phonon/AudioOutput>
-    static Phonon::MediaObject *BackgroundMusic;
-    static Phonon::AudioOutput *SoundOutput;
-#endif
 #endif
 
 static QPointF DiscardedPos(-6, -2);
@@ -2238,11 +2226,7 @@ void RoomScene::onGameOver(){
         win_effect = "win";
         /*foreach(const Player *player, ClientInstance->getPlayers()){
             if(player->property("win").toBool() && player->isCaoCao()){
-
-#ifdef Q_OS_WIN
-                if(SoundEngine)
-                    SoundEngine->stopAllSounds();
-#endif
+                Audio::stop();
 
                 win_effect = "win-cc";
                 break;
@@ -2898,6 +2882,7 @@ void RoomScene::onGameStart(){
 
 
 #ifdef AUDIO_SUPPORT
+
     if(!Config.EnableBgMusic)
         return;
 
@@ -2928,38 +2913,12 @@ void RoomScene::onGameStart(){
     // start playing background music
     QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
 
-#ifdef  Q_OS_WIN32
-    if(SoundEngine) {
-        const char *filename = bgmusic_path.toLocal8Bit().data();
-        BackgroundMusic = SoundEngine->play2D(filename, true, false, true);
-
-        if(BackgroundMusic)
-            BackgroundMusic->setVolume(Config.BGMVolume);
-    }
-#else
-    if(BackgroundMusic == NULL) {
-        SoundOutput = new Phonon::AudioOutput(Phonon::GameCategory, this);
-        BackgroundMusic = new Phonon::MediaObject(this);
-        connect(BackgroundMusic, SIGNAL(aboutToFinish()), SLOT(onMusicFinish()));
-        Phonon::createPath(BackgroundMusic, SoundOutput);
-    }
-    if(BackgroundMusic) {
-        // This crashes when running twice
-        // BackgroundMusic->setCurrentSource(bgmusic_path);
-        // BackgroundMusic->play();
-    }
-#endif
+    Audio::playBGM(bgmusic_path);
+    Audio::setBGMVolume(Config.BGMVolume);
 
 #endif
 }
 
-#ifdef AUDIO_SUPPORT
-#ifndef  Q_OS_WIN32
-void RoomScene::onMusicFinish(){
-    BackgroundMusic->seek(0);
-}
-#endif
-#endif
 void RoomScene::freeze(){
 
     ClientInstance->disconnectFromHost();
@@ -2975,10 +2934,9 @@ void RoomScene::freeze(){
     chat_edit->setEnabled(false);
 
 #ifdef AUDIO_SUPPORT
-#ifdef  Q_OS_WIN32
-    if(BackgroundMusic)
-        BackgroundMusic->stop();
-#endif
+
+    Audio::stopBGM();
+
 #endif
 
     progress_bar->hide();

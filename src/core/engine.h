@@ -6,10 +6,6 @@
 #include "skill.h"
 #include "package.h"
 
-#ifdef AUDIO_SUPPORT
-#include "irrKlang.h"
-#endif
-
 #include <QHash>
 #include <QStringList>
 #include <QMetaObject>
