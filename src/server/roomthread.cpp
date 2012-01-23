@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "gamerule.h"
 #include "ai.h"
+#include "settings.h"
 
 #include <QTime>
 

@@ -5,7 +5,7 @@
 #include "settings.h"
 #include "scenario.h"
 #include "lua.hpp"
-#include "banpairdialog.h"
+#include "banpair.h"
 
 #ifdef AUDIO_SUPPORT
 
@@ -264,13 +264,13 @@ QString Engine::translate(const QString &to_translate) const{
 }
 
 int Engine::getRoleIndex() const{
-    if(ServerInfo.GameMode == "08boss"){
-        return 2;
-    }else if(ServerInfo.GameMode.startsWith("@")){
-        return 3;
-    }else if(ServerInfo.GameMode == "06_3v3"){
+    if(ServerInfo.GameMode == "06_3v3"){
         return 4;
-    }else
+    }else if(ServerInfo.EnableHegemony){
+        return 5;
+    }else if(ServerInfo.GameMode == "08boss"){
+        return 2
+	}else
         return 1;
 }
 
@@ -305,8 +305,21 @@ int Engine::getGeneralCount(bool include_banned) const{
         if(ban_package.contains(general->getPackage()))
             total--;
 
-        if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+        else if( (ServerInfo.GameMode.endsWith("p") ||
+                  ServerInfo.GameMode.endsWith("pd"))
+                  && Config.value("Banlist/Roles").toStringList().contains(general->objectName()))
             total--;
+
+        else if(ServerInfo.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+            total--;
+
+        else if(ServerInfo.EnableBasara &&
+                Config.value("Banlist/Basara").toStringList().contains(general->objectName()))
+            total -- ;
+
+        else if(ServerInfo.EnableHegemony &&
+                Config.value("Banlist/Hegemony").toStringList().contains(general->objectName()))
+            total -- ;
     }
 
     return total;
@@ -386,6 +399,8 @@ QString Engine::getSetupString() const{
         flags.append("E");
     if(Config.EnableBasara)
         flags.append("B");
+    if(Config.EnableHegemony)
+        flags.append("H");
     if(Config.EnableAI)
         flags.append("A");
     if(Config.DisableChat)
@@ -580,8 +595,24 @@ QStringList Engine::getLords() const{
 }
 
 QStringList Engine::getRandomLords() const{
-    QStringList lords = getLords();
+    QStringList banlist_ban;
+    if(Config.EnableBasara)
+        banlist_ban = Config.value("Banlist/basara").toStringList();
 
+    if(Config.GameMode == "zombie_mode")
+        banlist_ban.append(Config.value("Banlist/zombie").toStringList());
+    else if((Config.GameMode.endsWith("p") ||
+             Config.GameMode.endsWith("pd")))
+        banlist_ban.append(Config.value("Banlist/Roles").toStringList());
+
+    QStringList lords;
+
+    foreach(QString alord,getLords())
+    {
+        if(banlist_ban.contains(alord))continue;
+
+        lords << alord;
+    }
     QStringList nonlord_list;
     foreach(QString nonlord, this->nonlord_list){
         const General *general = generals.value(nonlord);
@@ -589,6 +620,9 @@ QStringList Engine::getRandomLords() const{
             continue;
 
         if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+            continue;
+
+        if(banlist_ban.contains(general->objectName()))
             continue;
 
         nonlord_list << nonlord;
@@ -619,13 +653,20 @@ QStringList Engine::getLimitedGeneralNames() const{
 
 QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) const{
     QStringList all_generals = getLimitedGeneralNames();
+    QSet<QString> general_set = all_generals.toSet();
 
     Q_ASSERT(all_generals.count() >= count);
 
-    if(!ban_set.isEmpty()){
-        QSet<QString> general_set = all_generals.toSet();
-        all_generals = general_set.subtract(ban_set).toList();
-    }
+    if(Config.EnableBasara) general_set =
+            general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
+    if(Config.EnableHegemony) general_set =
+            general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
+
+    if(ServerInfo.GameMode.endsWith("p") ||
+                      ServerInfo.GameMode.endsWith("pd"))
+        general_set.subtract(Config.value("Banlist/Roles","").toStringList().toSet());
+
+    all_generals = general_set.subtract(ban_set).toList();
 
     // shuffle them
     qShuffle(all_generals);

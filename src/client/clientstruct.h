@@ -19,6 +19,7 @@ struct ServerInfoStruct{
     bool EnableSame;
     bool EnableEndless;
     bool EnableBasara;
+    bool EnableHegemony;
     bool EnableAI;
     bool DisableChat;
     int MaxHPScheme;
@@ -48,6 +49,8 @@ private:
     QLabel *scene_label;
     QLabel *same_label;
     QLabel *endless_label;
+    QLabel *basara_label;
+    QLabel *hegemony_label;
     QLabel *max_hp_label;
     QLabel *free_choose_label;
     QLabel *enable_ai_label;

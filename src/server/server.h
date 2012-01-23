@@ -8,6 +8,7 @@ class QRadioButton;
 
 #include "socket.h"
 #include "detector.h"
+#include "clientstruct.h"
 
 #include <QDialog>
 #include <QLineEdit>
@@ -41,19 +42,29 @@ private slots:
     void toggleCheck();
 };
 
-class KOFBanlistDialog: public QDialog{
+class BanlistDialog: public QDialog{
     Q_OBJECT
 
 public:
-    KOFBanlistDialog(QDialog *parent);
+    BanlistDialog(QWidget *parent, bool view = false);
 
 private:
-    QListWidget *list;
+    QList<QListWidget *>lists;
+    QListWidget * list;
+    int item;
+    QStringList ban_list;
+    QPushButton* add2nd;
 
 private slots:
     void addGeneral(const QString &name);
-    void removeGeneral();
+    void add2ndGeneral(const QString &name);
+    void addPair(const QString &first, const QString& second);
+    void doAdd2ndButton();
+    void doAddButton();
+    void doRemoveButton();
     void save();
+    void saveAll();
+    void switchTo(int item);
 };
 
 class ServerDialog: public QDialog{
@@ -89,7 +100,7 @@ private:
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
     QCheckBox *basara_checkbox;
-    QLabel *max_hp_label;
+    QCheckBox *hegemony_checkbox;
     QComboBox *max_hp_scheme_combobox;
     QCheckBox *announce_ip_checkbox;
     QComboBox *scenario_combobox;
@@ -128,6 +139,7 @@ public:
     void daemonize();
     Room *createNewRoom();
     void signupPlayer(ServerPlayer *player);
+    void gamesOver();
 
 private:
     ServerSocket *server;
