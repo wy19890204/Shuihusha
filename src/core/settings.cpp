@@ -1,6 +1,7 @@
 #include "settings.h"
 #include "photo.h"
 #include "card.h"
+#include "engine.h"
 
 #include <QFontDatabase>
 #include <QStringList>
@@ -70,7 +71,7 @@ void Settings::init(){
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
-    EnableAI = value("EnableAI", false).toBool();
+    EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1000).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
 
