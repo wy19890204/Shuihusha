@@ -80,6 +80,28 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         }*/
     }
 
+    if(ServerInfo.EnableHegemony && ServerInfo.Enable2ndGeneral
+            &&generals.length()>2)
+    {
+        int index = 0;
+        foreach(const General *general, generals)
+        {
+            int party = 0;
+            foreach(const General *other, generals)
+                if(other->getKingdom() == general->getKingdom())
+                    party ++;
+            if(party<2)
+                buttons.at(index)->setEnabled(false);
+            if(Self->getGeneral())
+                    if(Self->getGeneral()->getKingdom()
+                        != general->getKingdom()||
+                        Self->getGeneralName() ==
+                            general->objectName())
+                buttons.at(index)->setEnabled(false);
+            index ++;
+        }
+    }
+
     QLayout *layout = NULL;
     const int columns = generals.length() > 10 ? 6 : 5;
     if(generals.length() <= columns){
