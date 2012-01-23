@@ -269,8 +269,8 @@ int Engine::getRoleIndex() const{
     }else if(ServerInfo.EnableHegemony){
         return 5;
     }else if(ServerInfo.GameMode == "08boss"){
-        return 2
-	}else
+        return 2;
+    }else
         return 1;
 }
 

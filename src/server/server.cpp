@@ -225,10 +225,10 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addLayout(HLay(free_choose_checkbox, free_assign_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
-    layout->addLayout(HLay(second_general_checkbox, banpair_button));
+    layout->addWidget(second_general_checkbox);
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addWidget(basara_checkbox);
-	layout->addWidget(hegemony_checkbox);
+    layout->addWidget(hegemony_checkbox);
     layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
     layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addWidget(announce_ip_checkbox);
@@ -273,6 +273,32 @@ QWidget *ServerDialog::createAITab(){
 
 void ServerDialog::ensureEnableAI(){
     ai_enable_checkbox->setChecked(true);
+}
+
+void ServerDialog::updateButtonEnablility(QAbstractButton *button)
+{
+    if(!button)return;
+    if(button->objectName().contains("scenario")
+            || button->objectName().contains("mini")
+            || button->objectName().contains("1v1")
+            || button->objectName().contains("1v3"))
+    {
+        basara_checkbox->setChecked(false);
+        basara_checkbox->setEnabled(false);
+    }
+    else
+    {
+        basara_checkbox->setEnabled(true);
+    }
+
+    second_general_checkbox->setEnabled(true);
+}
+
+void BanlistDialog::switchTo(int item)
+{
+    this->item = item;
+    list = lists.at(item);
+    if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
 }
 
 

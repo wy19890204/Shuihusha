@@ -1136,14 +1136,8 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(new_general);
     player->invoke("transfigure", transfigure_str);
 
-    if(Config.Enable2ndGeneral && !old_general.isEmpty() && player->getGeneral2Name() == old_general){
-        setPlayerProperty(player, "general2", new_general);
-        broadcastProperty(player, "general2");
-    }
-    else{
-        setPlayerProperty(player, "general", new_general);
-        broadcastProperty(player, "general");
-    }
+    setPlayerProperty(player, "general", new_general);
+    broadcastProperty(player,"general");
     thread->addPlayerSkills(player, invoke_start);
 
     player->setMaxHP(player->getGeneralMaxHP());
@@ -1659,14 +1653,15 @@ void Room::chooseGenerals(){
         the_lord->setGeneralName(general);
         if(!Config.EnableBasara)broadcastProperty(the_lord, "general", general);
 
-    if(Config.EnableSame){
-        foreach(ServerPlayer *p, players){
-            if(!p->isLord())
-                p->setGeneralName(general);
-        }
+        if(Config.EnableSame){
+            foreach(ServerPlayer *p, players){
+                if(!p->isLord())
+                    p->setGeneralName(general);
+            }
 
-        Config.Enable2ndGeneral = false;
-        return;
+            Config.Enable2ndGeneral = false;
+            return;
+        }
     }
 
     QList<ServerPlayer *> to_assign = players;
