@@ -110,7 +110,7 @@ void Settings::init(){
 
     QStringList kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
-	kof_ban << "andaoquan" << "shenwuyong" << "wangdingliu" << "baisheng";
+    kof_ban << "andaoquan" << "shenwuyong" << "wangdingliu" << "baisheng";
 
     //basara_ban << "dongzhuo" << "zuoci" << "shenzhugeliang" << "shenlubu";
 
@@ -121,8 +121,8 @@ void Settings::init(){
             hegemony_ban << general;
     }
 
-    /*pairs_ban << "shencaocao" << "dongzhuo" << "zuoci" << "zhoutai" << "+luboyan"
-              << "caocao+caochong" << "xushu+zhugeliang" << "simayi+caizhaoji" << "wisjiangwei+zhanggongqi"
+    pairs_ban << "shenwuyong" << "shenzhangqing"
+              /*<< "caocao+caochong" << "xushu+zhugeliang" << "simayi+caizhaoji" << "wisjiangwei+zhanggongqi"
                 << "zhenji+zhangjiao" << "zhenji+simayi" << "huanggai+yuanshao"
                 << "huanggai+wuguotai" << "dengshizai+caoren" << "dengshizai+shenlubu" << "dengshizai+bgm_diaochan"
                 << "luxun+liubei" << "luxun+wolong" << "luxun+yuji" << "luxun+daqiao"
@@ -140,8 +140,8 @@ void Settings::init(){
                 << "huatuo+xunyu" << "huatuo+xiahoujuan" << "huatuo+zhanggongqi"
                 << "lukang+liubei" << "lukang+wolong" << "lukang+yuji" << "jiangboyue+lukang"
                 << "lukang+zhanggongqi" << "bgm_diaochan+caoren" << "bgm_diaochan+shenlubu"
-                << "bgm_diaochan+caizhaoji" << "caozhi+shenlubu" << "caoren+caozhi";
-*/
+                << "bgm_diaochan+caizhaoji" << "caozhi+shenlubu" << "caoren+caozhi"*/;
+
     QStringList banlist = value("Banlist/1v1").toStringList();
     foreach(QString ban_general, kof_ban){
         if(!banlist.contains(ban_general))

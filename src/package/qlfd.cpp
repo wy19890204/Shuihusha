@@ -1049,7 +1049,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
+        if(effect.from && effect.to == player && player->hasEquip()){
             QStringList suits;
             foreach(const Card *rmp, player->getEquips()){
                 if(!suits.contains(rmp->getSuitString()))

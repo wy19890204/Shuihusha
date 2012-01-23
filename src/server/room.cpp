@@ -595,7 +595,7 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
         if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
             continue;
 
-        trust:
+trust:
         AI *ai = player->getAI();
         const Card *card = NULL;
         if(ai){
@@ -867,27 +867,26 @@ int Room::askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusa
 }
 
 const Card *Room::askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const QString &reason){
-
     CardStar card;
-    if(player->getHandcardNum() == 1){
-        card= player->getHandcards().first();
-    }else{
 
-        AI *ai = player->getAI();
-        if(ai)
-            card= ai->askForCardShow(requestor, reason);
+    AI *ai = player->getAI();
+    if(ai)
+        card = ai->askForCardShow(requestor, reason);
+    else{
+        if(player->getHandcardNum() == 1)
+            card = player->getHandcards().first();
         else{
-
             player->invoke("askForCardShow", requestor->getGeneralName());
             getResult("responseCardCommand", player);
 
             if(result.isEmpty())
                 return askForCardShow(player, requestor, reason);
             else if(result == ".")
-                card= player->getRandomHandCard();
-            else card=Card::Parse(result);
+                card = player->getRandomHandCard();
+            else card = Card::Parse(result);
         }
     }
+
     QVariant decisionData = QVariant::fromValue("cardShow:"+reason+":_"+card->toString()+"_");
     thread->trigger(ChoiceMade, player, decisionData);
     return card;
@@ -1663,7 +1662,6 @@ void Room::chooseGenerals(){
             return;
         }
     }
-
     QList<ServerPlayer *> to_assign = players;
     if(!Config.EnableHegemony)to_assign.removeOne(getLord());
     assignGeneralsForPlayers(to_assign);
@@ -1954,6 +1952,7 @@ void Room::useCard(const CardUseStruct &card_use, bool add_history){
 
         card_use.from->addHistory(key);
         card_use.from->invoke("addHistory", key);
+        broadcastInvoke("addHistory","pushPile");
     }
 
     card = card_use.card->validate(&card_use);

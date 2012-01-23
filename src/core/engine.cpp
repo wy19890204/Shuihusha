@@ -474,6 +474,24 @@ void Engine::getRoles(const QString &mode, char *roles) const{
     }else if(mode == "04_1v3"){
         qstrcpy(roles, "ZFFF");
         return;
+    }else if(Config.EnableHegemony){
+        static const char *table[] = {
+            "",
+            "",
+
+            "ZN", // 2
+            "ZNN", // 3
+            "ZNNN", // 4
+            "ZNNNN", // 5
+            "ZNNNNN", // 6
+            "ZNNNNNN", // 7
+            "ZNNNNNNN", // 8
+            "ZNNNNNNNN", // 9
+            "ZNNNNNNNNN" // 10
+        };
+
+        qstrcpy(roles, table[n]);
+        return;
     }
 
     if(modes.contains(mode)){
@@ -587,8 +605,11 @@ QStringList Engine::getLords() const{
         if(general->getPackage() == "sp" && !Config.SPOpen)
             continue;
 
-        if(!ban_package.contains(general->getPackage()))
-            lords << lord;
+        if(ban_package.contains(general->getPackage()))
+            continue;
+        if(Config.Enable2ndGeneral && BanPair::isBanned(general->objectName()))
+            continue;
+		lords << lord;
     }
 
     return lords;

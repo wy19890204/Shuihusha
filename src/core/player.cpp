@@ -345,7 +345,7 @@ bool Player::hasLordSkill(const QString &skill_name) const{
     if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
-    if(isLord())
+    if(isLord() || ServerInfo.EnableHegemony)
         return hasInnateSkill(skill_name);
 
     if(hasSkill("weidi")){
@@ -473,7 +473,7 @@ bool Player::hasWeapon(const QString &weapon_name) const{
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
-    return armor && getMark("qinggang") == 0 && getMark("wuqian") == 0 && armor->objectName() == armor_name;
+    return armor && getMark("qinggang") == 0 && armor->objectName() == armor_name;
 }
 
 QList<const Card *> Player::getJudgingArea() const{
@@ -485,11 +485,9 @@ Player::Phase Player::getPhase() const{
 }
 
 void Player::setPhase(Phase phase){
-    if(this->phase != phase){
-        this->phase = phase;
+    this->phase = phase;
 
-        emit phase_changed();
-    }
+    emit phase_changed();
 }
 
 bool Player::faceUp() const{
@@ -785,7 +783,7 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;
-    if(hasSkill("qinlong") && getEquips().isEmpty())
+    if(hasSkill("qinlong") && !hasEquip())
         return true;
 
     int slash_count = getSlashCount();
