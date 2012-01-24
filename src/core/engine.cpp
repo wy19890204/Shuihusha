@@ -247,6 +247,8 @@ QString Engine::translate(const QString &to_translate) const{
 int Engine::getRoleIndex() const{
     if(ServerInfo.GameMode == "06_3v3"){
         return 4;
+    }else if(ServerInfo.EnableHegemony){
+        return 5;
     }else
         return 1;
 }
@@ -363,6 +365,8 @@ QString Engine::getSetupString() const{
         flags.append("E");
     if(Config.EnableBasara)
         flags.append("B");
+    if(Config.EnableHegemony)
+        flags.append("H");
     if(Config.EnableAI)
         flags.append("A");
     if(Config.DisableChat)
@@ -435,6 +439,24 @@ void Engine::getRoles(const QString &mode, char *roles) const{
         return;
     }else if(mode == "04_1v3"){
         qstrcpy(roles, "ZFFF");
+        return;
+    }else if(Config.EnableHegemony){
+        static const char *table[] = {
+            "",
+            "",
+
+            "ZN", // 2
+            "ZNN", // 3
+            "ZNNN", // 4
+            "ZNNNN", // 5
+            "ZNNNNN", // 6
+            "ZNNNNNN", // 7
+            "ZNNNNNNN", // 8
+            "ZNNNNNNNN", // 9
+            "ZNNNNNNNNN" // 10
+        };
+
+        qstrcpy(roles, table[n]);
         return;
     }
 

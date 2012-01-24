@@ -211,6 +211,15 @@ QStringList ServerPlayer::getSelected() const{
 QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreasonable){
 
     foreach(QString name, generals){
+        if(Config.Enable2ndGeneral){
+            if(Config.EnableHegemony)
+            {
+                if(getGeneral())
+                    if(getGeneral()->getKingdom()
+                            != Sanguosha->getGeneral(name)->getKingdom())
+                        continue;
+            }
+        }
         if(Config.EnableBasara)
         {
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();

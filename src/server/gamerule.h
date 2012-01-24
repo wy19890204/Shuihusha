@@ -43,6 +43,10 @@ public:
     virtual int getPriority() const;
     void playerShowed(ServerPlayer *player) const;
     void generalShowed(ServerPlayer *player,QString general_name) const;
+    static QString getMappedRole(const QString& role);
+
+private:
+    QMap<QString, QString> skill_mark;
 };
 
 #endif // GAMERULE_H
