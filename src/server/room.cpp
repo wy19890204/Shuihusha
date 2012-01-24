@@ -1642,6 +1642,18 @@ void Room::chooseGenerals(){
         }
         sem->acquire(to_assign.length());
     }
+
+
+    if(Config.EnableBasara)
+    {
+        foreach(ServerPlayer *player, players)
+        {
+            QStringList names;
+            if(player->getGeneral())names.append(player->getGeneralName());
+            if(player->getGeneral2() && Config.Enable2ndGeneral)names.append(player->getGeneral2Name());
+            this->setTag(player->objectName(),QVariant::fromValue(names));
+        }
+    }
 }
 
 void Room::run(){
