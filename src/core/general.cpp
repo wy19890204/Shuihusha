@@ -5,6 +5,7 @@
 #include "client.h"
 
 #include <QSize>
+#include <QFile>
 
 General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden)
     :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden)
@@ -146,6 +147,12 @@ QString General::getSkillDescription() const{
 
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.ogg").arg(objectName());
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)){
+        QStringList origin_generals = objectName().split("_");
+        if(origin_generals.length()>1)
+            filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
+    }
     Sanguosha->playEffect(filename);
 }
 

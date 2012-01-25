@@ -148,7 +148,7 @@ void ConfigDialog::on_browseBgMusicButton_clicked()
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Select a background music"),
                                                     location,
-                                                    tr("Audio files (*.wav *.mp3)"));
+                                                    tr("Audio files (*.wav *.mp3 *.ogg)"));
     if(!filename.isEmpty()){
         ui->bgMusicPathLineEdit->setText(filename);
         Config.setValue("BackgroundMusic", filename);
