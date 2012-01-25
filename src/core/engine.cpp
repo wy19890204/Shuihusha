@@ -50,12 +50,25 @@ extern "C" {
     int luaopen_sgs(lua_State *);
 }
 
-QString Engine::getVersion() const{
+QString Engine::getVersionNumber() const{
     return "20110106";
+}
+
+QString Engine::getVersion() const{
+    QString version_number = getVersionNumber();
+    QString mod_name = getMODName();
+    if(mod_name == "official")
+        return version_number;
+    else
+        return QString("%1:%2").arg(version_number).arg(mod_name);
 }
 
 QString Engine::getVersionName() const{
     return tr("V2.9.4");
+}
+
+QString Engine::getMODName() const{
+    return "Shuihusha";
 }
 
 Engine::Engine()
@@ -359,6 +372,8 @@ QString Engine::getSetupString() const{
         flags.append("S");
     if(Config.EnableScene)
         flags.append("C");
+    if(Config.EnableSame)
+        flags.append("T");
     if(Config.EnableEndless)
         flags.append("E");
     if(Config.EnableBasara)

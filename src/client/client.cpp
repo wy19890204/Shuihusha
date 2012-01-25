@@ -7,6 +7,7 @@
 #include "nativesocket.h"
 #include "recorder.h"
 
+#include <QApplication>
 #include <QCryptographicHash>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -184,7 +185,17 @@ void Client::request(const QString &message){
 }
 
 void Client::checkVersion(const QString &server_version){
-    emit version_checked(server_version);
+    QString version_number, mod_name;
+    if(server_version.contains(QChar(':'))){
+        QStringList texts = server_version.split(QChar(':'));
+        version_number = texts.value(0);
+        mod_name = texts.value(1);
+    }else{
+        version_number = server_version;
+        mod_name = "official";
+    }
+
+    emit version_checked(version_number, mod_name);
 }
 
 void Client::setup(const QString &setup_str){
@@ -603,6 +614,11 @@ void Client::setPromptList(const QStringList &texts){
     if(texts.length() >= 4){
         QString arg = Sanguosha->translate(texts.at(3));
         prompt.replace("%arg", arg);
+    }
+
+    if(texts.length() >= 5){
+        QString arg2 = Sanguosha->translate(texts.at(4));
+        prompt.replace("%2arg", arg2);
     }
 
     prompt_doc->setHtml(prompt);
@@ -1052,6 +1068,11 @@ void Client::killPlayer(const QString &player_name){
     if(!Self->hasFlag("marshalling")){
         QString general_name = player->getGeneralName();
         QString last_word = Sanguosha->translate(QString("~%1").arg(general_name));
+        if(last_word.startsWith("~")){
+            QStringList origin_generals = general_name.split("_");
+            if(origin_generals.length()>1)
+                last_word = Sanguosha->translate(("~") +  origin_generals.at(1));
+        }
 
         skill_title = tr("%1[dead]").arg(Sanguosha->translate(general_name));
         skill_line = last_word;
@@ -1084,8 +1105,8 @@ void Client::warn(const QString &reason){
     else
         msg = tr("Unknown warning: %1").arg(reason);
 
-    disconnectFromHost();
-    QMessageBox::warning(NULL, tr("Warning"), msg);
+    //disconnectFromHost();
+    //QMessageBox::warning(NULL, tr("Warning"), msg);
 }
 
 void Client::askForSuit(const QString &){
@@ -1278,6 +1299,7 @@ void Client::clearTurnTag(){
     switch(Self->getPhase()){
     case Player::Start:{
             Sanguosha->playAudio("your-turn");
+            QApplication::alert(QApplication::focusWidget());
             break;
     }
 
@@ -1412,7 +1434,9 @@ void Client::askForYiji(const QString &card_list){
 }
 
 void Client::askForPlayerChosen(const QString &players){
-    players_to_choose = players.split("+");
+    skill_name = players.split(":").at(1);
+    QString player_list = players.split(":").at(0);
+    players_to_choose = player_list.split("+");
 
     Q_ASSERT(!players_to_choose.isEmpty());
 
