@@ -25,8 +25,11 @@ public:
 
     enum Relation { Friend, Enemy, Neutrality };
     static Relation GetRelation3v3(const ServerPlayer *a, const ServerPlayer *b);
+<<<<<<< HEAD
     static Relation GetRelationBoss(const ServerPlayer *a, const ServerPlayer *b);
     static Relation GetRelationHegemony(const ServerPlayer *a, const ServerPlayer *b);
+=======
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
     static Relation GetRelation(const ServerPlayer *a, const ServerPlayer *b);
     Relation relationTo(const ServerPlayer *other) const;
     bool isFriend(const ServerPlayer *other) const;

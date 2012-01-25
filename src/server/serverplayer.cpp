@@ -213,6 +213,7 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
     foreach(QString name, generals){
         if(Config.Enable2ndGeneral){
+<<<<<<< HEAD
             if(getGeneral()){
                 if(BanPair::isBanned(getGeneralName(), name))
                     continue;
@@ -221,6 +222,8 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
                     continue;
             }
 
+=======
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
             if(Config.EnableHegemony)
             {
                 if(getGeneral())

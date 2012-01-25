@@ -771,77 +771,6 @@ QString GameRule::getWinner(ServerPlayer *victim) const{
     return winner;
 }
 
-
-static const int LoseHpTo1 = 1;
-static const int ThrowAllCard = 2;
-
-BossMode::BossMode(QObject *parent)
-    :GameRule(parent)
-{
-    setObjectName("boss_mode");
-}
-
-bool BossMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-    Room *room = player->getRoom();
-
-    switch(event)
-    {
-
-    case GameOverJudge:{
-            const static QString evil = "lord+renegade";
-            const static QString justice = "rebel+loyalist";
-
-            QStringList alive_roles = room->aliveRoles(player);
-            if(!alive_roles.contains("rebel") && !alive_roles.contains("loyalist")){
-                room->gameOver(evil);
-                return true;
-            }
-
-            DamageStar damage = data.value<DamageStar>();
-            ServerPlayer *killer = NULL;
-            if(damage)
-                killer = damage->from;
-
-            if(player->isLord()){
-                QString winner;
-                if(!alive_roles.contains("renegade"))
-                    winner = justice;
-                else{
-                    if(killer == NULL || evil.contains(killer->getRole()))
-                        winner = justice;
-                    else
-                        winner = evil;
-                }
-
-                room->gameOver(winner);
-                return true;
-            }
-
-            break;
-        }
-
-    case GameStart:{
-            if(player->isLord()){
-                // find guard
-                QList<ServerPlayer *> players = room->getOtherPlayers(player);
-                foreach(ServerPlayer *player, players){
-                    if(player->getRoleEnum() == Player::Renegade){
-                        room->broadcastProperty(player, "role");
-                        break;
-                    }
-                }
-            }
-
-            break;
-        }
-
-    default:
-        break;
-    }
-
-    return GameRule::trigger(event, player, data);
-}
-
 HulaoPassMode::HulaoPassMode(QObject *parent)
     :GameRule(parent)
 {
@@ -980,10 +909,17 @@ BasaraMode::BasaraMode(QObject *parent)
 QString BasaraMode::getMappedRole(const QString &role){
     static QMap<QString, QString> roles;
     if(roles.isEmpty()){
+<<<<<<< HEAD
         roles["wei"] = "lord";
         roles["shu"] = "loyalist";
         roles["wu"] = "rebel";
         roles["qun"] = "renegade";
+=======
+        roles["guan"] = "lord";
+        roles["jiang"] = "loyalist";
+        roles["min"] = "rebel";
+        roles["kou"] = "renegade";
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
     }
     return roles[role];
 }
@@ -1084,6 +1020,7 @@ bool BasaraMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &dat
 
                 if(Config.Enable2ndGeneral)
                 {
+<<<<<<< HEAD
 
                     transfigure_str = QString("%1:%2").arg(sp->getGeneral2Name()).arg("anjiang");
                     sp->invoke("transfigure", transfigure_str);
@@ -1092,6 +1029,16 @@ bool BasaraMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &dat
                     log.arg2 = room->getTag(sp->objectName()).toStringList().at(1);
                 }
 
+=======
+
+                    transfigure_str = QString("%1:%2").arg(sp->getGeneral2Name()).arg("anjiang");
+                    sp->invoke("transfigure", transfigure_str);
+                    room->setPlayerProperty(sp,"general2","anjiang");
+
+                    log.arg2 = room->getTag(sp->objectName()).toStringList().at(1);
+                }
+
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
                 sp->invoke("log",log.toString());
                 sp->tag["roles"] = room->getTag(sp->objectName()).toStringList().join("+");
             }

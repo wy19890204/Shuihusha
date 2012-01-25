@@ -36,6 +36,7 @@ AI::Relation AI::GetRelation3v3(const ServerPlayer *a, const ServerPlayer *b){
         return Enemy;
 }
 
+<<<<<<< HEAD
 AI::Relation AI::GetRelationBoss(const ServerPlayer *a, const ServerPlayer *b){
     static const int Justice = 1;
     static const int Evil = -1;
@@ -74,6 +75,8 @@ AI::Relation AI::GetRelationHegemony(const ServerPlayer *a, const ServerPlayer *
     return aKingdom == bKingdom ? Friend :Enemy;
 }
 
+=======
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
 AI::Relation AI::GetRelation(const ServerPlayer *a, const ServerPlayer *b){
     RoleMapping map, map_good, map_bad;
     if(map.isEmpty()){
@@ -130,11 +133,14 @@ AI::Relation AI::relationTo(const ServerPlayer *other) const{
 
     if(room->getMode() == "06_3v3")
         return GetRelation3v3(self, other);
+<<<<<<< HEAD
     else if(room->getMode() == "08_boss")
         return GetRelationBoss(self, other);
     else if(Config.EnableHegemony)
         return GetRelationHegemony(self, other);
 
+=======
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
     return GetRelation(self, other);
 }
 

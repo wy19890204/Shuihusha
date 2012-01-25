@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "scenario.h"
 #include "lua.hpp"
+<<<<<<< HEAD
 #include "banpair.h"
 
 #ifdef AUDIO_SUPPORT
@@ -18,6 +19,10 @@
     extern Phonon::AudioOutput *SoundOutput;
 #endif
 #endif
+=======
+#include "banpairdialog.h"
+#include "audio.h"
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
 
 #include <QFile>
 #include <QTextStream>
@@ -111,11 +116,8 @@ Engine::Engine()
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
     modes["08pd"] = tr("8 players (2 renegades)");
-    modes["08boss"] = tr("8 players (boss mode)");
     modes["09p"] = tr("9 players");
     modes["10p"] = tr("10 players");
-
-    translations.insert("bossmode", tr("Boss mode"));
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -162,14 +164,9 @@ Engine::~Engine(){
     lua_close(lua);
 
 #ifdef AUDIO_SUPPORT
-    if(SoundEngine) {
-#ifdef  Q_OS_WIN32
-        SoundEngine->drop();
-        SoundEngine = NULL;
-#else
-        delete SoundEngine;
-#endif
-    }
+
+    Audio::quit();
+
 #endif
 
 }
@@ -268,8 +265,11 @@ int Engine::getRoleIndex() const{
         return 4;
     }else if(ServerInfo.EnableHegemony){
         return 5;
+<<<<<<< HEAD
     }else if(ServerInfo.GameMode == "08boss"){
         return 2;
+=======
+>>>>>>> f0fad598c426df7934383f9f63e2955a22941743
     }else
         return 1;
 }
@@ -738,21 +738,7 @@ void Engine::playEffect(const QString &filename) const{
     if(filename.isNull())
         return;
 
-#ifdef  Q_OS_WIN32
-    if(SoundEngine == NULL)
-        return;
-
-    if(SoundEngine->isCurrentlyPlaying(filename.toAscii()))
-        return;
-    SoundEngine->play2D(filename.toAscii());
-#else
-    if(SoundEngine->currentSource().fileName() == filename.toAscii()) {
-        return;
-    }
-    SoundEngine->setCurrentSource(Phonon::MediaSource(filename));
-    SoundEngine->play();
-#endif
-
+    Audio::play(filename);
 
 #endif
 }
