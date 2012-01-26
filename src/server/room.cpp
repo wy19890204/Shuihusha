@@ -25,9 +25,9 @@
 
 Room::Room(QObject *parent, const QString &mode)
     :QThread(parent), mode(mode), current(NULL), reply_player(NULL), pile1(Sanguosha->getRandomCards()),
-    draw_pile(&pile1), discard_pile(&pile2),
-    game_started(false), game_finished(false),
-    L(NULL), thread(NULL), thread_3v3(NULL), sem(new QSemaphore), provided(NULL), _virtual(false)
+      draw_pile(&pile1), discard_pile(&pile2),
+      game_started(false), game_finished(false),
+      L(NULL), thread(NULL), thread_3v3(NULL), sem(new QSemaphore), provided(NULL), _virtual(false)
 {
     player_count = Sanguosha->getPlayerCount(mode);
     scenario = Sanguosha->getScenario(mode);
@@ -1296,6 +1296,34 @@ void Room::prepareForStart(){
 
             if(result.isEmpty() || result == ".")
                 assignRoles();
+            else if(Config.FreeAssignSelf){
+                QStringList texts = result.split(":");
+                QString name = texts.value(0);
+                QString role = texts.value(1);
+
+                ServerPlayer *player_self = findChild<ServerPlayer *>(name);
+                setPlayerProperty(player_self, "role", role);
+                if(role == "lord")
+                    broadcastProperty(player_self, "role", "lord");
+
+                QList<ServerPlayer *> all_players = players;
+                all_players.removeOne(player_self);
+                int n = all_players.count(), i;
+                QStringList roles = Sanguosha->getRoleList(mode);
+                roles.removeOne(role);
+                qShuffle(roles);
+
+                for(i=0; i<n; i++){
+                    ServerPlayer *player = all_players[i];
+                    QString role = roles.at(i);
+
+                    player->setRole(role);
+                    if(role == "lord")
+                        broadcastProperty(player, "role", "lord");
+                    else
+                        player->sendProperty("role");
+                }
+            }
             else{
                 QStringList assignments = result.split("+");
                 for(int i=0; i<assignments.length(); i++){
@@ -1450,10 +1478,10 @@ void Room::processRequest(const QString &request){
 
         (this->*callback)(player, args.at(1));
 
-//#ifndef QT_NO_DEBUG
+        //#ifndef QT_NO_DEBUG
         // output client command only in debug version
         emit room_message(player->reportHeader() + request);
-//#endif
+        //#endif
 
     }else
         emit room_message(tr("%1: %2 is not invokable").arg(player->reportHeader()).arg(command));
@@ -1550,7 +1578,7 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
 
     if(!is_robot){
         QString greetingStr = tr("<font color=#EEB422>Player <b>%1</b> joined the game</font>")
-                              .arg(Config.ContestMode ? tr("Contestant") : screen_name);
+                .arg(Config.ContestMode ? tr("Contestant") : screen_name);
         speakCommand(player, greetingStr.toUtf8().toBase64());
 
         // introduce all existing player to the new joined
