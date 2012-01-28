@@ -753,6 +753,9 @@ Server::Server(QObject *parent)
     server = new NativeServerSocket;
     server->setParent(this);
 
+    //synchronize ServerInfo on the server side to avoid ambiguous usage of Config and ServerInfo
+    ServerInfo.parse(Sanguosha->getSetupString());
+
     createNewRoom();
 
     connect(server, SIGNAL(new_connection(ClientSocket*)), this, SLOT(processNewConnection(ClientSocket*)));
@@ -889,4 +892,10 @@ void Server::gameOver(){
         name2objname.remove(player->screenName(), player->objectName());
         players.remove(player->objectName());
     }
+}
+
+void Server::gamesOver(){
+    name2objname.clear();
+    players.clear();
+    rooms.clear();
 }
