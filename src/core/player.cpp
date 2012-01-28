@@ -473,7 +473,7 @@ bool Player::hasWeapon(const QString &weapon_name) const{
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
-    return armor && getMark("qinggang") == 0 && getMark("wuqian") == 0 && armor->objectName() == armor_name;
+    return armor && getMark("qinggang") == 0 && armor->objectName() == armor_name;
 }
 
 QList<const Card *> Player::getJudgingArea() const{
@@ -485,11 +485,9 @@ Player::Phase Player::getPhase() const{
 }
 
 void Player::setPhase(Phase phase){
-    if(this->phase != phase){
-        this->phase = phase;
+    this->phase = phase;
 
-        emit phase_changed();
-    }
+    emit phase_changed();
 }
 
 bool Player::faceUp() const{

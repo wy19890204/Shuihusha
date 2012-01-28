@@ -79,6 +79,10 @@ void Skill::initMediaSource(){
     }
 }
 
+Skill::Location Skill::getLocation() const{
+    return parent() ? Right : Left;
+}
+
 void Skill::playEffect(int index) const{
     if(!sources.isEmpty()){
         if(index == -1)
@@ -97,6 +101,10 @@ void Skill::playEffect(int index) const{
         if(ClientInstance)
             ClientInstance->setLines(filename);
     }
+}
+
+bool Skill::useCardSoundEffect() const{
+    return false;
 }
 
 void Skill::setFlag(ServerPlayer *player) const{
