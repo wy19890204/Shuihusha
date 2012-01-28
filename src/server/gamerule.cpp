@@ -196,7 +196,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
     switch(event){
     case GameStart: {
-        if(player->getGeneral()->getKingdom() == "god" && !Config.EnableBasara){
+        if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
                 QString new_kingdom = room->askForKingdom(player);
                 room->setPlayerProperty(player, "kingdom", new_kingdom);
 
@@ -678,7 +678,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
 
     if(killer->getRoom()->getMode() == "06_3v3"){
         killer->drawCards(3);
-    }else{
+    }
+    else{
         if(victim->getRole() == "rebel" && killer != victim){
             killer->drawCards(3);
         }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
@@ -735,6 +736,7 @@ HulaoPassMode::HulaoPassMode(QObject *parent)
     setObjectName("hulaopass_mode");
 
     events << HpChanged;
+    default_choice = "recover";
 }
 
 static int Transfiguration = 1;
@@ -770,6 +772,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
     case CardUsed:{
             CardUseStruct use = data.value<CardUseStruct>();
             if(use.card->inherits("Weapon") && player->askForSkillInvoke("weapon_recast", data)){
+                room->playCardEffect("@recast", player->getGeneral()->isMale());
                 room->throwCard(use.card);
                 player->drawCards(1, false);
                 return false;
@@ -826,6 +829,15 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
 
                         room->revivePlayer(player);
                     }else if(player->isWounded()){
+                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover+draw") == "draw")){
+                            LogMessage log;
+                            log.type = "#ReformingDraw";
+                            log.from = player;
+                            room->sendLog(log);
+                            player->drawCards(1, false);
+                            return false;
+                        }
+
                         LogMessage log;
                         log.type = "#ReformingRecover";
                         log.from = player;
@@ -839,6 +851,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
                 else
                     player->play();
             }
+
             return false;
         }
 
