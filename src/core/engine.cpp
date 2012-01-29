@@ -66,14 +66,6 @@ extern "C" {
     int luaopen_sgs(lua_State *);
 }
 
-QString Engine::getVersion() const{
-    return "20110106";
-}
-
-QString Engine::getVersionName() const{
-    return tr("V2.9.4");
-}
-
 Engine::Engine()
 {
     Sanguosha = this;
@@ -168,7 +160,6 @@ Engine::~Engine(){
     Audio::quit();
 
 #endif
-
 }
 
 QStringList Engine::getScenarioNames() const{
@@ -350,6 +341,27 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
         return card;
     }else
         return NULL;
+}
+
+QString Engine::getVersionNumber() const{
+    return "20110122";
+}
+
+QString Engine::getVersion() const{
+    QString version_number = getVersionNumber();
+    QString mod_name = getMODName();
+    if(mod_name == "official")
+        return version_number;
+    else
+        return QString("%1:%2").arg(version_number).arg(mod_name);
+}
+
+QString Engine::getVersionName() const{
+    return tr("V2.9.7");
+}
+
+QString Engine::getMODName() const{
+    return "Shuihusha";
 }
 
 QStringList Engine::getExtensions() const{

@@ -262,3 +262,7 @@ CONFIG(joystick){
 }
 
 TRANSLATIONS += sanguosha.ts
+
+OTHER_FILES += \
+	sanguosha.qss
+

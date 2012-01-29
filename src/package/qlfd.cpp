@@ -395,6 +395,7 @@ public:
 };
 
 ShouwangCard::ShouwangCard(){
+    will_throw = false;
     once = true;
 }
 

@@ -284,8 +284,15 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     sendLog(log);
 
+    broadcastProperty(victim, "alive");
+
     QVariant data = QVariant::fromValue(reason);
     thread->trigger(GameOverJudge, victim, data);
+
+
+    broadcastInvoke("killPlayer", victim->objectName());
+    broadcastProperty(victim, "role");
+
     thread->trigger(Death, victim, data);
     victim->loseAllSkills();
 
@@ -441,6 +448,7 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     setEmotion(effect.from, "killer");
     setEmotion(effect.to, "victim");
 
+    setTag("LastSlashEffect", data);
     bool broken = thread->trigger(SlashEffect, effect.from, data);
     if(!broken)
         thread->trigger(SlashEffected, effect.to, data);
@@ -1304,6 +1312,34 @@ void Room::prepareForStart(){
 
             if(result.isEmpty() || result == ".")
                 assignRoles();
+            else if(Config.FreeAssignSelf){
+                QStringList texts = result.split(":");
+                QString name = texts.value(0);
+                QString role = texts.value(1);
+
+                ServerPlayer *player_self = findChild<ServerPlayer *>(name);
+                setPlayerProperty(player_self, "role", role);
+                if(role == "lord")
+                    broadcastProperty(player_self, "role", "lord");
+
+                QList<ServerPlayer *> all_players = players;
+                all_players.removeOne(player_self);
+                int n = all_players.count(), i;
+                QStringList roles = Sanguosha->getRoleList(mode);
+                roles.removeOne(role);
+                qShuffle(roles);
+
+                for(i=0; i<n; i++){
+                    ServerPlayer *player = all_players[i];
+                    QString role = roles.at(i);
+
+                    player->setRole(role);
+                    if(role == "lord")
+                        broadcastProperty(player, "role", "lord");
+                    else
+                        player->sendProperty("role");
+                }
+            }
             else{
                 QStringList assignments = result.split("+");
                 for(int i=0; i<assignments.length(); i++){
@@ -1458,10 +1494,10 @@ void Room::processRequest(const QString &request){
 
         (this->*callback)(player, args.at(1));
 
-//#ifndef QT_NO_DEBUG
+        //#ifndef QT_NO_DEBUG
         // output client command only in debug version
         emit room_message(player->reportHeader() + request);
-//#endif
+        //#endif
 
     }else
         emit room_message(tr("%1: %2 is not invokable").arg(player->reportHeader()).arg(command));
@@ -1558,7 +1594,7 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
 
     if(!is_robot){
         QString greetingStr = tr("<font color=#EEB422>Player <b>%1</b> joined the game</font>")
-                              .arg(Config.ContestMode ? tr("Contestant") : screen_name);
+                .arg(Config.ContestMode ? tr("Contestant") : screen_name);
         speakCommand(player, greetingStr.toUtf8().toBase64());
 
         // introduce all existing player to the new joined
@@ -1571,6 +1607,7 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
 }
 
 void Room::assignGeneralsForPlayers(const QList<ServerPlayer *> &to_assign){
+
     QSet<QString> existed;
     foreach(ServerPlayer *player, players){
         if(player->getGeneral())
@@ -2926,7 +2963,7 @@ void Room::doGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_only
         QString top_str = Card::IdsToStrings(top_cards).join("+");
         QString bottom_str = Card::IdsToStrings(bottom_cards).join("+");
 
-        qDebug("Guanxing error: %s %s", qPrintable(top_str), qPrintable(bottom_str));
+        //qDebug("Guanxing error: %s %s", qPrintable(top_str), qPrintable(bottom_str));
 
         top_cards = cards;
         bottom_cards.clear();
@@ -3004,8 +3041,8 @@ const Card *Room::askForPindian(ServerPlayer *player,
     }
 
     QString ask_str = QString("%1->%2")
-                       .arg(from->objectName())
-                       .arg(to->objectName());
+            .arg(from->objectName())
+            .arg(to->objectName());
 
     player->invoke("askForPindian", ask_str);
     getResult("responseCardCommand", player);

@@ -10,6 +10,12 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QSpinBox>
+<<<<<<< HEAD
+=======
+
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeContext>
+>>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 
 namespace Ui {
     class MainWindow;
@@ -115,8 +121,8 @@ private slots:
     void on_actionStart_Server_triggered();
     void on_actionExit_triggered();
 
-    void checkVersion(const QString &server_version);
     void startConnection();
+    void checkVersion(const QString &server_version, const QString &server_mod);
     void networkError(const QString &error_msg);
     void enterRoom();
     void gotoScene(QGraphicsScene *scene);

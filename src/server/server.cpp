@@ -156,6 +156,11 @@ QWidget *ServerDialog::createAdvancedTab(){
     free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
     free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
 
+    free_assign_self_checkbox = new QCheckBox(tr("Assign only your own role"));
+    free_assign_self_checkbox->setChecked(Config.FreeAssignSelf);
+    free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
+    connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
+
     maxchoice_spinbox = new QSpinBox;
     maxchoice_spinbox->setRange(3, 10);
     maxchoice_spinbox->setValue(Config.value("MaxChoice", 5).toInt());
@@ -231,7 +236,8 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addWidget(contest_mode_checkbox);
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addLayout(HLay(free_choose_checkbox, free_assign_checkbox));
+    layout->addWidget(free_choose_checkbox);
+    layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addWidget(second_general_checkbox);
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
@@ -802,6 +808,7 @@ bool ServerDialog::config(){
     Config.OperationNoLimit = nolimit_checkbox->isChecked();
     Config.ContestMode = contest_mode_checkbox->isChecked();
     Config.FreeChoose = free_choose_checkbox->isChecked();
+    Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
@@ -831,6 +838,7 @@ bool ServerDialog::config(){
     Config.setValue("ContestMode", Config.ContestMode);
     Config.setValue("FreeChoose", Config.FreeChoose);
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
+    Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
     Config.setValue("MaxChoice", maxchoice_spinbox->value());
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);

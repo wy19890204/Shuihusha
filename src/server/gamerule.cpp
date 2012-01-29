@@ -685,7 +685,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
 
     if(killer->getRoom()->getMode() == "06_3v3"){
         killer->drawCards(3);
-    }else{
+    }
+    else{
         if(victim->getRole() == "rebel" && killer != victim){
             killer->drawCards(3);
         }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
@@ -870,6 +871,15 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
 
                         room->revivePlayer(player);
                     }else if(player->isWounded()){
+                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover+draw") == "draw")){
+                            LogMessage log;
+                            log.type = "#ReformingDraw";
+                            log.from = player;
+                            room->sendLog(log);
+                            player->drawCards(1, false);
+                            return false;
+                        }
+
                         LogMessage log;
                         log.type = "#ReformingRecover";
                         log.from = player;

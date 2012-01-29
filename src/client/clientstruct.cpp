@@ -75,7 +75,10 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     same_label = new QLabel;
     endless_label = new QLabel;
     basara_label = new QLabel;
+<<<<<<< HEAD
     hegemony_label = new QLabel;
+=======
+>>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
     free_choose_label = new QLabel;
     enable_ai_label = new QLabel;
     time_limit_label = new QLabel;
@@ -96,7 +99,10 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     layout->addRow(tr("Same Mode"), same_label);
     layout->addRow(tr("Endless Mode"), endless_label);
     layout->addRow(tr("Basara Mode"), basara_label);
+<<<<<<< HEAD
     layout->addRow(tr("Hegemony Mode"), hegemony_label);
+=======
+>>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
     layout->addRow(tr("Max HP scheme"), max_hp_label);
     layout->addRow(tr("Free choose"), free_choose_label);
     layout->addRow(tr("Enable AI"), enable_ai_label);
@@ -124,7 +130,10 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     same_label->setText(info.EnableSame ? tr("Enabled") : tr("Disabled"));
     endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
     basara_label->setText(info.EnableBasara ? tr("Enabled") : tr("Disabled"));
+<<<<<<< HEAD
     hegemony_label->setText(info.EnableHegemony ? tr("Enabled") : tr("Disabled"));
+=======
+>>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 
     if(info.Enable2ndGeneral){
         switch(info.MaxHPScheme){
@@ -181,7 +190,10 @@ void ServerInfoWidget::clear(){
     same_label->clear();
     endless_label->clear();
     basara_label->clear();
+<<<<<<< HEAD
     hegemony_label->clear();
+=======
+>>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
     free_choose_label->clear();
     time_limit_label->clear();
     list_widget->clear();
