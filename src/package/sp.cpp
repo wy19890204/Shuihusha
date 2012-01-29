@@ -40,7 +40,7 @@ public:
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
-        if(!to->faceUp())
+        if(to->hasSkill(objectName()) && !to->faceUp())
             return +1;
         else
             return 0;

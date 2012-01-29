@@ -207,12 +207,12 @@ int Player::distanceTo(const Player *other) const{
 
     bool mengkang = false;
     foreach(const Player *player, getSiblings()){
-        if(player->isAlive() && player->hasSkill("mengchong")){
+        if(player->isAlive() && player->hasSkill("mengchong_old")){
             mengkang = true;
             break;
         }
     }
-    if(mengkang || this->hasSkill("mengchong")){
+    if(mengkang || this->hasSkill("mengchong_old")){
         if(!this->isChained() && other->isChained())
             distance ++;
     }
