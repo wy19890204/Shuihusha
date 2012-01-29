@@ -9,7 +9,7 @@
 #include <QRadioButton>
 #include <QBoxLayout>
 
-static const int ShrinkWidth = 285;
+static const int ShrinkWidth = 295;
 static const int ExpandWidth = 826;
 
 ConnectionDialog::ConnectionDialog(QWidget *parent) :
@@ -22,9 +22,6 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
 
     ui->hostComboBox->addItems(Config.HistoryIPs);
     ui->hostComboBox->lineEdit()->setText(Config.HostAddress);
-
-    ui->portLineEdit->setText(QString::number(Config.ServerPort));
-    ui->portLineEdit->setValidator(new QIntValidator(1, 9999, ui->portLineEdit));
 
     ui->connectButton->setFocus();
 
@@ -67,13 +64,6 @@ void ConnectionDialog::on_connectButton_clicked()
     Config.UserName = username;
     Config.HostAddress = ui->hostComboBox->lineEdit()->text();
     Config.Password = ui->passwordLineEdit->text();
-
-    bool ok;
-    int port = ui->portLineEdit->text().toInt(&ok);
-    if(port){
-        Config.ServerPort = port;
-        Config.setValue("ServerPort", Config.ServerPort);
-    }
 
     Config.setValue("UserName", Config.UserName);
     Config.setValue("HostAddress", Config.HostAddress);

@@ -221,8 +221,8 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addWidget(contest_mode_checkbox);
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addLayout(HLay(free_choose_checkbox, free_assign_checkbox));
-    layout->addWidget(free_assign_self_checkbox);
+    layout->addWidget(free_choose_checkbox);
+    layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addLayout(HLay(second_general_checkbox, banpair_button));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));

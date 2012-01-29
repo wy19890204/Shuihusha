@@ -338,7 +338,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     skill_dock_layout->setContentsMargins(margins);
     skill_dock_layout->addStretch();
 
-    main_window->statusBar()->setObjectName("skill_bar_container");
+    //main_window->statusBar()->setObjectName("skill_bar_container");
     main_window->statusBar()->setLayout(skill_dock_layout);
     addWidgetToSkillDock(sort_combobox, true);
 
@@ -2298,14 +2298,15 @@ void RoomScene::addRestartButton(QDialog *dialog){
     dialog->resize(main_window->width()/2, dialog->height());
 
     QPushButton *restart_button = new QPushButton(tr("Restart Game"));
+    //restart_button->setFocus();
     QPushButton *return_button = new QPushButton(tr("Return to main menu"));
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
-    hlayout->addWidget(return_button);
     hlayout->addWidget(restart_button);
 
     QPushButton *save_button = new QPushButton(tr("Save record"));
     hlayout->addWidget(save_button);
+    hlayout->addWidget(return_button);
 
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(dialog->layout());
     if(layout)
