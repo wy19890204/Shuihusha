@@ -3011,14 +3011,14 @@ void Room::askForGeneralAsync(ServerPlayer *player){
             choose2Command(player, QString());
         else
             chooseCommand(player, QString());
-    }else
-    {
-        QStringList selected = player->getSelected();
-        if(!Config.EnableBasara)selected.append(QString("%1(lord)").arg(getLord()->getGeneralName()));
-        else selected.append("anjiang(lord)");
-        const char *command = player->getGeneral() ? "doChooseGeneral2" : "doChooseGeneral";
-        player->invoke(command, selected.join("+"));
+
+        return;
     }
+
+    QStringList selected = player->getSelected();
+    const char *command = player->getGeneral() ? "doChooseGeneral2" : "doChooseGeneral";
+
+    player->invoke(command, selected.join("+"));
 }
 
 QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, QString default_choice){
