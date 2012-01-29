@@ -15,7 +15,6 @@ SOURCES += src/main.cpp \
 	src/client/client.cpp \
 	src/client/clientplayer.cpp \
 	src/client/clientstruct.cpp \
-	src/core/banpair.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
 	src/core/general.cpp \
@@ -23,6 +22,7 @@ SOURCES += src/main.cpp \
 	src/core/player.cpp \
 	src/core/settings.cpp \
 	src/core/skill.cpp \
+	src/dialog/banpairdialog.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
 	src/dialog/choosegeneraldialog.cpp \
@@ -121,11 +121,7 @@ HEADERS += src/client/aux-skills.h \
 	src/client/client.h \
 	src/client/clientplayer.h \
 	src/client/clientstruct.h \
-<<<<<<< HEAD
-	src/core/banpair.h \
-=======
 	src/core/audio.h \
->>>>>>> f0fad598c426df7934383f9f63e2955a22941743
 	src/core/card.h \
 	src/core/engine.h \
 	src/core/general.h \
@@ -133,6 +129,7 @@ HEADERS += src/client/aux-skills.h \
 	src/core/player.h \
 	src/core/settings.h \
 	src/core/skill.h \
+	src/dialog/banpairdialog.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
 	src/dialog/choosegeneraldialog.h \

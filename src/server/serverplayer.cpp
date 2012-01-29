@@ -5,7 +5,6 @@
 #include "ai.h"
 #include "settings.h"
 #include "recorder.h"
-#include "banpair.h"
 
 ServerPlayer::ServerPlayer(Room *room)
     : Player(room), socket(NULL), room(room),
@@ -216,26 +215,6 @@ QStringList ServerPlayer::getSelected() const{
 QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreasonable){
 
     foreach(QString name, generals){
-        if(Config.Enable2ndGeneral){
-<<<<<<< HEAD
-            if(getGeneral()){
-                if(BanPair::isBanned(getGeneralName(), name))
-                    continue;
-            }else{
-                if(BanPair::isBanned(name))
-                    continue;
-            }
-
-=======
->>>>>>> f0fad598c426df7934383f9f63e2955a22941743
-            if(Config.EnableHegemony)
-            {
-                if(getGeneral())
-                    if(getGeneral()->getKingdom()
-                            != Sanguosha->getGeneral(name)->getKingdom())
-                        continue;
-            }
-        }
         if(Config.EnableBasara)
         {
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();

@@ -15,7 +15,7 @@ class Scenario : public Package
 
 public:
     explicit Scenario(const QString &name);    
-    ScenarioRule *getRule() const;
+    const ScenarioRule *getRule() const;    
 
     virtual bool exposeRoles() const;
     virtual int getPlayerCount() const;
@@ -28,7 +28,7 @@ public:
 protected:
     QString lord;
     QStringList loyalists, rebels, renegades;
-    ScenarioRule *rule;
+    const ScenarioRule *rule;
 };
 
 #define ADD_SCENARIO(name) extern "C" { Q_DECL_EXPORT Scenario *New##name##Scenario() { return new name##Scenario; } }

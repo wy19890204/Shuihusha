@@ -679,11 +679,7 @@ QGroupBox *MeleeDialog::createGeneralBox(){
     QFormLayout *form_layout = new QFormLayout;
     spinbox = new QSpinBox;
     spinbox->setRange(1, 50);
-<<<<<<< HEAD
-    spinbox->setValue(10);
-=======
     spinbox->setValue(4);
->>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 
     start_button = new QPushButton(tr("Start"));
     connect(start_button, SIGNAL(clicked()), this, SLOT(startTest()));
@@ -931,10 +927,6 @@ void MainWindow::on_actionSend_lowlevel_command_triggered()
     if(!command.isEmpty())
         ClientInstance->request(command);
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 
 void MeleeDialog::updateResultBox(QString role, int win){    
     QLineEdit *edit = result_box->findChild<QLineEdit *>(role + "_edit");
@@ -957,14 +949,6 @@ void MeleeDialog::updateResultBox(QString role, int win){
     server_log->append(tr("End of game %1").arg(totalCount));
 }
 
-<<<<<<< HEAD
-void MainWindow::on_actionView_ban_list_triggered()
-{
-    BanlistDialog *dialog = new BanlistDialog(this, true);
-    dialog->exec();
-=======
-=======
->>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 #include "audio.h"
 
 void MainWindow::on_actionAbout_fmod_triggered()
@@ -1010,5 +994,4 @@ void MainWindow::on_actionAbout_Lua_triggered()
     window->shift();
 
     window->appear();
->>>>>>> f0fad598c426df7934383f9f63e2955a22941743
 }

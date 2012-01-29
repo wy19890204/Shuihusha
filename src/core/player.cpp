@@ -345,7 +345,7 @@ bool Player::hasLordSkill(const QString &skill_name) const{
     if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
-    if(isLord() || ServerInfo.EnableHegemony)
+    if(isLord())
         return hasInnateSkill(skill_name);
 
     if(hasSkill("weidi")){
@@ -783,7 +783,7 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;
-    if(hasSkill("qinlong") && !hasEquip())
+    if(hasSkill("qinlong") && getEquips().isEmpty())
         return true;
 
     int slash_count = getSlashCount();

@@ -1,7 +1,5 @@
 -- the common
 return {
-	["Pairs"] = "双将",
-
 	["spade"] = "黑桃",
 	["club"] = "梅花",
 	["heart"] = "红桃",
@@ -71,7 +69,6 @@ return {
 	["#NullificationDetails"] = "%from 对 %to 使用的锦囊 %arg 被抵消",
 	["#SkillAvoid"] = "%from 的 %arg 技能被触发，这张 %arg2 不能指定其作为目标",
 	["#Transfigure"] = "%from 变身为 %arg",
-	["#AcquireSkill"] = "%from 获得了技能 【%arg】",
 	["$InitialJudge"] = "%from 最初的判定结果为 %card",
 	["$ChangedJudge"] = "%from 把 %to 的判定结果改判成了 %card",
 	["$MoveCard"] = "%to 从 %from 处得到了 %card",
@@ -79,7 +76,6 @@ return {
 	["$LightningMove"] = "%card 从 %from 移动到 %to",
 	["$DiscardCard"] = "%from 弃置了 %card",
 	["$RecycleCard"] = "%from 从弃牌堆回收了 %card",
-	["$Dismantlement"] = "%from 被拆掉了 %card",
 	["$ShowCard"] = "%from 展示了 %card",
 	["$PutCard"] = "%from 的 %card 被放置在了摸牌堆",
 	["#GetMark"] = "%from 得到了 %arg2 枚 %arg 标记",
@@ -108,9 +104,9 @@ return {
 	["#IronChainDamage"] = "%from 处于铁锁连环状态，将受到铁锁的传导伤害",
 	["#LoseHp"] = "%from 流失了 %arg 点体力",
 	["#LoseMaxHp"] = "%from 流失了 %arg 点体力上限",
-	["#ChangeKingdom"] = "%from 把 %to 的国籍由原来的 %arg 改成了 %arg2",
+	["#AcquireSkill"] = "%from 获得了技能 【%arg】",
+	["$Dismantlement"] = "%from 被拆掉了 %card",
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
-	["#AnalepticBuff"] = "%from 喝了【酒】，对 %to 造成的杀伤害 +1",
 
 	["3v3:cw"] = "顺时针",
 	["3v3:ccw"] = "逆时针",

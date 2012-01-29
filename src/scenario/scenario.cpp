@@ -11,7 +11,7 @@ int Scenario::getPlayerCount() const{
     return 1 + loyalists.length() + rebels.length() + renegades.length();
 }
 
-ScenarioRule *Scenario::getRule() const{
+const ScenarioRule *Scenario::getRule() const{
     return rule;
 }
 

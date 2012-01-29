@@ -10,12 +10,9 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QSpinBox>
-<<<<<<< HEAD
-=======
 
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeContext>
->>>>>>> 3ba03f136908f069c2f704f2325caeaf61b87947
 
 namespace Ui {
     class MainWindow;
@@ -129,7 +126,6 @@ private slots:
     void gotoStartScene();
     void startGameInAnotherInstance();
     void changeBackground();
-    void on_actionView_ban_list_triggered();
 };
 
 #endif // MAINWINDOW_H

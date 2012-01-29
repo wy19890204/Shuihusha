@@ -42,29 +42,19 @@ private slots:
     void toggleCheck();
 };
 
-class BanlistDialog: public QDialog{
+class KOFBanlistDialog: public QDialog{
     Q_OBJECT
 
 public:
-    BanlistDialog(QWidget *parent, bool view = false);
+    KOFBanlistDialog(QDialog *parent);
 
 private:
-    QList<QListWidget *>lists;
-    QListWidget * list;
-    int item;
-    QStringList ban_list;
-    QPushButton* add2nd;
+    QListWidget *list;
 
 private slots:
     void addGeneral(const QString &name);
-    void add2ndGeneral(const QString &name);
-    void addPair(const QString &first, const QString& second);
-    void doAdd2ndButton();
-    void doAddButton();
-    void doRemoveButton();
+    void removeGeneral();
     void save();
-    void saveAll();
-    void switchTo(int item);
 };
 
 class ServerDialog: public QDialog{
@@ -101,8 +91,7 @@ private:
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
     QCheckBox *basara_checkbox;
-    QCheckBox *hegemony_checkbox;
-	QLabel *max_hp_label;
+    QLabel *max_hp_label;
     QComboBox *max_hp_scheme_combobox;
     QCheckBox *announce_ip_checkbox;
     QComboBox *scenario_combobox;
@@ -125,7 +114,6 @@ private slots:
     void onHttpDone(bool error);
     void select3v3Generals();
     void edit1v1Banlist();
-    void updateButtonEnablility(QAbstractButton* button);
 };
 
 class Scenario;

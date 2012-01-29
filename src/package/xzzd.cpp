@@ -93,7 +93,7 @@ public:
         if(!damage.to->isAllNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
             room->playSkillEffect(objectName());
-            int dust = !damage.to->hasEquip() ? damage.to->getRandomHandCardId() :
+            int dust = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
                           room->askForCardChosen(player, damage.to, "hej", objectName());
             room->throwCard(dust);
 
@@ -367,7 +367,7 @@ public:
     }
 
     static int GetCard(ServerPlayer *from, ServerPlayer *to){
-        int first = !to->hasEquip() ?
+        int first = to->getEquips().isEmpty()?
                     to->getRandomHandCardId():
                     from->getRoom()->askForCardChosen(from, to, "he", "lihun");
         from->obtainCard(Sanguosha->getCard(first));

@@ -13,9 +13,24 @@ struct BanPair: public QPair<QString, QString>{
     static void saveBanPairs();
     static bool isBanned(const QString &general);
     static bool isBanned(const QString &first, const QString &second);
-    static const QSet<BanPair> getBanPairSet();
-    static const QSet<QString> getAllBanSet();
-    static const QSet<QString> getSecondBanSet();
+};
+
+class BanPairDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit BanPairDialog(QWidget *parent = 0);
+    void addPairToList(const BanPair &pair);
+
+public slots:
+    void addPair();
+    void addPair(const QString &first, const QString &second);
+    void removePair();
+    void save();
+
+private:
+    QListWidget *list;
 };
 
 #endif // BANPAIRDIALOG_H
