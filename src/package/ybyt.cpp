@@ -193,6 +193,7 @@ public:
             judge.reason = objectName();
             judge.who = gaolian;
 
+            room->playSkillEffect(objectName());
             room->judge(judge);
 
             if(judge.isGood()){
@@ -656,6 +657,7 @@ public:
             return false;
         room->setTag("Jiayao", 1);
         sq->drawCards(1);
+        room->playSkillEffect(objectName());
         QVariantList ag_list = room->getTag("AmazingGrace").toList();
         int a = 0;
         foreach(QVariant card_id, ag_list){

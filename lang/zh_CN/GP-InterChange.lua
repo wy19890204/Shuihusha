@@ -57,4 +57,10 @@ return {
 	["designer:hongxin"] = "宇文天启",
 	["fangsheng"] = "放生",
 	[":fangsheng"] = "回合开始阶段开始前，若你的手牌数大于体力值，可以摸两张牌终止本回合，令任一角色进行一个额外的回合",
+
+	["#_zhangmengfang"] = "兵马都监",
+	["zhangmengfang"] = "张蒙方",
+	["designer:zhangmengfang"] = "宇文天启",
+	["tancai"] = "贪财",
+	[":tancai"] = "弃牌阶段弃牌前，你可以摸三张牌。",
 }
