@@ -324,6 +324,7 @@ public:
         if(taiwei->getPhase() == Player::Start && taiwei->getHandcardNum() > taiwei->getHp() &&
            taiwei->askForSkillInvoke(objectName())){
             Room *room = taiwei->getRoom();
+            taiwei->drawCards(2, false);
             room->playSkillEffect(objectName());
 
             PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
@@ -359,7 +360,7 @@ InterChangePackage::InterChangePackage()
     tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill("shuizhan");
 
-    General *hongxin = new General(this, "hongxin", "guan", 3);
+    General *hongxin = new General(this, "hongxin", "guan");
     hongxin->addSkill(new Fangsheng);
 
     addMetaObject<ShensuanCard>();
