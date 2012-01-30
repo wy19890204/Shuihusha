@@ -614,13 +614,13 @@ TestPackage::TestPackage()
     jiuweigui->addSkill("manli");
 
     General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
-    shenlvbu1->addSkill("cuju");
+    shenlvbu1->addSkill("huanshu");
     shenlvbu1->addSkill("wubang");
     shenlvbu1->addSkill("wuzu");
+    shenlvbu1->addSkill("fushang");
 
     General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
-    shenlvbu2->addSkill("huanshu");
-    shenlvbu2->addSkill("shunshui");
+    shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill("yuanyin");
 
