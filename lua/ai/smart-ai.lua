@@ -1200,6 +1200,9 @@ function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = 2
 	end
+	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
+		self.slash_targets = 2
+	end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()
@@ -3488,7 +3491,7 @@ function SmartAI:hasSameEquip(card, player)
 end
 
 sgs.lose_equip_skill = "cuihuo|jiebei"
-sgs.need_kongcheng = "kongmen"
+sgs.need_kongcheng = "kongmen|wanku"
 sgs.masochism_skill = "baoguo|fuqin|xiaozai|huatian|heidian|cuju|huanshu"
 sgs.wizard_skill = "zhaixing|butian|shenpan|yixing|yueli|houlue"
 sgs.wizard_harm_skill = "zhaixing|butian|shenpan|yixing"

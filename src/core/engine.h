@@ -5,6 +5,7 @@
 #include "general.h"
 #include "skill.h"
 #include "package.h"
+#include "exppattern.h"
 
 #include <QHash>
 #include <QStringList>

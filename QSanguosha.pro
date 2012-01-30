@@ -36,7 +36,8 @@ SOURCES += src/main.cpp \
 	src/dialog/playercarddialog.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
-        src/dialog/halldialog.cpp \
+	src/dialog/halldialog.cpp \
+	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
@@ -55,7 +56,7 @@ SOURCES += src/main.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
-        src/scenario/boss-mode-scenario.cpp \
+	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
@@ -144,6 +145,7 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
+	src/package/exppattern.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
 	src/package/standard-skillcards.h \
@@ -163,7 +165,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/god.h \
 	src/package/joy.h \
 	src/package/interchange.h \
-        src/scenario/boss-mode-scenario.h \
+	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
