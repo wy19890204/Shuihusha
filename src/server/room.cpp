@@ -589,6 +589,9 @@ bool Room::isCanceled(const CardEffectStruct &effect){
 
 bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive){
     QString trick_name = trick->objectName();
+    const Card *last_trick = getTag("LastTrick").value<CardStar>();
+    if(!last_trick)
+        last_trick = trick;
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
         if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
@@ -631,6 +634,7 @@ trust:
             use.card = card;
             use.from = player;
             useCard(use);
+            setTag("LastTrick", QVariant::fromValue((CardStar)card));
 
             LogMessage log;
             log.type = "#NullificationDetails";
@@ -643,7 +647,7 @@ trust:
                                     .arg(player->objectName()).arg(to->objectName());
             broadcastInvoke("animate", animation_str);
             if(card->objectName() == "counterplot")
-                player->obtainCard(trick);
+                player->obtainCard(last_trick);
 
             QVariant decisionData = QVariant::fromValue(use);
             thread->trigger(ChoiceMade, player, decisionData);
@@ -653,7 +657,7 @@ trust:
         }else if(continable)
             goto trust;
     }
-
+    removeTag("LastTrick");
     return false;
 }
 
