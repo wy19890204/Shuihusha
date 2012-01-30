@@ -45,6 +45,19 @@ public:
     }
 };
 
+class Mengchong: public DistanceSkill{
+public:
+    Mengchong():DistanceSkill("mengchong"){
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        if(!from->isChained() && to->isChained())
+            return +1;
+        else
+            return 0;
+    }
+};
+
 YuanyinCard::YuanyinCard(){
     mute = true;
 }
@@ -963,7 +976,7 @@ BWQZPackage::BWQZPackage()
 
     General *mengkang = new General(this, "mengkang", "kou");
     mengkang->addSkill(new Zaochuan);
-    mengkang->addSkill(new Skill("mengchong", Skill::Compulsory));
+    mengkang->addSkill(new Mengchong);
 
     General *jiaoting = new General(this, "jiaoting", "kou");
     jiaoting->addSkill(new Skill("qinlong"));

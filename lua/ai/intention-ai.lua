@@ -117,12 +117,16 @@ sgs.ai_card_intention["IronChain"]=function(card,from,to,source)
 end
 
 sgs.ai_card_intention["Dismantlement"]=function(card,from,to,source)
-	return sgs.ai_card_intention.general(to,40)
+	if to:getCards("j"):isEmpty() and
+		not (to:getArmor() and (to:getArmor():inherits("GaleShell") or to:getArmor():inherits("SilverLion"))) then
+		return sgs.ai_card_intention.general(to,80)
+	end
+	return 0
 end
 
-sgs.ai_card_intention["Snatch"]=function(card,from,to,source)
-	return sgs.ai_card_intention.general(to,40)
-end
+sgs.ai_card_intention["Snatch"]=sgs.ai_card_intention["Dismantlement"]
+
+sgs.ai_card_intention["ShentouCard"]=sgs.ai_card_intention["Dismantlement"]
 
 sgs.ai_card_intention["TuxiCard"]=function(card,from,to,source)
 	return sgs.ai_card_intention.general(to,80)
@@ -299,6 +303,14 @@ function SmartAI:refreshLoyalty(player,intention)
 	if player:isLord() or self ~= sgs.recorder then return end
 	local name=player:objectName()
 
+	if isRolePredictable() then
+		if player:getRole() == "loyalist" and intention > 0 then sgs.ai_explicit[name] = "loyalist"
+		elseif player:getRole() == "rebel" and intention < 0 then sgs.ai_explicit[name] = "rebel"
+		elseif player:getRole() == "renegade" and intention > 0 then sgs.ai_explicit[name] = "loyalist"
+		elseif player:getRole() == "renegade" and intention < 0 then sgs.ai_explicit[name] = "rebel" end
+		return
+	end
+	
 	local has_rebel = false
 	for _, aplayer in sgs.qlist(self.room:getAlivePlayers()) do
 		if aplayer:getRole() == "rebel" then has_rebel = true break end
@@ -321,6 +333,7 @@ function SmartAI:refreshLoyalty(player,intention)
 		if intention>0 then intention=intention/5 end
 	end
 	sgs.ai_loyalty[name]=sgs.ai_loyalty[name]+intention
+
 	
 	if sgs.ai_explicit[name]=="loyalish" then
 		sgs.ai_assumed["loyalist"]=sgs.ai_assumed["loyalist"]+1
@@ -331,7 +344,13 @@ function SmartAI:refreshLoyalty(player,intention)
 	elseif sgs.ai_explicit[name]=="rebel" then
 		sgs.ai_assumed["rebel"]=sgs.ai_assumed["rebel"]+1
 	end
-		
+
+	if (sgs.ai_renegade_suspect[name] or 0) > 1 then
+		if intention >0 then sgs.ai_explicit[name] = "loyalish" sgs.ai_assumed["loyalist"] = sgs.ai_assumed["loyalist"] - 1
+		elseif intention < 0 then sgs.ai_explicit[name] = "rebelish" sgs.ai_assumed["rebel"] = sgs.ai_assumed["rebel"] -1 end
+		return
+	end
+	
 	if sgs.ai_loyalty[name]<=-160 then
 		sgs.ai_assumed["rebel"]=sgs.ai_assumed["rebel"]-1
 		sgs.ai_explicit[name]="rebel"
