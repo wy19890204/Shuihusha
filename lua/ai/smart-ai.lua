@@ -279,19 +279,57 @@ function SmartAI:printFEList()
 	self.room:writeToConsole(self.player:getGeneralName().." list end")
 end
 
-function SmartAI:objectiveLevel(player)
-	if isRolePredictable() then
-		if self.player:getRole() == "renegade" or player:getRole() == "renegade" then
-			for _, aplayer in sgs.qlist(self.room:getOtherPlayers(self.player)) do
-				if not aplayer:isLord() then sgs.ai_explicit[aplayer:objectName()] = aplayer:getRole() end
-				if aplayer:getRole() == "rebel" then sgs.ai_loyalty[aplayer:objectName()] = -160 else sgs.ai_loyalty[aplayer:objectName()] = 160 end
-			end
-		-- elseif player:getRole() == "renegade" then return 4.1
-		elseif self:isFriend(player) then return -2
-		elseif player:isLord() then return 5
-		else return 4.5 end
+local function getGameProcessValues(self, players)
+	local rebel_num, loyalish_num, loyal_num, renegade_num = 0, 0, 0, 0
+	for _, aplayer in ipairs (players) do
+		if aplayer:getRole() == "rebel" then
+			rebel_num = rebel_num + 1
+		elseif aplayer:getRole() == "loyal" then
+			loyal_num = loyal_num + 1
+		elseif aplayer:getRole() == "renegade" then
+			renegade_num = renegade_num + 1
+		end
 	end
-	
+	local ambig_num, loyal_value, rebel_value = 0, 0, 0
+	for _, aplayer in ipairs(players) do
+		if (not isRolePredictable() and (sgs.ai_explicit[aplayer:objectName()] or ""):match("rebel"))
+			or (isRolePredictable() and aplayer:getRole() == "rebel") then
+			local rebel_hp
+			if aplayer:hasSkill("beizhan") and aplayer:getHp() > 4 then rebel_hp = 4
+			else rebel_hp = aplayer:getHp() end
+			if aplayer:getMaxHP() == 3 then rebel_value = rebel_value + 0.5 end
+			rebel_value = rebel_value + rebel_hp + math.max(self.GetDefense(aplayer) - rebel_hp * 2, 0) * 0.7
+			if aplayer:getWeapon() and aplayer:getWeapon():className() ~= "Weapon" then
+				rebel_value = rebel_value + math.min(1.5, math.min(sgs.weapon_range[aplayer:getWeapon():className()],self.room:alivePlayerCount()/2)/2) * 0.4
+			end
+			if aplayer:inMyAttackRange(self.room:getLord()) and rebel_num > 1 then
+				rebel_value = rebel_value + 0.2
+				if aplayer:getWeapon() and aplayer:getWeapon():inherits("Crossbow") or aplayer:hasSkill("paoxiao") then
+					rebel_value = rebel_value + 0.4
+				end
+			end
+		elseif (not isRolePredictable() and (sgs.ai_explicit[aplayer:objectName()] or ""):match("loyal")) 
+			or (isRolePredictable() and aplayer:getRole() == "loyalist") or aplayer:isLord() then
+			local loyal_hp
+			local modifier = 1
+			if aplayer:isLord() then
+				if rebel_num ==1 then modifier = 1.5 else modifier = rebel_num + 1 end
+			end
+			if aplayer:hasSkill("benghuai") and aplayer:getHp() > 4 then loyal_hp = 4
+			else loyal_hp = aplayer:getHp() end
+			if aplayer:getMaxHP() == 3 then loyal_value = loyal_value + 0.5 end
+			loyal_value = loyal_value + (loyal_hp + math.max(self.GetDefense(aplayer) - loyal_hp * 2, 0) * 0.7)/modifier
+			if aplayer:getWeapon() and aplayer:getWeapon():className() ~= "Weapon" then
+				loyal_value = loyal_value + math.min(1.5, sgs.weapon_range[aplayer:getWeapon():className()]/2) * 0.4/modifier
+			end
+		elseif (not aplayer:isLord() and not isRolePredictable()) then
+			ambig_num = ambig_num + 1
+		end
+	end
+	return ambig_num, loyal_value, rebel_value
+end
+
+function SmartAI:objectiveLevel(player)
 
 	if player:objectName() == self.player:objectName() then return -2 end
 
@@ -315,6 +353,36 @@ function SmartAI:objectiveLevel(player)
 		end
 	end
 
+	if isRolePredictable() then
+		if self.role == "renegade" then
+			local _, loyal_value, rebel_value = getGameProcessValues(self, players)
+			if (math.abs(loyal_value-rebel_value) < sgs.ai_renegade_threshold and loyal_value > 8) or (self:isWeak() and #self.enemies > 1) then return 0 end
+			if loyal_value <= rebel_value then
+				if (sgs.ai_explicit[player:objectName()] or "") == "rebel" then return 5
+				else return -1 end
+			else
+				if (sgs.ai_explicit[player:objectName()] or "") == "rebel" then return -3
+				else
+					if player:isLord() then
+						if rebel_num > 0 then return 3 else return 5 end
+					else
+						return 5
+					end
+				end
+			end
+		elseif player:getRole() == "renegade" then
+			local _, loyal_value, rebel_value = getGameProcessValues(self, players)
+			if self.role == (sgs.ai_explicit[player:objectName()] or "") or
+				(self.player:isLord() and (sgs.ai_explicit[player:objectName()] or "") == "loyalist") then
+					if rebel_num == 0 then return 5 else return -1 end
+			elseif (sgs.ai_explicit[player:objectName()] or "") == "loyalist" then
+				if rebel_value < loyal_value then return 4 else return 2 end
+			elseif not sgs.ai_explicit[player:objectName()] then return 0
+			else return 4 end
+		elseif self:isFriend(player) then return -2
+		else return 5
+		end
+	end
 	loyalish_num = loyal_num + renegade_num
 
 	if self.role == "lord" then
@@ -382,46 +450,8 @@ function SmartAI:objectiveLevel(player)
 			if player:isLord() and self:isWeak(player) then return -1 end
 			return 5
 		end
-		local ambig_num, loyal_value, rebel_value = 0, 0, 0
-		for _, aplayer in ipairs(players) do
-			if (sgs.ai_explicit[aplayer:objectName()] or ""):match("rebel") then
-				local rebel_hp
-				if aplayer:hasSkill("benghuai") and aplayer:getHp() > 4 then rebel_hp = 4
-				else rebel_hp = aplayer:getHp() end
-				if aplayer:getMaxHP() == 3 then rebel_value = rebel_value + 0.5 end
-				rebel_value = rebel_value + rebel_hp + math.max(self.GetDefense(aplayer) - rebel_hp * 2, 0) * 0.7
-				if aplayer:getWeapon() and aplayer:getWeapon():className() ~= "Weapon" then
-					rebel_value = rebel_value + math.min(1.5, math.min(sgs.weapon_range[aplayer:getWeapon():className()],self.room:alivePlayerCount()/2)/2) * 0.4
-				end
-				if aplayer:inMyAttackRange(self.room:getLord()) and rebel_num > 1 then
-					rebel_value = rebel_value + 0.2
-					if aplayer:getWeapon() and aplayer:getWeapon():inherits("Crossbow") or
-						aplayer:hasSkill("paoxiao") or aplayer:hasSkill("huafo") or
-						(aplayer:hasSkill("qinlong") and aplayer:getEquips():isEmpty()) then
-						rebel_value = rebel_value + 0.4
-					end
-				end
-			elseif (sgs.ai_explicit[aplayer:objectName()] or ""):match("loyal") or aplayer:isLord() then
-				local loyal_hp
-				local modifier = 1
-				if aplayer:isLord() then
-					if rebel_num ==1 then modifier = 1.5 else modifier = rebel_num + 1 end
-				end
-				if aplayer:hasSkill("benghuai") and aplayer:getHp() > 4 then loyal_hp = 4
-				else loyal_hp = aplayer:getHp() end
-				if aplayer:getMaxHP() == 3 then loyal_value = loyal_value + 0.5 end
-				loyal_value = loyal_value + (loyal_hp + math.max(self.GetDefense(aplayer) - loyal_hp * 2, 0) * 0.7)/modifier
-				if aplayer:getWeapon() and aplayer:getWeapon():className() ~= "Weapon" then
-					rebel_value = rebel_value + math.min(1.5, math.min(sgs.weapon_range[aplayer:getWeapon():className()],self.room:alivePlayerCount()/2)/2) * 0.4
-				end
-				if aplayer:getWeapon() and aplayer:getWeapon():className() ~= "Weapon" then
-					loyal_value = loyal_value + math.min(1.5, sgs.weapon_range[aplayer:getWeapon():className()]/2) * 0.4/modifier
-				end
-			elseif not aplayer:isLord() then
-				ambig_num = ambig_num + 1
-			end
-		end
-		if ambig_num > renegade_num then return 1 end
+		local ambig_num, loyal_value, rebel_value = getGameProcessValues(self, players)
+		if ambig_num > renegade_num then return -1 end
 		if (math.abs(loyal_value-rebel_value) < sgs.ai_renegade_threshold and loyal_value > 8) or (self:isWeak() and #self.enemies > 1) then return 0 end
 		if loyal_value <= rebel_value then
 			if sgs.ai_loyalty[player:objectName()] < 0 then return 5
@@ -925,7 +955,7 @@ function SmartAI:slashIsAvailable(player)
 	if player:hasSkill("shalu") and player:getMark("shalu") > 0 then
 		return true
 	end
-	if player:hasSkill("qinlong") and player:getEquips():isEmpty() then
+	if player:hasSkill("qinlong") and not player:hasEquip() then
 		return true
 	end
 	if player:hasSkill("huafo") then
@@ -1132,7 +1162,7 @@ function SmartAI:slashProhibit(card,enemy)
 		if enemy:isChained() and #(self:getChainedFriends()) > #(self:getChainedEnemies()) and self:slashIsEffective(card,enemy) then
 			return true
 		end
-		if enemy:hasSkill("foyuan") and self.player:getGeneral():isMale() and self.player:getEquips():isEmpty() then
+		if enemy:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
 			return true
 		end
 
@@ -1150,6 +1180,7 @@ function SmartAI:slashProhibit(card,enemy)
 end
 local function hasExplicitRebel(room)
 	for _, player in sgs.qlist(room:getAllPlayers()) do
+		if isRolePredictable() and player:getRole() == "rebel" then return true end
 		if sgs.ai_explicit[player:objectName()] and sgs.ai_explicit[player:objectName()]:match("rebel") then return true end
 	end
 	return false
@@ -1158,7 +1189,7 @@ end
 function SmartAI:useBasicCard(card, use, no_distance)
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if self.player:hasFlag("Longest") then no_distance = true end
-	if self.player:hasSkill("qinlong") and self.player:getEquips():isEmpty() then
+	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = 2
 	end
 	if (self.player:getHandcardNum() == 1
@@ -1254,7 +1285,7 @@ function SmartAI:useBasicCard(card, use, no_distance)
 								end
 							elseif not card:inherits("NatureSlash") then
 								local slash = self:getCard("NatureSlash")
-								if slash then usecard = slash end
+								if slash and self:slashIsEffective(slash, enemy) and not self:slashProhibit(slash, enemy) then usecard = slash end
 							end
 						end
 					end
@@ -1367,6 +1398,13 @@ function SmartAI:aoeIsEffective(card, to)
 	--Panjinlian's shengui
 	if to:hasSkill("shengui") and not to:faceUp() and self.player:getGeneral():isMale() then
 		return false
+	end
+	
+	--Wangding6's kongying
+	if card:inherits("ArcheryAttack") then
+		if (to:hasSkill("kongying") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
+			return false
+		end
 	end
 
 	return true
@@ -1992,7 +2030,7 @@ function SmartAI:getTurnUse()
 		slashAvail = 100
 	end
 
-	if self.player:hasSkill("qinlong") and self.player:getEquips():isEmpty() then
+	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = 2
 		slashAvail = 100
 	end
@@ -2630,7 +2668,7 @@ function SmartAI:getUnuseCard()
 				return acard
 			end
 		end
-	elseif not self.player:getEquips():isEmpty() then
+	elseif self.player:hasEquip() then
 		local player=self.player
 		if player:getWeapon() then return player:getWeapon()
 		elseif player:getOffensiveHorse() then return player:getOffensiveHorse()
@@ -3229,6 +3267,10 @@ function SmartAI:askForSinglePeach(dying)
 	return card_str or "."
 end
 
+function SmartAI:askForSuit()
+	return math.min(math.floor(math.random(0,8)/2),3)
+end
+
 function SmartAI:askForPindian(requestor, reason)
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	local compare_func = function(a, b)
@@ -3413,7 +3455,7 @@ function SmartAI:hasTrickEffective(card, player)
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
-		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and self.player:getEquips():isEmpty() then
+		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
 			return false
 		end
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:inherits("FireAttack") or card:inherits("FireSlash")) then
@@ -3428,7 +3470,7 @@ end
 
 function SmartAI:hasSameEquip(card, player)
 	player = player or self.player
-	if player:getEquips():isEmpty() then return false end
+	if not player:hasEquip() then return false end
 	if card:inherits("Weapon") then
 		if player:getWeapon() then return true end
 	elseif card:inherits("Armor") then
@@ -3555,6 +3597,14 @@ function SmartAI:getAoeValueTo(card, to , from)
 	if not from then from = self.player end
 	local value = 0
 	local sj_num
+
+	if to:hasSkill("yuanyin") then
+		value = value + 5
+	end
+
+	if to:hasSkill("longjiao") then
+		value = value + 5
+	end
 
 	if card:inherits("SavageAssault") then
 		sj_num = self:getCardsNum("Slash", to)
