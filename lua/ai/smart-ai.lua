@@ -919,8 +919,7 @@ function SmartAI:slashIsEffective(slash, to)
 		elseif armor:objectName() == "vine" then
 			return slash:inherits("NatureSlash") or self.player:hasWeapon("fan")
 		elseif armor:objectName() == "gold_armor" then
-			if self.player:getWeapon() then return false
-			else return not slash:inherits("NatureSlash") end
+			return not self.player:getWeapon() and not slash:inherits("NatureSlash")
 		end
 	end
 
@@ -3627,9 +3626,6 @@ function SmartAI:getAoeValueTo(card, to , from)
 		if to:getHp() > 1 or (self:getCardsNum("Peach", to) + self:getCardsNum("Analeptic", to) > 0) then
 			if to:hasSkill("yiji") or to:hasSkill("jianxiong") then
 				value = value + 20
-			end
-			if to:hasSkill("jieming") then
-				value = value - self:getJiemingChaofeng(to) * 3
 			end
 			if to:hasSkill("heidian") or to:hasSkill("huanshu") or to:hasSkill("cuju") then
 				if not self:isFriend(from, to) then

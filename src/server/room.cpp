@@ -588,10 +588,10 @@ bool Room::isCanceled(const CardEffectStruct &effect){
 }
 
 bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive){
-    QString trick_name = trick->objectName();
     const Card *last_trick = getTag("LastTrick").value<CardStar>();
     if(!last_trick)
         last_trick = trick;
+    QString trick_name = last_trick->objectName();
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
         if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
