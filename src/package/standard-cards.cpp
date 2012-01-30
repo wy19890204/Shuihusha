@@ -239,12 +239,14 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(effect.to->hasSkill("kongcheng") && effect.to->isKongcheng())
+        if(!player->canSlash(effect.to, false))
+            return false;
+        if(player->hasFlag("triggered"))
             return false;
 
         Room *room = player->getRoom();
-        const Card *card = room->askForCard(player, "slash", "blade-slash");
-        if(card && !player->hasFlag("triggered")){
+        CardStar card = room->askForCard(player, "slash", "blade-slash");
+        if(card){
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
                 room->setPlayerFlag(player, "-drank");
@@ -363,8 +365,10 @@ public:
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
         Room *room = player->getRoom();
+        if(player->hasFlag("triggered"))
+            return false;
         CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName());
-        if(card && !player->hasFlag("triggered")){
+        if(card){
             QList<int> card_ids = card->getSubcards();
             foreach(int card_id, card_ids){
                 LogMessage log;

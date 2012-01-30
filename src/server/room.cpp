@@ -249,11 +249,6 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
     thread->trigger(PreDeath, victim);
 
     victim->setAlive(false);
-    broadcastProperty(victim, "alive");
-
-    broadcastProperty(victim, "role");
-    broadcastInvoke("killPlayer", victim->objectName());
-
 
     int index = alive_players.indexOf(victim);
     int i;

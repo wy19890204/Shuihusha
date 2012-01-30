@@ -396,20 +396,6 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
             if(card->inherits("EquipCard") || card->inherits("Nullification"))
                 return true;
         }
-    }else if(hasSkill("guhuo")){
-        return !isKongcheng();
-    }else if(hasSkill("longhun")){
-        int n = qMax(1, getHp());
-        int count = 0;
-        foreach(const Card *card, handcards + getEquips()){
-            if(card->objectName() == "nullification")
-                return true;
-
-            if(card->getSuit() == Card::Spade)
-                count ++;
-        }
-
-        return count >= n;
     }else{
         foreach(const Card *card, handcards){
             if(include_counterplot && card->inherits("Nullification"))
