@@ -367,9 +367,7 @@ public:
     }
 
     static int GetCard(ServerPlayer *from, ServerPlayer *to){
-        int first = !to->hasEquip()?
-                    to->getRandomHandCardId():
-                    from->getRoom()->askForCardChosen(from, to, "he", "lihun");
+        int first = from->getRoom()->askForCardChosen(from, to, "he", "lihun");
         from->obtainCard(Sanguosha->getCard(first));
         return first;
     }

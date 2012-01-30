@@ -491,8 +491,7 @@ public:
         if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
             && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
-            int card_id = !damage.to->hasEquip() ? damage.to->getRandomHandCardId() :
-                          room->askForCardChosen(damage.from, damage.to, "he", objectName());
+            int card_id = room->askForCardChosen(damage.from, damage.to, "he", objectName());
             RecoverStruct re;
             re.card = Sanguosha->getCard(card_id);
             re.who = player;
@@ -1135,8 +1134,7 @@ public:
 
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), 1);
-                int card_id = !damage.to->hasEquip() ? damage.to->getRandomHandCardId() :
-                              room->askForCardChosen(hu3niang, damage.to, "he", objectName());
+                int card_id = room->askForCardChosen(hu3niang, damage.to, "he", objectName());
                 room->throwCard(card_id);
             }
             else{

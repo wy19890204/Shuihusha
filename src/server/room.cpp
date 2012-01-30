@@ -658,8 +658,10 @@ trust:
 }
 
 int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason){
-    if(flags == "h" && !who->hasFlag("dongchaee"))
-        return who->getRandomHandCardId();
+    if(!who->hasFlag("dongchaee")){
+        if(flags == "h" || (flags == "he" && !who->hasEquip()))
+            return who->getRandomHandCardId();
+    }
 
     int card_id;
 

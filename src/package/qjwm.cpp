@@ -415,8 +415,7 @@ public:
                 return;
             int i = 0;
             for(; i < lstn; i++){
-                int card_id = !damage.from->hasEquip() ? damage.from->getRandomHandCardId() :
-                              room->askForCardChosen(yan, damage.from, "he", objectName());
+                int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
                 room->throwCard(card_id);
                 if(damage.from->isNude())
                     break;
