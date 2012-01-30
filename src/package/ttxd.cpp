@@ -491,7 +491,7 @@ public:
         if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
             && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
             Room *room = player->getRoom();
-            int card_id = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
+            int card_id = !damage.to->hasEquip() ? damage.to->getRandomHandCardId() :
                           room->askForCardChosen(damage.from, damage.to, "he", objectName());
             RecoverStruct re;
             re.card = Sanguosha->getCard(card_id);
@@ -750,7 +750,7 @@ YixingCard::YixingCard(){
 }
 
 bool YixingCard::targetFilter(const QList<const Player *> &targets, const Player *to, const Player *Self) const{
-    return targets.isEmpty() && !to->getEquips().isEmpty();
+    return targets.isEmpty() && to->hasEquip();
 }
 
 void YixingCard::onEffect(const CardEffectStruct &effect) const{
@@ -800,7 +800,7 @@ public:
         player->tag["Judge"] = data;
         QList<ServerPlayer *> targets;
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
-            if(!tmp->getEquips().isEmpty())
+            if(tmp->hasEquip())
                 targets << tmp;
         }
         if(targets.isEmpty())
@@ -1135,7 +1135,7 @@ public:
 
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), 1);
-                int card_id = damage.to->getEquips().isEmpty() ? damage.to->getRandomHandCardId() :
+                int card_id = !damage.to->hasEquip() ? damage.to->getRandomHandCardId() :
                               room->askForCardChosen(hu3niang, damage.to, "he", objectName());
                 room->throwCard(card_id);
             }

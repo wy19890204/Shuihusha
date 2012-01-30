@@ -190,7 +190,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && effect.from->getGeneral()->isMale() && effect.from->getEquips().isEmpty()
+        if(effect.from && effect.to == player && effect.from->getGeneral()->isMale() && !effect.from->hasEquip()
             && (effect.card->isNDTrick() || effect.card->inherits("Slash"))){
             LogMessage log;
             log.type = "#ComskillNullify";
@@ -1050,7 +1050,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && !player->getEquips().isEmpty()){
+        if(effect.from && effect.to == player && player->hasEquip()){
             QStringList suits;
             foreach(const Card *rmp, player->getEquips()){
                 if(!suits.contains(rmp->getSuitString()))

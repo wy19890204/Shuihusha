@@ -783,7 +783,7 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;
-    if(hasSkill("qinlong") && getEquips().isEmpty())
+    if(hasSkill("qinlong") && !hasEquip())
         return true;
 
     int slash_count = getSlashCount();
