@@ -316,7 +316,7 @@ const Card *TrustAI::askForSinglePeach(ServerPlayer *dying) {
         if(dying == self){
             if(self->hasSkill("meicha")){
                 foreach(const Card *card, cards){
-                    if(card->getSuit() == Card::Spade){
+                    if(card->getSuit() == Card::Club){
                         Analeptic *analeptic = new Analeptic(Card::Spade, card->getNumber());
                         analeptic->addSubcard(card);
                         analeptic->setSkillName("meicha");
