@@ -424,8 +424,8 @@ void Room::gameOver(const QString &winner){
 void Room::slashEffect(const SlashEffectStruct &effect){
     effect.from->addMark("SlashCount");
 
-    if(effect.from->getMark("SlashCount") > 1 && effect.from->hasSkill("paoxiao"))
-        playSkillEffect("paoxiao");
+    if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
+        playSkillEffect("qinlong");
     if(effect.from->getMark("SlashCount") > 1 && effect.from->hasFlag("SlashbySlash"))
         playSkillEffect("yinyu", 2);
 

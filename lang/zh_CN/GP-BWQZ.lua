@@ -36,6 +36,7 @@ return {
 	["#_jiaoting"] = "没面目",
 	["jiaoting"] = "焦挺",
 	["designer:jiaoting"] = "宇文天启",
+	["cv:jiaoting"] = "小虎尔赤【影音同画】",
 	["qinlong"] = "擒龙",
 	[":qinlong"] = "若你的装备区没牌：你使用【杀】时可以额外指定一名其他角色；出牌阶段可以使用任意数量的【杀】。",
 	["$qinlong1"] = "都出局吧！",
