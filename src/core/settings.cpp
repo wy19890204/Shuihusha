@@ -73,7 +73,7 @@ void Settings::init(){
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
     EnableAI = value("EnableAI", true).toBool();
-    AIDelay = value("AIDelay", 1000).toInt();
+    AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
 
 #ifdef Q_OS_WIN32

@@ -432,10 +432,13 @@ void CihuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     damage.from = source;
     damage.to = ogami;
     room->damage(damage);
-    if(!targets.isEmpty()){
+    PlayerStar target = !targets.isEmpty() ? targets.first() :
+                        (source->getGeneral()->isFemale() && source->isWounded()) ?
+                        source : NULL;
+    if(target){
         RecoverStruct recover;
         recover.who = source;
-        room->recover(targets.first(), recover);
+        room->recover(target, recover);
     }
 }
 
