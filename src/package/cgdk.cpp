@@ -220,7 +220,7 @@ public:
             int old = player->getMark("Cit");
             if(old - player->getHandcardNum() >= 2 &&
                yanglin->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
-                //room->showAllCards(player, yanglin);
+                room->playSkillEffect(objectName());
                 QList<int> card_ids = player->handCards();
                 room->fillAG(card_ids, yanglin);
                 int to_move = room->askForAG(yanglin, card_ids, true, objectName());

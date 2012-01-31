@@ -363,6 +363,7 @@ public:
         QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
         CardStar card = room->askForCard(player, pattern, prompt, data);
         if(card){
+            room->playSkillEffect(objectName());
             room->slashResult(effect, NULL);
             ServerPlayer *target = room->askForPlayerChosen(player, room->getNextandPrevious(effect.to), objectName());
             DamageStruct damage;
