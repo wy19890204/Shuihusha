@@ -158,7 +158,7 @@ function SmartAI:initialize(player)
 		--self.room:output("initialized"..self.player:objectName()..self.role)
 		sgs.ai_loyalty[self.player:objectName()] = 0
 	end
-	if self.player:isLord() and not sgs.GetConfig("EnableHegemony", false) then
+	if self.player:isLord() then
 		sgs.ai_loyalty[self.player:objectName()] = 160
 		sgs.ai_explicit[self.player:objectName()] = "loyalist"
 		if (sgs.ai_chaofeng[self.player:getGeneralName()] or 0) < 3 then
@@ -1141,7 +1141,6 @@ function SmartAI:slashProhibit(card,enemy)
 		card = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	end
 
-	if self:isWeak() and self:hasSkills("duanchang|huilei", enemy) then return true end
 	if self:isFriend(enemy) then
 		if card:inherits("FireSlash") or self.player:hasWeapon("fan") then
 			if self:isEquip("Vine", enemy) then return true end
@@ -1283,23 +1282,8 @@ function SmartAI:useBasicCard(card, use, no_distance)
 							self:useEquipCard(self:getCard("KylinBow") ,use)
 							if use.card then return end
 						end
-						if enemy:isChained() and #(self:getChainedFriends()) < #(self:getChainedEnemies()) and not use.card then
-							if self:isEquip("Crossbow") and card:inherits("NatureSlash") then
-								local slashes = self:getCards("Slash")
-								for _, slash in ipairs(slashes) do
-									if not slash:inherits("NatureSlash") and self:slashIsEffective(slash, enemy)
-										and not self:slashProhibit(slash, enemy) then
-										usecard = slash
-										break
-									end
-								end
-							elseif not card:inherits("NatureSlash") then
-								local slash = self:getCard("NatureSlash")
-								if slash and self:slashIsEffective(slash, enemy) and not self:slashProhibit(slash, enemy) then usecard = slash end
-							end
-						end
 					end
-					use.card = use.card or usecard
+					use.card = card
 					if use.to then use.to:append(enemy) end
 					target_count = target_count+1
 					if self.slash_targets <= target_count then return end
