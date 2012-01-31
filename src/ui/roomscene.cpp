@@ -1078,7 +1078,19 @@ void RoomScene::moveCard(const CardMoveStructForClient &move){
     if(card_item->scene() == NULL)
         addItem(card_item);
 
-    putCardItem(dest, dest_place, card_item);
+    if(src != NULL && src_place != Player::Judging)
+    {
+        QString from_general;
+        from_general= src->getGeneralName();
+        from_general = Sanguosha->translate(from_general);
+        putCardItem(dest, dest_place, card_item, from_general);
+    }
+    else{
+        if(src_place == Player::DiscardedPile || dest_place == Player::Hand){
+            card_item->deleteCardDesc();
+        }
+        putCardItem(dest, dest_place, card_item);
+    }
 
     QString card_str = QString::number(card_id);
     if(src && dest){
@@ -1119,9 +1131,11 @@ void RoomScene::moveCard(const CardMoveStructForClient &move){
     }
 }
 
-void RoomScene::putCardItem(const ClientPlayer *dest, Player::Place dest_place, CardItem *card_item){
+void RoomScene::putCardItem(const ClientPlayer *dest, Player::Place dest_place, CardItem *card_item, QString show_name){
     if(dest == NULL){
         if(dest_place == Player::DiscardedPile){
+			if(!show_name.isEmpty())
+                card_item->writeCardDesc(show_name);
             card_item->setHomePos(DiscardedPos);
             card_item->goBack();
             card_item->setEnabled(true);

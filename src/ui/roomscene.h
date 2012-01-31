@@ -219,7 +219,7 @@ private:
     KOFOrderBox *enemy_box, *self_box;
 
     CardItem *takeCardItem(ClientPlayer *src, Player::Place src_place, int card_id);
-    void putCardItem(const ClientPlayer *dest, Player::Place dest_place, CardItem *card_item);
+    void putCardItem(const ClientPlayer *dest, Player::Place dest_place, CardItem *card_item, QString show_name = "");
     void useCard(const Card *card);
     void fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players);
     void chooseSkillButton();
@@ -230,7 +230,7 @@ private:
     void selectTarget(int order, bool multiple);
     void selectNextTarget(bool multiple);
     void unselectAllTargets(const QGraphicsItem *except = NULL);
-    void updateTargetsEnablity(const Card *card);
+    void updateTargetsEnablity(const Card *card = NULL);
 
     void callViewAsSkill();
     void cancelViewAsSkill();
