@@ -310,6 +310,7 @@ public:
         }
         if(caninvoke && room->askForSkillInvoke(zou, objectName(), data)){
             zou->drawCards(2);
+            room->playSkillEffect(objectName());
             QList<int> card_ids = zou->handCards().mid(zou->getHandcardNum() - 2);
             room->fillAG(card_ids, zou);
             int card_id = room->askForAG(zou, card_ids, false, objectName());
