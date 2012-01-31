@@ -2672,8 +2672,9 @@
         <translation>选择技能</translation>
     </message>
     <message>
-        <source>&lt;font color=&apos;white&apos;&gt;------- Game Start --------&lt;/font&gt;</source>
-        <translation type="obsolete">&lt;font color=&apos;white&apos;&gt;------- 游戏开始 --------&lt;/font&gt;</translation>
+        <location filename="src/ui/roomscene.cpp" line="2956"/>
+        <source>%1&apos;s judge</source>
+        <translation>%1的判定牌</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2870"/>

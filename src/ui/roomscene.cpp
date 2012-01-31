@@ -2730,6 +2730,9 @@ void RoomScene::showJudgeResult(const QString &who, const QString &result){
         const ClientPlayer *player = ClientInstance->getPlayer(who);
 
         special_card->showAvatar(player->getGeneral());
+        QString desc = QString(tr("%1's judge")).arg(Sanguosha->translate(player->getGeneralName()));
+        special_card->writeCardDesc(desc);
+
         special_card->setFrame(result);
     }
 }
