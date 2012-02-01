@@ -121,6 +121,8 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
         for(int i = 0; i < sources.length(); i++){
             if(skill->objectName() == "yinyu" && i > 4) // wake skills
                 break;
+            if((skill->objectName() == "butian" || skill->objectName() == "qimen") && i > 1)
+                break;
             QString source = wake_index == 0 ? sources.at(i) : sources.at(wake_index - 1);
             if(!rx.exactMatch(source))
                 continue;
@@ -128,7 +130,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
             QString button_text = skill_name;
             if(sources.length() != 1){
                 if(wake_index > 0)
-                    button_text.append(QString(" [Wake] (%1)").arg(wake_index));
+                    button_text.append(tr(" (%1) [Wake]").arg(wake_index));
                 else
                     button_text.append(QString(" (%1)").arg(i+1));
             }
@@ -192,7 +194,11 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     }
     if(general_name == "fanrui"){
         wake_skill = Sanguosha->getSkill("butian");
-        addLines(wake_skill, 2);
+        addLines(wake_skill, 3);
+        addLines(wake_skill, 4);
+        wake_skill = Sanguosha->getSkill("qimen");
+        addLines(wake_skill, 3);
+        addLines(wake_skill, 4);
     }
 
     QString last_word = Sanguosha->translate("~" + general->objectName());

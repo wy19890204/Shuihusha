@@ -1357,6 +1357,11 @@
         <translation>女性</translation>
     </message>
     <message>
+        <location filename="src/dialog/generaloverview.cpp" line="133"/>
+        <source> (%1) [Wake]</source>
+        <translation> (%1) [觉醒]</translation>
+    </message>
+    <message>
         <location filename="src/dialog/generaloverview.cpp" line="151"/>
         <source>Copy lines</source>
         <translation>复制台词</translation>

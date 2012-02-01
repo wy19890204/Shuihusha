@@ -621,56 +621,65 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
         room->useCard(use);
     }
     else{
-        room->attachSkillToPlayer(effect.from, "eyanslash");
-        room->setPlayerFlag(target, "EyanTarget");
+        room->setPlayerFlag(effect.from, "Eyan_success");
+        effect.from->tag["EyanTarget"] = QVariant::fromValue(target);
     }
 }
 
-class Eyan: public ZeroCardViewAsSkill{
+EyanSlashCard::EyanSlashCard(){
+    target_fixed = true;
+}
+
+void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *target = card_use.from->tag["EyanTarget"].value<PlayerStar>();
+    if(target == NULL || target->isDead())
+        return;
+
+    if(!card_use.from->canSlash(target, false))
+        return;
+
+    const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash");
+    if(slash){
+        CardUseStruct use;
+        use.card = slash;
+        use.from = card_use.from;
+        use.to << target;
+        room->useCard(use);
+    }
+}
+
+class EyanViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    Eyan():ZeroCardViewAsSkill("eyan"){
+    EyanViewAsSkill():ZeroCardViewAsSkill("eyan"){
+
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("EyanCard");
+        return ! player->hasUsed("EyanCard") || player->hasFlag("Eyan_success");
     }
 
     virtual const Card *viewAs() const{
-        return new EyanCard;
+        if(!Self->hasUsed("EyanCard")){
+            return new EyanCard;
+        }else if(Self->hasFlag("Eyan_success")){
+            return new EyanSlashCard;
+        }else
+            return NULL;
     }
 };
 
-EyanSlashCard::EyanSlashCard(){
-}
-
-bool EyanSlashCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    return to_select->hasFlag("EyanTarget");
-}
-
-void EyanSlashCard::onEffect(const CardEffectStruct &effect) const{
-    CardUseStruct use;
-    use.from = effect.from;
-    use.to << effect.to;
-    use.card = Sanguosha->getCard(this->getSubcards().first());
-    effect.from->getRoom()->useCard(use, false);
-}
-
-class EyanSlash: public OneCardViewAsSkill{
+class Eyan: public TriggerSkill{
 public:
-    EyanSlash():OneCardViewAsSkill("eyanslash"){
-
+    Eyan():TriggerSkill("eyan"){
+        view_as_skill = new EyanViewAsSkill;
+        events << PhaseChange;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("Slash");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        EyanSlashCard *card = new EyanSlashCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
+    virtual bool trigger(TriggerEvent event, ServerPlayer *gaoshun, QVariant &data) const{
+        ServerPlayer *target = gaoshun->tag["EyanTarget"].value<PlayerStar>();
+        if(gaoshun->getPhase() == Player::Finish && target)
+            gaoshun->tag.remove("EyanTarget");
+        return false;
     }
 };
 
@@ -1115,7 +1124,6 @@ QLFDPackage::QLFDPackage()
 
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
-    skills << new EyanSlash;
     baixiuying->addSkill(new Zhangshi);
 
     General *liruilan = new General(this, "liruilan", "min", 3, false);
@@ -1135,6 +1143,7 @@ QLFDPackage::QLFDPackage()
     jiashi->addSkill(new Zhuying);
 
     General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
+    ximenqing->addSkill("#losthp");
     ximenqing->addSkill(new Caiquan);
 
     addMetaObject<YushuiCard>();

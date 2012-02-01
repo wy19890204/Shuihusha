@@ -5,11 +5,14 @@ return {
 
 	["#_dingdesun"] = "中箭虎",
 	["dingdesun"] = "丁得孙",
+	["cv:dingdesun"] = "东方胤弘【夜澜锦音】",
 	["coder:dingdesun"] = "凌天翼",
 	["beizhan"] = "备战",
 	[":beizhan"] = "分发起始手牌时，共发你六张牌作为手牌。",
 	["fushang"] = "负伤",
 	[":fushang"] = "<b>锁定技</b>，你每受到一次伤害，若你的体力上限大于3，你须减1点体力上限。",
+	["$fushang1"] = "小伤而已！",
+	["$fushang2"] = "沙场征战，难免负伤。",
 
 	["#_houjian"] = "通臂猿",
 	["houjian"] = "侯健",
@@ -40,7 +43,7 @@ return {
 	["qinlong"] = "擒龙",
 	[":qinlong"] = "若你的装备区没牌：你使用【杀】时可以额外指定一名其他角色；出牌阶段可以使用任意数量的【杀】。",
 	["$qinlong1"] = "都出局吧！",
-	["$qinlong2"] = "三十六路擒龙手！",
+	["$qinlong2"] = "看我三十六路擒龙手！",
 
 	["#_shantinggui"] = "圣水将",
 	["shantinggui"] = "单廷珪",

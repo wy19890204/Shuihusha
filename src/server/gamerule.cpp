@@ -85,7 +85,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
         }
 
     case Player::Discard:{
-            if(player->hasSkill("linse"))
+            if(player->hasSkill("linse") &&
+               player->getHandcardNum() > player->getHp())
                 room->playSkillEffect("linse");
             int discard_num = player->getHandcardNum() - player->getMaxCards();
             if(player->hasFlag("jilei")){
