@@ -358,7 +358,7 @@ InterChangePackage::InterChangePackage()
 
     General *tongmeng = new General(this, "tongmeng", "min", 3);
     tongmeng->addSkill(new Shuilao);
-    tongmeng->addSkill("shuizhan");
+    tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *hongxin = new General(this, "hongxin", "guan");
     hongxin->addSkill(new Fangsheng);

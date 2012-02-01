@@ -32,7 +32,7 @@ return {
 
 	["#_luzhishen"] = "花和尚",
 	["luzhishen"] = "鲁智深",
-	["cv:luzhishen"] = "声声melody猎狐",
+	["cv:luzhishen"] = "流岚【裔美声社】",
 	["liba"] = "力拔",
 	[":liba"] = "出牌阶段，当你使用【杀】对目标角色造成伤害时，你可以展示该角色的一张手牌：若此牌不为基本牌，则你弃掉这张牌且该伤害+1。",
 	["$ForceDiscardCard"] = "%from 弃掉了 %to 的 %card",
