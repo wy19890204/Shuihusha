@@ -130,7 +130,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
             QString button_text = skill_name;
             if(sources.length() != 1){
                 if(wake_index > 0)
-                    button_text.append(QString(" (%1) [Wake]").arg(wake_index));
+                    button_text.append(tr(" (%1) [Wake]").arg(wake_index));
                 else
                     button_text.append(QString(" (%1)").arg(i+1));
             }

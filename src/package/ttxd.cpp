@@ -939,7 +939,7 @@ public:
                 QString pattern = QString("..%1").arg(suit_str.at(0).toUpper());
                 QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
                 if(room->askForCard(dragon, pattern, prompt)){
-                    if(source->getMark("wudao") == 0)
+                    if(dragon->getMark("wudao") == 0)
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
                     else
                         room->playSkillEffect(objectName(), qrand() % 2 + 3);
