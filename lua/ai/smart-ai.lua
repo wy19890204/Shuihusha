@@ -1198,9 +1198,9 @@ function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = 2
 	end
-	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
-		self.slash_targets = 2
-	end
+--	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
+--		self.slash_targets = 2
+--	end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()

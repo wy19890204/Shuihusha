@@ -52,7 +52,14 @@ public:
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
-        if(!from->isChained() && to->isChained())
+        bool mengkang = from->hasSkill(objectName());
+        foreach(const Player *player, from->getSiblings()){
+            if(player->isAlive() && player->hasSkill(objectName())){
+                mengkang = true;
+                break;
+            }
+        }
+        if(mengkang && !from->isChained() && to->isChained())
             return +1;
         else
             return 0;
