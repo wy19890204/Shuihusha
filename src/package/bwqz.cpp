@@ -17,12 +17,13 @@ public:
     virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
         if(hedgehog->getMaxHP() > 3){
             LogMessage log;
+            Room *room = hedgehog->getRoom();
             log.type = "#TriggerSkill";
             log.from = hedgehog;
             log.arg = objectName();
-            hedgehog->getRoom()->sendLog(log);
-
-            hedgehog->getRoom()->loseMaxHp(hedgehog);
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            room->loseMaxHp(hedgehog);
         }
     }
 };

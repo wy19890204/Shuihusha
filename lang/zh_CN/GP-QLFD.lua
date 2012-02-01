@@ -169,6 +169,7 @@ return {
 	["ximenqing"] = "西门庆",
 
 	["caiquan"] = "财权",
+	[":caiquan"] = "绝密技能，效果不详。",
 
 -- last words
 	["~panqiaoyun"] = "一了百了～",
