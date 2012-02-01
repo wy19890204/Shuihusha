@@ -107,7 +107,7 @@ GeneralOverview::~GeneralOverview()
     delete ui;
 }
 
-void GeneralOverview::addLines(const Skill *skill){
+void GeneralOverview::addLines(const Skill *skill, int wake_index){
     QString skill_name = Sanguosha->translate(skill->objectName());
     QStringList sources = skill->getSources();
 
@@ -118,15 +118,19 @@ void GeneralOverview::addLines(const Skill *skill){
         button_layout->addWidget(button);
     }else{
         QRegExp rx(".+/(\\w+\\d?).ogg");
-        int i;
-        for(i=0; i<sources.length(); i++){
-            QString source = sources.at(i);
+        for(int i = 0; i < sources.length(); i++){
+            if(skill->objectName() == "yinyu" && i > 4) // wake skills
+                break;
+            QString source = wake_index == 0 ? sources.at(i) : sources.at(wake_index - 1);
             if(!rx.exactMatch(source))
                 continue;
 
             QString button_text = skill_name;
             if(sources.length() != 1){
-                button_text.append(QString(" (%1)").arg(i+1));
+                if(wake_index > 0)
+                    button_text.append(QString(" [Wake] (%1)").arg(wake_index));
+                else
+                    button_text.append(QString(" (%1)").arg(i+1));
             }
 
             QCommandLinkButton *button = new QCommandLinkButton(button_text);
@@ -140,6 +144,8 @@ void GeneralOverview::addLines(const Skill *skill){
             connect(button, SIGNAL(clicked()), this, SLOT(playEffect()));
 
             addCopyAction(button);
+            if(wake_index != 0)
+                break;
         }
     }
 }
@@ -175,6 +181,18 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     foreach(const Skill *skill, skills){
         addLines(skill);
+    }
+
+    //QGroupBox *wake = new QGroupBox(tr("Wake Skills"));
+    const Skill *wake_skill;
+    if(general_name == "qiongying"){
+        wake_skill = Sanguosha->getSkill("yinyu");
+        for(int i = 6; i <= 10; i ++)
+            addLines(wake_skill, i);
+    }
+    if(general_name == "fanrui"){
+        wake_skill = Sanguosha->getSkill("butian");
+        addLines(wake_skill, 2);
     }
 
     QString last_word = Sanguosha->translate("~" + general->objectName());

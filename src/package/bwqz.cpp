@@ -1013,6 +1013,8 @@ BWQZPackage::BWQZPackage()
 
     tongguan = new General(this, "tongguanf", "yan", 4, false, true);
     tongguan->addSkill("aoxiang");
+    tongguan->addSkill("zhengfa");
+    tongguan->addSkill("jiaomie");
 
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);

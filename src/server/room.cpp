@@ -426,8 +426,10 @@ void Room::slashEffect(const SlashEffectStruct &effect){
 
     if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
         playSkillEffect("qinlong");
-    if(effect.from->getMark("SlashCount") > 1 && effect.from->hasFlag("SlashbySlash"))
-        playSkillEffect("yinyu", 2);
+    if(effect.from->getMark("SlashCount") > 1 && effect.from->hasFlag("SlashbySlash")){
+        int index = effect.from->getMark("mengshi") > 0 ? 7: 2;
+        playSkillEffect("yinyu", index);
+    }
 
     QVariant data = QVariant::fromValue(effect);
 

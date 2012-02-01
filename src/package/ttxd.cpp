@@ -314,9 +314,11 @@ public:
 
                 LogMessage log;
                 log.from = qing;
+                int index = 0;
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
-                        room->playSkillEffect(objectName(), 5);
+                        index = qing->getMark("mengshi") > 0 ? 10: 5;
+                        room->playSkillEffect(objectName(), index);
                         room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
@@ -328,13 +330,15 @@ public:
                         break;
                     }
                 case Card::Spade:{
-                        room->playSkillEffect(objectName(), 1);
+                        index = qing->getMark("mengshi") > 0 ? 6: 1;
+                        room->playSkillEffect(objectName(), index);
                         room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
                     }
                 case Card::Club:{
-                        room->playSkillEffect(objectName(), 4);
+                        index = qing->getMark("mengshi") > 0 ? 9: 4;
+                        room->playSkillEffect(objectName(), index);
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                             tmp->addMark("qinggang");
                         log.type = "#Yinyu8";

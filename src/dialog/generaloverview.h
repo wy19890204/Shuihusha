@@ -26,7 +26,7 @@ private:
     QVBoxLayout *button_layout;
 
     void resetButtons();
-    void addLines(const Skill *skill);
+    void addLines(const Skill *skill, int wake_index = 0);
     void addCopyAction(QCommandLinkButton *button);
 
 private slots:

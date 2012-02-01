@@ -19,6 +19,7 @@ public:
 };
 
 YuanpeiCard::YuanpeiCard(){
+    mute = true;
 }
 
 bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -30,6 +31,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+    room->playSkillEffect("yuanpei", 1);
     const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName());
     if(card){
         effect.from->obtainCard(card);
@@ -75,7 +77,7 @@ public:
         const Card *card = card_item->getCard();
         Card *slash = new Slash(card->getSuit(), card->getNumber());
         slash->addSubcard(card->getId());
-        slash->setSkillName(objectName());
+        slash->setSkillName("yuanpei");
         return slash;
     }
 };
@@ -996,6 +998,7 @@ YBYTPackage::YBYTPackage()
     patterns[".Yuanp"] = new SWPattern;
     qiongying->addSkill(new Mengshi);
     skills << new YuanpeiSlash;
+    related_skills.insertMulti("mengshi", "yinyu");
 
     General *xuning = new General(this, "xuning", "jiang");
     xuning->addSkill(new Goulian);
