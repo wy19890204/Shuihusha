@@ -148,7 +148,7 @@ local tt = {
 
 	["#_gongsunsheng"] = "入云龙",
 	["gongsunsheng"] = "公孙胜",
-	["cv:gongsunsheng"] = "声声melody猎狐",
+	["cv:gongsunsheng"] = "流岚【裔美声社】",
 	["yixing"] = "移星",
 	[":yixing"] = "在任意角色的判定牌生效前，你可以用任一角色装备区里的一张牌替换之（替换后，该角色将获得该判定牌）。",
 	["@yixing"] = "你可以发动【移星】技能来修改 %src 的 %arg 判定",
