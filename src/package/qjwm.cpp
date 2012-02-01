@@ -844,10 +844,14 @@ public:
 
 ButianCard::ButianCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void ButianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-
+    if(source->getMark("wudao") == 0)
+        room->playSkillEffect("butian", qrand() % 2 + 1);
+    else
+        room->playSkillEffect("butian", qrand() % 2 + 3);
 }
 
 class ButianViewAsSkill:public OneCardViewAsSkill{
