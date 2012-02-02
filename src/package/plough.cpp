@@ -95,7 +95,7 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
         dmae.card = this;
         dmae.from = effect.from;
         if(effect.to->hasSkill("huoshui")){
-            //room->playSkillEffect("huoshui", 3);
+            room->broadcastInvoke("playAudio", "scream");
             LogMessage ogg;
             ogg.type = "#Huoshui";
             ogg.from = effect.to;

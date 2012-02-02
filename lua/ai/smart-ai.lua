@@ -1198,9 +1198,9 @@ function SmartAI:useBasicCard(card, use, no_distance)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = 2
 	end
-	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
-		self.slash_targets = 2
-	end
+--	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
+--		self.slash_targets = 2
+--	end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()
@@ -2916,6 +2916,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		return "."
 	elseif parsedPrompt[1] == "@chiyuan" then
 		local rv = data:toRecover()
+		if rv.card:inherits("SilverLion") then return "." -- will crash
 		local cards = self.player:getCards("he")
 		cards=sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)

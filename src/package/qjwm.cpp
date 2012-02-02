@@ -847,11 +847,7 @@ ButianCard::ButianCard(){
     mute = true;
 }
 
-void ButianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    if(source->getMark("wudao") == 0)
-        room->playSkillEffect("butian", qrand() % 2 + 1);
-    else
-        room->playSkillEffect("butian", qrand() % 2 + 3);
+void ButianCard::use(Room *, ServerPlayer *, const QList<ServerPlayer *> &) const{
 }
 
 class ButianViewAsSkill:public OneCardViewAsSkill{
@@ -903,6 +899,11 @@ public:
         const Card *card = room->askForCard(player, "@butian", prompt, data);
 
         if(card){
+            int index = qrand() % 2 + 1;
+            if(player->getMark("wudao") == 0)
+                room->playSkillEffect(objectName(), index);
+            else
+                room->playSkillEffect(objectName(), index + 2);
             room->throwCard(judge->card);
 
             QList<int> card_ids = room->getNCards(3);
