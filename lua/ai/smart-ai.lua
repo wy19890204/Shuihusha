@@ -2916,7 +2916,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		return "."
 	elseif parsedPrompt[1] == "@chiyuan" then
 		local rv = data:toRecover()
-		if rv.card:inherits("SilverLion") then return "." -- will crash
+		if rv.card:inherits("SilverLion") then return "." end -- will crash
 		local cards = self.player:getCards("he")
 		cards=sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)

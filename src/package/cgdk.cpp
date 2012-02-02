@@ -515,8 +515,10 @@ public:
                     break;
                 }
             }
-            if(!hassamezi && writer->askForSkillInvoke(objectName()))
+            if(!hassamezi && writer->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
                 writer->addToPile("zi", use.card->getEffectiveId());
+            }
         }
         return false;
     }
