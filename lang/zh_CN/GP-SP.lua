@@ -72,7 +72,7 @@ return {
 	["$xiaduo2"] = "汝可取得投名状？",
 	["~wanglun"] = "可恨落此下场！",
 
-	["#_ximenjinge"] = "流光飞渡",
+	["#_ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
 	["designer:ximenjinge"] = "英魂",
 	["youxia"] = "游侠",
