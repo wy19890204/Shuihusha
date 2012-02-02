@@ -462,6 +462,7 @@ public:
         if((reason->inherits("Slash") || reason->inherits("Duel"))
             && turtle->getWeapon() && turtle->getArmor()
             && turtle->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
             LogMessage log;
             log.type = "#ManliBuff";
             log.from = turtle;
