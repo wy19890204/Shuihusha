@@ -333,7 +333,7 @@ public:
         if(conan->isDead())
             return false;
         if(move->from_place == Player::Hand){
-            //room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
             LogMessage log;
             log.type = "#TriggerSkill";
             log.from = conan;
@@ -370,6 +370,7 @@ public:
             if(wanglun->distanceTo(tmp) == 1)
                 ones << tmp;
         if(!ones.isEmpty() && room->askForCard(wanglun, ".equip", "@xiaduo", data)){
+            room->playSkillEffect(objectName());
             ServerPlayer *target = room->askForPlayerChosen(wanglun, ones, objectName());
             LogMessage log;
             log.type = "#UseSkill";

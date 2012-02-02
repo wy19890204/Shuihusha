@@ -7,7 +7,7 @@ local tt = {
 	["#_songjiang"] = "及时雨",
 	["songjiang"] = "宋江",
 	["designer:songjiang"] = "烨子&凌天翼",
-	["cv:songjiang"] = "声声melody猎狐",
+	["cv:songjiang"] = "猎狐【声声melody】",
 	["coder:songjiang"] = "宇文天启、凌天翼",
 	["ganlin"] = "甘霖",
 	[":ganlin"] = "出牌阶段，你可以将任意数量的手牌以任意分配方式交给其他角色。若如此做，你可以将手牌补至X张，X为你已损失的体力值(补牌之后,将不能再次发动本技能)。",
@@ -15,8 +15,8 @@ local tt = {
 	[":juyi"] = "<font color=red><b>主公技</b></font>，其他寇势力角色可在他们各自的出牌阶段与你交换一次手牌（可拒绝）。",
 	["jui"] = "聚义换牌",
 	[":jui"] = "你可以和拥有【聚义】技能的主公交换手牌，每回合限一次",
-	["jui:agree"] = "莫和大哥客气~（同意）",
-	["jui:deny"] = "你是……细作！（拒绝）",
+	["jui:agree"] = "莫和大哥客气～（同意）",
+	["jui:deny"] = "你是～细作！（拒绝）",
 	["#Juyi"] = "%from 和 %to 交换了手牌",
 	["$ganlin1"] = "扶危济困，急人所难。",
 	["$ganlin2"] = "在下正是山东及时雨宋公明！",
@@ -25,7 +25,7 @@ local tt = {
 
 	["#_lujunyi"] = "玉麒麟",
 	["lujunyi"] = "卢俊义",
-	["cv:lujunyi"] = "声声melody猎狐",
+	["cv:lujunyi"] = "猎狐【声声melody】",
 	["baoguo"] = "报国",
 	[":baoguo"] = "每当其他角色受到伤害时，你可以弃置一张牌，将此伤害转移给你；你每受到一次伤害，可以摸X张牌，X为你已损失的体力值。",
 	["@baoguo"] = "你可以弃置一张牌发动【报国】，将 %src 受到的 %dest 点伤害转移给你",
@@ -36,7 +36,7 @@ local tt = {
 	["#_chaijin"] = "小旋风",
 	["chaijin"] = "柴进",
 	["designer:chaijin"] = "烨子&小花荣",
-	["cv:chaijin"] = "烨子",
+	["cv:chaijin"] = "烨子【剪刀剧团】",
 	["coder:chaijin"] = "roxiel、宇文天启",
 	["danshu"] = "丹书",
 	[":danshu"] = "<b>锁定技</b>，当其他角色使用【杀】指定你为目标时，须额外弃置X张手牌，X为你已损失的体力值，否则该【杀】对你无效。",
@@ -54,7 +54,7 @@ local tt = {
 
 	["#_zhangqing"] = "没羽箭",
 	["zhangqing"] = "张清",
-	["cv:zhangqing"] = "烨子",
+	["cv:zhangqing"] = "烨子【剪刀剧团】",
 	["yinyu"] = "饮羽",
 	[":yinyu"] = "回合开始阶段，你可以进行一次判定，获得与判定结果对应的一项技能直到回合结束：\
 	红桃：攻击范围无限；\
@@ -73,7 +73,7 @@ local tt = {
 
 	["#_yuehe"] = "铁叫子",
 	["yuehe"] = "乐和",
-	["cv:yuehe"] = "烨子",
+	["cv:yuehe"] = "烨子【剪刀剧团】",
 	["yueli"] = "乐理",
 	[":yueli"] = "若你的判定牌为基本牌，在其生效后可以获得之。",
 	["yueli:yes"] = "拿屎",
@@ -98,7 +98,7 @@ local tt = {
 
 	["#_zhoutong"] = "小霸王",
 	["zhoutong"] = "周通",
-	["cv:zhoutong"] = "烨子",
+	["cv:zhoutong"] = "烨子【剪刀剧团】",
 	["qiangqu"] = "强娶",
 	[":qiangqu"] = "当你使用【杀】对已受伤的女性角色造成伤害时，你可以防止此伤害，改为获得该角色的一张牌，然后你和她各回复1点体力。",
 	["#Qiangqu"] = "%from 硬是把 %to 拉入了洞房",
@@ -113,7 +113,7 @@ local tt = {
 
 	["#_qiaodaoqing"] = "幻魔君",
 	["qiaodaoqing"] = "乔道清",
-	["cv:qiaodaoqing"] = "烨子",
+	["cv:qiaodaoqing"] = "烨子【剪刀剧团】",
 	["huanshu"] = "幻术",
 	[":huanshu"] = "你每受到1点伤害，可以令任一其他角色连续进行两次判定：若均为红色，你对其造成2点火焰伤害；若均为黑色，你对其造成2点雷电伤害。",
 	["@huanshu"] = "请指定一个目标以便于发动【幻术】",
@@ -129,7 +129,7 @@ local tt = {
 
 	["#_andaoquan"] = "神医",
 	["andaoquan"] = "安道全",
-	["cv:andaoquan"] = "东方胤弘",
+	["cv:andaoquan"] = "东方胤弘【夜澜锦音】",
 	["jishi"] = "济世",
 	[":jishi"] = "任意角色的回合开始时，若该角色已受伤，你可以弃置一张手牌，令其回复1点体力。",
 	["@jishi"] = "%src 受伤了，你可以发动【济世】，弃置一张手牌为 %src 回复1点体力。",
@@ -183,7 +183,7 @@ local tt = {
 
 	["#_husanniang"] = "一丈青",
 	["husanniang"] = "扈三娘",
-	["cv:husanniang"] = "蒲小猫",
+	["cv:husanniang"] = "蒲小猫【夜澜锦音】",
 	["hongjin"] = "红锦",
 	[":hongjin"] = "出牌阶段，你每对男性角色造成一次伤害，可以执行下列两项中的一项：\
         1.摸一张牌；\

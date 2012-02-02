@@ -702,6 +702,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
     QVariant asked = pattern;
     if(player->hasSkill("chengfu") && player->getPhase() == Player::NotActive && asked.toString() == "slash"){
+        room->playSkillEffect("chengfu", qrand() % 2 + 3);
         LogMessage log;
         log.type = "#ChengfuEffect";
         log.from = player;
@@ -790,6 +791,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
     if(player->hasSkill("chengfu") && answer == "slash" && player->getPhase() == Player::NotActive){
+        room->playSkillEffect("chengfu", qrand() % 2 + 3);
         LogMessage log;
         log.type = "#ChengfuEffect";
         log.from = player;
