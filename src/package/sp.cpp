@@ -172,6 +172,7 @@ public:
                     kuro ++;
             }
             if(kuro > 0){
+                room->playSkillEffect(objectName());
                 DamageStruct uct;
                 uct.from = target;
                 uct.to = damage->from;

@@ -88,6 +88,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             if(player->hasSkill("linse") &&
                player->getHandcardNum() > player->getHp())
                 room->playSkillEffect("linse");
+            if(player->hasSkill("shaxue") &&
+               player->getHandcardNum() > player->getHp() && player->getHandcardNum() <= player->getMaxCards())
+                room->playSkillEffect("shaxue");
             int discard_num = player->getHandcardNum() - player->getMaxCards();
             if(player->hasFlag("jilei")){
                 QSet<const Card *> jilei_cards;
