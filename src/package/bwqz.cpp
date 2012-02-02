@@ -694,6 +694,7 @@ public:
 
         if(player->askForSkillInvoke(objectName())){
             Room *room = player->getRoom();
+            room->playSkillEffect(objectName());
             ServerPlayer *target = room->askForPlayerChosen(player, room->getAlivePlayers(), objectName());
             if(!room->askForCard(target, "jink", "@kongying:" + player->objectName())){
                 DamageStruct damage;
