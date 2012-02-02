@@ -26,21 +26,6 @@ void YushuiCard::onEffect(const CardEffectStruct &effect) const{
 
     room->recover(effect.from, recover, true);
     room->recover(effect.to, recover, true);
-/*
-    int index = -1;
-    if(effect.from->getGeneral()->isMale()){
-        if(effect.from == effect.to)
-            index = 5;
-        else if(effect.from->getHp() >= effect.to->getHp())
-            index = 3;
-        else
-            index = 4;
-    }else{
-        index = 1 + qrand() % 2;
-    }
-
-    room->playSkillEffect("Yushui", index);
-*/
     effect.from->drawCards(2);
     effect.to->drawCards(2);
     effect.from->turnOver();
@@ -98,6 +83,7 @@ public:
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data)){
             xing->loseMark("@vi");
+            room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
             LogMessage log;
             log.type = "#Zhensha";

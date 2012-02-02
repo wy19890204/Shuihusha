@@ -928,6 +928,7 @@ public:
         if(zhufu && !zhufu->isNude() && zhufu->isWounded()){
             const Card *card = room->askForCard(zhufu, "..H", "@guitai:" + effect.to->objectName(), data);
             if(card){
+                room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#Guitai";
                 log.from = zhufu;
