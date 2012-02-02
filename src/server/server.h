@@ -91,6 +91,7 @@ private:
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
     QCheckBox *basara_checkbox;
+	QCheckBox *hegemony_checkbox;
     QLabel *max_hp_label;
     QComboBox *max_hp_scheme_combobox;
     QCheckBox *announce_ip_checkbox;

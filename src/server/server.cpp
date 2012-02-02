@@ -198,6 +198,9 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     connect(second_general_checkbox, SIGNAL(toggled(bool)), banpair_button, SLOT(setEnabled(bool)));
 
+	hegemony_checkbox = new QCheckBox(tr("Enable Hegemony"));
+    hegemony_checkbox->setEnabled(false);
+
     announce_ip_checkbox = new QCheckBox(tr("Annouce my IP in WAN"));
     announce_ip_checkbox->setChecked(Config.AnnounceIP);
     announce_ip_checkbox->setEnabled(false); // not support now
@@ -226,7 +229,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addLayout(HLay(second_general_checkbox, banpair_button));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
-    layout->addWidget(basara_checkbox);
+    layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
     layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addWidget(announce_ip_checkbox);
