@@ -421,33 +421,33 @@ public:
     }
 };
 
-WeizaoCard::WeizaoCard(){
+FangzaoCard::FangzaoCard(){
     once = true;
 }
 
-bool WeizaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool FangzaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     return targets.isEmpty() && to_select != Self && !to_select->isKongcheng();
 }
 
-void WeizaoCard::onEffect(const CardEffectStruct &effect) const{
+void FangzaoCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
 
-    room->playSkillEffect("weizao", 1);
-    const Card *card = room->askForCardShow(effect.to, effect.from, "weizao");
+    room->playSkillEffect("fangzao", 1);
+    const Card *card = room->askForCardShow(effect.to, effect.from, "fangzao");
     int card_id = card->getEffectiveId();
     room->showCard(effect.to, card_id);
 
     if(card->getTypeId() == Card::Basic || card->isNDTrick()){
-        room->setPlayerMark(effect.from, "weizao", card_id);
-        room->setPlayerFlag(effect.from, "weizao");
+        room->setPlayerMark(effect.from, "fangzao", card_id);
+        room->setPlayerFlag(effect.from, "fangzao");
     }else{
-        room->setPlayerFlag(effect.from, "-weizao");
+        room->setPlayerFlag(effect.from, "-fangzao");
     }
 }
 
-class Weizao: public ViewAsSkill{
+class Fangzao: public ViewAsSkill{
 public:
-    Weizao():ViewAsSkill("weizao"){
+    Fangzao():ViewAsSkill("fangzao"){
 
     }
 
@@ -459,8 +459,8 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->hasUsed("WeizaoCard") && player->hasFlag("weizao")){
-            int card_id = player->getMark("weizao");
+        if(player->hasUsed("FangzaoCard") && player->hasFlag("fangzao")){
+            int card_id = player->getMark("fangzao");
             const Card *card = Sanguosha->getCard(card_id);
             return card->isAvailable(player);
         }else
@@ -471,11 +471,11 @@ public:
         if(player->getPhase() == Player::NotActive)
             return false;
 
-        if(!player->hasFlag("weizao"))
+        if(!player->hasFlag("fangzao"))
             return false;
 
-        if(player->hasUsed("WeizaoCard")){
-            int card_id = player->getMark("weizao");
+        if(player->hasUsed("FangzaoCard")){
+            int card_id = player->getMark("fangzao");
             const Card *card = Sanguosha->getCard(card_id);
             return pattern.contains(card->objectName());
         }else
@@ -483,21 +483,21 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasUsed("WeizaoCard") && selected.isEmpty() && Self->hasFlag("weizao")){
+        if(Self->hasUsed("FangzaoCard") && selected.isEmpty() && Self->hasFlag("Fangzao")){
             return !to_select->isEquipped();
         }else
             return false;
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->hasUsed("WeizaoCard")){
-            if(!Self->hasFlag("weizao"))
+        if(Self->hasUsed("FangzaoCard")){
+            if(!Self->hasFlag("fangzao"))
                 return false;
 
             if(cards.length() != 1)
                 return NULL;
 
-            int card_id = Self->getMark("weizao");
+            int card_id = Self->getMark("fangzao");
             const Card *card = Sanguosha->getCard(card_id);
             const Card *first = cards.first()->getFilteredCard();
 
@@ -506,22 +506,22 @@ public:
             new_card->setSkillName(objectName());
             return new_card;
         }else{
-            return new WeizaoCard;
+            return new FangzaoCard;
         }
     }
 };
 
-class WeizaoMark: public TriggerSkill{
+class FangzaoMark: public TriggerSkill{
 public:
-    WeizaoMark():TriggerSkill("#weizao_mark"){
+    FangzaoMark():TriggerSkill("#fangzao_mark"){
         events << CardUsed;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *jindajian, QVariant &data) const{
         Room *room = jindajian->getRoom();
             CardUseStruct use = data.value<CardUseStruct>();
-            if(use.card->getSkillName() == "weizao"){
-                    room->setPlayerFlag(jindajian, "-weizao");
+            if(use.card->getSkillName() == "fangzao"){
+                    room->setPlayerFlag(jindajian, "-fangzao");
         }
         return false;
     }
@@ -1011,10 +1011,10 @@ YBYTPackage::YBYTPackage()
     xiangchong->addSkill(new Xuandao);
 
     General *jindajian = new General(this, "jindajian", "min", 3);
-    jindajian->addSkill(new Weizao);
-    jindajian->addSkill(new WeizaoMark);
+    jindajian->addSkill(new Fangzao);
+    jindajian->addSkill(new FangzaoMark);
     jindajian->addSkill(new Jiangxin);
-    related_skills.insertMulti("weizao", "#weizao_mark");
+    related_skills.insertMulti("fangzao", "#fangzao_mark");
 
     General *yangchun = new General(this, "yangchun", "kou");
     yangchun->addSkill(new Shexin);
@@ -1045,7 +1045,7 @@ YBYTPackage::YBYTPackage()
     addMetaObject<GuibingCard>();
     addMetaObject<HeiwuCard>();
     addMetaObject<SinueCard>();
-    addMetaObject<WeizaoCard>();
+    addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
     addMetaObject<HunjiuCard>();
