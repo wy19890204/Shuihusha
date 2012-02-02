@@ -441,6 +441,12 @@ public:
         frequency = Compulsory;
     }
 
+    static bool isWuzuEffectCard(CardStar card){
+        return card->inherits("Slash") ||
+                card->inherits("AOE") ||
+                card->inherits("FireAttack");
+    }
+
     virtual bool trigger(TriggerEvent e, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         Room *room = player->getRoom();
@@ -459,7 +465,7 @@ public:
                     play = true;
                 }
             }
-            if(play)
+            if(play && isWuzuEffectCard(use.card))
                 room->playSkillEffect(objectName());
         }
         else{

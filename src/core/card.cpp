@@ -181,10 +181,6 @@ bool Card::isNDTrick() const{
     return getTypeId() == Trick && !inherits("DelayedTrick");
 }
 
-bool Card::isDTE() const{
-    return inherits("DelayedTrick") || getTypeId() == Equip;
-}
-
 QString Card::getEffectPath() const{
     return QString("audio/card/common/%1.ogg").arg(objectName());
 }

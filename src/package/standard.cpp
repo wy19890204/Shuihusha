@@ -513,8 +513,13 @@ public:
     UbuneVAS():OneCardViewAsSkill("ubune"){
     }
 
+    virtual bool isDTE(CardStar card) const{
+        return (card->inherits("DelayedTrick") ||
+                card->getTypeId() == Card::Equip);
+    }
+
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->isDTE();
+        return isDTE(to_select->getCard());
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
