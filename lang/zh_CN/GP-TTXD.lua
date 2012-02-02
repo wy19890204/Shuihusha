@@ -87,7 +87,7 @@ local tt = {
 
 	["#_muhong"] = "没遮拦",
 	["muhong"] = "穆弘",
-	["cv:muhong"] = "爪子",
+	["cv:muhong"] = "流岚【裔美声社】",
 	["wuzu"] = "无阻",
 	[":wuzu"] = "<b>锁定技</b>，你始终无视其他角色的防具。",
 	["$IgnoreArmor"] = "%to 装备着 %card，但 %from 貌似没有看见",
@@ -204,7 +204,7 @@ local tt = {
 	["~chaijin"] = "辞官回乡罢了～",
 	["~zhangqing"] = "一技之长，不足傍身啊！",
 	["~yuehe"] = "叫子也难吹奏了。",
-	["~muhong"] = "弟，兄先去矣。",
+	["~muhong"] = "弟，兄先去矣！",
 	["~zhoutong"] = "虽有霸王相，奈无霸王功啊！",
 	["~qiaodaoqing"] = "这，就是五雷轰顶的滋味吗？",
 	["~andaoquan"] = "救人易，救己难！",
