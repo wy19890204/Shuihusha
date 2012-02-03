@@ -1655,7 +1655,7 @@ void Room::chooseGenerals(){
     ServerPlayer *the_lord = getLord();
     QString general = askForGeneral(the_lord, lord_list);
     the_lord->setGeneralName(general);
-    if(!Config.EnableBasara)broadcastProperty(the_lord, "general", general);
+    broadcastProperty(the_lord, "general", general);
 
     if(Config.EnableSame){
         foreach(ServerPlayer *p, players){
@@ -1682,18 +1682,6 @@ void Room::chooseGenerals(){
             askForGeneralAsync(player);
         }
         sem->acquire(to_assign.length());
-    }
-
-
-    if(Config.EnableBasara)
-    {
-        foreach(ServerPlayer *player, players)
-        {
-            QStringList names;
-            if(player->getGeneral())names.append(player->getGeneralName());
-            if(player->getGeneral2() && Config.Enable2ndGeneral)names.append(player->getGeneral2Name());
-            this->setTag(player->objectName(),QVariant::fromValue(names));
-        }
     }
 }
 
@@ -2230,20 +2218,20 @@ void Room::startGame(){
         if(mode == "06_3v3" || mode == "02_1v1")
             start_index = 0;
 
-        if(!Config.EnableBasara)for(i = start_index; i < players.count(); i++){
+        for(i = start_index; i < players.count(); i++){
             broadcastProperty(players.at(i), "general");
         }
 
         if(mode == "02_1v1"){
             foreach(ServerPlayer *player, players){
-                broadcastInvoke("revealGeneral",
-                                QString("%1:%2").arg(player->objectName()).arg(player->getGeneralName()),
-                                player);
+               broadcastInvoke("revealGeneral",
+                               QString("%1:%2").arg(player->objectName()).arg(player->getGeneralName()),
+                               player);
             }
         }
     }
 
-    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3" && mode != "04_1v3" && !Config.EnableBasara && mode != "custom"){
+    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3" && mode != "04_1v3" && mode != "custom"){
         foreach(ServerPlayer *player, players)
             broadcastProperty(player, "general2");
     }
