@@ -3083,6 +3083,12 @@ function SmartAI:askForCard(pattern, prompt, data)
 				or (target:getHp() > 2 and self.player:getHp() <= 1 and self:getCardsNum("Peach") == 0)
 				then return self:getCardId("Slash")
 			else return "." end
+		elseif parsedPrompt[1] == "savage-assault-slash" then
+			if not self:damageIsEffective(nil, nil, target) then return "." end
+			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
+			if (self.player:getHp()>1 and self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
+				then return "."
+			end
 		elseif (parsedPrompt[1] == "@zhangshi") then
 			if target and self:isFriend(target) then
 				if (self.player:hasSkill("longdan") and self:getCardsNum("Jink") > 1) then
@@ -3090,13 +3096,6 @@ function SmartAI:askForCard(pattern, prompt, data)
 					return self:getCardId("Slash")
 				end
 			else return "." end
-		elseif parsedPrompt[1] == "savage-assault-slash" then
-			if not self:damageIsEffective(nil, nil, target) then return "." end
-			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
-			if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-				or (self.player:hasSkill("yiji")) and self.player:getHp() > 2 then return "." end
-			if target and target:hasSkill("guagu") and self.player:isLord() then return "." end
-			if self.player:hasSkill("jieming") and self:getJiemingChaofeng() <= -6 and self.player:getHp() >= 2 then return "." end
 		end
 		return self:getCardId("Slash") or "."
 	elseif pattern == "jink" then
@@ -3112,7 +3111,6 @@ function SmartAI:askForCard(pattern, prompt, data)
 						or (self.player:hasSkill("yiji")) and self.player:getHp() > 2 then return "." end
 
 				end
-				if self.player:hasSkill("jieming") and self:getJiemingChaofeng() <= -6 then return "." end
 				if target:hasSkill("pojun") and not self.player:faceUp() then return "." end
 				if target:hasSkill("huatian") then return "." end
 			else

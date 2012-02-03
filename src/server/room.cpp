@@ -588,6 +588,7 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
     const Card *last_trick = getTag("LastTrick").value<CardStar>();
     if(!last_trick)
         last_trick = trick;
+    setTag("CounterplotTrick", QVariant::fromValue((CardStar)last_trick));
     QString trick_name = last_trick->objectName();
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
@@ -643,8 +644,8 @@ trust:
             QString animation_str = QString(card->objectName() + ":%1:%2")
                                     .arg(player->objectName()).arg(to->objectName());
             broadcastInvoke("animate", animation_str);
-            if(card->objectName() == "counterplot")
-                player->obtainCard(last_trick);
+            //if(card->objectName() == "counterplot")
+            //    player->obtainCard(last_trick);
 
             QVariant decisionData = QVariant::fromValue(use);
             thread->trigger(ChoiceMade, player, decisionData);

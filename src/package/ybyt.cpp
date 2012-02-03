@@ -976,7 +976,7 @@ public:
         Room *room = player->getRoom();
         if(!damage.from || !damage.from->getWeapon())
             return;
-        int percent = 25 + player->getEquips().length() * 10;
+        int percent = 30 + player->getEquips().length() * 15;
         if(qrand() % 100 < percent){
             LogMessage log;
             log.from = player;

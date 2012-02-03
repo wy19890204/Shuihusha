@@ -110,9 +110,15 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
 }
 
 Counterplot::Counterplot(Suit suit, int number)
-    :Nullification(suit, number)
-{
+    :Nullification(suit, number){
     setObjectName("counterplot");
+}
+
+void Counterplot::use(Room *room, ServerPlayer *me, const QList<ServerPlayer *> &) const{
+    room->throwCard(this);
+    CardStar card = room->getTag("CounterplotTrick").value<CardStar>();
+    me->obtainCard(card);
+    room->removeTag("CounterplotTrick");
 }
 
 Provistore::Provistore(Suit suit, int number)
