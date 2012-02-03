@@ -506,11 +506,12 @@ public:
         if(event != CardFinished)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.to.contains(writer) && (use.card->inherits("BasicCard") || use.card->isNDTrick())
+        const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
+        if(use.to.contains(writer) && (word->inherits("BasicCard") || word->isNDTrick())
             && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
             bool hassamezi = false;
             foreach(int x, writer->getPile("zi")){
-                if(Sanguosha->getCard(x)->objectName() == use.card->objectName()){
+                if(Sanguosha->getCard(x)->objectName() == word->objectName()){
                     hassamezi = true;
                     break;
                 }
@@ -849,7 +850,7 @@ public:
                 return false;
             if(player->isKongcheng()){
                 CardMoveStar move = data.value<CardMoveStar>();
-                if(move->from_place == Player::Hand){
+                if(move->from_place == Player::Hand && player->isAlive()){
                     room->playSkillEffect(objectName());
                     room->sendLog(log);
 
