@@ -1015,7 +1015,7 @@ local function getSkillViewCard(card, class_name, player, card_place)
 			end
 		end
 		if player:hasSkill("qiaojiang") then
-			if card:isBlack() and not card:inherits("TrickCard") then
+			if card:isBlack() and card:inherits("TrickCard") then
 				return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 			end
 		end
@@ -1026,7 +1026,7 @@ local function getSkillViewCard(card, class_name, player, card_place)
 		end
 	elseif class_name == "Jink" then
 		if player:hasSkill("qiaojiang") then
-			if card:isRed() and not card:inherits("TrickCard") then
+			if card:isRed() and card:inherits("TrickCard") then
 				return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 			end
 		end

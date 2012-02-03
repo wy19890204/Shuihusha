@@ -916,7 +916,7 @@ public:
 
         ServerPlayer *zhufu = room->findPlayerBySkillName(objectName());
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from == zhufu)
+        if(effect.to == zhufu)
             return false;
 
         if(zhufu->getPhase() != Player::NotActive)
@@ -1026,6 +1026,7 @@ YBYTPackage::YBYTPackage()
 
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill(new Maiyi);
+    xueyong->addSkill("#losthp");
 
     General *tanglong = new General(this, "tanglong", "kou", 3);
     tanglong->addSkill(new Cuihuo);
