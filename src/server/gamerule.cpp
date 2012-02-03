@@ -865,6 +865,10 @@ BasaraMode::BasaraMode(QObject *parent)
     setObjectName("basara_mode");
 
     events << CardLost << Predamaged;
+
+    skill_mark["niepan"] = "@nirvana";
+    skill_mark["smallyeyan"] = "@flame";
+    skill_mark["luanwu"] = "@chaos";
 }
 
 int BasaraMode::getPriority() const
@@ -906,77 +910,59 @@ void BasaraMode::generalShowed(ServerPlayer *player, QString general_name) const
         room->setPlayerProperty(player,"general2",general_name);
     }
 
-        int hp = player->getLostHp() == 0 ? 0 : player->getHp();
-        room->setPlayerProperty(player,"maxhp",player->getGeneralMaxHP());
-        room->setPlayerProperty(player,"hp",hp == 0 ? player->getMaxHP() : hp);
+    foreach(QString skill_name, skill_mark.keys()){
+        if(player->hasSkill(skill_name))
+            room->setPlayerMark(player, skill_mark[skill_name], 1);
+    }
 
-        room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
+    room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
+    //if(Config.EnableHegemony)room->setPlayerProperty(player, "role", getMappedRole(player->getGeneral()->getKingdom()));
 
-        names.removeOne(general_name);
-        room->setTag(player->objectName(),QVariant::fromValue(names));
+    names.removeOne(general_name);
+    room->setTag(player->objectName(),QVariant::fromValue(names));
 
-        LogMessage log;
-        log.type = "#BasaraReveal";
-        log.from = player;
-        log.arg  = player->getGeneralName();
-        log.arg2 = player->getGeneral2Name();
+    LogMessage log;
+    log.type = "#BasaraReveal";
+    log.from = player;
+    log.arg  = player->getGeneralName();
+    log.arg2 = player->getGeneral2Name();
 
-        room->sendLog(log);
-        room->broadcastInvoke("playAudio","choose-item");
+    room->sendLog(log);
+    room->broadcastInvoke("playAudio","choose-item");
 }
 
 bool BasaraMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
     Room *room = player->getRoom();
+    player->tag["event"] = event;
+    player->tag["event_data"] = data;
 
     switch(event){
     case GameStart:{
         if(player->isLord()){
 
-            QSet<QString> selected_set;
-            const Package *godpack = Sanguosha->findChild<const Package *>("god");
-            foreach(const General *general, godpack->findChildren<const General *>())
-                selected_set.insert(general->objectName());
+            foreach(ServerPlayer* sp, room->getAlivePlayers())
+            {
+                QString transfigure_str = QString("%1:%2").arg(sp->getGeneralName()).arg("anjiang");
+                sp->invoke("transfigure", transfigure_str);
+                room->setPlayerProperty(sp,"general","anjiang");
+                room->setPlayerProperty(sp,"kingdom","god");
 
-            foreach(ServerPlayer *p, room->getAllPlayers()){
-                QStringList choices = Sanguosha->getRandomGenerals(5, selected_set), selected;
-                QList<const General *> choices_generals, selected_generals;
-                foreach(QString n, choices)
-                    choices_generals << Sanguosha->getGeneral(n);
-
-                QString first_name;
-                do{
-                    first_name = room->askForGeneral(p, choices);
-                    const General *first = Sanguosha->getGeneral(first_name);
-
-                    foreach(const General *g, choices_generals)
-                        if(g->getKingdom() == first->getKingdom() && g != first){
-                            selected_generals << g;
-                            selected << g->objectName();
-                        }
-                }while(selected.isEmpty());
-
-                QString second_name = room->askForGeneral(p, selected);
-                selected_set.insert(first_name);
-                selected_set.insert(second_name);
-
-                QStringList roles;
-                roles << first_name << second_name;
-                QVariant player_roles;
-                player_roles.setValue(roles);
-                room->setTag(p->objectName(), player_roles);
                 LogMessage log;
                 log.type = "#BasaraGeneralChosen";
-                log.arg = first_name;
-                log.arg2 = second_name;
-                p->invoke("log",log.toString());
+                log.arg = room->getTag(sp->objectName()).toStringList().at(0);
 
-                const General * gen = Sanguosha->getGeneral(first_name);
-                foreach(const TriggerSkill *skill, gen->getTriggerSkills())
-                    room->getThread()->addTriggerSkill(skill);
+                if(Config.Enable2ndGeneral)
+                {
 
-                gen = Sanguosha->getGeneral(second_name);
-                foreach(const TriggerSkill *skill, gen->getTriggerSkills())
-                    room->getThread()->addTriggerSkill(skill);
+                    transfigure_str = QString("%1:%2").arg(sp->getGeneral2Name()).arg("anjiang");
+                    sp->invoke("transfigure", transfigure_str);
+                    room->setPlayerProperty(sp,"general2","anjiang");
+
+                    log.arg2 = room->getTag(sp->objectName()).toStringList().at(1);
+                }
+
+                sp->invoke("log",log.toString());
+                sp->tag["roles"] = room->getTag(sp->objectName()).toStringList().join("+");
             }
         }
 
