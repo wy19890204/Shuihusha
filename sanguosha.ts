@@ -3275,8 +3275,8 @@
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="86"/>
-        <source>Sanguosha-fans</source>
-        <translation>三国杀fans</translation>
+        <source>Shuihusha-fans</source>
+        <translation>水浒杀fans</translation>
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="87"/>
