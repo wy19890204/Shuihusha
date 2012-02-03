@@ -1028,7 +1028,7 @@ YBYTPackage::YBYTPackage()
     xueyong->addSkill(new Maiyi);
     xueyong->addSkill("#losthp");
 
-    General *tanglong = new General(this, "tanglong", "kou", 3);
+    General *tanglong = new General(this, "tanglong", "jiang", 3);
     tanglong->addSkill(new Cuihuo);
     tanglong->addSkill(new Jintang);
 

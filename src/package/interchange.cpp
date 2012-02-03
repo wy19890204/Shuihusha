@@ -335,6 +335,25 @@ public:
     }
 };
 
+class Tancai:public PhaseChangeSkill{
+public:
+    Tancai():PhaseChangeSkill("tancai"){
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *dujian) const{
+        if(dujian->getPhase() == Player::Discard &&
+           dujian->askForSkillInvoke(objectName())){
+            dujian->getRoom()->playSkillEffect(objectName());
+            dujian->drawCards(3, false);
+        }
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -362,6 +381,9 @@ InterChangePackage::InterChangePackage()
 
     General *hongxin = new General(this, "hongxin", "guan");
     hongxin->addSkill(new Fangsheng);
+
+    General *zhangmengfang = new General(this, "zhangmengfang", "guan");
+    zhangmengfang->addSkill(new Tancai);
 
     addMetaObject<ShensuanCard>();
 }
