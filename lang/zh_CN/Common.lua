@@ -147,4 +147,6 @@ return {
 	["designer:sujiangf"] = "游卡桌游",
 	["cv:sujiangf"] = "",
 	["coder:sujiangf"] = "",
+	["~sujiang"] = "赤条条来去无牵挂！",
+	["~sujiangf"] = "赤条条……流氓啊~!",
 }

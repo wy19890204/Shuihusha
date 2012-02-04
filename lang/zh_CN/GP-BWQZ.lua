@@ -53,6 +53,7 @@ return {
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
 	["shuizhan"] = "水战",
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",
+	["~shantinggui"] = "土克水……吾命休矣……",
 
 	["#_qingzhang"] = "菜园子",
 	["qingzhang"] = "张青",
