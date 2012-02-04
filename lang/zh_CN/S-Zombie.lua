@@ -21,6 +21,7 @@ return {
 	["designer:zombie"] = "HyperCross",
 	["cv:zombie"] = "网络素材",
 	["coder:zombie"] = "HyperCross",
+	["~zombie"] = "已死过一次，再死一次又有何妨？",
 
 	["paoxiao"] = "咆哮",
 	[":paoxiao"] = "出牌阶段，你可以使用任意数量的【杀】",

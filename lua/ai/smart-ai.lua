@@ -3105,17 +3105,17 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 		if target then
 			if self:isFriend(target) then
-				if parsedPrompt[1] == "archery-attack-jink"  then
-					local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
+				if parsedPrompt[1] == "archery-attack-jink" then
+					local aoe = sgs.Sanguosha:cloneCard("archery_attack", sgs.Card_NoSuit, 0)
 					if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-						or (self.player:hasSkill("yiji")) and self.player:getHp() > 2 then return "." end
-
+						then return "."
+					end
 				end
-				if target:hasSkill("pojun") and not self.player:faceUp() then return "." end
+				if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
 				if target:hasSkill("huatian") then return "." end
 			else
 				if not target:hasFlag("drank") then
-					if target:hasSkill("mengjin") and self.player:hasSkill("jijiu") then return "." end
+					if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
 				else
 					return self:getCardId("Jink") or "."
 				end

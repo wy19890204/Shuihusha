@@ -611,7 +611,8 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         damage.damage = 1;
         damage.from = effect.from;
         damage.to = effect.to;
-        damage.nature = DamageStruct::Normal;
+        damage.nature = effect.card->getSkillName() != "luanji" ?
+                        DamageStruct::Normal : DamageStruct::Fire;
 
         room->damage(damage);
     }

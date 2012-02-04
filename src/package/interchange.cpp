@@ -354,6 +354,32 @@ public:
     }
 };
 
+class Luanji:public ViewAsSkill{
+public:
+    Luanji():ViewAsSkill("luanji"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return !to_select->isEquipped() && to_select->getCard()->isRed();
+        else if(selected.length() == 1)
+            return to_select->getCard()->inherits("TrickCard");
+        else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            const Card *first = cards.first()->getCard();
+            ArcheryAttack *aa = new ArcheryAttack(first->getSuit(), 0);
+            aa->addSubcards(cards);
+            aa->setSkillName(objectName());
+            return aa;
+        }else
+            return NULL;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -384,6 +410,9 @@ InterChangePackage::InterChangePackage()
 
     General *zhangmengfang = new General(this, "zhangmengfang", "guan");
     zhangmengfang->addSkill(new Tancai);
+
+    General *pangwanchun = new General(this, "pangwanchun", "jiang");
+    pangwanchun->addSkill(new Luanji);
 
     addMetaObject<ShensuanCard>();
 }
