@@ -384,6 +384,54 @@ public:
     }
 };
 
+JingtianCard::JingtianCard(){
+}
+
+bool JingtianCard::targetFilter(const QList<const Player *> &targets, const Player *t, const Player *Self) const{
+    return targets.isEmpty() && t != Self;
+}
+
+void JingtianCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    LogMessage log;
+    log.type = "#Jingtian";
+    log.from = effect.from;
+    log.to << effect.to;
+    log.arg = QString::number(effect.to->getHp());
+    log.arg2 = QString::number(effect.from->getHp());
+
+    room->sendLog(log);
+    room->setPlayerProperty(effect.to, "hp", effect.from->getHp());
+}
+
+class Jingtian:public ViewAsSkill{
+public:
+    Jingtian():ViewAsSkill("jingtian"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return !to_select->isEquipped();
+        else if(selected.length() == 1){
+            const Card *card = selected.first()->getFilteredCard();
+            return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == card->getSuit();
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        JingtianCard *card = new JingtianCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("JingtianCard");
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -418,7 +466,11 @@ InterChangePackage::InterChangePackage()
     General *pangwanchun = new General(this, "pangwanchun", "jiang");
     pangwanchun->addSkill(new Luanji);
 
+    General *litianrun = new General(this, "litianrun", "jiang");
+    litianrun->addSkill(new Jingtian);
+
     addMetaObject<ShensuanCard>();
+    addMetaObject<JingtianCard>();
 }
 
 ADD_PACKAGE(InterChange);
