@@ -6,7 +6,7 @@ return {
 	["#_wuyong"] = "智多星",
 	["wuyong"] = "吴用",
 	["cv:wuyong"] = "佚名",
-	["coder:wuyong"] = "宇文天启、战栗贵公子",
+	["coder:wuyong"] = "宇文天启",
 	["yunchou"] = "运筹",
 	[":yunchou"] = "出牌阶段，你可以将你的任一锦囊牌当任一非延时类锦囊使用。每回合限一次。",
 	["stt"] = "单目标锦囊",
