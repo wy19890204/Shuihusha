@@ -404,7 +404,7 @@ public:
         ServerPlayer *jinge = room->findPlayerBySkillName(objectName());
         if(player->isKongcheng() && jinge && !jinge->isKongcheng() && jinge->isWounded()){
             CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
+            if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
                 const Card *card = room->askForCardShow(jinge, player, "youxia");
                 player->obtainCard(card);
                 RecoverStruct o;
