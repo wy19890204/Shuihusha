@@ -867,7 +867,7 @@ public:
         PlayerStar lili = room->findPlayerBySkillName(objectName());
         if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
             const Card *wolegequ = player->getRandomHandCard();
-            lili->obtainCard(wolegequ);
+            lili->obtainCard(wolegequ, false);
         }
     }
 };

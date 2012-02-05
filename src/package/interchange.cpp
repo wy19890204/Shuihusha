@@ -15,6 +15,10 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        int jink = effect.jink->getEffectiveId();
+        if(!Sanguosha->getCard(jink)->inherits("Jink"))
+            return false;
         LogMessage log;
         log.from = player;
         log.type = "#Xianxi";

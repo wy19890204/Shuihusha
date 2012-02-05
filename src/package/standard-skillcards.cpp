@@ -15,7 +15,7 @@ CheatCard::CheatCard(){
 void CheatCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(Config.FreeChoose){
         room->broadcastInvoke("playAudio", "cheat");
-        room->obtainCard(source, subcards.first(), false);
+        room->obtainCard(source, subcards.first());
     }
 }
 
