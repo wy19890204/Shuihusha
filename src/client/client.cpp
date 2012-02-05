@@ -717,8 +717,9 @@ void Client::askForChoice(const QString &ask_str){
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(new QLabel(tr("Please choose:")));
 
+    QCommandLinkButton *button, *button2;
     foreach(QString option, options){
-        QCommandLinkButton *button = new QCommandLinkButton;
+        button = new QCommandLinkButton;
         QString text = QString("%1:%2").arg(skill_name).arg(option);
         QString translated = Sanguosha->translate(text);
         if(text == translated)
@@ -730,7 +731,15 @@ void Client::askForChoice(const QString &ask_str){
         connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
         connect(button, SIGNAL(clicked()), this, SLOT(selectChoice()));
 
-        layout->addWidget(button);
+        if(options.length() > 6 && options.length() % 2 == 1)
+            button2 = button;
+        else if(options.length() > 6 && options.length() % 2 == 0){
+            QHBoxLayout *hlay = new QHBoxLayout;
+            hlay->addWidget(button2);
+            hlay->addWidget(button);
+            layout->addLayout(hlay);
+        }else
+            layout->addWidget(button);
     }
 
     dialog->setObjectName(options.first());

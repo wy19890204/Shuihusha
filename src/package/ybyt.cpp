@@ -483,7 +483,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasUsed("FangzaoCard") && selected.isEmpty() && Self->hasFlag("Fangzao")){
+        if(Self->hasUsed("FangzaoCard") && selected.isEmpty() && Self->hasFlag("fangzao")){
             return !to_select->isEquipped();
         }else
             return false;
