@@ -959,7 +959,7 @@ public:
             erniang->obtainCard(player->getOffensiveHorse());
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
-                room->moveCardTo(all_cards, erniang, Player::Hand, false);
+                room->obtainCard(erniang, all_cards, false);
                 delete all_cards;
             }
             QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);

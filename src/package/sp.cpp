@@ -89,8 +89,7 @@ bool JiebaoCard::targetFilter(const QList<const Player *> &targets, const Player
 void JiebaoCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     int card_id = room->askForCardChosen(effect.from, effect.to, "he", "jiebao");
-    const Card *card = Sanguosha->getCard(card_id);
-    room->moveCardTo(card, effect.from, Player::Hand, false);
+    room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
 
     room->setEmotion(effect.to, "bad");
     room->setEmotion(effect.from, "good");
@@ -406,7 +405,7 @@ public:
             CardMoveStar move = data.value<CardMoveStar>();
             if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
                 const Card *card = room->askForCardShow(jinge, player, "youxia");
-                player->obtainCard(card);
+                player->obtainCard(card, false);
                 RecoverStruct o;
                 o.card = card;
                 room->recover(jinge, o);

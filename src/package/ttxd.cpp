@@ -13,7 +13,7 @@ GanlinCard::GanlinCard(){
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
 
-    room->moveCardTo(this, target, Player::Hand, false);
+    room->obtainCard(target, this, false);
     int n = source->getLostHp() - source->getHandcardNum();
     if(n > 0 && source->askForSkillInvoke("ganlin")){
         source->drawCards(n);
@@ -78,13 +78,13 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         DummyCard *card1 = source->wholeHandCards();
         DummyCard *card2 = song->wholeHandCards();
         if(card1){
-            room->moveCardTo(card1, song, Player::Hand, false);
+            room->obtainCard(song, card1, false);
             delete card1;
         }
         room->getThread()->delay();
 
         if(card2){
-            room->moveCardTo(card2, source, Player::Hand, false);
+            room->obtainCard(source, card2, false);
             delete card2;
         }
         LogMessage log;
@@ -226,7 +226,7 @@ void HaoshenCard::use(Room *room, ServerPlayer *chaijin, const QList<ServerPlaye
         target->drawCards(num);
     }
     else if(chaijin->getPhase() == Player::Play){
-        target->obtainCard(this);
+        target->obtainCard(this, false);
         if(this->getSubcards().length() > 2)
             room->playSkillEffect("haoshen", 2);
         else
@@ -505,7 +505,7 @@ public:
             RecoverStruct re;
             re.card = Sanguosha->getCard(card_id);
             re.who = player;
-            room->obtainCard(player, card_id);
+            room->obtainCard(player, card_id, false);
 
             LogMessage log;
             log.from = player;

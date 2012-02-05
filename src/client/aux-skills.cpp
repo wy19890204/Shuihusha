@@ -116,7 +116,7 @@ void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }else
         target = targets.first();
 
-    room->moveCardTo(this, target, Player::Hand, false);
+    room->obtainCard(target, this, false);
 
     int old_value = source->getMark("rende");
     int new_value = old_value + subcards.length();

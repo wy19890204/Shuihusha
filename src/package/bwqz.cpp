@@ -810,7 +810,7 @@ public:
                         lo.from = tmp;
                         lo.arg = objectName();
                         room->sendLog(lo);
-                        room->moveCardTo(card, fang1a, Player::Hand, false);
+                        room->obtainCard(fang1a, card, false);
                         break;
                     }
                 }

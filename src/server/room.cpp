@@ -550,20 +550,20 @@ QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, cons
     return answer;
 }
 
-void Room::obtainCard(ServerPlayer *target, const Card *card){
+void Room::obtainCard(ServerPlayer *target, const Card *card, bool unhide){
     if(card == NULL)
         return;
 
     if(card->isVirtualCard()){
         QList<int> subcards = card->getSubcards();
         foreach(int card_id, subcards)
-            obtainCard(target, card_id);
+            obtainCard(target, card_id, unhide);
     }else
-        obtainCard(target, card->getId());
+        obtainCard(target, card->getId(), unhide);
 }
 
-void Room::obtainCard(ServerPlayer *target, int card_id){
-    moveCardTo(Sanguosha->getCard(card_id), target, Player::Hand, true);
+void Room::obtainCard(ServerPlayer *target, int card_id, bool unhide){
+    moveCardTo(Sanguosha->getCard(card_id), target, Player::Hand, unhide);
 }
 
 bool Room::isCanceled(const CardEffectStruct &effect){
@@ -660,7 +660,7 @@ trust:
     }
     removeTag("LastTrick"); //尘埃落定
     final_player = getTag("Counploter").value<PlayerStar>();
-    if(final_player->property("iscounplot").toBool()) //若最后一张是将计就计，可以拿走该锦囊
+    if(final_player && final_player->property("iscounplot").toBool()) //若最后一张是将计就计，可以拿走该锦囊
         final_player->obtainCard(final_player->property("counplot").value<CardStar>());
     removeTag("Counploter");
     return false;
