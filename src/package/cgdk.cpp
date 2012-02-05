@@ -474,164 +474,75 @@ public:
 };
 
 LinmoCard::LinmoCard(){
+    target_fixed = true;
 }
 
-LinmoDialog *LinmoDialog::GetInstance(){
-    static LinmoDialog *instance;
-    if(instance == NULL)
-        instance = new LinmoDialog;
-    return instance;
+void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    ServerPlayer *xiao = card_use.from;
+    QList<int> card_ids = xiao->getPile("zi");
+    room->fillAG(card_ids, xiao);
+    int zid = room->askForAG(xiao, card_ids, false, objectName());
+    QString zi = Sanguosha->getCard(zid)->objectName();
+    card_ids.removeOne(zid);
+    xiao->invoke("clearAG");
+
+    room->setPlayerProperty(xiao, "linmostore", zi);
 }
 
-LinmoDialog::LinmoDialog()
-{
-    setWindowTitle(Sanguosha->translate("linmo"));
-
-    group = new QButtonGroup(this);
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(createLeft());
-    layout->addWidget(createRight());
-
-    setLayout(layout);
-    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(selectCard(QAbstractButton*)));
-}
-
-void LinmoDialog::popup(){
-    if(ClientInstance->getStatus() != Client::Playing)
-        return;
-
-    foreach(QAbstractButton *button, group->buttons()){
-        const Card *card = map[button->objectName()];
-        button->setEnabled(card->isAvailable(Self));
-    }
-
-    Self->tag.remove("Linmo");
-    exec();
-}
-
-void LinmoDialog::selectCard(QAbstractButton *button){
-    CardStar card = map.value(button->objectName());
-    Self->tag["Linmo"] = QVariant::fromValue(card);
-    accept();
-}
-
-QGroupBox *LinmoDialog::createLeft(){
-    QGroupBox *box = new QGroupBox;
-    box->setTitle(tr("Basic cards"));
-
-    QVBoxLayout *layout = new QVBoxLayout;
-
-    foreach(int card_id, Self->getPile("zi")){
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->getTypeId() == Card::Basic){
-            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
-            c->setParent(this);
-            layout->addWidget(createButton(c));
-        }
-    }
-    layout->addStretch();
-    box->setLayout(layout);
-    return box;
-}
-
-QGroupBox *LinmoDialog::createRight(){
-    QGroupBox *box = new QGroupBox(tr("Non delayed tricks"));
-    QHBoxLayout *layout = new QHBoxLayout;
-
-    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
-    QVBoxLayout *layout1 = new QVBoxLayout;
-
-    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
-    QVBoxLayout *layout2 = new QVBoxLayout;
-
-    foreach(int card_id, Self->getPile("zi")){
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->isNDTrick()){
-            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
-            c->setSkillName("linmo");
-            c->setParent(this);
-
-            QVBoxLayout *layout = c->inherits("SingleTargetTrick") ? layout1 : layout2;
-            layout->addWidget(createButton(c));
-        }
-    }
-    box->setLayout(layout);
-    box1->setLayout(layout1);
-    box2->setLayout(layout2);
-
-    layout1->addStretch();
-    layout2->addStretch();
-
-    layout->addWidget(box1);
-    layout->addWidget(box2);
-    return box;
-}
-
-QAbstractButton *LinmoDialog::createButton(const Card *card){
-    QCommandLinkButton *button = new QCommandLinkButton(Sanguosha->translate(card->objectName()));
-    button->setObjectName(card->objectName());
-    button->setToolTip(card->getDescription());
-
-    map.insert(card->objectName(), card);
-    group->addButton(button);
-    return button;
-}
-
-bool LinmoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    CardStar card = Self->tag["Linmo"].value<CardStar>();
-    return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
-}
-
-bool LinmoCard::targetFixed() const{
-    CardStar card = Self->tag["Linmo"].value<CardStar>();
-    return card && card->targetFixed();
-}
-
-bool LinmoCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    CardStar card = Self->tag["Linmo"].value<CardStar>();
-    return card && card->targetsFeasible(targets, Self);
-}
-
-const Card *LinmoCard::validate(const CardUseStruct *card_use) const{
-    Room *room = card_use->from->getRoom();
-    //room->playSkillEffect("linmo");
-    const Card *card = Sanguosha->getCard(subcards.first());
-    Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
-    use_card->setSkillName("linmo");
-    use_card->addSubcard(card);
-    room->throwCard(this);
-
-    return use_card;
-}
-
-class LinmoViewAsSkill:public OneCardViewAsSkill{
+class LinmoViewAsSkill:public ViewAsSkill{
 public:
-    LinmoViewAsSkill():OneCardViewAsSkill("linmo"){
+    LinmoViewAsSkill():ViewAsSkill("linmo"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->hasUsed("LinmoCard") && selected.isEmpty() && !Self->hasFlag("linmo")){
+            return !to_select->isEquipped();
+        }else
+            return false;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         if(player->getPile("zi").isEmpty())
             return false;
-        return !player->hasUsed("LinmoCard");
+        if(player->hasUsed("LinmoCard") && !player->hasFlag("linmo")){
+            QString name = Self->property("linmostore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return card->isAvailable(player);
+        }else if(player->hasFlag("linmo"))
+            return false;
+        else
+            return true;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->hasUsed("LinmoCard")){
+            if(Self->hasFlag("linmo"))
+                return false;
+            if(cards.length() != 1)
+                return NULL;
+            const Card *card = cards.first()->getCard();
+            QString name = Self->property("linmostore").toString();
+            Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
+            new_card->addSubcard(card);
+            new_card->setSkillName("linmo");
+            Self->setFlags("linmo");
+            return new_card;
+        }else{
+            return new LinmoCard;
+        }
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
-        CardStar c = Self->tag["Linmo"].value<CardStar>();
-        if(c){
-            LinmoCard *card = new LinmoCard;
-            card->setUserString(c->objectName());
-            card->addSubcard(card_item->getFilteredCard());
-            return card;
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        if(player->hasFlag("linmo"))
+            return false;
+        if(player->hasUsed("LinmoCard")){
+            QString name = Self->property("linmostore").toString();
+            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
+            return pattern.contains(card->objectName());
         }else
-            return NULL;
-    }
-
-    virtual QDialog *getDialog() const{
-        return LinmoDialog::GetInstance();
+            return false;
     }
 };
 
@@ -655,6 +566,7 @@ public:
             if(event == PhaseChange){
                 if(player->getPhase() != Player::NotActive)
                     return false;
+                player->property("linmostore") = "";
                 foreach(int a, player->getPile("zi"))
                     room->throwCard(a);
             }
