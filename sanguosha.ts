@@ -689,7 +689,7 @@
     <message>
         <location filename="src/ui/clientlogbox.cpp" line="88"/>
         <source>%from use skill [%1], played [%2]</source>
-        <translation>%from 使用了【%1】技能，打出了 【%2】</translation>
+        <translation>%from 使用了【%1】技能，打出了【%2】</translation>
     </message>
     <message>
         <location filename="src/ui/clientlogbox.cpp" line="90"/>

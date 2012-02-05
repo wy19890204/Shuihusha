@@ -91,26 +91,22 @@ YunchouDialog *YunchouDialog::GetInstance(){
 
 YunchouDialog::YunchouDialog()
 {
-    setWindowTitle(tr("Yunchou"));
+    setWindowTitle(Sanguosha->translate("yunchou"));
 
     group = new QButtonGroup(this);
-
     QHBoxLayout *mainlayout = new QHBoxLayout;
 
-    QGroupBox *box = new QGroupBox(tr("Non delayed tricks"));
-    QHBoxLayout *layout = new QHBoxLayout;
-
-    QGroupBox *box1 = new QGroupBox(tr("Single target"));
+    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
     QVBoxLayout *layout1 = new QVBoxLayout;
 
-    QGroupBox *box2 = new QGroupBox(tr("Multiple targets"));
+    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
     QVBoxLayout *layout2 = new QVBoxLayout;
 
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
         if(card->isNDTrick() && !map.contains(card->objectName())){
             Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
-            c->setSkillName("Yunchou");
+            c->setSkillName("yunchou");
             c->setParent(this);
 
             QVBoxLayout *layout = c->inherits("SingleTargetTrick") ? layout1 : layout2;
@@ -118,16 +114,14 @@ YunchouDialog::YunchouDialog()
         }
     }
 
-    box->setLayout(layout);
     box1->setLayout(layout1);
     box2->setLayout(layout2);
 
     layout1->addStretch();
     layout2->addStretch();
 
-    layout->addWidget(box1);
-    layout->addWidget(box2);
-    mainlayout->addWidget(box);
+    mainlayout->addWidget(box1);
+    mainlayout->addWidget(box2);
 
     setLayout(mainlayout);
 
@@ -165,26 +159,27 @@ QAbstractButton *YunchouDialog::createButton(const Card *card){
 }
 
 bool YunchouCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    CardStar card = Self->tag.value("Yunchou").value<CardStar>();
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
     return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
 }
 
 bool YunchouCard::targetFixed() const{
-    CardStar card = Self->tag.value("Yunchou").value<CardStar>();
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
     return card && card->targetFixed();
 }
 
 bool YunchouCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    CardStar card = Self->tag.value("Yunchou").value<CardStar>();
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
     return card && card->targetsFeasible(targets, Self);
 }
 
 const Card *YunchouCard::validate(const CardUseStruct *card_use) const{
     Room *room = card_use->from->getRoom();
-    room->playSkillEffect("yunchou");
+    //room->playSkillEffect("yunchou");
     const Card *card = Sanguosha->getCard(subcards.first());
     Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
     use_card->setSkillName("yunchou");
+    use_card->addSubcard(card);
     room->throwCard(this);
 
     return use_card;
@@ -204,7 +199,7 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        CardStar c = Self->tag.value("Yunchou").value<CardStar>();
+        CardStar c = Self->tag["Yunchou"].value<CardStar>();
         if(c){
             YunchouCard *card = new YunchouCard;
             card->setUserString(c->objectName());
