@@ -15,6 +15,10 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        int jink = effect.jink->getEffectiveId();
+        if(!Sanguosha->getCard(jink)->inherits("Jink"))
+            return false;
         LogMessage log;
         log.from = player;
         log.type = "#Xianxi";
@@ -335,6 +339,99 @@ public:
     }
 };
 
+class Tancai:public PhaseChangeSkill{
+public:
+    Tancai():PhaseChangeSkill("tancai"){
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *dujian) const{
+        if(dujian->getPhase() == Player::Discard &&
+           dujian->askForSkillInvoke(objectName())){
+            dujian->getRoom()->playSkillEffect(objectName());
+            dujian->drawCards(3, false);
+        }
+        return false;
+    }
+};
+
+class Luanji:public ViewAsSkill{
+public:
+    Luanji():ViewAsSkill("luanji"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return !to_select->isEquipped() && to_select->getCard()->isRed();
+        else if(selected.length() == 1)
+            return to_select->getCard()->inherits("TrickCard");
+        else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            const Card *first = cards.first()->getCard();
+            ArcheryAttack *aa = new ArcheryAttack(first->getSuit(), 0);
+            aa->addSubcards(cards);
+            aa->setSkillName(objectName());
+            return aa;
+        }else
+            return NULL;
+    }
+};
+
+JingtianCard::JingtianCard(){
+}
+
+bool JingtianCard::targetFilter(const QList<const Player *> &targets, const Player *t, const Player *Self) const{
+    return targets.isEmpty() && t != Self;
+}
+
+void JingtianCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    LogMessage log;
+    log.type = "#Jingtian";
+    log.from = effect.from;
+    log.to << effect.to;
+    log.arg = QString::number(effect.to->getHp());
+    log.arg2 = QString::number(effect.from->getHp());
+
+    room->sendLog(log);
+    room->setPlayerProperty(effect.to, "hp", effect.from->getHp());
+}
+
+class Jingtian:public ViewAsSkill{
+public:
+    Jingtian():ViewAsSkill("jingtian"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return !to_select->isEquipped();
+        else if(selected.length() == 1){
+            const Card *card = selected.first()->getFilteredCard();
+            return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == card->getSuit();
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        JingtianCard *card = new JingtianCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("JingtianCard");
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -363,7 +460,17 @@ InterChangePackage::InterChangePackage()
     General *hongxin = new General(this, "hongxin", "guan");
     hongxin->addSkill(new Fangsheng);
 
+    General *zhangmengfang = new General(this, "zhangmengfang", "guan");
+    zhangmengfang->addSkill(new Tancai);
+
+    General *pangwanchun = new General(this, "pangwanchun", "jiang");
+    pangwanchun->addSkill(new Luanji);
+
+    General *litianrun = new General(this, "litianrun", "jiang");
+    litianrun->addSkill(new Jingtian);
+
     addMetaObject<ShensuanCard>();
+    addMetaObject<JingtianCard>();
 }
 
 ADD_PACKAGE(InterChange);

@@ -83,7 +83,7 @@ void Settings::init(){
 #endif
 
     if(UserName == "Admin" || UserName == "Administrator")
-        UserName = tr("Sanguosha-fans");
+        UserName = tr("Shuihusha-fans");
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();

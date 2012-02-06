@@ -100,7 +100,6 @@ public:
     virtual QString toString() const;
     virtual QString getEffectPath(bool is_male) const;
     bool isNDTrick() const;
-    bool isDTE() const;
 
     // card target selection
     virtual bool targetFixed() const;

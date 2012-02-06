@@ -49,6 +49,7 @@ class Counterplot:public Nullification{
 
 public:
     Q_INVOKABLE Counterplot(Card::Suit suit, int number);
+
 };
 
 class Provistore:public DelayedTrick{

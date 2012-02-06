@@ -72,9 +72,10 @@ return {
 	["$xiaduo2"] = "汝可取得投名状？",
 	["~wanglun"] = "可恨落此下场！",
 
-	["#_ximenjinge"] = "流光飞渡",
+	["#_ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
 	["designer:ximenjinge"] = "英魂",
 	["youxia"] = "游侠",
 	[":youxia"] = "当一名其他角色失去最后一张手牌时，你可立即交给其一张手牌并回复一点体力。",
+	["~ximenjinge"] = "日暮江山山无数，放眼流光光飞渡！",
 }

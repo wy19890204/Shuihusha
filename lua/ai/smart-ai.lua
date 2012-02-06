@@ -1015,7 +1015,7 @@ local function getSkillViewCard(card, class_name, player, card_place)
 			end
 		end
 		if player:hasSkill("qiaojiang") then
-			if card:isBlack() and not card:inherits("TrickCard") then
+			if card:isBlack() and card:inherits("TrickCard") then
 				return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 			end
 		end
@@ -1026,7 +1026,7 @@ local function getSkillViewCard(card, class_name, player, card_place)
 		end
 	elseif class_name == "Jink" then
 		if player:hasSkill("qiaojiang") then
-			if card:isRed() and not card:inherits("TrickCard") then
+			if card:isRed() and card:inherits("TrickCard") then
 				return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 			end
 		end
@@ -3083,6 +3083,12 @@ function SmartAI:askForCard(pattern, prompt, data)
 				or (target:getHp() > 2 and self.player:getHp() <= 1 and self:getCardsNum("Peach") == 0)
 				then return self:getCardId("Slash")
 			else return "." end
+		elseif parsedPrompt[1] == "savage-assault-slash" then
+			if not self:damageIsEffective(nil, nil, target) then return "." end
+			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
+			if (self.player:getHp()>1 and self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
+				then return "."
+			end
 		elseif (parsedPrompt[1] == "@zhangshi") then
 			if target and self:isFriend(target) then
 				if (self.player:hasSkill("longdan") and self:getCardsNum("Jink") > 1) then
@@ -3090,13 +3096,6 @@ function SmartAI:askForCard(pattern, prompt, data)
 					return self:getCardId("Slash")
 				end
 			else return "." end
-		elseif parsedPrompt[1] == "savage-assault-slash" then
-			if not self:damageIsEffective(nil, nil, target) then return "." end
-			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
-			if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-				or (self.player:hasSkill("yiji")) and self.player:getHp() > 2 then return "." end
-			if target and target:hasSkill("guagu") and self.player:isLord() then return "." end
-			if self.player:hasSkill("jieming") and self:getJiemingChaofeng() <= -6 and self.player:getHp() >= 2 then return "." end
 		end
 		return self:getCardId("Slash") or "."
 	elseif pattern == "jink" then
@@ -3106,18 +3105,17 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 		if target then
 			if self:isFriend(target) then
-				if parsedPrompt[1] == "archery-attack-jink"  then
-					local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
+				if parsedPrompt[1] == "archery-attack-jink" then
+					local aoe = sgs.Sanguosha:cloneCard("archery_attack", sgs.Card_NoSuit, 0)
 					if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-						or (self.player:hasSkill("yiji")) and self.player:getHp() > 2 then return "." end
-
+						then return "."
+					end
 				end
-				if self.player:hasSkill("jieming") and self:getJiemingChaofeng() <= -6 then return "." end
-				if target:hasSkill("pojun") and not self.player:faceUp() then return "." end
+				if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
 				if target:hasSkill("huatian") then return "." end
 			else
 				if not target:hasFlag("drank") then
-					if target:hasSkill("mengjin") and self.player:hasSkill("jijiu") then return "." end
+					if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
 				else
 					return self:getCardId("Jink") or "."
 				end

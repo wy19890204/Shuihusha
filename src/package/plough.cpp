@@ -110,8 +110,7 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
 }
 
 Counterplot::Counterplot(Suit suit, int number)
-    :Nullification(suit, number)
-{
+    :Nullification(suit, number){
     setObjectName("counterplot");
 }
 

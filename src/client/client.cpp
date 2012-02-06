@@ -944,6 +944,8 @@ void Client::setLines(const QString &filename){
         QChar last_char = skill_name[skill_name.length()-1];
         if(last_char.isDigit())
             skill_name.chop(1);
+        if(skill_name.right(1) == "1")
+            skill_name.chop(1);
 
         skill_title = Sanguosha->translate(skill_name);
 

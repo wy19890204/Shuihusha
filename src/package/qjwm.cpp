@@ -781,9 +781,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
-    foreach(int card_id, this->getSubcards()){
-        effect.to->getRoom()->obtainCard(effect.to, card_id);
-    }
+    effect.to->getRoom()->obtainCard(effect.to, this, false);
     PlayerStar target = effect.to;
     effect.from->tag["Xiaozai"] = QVariant::fromValue(target);
 }

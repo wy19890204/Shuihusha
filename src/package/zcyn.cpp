@@ -342,6 +342,7 @@ public:
             room->sendLog(log);
 
             damage.damage ++;
+            room->playSkillEffect(objectName());
             data = QVariant::fromValue(damage);
         }
         return false;

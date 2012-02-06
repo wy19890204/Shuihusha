@@ -611,7 +611,8 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         damage.damage = 1;
         damage.from = effect.from;
         damage.to = effect.to;
-        damage.nature = DamageStruct::Normal;
+        damage.nature = effect.card->getSkillName() != "luanji" ?
+                        DamageStruct::Normal : DamageStruct::Fire;
 
         room->damage(damage);
     }
@@ -807,10 +808,7 @@ void Snatch::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     int card_id = room->askForCardChosen(effect.from, effect.to, "hej", objectName());
 
-    if(room->getCardPlace(card_id) == Player::Hand)
-        room->moveCardTo(Sanguosha->getCard(card_id), effect.from, Player::Hand, false);
-    else
-        room->obtainCard(effect.from, card_id);
+    room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
 }
 
 Dismantlement::Dismantlement(Suit suit, int number)

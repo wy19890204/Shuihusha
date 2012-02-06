@@ -696,7 +696,7 @@ public:
         if(player->askForSkillInvoke(objectName())){
             Room *room = player->getRoom();
             room->playSkillEffect(objectName());
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getAlivePlayers(), objectName());
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
             if(!room->askForCard(target, "jink", "@kongying:" + player->objectName())){
                 DamageStruct damage;
                 damage.from = player;
@@ -810,7 +810,7 @@ public:
                         lo.from = tmp;
                         lo.arg = objectName();
                         room->sendLog(lo);
-                        room->moveCardTo(card, fang1a, Player::Hand, false);
+                        room->obtainCard(fang1a, card, false);
                         break;
                     }
                 }

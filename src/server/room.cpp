@@ -550,20 +550,20 @@ QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, cons
     return answer;
 }
 
-void Room::obtainCard(ServerPlayer *target, const Card *card){
+void Room::obtainCard(ServerPlayer *target, const Card *card, bool unhide){
     if(card == NULL)
         return;
 
     if(card->isVirtualCard()){
         QList<int> subcards = card->getSubcards();
         foreach(int card_id, subcards)
-            obtainCard(target, card_id);
+            obtainCard(target, card_id, unhide);
     }else
-        obtainCard(target, card->getId());
+        obtainCard(target, card->getId(), unhide);
 }
 
-void Room::obtainCard(ServerPlayer *target, int card_id){
-    moveCardTo(Sanguosha->getCard(card_id), target, Player::Hand, true);
+void Room::obtainCard(ServerPlayer *target, int card_id, bool unhide){
+    moveCardTo(Sanguosha->getCard(card_id), target, Player::Hand, unhide);
 }
 
 bool Room::isCanceled(const CardEffectStruct &effect){
@@ -585,10 +585,11 @@ bool Room::isCanceled(const CardEffectStruct &effect){
 }
 
 bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive){
-    const Card *last_trick = getTag("LastTrick").value<CardStar>();
-    if(!last_trick)
+    const Card *last_trick = getTag("LastTrick").value<CardStar>(); //获取最后一张锦囊记录
+    PlayerStar final_player = from; //记录最后使用锦囊的角色
+    if(!last_trick) //标记第一张锦囊
         last_trick = trick;
-    QString trick_name = last_trick->objectName();
+    QString trick_name = last_trick->objectName(); //锦囊名
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
         if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
@@ -631,7 +632,7 @@ trust:
             use.card = card;
             use.from = player;
             useCard(use);
-            setTag("LastTrick", QVariant::fromValue((CardStar)card));
+            setTag("LastTrick", QVariant::fromValue((CardStar)card)); //记录锦囊
 
             LogMessage log;
             log.type = "#NullificationDetails";
@@ -643,8 +644,11 @@ trust:
             QString animation_str = QString(card->objectName() + ":%1:%2")
                                     .arg(player->objectName()).arg(to->objectName());
             broadcastInvoke("animate", animation_str);
-            if(card->objectName() == "counterplot")
-                player->obtainCard(last_trick);
+
+            final_player = player; //记录锦囊使用者
+            setPlayerProperty(final_player, "iscounplot", card->objectName() == "counterplot"); //该锦囊是不是将计就计
+            setPlayerProperty(final_player, "counplot", QVariant::fromValue((CardStar)last_trick)); //暂存可以拿走的锦囊
+            setTag("Counploter", QVariant::fromValue(final_player));
 
             QVariant decisionData = QVariant::fromValue(use);
             thread->trigger(ChoiceMade, player, decisionData);
@@ -654,7 +658,11 @@ trust:
         }else if(continable)
             goto trust;
     }
-    removeTag("LastTrick");
+    removeTag("LastTrick"); //尘埃落定
+    final_player = getTag("Counploter").value<PlayerStar>();
+    if(final_player && final_player->property("iscounplot").toBool()) //若最后一张是将计就计，可以拿走该锦囊
+        final_player->obtainCard(final_player->property("counplot").value<CardStar>());
+    removeTag("Counploter");
     return false;
 }
 

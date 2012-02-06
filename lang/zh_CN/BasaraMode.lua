@@ -10,4 +10,5 @@ return
 	["designer:anjiang"] = "donle",
 	["cv:anjiang"] = "初音未来",
 	["coder:anjiang"] = "hypercross",
+	["~anjiang"] = "还没亮明武将，死不瞑目啊……",
 }

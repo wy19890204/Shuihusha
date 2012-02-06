@@ -3,7 +3,11 @@
 
 #include "package.h"
 #include "card.h"
-#include "generaloverview.h"
+
+#include <QGroupBox>
+#include <QAbstractButton>
+#include <QButtonGroup>
+#include <QDialog>
 
 class BingjiCard: public SkillCard{
     Q_OBJECT
@@ -22,7 +26,29 @@ class YunchouCard: public SkillCard{
 public:
     Q_INVOKABLE YunchouCard();
 
-    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+    virtual bool targetFixed() const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+
+    virtual const Card *validate(const CardUseStruct *card_use) const;
+};
+
+class YunchouDialog: public QDialog{
+    Q_OBJECT
+
+public:
+    static YunchouDialog *GetInstance();
+
+public slots:
+    void popup();
+    void selectCard(QAbstractButton *button);
+
+private:
+    YunchouDialog();
+
+    QAbstractButton *createButton(const Card *card);
+    QButtonGroup *group;
+    QHash<QString, const Card *> map;
 };
 
 class LingdiCard:public SkillCard{

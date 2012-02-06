@@ -75,73 +75,142 @@ public:
 };
 
 YunchouCard::YunchouCard(){
-    target_fixed = true;
 }
 
-void YunchouCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    ServerPlayer *nouse = card_use.from;
-    QStringList ndtricks;
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QCommandLinkButton>
+
+YunchouDialog *YunchouDialog::GetInstance(){
+    static YunchouDialog *instance;
+    if(instance == NULL)
+        instance = new YunchouDialog;
+
+    return instance;
+}
+
+YunchouDialog::YunchouDialog()
+{
+    setWindowTitle(Sanguosha->translate("yunchou"));
+
+    group = new QButtonGroup(this);
+    QHBoxLayout *mainlayout = new QHBoxLayout;
+
+    QGroupBox *box1 = new QGroupBox(Sanguosha->translate("stt"));
+    QVBoxLayout *layout1 = new QVBoxLayout;
+
+    QGroupBox *box2 = new QGroupBox(Sanguosha->translate("mtt"));
+    QVBoxLayout *layout2 = new QVBoxLayout;
+
     QList<const Card *> cards = Sanguosha->findChildren<const Card *>();
     foreach(const Card *card, cards){
-        if(card->isNDTrick() && !ndtricks.contains(card->objectName()))
-            ndtricks << card->objectName();
+        if(card->isNDTrick() && !map.contains(card->objectName())){
+            Card *c = Sanguosha->cloneCard(card->objectName(), Card::NoSuit, 0);
+            c->setSkillName("yunchou");
+            c->setParent(this);
+
+            QVBoxLayout *layout = c->inherits("SingleTargetTrick") ? layout1 : layout2;
+            layout->addWidget(createButton(c));
+        }
     }
-    QString name = room->askForChoice(nouse, "yunchou", ndtricks.join("+"));
-    room->setPlayerProperty(nouse, "yunchoustore", name);
+
+    box1->setLayout(layout1);
+    box2->setLayout(layout2);
+
+    layout1->addStretch();
+    layout2->addStretch();
+
+    mainlayout->addWidget(box1);
+    mainlayout->addWidget(box2);
+
+    setLayout(mainlayout);
+
+    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(selectCard(QAbstractButton*)));
 }
 
-class Yunchou:public ViewAsSkill{
+void YunchouDialog::popup(){
+    if(ClientInstance->getStatus() != Client::Playing)
+        return;
+
+    foreach(QAbstractButton *button, group->buttons()){
+        const Card *card = map[button->objectName()];
+        button->setEnabled(card->isAvailable(Self));
+    }
+
+    Self->tag.remove("Yunchou");
+    exec();
+}
+
+void YunchouDialog::selectCard(QAbstractButton *button){
+    CardStar card = map.value(button->objectName());
+    Self->tag["Yunchou"] = QVariant::fromValue(card);
+    accept();
+}
+
+QAbstractButton *YunchouDialog::createButton(const Card *card){
+    QCommandLinkButton *button = new QCommandLinkButton(Sanguosha->translate(card->objectName()));
+    button->setObjectName(card->objectName());
+    button->setToolTip(card->getDescription());
+
+    map.insert(card->objectName(), card);
+    group->addButton(button);
+
+    return button;
+}
+
+bool YunchouCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
+    return card && card->targetFilter(targets, to_select, Self) && !Self->isProhibited(to_select, card);
+}
+
+bool YunchouCard::targetFixed() const{
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
+    return card && card->targetFixed();
+}
+
+bool YunchouCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    CardStar card = Self->tag["Yunchou"].value<CardStar>();
+    return card && card->targetsFeasible(targets, Self);
+}
+
+const Card *YunchouCard::validate(const CardUseStruct *card_use) const{
+    Room *room = card_use->from->getRoom();
+    //room->playSkillEffect("yunchou");
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("yunchou");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    return use_card;
+}
+
+class Yunchou:public OneCardViewAsSkill{
 public:
-    Yunchou():ViewAsSkill("yunchou"){
+    Yunchou():OneCardViewAsSkill("yunchou"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->hasUsed("YunchouCard") && !player->hasFlag("yunchou")){
-            QString name = Self->property("yunchoustore").toString();
-            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
-            return card->isAvailable(player);
-        }else if(player->hasFlag("yunchou"))
-            return false;
-        else
-            return true;
+        return !player->hasUsed("YunchouCard");
     }
 
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasUsed("YunchouCard") && selected.isEmpty() && !Self->hasFlag("yunchou")){
-            return to_select->getCard()->inherits("TrickCard");
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        CardStar c = Self->tag["Yunchou"].value<CardStar>();
+        if(c){
+            YunchouCard *card = new YunchouCard;
+            card->setUserString(c->objectName());
+            card->addSubcard(card_item->getFilteredCard());
+            return card;
         }else
-            return false;
+            return NULL;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        if(player->getPhase() == Player::NotActive)
-            return false;
-        if(player->hasFlag("yunchou"))
-            return false;
-        if(player->hasUsed("YunchouCard")){
-            QString name = Self->property("yunchoustore").toString();
-            Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
-            return pattern.contains(card->objectName());
-        }else
-            return false;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->hasUsed("YunchouCard")){
-            if(Self->hasFlag("yunchou"))
-                return false;
-            if(cards.length() != 1)
-                return NULL;
-            const Card *card = cards.first()->getCard();
-            QString name = Self->property("yunchoustore").toString();
-            Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
-            new_card->addSubcard(card);
-            new_card->setSkillName("yunchou");
-            Self->setFlags("yunchou");
-            return new_card;
-        }else{
-            return new YunchouCard;
-        }
+    virtual QDialog *getDialog() const{
+        return YunchouDialog::GetInstance();
     }
 };
 
@@ -506,11 +575,12 @@ public:
         if(event != CardFinished)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.to.contains(writer) && (use.card->inherits("BasicCard") || use.card->isNDTrick())
+        const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
+        if(use.to.contains(writer) && (word->inherits("BasicCard") || word->isNDTrick())
             && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
             bool hassamezi = false;
             foreach(int x, writer->getPile("zi")){
-                if(Sanguosha->getCard(x)->objectName() == use.card->objectName()){
+                if(Sanguosha->getCard(x)->objectName() == word->objectName()){
                     hassamezi = true;
                     break;
                 }
@@ -797,7 +867,7 @@ public:
         PlayerStar lili = room->findPlayerBySkillName(objectName());
         if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
             const Card *wolegequ = player->getRandomHandCard();
-            lili->obtainCard(wolegequ);
+            lili->obtainCard(wolegequ, false);
         }
     }
 };
@@ -849,7 +919,7 @@ public:
                 return false;
             if(player->isKongcheng()){
                 CardMoveStar move = data.value<CardMoveStar>();
-                if(move->from_place == Player::Hand){
+                if(move->from_place == Player::Hand && player->isAlive()){
                     room->playSkillEffect(objectName());
                     room->sendLog(log);
 
@@ -889,7 +959,7 @@ public:
             erniang->obtainCard(player->getOffensiveHorse());
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
-                room->moveCardTo(all_cards, erniang, Player::Hand, false);
+                room->obtainCard(erniang, all_cards, false);
                 delete all_cards;
             }
             QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);

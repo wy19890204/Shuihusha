@@ -483,7 +483,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasUsed("FangzaoCard") && selected.isEmpty() && Self->hasFlag("Fangzao")){
+        if(Self->hasUsed("FangzaoCard") && selected.isEmpty() && Self->hasFlag("fangzao")){
             return !to_select->isEquipped();
         }else
             return false;
@@ -916,7 +916,7 @@ public:
 
         ServerPlayer *zhufu = room->findPlayerBySkillName(objectName());
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from == zhufu)
+        if(effect.to == zhufu)
             return false;
 
         if(zhufu->getPhase() != Player::NotActive)
@@ -976,7 +976,7 @@ public:
         Room *room = player->getRoom();
         if(!damage.from || !damage.from->getWeapon())
             return;
-        int percent = 25 + player->getEquips().length() * 10;
+        int percent = 30 + player->getEquips().length() * 15;
         if(qrand() % 100 < percent){
             LogMessage log;
             log.from = player;
@@ -1026,8 +1026,9 @@ YBYTPackage::YBYTPackage()
 
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill(new Maiyi);
+    xueyong->addSkill("#losthp");
 
-    General *tanglong = new General(this, "tanglong", "kou", 3);
+    General *tanglong = new General(this, "tanglong", "jiang", 3);
     tanglong->addSkill(new Cuihuo);
     tanglong->addSkill(new Jintang);
 
