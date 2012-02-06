@@ -50,7 +50,6 @@ class Counterplot:public Nullification{
 public:
     Q_INVOKABLE Counterplot(Card::Suit suit, int number);
 
-    virtual void use(Room *room, ServerPlayer *me, const QList<ServerPlayer *> &targets) const;
 };
 
 class Provistore:public DelayedTrick{

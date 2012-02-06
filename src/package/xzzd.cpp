@@ -240,7 +240,7 @@ bool Maida0Card::targetFilter(const QList<const Player *> &targets, const Player
 void Maida0Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
     room->playSkillEffect("maidao", qrand() % 2 + 3);
-    target->obtainCard(this);
+    target->obtainCard(this, false);
 
     const QList<int> &knife = target->getPile("knife");
     if(knife.isEmpty())
@@ -366,9 +366,9 @@ public:
         events << Dying;
     }
 
-    static int GetCard(ServerPlayer *from, ServerPlayer *to){
-        int first = from->getRoom()->askForCardChosen(from, to, "he", "lihun");
-        from->obtainCard(Sanguosha->getCard(first));
+    static int GetCard(Room *room, ServerPlayer *from, ServerPlayer *to){
+        int first = room->askForCardChosen(from, to, "he", "lihun");
+        room->obtainCard(from, first, room->getCardPlace(first) != Player::Hand);
         return first;
     }
 
@@ -380,11 +380,11 @@ public:
             Room *room = shun->getRoom();
             room->playSkillEffect(objectName());
             DummyCard *dummy = new DummyCard;
-            dummy->addSubcard(GetCard(shun, from));
+            dummy->addSubcard(GetCard(room, shun, from));
             if(!from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from)))
-                dummy->addSubcard(GetCard(shun, from));
+                dummy->addSubcard(GetCard(room, shun, from));
             ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(from), objectName());
-            room->moveCardTo(dummy, target, Player::Hand);
+            room->obtainCard(target, dummy, false);
             delete dummy;
         }
         return false;
@@ -589,7 +589,7 @@ bool BinggongCard::targetFilter(const QList<const Player *> &targets, const Play
 void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     int num = this->getSubcards().length();
     ServerPlayer *target = targets.first();
-    target->obtainCard(this);
+    target->obtainCard(this, false);
     if(num >= 3){
         RecoverStruct rev;
         rev.who = source;

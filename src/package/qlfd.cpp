@@ -108,7 +108,7 @@ bool FanwuCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void FanwuCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->obtainCard(this);
+    effect.to->obtainCard(this, false);
     DamageStruct damage = effect.from->tag["FanwuStruct"].value<DamageStruct>();
     damage.from = effect.to;
     effect.from->tag["FanwuStruct"] = QVariant::fromValue(damage);
@@ -791,7 +791,7 @@ void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         }
     }else
         target = targets.first();
-    room->moveCardTo(this, target, Player::Hand, false);
+    room->obtainCard(target, this, false);
 
     int num = 0;
     foreach(int x, this->getSubcards()){
@@ -980,9 +980,9 @@ public:
             room->fillAG(card_ids, loli);
             int card_id = room->askForAG(loli, card_ids, false, objectName());
             room->broadcastInvoke("clearAG");
-            room->obtainCard(loli, card_id);
+            room->obtainCard(loli, card_id, false);
             room->getThread()->delay(300);
-            room->obtainCard(masata, room->askForCardShow(loli, masata, objectName()));
+            room->obtainCard(masata, room->askForCardShow(loli, masata, objectName()), false);
 
             LogMessage log;
             log.type = "#Zhiyu";

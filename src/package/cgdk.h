@@ -66,31 +66,7 @@ class LinmoCard: public SkillCard{
 public:
     Q_INVOKABLE LinmoCard();
 
-    virtual bool targetFixed() const;
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
-
-    virtual const Card *validate(const CardUseStruct *card_use) const;
-};
-
-class LinmoDialog: public QDialog{
-    Q_OBJECT
-
-public:
-    static LinmoDialog *GetInstance();
-
-public slots:
-    void popup();
-    void selectCard(QAbstractButton *button);
-
-private:
-    LinmoDialog();
-
-    QGroupBox *createLeft();
-    QGroupBox *createRight();
-    QAbstractButton *createButton(const Card *card);
-    QButtonGroup *group;
-    QHash<QString, const Card *> map;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 class ZhaixingCard: public SkillCard{

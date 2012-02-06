@@ -781,9 +781,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
-    foreach(int card_id, this->getSubcards()){
-        effect.to->getRoom()->obtainCard(effect.to, card_id);
-    }
+    effect.to->getRoom()->obtainCard(effect.to, this, false);
     PlayerStar target = effect.to;
     effect.from->tag["Xiaozai"] = QVariant::fromValue(target);
 }
@@ -969,6 +967,25 @@ public:
     }
 };
 
+class Qibing:public DrawCardsSkill{
+public:
+    Qibing():DrawCardsSkill("qibing"){
+        frequency = Compulsory;
+    }
+
+    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
+        Room *room = wangq->getRoom();
+        room->playSkillEffect(objectName());
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = wangq;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        return qMin(wangq->getHp(), 4);
+    }
+};
+
 class Jiachu:public MasochismSkill{
 public:
     Jiachu():MasochismSkill("jiachu$"){
@@ -1052,7 +1069,7 @@ QJWMPackage::QJWMPackage()
     shien->addSkill(new Xiaozai);
 
     General *wangqing = new General(this, "wangqing$", "min");
-    wangqing->addSkill(new Skill("qibing", Skill::Compulsory));
+    wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
 
     General *luozhenren = new General(this, "luozhenren", "kou", 3);

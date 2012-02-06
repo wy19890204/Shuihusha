@@ -79,4 +79,12 @@ return {
 	["luanji"] = "乱击",
 	[":luanji"] = "出牌阶段，你可将一张红色手牌和一张锦囊牌当【万箭齐发】使用，且造成的伤害均为火焰伤害。",
 	["~pangwanchun"] = "中埋伏了……",
+
+	["#_litianrun"] = "镇国大将",
+	["litianrun"] = "厉天闰",
+	["designer:litianrun"] = "猪猪天使",
+	["jingtian"] = "惊天",
+	[":jingtian"] = "出牌阶段，可弃掉两张相同花色的手牌，令一名其他角色的体力值与你相同。每回合限一次。",
+	["#Jingtian"] = "%from 将 %to 的体力值由 %arg 改成了 %arg2",
+	["~litianrun"] = "我这是怎么了……",
 }
