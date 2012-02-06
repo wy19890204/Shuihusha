@@ -1,0 +1,2 @@
+general:gaoqiu general2:pengqi role:lord starter:true equip:57 hand:5 
+general:hongxin general2:zhutong role:rebel 

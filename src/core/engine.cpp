@@ -44,6 +44,28 @@ extern "C" {
     Scenario *NewZombieScenario();
     Scenario *NewLegendScenario();
     Scenario *NewImpasseScenario();
+    Scenario *NewCustomScenario();
+
+    Scenario *NewMiniScene_01();
+    Scenario *NewMiniScene_02();
+    Scenario *NewMiniScene_03();
+    Scenario *NewMiniScene_04();
+    Scenario *NewMiniScene_05();
+    Scenario *NewMiniScene_06();
+    Scenario *NewMiniScene_07();
+    Scenario *NewMiniScene_08();
+    Scenario *NewMiniScene_09();
+    Scenario *NewMiniScene_10();
+    Scenario *NewMiniScene_11();
+    Scenario *NewMiniScene_12();
+    Scenario *NewMiniScene_13();
+    Scenario *NewMiniScene_14();
+    Scenario *NewMiniScene_15();
+    Scenario *NewMiniScene_16();
+    Scenario *NewMiniScene_17();
+    Scenario *NewMiniScene_18();
+    Scenario *NewMiniScene_19();
+    Scenario *NewMiniScene_20();
 }
 
 extern "C" {
@@ -78,6 +100,28 @@ Engine::Engine()
     addScenario(NewZombieScenario());
     addScenario(NewLegendScenario());
     addScenario(NewImpasseScenario());
+    addScenario(NewCustomScenario());
+
+    addScenario(NewMiniScene_01());
+    addScenario(NewMiniScene_02());
+    addScenario(NewMiniScene_03());
+    addScenario(NewMiniScene_04());
+    addScenario(NewMiniScene_05());
+    addScenario(NewMiniScene_06());
+    addScenario(NewMiniScene_07());
+    addScenario(NewMiniScene_08());
+    addScenario(NewMiniScene_09());
+    addScenario(NewMiniScene_10());
+    addScenario(NewMiniScene_11());
+    addScenario(NewMiniScene_12());
+    addScenario(NewMiniScene_13());
+    addScenario(NewMiniScene_14());
+    addScenario(NewMiniScene_15());
+    addScenario(NewMiniScene_16());
+    addScenario(NewMiniScene_17());
+    addScenario(NewMiniScene_18());
+    addScenario(NewMiniScene_19());
+    addScenario(NewMiniScene_20());
 
     // available game modes
     modes["02p"] = tr("2 players");
@@ -147,7 +191,10 @@ Engine::~Engine(){
 }
 
 QStringList Engine::getScenarioNames() const{
-    return scenarios.keys();
+    QStringList names;
+    foreach(QString name, scenarios.keys())
+        if(!name.contains("_mini_") && !name.contains("custom_scenario")) names << name;
+    return names;
 }
 
 void Engine::addScenario(Scenario *scenario){
