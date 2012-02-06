@@ -108,7 +108,7 @@ Engine::Engine()
     addScenario(NewMiniScene_04());
     addScenario(NewMiniScene_05());
     addScenario(NewMiniScene_06());
-    addScenario(NewMiniScene_07());
+    /*addScenario(NewMiniScene_07());
     addScenario(NewMiniScene_08());
     addScenario(NewMiniScene_09());
     addScenario(NewMiniScene_10());
@@ -121,7 +121,7 @@ Engine::Engine()
     addScenario(NewMiniScene_17());
     addScenario(NewMiniScene_18());
     addScenario(NewMiniScene_19());
-    addScenario(NewMiniScene_20());
+    addScenario(NewMiniScene_20());*/
 
     // available game modes
     modes["02p"] = tr("2 players");

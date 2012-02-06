@@ -1,2 +1,4 @@
- general:select  role:rebel
-    general:caocao  maxhp:5  hp:5  role:lord  equip:yitian_sword  starter:true
+general:select|role:rebel
+general:linchong|role:rebel
+general:gaoqiu|maxhp:5|hp:5|role:lord|starter:true
+general:tongguan|maxhp:4|hp:4|role:loyalist|equip:fan

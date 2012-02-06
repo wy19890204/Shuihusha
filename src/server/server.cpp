@@ -488,10 +488,10 @@ QGroupBox *ServerDialog::createGameModeBox(){
         mini_scene_button = new QPushButton(tr("Custom Mini Scene"));
         connect(mini_scene_button, SIGNAL(clicked()), this, SLOT(doCustomAssign()));
         mini_scene_button->setEnabled(mini_scenes->isChecked());
-        connect(mini_scenes, SIGNAL(toggled(bool)), mini_scene_button, SLOT(setEnabled(bool)));
         /*mini_scene_button->setEnabled(mode_group->checkedButton() ?
                                           mode_group->checkedButton()->objectName() == "mini" :
                                           false);*/
+        connect(mini_scenes, SIGNAL(toggled(bool)), mini_scene_button, SLOT(setEnabled(bool)));
 
         item_list << HLay(scenario_button, scenario_combobox);
         item_list << HLay(mini_scenes, mini_scene_combobox);

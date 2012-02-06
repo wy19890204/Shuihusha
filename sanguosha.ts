@@ -3347,6 +3347,16 @@
         <translation>电脑延迟</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="616"/>
+        <source>Custom Mini Scene</source>
+        <translation>自定义小型场景</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="587"/>
+        <source>Mini Scenes</source>
+        <translation>小型场景</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="461"/>
         <source>Custom Mode</source>
         <translation>自定义模式</translation>

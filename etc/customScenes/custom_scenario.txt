@@ -1,2 +1,2 @@
-general:gaoqiu general2:pengqi role:lord starter:true equip:138,135 hand:5 judge:123 
+general:gaoqiu general2:pengqi role:lord starter:true equip:135,138 hand:5 judge:123 
 general:hongxin general2:zhutong role:rebel 

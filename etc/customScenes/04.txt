@@ -1,3 +1,5 @@
-general:select  role:rebel
-    general:yuanshao  role:rebel  starter:true
-    general:guojia  general2:huatuo  maxhp:3  role:lord  equip:eight_diagram
+general:select|role:loyalist
+general:yangzhi|role:lord|equip:gold_armor,meteor_sword
+general:chaogai|maxhp:3|hp:3|role:rebel
+general:wuyong|maxhp:3|hp:3|role:rebel
+general:gongsunsheng|maxhp:3|hp:2|role:rebel|equip:fan|starter:true
