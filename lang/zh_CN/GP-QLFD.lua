@@ -181,13 +181,13 @@ return {
 	[":caiquan"] = "绝密技能，效果不详。",
 
 -- last words
-	["~panjinlian"] = "庆哥哥，说好的幸福呢……",
---	["~panjinlian"] = "大错铸成两命丧，风吹败柳赴黄泉。",
+--	["~panjinlian"] = "庆哥哥，说好的幸福呢……",
+	["~panjinlian"] = "大错铸成两命丧，风吹败柳赴黄泉。",
 	["~panqiaoyun"] = "一了百了～",
 	["~wangpo"] = "死到眼前，犹做发财梦～",
 	["~linniangzi"] = "官人，就此～别过！",
 	["~duansanniang"] = "大王！我，此生无悔！",
-	["~yanxijiao"] = "宋三郎，你～",
+	["~yanxijiao"] = "别管我，你快走……",
 	["~baixiuying"] = "谁都帮不了我了～",
 	["~liruilan"] = "虔～婆～害～我！",
 	["~liqiaonu"] = "早知如此，何必～当初。",
