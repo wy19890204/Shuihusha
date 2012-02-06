@@ -969,6 +969,25 @@ public:
     }
 };
 
+class Qibing:public DrawCardsSkill{
+public:
+    Qibing():DrawCardsSkill("qibing"){
+        frequency = Compulsory;
+    }
+
+    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
+        Room *room = wangq->getRoom();
+        room->playSkillEffect(objectName());
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = wangq;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        return qMin(wangq->getHp(), 4);
+    }
+};
+
 class Jiachu:public MasochismSkill{
 public:
     Jiachu():MasochismSkill("jiachu$"){
@@ -1052,7 +1071,7 @@ QJWMPackage::QJWMPackage()
     shien->addSkill(new Xiaozai);
 
     General *wangqing = new General(this, "wangqing$", "min");
-    wangqing->addSkill(new Skill("qibing", Skill::Compulsory));
+    wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
 
     General *luozhenren = new General(this, "luozhenren", "kou", 3);
