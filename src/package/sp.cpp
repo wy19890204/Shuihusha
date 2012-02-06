@@ -13,7 +13,6 @@ public:
     }
 
     virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
-        //Room *room = emperor->getRoom();
         if(e == PhaseChange){
             if(emperor->getPhase() == Player::Discard &&
                emperor->askForSkillInvoke(objectName(), data)){

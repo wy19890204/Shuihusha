@@ -217,7 +217,6 @@ void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     int num = this->getSubcards().length();
     room->moveCardTo(this, NULL, Player::DrawPile, true);
     QList<int> fog = room->getNCards(num, false);
-            //this->getSubcards();
     room->doGuanxing(source, fog, false);
 };
 

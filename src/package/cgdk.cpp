@@ -999,7 +999,6 @@ public:
                 room->sendLog(log);
                 if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
                     room->throwCard(damage.from->getRandomHandCardId());
-                //room->throwCard(room->askForCardShow(damage.from, sun, objectName()));
             }
         }
         else if(v == CardLost){

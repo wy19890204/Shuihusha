@@ -380,14 +380,9 @@ public:
             Room *room = shun->getRoom();
             room->playSkillEffect(objectName());
             DummyCard *dummy = new DummyCard;
-            //int first = room->askForCardChosen(shun, from, "he", objectName());
-            //shun->obtainCard(Sanguosha->getCard(first));
             dummy->addSubcard(GetCard(shun, from));
-            if(!from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from))){
-                //first = room->askForCardChosen(shun, from, "he", objectName());
-                //shun->obtainCard(Sanguosha->getCard(first));
+            if(!from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from)))
                 dummy->addSubcard(GetCard(shun, from));
-            }
             ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(from), objectName());
             room->moveCardTo(dummy, target, Player::Hand);
             delete dummy;
@@ -731,7 +726,7 @@ public:
 };
 
 XZDDPackage::XZDDPackage()
-    :Package("XZDD"){ //guan == wei, jiang == shu, min == wu, kou == qun
+    :Package("XZDD"){
 
     General *linchong = new General(this, "linchong", "jiang");
     linchong->addSkill(new Duijue);
