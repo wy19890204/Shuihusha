@@ -1,2 +1,2 @@
 ﻿general:select|role:rebel|starter:true
-general:gongsunsheng|general2:qiaodaoqing|maxhp:5|hp:5|role:lord|draw:4|equip:ice_sword
+general:gongsunsheng|general2:qiaodaoqing|maxhp:4|hp:3|role:lord|draw:4|equip:ice_sword

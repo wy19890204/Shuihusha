@@ -188,9 +188,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
 
         QVariant v;
         foreach(const TriggerSkill *skill, sp->getTriggerSkills()){
-            if(!skill->inherits("SPConvertSkill"))
-                room->getThread()->addTriggerSkill(skill);
-            else continue;
+            room->getThread()->addTriggerSkill(skill);
 
             if(skill->getTriggerEvents().contains(GameStart))
                 skill->trigger(GameStart, sp, v);

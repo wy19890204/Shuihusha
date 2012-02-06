@@ -2907,6 +2907,11 @@
         <translation>失败者</translation>
     </message>
     <message>
+        <location filename="src/ui/roomscene.cpp" line="2509"/>
+        <source>Next Stage</source>
+        <translation>下一场景</translation>
+    </message>
+    <message>
         <location filename="src/ui/roomscene.cpp" line="2316"/>
         <source>Return to main menu</source>
         <translation>返回主菜单</translation>

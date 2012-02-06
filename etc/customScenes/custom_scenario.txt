@@ -1,2 +1,4 @@
-general:gaoqiu general2:pengqi role:lord starter:true equip:135,138 hand:5 judge:123 
-general:hongxin general2:zhutong role:rebel 
+general:select role:rebel 
+general:linchong role:rebel 
+general:gaoqiu role:lord starter:true maxhp:5 hp:5 
+general:tongguan role:loyalist maxhp:4 hp:4 equip:195 
