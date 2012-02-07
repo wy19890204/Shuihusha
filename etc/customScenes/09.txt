@@ -1,4 +1,5 @@
-general:select  role:lord  starter:true
-    general:xiahoudun  role:rebel
-    general:fazheng  general2:caiwenji  role:loyalist
-    general:simayi  general2:xunyu  maxhp:3  role:rebel
+general:select|general2:duwei|general3:ruanxiaoer|role:loyalist
+general:gongsunsheng|role:rebel|hand:217
+general:gaolian|role:lord|maxhp:4|hp:4|equip:crossbow|starter:true
+general:fanrui|role:rebel
+general:luozhenren|role:rebel

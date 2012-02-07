@@ -1,4 +1,3 @@
-general:select role:rebel 
-general:linchong role:rebel 
-general:gaoqiu role:lord starter:true maxhp:5 hp:5 
-general:tongguan role:loyalist maxhp:4 hp:4 equip:195 
+general:select role:rebel chained:true 
+general:yanxijiao general2:duansanniang role:lord maxhp:5 hp:4 equip:68 hand:127 
+general:jiangsong role:rebel starter:true maxhp:4 chained:true equip:207 

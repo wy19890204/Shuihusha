@@ -108,11 +108,11 @@ Engine::Engine()
     addScenario(NewMiniScene_04());
     addScenario(NewMiniScene_05());
     addScenario(NewMiniScene_06());
-    /*addScenario(NewMiniScene_07());
+    addScenario(NewMiniScene_07());
     addScenario(NewMiniScene_08());
     addScenario(NewMiniScene_09());
     addScenario(NewMiniScene_10());
-    addScenario(NewMiniScene_11());
+    /*addScenario(NewMiniScene_11());
     addScenario(NewMiniScene_12());
     addScenario(NewMiniScene_13());
     addScenario(NewMiniScene_14());

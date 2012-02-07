@@ -918,13 +918,13 @@ public:
         if(effect.to == zhufu)
             return false;
 
-        if(zhufu->getPhase() != Player::NotActive)
+        if(!zhufu || zhufu->getPhase() != Player::NotActive)
             return false;
 
         if(!effect.card->inherits("Peach"))
             return false;
 
-        if(zhufu && !zhufu->isNude() && zhufu->isWounded()){
+        if(!zhufu->isNude() && zhufu->isWounded()){
             const Card *card = room->askForCard(zhufu, "..H", "@guitai:" + effect.to->objectName(), data);
             if(card){
                 room->playSkillEffect(objectName());

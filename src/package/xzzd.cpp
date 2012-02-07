@@ -381,7 +381,6 @@ public:
                     jink->setSkillName(objectName());
                     room->provide(jink);
                     room->setEmotion(player, "good");
-                    room->playSkillEffect(objectName());
                     return true;
                 }
             }

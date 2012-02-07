@@ -500,6 +500,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
 
     QRadioButton *button = new QRadioButton(tr("Custom Mode"));
     button->setObjectName("custom");
+    button->setVisible(false);
     mode_group->addButton(button);
     item_list << button;
     if(button->objectName() == Config.GameMode)
