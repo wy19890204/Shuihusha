@@ -631,6 +631,9 @@ bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, Serve
             continue;
 
 trust:
+        final_player = getTag("Counploter").value<PlayerStar>();
+        if(final_player && final_player->hasSkill("pozhen"))
+            break;
         AI *ai = player->getAI();
         const Card *card = NULL;
         if(ai){

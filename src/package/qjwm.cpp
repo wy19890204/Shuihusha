@@ -447,8 +447,14 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->isNDTrick() && !use.card->inherits("Nullification")){
+        if(use.card->isNDTrick()){
             room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Pozhen";
+            log.from = use.from;
+            log.arg = objectName();
+            log.arg2 = use.card->objectName();
+            room->sendLog(log);
         }
         return false;
     }
@@ -501,9 +507,9 @@ public:
         if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
             Room *room = zhuwu->getRoom();
             if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
-                //room->broadcastInvoke("animate", "lightbox:$buzhen");
+                room->broadcastInvoke("animate", "lightbox:$buzhen:5000");
                 zhuwu->loseMark("@buvr");
-                room->getThread()->delay();
+                room->getThread()->delay(4500);
                 return true;
             }
         }
