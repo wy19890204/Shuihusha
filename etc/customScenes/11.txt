@@ -1,5 +1,3 @@
-general:select  general2:select  role:lord  starter:true
-    general:pangde  equip:blade  role:rebel
-    general:ganning  general2:sunjian  maxhp:4  role:rebel  equip:guding_blade
-    general:zhangliao  general2:lukang  equip:ice_sword  role:rebel
-    general:sunshangxiang  general2:lingtong  maxhp:4  role:loyalist
+general:select|role:rebel|chained:true
+general:yanxijiao|general2:duansanniang|role:lord|maxhp:5|hp:5|equip:68|hand:127
+general:jiangsong|role:rebel|starter:true|maxhp:4|chained:true|equip:207
