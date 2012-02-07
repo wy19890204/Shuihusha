@@ -13,7 +13,7 @@ void MiniSceneRule::assign(QStringList &generals, QStringList &roles) const{
     {
         QMap<QString,QString> sp =players.at(i);
         QString name = sp["general"];
-        if(name == "select")name = "sujiang";
+        if(name == "select")name = "anjiang";
         generals << name;
         roles << sp["role"];
     }
@@ -26,11 +26,11 @@ QStringList MiniSceneRule::existedGenerals() const
     {
         QMap<QString,QString> sp =players.at(i);
         QString name = sp["general"];
-        if(name == "select")name = "sujiang";
+        if(name == "select")name = "anjiang";
         names << name;
         name = sp["general2"];
         if(name == NULL )continue;
-        if(name == "select")name = "sujiang";
+        if(name == "select")name = "anjiang";
         names << name;
     }
     return names;
@@ -129,7 +129,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
                     general = room->askForGeneral(sp,available);
                 }
                 if(general == sp->getGeneralName())general = this->players.at(i)["general3"];
-                QString trans = QString("%1:%2").arg("sujiang").arg(general);
+                QString trans = QString("%1:%2").arg("anjiang").arg(general);
                 sp->invoke("transfigure",trans);
                 room->setPlayerProperty(sp,"general2",general);
             }
@@ -303,11 +303,11 @@ ADD_CUSTOM_SCENARIO(03)
 ADD_CUSTOM_SCENARIO(04)
 ADD_CUSTOM_SCENARIO(05)
 ADD_CUSTOM_SCENARIO(06)
-/*ADD_CUSTOM_SCENARIO(07)
+ADD_CUSTOM_SCENARIO(07)
 ADD_CUSTOM_SCENARIO(08)
 ADD_CUSTOM_SCENARIO(09)
 ADD_CUSTOM_SCENARIO(10)
-ADD_CUSTOM_SCENARIO(11)
+/*ADD_CUSTOM_SCENARIO(11)
 ADD_CUSTOM_SCENARIO(12)
 ADD_CUSTOM_SCENARIO(13)
 ADD_CUSTOM_SCENARIO(14)

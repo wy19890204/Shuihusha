@@ -1,5 +1,4 @@
- general:select  general2:select  role:lord  equip:double_sword  starter:true
-    general:daqiao  role:rebel
-    general:zhenji  role:loyalist
-    general:sp_sunshangxiang  maxhp:4  role:rebel
-    general:wuguotai  role:rebel
+general:select|role:lord|hand:219
+general:qingzhang|role:rebel|starter:true
+general:sujiang|maxhp:3|hp:3|role:loyalist
+general:sunerniang|role:rebel

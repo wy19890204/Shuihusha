@@ -1,4 +1,4 @@
-general:select role:rebel 
+general:select role:rebel hand:87 
 general:linchong role:rebel 
-general:gaoqiu role:lord starter:true maxhp:5 hp:5 
+general:gaoqiu role:lord starter:true maxhp:5 hp:4 judge:121 
 general:tongguan role:loyalist maxhp:4 hp:4 equip:195 
