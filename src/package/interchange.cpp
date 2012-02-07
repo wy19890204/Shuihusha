@@ -432,6 +432,35 @@ public:
     }
 };
 
+class Wodao: public FilterSkill{
+public:
+    Wodao():FilterSkill("wodao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getCard();
+        return (card->getSuit() == Card::Spade && card->inherits("TrickCard")) ||
+                card->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        if(c->getSuit() != Card::Heart){
+            Duel *duel = new Duel(c->getSuit(), c->getNumber());
+            duel->setSkillName(objectName());
+            duel->addSubcard(card_item->getCard());
+            return duel;
+        }
+        else{
+            Slash *slash = new Slash(c->getSuit(), c->getNumber());
+            slash->setSkillName(objectName());
+            slash->addSubcard(card_item->getCard());
+            return slash;
+        }
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -468,6 +497,9 @@ InterChangePackage::InterChangePackage()
 
     General *litianrun = new General(this, "litianrun", "jiang");
     litianrun->addSkill(new Jingtian);
+
+    General *duxue = new General(this, "duxue", "kou");
+    duxue->addSkill(new Wodao);
 
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();

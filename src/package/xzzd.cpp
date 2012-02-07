@@ -76,6 +76,36 @@ public:
     }
 };
 
+SijiuCard::SijiuCard()
+    :QingnangCard(){
+}
+
+bool SijiuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() > 0)
+        return false;
+    return to_select->isWounded();
+}
+
+class Sijiu: public OneCardViewAsSkill{
+public:
+    Sijiu():OneCardViewAsSkill("sijiu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return true;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Peach");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        SijiuCard *qingnang_card = new SijiuCard;
+        qingnang_card->addSubcard(card_item->getCard()->getId());
+        return qingnang_card;
+    }
+};
+
 class Yixian: public TriggerSkill{
 public:
     Yixian():TriggerSkill("yixian"){
@@ -732,6 +762,7 @@ XZDDPackage::XZDDPackage()
     linchong->addSkill(new Duijue);
 
     General *zhutong = new General(this, "zhutong", "min");
+    zhutong->addSkill(new Sijiu);
     zhutong->addSkill(new Yixian);
 
     General *yangzhi = new General(this, "yangzhi", "guan");
@@ -775,6 +806,7 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Shentou);
 
     addMetaObject<DuijueCard>();
+    addMetaObject<SijiuCard>();
     addMetaObject<MaidaoCard>();
     addMetaObject<Maida0Card>();
     addMetaObject<BinggongCard>();
