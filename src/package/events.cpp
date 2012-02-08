@@ -39,16 +39,16 @@ void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->throwCard(this);
     ServerPlayer *target = targets.first();
     if(source->getPhase() == Player::Play){
-        if(target->getJudgingArea().length() > 1){
-            room->playCardEffect("@jiefachang1", source->getGeneral()->isMale());
+        room->playCardEffect("@jiefachang1", source->getGeneral()->isMale());
+        if(target->getJudgingArea().length() > 1)
             room->throwCard(room->askForCardChosen(source, target, "j", "jiefachang"));
-        }else{
-            room->playCardEffect("@jiefachang2", source->getGeneral()->isMale());
+        else
             room->throwCard(target->getJudgingArea().last());
-        }
     }
-    else
+    else{
+        room->playCardEffect("@jiefachang2", source->getGeneral()->isMale());
         target->turnOver();
+    }
 }
 
 Daojia::Daojia(Suit suit, int number):EventsCard(suit, number){

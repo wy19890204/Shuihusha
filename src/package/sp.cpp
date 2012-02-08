@@ -200,7 +200,7 @@ public:
 };
 
 YuzhongCard::YuzhongCard(){
-
+    mute = true;
 }
 
 bool YuzhongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -262,20 +262,22 @@ public:
         if(damage->from != damage->to && damage->from->hasSkill(objectName())){
             ServerPlayer *source = damage->from;
             QString choice = room->askForChoice(source, objectName(), "hp+card+cancel");
-            if(choice != "cancel"){
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = source;
-                log.arg = "yuzhong";
-                room->sendLog(log);
-            }
+            if(choice == "cancel")
+                return false;
+            LogMessage log;
+            log.type = "#InvokeSkill";
+            log.from = source;
+            log.arg = objectName();
+            room->sendLog(log);
             if(choice == "hp"){
+                room->playSkillEffect(objectName(), 1);
                 RecoverStruct rev;
                 rev.who = source;
                 rev.recover = num;
                 room->recover(room->getLord(), rev);
             }
             else if(choice == "card"){
+                room->playSkillEffect(objectName(), 2);
                 room->getLord()->drawCards(num);
             }
         }
@@ -298,10 +300,14 @@ public:
         QString choice = room->askForChoice(player, "yuzhong", "all+me+cancel");
         if(choice == "cancel")
             return false;
-        if(choice == "all")
+        if(choice == "all"){
             if(!room->askForUseCard(player, "@@yuzhong", "@yuzhong"))
                 choice = "me";
+            else
+                room->playSkillEffect(objectName(), 3);
+        }
         if(choice == "me"){
+            room->playSkillEffect(objectName(), 4);
             LogMessage log;
             log.type = "#InvokeSkill";
             log.from = player;
