@@ -25,7 +25,7 @@ return {
 
 	["#_ruanxiaoqi"] = "活阎罗",
 	["ruanxiaoqi"] = "阮小七",
-	["cv:ruanxiaoqi"] = "佚名",
+	["cv:ruanxiaoqi"] = "爪子",
 	["jueming"] = "绝命",
 	[":jueming"] = "<b>锁定技</b>，你的回合外，若你的当前体力值为1，你不能成为【杀】、【决斗】和【行刺】的目标。",
 	["jiuhan"] = "酒酣",

@@ -47,6 +47,20 @@ public:
     }
 };
 
+class JuemingEffect:public TriggerSkill{
+public:
+    JuemingEffect():TriggerSkill("#jueming_effect"){
+        events << HpChanged;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
+        Room *room = nana->getRoom();
+        if(nana->getHp() == 1 && nana->getPhase() == Player::NotActive)
+            room->playSkillEffect("jueming");
+        return false;
+    }
+};
+
 class Jiuhan:public TriggerSkill{
 public:
     Jiuhan():TriggerSkill("jiuhan"){
@@ -981,6 +995,8 @@ CGDKPackage::CGDKPackage()
 
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);
+    ruanxiaoqi->addSkill(new JuemingEffect);
+    related_skills.insertMulti("jueming", "#jueming_effect");
     ruanxiaoqi->addSkill(new Jiuhan);
 
     General *xiebao = new General(this, "xiebao", "min");
