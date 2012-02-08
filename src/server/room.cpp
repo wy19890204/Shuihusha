@@ -324,6 +324,7 @@ void Room::judge(JudgeStruct &judge_struct){
                 setPlayerFlag(player, "FuckLian");
                 const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl", data);
                 if(fuck){
+                    playCardEffect("@fuckgaolian2", player->getGeneral()->isMale());
                     JudgeStar judge = data.value<JudgeStar>();
                     source->obtainCard(judge->card);
                     judge->card = fuck;
