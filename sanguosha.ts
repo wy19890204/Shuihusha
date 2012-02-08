@@ -1538,11 +1538,6 @@
         <translation>重复技能: %1</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="327"/>
-        <source>V3.0.0</source>
-        <translation>V3.0.0</translation>
-    </message>
-    <message>
         <location filename="src/core/engine.cpp" line="410"/>
         <source>%1 [Scenario mode]</source>
         <translation>%1 【剧情模式】</translation>
