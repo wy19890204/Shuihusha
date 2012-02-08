@@ -2,4 +2,4 @@ general:select|role:loyalist
 general:chaogai|role:rebel|maxhp:3|hp:3
 general:wuyong|role:rebel|maxhp:3|hp:3|equip:195
 general:gongsunsheng|role:rebel|maxhp:3|hp:2|equip:208|starter:true
-general:yangzhi|role:lord|maxhp:4|hp:4|equip:106,112|hand:60,55
+general:yangzhi|role:lord|maxhp:4|hp:4|equip:106,112|hand:60,55|judge:123

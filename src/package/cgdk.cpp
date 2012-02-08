@@ -863,6 +863,7 @@ public:
         if(damage.card && damage.card->inherits("Slash") &&
             damage.to->isKongcheng() && player->askForSkillInvoke(objectName())){
             Room *room = damage.to->getRoom();
+            room->playSkillEffect(objectName());
             room->loseMaxHp(damage.to);
         }
         return false;
@@ -882,6 +883,7 @@ public:
         Room *room = player->getRoom();
         PlayerStar lili = room->findPlayerBySkillName(objectName());
         if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
             const Card *wolegequ = player->getRandomHandCard();
             lili->obtainCard(wolegequ, false);
         }
