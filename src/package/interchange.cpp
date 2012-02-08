@@ -441,22 +441,23 @@ public:
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getCard();
         return (card->getSuit() == Card::Spade && card->inherits("TrickCard")) ||
+                card->inherits("EventsCard") ||
                 card->getSuit() == Card::Heart;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
         const Card *c = card_item->getCard();
-        if(c->getSuit() != Card::Heart){
-            Duel *duel = new Duel(c->getSuit(), c->getNumber());
-            duel->setSkillName(objectName());
-            duel->addSubcard(card_item->getCard());
-            return duel;
-        }
-        else{
+        if(c->getSuit() == Card::Heart && !card->inherits("EventsCard")){
             Slash *slash = new Slash(c->getSuit(), c->getNumber());
             slash->setSkillName(objectName());
             slash->addSubcard(card_item->getCard());
             return slash;
+        }
+        else{
+            Duel *duel = new Duel(c->getSuit(), c->getNumber());
+            duel->setSkillName(objectName());
+            duel->addSubcard(card_item->getCard());
+            return duel;
         }
     }
 };

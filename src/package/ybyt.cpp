@@ -789,12 +789,12 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
 
         ServerPlayer *zouyuan = room->findPlayerBySkillName(objectName());
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from == zouyuan)
+        if(!zouyuan || effect.from == zouyuan)
             return false;
 
         if(effect.multiple || effect.from == NULL)
@@ -804,7 +804,7 @@ public:
             return false;
 
         if(zouyuan && !zouyuan->isNude() && room->askForSkillInvoke(zouyuan, objectName(), data)){
-            room->askForDiscard(zouyuan, "longao", 1, false, true);
+            room->askForDiscard(zouyuan, objectName(), 1, false, true);
 
             QList<ServerPlayer *> players = room->getOtherPlayers(effect.from), targets;
             foreach(ServerPlayer *player, players){
@@ -814,7 +814,7 @@ public:
 
             QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
             if(choice == "zhuan" && targets.length() > 0){
-                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, "sinue");
+                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
 
                 effect.from = effect.from;
                 effect.to = target;

@@ -575,6 +575,8 @@ public:
         if(event != CardFinished)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->isVirtualCard())
+            return false;
         const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
         if(use.to.contains(writer) && (word->inherits("BasicCard") || word->isNDTrick())
             && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
