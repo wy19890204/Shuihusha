@@ -1,6 +1,4 @@
-general:select  role:loyalist  equip:dilu
-    general:lumeng  role:rebel
-    general:jiaxu  general2:jiawenhe  maxhp:4  role:rebel  marks:@chaos*2
-    general:shensimayi  role:rebel
-    general:xushu  role:loyalist
-    general:liushan  role:lord  maxhp:3  starter:true
+general:select|role:rebel|starter:true|lose:qiongying
+general:zhangqing|role:rebel|equip:axe
+general:qiaodaoqing|role:lord|chained:true|equip:lhh
+general:qiongying|role:renegade|chained:true|equip:gold_armor

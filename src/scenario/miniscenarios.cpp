@@ -5,7 +5,7 @@
 MiniSceneRule::MiniSceneRule(Scenario *scenario)
     :ScenarioRule(scenario)
 {
-    events << GameStart << PhaseChange;
+    events << GameStart << PhaseChange << Death;
 }
 
 void MiniSceneRule::assign(QStringList &generals, QStringList &roles) const{
@@ -40,10 +40,8 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
 {
     Room* room = player->getRoom();
 
-    if(event == PhaseChange)
-    {
-        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL
-                )
+    if(event == PhaseChange){
+        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL)
         {
             if(player->tag["playerHasPlayed"].toBool())
                 room->gameOver(this->players.first()["beforeNext"]);
@@ -54,6 +52,15 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
         if(player->getState() == "robot" || this->players.first()["singleTurn"] == NULL)
             return false;
         room->gameOver(this->players.first()["singleTurn"]);
+    }
+    else if(event == Death){
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
+            if(tmp->property("lose").toString() == tmp->getGeneralName())
+                //room->gameOver(".");
+                room->gameOver(player->objectName());
+            if(tmp->property("win").toString() == tmp->getGeneralName())
+                room->gameOver(tmp->objectName());
+        }
     }
     if(player->getRoom()->getTag("WaitForPlayer").toBool())
         return true;
@@ -183,7 +190,26 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
             {
                 room->obtainCard(sp,hand.toInt());
             }
+        }
 
+        str = this->players.at(i)["skill"];
+        if(str != NULL)
+        {
+            QStringList skills = str.split(",");
+            foreach(QString skill, skills)
+            {
+                room->acquireSkill(sp, skill);
+            }
+        }
+
+        str = this->players.at(i)["lose"];
+        if(str != NULL){
+            room->setPlayerProperty(sp, "lose", str);
+        }
+
+        str = this->players.at(i)["win"];
+        if(str != NULL){
+            room->setPlayerProperty(sp, "win", str);
         }
 
         QVariant v;
@@ -307,9 +333,9 @@ ADD_CUSTOM_SCENARIO(07)
 ADD_CUSTOM_SCENARIO(08)
 ADD_CUSTOM_SCENARIO(09)
 ADD_CUSTOM_SCENARIO(10)
-ADD_CUSTOM_SCENARIO(11)/*
+ADD_CUSTOM_SCENARIO(11)
 ADD_CUSTOM_SCENARIO(12)
-ADD_CUSTOM_SCENARIO(13)
+ADD_CUSTOM_SCENARIO(13)/*
 ADD_CUSTOM_SCENARIO(14)
 ADD_CUSTOM_SCENARIO(15)
 ADD_CUSTOM_SCENARIO(16)
