@@ -107,29 +107,34 @@ public:
 
             QList<int> card_ids = liying->handCards();
             qSort(card_ids.begin(), card_ids.end(), CompareBySuit);
-            room->fillAG(card_ids);
             int count = 0;
             while(!card_ids.isEmpty() && count < 2){
-                int card_id = room->askForAG(liying, card_ids, false, objectName());
+                room->fillAG(card_ids);
+                int card_id = -1;
+                do{
+                    card_id = room->askForAG(liying, card_ids, false, objectName());
+                }while(card_id < 0);
                 room->throwCard(card_id);
                 card_ids.removeOne(card_id);
 
                 // throw the rest cards that matches the same suit
                 const Card *card = Sanguosha->getCard(card_id);
                 Card::Suit suit = card->getSuit();
-                QMutableListIterator<int> itor(card_ids);
-                while(itor.hasNext()){
-                    const Card *c = Sanguosha->getCard(itor.next());
+                LogMessage ogg;
+                ogg.type = "#Kongrice";
+                ogg.from = liying;
+                ogg.arg = card->getSuitString();
+                room->sendLog(ogg);
+                for(int i = card_ids.length() - 1; i > -1; i --){
+                    const Card *c = Sanguosha->getCard(card_ids.at(i));
                     if(c->getSuit() == suit){
-                        room->throwCard(itor.next());
-                        itor.remove();
+                        card_ids.removeAt(i);
+                        room->throwCard(c);
                     }
                 }
                 count ++;
                 room->broadcastInvoke("clearAG");
-                room->fillAG(card_ids);
             }
-            room->broadcastInvoke("clearAG");
             return true;
         }
         return false;

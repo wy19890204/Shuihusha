@@ -447,7 +447,7 @@ public:
 
     virtual const Card *viewAs(CardItem *card_item) const{
         const Card *c = card_item->getCard();
-        if(c->getSuit() == Card::Heart && !card->inherits("EventsCard")){
+        if(c->getSuit() == Card::Heart && !c->inherits("EventsCard")){
             Slash *slash = new Slash(c->getSuit(), c->getNumber());
             slash->setSkillName(objectName());
             slash->addSubcard(card_item->getCard());
