@@ -1,4 +1,4 @@
-general:select|role:rebel|starter:true|lose:qiongying
+general:select|role:rebel|starter:true
 general:zhangqing|role:rebel|equip:axe
-general:qiaodaoqing|role:lord|chained:true|equip:lhh
-general:qiongying|role:renegade|chained:true|equip:gold_armor
+general:qiaodaoqing|role:lord|maxhp:4|hp:3|chained:true|equip:lhh
+general:qiongying|role:renegade|maxhp:3|hp:3|chained:true|equip:gold_armor|win:lord

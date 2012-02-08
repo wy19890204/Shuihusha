@@ -54,12 +54,8 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
         room->gameOver(this->players.first()["singleTurn"]);
     }
     else if(event == Death){
-        foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
-            if(tmp->property("lose").toString() == tmp->getGeneralName())
-                //room->gameOver(".");
-                room->gameOver(player->objectName());
-            if(tmp->property("win").toString() == tmp->getGeneralName())
-                room->gameOver(tmp->objectName());
+        if(!player->property("win").isNull()){
+            room->gameOver(player->property("win").toString());
         }
     }
     if(player->getRoom()->getTag("WaitForPlayer").toBool())
@@ -202,11 +198,6 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
             }
         }
 
-        str = this->players.at(i)["lose"];
-        if(str != NULL){
-            room->setPlayerProperty(sp, "lose", str);
-        }
-
         str = this->players.at(i)["win"];
         if(str != NULL){
             room->setPlayerProperty(sp, "win", str);
@@ -335,9 +326,9 @@ ADD_CUSTOM_SCENARIO(09)
 ADD_CUSTOM_SCENARIO(10)
 ADD_CUSTOM_SCENARIO(11)
 ADD_CUSTOM_SCENARIO(12)
-ADD_CUSTOM_SCENARIO(13)/*
+ADD_CUSTOM_SCENARIO(13)
 ADD_CUSTOM_SCENARIO(14)
-ADD_CUSTOM_SCENARIO(15)
+ADD_CUSTOM_SCENARIO(15)/*
 ADD_CUSTOM_SCENARIO(16)
 ADD_CUSTOM_SCENARIO(17)
 ADD_CUSTOM_SCENARIO(18)
