@@ -762,28 +762,31 @@ public:
             return false;
 
         if(room->askForSkillInvoke(shien, objectName(), data)){
-            QList<int> card_ids = room->getNCards(2);
-            room->fillAG(card_ids);
-            QMutableListIterator<int> itor(card_ids);
-            while(itor.hasNext()){
-                const Card *c = Sanguosha->getCard(itor.next());
-                if(c->getTypeId() != Card::Basic){
-                    itor.remove();
-                    room->takeAG(NULL, c->getId());
+            room->playSkillEffect(objectName());
+            for(int i = 0; i < 2; i++){
+                int card_id = room->drawCard();
+                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+                room->getThread()->delay();
+
+                CardStar card = Sanguosha->getCard(card_id);
+                LogMessage lolo;
+                lolo.from = shien;
+                lolo.card_str = card->getEffectIdString();
+                if(!card->inherits("BasicCard")){
+                    lolo.type = "$Longluo1";
+                    room->throwCard(card_id);
+                    room->sendLog(lolo);
+                }else{
+                    lolo.type = "$Longluo2";
+                    shien->tag["LongluoCard"] = QVariant::fromValue(card);
+                    room->sendLog(lolo);
+                    ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
+                    if(!target)
+                        target = shien;
+                    room->obtainCard(target, card_id);
+                    shien->tag.remove("LongluoCard");
                 }
             }
-            if(!card_ids.isEmpty())
-                room->playSkillEffect(objectName());
-            while(!card_ids.isEmpty()){
-                int card_id = room->askForAG(shien, card_ids, false, objectName());
-                ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
-                if(!target)
-                    target = shien;
-                card_ids.removeOne(card_id);
-                room->broadcastInvoke("clearAG");
-                room->fillAG(card_ids);
-            }
-            room->broadcastInvoke("clearAG");
         }
         return false;
     }
