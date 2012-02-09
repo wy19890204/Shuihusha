@@ -567,6 +567,8 @@ public:
                 pindian->from->obtainCard(pindian->to_card);
             return false;
         }
+        if(player->getPhase() != Player::Play)
+            return false;
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->getNumber() == 0)
             return false;
