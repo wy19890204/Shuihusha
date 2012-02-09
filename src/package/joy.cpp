@@ -285,5 +285,510 @@ JoyPackage::JoyPackage()
     type = CardPack;
 }
 
+//joy generals : miheng
+#include "tocheck.h"
+#include "settings.h"
+#include "carditem.h"
+class Jieao: public PhaseChangeSkill{
+public:
+    Jieao():PhaseChangeSkill("jieao"){
+        frequency = Compulsory;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *miheng) const{
+        if(miheng->getPhase() == Player::Start && miheng->getHp() > miheng->getHandcardNum()){
+            LogMessage log;
+            log.type = "#TriggerSkill";
+            log.from = miheng;
+            log.arg = objectName();
+            miheng->getRoom()->sendLog(log);
+            miheng->drawCards(2);
+        }
+        return false;
+    }
+};
+
+YuluCard::YuluCard(){
+    target_fixed = true;
+    will_throw = false;
+}
+
+void YuluCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    foreach(int word_id, this->getSubcards()){
+        source->addToPile("word", word_id);
+    }
+}
+
+class Yulu: public ViewAsSkill{
+public:
+    Yulu():ViewAsSkill("yulu"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        YuluCard *yulu_card = new YuluCard;
+        yulu_card->addSubcards(cards);
+        return yulu_card;
+    }
+};
+
+ViewMyWordsCard::ViewMyWordsCard(){
+    target_fixed = true;
+}
+
+void ViewMyWordsCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<int> words = source->getPile("word");
+    if(words.isEmpty())
+        return;
+    room->fillAG(words, source);
+    int card_id = room->askForAG(source, words, true, "viewmywords");
+    if(card_id != -1){
+        words.removeOne(card_id);
+        room->moveCardTo(Sanguosha->getCard(card_id), source, Player::Hand, false);
+    }
+    source->invoke("clearAG");
+    words.clear();
+}
+
+class ViewMyWords: public ZeroCardViewAsSkill{
+public:
+    ViewMyWords():ZeroCardViewAsSkill("numa"){
+    }
+    virtual const Card *viewAs() const{
+        return new ViewMyWordsCard;
+    }
+};
+
+class Numa: public PhaseChangeSkill{
+public:
+    Numa():PhaseChangeSkill("numa"){
+        view_as_skill = new ViewMyWords;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *miheng) const{
+        Room *room = miheng->getRoom();
+        if(miheng->getPhase() == Player::Finish &&
+           !miheng->getPile("word").isEmpty() &&
+           room->askForSkillInvoke(miheng, objectName())){
+            Room *room = miheng->getRoom();
+            QString c,word;
+            foreach(int i, miheng->getPile("word")){
+                c = Sanguosha->getCard(i)->getSuitString().left(1);
+
+                LogMessage log;
+                log.type = "#Numasingle";
+                log.from = miheng;
+                log.arg = objectName() + c;
+                room->sendLog(log);
+
+                word = word + c;
+            }
+
+            LogMessage gitlog;
+            gitlog.type = "#Numa_" + word;
+            gitlog.from = miheng;
+            if(word == "hc"){
+                room->sendLog(gitlog);
+                //womei:recover self
+                RecoverStruct womei;
+                womei.who = miheng;
+                room->recover(miheng, womei);
+            }
+            else if(word == "dc"){
+                room->sendLog(gitlog);
+                //nimei:throw single player 2 cards
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    if(tmp->getHandcardNum() >= 2)
+                        players << tmp;
+                }
+                room->askForDiscard(room->askForPlayerChosen(miheng, players, objectName()), objectName(), 2);
+            }
+            else if(word == "cc"){
+                room->sendLog(gitlog);
+                //meimei:clear single player's all judge_area
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    if(!tmp->getJudgingArea().isEmpty())
+                        players << tmp;
+                }
+                if(!players.isEmpty()){
+                    ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                    foreach(const Card *c, target->getJudgingArea()){
+                        room->throwCard(c);
+                    }
+                }
+            }
+            else if(word == "sd"){
+                room->sendLog(gitlog);
+                //rini:let single player tribute a card and recover 1 hp
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(miheng)){
+                    if(tmp->isWounded() && !tmp->isKongcheng())
+                        players << tmp;
+                }
+                if(!players.isEmpty()){
+                    ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                    const Card *card = room->askForCardShow(target, miheng, objectName());
+                    miheng->obtainCard(card, false);
+                    RecoverStruct rini;
+                    rini.card = card;
+                    rini.who = miheng;
+                    room->recover(target, rini);
+                }
+            }
+            else if(word == "hs"){
+                room->sendLog(gitlog);
+                //wori:get skill fanchun
+                JudgeStruct judge;
+                judge.pattern = QRegExp("(Peach|GodSalvation):(.*):(.*)");
+                judge.good = true;
+                judge.reason = objectName();
+                judge.who = miheng;
+                room->judge(judge);
+                if(judge.isGood())
+                    room->acquireSkill(miheng, "fanchun");
+            }
+            else if(word == "hsc" || word == "hsd"){
+                room->sendLog(gitlog);
+                //worimei&worini:recover hp with a girl or a boy
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(miheng)){
+                    if(((word == "hsc" && tmp->getGeneral()->isFemale()) ||
+                       (word == "hsd" && tmp->getGeneral()->isMale())) && tmp->isWounded())
+                        players << tmp;
+                }
+                if(!players.isEmpty()){
+                    ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                    RecoverStruct worimei;
+                    worimei.who = miheng;
+                    room->recover(target, worimei);
+                    room->recover(miheng, worimei);
+                }
+            }
+            else if(word == "dsh"){
+                room->sendLog(gitlog);
+                //niriwo:call slash me! or taking away all his cards
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    if(tmp->canSlash(miheng))
+                        players << tmp;
+                }
+                ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                const Card *slash = room->askForCard(target, "slash", objectName());
+                if(slash){
+                    CardUseStruct niriwo;
+                    niriwo.card = slash;
+                    niriwo.to << miheng;
+                    niriwo.from = target;
+                    room->useCard(niriwo);
+                }else if(!target->isNude()){
+                    QList<const Card *> cards = target->getCards("hej");
+                    foreach(const Card *tmp, cards)
+                        miheng->obtainCard(tmp, false);
+                }
+            }
+            else if(word == "shc"){
+                room->sendLog(gitlog);
+                //riwomei:let single player damage myself and recover himself
+                DamageStruct riwmei;
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                riwmei.from = target;
+                riwmei.to = miheng;
+                room->damage(riwmei);
+
+                RecoverStruct riwomei;
+                riwomei.who = miheng;
+                room->recover(target, riwomei);
+            }
+            else if(word == "hhh"){
+                room->sendLog(gitlog);
+                //wowowo:the same to Jushou
+                miheng->turnOver();
+                miheng->drawCards(3);
+            }
+            else if(word == "sss"){
+                room->sendLog(gitlog);
+                //ririri:the same to Fangzhu
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                target->turnOver();
+                target->drawCards(miheng->getMaxHP() - miheng->getHp());
+            }
+            else if(word == "ddd"){
+                room->sendLog(gitlog);
+                //ninini:let a player obtain word-card
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                foreach(int i, miheng->getPile("word"))
+                    room->obtainCard(target, i, false);
+            }
+            else if(word == "ccc"){
+                room->sendLog(gitlog);
+                //meimeimei:clear single player's all equip_area
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                target->throwAllEquips();
+            }
+            else if(word == "dcdc"){
+                room->sendLog(gitlog);
+                //nimeinimei:make a extra turn
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                foreach(int i, miheng->getPile("word"))
+                    room->throwCard(i);
+                target->gainAnExtraTurn();
+            }
+            else if(word == "sdc" || word == "hsdc"){
+                room->sendLog(gitlog);
+                //rinimei:slash
+                //worinimei:drank and slash
+                if(word == "hsdc")
+                    room->setPlayerFlag(miheng, "drank");
+
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    if(tmp->hasSkill("jueming") && tmp->getHp() == 1)
+                        continue;
+                    players << tmp;
+                }
+                ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+
+                int slashtype = Sanguosha->getCard(miheng->getPile("word").first())->getNumber();
+
+                if(!players.isEmpty()){
+                    CardUseStruct worinimei;
+                    Card *card;
+                    if(word == "sdc" && slashtype < 5)
+                        card = new ThunderSlash(Card::NoSuit, 0);
+                    else if(word == "sdc" && slashtype >9)
+                        card = new FireSlash(Card::NoSuit, 0);
+                    else
+                        card = new Slash(Card::NoSuit, 0);
+                    card->setSkillName(objectName());
+                    worinimei.card = card;
+                    worinimei.from = miheng;
+                    worinimei.to << target;
+                    room->useCard(worinimei);
+                }
+            }
+            else if(word == "ccsh"){
+                room->sendLog(gitlog);
+                //nimeiriwo:hp full
+                room->setPlayerProperty(miheng, "hp", miheng->getMaxHP());
+            }
+            else if(word == "dsdc"){
+                room->sendLog(gitlog);
+                //nimeiriwo:show one player's handcard to other one
+                ServerPlayer *source = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+
+                LogMessage log;
+                log.type = "#Info_dsdc";
+                log.from = source;
+                log.to << target;
+                room->sendLog(log);
+
+                room->showAllCards(target, source);
+            }
+            else if(word == "dshc"){
+                room->sendLog(gitlog);
+                //niriwomei:kill-self
+                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "kno+kyes") == "kno"){
+                    gitlog.type = "#Numa_tequan";
+                    gitlog.from = miheng;
+                    room->sendLog(gitlog);
+                }
+                else{
+                    DamageStruct damage;
+                    damage.from = miheng;
+                    room->killPlayer(miheng, &damage);
+                }
+            }
+            else if(word == "dshcc"){
+                room->sendLog(gitlog);
+                //niriwomeimei:throw other 4 card and make 2 damage to self
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                for(int i = qMin(4, target->getCardCount(true)); i > 0; i--)
+                    room->throwCard(room->askForCardChosen(miheng, target, "he", objectName()));
+                DamageStruct niriwomm;
+                niriwomm.from = miheng;
+                niriwomm.to = miheng;
+                niriwomm.damage = 2;
+                room->damage(niriwomm);
+            }
+            else if(word == "hsdcc" && miheng->getMark("hsdcc") == 0){
+                room->sendLog(gitlog);
+                //worinimeimei:Limited-Skill, like GreatYeyan
+                ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+                DamageStruct worinimm;
+                worinimm.from = miheng;
+                worinimm.to = target;
+                worinimm.nature = DamageStruct::Thunder;
+                room->damage(worinimm);
+                worinimm.nature = DamageStruct::Fire;
+                room->damage(worinimm);
+                worinimm.nature = DamageStruct::Normal;
+                room->damage(worinimm);
+                room->loseHp(miheng, 2);
+                miheng->addMark("hsdcc");
+            }
+            else if(word == "dcshc" && miheng->getMark("dcshc") == 0){
+                room->sendLog(gitlog);
+                //worinimeimei:Limited-Skill, like Guixin
+                room->loseHp(miheng);
+                foreach(ServerPlayer *player, room->getAllPlayers()){
+                    if(!player->isKongcheng()){
+                        int card_id = player->getRandomHandCardId();
+                        room->obtainCard(miheng, card_id, false);
+                    }
+                }
+                miheng->turnOver();
+                miheng->addMark("dcshc");
+            }
+            else if(word == "ssdcc" && miheng->getMark("ssdcc") == 0){
+                room->sendLog(gitlog);
+                //ririnimeimei:lightning
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                    foreach(const Card *lightning, tmp->getJudgingArea()){
+                        if(lightning->objectName() == "lightning"){
+                            players << tmp;
+                            break;
+                        }
+                    }
+                }
+                if(!players.isEmpty()){
+                    ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                    foreach(const Card *lightning, target->getJudgingArea()){
+                        if(lightning->objectName() == "lightning"){
+                            room->throwCard(lightning);
+                            break;
+                        }
+                    }
+                    DamageStruct damage;
+                    damage.to = target;
+                    damage.nature = DamageStruct::Thunder;
+                    damage.damage = 3;
+                    room->damage(damage);
+
+                    miheng->addMark("ssdcc");
+                }
+            }
+            else if(word == "ssscc" && miheng->getMark("ssscc") == 0){
+                room->sendLog(gitlog);
+                //riririmeimei:let single player acquire fushang or dunwu
+                QList<ServerPlayer *> players;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(miheng)){
+                    if(tmp->getMaxHP() > miheng->getMaxHP())
+                        players << tmp;
+                }
+                if(!players.isEmpty()){
+                    ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
+                    QString choice = room->askForChoice(target, objectName(), "bthx+wump");
+                    if(choice == "bthx"){
+                        room->setPlayerProperty(target, "maxhp", target->getMaxHP() + 2);
+                        room->acquireSkill(target, "fushang");
+                    }
+                    else{
+                        room->setPlayerProperty(target, "maxhp", target->getMaxHP() + 1);
+                        room->acquireSkill(target, "dunwu");
+                    }
+                    miheng->addMark("ssscc");
+                }
+            }
+            else if(word.length() == 4){
+                gitlog.type = "#Numa_4wd";
+                gitlog.from = miheng;
+                room->sendLog(gitlog);
+                //worinimeimei:Wake-Skill, lost all skills
+                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "suno+suyes") == "suno"){
+                    gitlog.type = "#Numa_tequan";
+                    gitlog.from = miheng;
+                    room->sendLog(gitlog);
+                }
+                else{
+                    QList<const Skill *> skills = miheng->getVisibleSkillList();
+                    foreach(const Skill *skill, skills)
+                        room->detachSkillFromPlayer(miheng, skill->objectName());
+                    room->setPlayerProperty(miheng, "general", "sujiang");
+                    room->setPlayerProperty(miheng, "general2", "sujiangf");
+                    room->setPlayerProperty(miheng, "maxhp", miheng->getMaxHP() + 2);
+                }
+            }
+            else if(word.length() == 5 && miheng->getMark("fivewd") == 0){
+                gitlog.type = "#Numa_5wd";
+                gitlog.from = miheng;
+                room->sendLog(gitlog);
+                //worinimeimei:Wake-Skill
+                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "lhno+lhyes") == "lhno"){
+                    gitlog.type = "#Numa_tequan";
+                    gitlog.from = miheng;
+                    room->sendLog(gitlog);
+                }
+                else{
+                    room->loseMaxHp(miheng);
+                    if(miheng->isAlive())
+                        miheng->addMark("fivewd");
+                }
+            }
+            else if(word.length() > 5 && miheng->getMark("othwd") == 0){
+                gitlog.type = "#Numa_wds";
+                gitlog.from = miheng;
+                room->sendLog(gitlog);
+                //worinimeimei:Wake-Skill
+                room->loseMaxHp(miheng, 2);
+                if(miheng->isAlive())
+                    miheng->addMark("othwd");
+            }
+            else{
+                gitlog.type = "#Numa_git";
+                gitlog.from = miheng;
+                room->sendLog(gitlog);
+            }
+            foreach(int i, miheng->getPile("word"))
+                room->throwCard(i);
+        }
+        return false;
+    }
+};
+
+class Fanchun:public MasochismSkill{
+public:
+    Fanchun():MasochismSkill("fanchun"){
+    }
+    virtual void onDamaged(ServerPlayer *mh, const DamageStruct &damage) const{
+        Room *room = mh->getRoom();
+        CardStar card = damage.card;
+        if(!room->obtainable(card, mh))
+            return;
+        QVariant data = QVariant::fromValue(card);
+        if(room->askForSkillInvoke(mh, objectName(), data)){
+            if(!card->getSubcards().isEmpty())
+                foreach(int cd, card->getSubcards())
+                    mh->addToPile("word", cd);
+            else
+                mh->addToPile("word", card->getEffectiveId());
+        }
+    }
+};
+
+JoyGeneralPackage::JoyGeneralPackage()
+    :Package("joyer")
+{
+    General *miheng = new General(this, "miheng", "god", 3);
+    miheng->addSkill(new Yulu);
+    miheng->addSkill(new Numa);
+    miheng->addSkill(new Jieao);
+    skills << new Fanchun;
+
+    addMetaObject<YuluCard>();
+    addMetaObject<ViewMyWordsCard>();
+
+    type = GeneralPack;
+}
+
 ADD_PACKAGE(Kuso)
 ADD_PACKAGE(Joy)
+ADD_PACKAGE(JoyGeneral)
