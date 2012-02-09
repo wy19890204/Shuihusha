@@ -1129,6 +1129,15 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
     return NULL;
 }
 
+QList<ServerPlayer *>Room::findPlayersBySkillName(const QString &skill_name, bool include_dead) const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, include_dead ? players : alive_players){
+        if(player->hasSkill(skill_name))
+            list << player;
+    }
+    return list;
+}
+
 ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool include_dead) const{
     const QList<ServerPlayer *> &list = include_dead ? players : alive_players;
     foreach(ServerPlayer *player, list){
