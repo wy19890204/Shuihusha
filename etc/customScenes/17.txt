@@ -1,4 +1,4 @@
-general:select|general2:select|role:lord|draw:5|starter:true|turned:true
+general:select|general2:select|role:lord|draw:5|starter:true
 general:dingdesun|role:rebel|skill:tongxia
-general:dingdesun|role:rebel|skill:jishi
+general:dingdesun|role:rebel|turned:true|skill:jishi
 general:dingdesun|role:rebel|skill:paohong

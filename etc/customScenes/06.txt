@@ -2,4 +2,4 @@ general:select|role:rebel|hp:3|draw:5
 general:linchong|role:rebel|equip:qinggang_sword|starter:true
 general:zhufu|role:loyalist
 general:wanglun|role:lord|maxhp:4|hp:4|draw:6|equip:eight_diagram,silver
-general:songqing|role:loyalist
+general:duwei|role:loyalist
