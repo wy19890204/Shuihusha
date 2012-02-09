@@ -366,8 +366,10 @@ public:
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
         PlayerStar target = player;
-        ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
-        if(zhangqing && target->getPhase() == Player::Finish){
+        QList<ServerPlayer *> zhangqings = room->findPlayersBySkillName(objectName());
+        if(zhangqings.isEmpty() || target->getPhase() != Player::Finish)
+            return false;
+        foreach(ServerPlayer *zhangqing, zhangqings){
             if(target->getHandcardNum() <= 1 && !target->isNude()
                 && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());

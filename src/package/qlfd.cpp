@@ -471,27 +471,31 @@ public:
 
     virtual int getDrawNum(ServerPlayer *player, int n) const{
         Room *room = player->getRoom();
-        ServerPlayer *duan3niang = room->findPlayerBySkillName(objectName());
-        if(!duan3niang || duan3niang->isNude())
+        QList<ServerPlayer *> duan3iang = room->findPlayersBySkillName(objectName());
+        if(duan3iang.isEmpty())
             return n;
-        duan3niang->tag["ZishiSource"] = QVariant::fromValue((PlayerStar)player);
-        if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
-            int delta = duan3niang->tag.value("ZiShi", 0).toInt();
-            if(delta > 0){
-                QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
-                LogMessage log;
-                log.type = "#Zishi";
-                log.from = duan3niang;
-                log.to << player;
-                log.arg = QString::number(delta);
-                log.arg2 = choice == "duo" ? "duo" : "shao";
-                n = choice == "duo" ? n + delta : n - delta;
-                room->sendLog(log);
+        foreach(ServerPlayer *duan3niang, duan3iang){
+            if(duan3niang->isNude())
+                continue;
+            duan3niang->tag["ZishiSource"] = QVariant::fromValue((PlayerStar)player);
+            if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
+                int delta = duan3niang->tag.value("ZiShi", 0).toInt();
+                if(delta > 0){
+                    QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
+                    LogMessage log;
+                    log.type = "#Zishi";
+                    log.from = duan3niang;
+                    log.to << player;
+                    log.arg = QString::number(delta);
+                    log.arg2 = choice == "duo" ? "duo" : "shao";
+                    n = choice == "duo" ? n + delta : n - delta;
+                    room->sendLog(log);
+                }
+                duan3niang->tag.remove("ZiShi");
             }
-            duan3niang->tag.remove("ZiShi");
+            duan3niang->tag.remove("ZishiSource");
         }
-        duan3niang->tag.remove("ZishiSource");
-        return n;
+        return qMax(n, 0);
     }
 };
 
@@ -570,8 +574,10 @@ public:
 
     virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
         Room *room = other->getRoom();
-        ServerPlayer *loli = room->findPlayerBySkillName(objectName());
-        if(loli){
+        QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
+        if(lolita.isEmpty())
+            return;
+        foreach(ServerPlayer *loli, lolita){
             if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
                 loli->drawCards(1);
         }

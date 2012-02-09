@@ -407,33 +407,41 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        ServerPlayer *fanrui = target->getRoom()->findPlayerBySkillName(objectName());
-        return target->getPhase() == Player::Start
-                && fanrui && fanrui->getMark("wudao") == 0
-                && fanrui->isKongcheng();
+        if(target->getPhase() != Player::Start)
+            return false;
+        Room *room = target->getRoom();
+        QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
+        if(!fanruis.isEmpty()){
+            foreach(ServerPlayer *fanrui, fanruis){
+                if(fanrui->getMark("wudao") == 0 && fanrui->isKongcheng())
+                    return true;
+            }
+        }
+        return false;
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
-        ServerPlayer *fanrui = room->findPlayerBySkillName(objectName());
-        if(!fanrui)
+        QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
+        if(fanruis.isEmpty())
             return false;
 
         LogMessage log;
         log.type = "#WakeUp";
-        log.from = fanrui;
         log.arg = objectName();
-        room->sendLog(log);
-        room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$wudao:2500");
-        room->getThread()->delay(2500);
+        foreach(ServerPlayer *fanrui, fanruis){
+            log.from = fanrui;
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            room->broadcastInvoke("animate", "lightbox:$wudao:2500");
+            room->getThread()->delay(2500);
 
-        room->drawCards(fanrui, 2);
-        room->setPlayerMark(fanrui, objectName(), 1);
-        room->loseMaxHp(fanrui);
-        room->acquireSkill(fanrui, "butian");
-        room->acquireSkill(fanrui, "qimen");
-
+            room->drawCards(fanrui, 2);
+            room->setPlayerMark(fanrui, objectName(), 1);
+            room->loseMaxHp(fanrui);
+            room->acquireSkill(fanrui, "butian");
+            room->acquireSkill(fanrui, "qimen");
+        }
         return false;
     }
 };
@@ -881,11 +889,15 @@ public:
 
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
-        PlayerStar lili = room->findPlayerBySkillName(objectName());
-        if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            const Card *wolegequ = player->getRandomHandCard();
-            lili->obtainCard(wolegequ, false);
+        QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
+        if(lily.isEmpty())
+            return;
+        foreach(ServerPlayer *lili, lily){
+            if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                const Card *wolegequ = player->getRandomHandCard();
+                lili->obtainCard(wolegequ, false);
+            }
         }
     }
 };
@@ -913,38 +925,40 @@ public:
 
     virtual bool trigger(TriggerEvent v, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        PlayerStar sun = room->findPlayerBySkillName(objectName());
-        if(!sun)
+        QList<ServerPlayer *> sunny = room->findPlayersBySkillName(objectName());
+        if(sunny.isEmpty())
             return false;
         LogMessage log;
         log.type = "#TriggerSkill";
-        log.from = sun;
         log.arg = objectName();
-        if(v == Damaged){
-            DamageStruct damage = data.value<DamageStruct>();
-            if(damage.to == sun && damage.from && damage.from != damage.to &&
-               !damage.from->isKongcheng()){
+        foreach(ServerPlayer *sun, sunny){
+            log.from = sun;
+            if(v == Damaged){
+                DamageStruct damage = data.value<DamageStruct>();
+                if(damage.to == sun && damage.from && damage.from != damage.to &&
+                   !damage.from->isKongcheng()){
 
-                room->playSkillEffect(objectName());
-                room->sendLog(log);
-                if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
-                    room->throwCard(damage.from->getRandomHandCardId());
-            }
-        }
-        else if(v == CardLost){
-            if(player == sun)
-                return false;
-            if(player->isKongcheng()){
-                CardMoveStar move = data.value<CardMoveStar>();
-                if(move->from_place == Player::Hand && player->isAlive()){
                     room->playSkillEffect(objectName());
                     room->sendLog(log);
+                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
+                        room->throwCard(damage.from->getRandomHandCardId());
+                }
+            }
+            else if(v == CardLost){
+                if(player == sun)
+                    continue;
+                if(player->isKongcheng()){
+                    CardMoveStar move = data.value<CardMoveStar>();
+                    if(move->from_place == Player::Hand && player->isAlive()){
+                        room->playSkillEffect(objectName());
+                        room->sendLog(log);
 
-                    const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data);
-                    if(card)
-                        sun->obtainCard(card);
-                    else
-                        room->loseHp(player);
+                        const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data);
+                        if(card)
+                            sun->obtainCard(card);
+                        else
+                            room->loseHp(player);
+                    }
                 }
             }
         }
@@ -966,22 +980,26 @@ public:
         if(player->isNude())
             return false;
         Room *room = player->getRoom();
-        ServerPlayer *erniang = room->findPlayerBySkillName(objectName());
-        if(erniang && erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), data)){
-            room->playSkillEffect(objectName(), 2);
-            int cardnum = player->getCardCount(true);
-            erniang->obtainCard(player->getWeapon());
-            erniang->obtainCard(player->getArmor());
-            erniang->obtainCard(player->getDefensiveHorse());
-            erniang->obtainCard(player->getOffensiveHorse());
-            DummyCard *all_cards = player->wholeHandCards();
-            if(all_cards){
-                room->obtainCard(erniang, all_cards, false);
-                delete all_cards;
+        QList<ServerPlayer *> ernian = room->findPlayersBySkillName(objectName());
+        if(ernian.isEmpty())
+            return false;
+        foreach(ServerPlayer *erniang, ernian){
+            if(erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), data)){
+                room->playSkillEffect(objectName(), 2);
+                int cardnum = player->getCardCount(true);
+                erniang->obtainCard(player->getWeapon());
+                erniang->obtainCard(player->getArmor());
+                erniang->obtainCard(player->getDefensiveHorse());
+                erniang->obtainCard(player->getOffensiveHorse());
+                DummyCard *all_cards = player->wholeHandCards();
+                if(all_cards){
+                    room->obtainCard(erniang, all_cards, false);
+                    delete all_cards;
+                }
+                QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);
+                while(room->askForYiji(erniang, yiji_cards))
+                    ; // empty loop
             }
-            QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);
-            while(room->askForYiji(erniang, yiji_cards))
-                ; // empty loop
         }
         return false;
     }

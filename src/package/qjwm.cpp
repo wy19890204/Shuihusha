@@ -191,34 +191,37 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        ServerPlayer *wusong = room->findPlayerBySkillName(objectName());
-        if(!wusong)
-            return false;
         DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || !damage.card || !damage.card->inherits("Slash"))
+            return false;
+        QList<ServerPlayer *> wusOng = room->findPlayersBySkillName(objectName());
+        if(wusOng.isEmpty())
+            return false;
 
-        if(damage.from && damage.card && damage.card->inherits("Slash")
-                && wusong->canSlash(damage.from, false)
-                && !wusong->isKongcheng() && damage.from != wusong){
-            const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
-            if(!card)
-                return false;
-            Slash *slash = new Slash(Card::NoSuit, 0);
-            slash->setSkillName(objectName());
-            CardUseStruct use;
-            use.card = slash;
-            use.from = wusong;
-            use.to << damage.from;
+        foreach(ServerPlayer *wusong, wusOng){
+            if(wusong->canSlash(damage.from, false)
+                    && !wusong->isKongcheng() && damage.from != wusong){
+                const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
+                if(!card)
+                    continue;
+                Slash *slash = new Slash(Card::NoSuit, 0);
+                slash->setSkillName(objectName());
+                CardUseStruct use;
+                use.card = slash;
+                use.from = wusong;
+                use.to << damage.from;
 
-            if(card->inherits("Analeptic")){
-                LogMessage log;
-                log.type = "$Fuhu";
-                log.from = wusong;
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
+                if(card->inherits("Analeptic")){
+                    LogMessage log;
+                    log.type = "$Fuhu";
+                    log.from = wusong;
+                    log.card_str = card->getEffectIdString();
+                    room->sendLog(log);
 
-                room->setPlayerFlag(wusong, "drank");
+                    room->setPlayerFlag(wusong, "drank");
+                }
+                room->useCard(use);
             }
-            room->useCard(use);
         }
         return false;
     }
@@ -276,33 +279,36 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
-        if(!jiuwenlong || jiuwenlong->isNude())
+        QList<ServerPlayer *> jiuwennong = room->findPlayersBySkillName(objectName());
+        if(jiuwennong.isEmpty())
             return false;
+
         DamageStruct damage = data.value<DamageStruct>();
-
-        if(damage.nature == DamageStruct::Normal && damage.to->isAlive() && damage.damage > 0){
-            bool caninvoke = false;
-            foreach(const Card *cd, jiuwenlong->getCards("he")){
-                if(cd->getTypeId() == Card::Equip){
-                    caninvoke = true;
-                    break;
+        foreach(ServerPlayer *jiuwenlong, jiuwennong){
+            if(!jiuwenlong->isNude() && damage.nature == DamageStruct::Normal &&
+               damage.to->isAlive() && damage.damage > 0){
+                bool caninvoke = false;
+                foreach(const Card *cd, jiuwenlong->getCards("he")){
+                    if(cd->getTypeId() == Card::Equip){
+                        caninvoke = true;
+                        break;
+                    }
                 }
-            }
-            if(caninvoke){
-                const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
-                if(card){
-                    LogMessage log;
-                    log.type = "$Xiagu";
-                    log.from = jiuwenlong;
-                    log.to << damage.to;
-                    log.card_str = card->getEffectIdString();
-                    room->sendLog(log);
-                    room->playSkillEffect(objectName());
+                if(caninvoke){
+                    const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
+                    if(card){
+                        LogMessage log;
+                        log.type = "$Xiagu";
+                        log.from = jiuwenlong;
+                        log.to << damage.to;
+                        log.card_str = card->getEffectIdString();
+                        room->sendLog(log);
+                        room->playSkillEffect(objectName());
 
-                    damage.damage --;
+                        damage.damage --;
+                    }
+                    data = QVariant::fromValue(damage);
                 }
-                data = QVariant::fromValue(damage);
             }
         }
         return false;
@@ -629,38 +635,44 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        ServerPlayer *aoko = room->findPlayerBySkillName(objectName());
+        QList<ServerPlayer *> aokoo = room->findPlayersBySkillName(objectName());
+        if(aokoo.isEmpty())
+            return false;
         PindianStar pindian = data.value<PindianStar>();
-        if(pindian->from != aoko && pindian->to != aoko)
+        if(!aokoo.contains(pindian->from) && !aokoo.contains(pindian->to))
             return false;
         Card *pdcd;
-        bool invoke = false;
-        if(pindian->from != aoko && pindian->to_card->getSuit() == Card::Spade){
-            pdcd = Sanguosha->cloneCard(pindian->to_card->objectName(), pindian->to_card->getSuit(), 13);
-            pdcd->addSubcard(pindian->to_card);
-            pdcd->setSkillName(objectName());
-            pindian->to_card = pdcd;
-            invoke = true;
-            room->playSkillEffect(objectName(), 2);
-        }
-        else if(pindian->to != aoko && pindian->from_card->getSuit() == Card::Spade){
-            pdcd = Sanguosha->cloneCard(pindian->from_card->objectName(), pindian->from_card->getSuit(), 13);
-            pdcd->addSubcard(pindian->from_card);
-            pdcd->setSkillName(objectName());
-            pindian->from_card = pdcd;
-            invoke = true;
-            room->playSkillEffect(objectName(), 1);
-        }
+        foreach(ServerPlayer *aoko, aokoo){
+            bool invoke = false;
+            if(pindian->from != aoko && pindian->to != aoko)
+                continue;
+            if(pindian->from != aoko && pindian->to_card->getSuit() == Card::Spade){
+                pdcd = Sanguosha->cloneCard(pindian->to_card->objectName(), pindian->to_card->getSuit(), 13);
+                pdcd->addSubcard(pindian->to_card);
+                pdcd->setSkillName(objectName());
+                pindian->to_card = pdcd;
+                invoke = true;
+                room->playSkillEffect(objectName(), 2);
+            }
+            else if(pindian->to != aoko && pindian->from_card->getSuit() == Card::Spade){
+                pdcd = Sanguosha->cloneCard(pindian->from_card->objectName(), pindian->from_card->getSuit(), 13);
+                pdcd->addSubcard(pindian->from_card);
+                pdcd->setSkillName(objectName());
+                pindian->from_card = pdcd;
+                invoke = true;
+                room->playSkillEffect(objectName(), 1);
+            }
 
-        if(invoke){
-            LogMessage log;
-            log.type = "#Changsheng";
-            log.from = aoko;
-            log.arg = objectName();
-            room->sendLog(log);
-        }
+            if(invoke){
+                LogMessage log;
+                log.type = "#Changsheng";
+                log.from = aoko;
+                log.arg = objectName();
+                room->sendLog(log);
+            }
 
-        data = QVariant::fromValue(pindian);
+            data = QVariant::fromValue(pindian);
+        }
         return false;
     }
 };

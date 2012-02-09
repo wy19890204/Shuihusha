@@ -141,32 +141,34 @@ public:
     virtual bool trigger(TriggerEvent evt, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
-        ServerPlayer *duck = room->findPlayerBySkillName(objectName());
-        if(!duck)
+        QList<ServerPlayer *> ducks = room->findPlayersBySkillName(objectName());
+        if(ducks.isEmpty())
             return false;
-        if(evt == Damaged){
-            if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
-                if(duck->getMark("baoguo") == 0)
-                    room->playSkillEffect(objectName(), 1);
-                duck->drawCards(duck->getLostHp());
+        foreach(ServerPlayer *duck, ducks){
+            if(evt == Damaged){
+                if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
+                    if(duck->getMark("baoguo") == 0)
+                        room->playSkillEffect(objectName(), 1);
+                    duck->drawCards(duck->getLostHp());
+                }
+                duck->setMark("baoguo", 0);
             }
-            duck->setMark("baoguo", 0);
-        }
-        else if(duck != player && !duck->isNude() && damage.damage > 0
-            && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
-            room->playSkillEffect(objectName(), 2);
-            LogMessage log;
-            log.type = "#Baoguo";
-            log.from = duck;
-            log.to << damage.to;
-            log.arg = objectName();
-            log.arg2 = QString::number(damage.damage);
-            room->sendLog(log);
+            else if(duck != player && !duck->isNude() && damage.damage > 0
+                && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
+                room->playSkillEffect(objectName(), 2);
+                LogMessage log;
+                log.type = "#Baoguo";
+                log.from = duck;
+                log.to << damage.to;
+                log.arg = objectName();
+                log.arg2 = QString::number(damage.damage);
+                room->sendLog(log);
 
-            damage.to = duck;
-            duck->setMark("baoguo", 1);
-            room->damage(damage);
-            return true;
+                damage.to = duck;
+                duck->setMark("baoguo", 1);
+                room->damage(damage);
+                return true;
+            }
         }
         return false;
     }
