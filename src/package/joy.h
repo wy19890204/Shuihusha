@@ -73,4 +73,29 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
+class JoyGeneralPackage: public Package{
+    Q_OBJECT
+
+public:
+    JoyGeneralPackage();
+};
+
+class YuluCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE YuluCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class ViewMyWordsCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ViewMyWordsCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 #endif // JOYPACKAGE_H

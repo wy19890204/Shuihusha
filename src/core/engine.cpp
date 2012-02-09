@@ -39,6 +39,7 @@ extern "C" {
     Package *NewEvents();
     Package *NewKuso();
     Package *NewJoy();
+    Package *NewJoyGeneral();
 
     Scenario *NewCoupleScenario();
     Scenario *NewZombieScenario();
@@ -95,6 +96,7 @@ Engine::Engine()
     addPackage(NewEvents());
     addPackage(NewKuso());
     addPackage(NewJoy());
+    addPackage(NewJoyGeneral());
 
     addScenario(NewCoupleScenario());
     addScenario(NewZombieScenario());
