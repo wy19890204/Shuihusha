@@ -396,6 +396,10 @@ public:
                 room->sendLog(gitlog);
                 //womei:recover self
                 RecoverStruct womei;
+<<<<<<< HEAD
+=======
+                womei.card = NULL;
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 womei.who = miheng;
                 room->recover(miheng, womei);
             }
@@ -404,7 +408,19 @@ public:
                 //nimei:throw single player 2 cards
                 QList<ServerPlayer *> players;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+<<<<<<< HEAD
                     if(tmp->getHandcardNum() >= 2)
+=======
+                    if(tmp->getHandcardNum() < 2){
+                        if(tmp->hasSkill("lianying"))
+                            players << tmp;
+                        else if(tmp->hasSkill("shangshi") && tmp->isWounded())
+                            players << tmp;
+                        else
+                            continue;
+                    }
+                    else
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                         players << tmp;
                 }
                 room->askForDiscard(room->askForPlayerChosen(miheng, players, objectName()), objectName(), 2);
@@ -420,7 +436,11 @@ public:
                 if(!players.isEmpty()){
                     ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
                     foreach(const Card *c, target->getJudgingArea()){
+<<<<<<< HEAD
                         room->throwCard(c);
+=======
+                        room->throwCard(c->getId());
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     }
                 }
             }
@@ -435,7 +455,11 @@ public:
                 if(!players.isEmpty()){
                     ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
                     const Card *card = room->askForCardShow(target, miheng, objectName());
+<<<<<<< HEAD
                     miheng->obtainCard(card, false);
+=======
+                    miheng->obtainCard(card);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     RecoverStruct rini;
                     rini.card = card;
                     rini.who = miheng;
@@ -466,6 +490,10 @@ public:
                 if(!players.isEmpty()){
                     ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
                     RecoverStruct worimei;
+<<<<<<< HEAD
+=======
+                    worimei.card = NULL;
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     worimei.who = miheng;
                     room->recover(target, worimei);
                     room->recover(miheng, worimei);
@@ -490,7 +518,11 @@ public:
                 }else if(!target->isNude()){
                     QList<const Card *> cards = target->getCards("hej");
                     foreach(const Card *tmp, cards)
+<<<<<<< HEAD
                         miheng->obtainCard(tmp, false);
+=======
+                        room->moveCardTo(tmp, miheng, Player::Hand, false);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 }
             }
             else if(word == "shc"){
@@ -503,6 +535,10 @@ public:
                 room->damage(riwmei);
 
                 RecoverStruct riwomei;
+<<<<<<< HEAD
+=======
+                riwomei.card = NULL;
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 riwomei.who = miheng;
                 room->recover(target, riwomei);
             }
@@ -524,7 +560,11 @@ public:
                 //ninini:let a player obtain word-card
                 ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
                 foreach(int i, miheng->getPile("word"))
+<<<<<<< HEAD
                     room->obtainCard(target, i, false);
+=======
+                    room->moveCardTo(Sanguosha->getCard(i), target, Player::Hand);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
             }
             else if(word == "ccc"){
                 room->sendLog(gitlog);
@@ -538,7 +578,13 @@ public:
                 ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
                 foreach(int i, miheng->getPile("word"))
                     room->throwCard(i);
+<<<<<<< HEAD
                 target->gainAnExtraTurn();
+=======
+                room->setCurrent(target);
+                room->getThread()->trigger(TurnStart, target);
+                room->setCurrent(miheng);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
             }
             else if(word == "sdc" || word == "hsdc"){
                 room->sendLog(gitlog);
@@ -549,7 +595,11 @@ public:
 
                 QList<ServerPlayer *> players;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+<<<<<<< HEAD
                     if(tmp->hasSkill("jueming") && tmp->getHp() == 1)
+=======
+                    if(tmp->hasSkill("kongcheng") && tmp->isKongcheng())
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                         continue;
                     players << tmp;
                 }
@@ -601,16 +651,24 @@ public:
                     room->sendLog(gitlog);
                 }
                 else{
+<<<<<<< HEAD
                     DamageStruct damage;
                     damage.from = miheng;
                     room->killPlayer(miheng, &damage);
+=======
+                    room->killPlayer(miheng);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 }
             }
             else if(word == "dshcc"){
                 room->sendLog(gitlog);
                 //niriwomeimei:throw other 4 card and make 2 damage to self
                 ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
+<<<<<<< HEAD
                 for(int i = qMin(4, target->getCardCount(true)); i > 0; i--)
+=======
+                for(int i = 4; i > 0; i--)
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     room->throwCard(room->askForCardChosen(miheng, target, "he", objectName()));
                 DamageStruct niriwomm;
                 niriwomm.from = miheng;
@@ -640,8 +698,16 @@ public:
                 room->loseHp(miheng);
                 foreach(ServerPlayer *player, room->getAllPlayers()){
                     if(!player->isKongcheng()){
+<<<<<<< HEAD
                         int card_id = player->getRandomHandCardId();
                         room->obtainCard(miheng, card_id, false);
+=======
+                        int card_id = room->askForCardChosen(miheng, player, "h", objectName());
+                        if(room->getCardPlace(card_id) == Player::Hand)
+                            room->moveCardTo(Sanguosha->getCard(card_id), miheng, Player::Hand, false);
+                        else
+                            room->obtainCard(miheng, card_id);
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     }
                 }
                 miheng->turnOver();
@@ -663,11 +729,19 @@ public:
                     ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
                     foreach(const Card *lightning, target->getJudgingArea()){
                         if(lightning->objectName() == "lightning"){
+<<<<<<< HEAD
                             room->throwCard(lightning);
+=======
+                            room->throwCard(lightning->getId());
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                             break;
                         }
                     }
                     DamageStruct damage;
+<<<<<<< HEAD
+=======
+                    damage.from = NULL;
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     damage.to = target;
                     damage.nature = DamageStruct::Thunder;
                     damage.damage = 3;
@@ -678,7 +752,11 @@ public:
             }
             else if(word == "ssscc" && miheng->getMark("ssscc") == 0){
                 room->sendLog(gitlog);
+<<<<<<< HEAD
                 //riririmeimei:let single player acquire fushang or dunwu
+=======
+                //riririmeimei:let single player acquire benghuai or wumou
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 QList<ServerPlayer *> players;
                 foreach(ServerPlayer *tmp, room->getOtherPlayers(miheng)){
                     if(tmp->getMaxHP() > miheng->getMaxHP())
@@ -689,11 +767,19 @@ public:
                     QString choice = room->askForChoice(target, objectName(), "bthx+wump");
                     if(choice == "bthx"){
                         room->setPlayerProperty(target, "maxhp", target->getMaxHP() + 2);
+<<<<<<< HEAD
                         room->acquireSkill(target, "fushang");
                     }
                     else{
                         room->setPlayerProperty(target, "maxhp", target->getMaxHP() + 1);
                         room->acquireSkill(target, "dunwu");
+=======
+                        room->acquireSkill(target, "benghuai");
+                    }
+                    else{
+                        room->setPlayerProperty(target, "maxhp", target->getMaxHP() + 1);
+                        room->acquireSkill(target, "wumou");
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                     }
                     miheng->addMark("ssscc");
                 }
@@ -721,7 +807,11 @@ public:
                 gitlog.type = "#Numa_5wd";
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
+<<<<<<< HEAD
                 //worinimeimei:Wake-Skill
+=======
+                //worinimeimei:Wake-Skill, learn longhun
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 if(Config.FreeChoose && room->askForChoice(miheng, "numat", "lhno+lhyes") == "lhno"){
                     gitlog.type = "#Numa_tequan";
                     gitlog.from = miheng;
@@ -729,18 +819,35 @@ public:
                 }
                 else{
                     room->loseMaxHp(miheng);
+<<<<<<< HEAD
                     if(miheng->isAlive())
                         miheng->addMark("fivewd");
+=======
+                    if(miheng->isAlive()){
+                        room->acquireSkill(miheng, "longhun");
+                        miheng->addMark("fivewd");
+                    }
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
                 }
             }
             else if(word.length() > 5 && miheng->getMark("othwd") == 0){
                 gitlog.type = "#Numa_wds";
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
+<<<<<<< HEAD
                 //worinimeimei:Wake-Skill
                 room->loseMaxHp(miheng, 2);
                 if(miheng->isAlive())
                     miheng->addMark("othwd");
+=======
+                //worinimeimei:Wake-Skill, learn wuyan and buqu
+                room->loseMaxHp(miheng, 2);
+                if(miheng->isAlive()){
+                    room->acquireSkill(miheng, "wuyan");
+                    room->acquireSkill(miheng, "buqu");
+                    miheng->addMark("othwd");
+                }
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
             }
             else{
                 gitlog.type = "#Numa_git";
@@ -760,7 +867,11 @@ public:
     }
     virtual void onDamaged(ServerPlayer *mh, const DamageStruct &damage) const{
         Room *room = mh->getRoom();
+<<<<<<< HEAD
         CardStar card = damage.card;
+=======
+        const Card *card = damage.card;
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
         if(!room->obtainable(card, mh))
             return;
         QVariant data = QVariant::fromValue(card);
@@ -769,7 +880,11 @@ public:
                 foreach(int cd, card->getSubcards())
                     mh->addToPile("word", cd);
             else
+<<<<<<< HEAD
                 mh->addToPile("word", card->getEffectiveId());
+=======
+                mh->addToPile("word", card->getId());
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
         }
     }
 };
@@ -781,7 +896,10 @@ JoyGeneralPackage::JoyGeneralPackage()
     miheng->addSkill(new Yulu);
     miheng->addSkill(new Numa);
     miheng->addSkill(new Jieao);
+<<<<<<< HEAD
     skills << new Fanchun;
+=======
+>>>>>>> a6867d14cdbf4db931d2c428ac8dc663d35278e5
 
     addMetaObject<YuluCard>();
     addMetaObject<ViewMyWordsCard>();

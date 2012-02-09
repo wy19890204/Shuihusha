@@ -549,6 +549,33 @@ public:
     }
 };
 
+class Jielue: public TriggerSkill{
+public:
+    Jielue():TriggerSkill("jielue"){
+        events << SlashEffect << Pindian;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(event == Pindian){
+            PindianStar pindian = data.value<PindianStar>();
+            if(pindian->reason == objectName() && pindian->isSuccess())
+                pindian->from->obtainCard(pindian->to_card);
+            return false;
+        }
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.slash->getNumber() == 0)
+            return false;
+        if(effect.slash && !effect.to->isKongcheng() && effect.from->askForSkillInvoke(objectName(), data))
+            effect.from->pindian(effect.to, objectName(), effect.slash);
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -592,6 +619,9 @@ InterChangePackage::InterChangePackage()
     General *fuan = new General(this, "fuan", "guan", 3);
     fuan->addSkill(new Tongmou);
     fuan->addSkill(new Xianhai);
+
+    General *zhangwang = new General(this, "zhangwang", "kou", 4);
+    zhangwang->addSkill(new Jielue);
 
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
