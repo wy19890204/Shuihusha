@@ -39,8 +39,15 @@ void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
         effect.from->drawCards(1);
         effect.to->drawCards(1);
     }
-    else
+    else{
         room->setPlayerFlag(effect.from, "yuanpei");
+        LogMessage lsp;
+        lsp.type = "#Yuanpei";
+        lsp.from = effect.from;
+        lsp.to << effect.to;
+        lsp.arg = "yuanpei";
+        room->sendLog(lsp);
+    }
 }
 
 class Yuanpei: public ViewAsSkill{
@@ -231,14 +238,14 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         PlayerStar xuning = damage.from;
-        if(!damage.card || !damage.card->inherits("Slash") || damage.to == xuning)
-            return false;
-        if(damage.nature == DamageStruct::Normal && damage.to->isChained() &&
+        if(damage.to != xuning && damage.nature == DamageStruct::Normal && damage.to->isChained() &&
            xuning->askForSkillInvoke(objectName(), data)){
             Room *room = xuning->getRoom();
 
             damage.to->setChained(false);
             room->broadcastProperty(damage.to, "chained");
+            if(!damage.to->faceUp())
+                damage.to->turnOver();
 
             room->throwCard(damage.to->getDefensiveHorse());
             room->throwCard(damage.to->getOffensiveHorse());
@@ -295,7 +302,7 @@ SinueCard::SinueCard(){
 bool SinueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    return Self->distanceTo(to_select) <= 1;
+    return Self->distanceTo(to_select) == 1;
 }
 
 void SinueCard::onEffect(const CardEffectStruct &effect) const{
@@ -357,11 +364,10 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
-        if(!killer || !killer->hasSkill(objectName()))
+        if(!killer || !killer->hasSkill(objectName()) || killer == player)
             return false;
         Room *room = killer->getRoom();
-        if(killer->getPhase() == Player::Play
-            && !killer->isKongcheng())
+        if(killer->getPhase() == Player::Play && !killer->isKongcheng())
             room->askForUseCard(killer, "@@sinue", "@sinue");
         return false;
     }
@@ -746,10 +752,50 @@ public:
     }
 };
 
+LongaoCard::LongaoCard(){
+}
+
+bool LongaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    CardEffectStruct effect = Self->property("LongaoStruct").value<CardEffectStruct>();
+    return targets.isEmpty() && to_select != effect.from && to_select != effect.to;
+}
+
+void LongaoCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.to->getRoom();
+    CardEffectStruct store = effect.from->property("LongaoStruct").value<CardEffectStruct>();
+    store.to = effect.to;
+    room->setPlayerProperty(effect.from, "LongaoStruct", QVariant::fromValue(store));
+}
+
+class LongaoViewAsSkill: public OneCardViewAsSkill{
+public:
+    LongaoViewAsSkill():OneCardViewAsSkill("longao"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@longao";
+    }
+
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        LongaoCard *card = new LongaoCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
 class Longao: public TriggerSkill{
 public:
     Longao():TriggerSkill("longao"){
         events << CardEffected;
+        view_as_skill = new LongaoViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -761,36 +807,21 @@ public:
 
         ServerPlayer *zouyuan = room->findPlayerBySkillName(objectName());
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(!zouyuan || effect.from == zouyuan)
+        if(!zouyuan || !effect.from || effect.from == zouyuan ||
+           effect.multiple || !effect.card->isNDTrick())
             return false;
 
-        if(effect.multiple || effect.from == NULL)
-            return false;
-
-        if(!effect.card->isNDTrick())
-            return false;
-
-        if(zouyuan && !zouyuan->isNude() && room->askForSkillInvoke(zouyuan, objectName(), data)){
-            room->askForDiscard(zouyuan, objectName(), 1, false, true);
-
-            QList<ServerPlayer *> players = room->getOtherPlayers(effect.from), targets;
-            foreach(ServerPlayer *player, players){
-                if(player != effect.to)
-                    targets << player;
+        if(!zouyuan->isNude()){
+            room->setPlayerProperty(zouyuan, "LongaoStruct", data);
+            QString prompt = QString("@longao:%1:%2:%3").arg(effect.from->objectName()).arg(effect.to->objectName()).arg(effect.card->objectName());
+            if(room->askForUseCard(zouyuan, "@@longao", prompt)){
+                data = zouyuan->property("LongaoStruct");
             }
-
-            QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
-            if(choice == "zhuan" && targets.length() > 0){
-                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
-
-                effect.from = effect.from;
-                effect.to = target;
-                data = QVariant::fromValue(effect);
-            }
-            if(choice == "qi" && !effect.from->isNude()){
+            else if(!effect.from->isNude()){
                 int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
                 room->throwCard(to_throw);
             }
+            room->setPlayerProperty(zouyuan, "LongaoStruct", QVariant());
         }
         return false;
     }
@@ -1015,6 +1046,7 @@ YBYTPackage::YBYTPackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
+    addMetaObject<LongaoCard>();
     addMetaObject<HunjiuCard>();
 }
 
