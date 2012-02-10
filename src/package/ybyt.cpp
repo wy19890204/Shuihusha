@@ -752,50 +752,10 @@ public:
     }
 };
 
-LongaoCard::LongaoCard(){
-}
-
-bool LongaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    CardEffectStruct effect = Self->property("LongaoStruct").value<CardEffectStruct>();
-    return targets.isEmpty() && to_select != effect.from && to_select != effect.to;
-}
-
-void LongaoCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.to->getRoom();
-    CardEffectStruct store = effect.from->property("LongaoStruct").value<CardEffectStruct>();
-    store.to = effect.to;
-    room->setPlayerProperty(effect.from, "LongaoStruct", QVariant::fromValue(store));
-}
-
-class LongaoViewAsSkill: public OneCardViewAsSkill{
-public:
-    LongaoViewAsSkill():OneCardViewAsSkill("longao"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@longao";
-    }
-
-    virtual bool viewFilter(const CardItem *) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        LongaoCard *card = new LongaoCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
 class Longao: public TriggerSkill{
 public:
     Longao():TriggerSkill("longao"){
         events << CardEffected;
-        view_as_skill = new LongaoViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -811,17 +771,27 @@ public:
            effect.multiple || !effect.card->isNDTrick())
             return false;
 
-        if(!zouyuan->isNude()){
-            room->setPlayerProperty(zouyuan, "LongaoStruct", data);
-            QString prompt = QString("@longao:%1:%2:%3").arg(effect.from->objectName()).arg(effect.to->objectName()).arg(effect.card->objectName());
-            if(room->askForUseCard(zouyuan, "@@longao", prompt)){
-                data = zouyuan->property("LongaoStruct");
+        if(!zouyuan->isNude() && room->askForSkillInvoke(zouyuan, objectName(), data)){
+            room->askForDiscard(zouyuan, objectName(), 1, false, true);
+
+            QList<ServerPlayer *> players = room->getOtherPlayers(effect.from), targets;
+            foreach(ServerPlayer *player, players){
+                if(player != effect.to)
+                    targets << player;
             }
-            else if(!effect.from->isNude()){
+
+            QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
+            if(choice == "zhuan" && targets.length() > 0){
+                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
+
+                effect.from = effect.from;
+                effect.to = target;
+                data = QVariant::fromValue(effect);
+            }
+            if(choice == "qi" && !effect.from->isNude()){
                 int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
                 room->throwCard(to_throw);
             }
-            room->setPlayerProperty(zouyuan, "LongaoStruct", QVariant());
         }
         return false;
     }
@@ -1046,7 +1016,6 @@ YBYTPackage::YBYTPackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
-    addMetaObject<LongaoCard>();
     addMetaObject<HunjiuCard>();
 }
 
