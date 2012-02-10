@@ -490,8 +490,10 @@ public:
     }
 
     virtual void onDamaged(ServerPlayer *malin, const DamageStruct &damage) const{
-        if(damage.from && malin->askForSkillInvoke(objectName()))
+        if(damage.from && malin->askForSkillInvoke(objectName())){
+            malin->getRoom()->playSkillEffect(objectName());
             damage.from->turnOver();
+        }
     }
 };
 
@@ -938,7 +940,7 @@ public:
                 if(damage.to == sun && damage.from && damage.from != damage.to &&
                    !damage.from->isKongcheng()){
 
-                    room->playSkillEffect(objectName());
+                    room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
                     if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
                         room->throwCard(damage.from->getRandomHandCardId());
@@ -950,7 +952,7 @@ public:
                 if(player->isKongcheng()){
                     CardMoveStar move = data.value<CardMoveStar>();
                     if(move->from_place == Player::Hand && player->isAlive()){
-                        room->playSkillEffect(objectName());
+                        room->playSkillEffect(objectName(), 1);
                         room->sendLog(log);
 
                         const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data);
@@ -985,7 +987,7 @@ public:
             return false;
         foreach(ServerPlayer *erniang, ernian){
             if(erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), data)){
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), 1);
                 int cardnum = player->getCardCount(true);
                 erniang->obtainCard(player->getWeapon());
                 erniang->obtainCard(player->getArmor());
@@ -997,8 +999,11 @@ public:
                     delete all_cards;
                 }
                 QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);
+                bool isyiji = false;
                 while(room->askForYiji(erniang, yiji_cards))
-                    ; // empty loop
+                    isyiji = true;
+                if(isyiji)
+                    room->playSkillEffect(objectName(), 2);
             }
         }
         return false;

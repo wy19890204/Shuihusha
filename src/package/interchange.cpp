@@ -332,8 +332,8 @@ public:
             room->playSkillEffect(objectName());
 
             PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
-            target->gainAnExtraTurn();
-            taiwei->skip(taiwei);
+            target->gainAnExtraTurn(taiwei);
+            taiwei->skip();
         }
         return false;
     }
