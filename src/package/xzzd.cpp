@@ -404,6 +404,8 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *shun, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
         DamageStruct *damage = dying.damage;
+        if(!damage)
+            return false;
         PlayerStar from = damage->from;
         if(from && !from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from))){
             Room *room = shun->getRoom();

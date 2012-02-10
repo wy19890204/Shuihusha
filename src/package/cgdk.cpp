@@ -460,6 +460,10 @@ bool LingdiCard::targetFilter(const QList<const Player *> &targets, const Player
     return true;
 }
 
+bool LingdiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
 void LingdiCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->turnOver();
 }

@@ -337,7 +337,7 @@ public:
         CardMoveStar move = data.value<CardMoveStar>();
         if(conan->isDead())
             return false;
-        if(move->from_place == Player::Hand){
+        if(move->from_place == Player::Hand || move->from_place == Player::Equip){
             room->playSkillEffect(objectName(), qrand() % 2 + 1);
             LogMessage log;
             log.type = "#TriggerSkill";
