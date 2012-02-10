@@ -1083,6 +1083,7 @@ public:
                 gaoqiu->tag["CujuDamage"] = QVariant::fromValue(damage);
                 if(room->askForUseCard(gaoqiu, "@@cuju", "@cuju-card"))
                     return true;
+                gaoqiu->tag.remove("CujuDamage");
             }
         }
         return false;
@@ -1096,13 +1097,13 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName()) && target->getKingdom() == "guan";
+        return !target->hasLordSkill(objectName()) && target->getKingdom() == "guan";
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *ply, QVariant &data) const{
         Room *room = ply->getRoom();
-        ServerPlayer *gaoqiu = room->findPlayerBySkillName(objectName());
-        if(!gaoqiu || !gaoqiu->hasLordSkill(objectName()))
+        ServerPlayer *gaoqiu = room->getLord();
+        if(!gaoqiu->hasLordSkill(objectName()))
             return false;
         RecoverStruct recover = data.value<RecoverStruct>();
         for(int i = 0; i < recover.recover; i++){

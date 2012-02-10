@@ -20,6 +20,7 @@ public:
 
 YuanpeiCard::YuanpeiCard(){
     mute = true;
+    once = true;
 }
 
 bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -39,61 +40,40 @@ void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
         effect.to->drawCards(1);
     }
     else
-        room->acquireSkill(effect.from, "yuanpei_slash");
+        room->setPlayerFlag(effect.from, "yuanpei");
 }
 
-class Yuanpei: public ZeroCardViewAsSkill{
+class Yuanpei: public ViewAsSkill{
 public:
-    Yuanpei():ZeroCardViewAsSkill("yuanpei"){
+    Yuanpei():ViewAsSkill("yuanpei"){
     }
 
-    virtual const Card *viewAs() const{
-        return new YuanpeiCard;
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->hasFlag("yuanpei"))
+            return selected.isEmpty() && !to_select->isEquipped();
+        else
+            return false;
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("YuanpeiCard");
-    }
-};
-
-class YuanpeiS1ash:public OneCardViewAsSkill{
-public:
-    YuanpeiS1ash():OneCardViewAsSkill("yuanpei_slash"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return Slash::IsAvailable(player);
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "slash";
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        Card *slash = new Slash(card->getSuit(), card->getNumber());
-        slash->addSubcard(card->getId());
-        slash->setSkillName("yuanpei");
-        return slash;
-    }
-};
-
-class YuanpeiSlash: public PhaseChangeSkill{
-public:
-    YuanpeiSlash():PhaseChangeSkill("yuanpei_slash"){
-        view_as_skill = new YuanpeiS1ash;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *p) const{
-        if(p->getPhase() == Player::NotActive){
-            p->getRoom()->detachSkillFromPlayer(p, "yuanpei_slash");
-            p->loseSkill("yuanpei_slash");
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 1 && Self->hasFlag("yuanpei")){
+            const Card *card = cards.first()->getCard();
+            Card *slash = new Slash(card->getSuit(), card->getNumber());
+            slash->addSubcard(card->getId());
+            slash->setSkillName("yuanpei");
+            return slash;
         }
-        return false;
+        else if(cards.isEmpty())
+            return new YuanpeiCard;
+        else
+            return NULL;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        if(!player->hasUsed("YuanpeiCard"))
+            return true;
+        else
+            return player->hasFlag("yuanpei") && Slash::IsAvailable(player);
     }
 };
 
@@ -984,7 +964,6 @@ YBYTPackage::YBYTPackage()
     qiongying->addSkill(new Yuanpei);
     patterns[".Yuanp"] = new SWPattern;
     qiongying->addSkill(new Mengshi);
-    skills << new YuanpeiSlash;
     related_skills.insertMulti("mengshi", "yinyu");
 
     General *xuning = new General(this, "xuning", "jiang");
