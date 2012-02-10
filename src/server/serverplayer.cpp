@@ -775,11 +775,13 @@ void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){
     room->moveCardTo(Sanguosha->getCard(card_id), this, Player::Special, open);
 }
 
-void ServerPlayer::gainAnExtraTurn(){
+void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     ServerPlayer *current = room->getCurrent();
 
     room->setCurrent(this);
     room->removeTag("Shudan");
+    if(clearflag)
+        clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, this);
     room->setCurrent(current);
 }

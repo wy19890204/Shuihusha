@@ -737,7 +737,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                opt->gainAnExtraTurn();
+                opt->gainAnExtraTurn(opt);
             }
         }
         return false;

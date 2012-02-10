@@ -333,7 +333,7 @@ public:
 
             PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
             target->gainAnExtraTurn();
-            taiwei->skip();
+            taiwei->skip(taiwei);
         }
         return false;
     }

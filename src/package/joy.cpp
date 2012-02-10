@@ -538,7 +538,7 @@ public:
                 ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
                 foreach(int i, miheng->getPile("word"))
                     room->throwCard(i);
-                target->gainAnExtraTurn();
+                target->gainAnExtraTurn(miheng);
             }
             else if(word == "sdc" || word == "hsdc"){
                 room->sendLog(gitlog);
