@@ -683,25 +683,19 @@ bool MaiyiCard::targetFilter(const QList<const Player *> &targets, const Player 
     return true;
 }
 
+bool MaiyiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2 || targets.isEmpty();
+}
+
 void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     room->playSkillEffect(objectName());
-    foreach(ServerPlayer *target, targets){
-        CardEffectStruct effect;
-        effect.card = this;
-        effect.from = source;
-        effect.to = target;
-        effect.multiple = targets.length() == 1 ? false :true;
-
-        room->cardEffect(effect);
+    if(targets.isEmpty())
+        room->setPlayerFlag(source, "maiyi");
+    else{
+        foreach(ServerPlayer *target, targets)
+            target->drawCards(2);
     }
-}
-
-void MaiyiCard::onEffect(const CardEffectStruct &effect) const{
-    if(!effect.multiple)
-        effect.to->addMark("maiyi");
-    else
-        effect.to->drawCards(2);
 }
 
 class MaiyiViewAsSkill: public ViewAsSkill{
@@ -755,26 +749,19 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *xueyong) const{
+        if(xueyong->getPhase() != Player::NotActive || !xueyong->hasFlag("maiyi"))
+            return false;
         Room *room = xueyong->getRoom();
 
-        QList<ServerPlayer *> players = room->getOtherPlayers(xueyong), maiyis;
-        foreach(ServerPlayer *player, players){
-            if(player->getMark("maiyi") > 0)
-                maiyis << player;
-        }
+        ServerPlayer *maiyier = room->askForPlayerChosen(xueyong, room->getAllPlayers(), objectName());
+        LogMessage log;
+        log.type = "#MaiyiCanInvoke";
+        log.to << maiyier;
+        log.from = xueyong;
+        log.arg = objectName();
+        room->sendLog(log);
 
-        if(maiyis.length() > 0 && xueyong->getPhase() == Player::Finish){
-            ServerPlayer *maiyier = room->askForPlayerChosen(xueyong, maiyis, objectName());
-            maiyier->setMark("maiyi", 0);
-
-            LogMessage log;
-            log.type = "#MaiyiCanInvoke";
-            log.from = maiyier;
-            log.arg = "maiyi";
-            room->sendLog(log);
-
-            maiyier->gainAnExtraTurn();
-        }
+        maiyier->gainAnExtraTurn(xueyong);
         return false;
     }
 };
