@@ -2415,29 +2415,29 @@ function SmartAI:useBasicCard(card, use)
 end
 
 function SmartAI:aoeIsEffective(card, to)
+	-- the AOE starter is not effected by AOE
 	if self.player == to then
 		return false
 	end
+	-- the vine
 	local armor = to:getArmor()
-	if armor and armor:inherits("Vine") then
+	if armor and armor:inherits("Vine") and not self.player:hasSkill("wuzu") then
 		return false
 	end
 	if self.room:isProhibited(self.player, to, card) then
 		return false
 	end
-	if self.player:hasSkill("wuyan") or self.player:hasSkill("danlao") then
+	--Baisheng's shudan
+	if (to:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == to:objectName()) then
 		return false
 	end
-	if card:inherits("SavageAssault") then
-		if to:hasSkill("huoshou") or to:hasSkill("juxiang") then
-			return false
-		end
-	end
-	if (to:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == to:objectName()) then
+	--Panjinlian's shengui
+	if to:hasSkill("shengui") and not to:faceUp() and self.player:getGeneral():isMale() then
 		return false
 	end
+	--Wangding6's kongying
 	if card:inherits("ArcheryAttack") then
-		if (to:hasSkill("leiji") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
+		if (to:hasSkill("kongying") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
 			return false
 		end
 	end
@@ -2445,18 +2445,14 @@ function SmartAI:aoeIsEffective(card, to)
 end
 
 function SmartAI:getDistanceLimit(card)
-	if self.player:hasSkill("qicai") then
-		return 100
-	end
-
 	if card:inherits("Snatch") then
-		return 1
-	elseif card:inherits("SupplyShortage") then
-		if self.player:hasSkill("duanliang") then
+		if self.player:hasSkill("shentou") then
 			return 2
 		else
 			return 1
 		end
+	elseif card:inherits("SupplyShortage") then
+		return 1
 	end
 end
 
@@ -2469,11 +2465,13 @@ function SmartAI:exclude(players, card)
 			if limit then
 				should_insert = self.player:distanceTo(player) <= limit
 			end
+
 			if should_insert then
 				table.insert(excluded, player)
 			end
 		end
 	end
+
 	return excluded
 end
 
