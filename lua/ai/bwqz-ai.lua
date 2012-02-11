@@ -343,3 +343,12 @@ sgs.ai_cardshow["yongle"] = function(self, requestor)
 	self:sortByUseValue(cards, true)
 	return cards[1]
 end
+
+-- zhiyuan
+sgs.ai_skill_cardask["@zhiyuan"] = function(self)
+	local lord = self.room:getLord()
+	if self:isFriend(lord) and not self.player:isKongcheng() then
+		return self.player:getRandomHandCard():getEffectiveId() or "."
+	end
+	return "."
+end

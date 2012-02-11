@@ -1,3 +1,5 @@
+sgs.ai_skill_cardask["@xianji"] = sgs.ai_skill_cardask["@fuji"]
+
 	-- this script file contains the AI classes for gods
 
 -- guixin, always invoke

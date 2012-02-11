@@ -24,6 +24,22 @@ sgs.ai_skill_use_func["YushuiCard"] = function(card, use, self)
 	end
 end
 
+-- zhensha
+sgs.ai_skill_cardask["@zhensha"] = function(self, data)
+	local carduse = data:toCardUse()
+	if self:isFriend(carduse.from) then return "." end
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	for _, fcard in ipairs(cards) do
+		if fcard:getSuit() == sgs.Card_Spade then
+			if carduse.from:isLord() or carduse.from:getHp() > 1 then
+				return fcard:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
 -- meicha
 meicha_skill={}
 meicha_skill.name = "meicha"
@@ -254,6 +270,12 @@ sgs.ai_skill_use_func["EyanCard"]=function(card,use,self)
 	end
 end
 
+-- zhangshi
+sgs.ai_skill_cardask["@zhangshi"] = function(self, data)
+	if not self:isFriend(sgs.zhangshisource) then return "." end
+	return self:getCardId("Slash") or "."
+end
+
 -- chiyuan
 sgs.ai_skill_choice["chiyuan"] = function(self, choice)
 	if self.player:isWounded() then
@@ -261,6 +283,17 @@ sgs.ai_skill_choice["chiyuan"] = function(self, choice)
 	else
 		return "nu"
 	end
+end
+sgs.ai_skill_cardask["@chiyuan"] = function(self, data)
+	local rv = data:toRecover()
+	if rv.card:inherits("SilverLion") then return "." end -- will crash
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	if self:isEnemy(rv.who) then
+		return cards[1]:getEffectiveId()
+	end
+	return "."
 end
 
 -- huoshui
@@ -318,6 +351,19 @@ sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 		self:sortByUseValue(cards, true)
 	end
 	return cards[1]
+end
+
+-- chumai
+sgs.ai_skill_cardask["@chumai"] = function(self, data)
+	local target = data:toPlayer()
+	if self:isEnemy(target) then
+		local cards = self.player:getHandcards()
+		for _, card in sgs.qlist(cards) do
+			if card:isBlack() then
+			return card:getEffectiveId()
+		end
+	end
+	return "."
 end
 
 -- yinlang
@@ -407,4 +453,12 @@ sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
 		use.to:append(first)
 		use.to:append(second)
 	end
+end
+
+-- baoen
+sgs.ai_skill_cardask["@baoen"] = function(self, data)
+	local rev = data:toRecover()
+	local card = self:getUnuseCard()
+	if self:isEnemy(rev.who) or not card then return "." end
+	return card:getEffectiveId() or "."
 end

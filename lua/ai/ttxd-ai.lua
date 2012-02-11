@@ -24,6 +24,22 @@ sgs.ai_skill_choice["jui"] = function(self, choice)
 	end
 end
 
+-- baoguo
+sgs.ai_skill_cardask["@baoguo"] = function(self, data)
+	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
+	local damage = data:toDamage()
+	if self:isFriend(damage.to) and not self.player:isKongcheng() then
+		local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
+		local dmgnum = damage.damage
+		if self.player:getHp() + pile - dmgnum > 0 then
+			if self.player:getHp() + pile - dmgnum == 1 and pile > 0 then return "." end
+			local card = self:getUnuseCard()
+			if card then return card:getEffectiveId() end
+		end
+	end
+	return "."
+end
+
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then
@@ -87,6 +103,13 @@ sgs.ai_skill_invoke["yinyu"] = true
 sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
 	self:sort(self.friends, "handcard")
 	return self.friends[1]
+end
+
+-- jishi
+sgs.ai_skill_cardask["@jishi"] = function(self, data)
+	local who = data:toPlayer()
+	if self:isEnemy(who) or self.player:isKongcheng() then return "." end
+	return self.player:getRandomHandCard():getEffectiveId() or "."
 end
 
 -- huanshu
@@ -404,7 +427,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		if use.to then use.to:append(self.enemies[1]) end
 		return
 	end
-	
+
 	if #self.friends == 1 then return end
 
 	if (self:getOverflow()>0 or (self.player:isWounded() and self.player:usedTimes("GanlinCard") < 2))
@@ -418,7 +441,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 			return
 		end
 	end
-	
+
 	if self.player:getHandcardNum()==1 then
 		for _, enemy in ipairs(self.enemies) do
 			if self:isEquip("GudingBlade", enemy) and enemy:canSlash(self.player, true) then return end

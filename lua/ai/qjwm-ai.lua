@@ -1,6 +1,22 @@
 -- kaixian
 sgs.ai_skill_invoke["kaixian"] = true
 
+--xiagu
+sgs.ai_skill_cardask["@xiagu"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isFriend(damage.to) then
+		if damage.to:hasSkill("fushang") and
+			damage.to:getMaxHP() > 3 and damage.damage < 2 then return "." end
+		local allcards = self.player:getCards("he")
+		for _, card in sgs.qlist(allcards) do
+			if card:inherits("EquipCard") then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
 -- kongliang
 sgs.ai_skill_invoke["kong1iang"] = function(self, data)
 	local showcardnum = self.player:getMaxHP() + self.player:getLostHp() + self.player:getHandcardNum()
@@ -27,6 +43,20 @@ end
 sgs.ai_skill_invoke["liba"] = function(self, data)
 	local damage = data:toDamage()
 	return self:isEnemy(damage.to)
+end
+
+-- fuhu
+sgs.ai_skill_cardask["@fuhu"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isEnemy(damage.from) then
+		local cards = self.player:getHandcards()
+		for _, card in sgs.qlist(cards) do
+			if card:inherits("BasicCard") then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
 end
 
 -- zhanchi
@@ -161,5 +191,19 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 	else
 		return "."
 	end
+end
+
+-- jiachu
+sgs.ai_skill_cardask["@jiachu"] = function(self)
+	local target = self.room:getLord()
+	if self:isFriend(target) then
+		local allcards = self.player:getCards("he")
+		for _, card in sgs.qlist(allcards) do
+			if card:getSuit() == sgs.Card_Heart then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
 end
 

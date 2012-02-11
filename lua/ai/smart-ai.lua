@@ -2841,6 +2841,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 	return self:getCardRandomly(who, new_flag) or who:getCards(flags):first():getEffectiveId()
 end
 
+sgs.ai_skill_cardask = {}
 function SmartAI:askForCard(pattern, prompt, data)
 	self.room:output(prompt)
 	if sgs.ai_skill_invoke[pattern] then return sgs.ai_skill_invoke[pattern](self, prompt) end
@@ -2861,150 +2862,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 	end
 
-	if parsedPrompt[1] == "@xiuluo" then
-		local hand_card = self.player:getHandcards()
-		for _, card in sgs.qlist(hand_card) do
-			if card:getSuitString() == parsedPrompt[2] then return "$"..card:getEffectiveId() end
-		end
-	elseif parsedPrompt[1] == "@xiagu" then
-		local damage = data:toDamage()
-		if self:isFriend(damage.to) then
-			if damage.to:hasSkill("fushang") and
-				damage.to:getMaxHP() > 3 and damage.damage < 2 then return "." end
-			local allcards = self.player:getCards("he")
-			for _, card in sgs.qlist(allcards) do
-				if card:inherits("EquipCard") then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@fuhu" then
-		local damage = data:toDamage()
-		if self:isEnemy(damage.from) then
-			local cards = self.player:getHandcards()
-			for _, card in sgs.qlist(cards) do
-				if card:inherits("BasicCard") then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@jiachu" then
-		local target = self.room:getLord()
-		if self:isFriend(target) then
-			local allcards = self.player:getCards("he")
-			for _, card in sgs.qlist(allcards) do
-				if card:getSuit() == sgs.Card_Heart then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@baoguo" then
-		if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end 
-		local damage = data:toDamage()
-		if self:isFriend(damage.to) and not self.player:isKongcheng() then
-			local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
-			local dmgnum = damage.damage
-			if self.player:getHp() + pile - dmgnum > 0 then
-				if self.player:getHp() + pile - dmgnum == 1 and pile > 0 then return "." end
-				local card = self:getUnuseCard()
-				if card then return card:getEffectiveId() end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@chiyuan" then
-		local rv = data:toRecover()
-		if rv.card:inherits("SilverLion") then return "." end -- will crash
-		local cards = self.player:getCards("he")
-		cards=sgs.QList2Table(cards)
-		self:sortByUseValue(cards, true)
-		if self:isEnemy(rv.who) then
-			return cards[1]:getEffectiveId()
-		end
-		return "."
-	elseif parsedPrompt[1] == "@xianji" or parsedPrompt[1] == "@fuji" then
-		local who = data:toPlayer()
-		if self:isFriend(who) or self.player:isKongcheng() then return "." end
-		return self.player:getRandomHandCard():getEffectiveId() or "."
-	elseif parsedPrompt[1] == "@jishi" then
-		local who = data:toPlayer()
-		if self:isEnemy(who) or self.player:isKongcheng() then return "." end
-		return self.player:getRandomHandCard():getEffectiveId() or "."
-	elseif parsedPrompt[1] == "@zhensha" then
-		local carduse = data:toCardUse()
-		if self:isFriend(carduse.from) then return "." end
-		local cards = self.player:getHandcards()
-		cards = sgs.QList2Table(cards)
-		for _, fcard in ipairs(cards) do
-			if fcard:getSuit() == sgs.Card_Spade then
-				if carduse.from:isLord() or carduse.from:getHp() > 1 then
-					return fcard:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@chumai" then
-		local target = data:toPlayer()
-		if self:isEnemy(target) then
-			local cards = self.player:getHandcards()
-			for _, card in sgs.qlist(cards) do
-				if card:isBlack() then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@zhangshi" then
-		if not self:isFriend(sgs.zhangshisource) then return "." end
-		return self:getCardId("Slash") or "."
-	elseif parsedPrompt[1] == "@guizi" then
-		local dy = data:toDying()
-		if self:isEnemy(dy.who) then
-			local cards = self.player:getCards("he")
-			for _, card in sgs.qlist(cards) do
-				if card:getSuit() == sgs.Card_Spade then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@zhiyuan" then
-		local lord = self.room:getLord()
-		if self:isFriend(lord) and not self.player:isKongcheng() then
-			return self.player:getRandomHandCard():getEffectiveId() or "."
-		end
-		return "."
-	elseif parsedPrompt[1] == "@baoen" then
-		local rev = data:toRecover()
-		local card = self:getUnuseCard()
-		if self:isEnemy(rev.who) or not card then return "." end
-		return card:getEffectiveId() or "."
-	elseif parsedPrompt[1] == "@hengchong" then
-		local effect = data:toSlashEffect()
-		if self:isFriend(effect.to) and not self:hasSkills(sgs.masochism_skill, effect.to) then
-			return "."
-		end
-		local caninvoke = false
-		for _, target in sgs.qlist(self.room:getNextandPrevious(effect.to)) do
-			if self:isEnemy(target) then
-				caninvoke = true
-				break
-			end
-		end
-		if caninvoke then
-			local cards = self.player:getCards("he")
-			cards = sgs.QList2Table(cards)
-			self:sortByUseValue(cards, true)
-			for _, card in ipairs(cards) do
-				if card:getSuit() == effect.slash:getSuit() then
-					return card:getEffectiveId()
-				end
-			end
-		end
-		return "."
-	end
+	if sgs.ai_skill_cardask[parsedPrompt[1]] then return sgs.ai_skill_cardask[parsedPrompt[1]](self, data, pattern, target, target2) end
 
 	if parsedPrompt[1] == "double-sword-card" then
 		if target and self:isFriend(target) then return "." end

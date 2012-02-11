@@ -45,6 +45,13 @@ sgs.ai_skill_invoke["dujian"] = function(self, data)
 	return rand == 2
 end
 
+-- fuji
+sgs.ai_skill_cardask["@fuji"] = function(self, data)
+	local who = data:toPlayer()
+	if self:isFriend(who) or self.player:isKongcheng() then return "." end
+	return self.player:getRandomHandCard():getEffectiveId() or "."
+end
+
 -- paohong
 local paohong_skill={}
 paohong_skill.name = "paohong"
@@ -111,3 +118,44 @@ sgs.ai_skill_invoke["@cihu"] = function(self, prompt)
 	end
 	return "."
 end
+
+-- guizi
+sgs.ai_skill_cardask["@guizi"] = function(self, data)
+	local dy = data:toDying()
+	if self:isEnemy(dy.who) then
+		local cards = self.player:getCards("he")
+		for _, card in sgs.qlist(cards) do
+			if card:getSuit() == sgs.Card_Spade then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
+-- hengchong
+sgs.ai_skill_cardask["@hengchong"] = function(self, data)
+	local effect = data:toSlashEffect()
+	if self:isFriend(effect.to) and not self:hasSkills(sgs.masochism_skill, effect.to) then
+		return "."
+	end
+	local caninvoke = false
+	for _, target in sgs.qlist(self.room:getNextandPrevious(effect.to)) do
+		if self:isEnemy(target) then
+			caninvoke = true
+			break
+		end
+	end
+	if caninvoke then
+		local cards = self.player:getCards("he")
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		for _, card in ipairs(cards) do
+			if card:getSuit() == effect.slash:getSuit() then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
