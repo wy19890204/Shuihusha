@@ -47,9 +47,9 @@ return {
 
 	["#_shantinggui"] = "圣水将",
 	["shantinggui"] = "单廷珪",
-	["designer:shantinggui"] = "宇文天启",
+	["designer:shantinggui"] = "烨子&宇文天启",
 	["xiaofang"] = "消防",
-	[":xiaofang"] = "当场上出现火焰伤害时，你可以弃掉一张手牌，将其改为无属性伤害。",
+	[":xiaofang"] = "绝密技能，效果不详",
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
 	["shuizhan"] = "水战",
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",

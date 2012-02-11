@@ -191,7 +191,7 @@ public:
 class Xiaofang: public TriggerSkill{
 public:
     Xiaofang():TriggerSkill("xiaofang"){
-        events << Predamaged;
+        events << Predamaged << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -202,22 +202,41 @@ public:
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
         ServerPlayer *water = room->findPlayerBySkillName(objectName());
-        if(!water || water->isKongcheng() || damage.nature != DamageStruct::Fire)
+        if(!water || water->isKongcheng())
             return false;
-        if(water->askForSkillInvoke(objectName()) && room->askForDiscard(water, objectName(), 1)){
-            LogMessage log;
-            log.type = "#Xiaofang";
-            log.from = water;
-            log.arg = objectName();
-            log.to << damage.to;
-            room->sendLog(log);
+        if(event == Predamaged){
+            if(damage.nature == DamageStruct::Fire &&
+               water->askForSkillInvoke(objectName()) &&
+               room->askForDiscard(water, objectName(), 1)){
+                LogMessage log;
+                log.type = "#Xiaofan";
+                log.from = water;
+                log.arg = objectName();
+                log.to << damage.to;
+                room->sendLog(log);
 
-            damage.nature = DamageStruct::Normal;
-            data = QVariant::fromValue(damage);
+                return true;
+            }
+        }
+        else{
+            if(damage.nature == DamageStruct::Thunder &&
+               water->askForSkillInvoke(objectName()) &&
+               room->askForDiscard(water, objectName(), 1)){
+                ServerPlayer *forbider = damage.to;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
+                    if(tmp == forbider)
+                        continue;
+                    DamageStruct ailue;
+                    ailue.from = water;
+                    ailue.to = tmp;
+                    ailue.nature = DamageStruct::Thunder;
+                    room->damage(ailue);
+                }
+            }
         }
         return false;
     }
@@ -610,33 +629,25 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
     if(!Self->hasUsed("ZhengfaCard"))
         return targets.isEmpty() && to_select->getGender() != Self->getGender()
             && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
-    else{
-        if(targets.length() >= Self->getHp())
-            return false;
-        return Self->canSlash(to_select);
-    }
+    else
+        return targets.length() < Self->getHp() && Self->canSlash(to_select);
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
     if(!Self->hasUsed("ZhengfaCard")){
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
-            if(tonguan->getGeneral()->isMale())
-                room->playSkillEffect("zhengfa", qrand() % 2 + 1);
-            else
-                room->playSkillEffect("zhengfa", qrand() % 2 + 3);
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect");
         }else{
-            if(tonguan->getGeneral()->isMale())
-                room->playSkillEffect("zhengfa", 5);
-            else
-                room->playSkillEffect("zhengfa", 6);
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
             tonguan->turnOver();
         }
     }
     else{
-        foreach(ServerPlayer *tmp, targets)
-            room->cardEffect(this, tonguan, tmp);
+        foreach(ServerPlayer *tarmp, targets)
+            room->cardEffect(this, tonguan, tarmp);
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
     }
 }
 
@@ -658,10 +669,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(!Self->hasUsed("ZhengfaCard")){
-            return selected.isEmpty() && !to_select->isEquipped();
-        }else
-            return false;
+        return !Self->hasUsed("ZhengfaCard")? !to_select->isEquipped(): false;
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
@@ -670,10 +678,8 @@ public:
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
         Card *zhengfcard = new ZhengfaCard;
-        if(!cards.isEmpty()){
-            const Card *card = cards.first()->getCard();
-            zhengfcard->addSubcard(card);
-        }
+        if(!cards.isEmpty())
+            zhengfcard->addSubcard(cards.first()->getCard());
         return zhengfcard;
     }
 };
