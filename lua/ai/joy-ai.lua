@@ -1,3 +1,61 @@
+function SmartAI:useCardShit(card, use)
+	if self.player:hasSkill("fushang") and self.player:getMaxHP() > 3 then return end
+	if (card:getSuit() == sgs.Card_Heart or card:getSuit() == sgs.Card_Club) and self.player:isChained() and
+		#(self:getChainedFriends()) > #(self:getChainedEnemies()) then return end
+	if self.player:getHp()>3 and (self.player:hasSkill("huanshu") or self.player:hasSkill("shenchou")) then use.card = card return end
+	if card:getSuit() == sgs.Card_Heart and (self:isEquip("GaleShell") or self:isEquip("Vine")) then return end
+	if not self.player:isWounded() then
+		if self:hasSkills(sgs.need_kongcheng) and self.player:getHandcardNum() == 1 then
+			use.card = card
+			return
+		end
+		if sgs[self.player:getGeneralName() .. "_suit_value"] and
+			(sgs[self.player:getGeneralName() .. "_suit_value"][card:getSuitString()] or 0) > 0 then return end
+		local peach = self:getCard("Peach")
+		if peach then
+			self:sort(self.friends, "hp")
+			if not self:isWeak(self.friends[1]) then
+				use.card = card
+				return
+			end
+		end
+	end
+end
+
+sgs.ai_use_value.Shit = -10
+sgs.ai_keep_value.Shit = 6
+
+function SmartAI:useCardStink(card, use)
+	local next_player = self.player:getNextAlive()
+	if self:isFriend(next_player) then return end
+	use.card = card
+end
+
+sgs.ai_use_value.Stink = 2
+sgs.ai_keep_value.Stink = -1
+sgs.dynamic_value.control_card.Stink = true
+
+function SmartAI:useCardPoison(card, use)
+	local players = self.room:getAllPlayers()
+	players = sgs.QList2Table(players)
+	for _, target in ipairs(players) do
+		if self.player:distanceTo(target) <= 1 and
+			((self:isFriend(target) and target:getMark("poison") > 0) or
+			(self:isEnemy(target) and target:getMark("poison") == 0)) then
+			use.card = card
+			if use.to then
+				use.to:append(target)
+			end
+			return
+		end
+	end
+end
+
+sgs.ai_use_value.Poison = 7
+sgs.ai_keep_value.Poison = 1
+sgs.dynamic_value.control_card.Poison = true
+sgs.dynamic_value.damage_card.Poison = true
+
 -- when enemy using the peach
 sgs.ai_skill_invoke["grab_peach"] = function(self, data)
 	local struct = data:toCardUse()
@@ -15,4 +73,9 @@ function SmartAI:useGaleShell(card, use)
 		end
 	end
 end
+
+sgs.ai_card_intention.GaleShell = 80
+sgs.ai_use_priority.GaleShell = 0.9
+
+sgs.dynamic_value.control_card.GaleShell = true
 

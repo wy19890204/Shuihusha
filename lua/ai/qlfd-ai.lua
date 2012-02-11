@@ -24,6 +24,29 @@ sgs.ai_skill_use_func["YushuiCard"] = function(card, use, self)
 	end
 end
 
+-- zhensha
+sgs.ai_skill_cardask["@zhensha"] = function(self, data)
+	local carduse = data:toCardUse()
+	if self:isFriend(carduse.from) then return "." end
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	for _, fcard in ipairs(cards) do
+		if fcard:getSuit() == sgs.Card_Spade then
+			if carduse.from:isLord() or carduse.from:getHp() > 1 then
+				return fcard:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
+function SmartAI:isNoZhenshaMark()
+	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
+		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
+	end
+	return true
+end
+
 -- meicha
 meicha_skill={}
 meicha_skill.name = "meicha"
@@ -46,6 +69,15 @@ meicha_skill.getTurnUseCard = function(self)
 	local analeptic = sgs.Card_Parse(card_str)
 	assert(analeptic)
 	return analeptic
+end
+sgs.ai_view_as["meicha"] = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+
+	if card_place ~= sgs.Player_Equip and card:getSuit() == sgs.Card_Club then
+		return ("analeptic:meicha[%s:%s]=%d"):format(suit, number, card_id)
+	end
 end
 
 -- fanwu
@@ -117,6 +149,12 @@ zhuying_skill.getTurnUseCard = function(self)
 		local peach = sgs.Card_Parse(card_str)
 		return peach
 	end
+end
+sgs.ai_filterskill_filter["zhuying"] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
 -- shouwang
@@ -208,7 +246,12 @@ sgs.ai_skill_invoke["zhangshi"] = function(self, data)
 	local cards = self.player:getHandcards()
 	local slash = self:getCard("Slash")
 	if slash then return false end
-	if sgs.zhangshisource then return false else return true end
+	return true
+end
+sgs.ai_skill_cardask["@zhangshi"] = function(self, data)
+	local who = data:toPlayer()
+	if not self:isFriend(who) then return "." end
+	return self:getCardId("Slash") or "."
 end
 
 -- suocai
@@ -262,6 +305,17 @@ sgs.ai_skill_choice["chiyuan"] = function(self, choice)
 		return "nu"
 	end
 end
+sgs.ai_skill_cardask["@chiyuan"] = function(self, data)
+	local rv = data:toRecover()
+	if rv.card:inherits("SilverLion") then return "." end -- will crash
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	if self:isEnemy(rv.who) then
+		return cards[1]:getEffectiveId()
+	end
+	return "."
+end
 
 -- huoshui
 local huoshui_skill={}
@@ -286,6 +340,12 @@ huoshui_skill.getTurnUseCard = function(self)
 		local driver = sgs.Card_Parse(card_str)
 		return driver
 	end
+end
+sgs.ai_filterskill_filter["huoshui"] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:inherits("Weapon") or card:inherits("Slash") then return ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
 -- huakui
@@ -318,6 +378,18 @@ sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 		self:sortByUseValue(cards, true)
 	end
 	return cards[1]
+end
+
+-- chumai
+sgs.ai_skill_cardask["@chumai"] = function(self, data)
+	local target = data:toPlayer()
+	if self:isEnemy(target) then
+		local cards = self.player:getHandcards()
+		for _, card in sgs.qlist(cards) do
+			if card:isBlack() then return card:getEffectiveId() end
+		end
+	end
+	return "."
 end
 
 -- yinlang
@@ -407,4 +479,12 @@ sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
 		use.to:append(first)
 		use.to:append(second)
 	end
+end
+
+-- baoen
+sgs.ai_skill_cardask["@baoen"] = function(self, data)
+	local rev = data:toRecover()
+	local card = self:getUnuseCard()
+	if self:isEnemy(rev.who) or not card then return "." end
+	return card:getEffectiveId() or "."
 end

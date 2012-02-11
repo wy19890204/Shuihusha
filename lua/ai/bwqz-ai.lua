@@ -142,6 +142,14 @@ menghan_skill.getTurnUseCard = function(self, inclusive)
 		end
 	end
 end
+sgs.ai_view_as["menghan"] = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:getSuit() == sgs.Card_Spade then
+		return ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
 
 -- nusha
 nusha_skill={}
@@ -342,4 +350,13 @@ sgs.ai_cardshow["yongle"] = function(self, requestor)
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	return cards[1]
+end
+
+-- zhiyuan
+sgs.ai_skill_cardask["@zhiyuan"] = function(self)
+	local lord = self.room:getLord()
+	if self:isFriend(lord) and not self.player:isKongcheng() then
+		return self.player:getRandomHandCard():getEffectiveId() or "."
+	end
+	return "."
 end
