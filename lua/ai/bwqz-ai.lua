@@ -296,7 +296,7 @@ sgs.ai_skill_use_func["ZhengfaCard"]=function(card,use,self)
 		end
 	end
 end
-sgs.ai_skill_use["@@zhengFa"] = function(self, prompt)
+sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	local enemies = {}
 	local i = 0
 	for _, enemy in ipairs(self.enemies) do
@@ -307,7 +307,7 @@ sgs.ai_skill_use["@@zhengFa"] = function(self, prompt)
 		if i >= self.player:getHp() then break end
 	end
 	if self.player:getHp() >= #enemies then
-		return "@JiaomieCard=.->" .. table.concat(enemies, "+")
+		return "@ZhengfaCard=.->" .. table.concat(enemies, "+")
 	else
 		return "."
 	end
