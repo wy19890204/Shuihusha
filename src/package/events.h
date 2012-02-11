@@ -19,6 +19,7 @@ public:
     virtual QString getType() const;
     virtual CardType getTypeId() const;
     virtual QString getSubtype() const;
+    virtual QString getEffectPath(bool is_male) const;
 };
 
 class Jiefachang:public EventsCard{

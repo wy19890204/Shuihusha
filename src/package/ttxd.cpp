@@ -141,32 +141,34 @@ public:
     virtual bool trigger(TriggerEvent evt, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
-        ServerPlayer *duck = room->findPlayerBySkillName(objectName());
-        if(!duck)
+        QList<ServerPlayer *> ducks = room->findPlayersBySkillName(objectName());
+        if(ducks.isEmpty())
             return false;
-        if(evt == Damaged){
-            if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
-                if(duck->getMark("baoguo") == 0)
-                    room->playSkillEffect(objectName(), 1);
-                duck->drawCards(duck->getLostHp());
+        foreach(ServerPlayer *duck, ducks){
+            if(evt == Damaged){
+                if(duck == player && duck->isWounded() && duck->askForSkillInvoke(objectName())){
+                    if(duck->getMark("baoguo") == 0)
+                        room->playSkillEffect(objectName(), 1);
+                    duck->drawCards(duck->getLostHp());
+                }
+                duck->setMark("baoguo", 0);
             }
-            duck->setMark("baoguo", 0);
-        }
-        else if(duck != player && !duck->isNude() && damage.damage > 0
-            && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
-            room->playSkillEffect(objectName(), 2);
-            LogMessage log;
-            log.type = "#Baoguo";
-            log.from = duck;
-            log.to << damage.to;
-            log.arg = objectName();
-            log.arg2 = QString::number(damage.damage);
-            room->sendLog(log);
+            else if(duck != player && !duck->isNude() && damage.damage > 0
+                && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
+                room->playSkillEffect(objectName(), 2);
+                LogMessage log;
+                log.type = "#Baoguo";
+                log.from = duck;
+                log.to << damage.to;
+                log.arg = objectName();
+                log.arg2 = QString::number(damage.damage);
+                room->sendLog(log);
 
-            damage.to = duck;
-            duck->setMark("baoguo", 1);
-            room->damage(damage);
-            return true;
+                damage.to = duck;
+                duck->setMark("baoguo", 1);
+                room->damage(damage);
+                return true;
+            }
         }
         return false;
     }
@@ -912,17 +914,16 @@ public:
     virtual bool onPhaseChange(ServerPlayer *player) const{
         PlayerStar target = player;
         Room *room = target->getRoom();
-        ServerPlayer *dragon = room->findPlayerBySkillName(objectName());
-        if(!dragon || dragon->isNude())
+        QList<ServerPlayer *> dragons = room->findPlayersBySkillName(objectName());
+        if(dragons.isEmpty())
             return false;
         if(target->getPhase() == Player::NotActive){
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(dragon)){
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(tmp->getMark("Qimen_target") > 0){
                     stopCry(room, tmp);
 
                     LogMessage log;
                     log.type = "#QimenEnd";
-                    log.from = dragon;
                     log.to << tmp;
                     log.arg = objectName();
 
@@ -933,30 +934,33 @@ public:
             return false;
         }
         else if(target->getPhase() == Player::Start){
-            if(room->askForSkillInvoke(dragon, objectName(), QVariant::fromValue(target))){
-                ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
-                JudgeStruct judge;
-                judge.pattern = QRegExp("(.*):(.*):(.*)");
-                judge.reason = objectName();
-                judge.who = superman;
+            foreach(ServerPlayer *dragon, dragons){
+                if(!dragon->isNude() && room->askForSkillInvoke(dragon, objectName(), QVariant::fromValue(target))){
+                    ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
+                    JudgeStruct judge;
+                    judge.pattern = QRegExp("(.*):(.*):(.*)");
+                    judge.reason = objectName();
+                    judge.who = superman;
 
-                room->judge(judge);
-                QString suit_str = judge.card->getSuitString();
-                QString pattern = QString("..%1").arg(suit_str.at(0).toUpper());
-                QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-                if(room->askForCard(dragon, pattern, prompt)){
-                    if(dragon->getMark("wudao") == 0)
-                        room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                    else
-                        room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                    LogMessage log;
-                    log.type = "#Qimen";
-                    log.from = dragon;
-                    log.to << superman;
-                    log.arg = objectName();
-                    room->sendLog(log);
+                    room->judge(judge);
+                    QString suit_str = judge.card->getSuitString();
+                    QString pattern = QString("..%1").arg(suit_str.at(0).toUpper());
+                    QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
+                    if(room->askForCard(dragon, pattern, prompt)){
+                        if(dragon->getMark("wudao") == 0)
+                            room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                        else
+                            room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                        LogMessage log;
+                        log.type = "#Qimen";
+                        log.from = dragon;
+                        log.to << superman;
+                        log.arg = objectName();
+                        room->sendLog(log);
 
-                    willCry(room, superman, dragon);
+                        willCry(room, superman, dragon);
+                        break;
+                    }
                 }
             }
         }
@@ -1079,6 +1083,7 @@ public:
                 gaoqiu->tag["CujuDamage"] = QVariant::fromValue(damage);
                 if(room->askForUseCard(gaoqiu, "@@cuju", "@cuju-card"))
                     return true;
+                gaoqiu->tag.remove("CujuDamage");
             }
         }
         return false;
@@ -1092,13 +1097,13 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName()) && target->getKingdom() == "guan";
+        return !target->hasLordSkill(objectName()) && target->getKingdom() == "guan";
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *ply, QVariant &data) const{
         Room *room = ply->getRoom();
-        ServerPlayer *gaoqiu = room->findPlayerBySkillName(objectName());
-        if(!gaoqiu || !gaoqiu->hasLordSkill(objectName()))
+        ServerPlayer *gaoqiu = room->getLord();
+        if(!gaoqiu->hasLordSkill(objectName()))
             return false;
         RecoverStruct recover = data.value<RecoverStruct>();
         for(int i = 0; i < recover.recover; i++){

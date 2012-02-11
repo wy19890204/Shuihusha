@@ -1,0 +1,4 @@
+general:select|role:rebel
+general:linchong|role:rebel
+general:tongguan|maxhp:4|hp:4|role:loyalist|equip:fan
+general:gaoqiu|maxhp:5|hp:5|role:lord|starter:true

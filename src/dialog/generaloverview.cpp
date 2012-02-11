@@ -123,6 +123,13 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
                 break;
             if((skill->objectName() == "butian" || skill->objectName() == "qimen") && i > 1)
                 break;
+            QString general_name = ui->tableWidget->item(ui->tableWidget->currentRow(), 0)->data(Qt::UserRole).toString();
+            if(skill->objectName() == "zhengfa"){
+                if(general_name == "tongguan" && (i == 2 || i == 3 || i == 5))
+                    continue;
+                else if(general_name == "tongguanf" && (i == 0 || i == 1 || i == 4))
+                    continue;
+            }
             QString source = wake_index == 0 ? sources.at(i) : sources.at(wake_index - 1);
             if(!rx.exactMatch(source))
                 continue;

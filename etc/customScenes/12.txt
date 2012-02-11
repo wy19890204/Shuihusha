@@ -1,0 +1,4 @@
+general:select|role:renegade
+general:shijin|role:rebel|equip:eight_diagram|starter:true
+general:yangchun|role:loyalist|maxhp:4|hp:4|equip:fan
+general:zhuwu|role:lord|maxhp:4|hp:3

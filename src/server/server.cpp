@@ -7,6 +7,7 @@
 #include "scenario.h"
 #include "contestdb.h"
 #include "choosegeneraldialog.h"
+#include "customassigndialog.h"
 
 #include <QInputDialog>
 #include <QMessageBox>
@@ -454,12 +455,52 @@ QGroupBox *ServerDialog::createGameModeBox(){
                 scenario_combobox->setCurrentIndex(index);
             }
         }
+        //mini scenes
+        QRadioButton *mini_scenes = new QRadioButton(tr("Mini Scenes"));
+        mini_scenes->setObjectName("mini");
+        mode_group->addButton(mini_scenes);
+
+        mini_scene_combobox = new QComboBox;
+        int index = -1;
+        int stage = Config.value("MiniSceneStage",1).toInt();
+        for(int i =1;i<=stage;i++)
+        {
+            QString name = QString::number(i);
+            name = name.rightJustified(2,'0');
+            name = name.prepend("_mini_");
+            QString scenario_name = Sanguosha->translate(name);
+            const Scenario *scenario = Sanguosha->getScenario(name);
+            int count = scenario->getPlayerCount();
+            QString text = tr("%1 (%2 persons)").arg(scenario_name).arg(count);
+            mini_scene_combobox->addItem(text, name);
+
+            if(name == Config.GameMode)index = i-1;
+        }
+
+        if(index>=0)
+        {
+            mini_scene_combobox->setCurrentIndex(index);
+            mini_scenes->setChecked(true);
+        }
+        else if(Config.GameMode == "custom_scenario")
+            mini_scenes->setChecked(true);
+
+        mini_scene_button = new QPushButton(tr("Custom Mini Scene"));
+        connect(mini_scene_button, SIGNAL(clicked()), this, SLOT(doCustomAssign()));
+        mini_scene_button->setEnabled(mini_scenes->isChecked());
+        /*mini_scene_button->setEnabled(mode_group->checkedButton() ?
+                                          mode_group->checkedButton()->objectName() == "mini" :
+                                          false);*/
+        connect(mini_scenes, SIGNAL(toggled(bool)), mini_scene_button, SLOT(setEnabled(bool)));
 
         item_list << HLay(scenario_button, scenario_combobox);
+        item_list << HLay(mini_scenes, mini_scene_combobox);
+        item_list << HLay(mini_scenes, mini_scene_button);
     }
 
     QRadioButton *button = new QRadioButton(tr("Custom Mode"));
     button->setObjectName("custom");
+    button->setVisible(false);
     mode_group->addButton(button);
     item_list << button;
     if(button->objectName() == Config.GameMode)
@@ -623,6 +664,17 @@ void Select3v3GeneralDialog::fillListWidget(QListWidget *list, const Package *pa
     connect(action, SIGNAL(triggered()), this, SLOT(toggleCheck()));
 }
 
+void ServerDialog::doCustomAssign(){
+    CustomAssignDialog *dialog = new CustomAssignDialog(this);
+
+    connect(dialog, SIGNAL(scenario_changed()), this, SLOT(setMiniCheckBox()));
+    dialog->exec();
+}
+
+void ServerDialog::setMiniCheckBox(){
+    mini_scene_combobox->setEnabled(false);
+}
+
 void Select3v3GeneralDialog::toggleCheck(){
     QWidget *widget = tab_widget->currentWidget();
     QListWidget *list = qobject_cast<QListWidget *>(widget);
@@ -694,6 +746,12 @@ bool ServerDialog::config(){
     QString objname = mode_group->checkedButton()->objectName();
     if(objname == "scenario")
         Config.GameMode = scenario_combobox->itemData(scenario_combobox->currentIndex()).toString();
+    else if(objname == "mini"){
+        if(mini_scene_combobox->isEnabled())
+            Config.GameMode = mini_scene_combobox->itemData(mini_scene_combobox->currentIndex()).toString();
+        else
+            Config.GameMode = "custom_scenario";
+    }
     else
         Config.GameMode = objname;
 

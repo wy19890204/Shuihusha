@@ -1,0 +1,4 @@
+general:select|role:lord|equip:54|hand:219
+general:qingzhang|role:rebel|starter:true
+general:sujiang|role:loyalist|maxhp:6|hp:4
+general:sunerniang|role:rebel

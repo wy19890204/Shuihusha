@@ -1,0 +1,923 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.6" />
+<title>小型场景</title>
+<style type="text/css">/* Sans-serif font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+div#toctitle,
+span#author, span#revnumber, span#revdate, span#revremark,
+div#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/* Serif font. */
+div.sectionbody {
+  font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+/* Monospace font. */
+tt {
+  font-size: inherit;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  font-size: inherit;
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+}
+
+div#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toc {
+  margin-bottom: 2.5em;
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  var cont = document.getElementById("content");
+  var noteholder = document.getElementById("footnotes");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      // Use [\s\S] in place of . so multi-line matches work.
+      // Because JavaScript has no s (dotall) regex flag.
+      note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      spans[i].innerHTML =
+        "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+        "' title='View footnote' class='footnote'>" + n + "</a>]";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+}
+
+}
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>小型场景</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_说明">说明</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>本模式为一系列的单双将混合的特定场景。与一般剧情模式相比，没有特别设定的技能或事件。</p></div>
+<div class="paragraph"><p>虽然没有禁止多名玩家加入游戏或作弊，但原则上建议单独进行游戏，
+以AI为对手逐关挑战，获得胜利，然后再开启下一关。</p></div>
+<div class="paragraph"><p>在本模式的部分场景中，武将的选择可能会造成难度的巨大差异，因此建议开启自由选将进行游戏。</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_自定义模式说明">自定义模式说明</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>开局状态由玩家自行设定，可设定所有角色的手牌，装备牌，判定牌和接下来的摸牌堆。
+角色状态可设置是否横置，翻面，体力上限和体力值。可以设定开局的出牌者是谁。
+所有角色必须分配主将人物或设定为开局自选，副将人物可以为空。游戏中可以设定重复武将以及单双将混合开局。</p></div>
+<div class="listingblock">
+<div class="title">开局特殊设定</div>
+<div class="content">
+<pre><tt>游戏可以设定两个状态用于设定某些残局题：
+1.此回合过后游戏结束；即当前回合过后则直接判定胜负。
+2.下回合开始前游戏结束；即在开局出牌者的下个回合开始前判定胜负。</tt></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">保存和载入场景信息</div>
+<div class="content">
+<pre><tt><strong>载入</strong> 载入之前保存过的场景信息，以及已有的小型场景的配置信息（在etc/customScenes下）。
+<strong>保存</strong> 另存场景信息，用于玩家间交流。
+<strong>确定</strong> 保存为默认场景，即点击确定后小型场景则自动载入玩家所设定的场景信息。</tt></pre>
+</div></div>
+<div class="sect2">
+<h3 id="_1_五雷天心">1、五雷天心</h3>
+<div class="paragraph"><p>使用单将挑战4体力上限的公孙胜/乔道清双将。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：公孙胜/乔道清[3/4HP]
+游戏开始时公孙胜/乔道清获得装备七星剑
+公孙胜/乔道清以4手牌开始游戏
+玩家首先行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_2_无冕之王">2、无冕之王</h3>
+<div class="paragraph"><p>使用单将挑战5体力上限的王庆/段三娘双将。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：王庆/段三娘[4/5HP]
+游戏开始时王庆/段三娘获得装备连环马
+王庆/段三娘首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_3_大闹白虎堂">3、大闹白虎堂</h3>
+<div class="paragraph"><p>你是反贼，使用单将，协助林冲杀死高俅。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：高俅[5HP]（主公），童贯[5HP]（忠臣）
+友军：林冲[4HP]（反贼）
+游戏开始时童贯获得装备诸葛白羽扇
+高俅首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_4_保护生辰纲">4、保护生辰纲</h3>
+<div class="paragraph"><p>你是忠臣，使用单将，协助杨志杀死晁盖、吴用、公孙胜。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：晁盖[3HP]，吴用[3HP]，公孙胜[2/3HP]（均为反贼）
+友军：杨志[4HP]（主公）
+游戏开始时杨志获得装备流星碎岩刀、雁翎圈金甲，手牌日月霜刀、水磨禅杖
+吴用获得装备诸葛白羽扇；公孙胜获得装备七星剑；杨志判定区添加生辰纲
+公孙胜首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_5_英雄救美">5、英雄救美</h3>
+<div class="paragraph"><p>你是忠臣，使用单将，保护潘金莲并杀死武松、神武松。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：武松[4HP]，神武松[5HP]（均为反贼）
+友军：潘金莲[3HP]（主公）
+潘金莲以2张手牌开始游戏
+游戏开始时玩家获得装备劈风刀
+武松首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_6_火并王伦">6、火并王伦</h3>
+<div class="paragraph"><p>你是反贼，使用单将，和林冲配合，突破宋万、杜迁，杀死王伦。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：宋万（暂时朱富）[4HP]（忠臣），杜迁（暂时杜微）[4HP]（忠臣），王伦[4HP]（主公）
+友军：林冲[4HP]（反贼）
+玩家以3体力5张手牌开始游戏
+王伦以6手牌开始游戏
+游戏开始时，王伦获得装备甲马、拳色银花；林冲获得装备鱼肠剑
+林冲首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_7_武松打虎">7、武松打虎</h3>
+<div class="paragraph"><p>你是忠臣，使用双将，协助武松等打虎英雄击杀所有“老虎”。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：锦毛虎燕顺[4HP]，花项虎龚旺[4HP]，中箭虎丁得孙[7HP]，笑面虎朱富[3HP]，母大虫顾大嫂[4HP]（均为反贼）
+友军：行者武松[5HP]（主公），打虎将李忠[3/4HP]（忠臣），病大虫薛永[3/4HP]（忠臣）
+游戏开始时，燕顺获得装备雪豹，丁得孙获得装备麒麟黄金盾，武松获得装备青龙偃月刀
+李忠首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_8_水军操演">8、水军操演</h3>
+<div class="paragraph"><p>你是主公，使用单将[3HP]，迎战所有水军。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：张顺[3/4HP]、阮小二[4HP]、阮小七[3/4HP]、童威[3/4HP]、童猛[3/4HP]（均为内奸）
+游戏开始时玩家获得装备甲马、麒麟兽，张顺获得装备鱼肠剑，童威和童猛判定区添加海啸
+玩家以6张牌开始游戏，首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_9_斗法高唐州">9、斗法高唐州</h3>
+<div class="paragraph"><p>你是忠臣，使用单将/裴宣，协助高廉击败公孙胜、樊瑞、罗真人。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：公孙胜[3HP]、樊瑞[3HP]、罗真人[3HP]（均为反贼）
+友军：高廉[4HP]（主公）
+游戏开始时高廉获得装备飞燕弩，公孙胜获得手牌“斗法破高廉”。
+玩家抽选武将后获得副将裴宣（如果玩家已选择了裴宣则获得阮小二）
+高廉首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_10_人肉叉烧包">10、人肉叉烧包</h3>
+<div class="paragraph"><p>你是主公，使用单将，在4血素将的帮助下击败张青、孙二娘</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：张青[3HP]、孙二娘[3HP]（均为反贼）
+友军：稻草男[4/6HP]（忠臣）
+游戏开始时，玩家获得装备飞燕弩，手牌220号
+张青首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_11_轮奸阎婆惜">11、轮奸阎婆惜</h3>
+<div class="paragraph"><p>你是反贼，使用单将，帮助呼保义宋江击败阎惜娇/段三娘</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：阎惜娇/段三娘[5HP]（主公）
+友军：呼保义宋江[4HP]（反贼）
+游戏开始时，阎惜娇/段三娘获得装备雪豹，手牌128号，宋江获得装备桃花
+玩家和宋江处于横置状态
+宋江首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_12_围剿少华山">12、围剿少华山</h3>
+<div class="paragraph"><p>你是内奸，使用单将，在史进夺取少华山的战役中伺机击败所有人，夺得少华山</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：朱武[3/4HP]（主公）、杨春[4HP]（忠臣）
+友军：史进[4HP]（反贼）
+游戏开始时，史进获得装备甲马，杨春获得装备诸葛白羽扇
+史进首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_13_无君主的太原城">13、无君主的太原城</h3>
+<div class="paragraph"><p>你是反贼，使用单将，帮助张清击败乔道清并保证琼英存活</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：乔道清[3/4HP]（主公）、琼英[3HP]（内奸）
+友军：张清[4HP]（反贼）
+游戏开始时，张清获得装备战神斧，琼英获得装备雁翎圈金甲
+琼英和乔道清处于横置状态
+玩家首先开始行动
+若琼英阵亡，则游戏结束，反贼和内奸失败</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_14_郑屠是俺兄弟">14、郑屠是俺兄弟</h3>
+<div class="paragraph"><p>你是反贼，使用双将，突破金翠莲，击败鲁智深。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：鲁智深[4HP]（主公）、金翠莲[3HP]（忠臣）
+游戏开始时，鲁智深获得装备水磨禅杖
+鲁智深获得技能“花佛”
+鲁智深首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_15_蔷薇之殇">15、蔷薇之殇</h3>
+<div class="paragraph"><p>使用罗真人/单将，阻止贾氏/李巧奴的爆发并将其击败。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：贾氏/李巧奴[4HP]
+游戏开始时，贾氏/李巧奴获得装备麒麟黄金盾
+贾氏/李巧奴获得技能“佛缘”
+玩家抽选武将后获得主将罗真人，初始5张手牌
+贾氏/李巧奴首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_16_智取潘巧云">16、智取潘巧云</h3>
+<div class="paragraph"><p>你是内奸，使用单将，帮助潘巧云击败杨雄石秀和时迁，然后单挑潘巧云</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：杨雄[4HP]、石秀（暂时宋清）[3HP]、时迁[3HP]（均为反贼）
+友军：潘巧云[4/5HP]（主公）
+游戏开始时，玩家获得装备天地日月弓，时迁获得装备雪豹
+潘巧云首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_17_战神一拖三">17、战神一拖三</h3>
+<div class="paragraph"><p>使用双将，挑战3名丁得孙。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：丁得孙[6HP] × 3
+游戏开始时，丁得孙1获得技能“统辖”；丁得孙2获得技能“济世”并处于翻面状态；丁得孙3获得技能“炮轰”
+玩家以5手牌首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_18_传家宝">18、传家宝</h3>
+<div class="paragraph"><p>使用单将，在一回合内击败徐宁夺得雁翎圈金甲</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：徐宁[4HP]
+游戏开始时，玩家获得天地日月弓，徐宁获得装备雁翎圈金甲
+玩家以6手牌首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_19_枷打白秀英">19、枷打白秀英</h3>
+<div class="paragraph"><p>使用双将/朱仝，一回合内协同花荣打死白秀英</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：白秀英[4HP]
+友军：花荣[4HP]
+玩家首先开始行动</tt></pre>
+</div></div>
+<div class="sect2">
+<h3 id="_20_山穷水尽">20、山穷水尽</h3>
+<div class="paragraph"><p>使用双将，在一回合内击败李逵与柴进</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置:
+玩家在游戏开始时的状态：
+体力：3/3
+装备：麒麟黄金盾
+手牌：红桃2火攻，红桃3火攻。
+
+主公柴进在游戏开始时的状态：
+体力：2/3
+装备：天蚕丝衣
+手牌：红桃J无中生有，方块J闪
+
+忠臣李逵在游戏开始时的状态：
+体力：2/4
+装备：战神斧
+手牌：方块Q桃。
+
+摸牌堆接下来是：梅花10杀，黑桃A闪电，红桃2闪，黑桃8杀，黑桃4过河拆桥，梅花J铁索连环，梅花6乐不思蜀。
+
+玩家首先行动；玩家的回合结束时玩家失败。</tt></pre>
+</div></div>
+</div>
+<!--<div class="sect2">
+<h3 id="_16_英雄豪迈">16、英雄豪迈</h3>
+<div class="paragraph"><p>使用双将，在神关羽/神吕蒙的帮助下击败神司马懿/袁术和太史慈/二张，然后将其击败</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：神司马懿/袁术 4勾玉 太史慈/二张 4勾玉
+友军：神关羽/神吕蒙 5勾玉（内奸）
+玩家首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_17_天命之子">17、天命之子</h3>
+<div class="paragraph"><p>使用单将/五星诸葛，在姜维的帮助下击败张角与司马懿/郭嘉</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：张角 3勾玉 司马懿/郭嘉 3勾玉
+友军：姜维 4勾玉
+游戏开始时，玩家获得副将五星诸葛（若已经选择了五星诸葛则为卧龙）
+张角获得装备八卦阵
+司马懿/郭嘉获得手牌“闪电”
+玩家首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_18_高帅富">18、高帅富</h3>
+<div class="paragraph"><p>在争取貂蝉/小乔的竞争中胜出。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：刘备/荀彧 3勾玉（反贼） 孙权/鲁肃 3勾玉 （反贼）
+友军：桌游志貂蝉/小乔 3勾玉（主公） 黄忠/周泰 4勾玉（忠臣）
+黄忠/周泰以2体力开始游戏
+玩家首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_19_火烧连营">19、火烧连营</h3>
+<div class="paragraph"><p>在一回合内击败陆逊与张角。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：陆逊 3勾玉（忠臣）张角 4勾玉（主公）
+
+玩家在游戏开始时的状态：
+体力：3/3
+装备：白银狮子
+手牌：红桃2火攻，红桃3火攻。
+
+主公张角在游戏开始时的状态：
+体力：2/4
+装备：黑桃2八卦阵
+手牌：红桃J无中生有，方块J闪
+
+忠臣陆逊在游戏开始时的状态：
+体力：2/3
+装备：藤甲
+手牌：方块Q桃。
+
+摸牌堆接下来是：梅花10杀，黑桃A闪电，红桃2闪，黑桃8杀，黑桃4过河拆桥，梅花J铁索连环，梅花6乐不思蜀。
+
+玩家首先行动；玩家的回合结束时玩家失败。</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_20_一锤定音">20、一锤定音</h3>
+<div class="paragraph"><p>使用双将，在你的下一个回合开始前击败张角/陈宫。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+敌军：张角 3勾玉（反贼）
+
+玩家（忠臣）在游戏开始时的状态：
+体力：1
+手牌：黑桃J顺手牵羊 红桃Q闪电
+
+张角/陈宫（反贼）在游戏开始时的状态：
+体力：3/3
+装备：青龙偃月刀，黑桃2八卦阵
+手牌：红桃10火杀，黑桃J无懈可击，方块5闪，红桃A无懈可击
+
+曹操（主公）在游戏开始时的状态：
+体力：2/5
+装备：古锭刀，藤甲
+手牌：无
+
+摸牌堆接下来是：黑桃K无懈可击，梅花6雷杀，红桃K闪，黑桃3酒，红桃Q桃，梅花Q借刀杀人
+
+玩家首先行动；玩家的第二个回合开始时玩家失败。</tt></pre>
+</div></div>
+</div>
+</div>
+</div>
+</div>-->
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2012-02-07 21:40:04 庆历四年春
+</div>
+</div>
+</body>
+</html>

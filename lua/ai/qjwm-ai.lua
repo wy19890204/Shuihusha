@@ -164,7 +164,16 @@ end
 
 -- longluo
 sgs.ai_skill_playerchosen["longluo"] = function(self, targets)
-	self:sort(self.friends, "hp")
+	local card = self.player:getTag("LongluoCard"):toCard()
+	if(self:getCardsNum("Jink") < 1 and card:inherits("Jink")) then
+		return self.player
+	elseif(self:isWeak() and (card:inherits("Peach") or card:inherits("Analeptic"))) then
+		return self.player
+	elseif(card:inherits("Shit")) then
+		self:sort(self.enemies, "hp")
+		return self.enemies[1]
+	end
+	self:sort(self.friends, "handcard")
 	return self.friends[1]
 end
 

@@ -28,6 +28,7 @@ SOURCES += src/main.cpp \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
+	src/dialog/customassigndialog.cpp \
 	src/dialog/distanceviewdialog.cpp \
 	src/dialog/generaloverview.cpp \
 	src/dialog/generalselector.cpp \
@@ -58,6 +59,7 @@ SOURCES += src/main.cpp \
 	src/package/interchange.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
+	src/scenario/miniscenarios.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
@@ -136,6 +138,7 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/choosegeneraldialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
+	src/dialog/customassigndialog.h \
 	src/dialog/distanceviewdialog.h \
 	src/dialog/generaloverview.h \
 	src/dialog/generalselector.h \
@@ -167,6 +170,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/interchange.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
+	src/scenario/miniscenarios.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \

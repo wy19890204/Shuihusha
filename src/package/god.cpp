@@ -297,27 +297,30 @@ public:
         if(target->getPhase() != Player::Start)
             return false;
         Room *room = target->getRoom();
-        ServerPlayer *waste = room->findPlayerBySkillName(objectName());
+        QList<ServerPlayer *> waster = room->findPlayersBySkillName(objectName());
         const Card *card = NULL;
-        if(waste && !waste->isNude())
-            card = room->askForCard(waste, "..", "@xianji", QVariant::fromValue(target));
-        if(!waste || !card)
-           return false;
-        QString choice = card->getType();
-        room->playSkillEffect(objectName());
+        if(waster.isEmpty())
+            return false;
+        foreach(ServerPlayer *waste, waster){
+            if(!waste->isNude())
+                card = room->askForCard(waste, "..", "@xianji", QVariant::fromValue(target));
+            if(!card)
+               continue;
+            QString choice = card->getType();
+            room->playSkillEffect(objectName());
 
-        target->jilei(choice);
-        target->invoke("jilei", choice);
-        target->setFlags("jilei");
+            target->jilei(choice);
+            target->invoke("jilei", choice);
+            target->setFlags("jilei");
 
-        LogMessage log;
-        log.type = "#Xianji";
-        log.from = waste;
-        log.to << target;
-        log.arg2 = objectName();
-        log.arg = choice;
-        room->sendLog(log);
-
+            LogMessage log;
+            log.type = "#Xianji";
+            log.from = waste;
+            log.to << target;
+            log.arg2 = objectName();
+            log.arg = choice;
+            room->sendLog(log);
+        }
         return false;
     }
 };

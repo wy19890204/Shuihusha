@@ -637,7 +637,10 @@ int ServerPlayer::getGeneralMaxHP() const{
         int first = getGeneral()->getMaxHp();
         int second = getGeneral2()->getMaxHp();
 
-        switch(Config.MaxHpScheme){
+        int plan = Config.MaxHpScheme;
+        if(Config.GameMode.contains("_mini_"))plan = 1;
+
+        switch(plan){
         case 2: max_hp = (first + second)/2; break;
         case 1: max_hp = qMin(first, second); break;
         case 0:
@@ -772,11 +775,13 @@ void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){
     room->moveCardTo(Sanguosha->getCard(card_id), this, Player::Special, open);
 }
 
-void ServerPlayer::gainAnExtraTurn(){
+void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     ServerPlayer *current = room->getCurrent();
 
     room->setCurrent(this);
     room->removeTag("Shudan");
+    if(clearflag)
+        clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, this);
     room->setCurrent(current);
 }

@@ -301,7 +301,7 @@ public:
 	void marshal(ServerPlayer *player) const;
 
 	void addToPile(const char *pile_name, int card_id, bool open = true);
-	void gainAnExtraTurn();
+	void gainAnExtraTurn(ServerPlayer *clearflag = NULL);
 };
 
 %extend ServerPlayer{
@@ -807,6 +807,7 @@ public:
 	ServerPlayer *findPlayer(const char *general_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerWhohasEventCard(const char *event) const;
+	QList<ServerPlayer *> findPlayersBySkillName(const QString &skill_name, bool include_dead = false) const;
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);

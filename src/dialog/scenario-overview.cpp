@@ -29,7 +29,7 @@ ScenarioOverview::ScenarioOverview(QWidget *parent)
     setLayout(layout);
 
     QStringList names = Sanguosha->getScenarioNames();
-    names << "endlessmode" << "Hulaopass" << "basara" << "custom";
+    names << "endlessmode" << "Hulaopass" << "basara" << "MiniScene";
     foreach(QString name, names){
         QString text = Sanguosha->translate(name);
         QListWidgetItem *item = new QListWidgetItem(text, list);

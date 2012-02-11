@@ -191,7 +191,7 @@ public:
 class Xiaofang: public TriggerSkill{
 public:
     Xiaofang():TriggerSkill("xiaofang"){
-        events << Predamaged;
+        events << Predamaged << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -202,22 +202,41 @@ public:
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         Room *room = player->getRoom();
         ServerPlayer *water = room->findPlayerBySkillName(objectName());
-        if(!water || water->isKongcheng() || damage.nature != DamageStruct::Fire)
+        if(!water || water->isKongcheng())
             return false;
-        if(water->askForSkillInvoke(objectName()) && room->askForDiscard(water, objectName(), 1)){
-            LogMessage log;
-            log.type = "#Xiaofang";
-            log.from = water;
-            log.arg = objectName();
-            log.to << damage.to;
-            room->sendLog(log);
+        if(event == Predamaged){
+            if(damage.nature == DamageStruct::Fire &&
+               water->askForSkillInvoke(objectName()) &&
+               room->askForDiscard(water, objectName(), 1)){
+                LogMessage log;
+                log.type = "#Xiaofan";
+                log.from = water;
+                log.arg = objectName();
+                log.to << damage.to;
+                room->sendLog(log);
 
-            damage.nature = DamageStruct::Normal;
-            data = QVariant::fromValue(damage);
+                return true;
+            }
+        }
+        else{
+            if(damage.nature == DamageStruct::Thunder &&
+               water->askForSkillInvoke(objectName()) &&
+               room->askForDiscard(water, objectName(), 1)){
+                ServerPlayer *forbider = damage.to;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
+                    if(tmp == forbider)
+                        continue;
+                    DamageStruct ailue;
+                    ailue.from = water;
+                    ailue.to = tmp;
+                    ailue.nature = DamageStruct::Thunder;
+                    room->damage(ailue);
+                }
+            }
         }
         return false;
     }
@@ -366,8 +385,10 @@ public:
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
         PlayerStar target = player;
-        ServerPlayer *zhangqing = room->findPlayerBySkillName(objectName());
-        if(zhangqing && target->getPhase() == Player::Finish){
+        QList<ServerPlayer *> zhangqings = room->findPlayersBySkillName(objectName());
+        if(zhangqings.isEmpty() || target->getPhase() != Player::Finish)
+            return false;
+        foreach(ServerPlayer *zhangqing, zhangqings){
             if(target->getHandcardNum() <= 1 && !target->isNude()
                 && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());
@@ -598,42 +619,6 @@ public:
     }
 };
 
-JiaomieCard::JiaomieCard(){
-    mute = true;
-}
-
-bool JiaomieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() >= Self->getHp())
-        return false;
-    return Self->canSlash(to_select);
-}
-
-void JiaomieCard::onEffect(const CardEffectStruct &effect) const{
-    DamageStruct damage;
-    damage.from = effect.from;
-    damage.to = effect.to;
-    damage.card = this;
-    effect.from->getRoom()->damage(damage);
-}
-
-class Jiaomie: public ZeroCardViewAsSkill{
-public:
-    Jiaomie():ZeroCardViewAsSkill("jiaomie"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@zhengFa";
-    }
-
-    virtual const Card *viewAs() const{
-        return new JiaomieCard;
-    }
-};
-
 ZhengfaCard::ZhengfaCard(){
     once = true;
     will_throw = false;
@@ -641,44 +626,61 @@ ZhengfaCard::ZhengfaCard(){
 }
 
 bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->getGender() != Self->getGender()
+    if(!Self->hasUsed("ZhengfaCard"))
+        return targets.isEmpty() && to_select->getGender() != Self->getGender()
             && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
+    else
+        return targets.length() < Self->getHp() && Self->canSlash(to_select);
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
-    bool success = tonguan->pindian(targets.first(), "zhengfa", this);
-    if(success){
-        if(tonguan->getGeneral()->isMale())
-            room->playSkillEffect("jiaomie", qrand() % 2 + 1);
-        else
-            room->playSkillEffect("jiaomie", qrand() % 2 + 3);
-        room->askForUseCard(tonguan, "@@zhengFa", "@jiaomie-effect");
-    }else{
-        if(tonguan->getGeneral()->isMale())
-            room->playSkillEffect("zhengfa", 1);
-        else
-            room->playSkillEffect("zhengfa", 2);
-        tonguan->turnOver();
+    if(!Self->hasUsed("ZhengfaCard")){
+        bool success = tonguan->pindian(targets.first(), "zhengfa", this);
+        if(success){
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
+            room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect");
+        }else{
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
+            tonguan->turnOver();
+        }
+    }
+    else{
+        foreach(ServerPlayer *tarmp, targets)
+            room->cardEffect(this, tonguan, tarmp);
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
     }
 }
 
-class Zhengfa: public OneCardViewAsSkill{
+void ZhengfaCard::onEffect(const CardEffectStruct &effect) const{
+    DamageStruct damage;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    damage.card = this;
+    effect.from->getRoom()->damage(damage);
+}
+
+class Zhengfa: public ViewAsSkill{
 public:
-    Zhengfa():OneCardViewAsSkill("zhengfa"){
+    Zhengfa():ViewAsSkill("zhengfa"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->hasUsed("ZhengfaCard") && !player->isKongcheng();
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return !Self->hasUsed("ZhengfaCard")? !to_select->isEquipped(): false;
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new ZhengfaCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zhengfa";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        Card *zhengfcard = new ZhengfaCard;
+        if(!cards.isEmpty())
+            zhengfcard->addSubcard(cards.first()->getCard());
+        return zhengfcard;
     }
 };
 
@@ -1018,12 +1020,11 @@ BWQZPackage::BWQZPackage()
     tongguan->addSkill(new AoxiangChange);
     related_skills.insertMulti("aoxiang", "#aox_cg");
     tongguan->addSkill(new Zhengfa);
-    tongguan->addSkill(new Jiaomie);
 
     tongguan = new General(this, "tongguanf", "yan", 4, false, true);
     tongguan->addSkill("aoxiang");
     tongguan->addSkill("zhengfa");
-    tongguan->addSkill("jiaomie");
+    tongguan->addSkill("zhengfa");
 
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);
@@ -1039,7 +1040,6 @@ BWQZPackage::BWQZPackage()
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
-    addMetaObject<JiaomieCard>();
     addMetaObject<YongleCard>();
     skills << new Qiaogongplus;
 }

@@ -332,7 +332,7 @@ public:
             room->playSkillEffect(objectName());
 
             PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
-            target->gainAnExtraTurn();
+            target->gainAnExtraTurn(taiwei);
             taiwei->skip();
         }
         return false;
@@ -432,6 +432,152 @@ public:
     }
 };
 
+class Wodao: public FilterSkill{
+public:
+    Wodao():FilterSkill("wodao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getCard();
+        return (card->getSuit() == Card::Spade && card->inherits("TrickCard")) ||
+                card->inherits("EventsCard") ||
+                card->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        if(c->getSuit() == Card::Heart && !c->inherits("EventsCard")){
+            Slash *slash = new Slash(c->getSuit(), c->getNumber());
+            slash->setSkillName(objectName());
+            slash->addSubcard(card_item->getCard());
+            return slash;
+        }
+        else{
+            Duel *duel = new Duel(c->getSuit(), c->getNumber());
+            duel->setSkillName(objectName());
+            duel->addSubcard(card_item->getCard());
+            return duel;
+        }
+    }
+};
+
+class Tongmou: public SlashBuffSkill{
+public:
+    Tongmou():SlashBuffSkill("tongmou"){
+    }
+
+    virtual bool buff(const SlashEffectStruct &effect) const{
+        ServerPlayer *fuan = effect.from;
+        Room *room = fuan->getRoom();
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(fuan)){
+            if(tmp->inMyAttackRange(effect.to))
+                targets << tmp;
+        }
+        if(targets.isEmpty() || !fuan->askForSkillInvoke(objectName()))
+            return false;
+        ServerPlayer *target = room->askForPlayerChosen(fuan, targets, objectName());
+        if(room->askForCard(target, "slash", "@tongmou:" + fuan->objectName())){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Tongmou";
+            log.from = effect.to;
+            log.to << fuan << target;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->slashResult(effect, NULL);
+            return true;
+        }
+        return false;
+    }
+};
+
+XianhaiCard::XianhaiCard(){
+}
+
+bool XianhaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+void XianhaiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    const Card *c = Sanguosha->getCard(getSubcards().first());
+    Drivolt *drive = new Drivolt(c->getSuit(), c->getNumber());
+    drive->setSkillName("xianhai");
+    drive->addSubcard(c);
+    CardUseStruct use;
+    use.card = drive;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
+class XianhaiViewAsSkill: public OneCardViewAsSkill{
+public:
+    XianhaiViewAsSkill():OneCardViewAsSkill("xianhai"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@xianhai";
+    }
+
+    virtual bool viewFilter(const CardItem *n) const{
+        return !n->isEquipped() && n->getCard()->getSuit() == Card::Spade;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        XianhaiCard *card = new XianhaiCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class Xianhai: public MasochismSkill{
+public:
+    Xianhai():MasochismSkill("xianhai"){
+        view_as_skill = new XianhaiViewAsSkill;
+    }
+
+    virtual void onDamaged(ServerPlayer *an, const DamageStruct &damage) const{
+        Room *room = an->getRoom();
+        room->askForUseCard(an, "@@xianhai", "@xianhai");
+    }
+};
+
+class Jielue: public TriggerSkill{
+public:
+    Jielue():TriggerSkill("jielue"){
+        events << SlashEffect << Pindian;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(event == Pindian){
+            PindianStar pindian = data.value<PindianStar>();
+            if(pindian->reason == objectName() && pindian->isSuccess())
+                pindian->from->obtainCard(pindian->to_card);
+            return false;
+        }
+        if(player->getPhase() != Player::Play)
+            return false;
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.slash->getNumber() == 0)
+            return false;
+        if(effect.slash && !effect.to->isKongcheng() && effect.from->askForSkillInvoke(objectName(), data))
+            effect.from->pindian(effect.to, objectName(), effect.slash);
+        return false;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -469,8 +615,19 @@ InterChangePackage::InterChangePackage()
     General *litianrun = new General(this, "litianrun", "jiang");
     litianrun->addSkill(new Jingtian);
 
+    General *duxue = new General(this, "duxue", "kou");
+    duxue->addSkill(new Wodao);
+
+    General *fuan = new General(this, "fuan", "guan", 3);
+    fuan->addSkill(new Tongmou);
+    fuan->addSkill(new Xianhai);
+
+    General *zhangwang = new General(this, "zhangwang", "kou", 4);
+    zhangwang->addSkill(new Jielue);
+
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
+    addMetaObject<XianhaiCard>();
 }
 
 ADD_PACKAGE(InterChange);
