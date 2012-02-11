@@ -1,5 +1,39 @@
 -- this scripts contains the AI classes for generals of plough package
 
+function SmartAI:searchForEcstasy(use,enemy,slash)
+    if not self.toUse then return nil end
+
+	for _,card in ipairs(self.toUse) do
+		if card:getId()~= slash:getId() then return nil end
+	end
+
+	if not use.to then return nil end
+	if self.player:hasUsed("Ecstasy") then return nil end
+
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	self:fillSkillCards(cards)
+
+	if sgs.getDefense(self.player) < sgs.getDefense(enemy) and
+		self.player:getHandcardNum() < self.player:getHp() + 1 then
+			return
+	end
+
+	if not self.player:canSlash(enemy) or enemy:hasFlag("ecst") then
+		return
+	end
+
+	local card_str = self:getCardId("Ecstasy")
+	if card_str then return sgs.Card_Parse(card_str) end
+
+	for _, mi in ipairs(cards) do
+		if (mi:className() == "Ecstasy") and not (mi:getEffectiveId() == slash:getEffectiveId()) and
+			not isCompulsoryView(mi, "Slash", self.player, sgs.Player_Hand) then
+			return mi
+		end
+	end
+end
+
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
