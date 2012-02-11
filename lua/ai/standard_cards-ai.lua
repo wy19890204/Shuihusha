@@ -293,7 +293,6 @@ end
 
 function SmartAI:useCardPeach(card, use)
 	if not self.player:isWounded() then return end
-	math.min(self.player:getMaxCards(), self.player:getHandcardNum()) + self.player:getCards("e"):length() > 3 then return end
 	if not (self.player:hasSkill("rende") and self:getOverflow() > 1 and #self.friends_noself > 0) then
 		local peaches = 0
 		local cards = self.player:getHandcards()

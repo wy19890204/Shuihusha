@@ -52,6 +52,7 @@ sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_e
 		return to_discard
 	else
 		return {}
+	end
 end
 
 -- haoshen

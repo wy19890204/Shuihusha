@@ -40,6 +40,13 @@ sgs.ai_skill_cardask["@zhensha"] = function(self, data)
 	return "."
 end
 
+function SmartAI:isNoZhenshaMark()
+	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
+		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
+	end
+	return true
+end
+
 -- meicha
 meicha_skill={}
 meicha_skill.name = "meicha"
@@ -143,7 +150,7 @@ zhuying_skill.getTurnUseCard = function(self)
 		return peach
 	end
 end
-sgs.ai_filterskill_filter["zhuying] = function(card, card_place)
+sgs.ai_filterskill_filter["zhuying"] = function(card, card_place)
 	local suit = card:getSuitString()
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
