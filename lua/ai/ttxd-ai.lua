@@ -40,6 +40,20 @@ sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	return "."
 end
 
+-- danshu
+sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_equip)
+	local to_discard = {}
+	local cards = self.player:getHandcards()
+	for _, card in ipairs(cards) do
+		if #to_discard >= discard_num then break end
+		table.insert(to_discard, card:getId())
+	end
+	if #to_discard == discard_num then
+		return to_discard
+	else
+		return {}
+end
+
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then

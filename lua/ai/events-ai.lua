@@ -43,3 +43,16 @@ sgs.ai_skill_use["fuckgaolian"] = function(self, prompt)
 	local enemy = self.enemies[1]
 	return ("%s->%s"):format(evc:toString(), enemy:objectName())
 end
+sgs.ai_skill_cardask["@fuckl"] = function(self, data)
+	local judge = data:toJudge()
+	local fuck = self:getCard("FuckGaolian")
+	if self:needRetrial(judge) then
+		local cards = {}
+		table.insert(cards, fuck)
+		local card_id = self:getRetrialCardId(cards, judge)
+		if card_id ~= -1 then
+			return fuck:getEffectiveId()
+		end
+	end
+	return "."
+end

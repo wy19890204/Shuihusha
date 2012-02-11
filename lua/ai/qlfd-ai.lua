@@ -359,8 +359,7 @@ sgs.ai_skill_cardask["@chumai"] = function(self, data)
 	if self:isEnemy(target) then
 		local cards = self.player:getHandcards()
 		for _, card in sgs.qlist(cards) do
-			if card:isBlack() then
-			return card:getEffectiveId()
+			if card:isBlack() then return card:getEffectiveId() end
 		end
 	end
 	return "."
