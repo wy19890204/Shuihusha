@@ -63,6 +63,15 @@ meicha_skill.getTurnUseCard = function(self)
 	assert(analeptic)
 	return analeptic
 end
+sgs.ai_view_as["meicha"] = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+
+	if card_place ~= sgs.Player_Equip and card:getSuit() == sgs.Card_Club then
+		return ("analeptic:meicha[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
 
 -- fanwu
 sgs.ai_skill_use["@@fanwu"] = function(self, prompt)

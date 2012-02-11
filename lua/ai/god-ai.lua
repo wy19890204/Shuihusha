@@ -1,5 +1,19 @@
 sgs.ai_skill_cardask["@xianji"] = sgs.ai_skill_cardask["@fuji"]
 
+-- huafo
+sgs.ai_view_as["huafo"] = function(card, player, card_place, class_name)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+
+	if card:inherits("BasicCard") then
+		if class_name == "Analeptic" then
+			return ("analeptic:huafo[%s:%s]=%d"):format(suit, number, card_id)
+		else
+			return ("slash:huafo[%s:%s]=%d"):format(suit, number, card_id)
+		end
+	end
+end
 	-- this script file contains the AI classes for gods
 
 -- guixin, always invoke

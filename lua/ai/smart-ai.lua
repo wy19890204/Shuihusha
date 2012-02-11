@@ -2168,62 +2168,456 @@ end
 sgs.ai_view_as = {}
 
 local function getSkillViewCard(card, class_name, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-
-	if class_name == "Slash" then
-		if player:hasSkill("paohong") then
-			if card:objectName() == "slash" and card:isBlack() then
-				return ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-		if player:hasSkill("qiaojiang") then
-			if card:isBlack() and card:inherits("TrickCard") then
-				return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-		if player:hasSkill("huafo") then
-			if card:inherits("BasicCard") then
-				return ("slash:huafo[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-	elseif class_name == "Jink" then
-		if player:hasSkill("qiaojiang") then
-			if card:isRed() and card:inherits("TrickCard") then
-				return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-	elseif class_name == "Peach" then
-		if player:hasSkill("jijiu") and card:isRed() and player:getPhase()==sgs.Player_NotActive then
-			return ("peach:jijiu[%s:%s]=%d"):format(suit, number, card_id)
-		end
-	elseif class_name == "Analeptic" then
-		if card_place ~= sgs.Player_Equip then
-			if player:hasSkill("meicha") and card:getSuit() == sgs.Card_Club then
-				return ("analeptic:meicha[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-		if player:hasSkill("hunjiu") then
-			if card:inherits("Peach") or card:inherits("Ecstasy") then
-				return ("analeptic:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-		if player:hasSkill("huafo") then
-			if card:inherits("BasicCard") then
-				return ("analeptic:huafo[%s:%s]=%d"):format(suit, number, card_id)
-			end
-		end
-	elseif class_name == "Nullification" then
-		if card:inherits("EquipCard") and player:hasSkill("zhiqu") then
-		-- card:inherits("SingleTargetTrick")
-			return ("nullification:zhiqu[%s:%s]=%d"):format(suit, number, card_id)
-		end
-	elseif class_name == "Ecstasy" then
-		if player:hasSkill("menghan") and card:getSuit() == sgs.Card_Spade then
-			return ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
+	local vlist = sgs.getSkillLists(player)
+	for _, askill in ipairs(vlist) do
+		local callback = sgs.ai_view_as[askill]
+		if callback and type(callback) == "function" and callback(card, player, card_place)
+			and sgs.Card_Parse(callback(card, player, card_place, class_name)):inherits(class_name) then
+			return callback(card, player, card_place)
 		end
 	end
+end
+
+function SmartAI:getMaxCard(player)
+	player = player or self.player
+
+	if player:isKongcheng() then
+		return nil
+	end
+
+	local cards = player:getHandcards()
+	local max_card, max_point = nil, 0
+	for _, card in sgs.qlist(cards) do
+		local point = card:getNumber()
+		if point > max_point then
+			max_point = point
+			max_card = card
+		end
+	end
+
+	return max_card
+end
+
+function SmartAI:getCardId(class_name, player)
+	player = player or self.player
+	local cards = player:getCards("he")
+	cards = sgs.QList2Table(cards)
+	self:sortByUsePriority(cards)
+	local card_str = zeroCardView(class_name, player)
+	if card_str then return card_str end
+
+	for _, card in ipairs(cards) do
+		local card_place = self.room:getCardPlace(card:getEffectiveId())
+		if card:inherits(class_name) and not prohibitUseDirectly(card, player) then
+			return card:getEffectiveId()
+		elseif isCompulsoryView(card, class_name, player, card_place) then
+			return isCompulsoryView(card, class_name, player, card_place)
+		end
+	end
+	for _, card in ipairs(cards) do
+		local card_place = self.room:getCardPlace(card:getEffectiveId())
+		card_str = getSkillViewCard(card, class_name, player, card_place)
+		if card_str then return card_str end
+	end
+end
+
+function SmartAI:getCard(class_name, player)
+	player = player or self.player
+	local card_id = self:getCardId(class_name, player)
+	if card_id then return sgs.Card_Parse(card_id) end
+end
+
+function getCards(class_name, player, room, flag)
+	flag = flag or "he"
+	local cards = {}
+	local card_place, card_str
+	if not room then card_place = sgs.Player_Hand end
+
+	for _, card in sgs.qlist(player:getCards(flag)) do
+		card_place = card_place or room:getCardPlace(card:getEffectiveId())
+
+		if class_name == "." then table.insert(cards, card)
+		elseif isCompulsoryView(card, class_name, player, card_place) then
+			cards_str = isCompulsoryView(card, class_name, player, card_place)
+			card_str = sgs.Card_Parse(card_str)
+			table.insert(cards, card_str)
+		elseif card:inherits(class_name) and not prohibitUseDirectly(card, player) then table.insert(cards, card)
+		elseif getSkillViewCard(card, class_name, player, card_place) then
+			cards_str = getSkillViewCard(card, class_name, player, card_place)
+			card_str = sgs.Card_Parse(card_str)
+			table.insert(cards, card_str)
+		end
+	end
+	return cards
+end
+
+function SmartAI:getCards(class_name, player, flag)
+	player = player or self.player
+	return getCards(class_name, player, self.room, flag)
+end
+
+function getCardsNum(class_name, player)
+	return #getCards(class_name, player)
+end
+
+function SmartAI:getCardsNum(class_name, player, flag, selfonly)
+	player = player or self.player
+	local n = 0
+	if type(class_name) == "table" then
+		for _, each_class in ipairs(class_name) do
+			n = n + #getCards(each_class, player, self.room, flag)
+		end
+		return n
+	end
+	n = #getCards(class_name, player, self.room, flag)
+
+	if selfonly then return n end
+	if class_name == "Jink" then
+		if player:hasSkill("yuanyin") then
+			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
+				local equips = target:getEquips()
+				for _,equip in sgs.qlist(equips) do
+					if not equip:inherits("Weapon") then
+						n = n + 1
+					end
+				end
+			end
+		end
+		if player:hasSkill("shunshui") then
+			for _, target in sgs.qlist(self.room:getAllPlayers()) do
+				local juds = target:getJudgingArea():length()
+				n = n + juds
+			end
+		end
+	elseif class_name == "Slash" then
+		if player:hasSkill("wushuang") then
+			n = n * 2
+		end
+		if player:hasSkill("yuanyin") then
+			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
+				if target:getWeapon() then
+					n = n + 1
+				end
+			end
+		end
+		if player:hasSkill("zhangshi") then
+			local lieges = self.room:getMenorWomen("male")
+			for _, liege in sgs.qlist(lieges) do
+				if self:isFriend(liege, player) then
+				n = n + self:getCardsNum("Slash", liege, nil, liege:hasSkill("zhangshi"))
+				end
+			end
+		end
+	end
+	return n
+end
+
+function SmartAI:getAllPeachNum(player)
+	player = player or self.player
+	local n = 0
+	for _, friend in ipairs(self:getFriends(player)) do
+		n = n + self:getCardsNum("Peach")
+	end
+	return n
+end
+
+function SmartAI:hasSuit(suit_strings, include_equip, player)
+	return self:getSuitNum(suit_strings, include_equip, player) > 0
+end
+
+function SmartAI:getSuitNum(suit_strings, include_equip, player)
+	player = player or self.player
+	local n = 0
+	local flag = "h"
+	if include_equip then flag = "he" end
+	local allcards = player:getCards(flag)
+	for _, card in sgs.qlist(allcards) do
+		for _, suit_string in ipairs(suit_strings:split("|")) do
+			if card:getSuitString() == suit_string then
+				n = n + 1
+			end
+		end
+	end
+	return n
+end
+
+function SmartAI:hasSkill(skill)
+	local skill_name = skill
+	if type(skill) == "table" then
+		skill_name = skill.name
+	end
+
+	local real_skill = sgs.Sanguosha:getSkill(skill_name)
+	if real_skill and real_skill:isLordSkill() then
+		return self.player:hasLordSkill(skill_name)
+	else
+		return self.player:hasSkill(skill_name)
+	end
+end
+
+function SmartAI:hasSkills(skill_names, player)
+	player = player or self.player
+	for _, skill_name in ipairs(skill_names:split("|")) do
+		if player:hasSkill(skill_name) then
+			return true
+		end
+	end
+end
+
+function SmartAI:fillSkillCards(cards)
+	local i = 1
+	while i <= #cards do
+		if prohibitUseDirectly(cards[i], self.player) then
+			table.remove(cards, i)
+		else
+			i = i + 1
+		end
+	end
+	for _,skill in ipairs(sgs.ai_skills) do
+		if self:hasSkill(skill) then
+			local skill_card = skill.getTurnUseCard(self)
+			if #cards == 0 then skill_card = skill.getTurnUseCard(self,true) end
+			if skill_card then table.insert(cards, skill_card) end
+		end
+	end
+end
+
+function SmartAI:useSkillCard(card,use)
+	local name
+	if card:inherits("LuaSkillCard") then
+		name = "#" .. card:objectName()
+	else
+		name = card:className()
+	end
+	sgs.ai_skill_use_func[name](card, use, self)
+	if use.to then
+		if not use.to:isEmpty() and sgs.dynamic_value.damage_card[name] then
+			for _, target in sgs.qlist(use.to) do
+				if self:damageIsEffective(target) then return end
+			end
+			use.card = nil
+		end
+	end
+	if not use.card then return end
+	local subcards = sgs.QList2Table(use.card:getSubcards())
+	local shit = 0
+	if #subcards > 0 then
+		for _, card in ipairs(subcards) do
+			if sgs.Sanguosha:getCard(card):inherits("Shit") then shit = shit + 1 end
+		end
+	end
+	if shit - self.player:getHp() > self:getAllPeachNum() then use.card = nil end
+end
+
+function SmartAI:useBasicCard(card, use)
+	if self.player:hasSkill("chengxiang") and self.player:getHandcardNum() < 8 and card:getNumber() < 7 then return end
+	self:useCardByClassName(card, use)
+end
+
+function SmartAI:aoeIsEffective(card, to)
+	if self.player == to then
+		return false
+	end
+	local armor = to:getArmor()
+	if armor and armor:inherits("Vine") then
+		return false
+	end
+	if self.room:isProhibited(self.player, to, card) then
+		return false
+	end
+	if self.player:hasSkill("wuyan") or self.player:hasSkill("danlao") then
+		return false
+	end
+	if card:inherits("SavageAssault") then
+		if to:hasSkill("huoshou") or to:hasSkill("juxiang") then
+			return false
+		end
+	end
+	if (to:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == to:objectName()) then
+		return false
+	end
+	if card:inherits("ArcheryAttack") then
+		if (to:hasSkill("leiji") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
+			return false
+		end
+	end
+	return true
+end
+
+function SmartAI:getDistanceLimit(card)
+	if self.player:hasSkill("qicai") then
+		return 100
+	end
+
+	if card:inherits("Snatch") then
+		return 1
+	elseif card:inherits("SupplyShortage") then
+		if self.player:hasSkill("duanliang") then
+			return 2
+		else
+			return 1
+		end
+	end
+end
+
+function SmartAI:exclude(players, card)
+	local excluded = {}
+	local limit = self:getDistanceLimit(card)
+	for _, player in sgs.list(players) do
+		if not self.room:isProhibited(self.player, player, card) then
+			local should_insert = true
+			if limit then
+				should_insert = self.player:distanceTo(player) <= limit
+			end
+			if should_insert then
+				table.insert(excluded, player)
+			end
+		end
+	end
+	return excluded
+end
+
+function SmartAI:getJiemingChaofeng(player)
+	local max_x , chaofeng = 0 , 0
+	for _, friend in ipairs(self:getFriends(player)) do
+		local x = math.min(friend:getMaxHP(), 5) - friend:getHandcardNum()
+		if x > max_x then
+			max_x = x
+		end
+	end
+	if max_x < 2 then
+		chaofeng = 5 - max_x * 2
+	else
+		chaofeng = (-max_x) * 2
+	end
+	return chaofeng
+end
+
+function SmartAI:getAoeValueTo(card, to , from)
+	if not from then from = self.player end
+	local value = 0
+	local sj_num
+
+	if to:hasSkill("buqu") then
+		value = value + 10
+	end
+
+	if to:hasSkill("longdan") then
+		value = value + 5
+	end
+
+	if to:hasSkill("danlao") then
+		value = value + 15
+	end
+
+	if card:inherits("SavageAssault") then
+		sj_num = self:getCardsNum("Slash", to)
+		if to:hasSkill("juxiang") then
+			value = value + 20
+		end
+	end
+	if card:inherits("ArcheryAttack") then
+		sj_num = self:getCardsNum("Jink", to)
+	end
+
+	if self:aoeIsEffective(card, to) then
+		if to:getHp() > 1 or (self:getCardsNum("Peach", to) + self:getCardsNum("Analeptic", to) > 0) then
+			if to:hasSkill("yiji") or to:hasSkill("jianxiong") then
+				value = value + 20
+			end
+			if to:hasSkill("jieming") then
+				value = value - self:getJiemingChaofeng(to) * 3
+			end
+			if to:hasSkill("ganglie") or to:hasSkill("fankui") or to:hasSkill("enyuan") then
+				if not self:isFriend(from, to) then
+					value = value + 10
+				else
+					value = value - 10
+				end
+			end
+		end
+
+		if card:inherits("ArcheryAttack") then
+			sj_num = self:getCardsNum("Jink", to)
+			if (to:hasSkill("leiji") and self:getCardsNum("Jink", to) > 0) or self:isEquip("EightDiagram", to) then
+				value = value + 30
+				if self:hasSuit("spade", true, to) then
+					value = value + 20
+				end
+			end
+			if to:hasSkill("qingguo") or self:isEquip("EightDiagram", to) then
+				value = value + 10
+			end
+		end
+
+		if to:getHp() ~= 0 then
+			value = value - 24 / to:getHp() - 10
+		end
+
+		if self:isFriend(from, to) then
+		if (to:isLord() or from:isLord()) and (not to:hasSkill("buqu")) then
+				if to:getHp() <= 1 and self:getCardsNum("Peach", from) == 0 and sj_num == 0 then
+					if to:getRole() == "renegade" then
+						value = value - 50
+					else
+						value = value - 150
+					end
+				end
+			end
+			value = value + self:getCardsNum("Peach", from) * 2
+		elseif to:getRole() == "rebel" or (to:isLord() and from:getRole() == "rebel") then
+			if to:getHp() <= 1 and self:getCardsNum("Peach", to) == 0 and sj_num == 0 then
+				value = value - 50
+			end
+		end
+	else
+		value = value + 10
+	end
+
+	return value
+end
+
+function SmartAI:getAoeValue(card, player)
+	player = player or self.player
+	friends_noself = self:getFriendsNoself(player)
+	enemies = self:getEnemies(player)
+	local good, bad = 0, 0
+	for _, friend in ipairs(friends_noself) do
+		good = good + self:getAoeValueTo(card, friend, player)
+	end
+
+	for _, enemy in ipairs(enemies) do
+		bad = bad + self:getAoeValueTo(card, enemy, player)
+	end
+
+	if player:hasSkill("jizhi") then
+		good = good + 40
+	end
+	return good - bad
+end
+
+function SmartAI:hasTrickEffective(card, player)
+	if player then
+		if (player:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == player:objectName()) or player:hasSkill("wuyan") then
+			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
+		end
+		if (player:getMark("@fog") > 0 or (player:hasSkill("shenjun") and self.player:getGender() ~= player:getGender())) and
+			sgs.dynamic_value.damage_card[card:className()] then return false end
+	else
+		if self.player:hasSkill("wuyan") then
+			if card:inherits("TrickCard") and not
+				(card:inherits("DelayedTrick") or card:inherits("GodSalvation") or card:inherits("AmazingGrace")) then
+			return false end
+		end
+	end
+	return true
+end
+
+function SmartAI:trickProhibit(card, to)
+	if card:isBlack() and to:hasSkill("weimu") then return true end
+	if card:inherits("Indulgence") or card:inherits("Snatch") and to:hasSkill("qianxun") then return true end
+	if card:inherits("Duel") and to:hasSkill("kongcheng") and to:isKongcheng() then return true end
+	return false
 end
 
 function SmartAI:searchForAnaleptic(use,enemy,slash)
@@ -2943,15 +3337,6 @@ function SmartAI:useCardAmazingGrace(card, use)
 		or self.player:hasSkill("longjiao") then
 		use.card = card
 	end
-end
-
-function SmartAI:getAllPeachNum(player)
-	player = player or self.player
-	local n = 0
-	for _, friend in ipairs(self:getFriends(player)) do
-		n = n + self:getCardsNum("Peach")
-	end
-	return n
 end
 
 function SmartAI:useTrickCard(card, use)
@@ -4519,29 +4904,6 @@ function SmartAI:isEquip(equip_name, player)
 	return false
 end
 
-function SmartAI:getCardId(class_name, player)
-	player = player or self.player
-	local cards = player:getCards("he")
-	cards = sgs.QList2Table(cards)
-	self:sortByUsePriority(cards)
-	local card_str = zeroCardView(class_name, player)
-	if card_str then return card_str end
-
-	for _, card in ipairs(cards) do
-		local card_place = self.room:getCardPlace(card:getEffectiveId())
-		if card:inherits(class_name) and not prohibitUseDirectly(card, player) then
-			return card:getEffectiveId()
-		elseif isCompulsoryView(card, class_name, player, card_place) then
-			return isCompulsoryView(card, class_name, player, card_place)
-		end
-	end
-	for _, card in ipairs(cards) do
-		local card_place = self.room:getCardPlace(card:getEffectiveId())
-		card_str = getSkillViewCard(card, class_name, player, card_place)
-		if card_str then return card_str end
-	end
-end
-
 function SmartAI:getJiemingChaofeng(player)
 	local max_x , chaofeng = 0 , 0
 	for _, friend in ipairs(self:getFriends(player)) do
@@ -4679,97 +5041,6 @@ function SmartAI:getAoeValueTo(card, to , from)
 	end
 
 	return value
-end
-
-function SmartAI:getCard(class_name, player)
-	player = player or self.player
-	local card_id = self:getCardId(class_name, player)
-	if card_id then return sgs.Card_Parse(card_id) end
-end
-
-function getCards(class_name, player, room, flag)
-	flag = flag or "he"
-	local cards = {}
-	local card_place, card_str
-	if not room then card_place = sgs.Player_Hand end
-
-	for _, card in sgs.qlist(player:getCards(flag)) do
-		card_place = card_place or room:getCardPlace(card:getEffectiveId())
-
-		if class_name == "." then table.insert(cards, card)
-		elseif isCompulsoryView(card, class_name, player, card_place) then
-			cards_str = isCompulsoryView(card, class_name, player, card_place)
-			card_str = sgs.Card_Parse(card_str)
-			table.insert(cards, card_str)
-		elseif card:inherits(class_name) and not prohibitUseDirectly(card, player) then table.insert(cards, card)
-		elseif getSkillViewCard(card, class_name, player, card_place) then
-			cards_str = getSkillViewCard(card, class_name, player, card_place)
-			card_str = sgs.Card_Parse(card_str)
-			table.insert(cards, card_str)
-		end
-	end
-	return cards
-end
-
-function SmartAI:getCards(class_name, player, flag)
-	player = player or self.player
-	return getCards(class_name, player, self.room, flag)
-end
-
-function getCardsNum(class_name, player)
-	return #getCards(class_name, player)
-end
-
-function SmartAI:getCardsNum(class_name, player, flag, selfonly)
-	player = player or self.player
-	local n = 0
-	if type(class_name) == "table" then
-		for _, each_class in ipairs(class_name) do
-			n = n + #getCards(each_class, player, self.room, flag)
-		end
-		return n
-	end
-	n = #getCards(class_name, player, self.room, flag)
-
-	if selfonly then return n end
-	if class_name == "Jink" then
-		if player:hasSkill("yuanyin") then
-			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
-				local equips = target:getEquips()
-				for _,equip in sgs.qlist(equips) do
-					if not equip:inherits("Weapon") then
-						n = n + 1
-					end
-				end
-			end
-		end
-		if player:hasSkill("shunshui") then
-			for _, target in sgs.qlist(self.room:getAllPlayers()) do
-				local juds = target:getJudgingArea():length()
-				n = n + juds
-			end
-		end
-	elseif class_name == "Slash" then
-		if player:hasSkill("wushuang") then
-			n = n * 2
-		end
-		if player:hasSkill("yuanyin") then
-			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
-				if target:getWeapon() then
-					n = n + 1
-				end
-			end
-		end
-		if player:hasSkill("zhangshi") then
-			local lieges = self.room:getMenorWomen("male")
-			for _, liege in sgs.qlist(lieges) do
-				if self:isFriend(liege, player) then
-				n = n + self:getCardsNum("Slash", liege, nil, liege:hasSkill("zhangshi"))
-				end
-			end
-		end
-	end
-	return n
 end
 
 function SmartAI:cardProhibit(card, to)
