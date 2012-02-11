@@ -1,5 +1,24 @@
 -- this scripts contains the AI classes for generals of plough package
 
+sgs.ai_skill_invoke.double_whip = function(self, data)
+	local carduse = data:toCardUse()
+	local tos = sgs.QList2Table(carduse.to)
+	local mengkang = self.room:findPlayerBySkillName("mengchong")
+	local mk = mengkang and self:isFriend(mengkang)
+	for _, target in ipairs(tos) do
+		if target:isChained() then
+			return self:isFriend(target) and not mk
+		else
+			return self:isEnemy(target) and not mk
+		end
+		break
+	end
+end
+
+sgs.weapon_range.DoubleWhip = 2
+sgs.weapon_range.MeteorSword = 3
+sgs.weapon_range.SunBow = 5
+
 function SmartAI:searchForEcstasy(use,enemy,slash)
     if not self.toUse then return nil end
 
@@ -34,6 +53,9 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 end
 
+sgs.dynamic_value.control_card.Ecstasy = true
+sgs.dynamic_value.benefit.Counterplot = true
+
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
@@ -67,6 +89,9 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	if use.to then use.to:append(players[r]) end
 end
 
+sgs.dynamic_value.damage_card.Drivolt = true
+sgs.dynamic_value.control_card.Drivolt = true
+
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
 --	if self.player:hasSkill("wuyan") then return end
@@ -89,6 +114,8 @@ function SmartAI:useCardWiretap(wiretap, use)
 		end
 	end
 end
+
+sgs.dynamic_value.benefit.Wiretap = true
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
@@ -121,12 +148,16 @@ function SmartAI:useCardAssassinate(ass, use)
 	end
 end
 
+sgs.dynamic_value.damage_card.Assassinate = true
+
 -- sheng chen gang
 function SmartAI:useCardTreasury(card, use)
 	if not self.player:containsTrick("treasury") then
 		use.card = card
 	end
 end
+
+sgs.dynamic_value.lucky_chance.Treasury = true
 
 -- hai xiao
 function SmartAI:useCardTsunami(card, use)
@@ -165,6 +196,8 @@ function SmartAI:useCardTsunami(card, use)
 	end
 end
 
+sgs.dynamic_value.lucky_chance.Tsunami = true
+
 -- ji cao tun liang
 function SmartAI:useCardProvistore(provistore, use)
 --	if self.player:hasSkill("wuyan") then return end
@@ -182,3 +215,7 @@ function SmartAI:useCardProvistore(provistore, use)
 		use.to:append(self.friends[1])
 	end
 end
+
+sgs.dynamic_value.control_usecard.Provistore = true
+sgs.dynamic_value.benefit.Provistore = true
+

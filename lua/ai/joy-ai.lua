@@ -22,11 +22,18 @@ function SmartAI:useCardShit(card, use)
 	end
 end
 
+sgs.ai_use_value.Shit = -10
+sgs.ai_keep_value.Shit = 6
+
 function SmartAI:useCardStink(card, use)
 	local next_player = self.player:getNextAlive()
 	if self:isFriend(next_player) then return end
 	use.card = card
 end
+
+sgs.ai_use_value.Stink = 2
+sgs.ai_keep_value.Stink = -1
+sgs.dynamic_value.control_card.Stink = true
 
 function SmartAI:useCardPoison(card, use)
 	local players = self.room:getAllPlayers()
@@ -43,6 +50,11 @@ function SmartAI:useCardPoison(card, use)
 		end
 	end
 end
+
+sgs.ai_use_value.Poison = 7
+sgs.ai_keep_value.Poison = 1
+sgs.dynamic_value.control_card.Poison = true
+sgs.dynamic_value.damage_card.Poison = true
 
 -- when enemy using the peach
 sgs.ai_skill_invoke["grab_peach"] = function(self, data)
@@ -61,4 +73,9 @@ function SmartAI:useGaleShell(card, use)
 		end
 	end
 end
+
+sgs.ai_card_intention.GaleShell = 80
+sgs.ai_use_priority.GaleShell = 0.9
+
+sgs.dynamic_value.control_card.GaleShell = true
 

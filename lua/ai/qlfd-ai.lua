@@ -246,7 +246,12 @@ sgs.ai_skill_invoke["zhangshi"] = function(self, data)
 	local cards = self.player:getHandcards()
 	local slash = self:getCard("Slash")
 	if slash then return false end
-	if sgs.zhangshisource then return false else return true end
+	return true
+end
+sgs.ai_skill_cardask["@zhangshi"] = function(self, data)
+	local who = data:toPlayer()
+	if not self:isFriend(who) then return "." end
+	return self:getCardId("Slash") or "."
 end
 
 -- suocai
@@ -290,12 +295,6 @@ sgs.ai_skill_use_func["EyanCard"]=function(card,use,self)
             return
 		end
 	end
-end
-
--- zhangshi
-sgs.ai_skill_cardask["@zhangshi"] = function(self, data)
-	if not self:isFriend(sgs.zhangshisource) then return "." end
-	return self:getCardId("Slash") or "."
 end
 
 -- chiyuan

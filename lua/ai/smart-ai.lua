@@ -2842,9 +2842,9 @@ function SmartAI:getUnuseCard()
 	end
 end
 
-function SmartAI:log(outString)
+--[[function SmartAI:log(outString)
 	self.room:output(outString)
-end
+end]]
 
 -- load other ai scripts
 dofile "lua/ai/debug-ai.lua"
@@ -2852,8 +2852,9 @@ dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/tocheck-ai.lua"
+dofile "lua/ai/events-ai.lua"
 
-local loaded = "standard|standard_cards|tocheck|plough"
+local loaded = "standard|standard_cards|tocheck|plough|events"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 for _, aextension in ipairs(sgs.Sanguosha:getExtensions()) do
@@ -2871,17 +2872,15 @@ dofile "lua/ai/zcyn-ai.lua"
 dofile "lua/ai/cgdk-ai.lua"
 dofile "lua/ai/sp-ai.lua"
 dofile "lua/ai/god-ai.lua"
-dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/joy-ai.lua"]]
 
 dofile "lua/ai/general_config.lua"
---dofile "lua/ai/intention-ai.lua"
-dofile "lua/ai/chat-ai.lua"
 dofile "lua/ai/value_config.lua"
 
 dofile "lua/ai/basara-ai.lua"
 dofile "lua/ai/hegemony-ai.lua"
 
+dofile "lua/ai/chat-ai.lua"
 dofile "lua/ai/hulaoguan-ai.lua"
 dofile "lua/ai/guanxing-ai.lua"
 

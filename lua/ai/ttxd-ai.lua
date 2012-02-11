@@ -44,6 +44,8 @@ end
 sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_equip)
 	local to_discard = {}
 	local cards = self.player:getHandcards()
+	cards=sgs.QList2Table(cards)
+	self:sortByKeepValue(cards, true)
 	for _, card in ipairs(cards) do
 		if #to_discard >= discard_num then break end
 		table.insert(to_discard, card:getId())
@@ -308,13 +310,13 @@ end
 
 -- ganlin
 sgs.ai_skill_invoke["ganlin"] = function(self, data)
-	return self.player:isKongcheng() and self.player:isWounded()
+	return self.player:getHandcardNum() < 2 and self.player:isWounded()
 end
 local ganlin_skill={}
 ganlin_skill.name = "ganlin"
 table.insert(sgs.ai_skills, ganlin_skill)
 ganlin_skill.getTurnUseCard = function(self)
-	if self.player:isKongcheng() then return end
+	if self.player:hasFlag("Ganlin") or self.player:isKongcheng() then return end
 	for _, player in ipairs(self.friends_noself) do
 		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage"))
 			or (not player:containsTrick("indulgence") and (self:hasSkills("banzhuang|shouge", player)))

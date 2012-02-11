@@ -42,7 +42,7 @@ function SmartAI:slashProhibit(card,enemy)
 		end
 
 		if enemy:hasSkill("huanshu") then
-			if self.player:hasSkill("jueqing") or	self:isEquip("MeteorSword") then return false end
+			if self.player:hasSkill("jueqing") or self:isEquip("MeteorSword") then return false end
 			return true
 		end
 
@@ -176,6 +176,7 @@ function SmartAI:useCardSlash(card, use)
 			not (not self:isWeak(enemy) and #self.enemies > 1 and #self.friends > 1 and self.player:hasSkill("shemi")
 				and self:getOverflow() > 0 and not self:isEquip("Crossbow")) then
 				-- fill the card use struct
+				local usecard = card
 				local mi = self:searchForEcstasy(use,enemy,card)
 				if mi and self:getCardsNum("Jink", enemy) > 0 and self:getCardId("Slash") then
 					use.card = mi
@@ -209,8 +210,23 @@ function SmartAI:useCardSlash(card, use)
 						self:useEquipCard(self:getCard("KylinBow") ,use)
 						if use.card then return end
 					end
+					if enemy:isChained() and #(self:getChainedFriends()) < #(self:getChainedEnemies()) and not use.card then
+						if self:isEquip("Crossbow") and card:inherits("NatureSlash") then
+							local slashes = self:getCards("Slash")
+							for _, slash in ipairs(slashes) do
+								if not slash:inherits("NatureSlash") and self:slashIsEffective(slash, enemy)
+									and not self:slashProhibit(slash, enemy) then
+									usecard = slash
+									break
+								end
+							end
+						elseif not card:inherits("NatureSlash") then
+							local slash = self:getCard("NatureSlash")
+							if slash and self:slashIsEffective(slash, enemy) and not self:slashProhibit(slash, enemy) then usecard = slash end
+						end
 					end
-				use.card = card
+				end
+				use.card = use.card or usecard
 				if use.to then use.to:append(enemy) end
 				target_count = target_count+1
 				if self.slash_targets <= target_count then return end
@@ -290,6 +306,11 @@ sgs.ai_card_intention.Slash = function(card,from,tos,source)
 	end
 end
 
+sgs.dynamic_value.damage_card.Slash = true
+
+sgs.ai_use_value.Slash = 4.6
+sgs.ai_keep_value.Slash = 2
+sgs.ai_use_priority.Slash = 2.4
 
 function SmartAI:useCardPeach(card, use)
 	if not self.player:isWounded() then return end
@@ -308,6 +329,30 @@ function SmartAI:useCardPeach(card, use)
 		use.card = card
 	end
 end
+
+sgs.ai_card_intention.Peach = -120
+
+sgs.ai_use_value.Peach = 6
+sgs.ai_keep_value.Peach = 5
+sgs.ai_use_priority.Peach = 4.1
+
+sgs.ai_use_value.Jink = 8.9
+sgs.ai_keep_value.Jink = 4
+
+sgs.dynamic_value.benefit.Peach = true
+
+sgs.weapon_range.Crossbow = 1
+sgs.weapon_range.DoubleSword = 2
+sgs.weapon_range.QinggangSword = 2
+sgs.weapon_range.IceSword = 2
+sgs.weapon_range.GudingBlade = 2
+sgs.weapon_range.Axe = 3
+sgs.weapon_range.Blade = 3
+sgs.weapon_range.Spear = 3
+sgs.weapon_range.Halberd = 4
+sgs.weapon_range.KylinBow = 5
+
+sgs.ai_skill_invoke.double_sword = true
 
 sgs.ai_skill_invoke.ice_sword=function(self, data)
 	if self.player:hasFlag("drank") then return false end
@@ -372,9 +417,35 @@ end
 sgs.ai_skill_invoke.eight_diagram = function(self, data)
 	if self.player:hasSkill("yueli") then return true end
 	if self:getDamagedEffects(self) then return false end
-	if self:getDamagedEffects(self) then return false end
 	return true
 end
+
+sgs.ai_use_priority.OffensiveHorse = 2.69
+sgs.ai_use_priority.Halberd = 2.685
+sgs.ai_use_priority.KylinBow = 2.68
+sgs.ai_use_priority.Blade = 2.675
+sgs.ai_use_priority.GudingBlade = 2.67
+sgs.ai_use_priority.DoubleSword =2.665
+sgs.ai_use_priority.Spear = 2.66
+sgs.ai_use_priority.IceSword = 2.65
+sgs.ai_use_priority.QinggangSword = 2.645
+sgs.ai_use_priority.Axe = 2.64
+sgs.ai_use_priority.Crossbow = 2.63
+sgs.ai_use_priority.SilverLion = 0.9
+sgs.ai_use_priority.EightDiagram = 0.8
+sgs.ai_use_priority.RenwangShield = 0.7
+sgs.ai_use_priority.DefensiveHorse = 0
+
+sgs.dynamic_value.damage_card.ArcheryAttack = true
+sgs.dynamic_value.damage_card.SavageAssault = true
+
+sgs.ai_use_value.ArcheryAttack = 3.8
+sgs.ai_use_priority.ArcheryAttack = 3.5
+sgs.ai_use_value.SavageAssault = 3.9
+sgs.ai_use_priority.SavageAssault = 3.5
+
+sgs.ai_keep_value.Nullification = 3
+sgs.ai_use_value.Nullification = 8
 
 function SmartAI:useCardAmazingGrace(card, use)
 	if #self.friends >= #self.enemies or (self:hasSkills(sgs.need_kongcheng) and self.player:getHandcardNum() == 1)
@@ -382,6 +453,10 @@ function SmartAI:useCardAmazingGrace(card, use)
 		use.card = card
 	end
 end
+
+sgs.ai_use_value.AmazingGrace = 3
+sgs.ai_keep_value.AmazingGrace = -1
+sgs.ai_use_priority.AmazingGrace = 1
 
 function SmartAI:useCardGodSalvation(card, use)
 	local good, bad = 0, 0
@@ -411,6 +486,9 @@ function SmartAI:useCardGodSalvation(card, use)
 		use.card = card
 	end
 end
+
+sgs.ai_use_priority.GodSalvation = 3.9
+sgs.dynamic_value.benefit.GodSalvation = true
 
 local function factorial(n)
 	if n <= 0.1 then return 1 end
@@ -456,12 +534,25 @@ sgs.ai_card_intention.Duel=function(card,from,tos,source)
 	sgs.updateIntentions(from, tos, 80)
 end
 
+sgs.ai_use_value.Duel = 3.7
+sgs.ai_use_priority.Duel = 2.9
+
+sgs.dynamic_value.damage_card.Duel = true
+
 function SmartAI:useCardExNihilo(card, use)
 	use.card = card
 	if not use.isDummy then
 		self:speak("lucky")
 	end
 end
+
+sgs.ai_card_intention.ExNihilo = -80
+
+sgs.ai_keep_value.ExNihilo = 3.6
+sgs.ai_use_value.ExNihilo = 10
+sgs.ai_use_priority.ExNihilo = 4.6
+
+sgs.dynamic_value.benefit.ExNihilo = true
 
 function SmartAI:useCardSnatch(snatch, use)
 	if self.player:hasSkill("wuyan") then return end
@@ -523,6 +614,11 @@ function SmartAI:useCardSnatch(snatch, use)
 		end
 	end
 end
+
+sgs.ai_use_value.Snatch = 9
+sgs.ai_use_priority.Snatch = 4.3
+
+sgs.dynamic_value.control_card.Snatch = true
 
 function SmartAI:useCardDismantlement(dismantlement, use)
 	if self.player:hasSkill("wuyan") then return end
@@ -600,6 +696,11 @@ function SmartAI:useCardDismantlement(dismantlement, use)
 		end
 	end
 end
+
+sgs.ai_use_value.Dismantlement = 5.6
+sgs.ai_use_priority.Dismantlement = 4.4
+
+sgs.dynamic_value.control_card.Dismantlement = true
 
 function SmartAI:useCardCollateral(card, use)
 	if self.player:hasSkill("wuyan") then return end
@@ -692,6 +793,12 @@ function SmartAI:useCardIndulgence(card, use)
 	end
 end
 
+sgs.ai_use_value.Indulgence = 8
+
+sgs.ai_card_intention.Indulgence = 120
+
+sgs.dynamic_value.control_usecard.Indulgence = true
+
 function SmartAI:useCardLightning(card, use)
 	if self.player:containsTrick("lightning") then return end
 	if self.player:hasSkill("weimu") and card:isBlack() then return end
@@ -728,3 +835,6 @@ function SmartAI:useCardLightning(card, use)
 	end
 end
 
+sgs.dynamic_value.lucky_chance.Lightning = true
+
+sgs.ai_keep_value.Lightning = -1

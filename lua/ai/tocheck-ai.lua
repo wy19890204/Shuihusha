@@ -4,9 +4,25 @@ function SmartAI:useCardThunderSlash(...)
 	self:useCardSlash(...)
 end
 
+sgs.ai_card_intention.ThunderSlash = sgs.ai_card_intention.Slash
+
+sgs.ai_use_value.ThunderSlash = 4.5
+sgs.ai_keep_value.ThunderSlash = 2.5
+sgs.ai_use_priority.ThunderSlash = 2.5
+
 function SmartAI:useCardFireSlash(...)
 	self:useCardSlash(...)
 end
+
+sgs.ai_card_intention.FireSlash = sgs.ai_card_intention.Slash
+
+sgs.ai_use_value.FireSlash = 4.4
+sgs.ai_keep_value.FireSlash = 2.6
+sgs.ai_use_priority.FireSlash = 2.6
+
+sgs.weapon_range.Fan = 4
+sgs.ai_use_priority.Fan = 2.655
+sgs.ai_use_priority.Vine = 0.6
 
 sgs.ai_skill_invoke.fan = function(self, data)
 	return not self:isFriend(data:toSlashEffect().to)
@@ -52,7 +68,12 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 	end
 end
 
--- bing liang cun duan
+sgs.dynamic_value.benefit.Analeptic = true
+
+sgs.ai_use_value.Analeptic = 5.98
+sgs.ai_keep_value.Analeptic = 4.5
+sgs.ai_use_priority.Analeptic = 2.7
+
 local function handcard_subtract_hp(a, b)
 	local diff1 = a:getHandcardNum() - a:getHp()
 	local diff2 = b:getHandcardNum() - b:getHp()
@@ -83,7 +104,12 @@ function SmartAI:useCardSupplyShortage(card, use)
 	end
 end
 
--- tie suo lian huan
+sgs.ai_use_value.SupplyShortage = 7
+
+sgs.ai_card_intention.SupplyShortage = 120
+
+sgs.dynamic_value.control_usecard.SupplyShortage = true
+
 function SmartAI:getChainedFriends()
 	local chainedFriends = {}
 	for _, friend in ipairs(self.friends) do
@@ -139,7 +165,11 @@ sgs.ai_card_intention.IronChain=function(card,from,tos,source)
 	end
 end
 
--- huo gong
+sgs.ai_use_value.IronChain = 5.4
+sgs.ai_use_priority.IronChain = 2.8
+
+sgs.dynamic_value.benefit.IronChain = true
+
 function SmartAI:useCardFireAttack(fire_attack, use)
 	if self.player:hasSkill("wuyan") then return end
 	local lack = {

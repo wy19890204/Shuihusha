@@ -664,7 +664,7 @@ public:
         events << PhaseChange;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *gaoshun, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *gaoshun, QVariant &data) const{
         ServerPlayer *target = gaoshun->tag["EyanTarget"].value<PlayerStar>();
         if(gaoshun->getPhase() == Player::Finish && target)
             gaoshun->tag.remove("EyanTarget");
@@ -685,6 +685,8 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
     const Card *slash = NULL;
     QVariant tohelp = QVariant::fromValue((PlayerStar)white);
     foreach(ServerPlayer *man, men){
+        if(man == white)
+            continue;
         slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
         if(slash){
             CardUseStruct card_use;
@@ -699,7 +701,7 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
 
 class ZhangshiViewAsSkill:public ZeroCardViewAsSkill{
 public:
-    ZhangshiViewAsSkill():ZeroCardViewAsSkill("zhangshi$"){
+    ZhangshiViewAsSkill():ZeroCardViewAsSkill("zhangshi"){
 
     }
 
@@ -730,6 +732,8 @@ public:
         room->playSkillEffect(objectName());
         QVariant tohelp = QVariant::fromValue((PlayerStar)white);
         foreach(ServerPlayer *man, men){
+            if(man == white)
+                continue;
             const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
             if(slash){
                 room->provide(slash);

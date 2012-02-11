@@ -40,6 +40,11 @@ end
 sgs.ai_skill_invoke["fengmang"] = true
 sgs.ai_skill_playerchosen["fengmang"] = function(self, targets)
 	self:sort(self.enemies, "hp")
+	for _, target in ipairs(self.enemies) do
+		if not self:slashProhibit(nil, target) then
+			return target
+		end
+	end
 	return self.enemies[1]
 end
 
