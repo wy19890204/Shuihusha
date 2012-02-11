@@ -1642,7 +1642,7 @@ function SmartAI:askForCard(pattern, prompt, data)
 		if target then
 			if self:isFriend(target) then
 				if parsedPrompt[1] == "archery-attack-jink" then
-					local aoe = sgs.Sanguosha:cloneCard("archery_attack", sgs.Card_NoSuit, 0)
+					local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
 					if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
 						then return "."
 					end
@@ -2848,6 +2848,8 @@ end]]
 
 -- load other ai scripts
 dofile "lua/ai/debug-ai.lua"
+dofile "lua/ai/general_config.lua"
+dofile "lua/ai/value_config.lua"
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
@@ -2870,12 +2872,10 @@ dofile "lua/ai/bwqz-ai.lua"
 dofile "lua/ai/qlfd-ai.lua"
 dofile "lua/ai/zcyn-ai.lua"
 dofile "lua/ai/cgdk-ai.lua"
+dofile "lua/ai/ybyt-ai.lua"
 dofile "lua/ai/sp-ai.lua"
 dofile "lua/ai/god-ai.lua"
 dofile "lua/ai/joy-ai.lua"]]
-
-dofile "lua/ai/general_config.lua"
-dofile "lua/ai/value_config.lua"
 
 dofile "lua/ai/basara-ai.lua"
 dofile "lua/ai/hegemony-ai.lua"

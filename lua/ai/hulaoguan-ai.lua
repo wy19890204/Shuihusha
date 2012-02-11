@@ -29,3 +29,11 @@ sgs.ai_skill_cardask["@xiuluo"] = function(self)
 	end
 	return "."
 end
+
+-- zombie
+sgs.ai_filterskill_filter["ganran"] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:getTypeId() == sgs.Card_Equip then return ("iron_chain:ganran[%s:%s]=%d"):format(suit, number, card_id) end
+end
