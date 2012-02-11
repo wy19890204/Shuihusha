@@ -134,6 +134,12 @@ zhuying_skill.getTurnUseCard = function(self)
 		return peach
 	end
 end
+sgs.ai_filterskill_filter["zhuying] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
+end
 
 -- shouwang
 shouwang_skill={}
@@ -319,6 +325,12 @@ huoshui_skill.getTurnUseCard = function(self)
 		local driver = sgs.Card_Parse(card_str)
 		return driver
 	end
+end
+sgs.ai_filterskill_filter["huoshui"] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:inherits("Weapon") or card:inherits("Slash") then return ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
 -- huakui

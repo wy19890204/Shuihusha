@@ -2139,11 +2139,12 @@ end
 
 sgs.ai_filterskill_filter = {}
 local function prohibitUseDirectly(card, player)
-	if player:hasSkill("zhuying") then return card:inherits("Analeptic")
-	elseif player:hasSkill("paohong") then return card:objectName() == "slash" and card:isBlack()
-	elseif player:hasSkill("huoshui") then return card:inherits("Weapon") or card:inherits("Slash")
-	elseif player:hasSkill("ganran") then return card:getTypeId() == sgs.Card_Equip
+	local _, flist = sgs.getSkillLists(player)
+	for _, askill in ipairs(flist) do
+		local callback = sgs.ai_filterskill_filter[askill]
+		if callback and type(callback) == "function" and callback(card) then return true end
 	end
+	return false
 end
 
 local function zeroCardView(class_name, player)
@@ -2155,19 +2156,16 @@ local function zeroCardView(class_name, player)
 end
 
 local function isCompulsoryView(card, class_name, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	if class_name == "ThunderSlash" and card_place ~= sgs.Player_Equip then
-		if player:hasSkill("paohong") and card:objectName() == "slash" and card:isBlack() then return ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id) end
-	elseif class_name == "Peach" then
-		if player:hasSkill("zhuying") and card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
-	elseif class_name == "Drivolt" then
-		if player:hasSkill("huoshui") and (card:inherits("Weapon") or card:inherits("Slash")) then
-			return ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id)
+	local _, flist = sgs.getSkillLists(player)
+	for _, askill in ipairs(flist) do
+		local callback = sgs.ai_filterskill_filter[askill]
+		if callback and type(callback) == "function" and callback(card, card_place) and sgs.Card_Parse(callback(card)):inherits(class_name) then
+			return callback(card, card_place)
 		end
 	end
 end
+
+sgs.ai_view_as = {}
 
 local function getSkillViewCard(card, class_name, player, card_place)
 	local suit = card:getSuitString()

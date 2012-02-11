@@ -75,6 +75,12 @@ paohong_skill.getTurnUseCard = function(self)
 		return sgs.Card_Parse(card_str)
 	end
 end
+sgs.ai_filterskill_filter["paohong"] = function(card, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:objectName() == "slash" and card:isBlack() then return ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id) end
+end
 
 -- hengchong
 sgs.ai_skill_playerchosen["hengchong"] = function(self, targets)
