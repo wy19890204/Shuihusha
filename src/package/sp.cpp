@@ -108,7 +108,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "@@jiebao";
+        return pattern == "@@jiebao";
     }
 };
 
@@ -155,8 +155,8 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         DamageStar damage = data.value<DamageStar>();
-        if(damage->to == player && damage->from && damage->from != player){
-            if(!player->askForSkillInvoke(objectName()))
+        if(damage && damage->to == player && damage->from && damage->from != player){
+            if(!player->askForSkillInvoke(objectName(), QVariant::fromValue(damage)))
                 return false;
             QList<ServerPlayer *> targets = room->getOtherPlayers(damage->from);
             targets.removeOne(player);
@@ -259,7 +259,7 @@ public:
         Room *room = player->getRoom();
         int num = getKingdoms(room);
         DamageStar damage = data.value<DamageStar>();
-        if(damage->from != damage->to && damage->from->hasSkill(objectName())){
+        if(damage && damage->from != damage->to && damage->from->hasSkill(objectName())){
             ServerPlayer *source = damage->from;
             QString choice = room->askForChoice(source, objectName(), "hp+card+cancel");
             if(choice == "cancel")
