@@ -494,7 +494,7 @@ public:
     }
 
     virtual void onDamaged(ServerPlayer *malin, const DamageStruct &damage) const{
-        if(damage.from && malin->askForSkillInvoke(objectName())){
+        if(damage.from && malin->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)damage.from))){
             malin->getRoom()->playSkillEffect(objectName());
             damage.from->turnOver();
         }
@@ -875,7 +875,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") &&
-            damage.to->isKongcheng() && player->askForSkillInvoke(objectName())){
+            damage.to->isKongcheng() && player->askForSkillInvoke(objectName(), data)){
             Room *room = damage.to->getRoom();
             room->playSkillEffect(objectName());
             room->loseMaxHp(damage.to);
@@ -899,7 +899,7 @@ public:
         if(lily.isEmpty())
             return;
         foreach(ServerPlayer *lili, lily){
-            if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName())){
+            if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
                 const Card *wolegequ = player->getRandomHandCard();
                 lili->obtainCard(wolegequ, false);
