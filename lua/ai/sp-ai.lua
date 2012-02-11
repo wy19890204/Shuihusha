@@ -49,7 +49,7 @@ sgs.ai_skill_use["@@jiebao"] = function(self, prompt)
 	local enemies = {}
 	local i = 0
 	for _, enemy in ipairs(self.enemies) do
-		if not enemy:isNude() then
+		if not enemy:isNude() and not enemy == self.player then
 			table.insert(enemies, enemy:objectName())
 			i = i + 1
 		end

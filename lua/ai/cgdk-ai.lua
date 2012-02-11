@@ -1,3 +1,13 @@
+-- zhiqu
+sgs.ai_view_as["zhiqu"] = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	if card:inherits("EquipCard") then
+		return ("nullification:zhiqu[%s:%s]=%d"):format(suit, number, card_id)
+	end
+end
+
 -- jiuhan&linmo
 sgs.ai_skill_invoke["jiuhan"] = true
 sgs.ai_skill_invoke["linmo"] = true
@@ -100,17 +110,17 @@ sgs.ai_skill_use_func["BingjiCard"] = function(card, use, self)
 	end
 end
 
---tuntian
-sgs.ai_skill_invoke.tuntian = true
+-- qiaojiang
+sgs.ai_view_as["qiaojiang"] = function(card, player, card_place)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
 
---fangquan
-sgs.ai_skill_invoke.fangquan = function(self, data)
-	if #self.friends == 1 then
-		return false
+	if card:isBlack() and card:inherits("TrickCard") then
+		return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
+	elseif card:isRed() and card:inherits("TrickCard") then
+		return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 	end
-
-	local limit = self.player:getMaxCards()
-	return self.player:getHandcardNum() <= limit
 end
 
 sgs.ai_skill_playerchosen.fangquan = function(self, targets)

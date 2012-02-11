@@ -259,7 +259,7 @@ public:
         Room *room = player->getRoom();
         int num = getKingdoms(room);
         DamageStar damage = data.value<DamageStar>();
-        if(damage->from != damage->to && damage->from->hasSkill(objectName())){
+        if(damage && damage->from != damage->to && damage->from->hasSkill(objectName())){
             ServerPlayer *source = damage->from;
             QString choice = room->askForChoice(source, objectName(), "hp+card+cancel");
             if(choice == "cancel")
