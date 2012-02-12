@@ -30,7 +30,7 @@ end
 sgs.ai_skill_use_func["MeiyuCard"] = function(card, use, self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
-		if self:getCardsNum("Jink") == 0 then
+		if self:getCardsNum("Jink", enemy) == 0 then
 			if use.to then use.to:append(enemy) end
 			use.card = card
 			break

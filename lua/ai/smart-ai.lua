@@ -10,7 +10,7 @@ math.randomseed(os.time())
 -- SmartAI is the base class for all other specialized AI classes
 SmartAI = class "SmartAI"
 
-version = "QSanguosha AI 20120201"
+version = "QSanguosha AI 20120205"
 --- this function is only function that exposed to the host program
 --- and it clones an AI instance by general name
 -- @param player The ServerPlayer object that want to create the AI object
@@ -1113,16 +1113,8 @@ function SmartAI:filterEvent(event, player, data)
 		local source = self.room:getCurrent()
 		
 		if not damage.card then
-			local intention
-			intention = sgs.ai_card_intention.general(to, 100)
-			
-			if from then
-				if from:objectName() == to:objectName() then intention = 0 end
-				sgs.refreshLoyalty(from, intention)
-				if to:isLord() and intention < 0 then
-					sgs.ai_anti_lord[from:objectName()] = (sgs.ai_anti_lord[from:objectName()] or 0)+1
-				end
-			end
+			local intention = 100 
+			if from then sgs.updateIntention(from, to, intention) end
 		end
 	elseif event == sgs.CardUsed then
 		local struct = data:toCardUse()
@@ -1153,22 +1145,18 @@ function SmartAI:filterEvent(event, player, data)
 	elseif event == sgs.CardLost then
 		local move = data:toCardMove()
 		local from = move.from
-		local to =   move.to
 		local place = move.from_place
 		local card = sgs.Sanguosha:getCard(move.card_id)
 		if sgs.ai_snat_disma_effect then
 			sgs.ai_snat_disma_effect = false
-			local intention = sgs.ai_card_intention.general(from,70)
+			local intention = 70
 			if place == sgs.Player_Judging then
-				if not card:inherits("Lightning") and not card:inherits("Disaster") then intention = -intention else intention = 0 end
+				if not card:inherits("Disaster") then intention = -intention else intention = 0 end
 			elseif place == sgs.Player_Equip then
 				if player:getLostHp() > 1 and card:inherits("SilverLion") then intention = -intention end
-				if self:hasSkills(sgs.lose_equip_skill, player) then intention = 0 end
+				if self:hasSkills(sgs.lose_equip_skill, player) or card:inherits("GaleShell") then intention = 0 end
 			end
-			if from:isLord() and intention < 0 then
-				sgs.ai_anti_lord[sgs.ai_snat_dism_from:objectName()] = (sgs.ai_anti_lord[sgs.ai_snat_dism_from:objectName()] or 0)+1
-			end
-			sgs.refreshLoyalty(sgs.ai_snat_dism_from,intention)
+			sgs.updateIntention(sgs.ai_snat_dism_from, from, intention)
 		end
 	elseif event == sgs.StartJudge then
 		local judge = data:toJudge()
@@ -1179,16 +1167,23 @@ function SmartAI:filterEvent(event, player, data)
 			if player:objectName() == caiwenji:objectName() then intention = 0 end
 			sgs.refreshLoyalty(caiwenji, intention)
 		end
-	elseif event == sgs.TurnStart and player:isLord() then
-		sgs.turncount = (sgs.turncount or 0) + 1
+	elseif event == sgs.PhaseChange and player:isLord() and player:getPhase()== sgs.Player_Finish then
+		sgs.turncount = sgs.turncount + 1
 		--self.room:writeToConsole(self.player:objectName() .. " " .. sgs.turncount)
+	elseif event == sgs.GameStart then
+		sgs.turncount = 0
 	end
 end
 
 sgs.ai_skill_suit = {}
 
-function SmartAI:askForSuit()
-	return math.min(math.floor(math.random(0,8)/2),3)
+function SmartAI:askForSuit(reason)
+	if not reason then return sgs.ai_skill_suit.fanjian() end -- this line is kept for back-compatibility
+	local callback = sgs.ai_skill_suit[reason]
+	if callback and type(callback) == "function" then
+		if callback() then return callback(self) end
+	end
+	return math.random(0,3)
 end
 
 sgs.ai_skill_invoke = {}
@@ -1231,9 +1226,8 @@ sgs.ai_skill_discard = {}
 function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	local callback = sgs.ai_skill_discard[reason]
 	if callback and type(callback) == "function" then
-		return callback(self, discard_num, optional, include_equip)
-	end
-	if optional then return {} end
+		if callback(self, discard_num, optional, include_equip) then return callback(self, discard_num, optional, include_equip) end
+	elseif optional then return {} end
 
 	local flag = "h"
 	if include_equip and (self.player:getEquips():isEmpty() or not self.player:isJilei(self.player:getEquips():first())) then flag = flag .. "e" end
@@ -1261,7 +1255,7 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	table.sort(cards, compare_func)
 	for _, card in ipairs(cards) do
 		if #to_discard >= discard_num then break end
-		table.insert(to_discard, card:getId())
+		if not self.player:isJilei(card) then table.insert(to_discard, card:getId()) end
 	end
 	
 	return to_discard
@@ -1276,7 +1270,7 @@ function SmartAI:askForNullification(trick_name, from, to, positive)
 	if null_card then null_card = sgs.Card_Parse(null_card) else return end
 
 	if positive then
-		if from and self:isEnemy(from) then
+		if from and self:isEnemy(from) and (sgs.ai_explicit[from:objectName()] or sgs.isRolePredictable()) then
 			if trick_name:inherits("ExNihilo") and self:getOverflow(from) == 0 then return null_card end
 			if trick_name:inherits("IronChain") and not self:isEquip("Vine", to) then return nil end
 			if self:isFriend(to) then
@@ -1328,7 +1322,7 @@ function SmartAI:askForNullification(trick_name, from, to, positive)
 				if self:isFriend(from) then return null_card end
 			end
 		else
-			if self:isEnemy(to) then return null_card else return end
+			if self:isEnemy(to) and (sgs.ai_explicit[to:objectName()] or sgs.isRolePredictable()) then return null_card else return end
 		end
 	end
 end
@@ -1366,7 +1360,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 	local cardchosen = sgs.ai_skill_cardchosen[string.gsub(reason,"%-","_")]
 	local card
 	if type(cardchosen) == "function" then
-		card = cardchosen(self, who)
+		card = cardchosen(self, who, flags)
 	end
 	if card then
 		return card:getId()
@@ -1382,7 +1376,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 					lightning = trick:getId()
 				elseif trick:inherits("Indulgence") or trick:getSuit() == sgs.Card_Diamond then
 					indulgence = trick:getId()
-				else
+				elseif not trick:inherits("Disaster") then
 					supply_shortage = trick:getId()
 				end
 			end
@@ -1503,6 +1497,11 @@ function SmartAI:askForCardChosen(who, flags, reason)
 end
 
 sgs.ai_skill_cardask = {}
+
+function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
+	if not self:damageIsEffective(nil, nil, target) then return "." end
+	if self:getDamagedEffects(self) then return "." end
+end
 
 function SmartAI:askForCard(pattern, prompt, data)
 	self.room:output(prompt)
@@ -1681,7 +1680,7 @@ function SmartAI:askForAG(card_ids, refusable, reason)
 	for _, id in ipairs(ids) do
 		table.insert(cards, sgs.Sanguosha:getCard(id))
 	end
-	self:sortByCardNeed(cards, true)
+	self:sortByCardNeed(cards)
 	return cards[#cards]:getEffectiveId()
 end
 
@@ -2208,7 +2207,7 @@ function getCards(class_name, player, room, flag)
 			table.insert(cards, card_str)
 		elseif card:inherits(class_name) and not prohibitUseDirectly(card, player) then table.insert(cards, card)
 		elseif getSkillViewCard(card, class_name, player, card_place) then
-			cards_str = getSkillViewCard(card, class_name, player, card_place)
+			card_str = getSkillViewCard(card, class_name, player, card_place)
 			card_str = sgs.Card_Parse(card_str)
 			table.insert(cards, card_str)
 		end
@@ -2430,13 +2429,11 @@ function SmartAI:exclude(players, card)
 			if limit then
 				should_insert = self.player:distanceTo(player) <= limit
 			end
-
 			if should_insert then
 				table.insert(excluded, player)
 			end
 		end
 	end
-
 	return excluded
 end
 
@@ -2634,6 +2631,7 @@ function SmartAI:isEquip(equip_name, player)
 		if card:inherits(equip_name) then return true end
 	end
 	if equip_name == "EightDiagram" and player:hasSkill("bazhen") and not player:getArmor() then return true end
+	if equip_name == "Crossbow" and self:canPaoxiao(player) then return true end
 	return false
 end
 
@@ -2833,6 +2831,7 @@ dofile "lua/ai/events-ai.lua"
 local loaded = "standard|standard_cards|tocheck|plough|events"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
+
 for _, aextension in ipairs(sgs.Sanguosha:getExtensions()) do
 	if not loaded:match(aextension) and files:match(string.lower(aextension)) then
 		dofile("lua/ai/" .. aextension .. "-ai.lua")
