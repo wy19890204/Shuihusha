@@ -718,9 +718,7 @@ public:
                 targets << tmp;
         if(targets.isEmpty() || !player->askForSkillInvoke(objectName()))
             return false;
-        PlayerStar from = room->askForPlayerChosen(player, targets, objectName());
-        if(from->getJudgingArea().isEmpty())
-            return false;
+        PlayerStar from = room->askForPlayerChosen(player, targets, "dalangfrom");
         while(!from->getJudgingArea().isEmpty()){
             QList<int> card_ids;
             foreach(const Card *c, from->getJudgingArea())
@@ -738,7 +736,7 @@ public:
                 if(trick && trick->isVirtualCard())
                     delete trick;
                 room->setTag("DalangTarget", QVariant::fromValue(from));
-                ServerPlayer *to = room->askForPlayerChosen(player, tos, objectName());
+                ServerPlayer *to = room->askForPlayerChosen(player, tos, "dalangtu");
                 if(to)
                     room->moveCardTo(card, to, Player::Judging);
                 room->removeTag("DalangTarget");
@@ -989,8 +987,9 @@ public:
         QList<ServerPlayer *> ernian = room->findPlayersBySkillName(objectName());
         if(ernian.isEmpty())
             return false;
+        QVariant shiti = QVariant::fromValue((PlayerStar)player);
         foreach(ServerPlayer *erniang, ernian){
-            if(erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), data)){
+            if(erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), shiti)){
                 room->playSkillEffect(objectName(), 1);
                 int cardnum = player->getCardCount(true);
                 erniang->obtainCard(player->getWeapon());

@@ -72,6 +72,14 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class SheyanCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE SheyanCard();
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
 class HunjiuCard: public SkillCard{
     Q_OBJECT
 

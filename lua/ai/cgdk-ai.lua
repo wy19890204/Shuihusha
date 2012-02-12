@@ -12,8 +12,29 @@ end
 sgs.ai_skill_invoke["jiuhan"] = true
 sgs.ai_skill_invoke["linmo"] = true
 
+-- dalang
+sgs.ai_skill_invoke["dalang"] = function(self, data)
+	if self.player:getHandcardNum() < 2 then return false end
+	for _, friend in ipairs(self.friends_noself) do
+		if (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage"))
+			and friend:getHandcardNum() > friend:getHp() then
+			self.dalangtarget = friend
+			return true
+		end
+	end
+	return false
+end
+sgs.ai_skill_playerchosen["dalangfrom"] = function(self, targets)
+	local target = self.dalangtarget
+	return target
+end
+sgs.ai_skill_askforag["dalang"] = function(self, card_ids)
+	return card_ids[1]
+end
+sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["hengchong"]
+
 -- zhaixing
-sgs.ai_skill_invoke["@zhaixing"]=function(self,prompt)
+sgs.ai_skill_invoke["@zhaixing"] = function(self,prompt)
 	local judge = self.player:getTag("Judge"):toJudge()
 	local all_cards = self.player:getCards("he")
 	local cards = sgs.QList2Table(all_cards)
@@ -177,7 +198,6 @@ sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 			use.to:append(down)
 		end
 		use.card=card
-		break
 	end
 end
 
@@ -237,9 +257,8 @@ end
 
 -- renrou
 sgs.ai_skill_invoke["renrou"] = function(self, data)
-	local damage = data:toDamageStar()
-	if not damage then return true end
-	local cards = damage.to:getHandcards()
+	local shiti = data:toPlayer()
+	local cards = shiti:getHandcards()
 	local shit_num = 0
 	for _, card in sgs.qlist(cards) do
 		if card:inherits("Shit") then
@@ -249,6 +268,5 @@ sgs.ai_skill_invoke["renrou"] = function(self, data)
 			end
 		end
 	end
-	if shit_num > 1 then return false end
-	return true
+	return shit_num <= 1
 end

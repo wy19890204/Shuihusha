@@ -29,3 +29,4 @@ sgs.ai_skill_cardask["@xiuluo"] = function(self)
 	end
 	return "."
 end
+

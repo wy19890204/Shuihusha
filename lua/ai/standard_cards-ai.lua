@@ -6,20 +6,6 @@ local function hasExplicitRebel(room)
 	return false
 end
 
-function SmartAI:canPaoxiao(player)
-	player = player or self.player
-	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or player:hasFlag("SlashbySlash") then
-		return true
-	end
-	if player:hasSkill("shalu") and player:getMark("shalu") > 0 then
-		return true
-	end
-	if player:hasSkill("qinlong") and not player:hasEquip() then
-		return true
-	end
-	return false
-end
-
 function SmartAI:slashProhibit(card,enemy)
 	if card == nil then
 		card = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
