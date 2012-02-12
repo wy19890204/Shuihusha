@@ -177,7 +177,6 @@ sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 			use.to:append(down)
 		end
 		use.card=card
-		break
 	end
 end
 

@@ -16,7 +16,7 @@ sgs.ai_skill_use["@@feihuang"] = function(self, prompt)
 		i = i + 1
 		if i == num then break end
 	end
-	return "@FeihuangCard=" .. table.concat(shis, "+")
+	return "@FeihuangCard=" .. table.concat(shis, "+") .. "->."
 end
 
 -- meiyu
