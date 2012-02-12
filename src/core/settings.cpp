@@ -111,7 +111,7 @@ void Settings::init(){
 
     if(!contains("1v1/Banlist")){
         QStringList banlist;
-        banlist << "andaoquan" << "shenwuyong" << "wangdingliu" << "baisheng";
+        banlist << "andaoquan" << "shenwuyong" << "wangdingliu" << "zhaoji";
         setValue("1v1/Banlist", banlist);
     }
 }
