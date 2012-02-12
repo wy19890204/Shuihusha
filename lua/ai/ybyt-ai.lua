@@ -1,3 +1,34 @@
+-- yuanpei
+local yuanpei_skill={}
+yuanpei_skill.name = "yuanpei"
+table.insert(sgs.ai_skills, yuanpei_skill)
+yuanpei_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("YuanpeiCard") then
+		if not self.player:hasFlag("yuanpei") or self.player:isKongcheng() then return end
+		local cards = self.player:getCards("h")
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local suit = cards[1]:getSuitString()
+		local number = cards[1]:getNumberString()
+		local card_id = cards[1]:getEffectiveId()
+		local card_str = ("slash:yuanpei[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
+	return sgs.Card_Parse("@YuanpeiCard=.")
+end
+sgs.ai_skill_use_func["YuanpeiCard"]=function(card,use,self)
+	self:sort(self.friends, "defense")
+	for _, enemy in ipairs(self.friends) do
+		if enemy:getGeneral():isMale() then
+            use.card = card
+		    if use.to then use.to:append(enemy) end
+            return
+		end
+	end
+end
+
 -- hunjiu
 hunjiu_skill={}
 hunjiu_skill.name = "hunjiu"
@@ -18,8 +49,10 @@ hunjiu_skill.getTurnUseCard = function(self)
 	local suit = card:getSuitString()
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
-	local card_str = ("analeptic:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
-	if card:inherits("Analeptic") then
+	local card_str
+	if card:inherits("Peach") then
+		card_str = ("analeptic:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
+	elseif card:inherits("Analeptic") then
 		card_str = ("ecstasy:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
 	end
 	local caard = sgs.Card_Parse(card_str)
@@ -37,6 +70,28 @@ sgs.ai_view_as["hunjiu"] = function(card, player, card_place, class_name)
 		else
 			return ("ecstasy:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
 		end
+	end
+end
+
+-- guitai
+sgs.ai_skill_cardask["@guitai"] = function(self, data)
+	local ard
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuit() == sgs.Card_Heart then
+			ard = card
+			break
+		end
+	end
+	if not ard then return "." end
+	local effect = data:toCardEffect()
+	if self:isEnemy(effect.to) or
+		(self:isFriend(effect.to) and self:isWeak() and not self:isWeak(effect.to)) then
+		return ard:getEffectiveId()
+	else
+		return "."
 	end
 end
 
@@ -84,3 +139,27 @@ end
 
 -- jiayao
 sgs.ai_skill_invoke["jiayao"] = true
+
+-- sheyan
+local sheyan_skill = {}
+sheyan_skill.name = "sheyan"
+table.insert(sgs.ai_skills, sheyan_skill)
+sheyan_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("SheyanCard") then return end
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local card
+	self:sortByUseValue(cards, true)
+	for _,acard in ipairs(cards)  do
+		if acard:getSuit() == sgs.Card_Heart then
+			card = acard
+			break
+		end
+	end
+	if card then
+		return sgs.Card_Parse("@SheyanCard=" .. card:getEffectiveId())
+	end
+end
+sgs.ai_skill_use_func["SheyanCard"]=function(card,use,self)
+    use.card=card
+end

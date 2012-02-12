@@ -597,13 +597,32 @@ public:
     }
 };
 
+SheyanCard::SheyanCard(){
+    target_fixed = true;
+}
+
+void SheyanCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    room->throwCard(this);
+    int card_id = getSubcards().first();
+    Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
+    int num = Sanguosha->getCard(card_id)->getNumber();
+
+    CardUseStruct use;
+    use.from = card_use.from;
+    AmazingGrace *amazingGrace = new AmazingGrace(suit, num);
+    amazingGrace->addSubcard(card_id);
+    amazingGrace->setSkillName("sheyan");
+    use.card = amazingGrace;
+    room->useCard(use);
+}
+
 class Sheyan: public OneCardViewAsSkill{
 public:
     Sheyan():OneCardViewAsSkill("sheyan"){
 
     }
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasFlag("sheyan");
+        return ! player->hasUsed("SheyanCard");
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
@@ -611,12 +630,9 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getCard();
-        AmazingGrace *amazingGrace = new AmazingGrace(first->getSuit(), first->getNumber());
-        amazingGrace->addSubcard(first->getId());
-        amazingGrace->setSkillName(objectName());
-        Self->setFlags("sheyan");
-        return amazingGrace;
+        SheyanCard *card = new SheyanCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
@@ -1016,6 +1032,7 @@ YBYTPackage::YBYTPackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
+    addMetaObject<SheyanCard>();
     addMetaObject<HunjiuCard>();
 }
 
