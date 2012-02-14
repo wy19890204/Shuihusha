@@ -145,7 +145,7 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
         use.card = slash;
         room->useCard(use);
     }else
-        Self->setFlags("Guibing");
+        room->setPlayerFlag(gaolian, "Guibing");
 }
 
 class GuibingViewAsSkill:public ZeroCardViewAsSkill{
@@ -201,7 +201,7 @@ HeiwuCard::HeiwuCard(){
 }
 
 void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    int num = this->getSubcards().length();
+    int num = getSubcards().length();
     room->moveCardTo(this, NULL, Player::DrawPile, true);
     QList<int> fog = room->getNCards(num, false);
     room->doGuanxing(source, fog, false);

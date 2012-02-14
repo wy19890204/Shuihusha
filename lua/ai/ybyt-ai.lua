@@ -183,3 +183,16 @@ end
 sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
     use.card=card
 end
+
+-- guibing
+local guibing_skill = {}
+guibing_skill.name = "guibing"
+table.insert(sgs.ai_skills, guibing_skill)
+guibing_skill.getTurnUseCard = function(self)
+	if self.player:hasFlag("Guibing") or not self:slashIsAvailable() then return end
+	local card_str = "@GuibingCard=."
+	local slash = sgs.Card_Parse(card_str)
+	assert(slash)
+	return slash
+end
+sgs.ai_skill_use_func["GuibingCard"] = sgs.ai_skill_use_func["ZhangshiCard"]
