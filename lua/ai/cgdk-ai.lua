@@ -270,3 +270,16 @@ sgs.ai_skill_invoke["renrou"] = function(self, data)
 	end
 	return shit_num <= 1
 end
+
+-- yunchou
+function sgs.ai_skill_use_func.YunchouCard(card, use)
+	local subcard = card:getSubcards():first()
+	local newuse = "ex_nihilo|..."
+	for _, anewuse in ipairs(newuse:split("|")) do
+		local newusecard = sgs.Card_Parse(("%s:yunchou[%s:%s]=%d"):format(
+			anewuse, subcard:getSuitString(), subcard:getNumberString(), subcard:getEffectiveId()))
+		self:useTrickCard(newusecard, use)
+		if use.card then return end
+	end
+	use.card = nil
+end
