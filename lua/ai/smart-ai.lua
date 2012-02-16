@@ -1520,128 +1520,16 @@ function SmartAI:askForCard(pattern, prompt, data)
 		end
 	end
 
-	if sgs.ai_skill_cardask[parsedPrompt[1]] then return sgs.ai_skill_cardask[parsedPrompt[1]](self, data, pattern, target, target2) end
-
-	if parsedPrompt[1] == "double-sword-card" then
-		if target and self:isFriend(target) then return "." end
-		local cards = self.player:getHandcards()
-		for _, card in sgs.qlist(cards) do
-			if card:inherits("Slash") or card:inherits("Shit") or card:inherits("Collateral") or card:inherits("GodSalvation")
-			or card:inherits("Lightning") or card:inherits("EquipCard") or card:inherits("AmazingGrace") then
-				return "$"..card:getEffectiveId()
-			end
-		end
-		return "."
-	elseif parsedPrompt[1] == "@axe" then
-		if target and self:isFriend(target) then return "." end
-
-		local allcards = self.player:getCards("he")
-		allcards = sgs.QList2Table(allcards)
-		if self.player:hasFlag("drank") or #allcards-2 >= self.player:getHp() or (self.player:hasSkill("kuanggu") and self.player:isWounded()) then
-			local cards = self.player:getCards("h")
-			cards = sgs.QList2Table(cards)
-			local index
-			if self:hasSkills(sgs.need_kongcheng) then index = #cards end
-			if self.player:getOffensiveHorse() then
-				if index then
-					if index < 2 then
-						index = index + 1
-						table.insert(cards, self.player:getOffensiveHorse())
-					end
-				end
-				table.insert(cards, self.player:getOffensiveHorse())
-			end
-			if self.player:getArmor() then
-				if index then
-					if index < 2 then
-						index = index + 1
-						table.insert(cards, self.player:getArmor())
-					end
-				end
-				table.insert(cards, self.player:getArmor())
-			end
-			if self.player:getDefensiveHorse() then
-				if index then
-					if index < 2 then
-						index = index + 1
-						table.insert(cards, self.player:getDefensiveHorse())
-					end
-				end
-				table.insert(cards, self.player:getDefensiveHorse())
-			end
-			if #cards >= 2 then
-				self:sortByUseValue(cards, true)
-				return "$"..cards[1]:getEffectiveId().."+"..cards[2]:getEffectiveId()
-			end
-		end
+	local callback = sgs.ai_skill_cardask[parsedPrompt[1]]
+	if callback and type(callback) == "function" then
+		local ret = callback(self, data, pattern, target, target2)
+		if ret then return ret end
 	end
-
-	if self.player:hasSkill("tianxiang") then
-		local dmgStr = {damage = 1, nature = 0}
-		local willTianxiang = sgs.ai_skill_use["@tianxiang"](self, dmgStr)
-		if willTianxiang ~= "." then return "." end
-	elseif self.player:hasSkill("longhun") and self.player:getHp() > 1 then
-		return "."
-	end
-
+	
 	if pattern == "slash" then
-		if parsedPrompt[1] == "@wushuang-slash-1" and self:getCardsNum("Slash") < 2 and
-			not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end
-		if parsedPrompt[1] == "collateral-slash" then
-			if target and (not self:isFriend(target2) or target2:getHp() > 2 or self:getCardsNum("Jink", targets2) > 0)and not self:hasSkills(sgs.lose_equip_skill) then
-				local slash = self:getCardId("Slash")
-				if not self:slashProhibit(sgs.Card_Parse(slash), target2) then return slash end
-			end
-			self:speak("collateral", self.player:getGeneral():isFemale())
-			return "."
-		elseif (parsedPrompt[1] == "duel-slash") then
-			if (not self:isFriend(target) and self:getCardsNum("Slash")*2 >= target:getHandcardNum())
-				or (target:getHp() > 2 and self.player:getHp() <= 1 and self:getCardsNum("Peach") == 0)
-				then return self:getCardId("Slash")
-			else return "." end
-		elseif parsedPrompt[1] == "savage-assault-slash" then
-			if not self:damageIsEffective(nil, nil, target) then return "." end
-			local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
-			if (self.player:getHp()>1 and self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-				then return "."
-			end
-		end
-		return self:getCardId("Slash") or "."
+		return sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) or self:getCardId("Slash") or "."
 	elseif pattern == "jink" then
-		if parsedPrompt[1] == "@assas1"	and self:getCardsNum("Jink") < 2 then return "." end
-		if parsedPrompt[1] == "archery-attack-jink" then
-			if not self:damageIsEffective(nil, nil, target) then return "." end
-		end
-		if target then
-			if self:isFriend(target) then
-				if parsedPrompt[1] == "archery-attack-jink" then
-					local aoe = sgs.Sanguosha:cloneCard("savage_assault", sgs.Card_NoSuit , 0)
-					if (self.player:getHp()>1 or self:getAllPeachNum()>0 and not self.player:containsTrick("indulgence"))
-						then return "."
-					end
-				end
-				if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
-				if target:hasSkill("huatian") then return "." end
-			else
-				if not target:hasFlag("drank") then
-					if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
-				else
-					return self:getCardId("Jink") or "."
-				end
-				if not self:hasSkills(sgs.need_kongcheng, player) then
-					if self:isEquip("Axe", target) then
-						if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
-						if target:getHandcardNum() - target:getHp() > 2 then return "." end
-					elseif self:isEquip("Blade", target) then
-						if self:getCardsNum("Jink") <= self:getCardsNum("Slash", target) then return "." end
-					end
-				end
-
-			end
-		end
-		
-		if self:getDamagedEffects(self) then return "." end
-		return self:getCardId("Jink") or "."
+		return sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) or self:getCardId("Jink") or "."
 	end
 end
 
