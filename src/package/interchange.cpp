@@ -578,51 +578,6 @@ public:
     }
 };
 
-class Pishan: public SlashBuffSkill{
-public:
-    Pishan():SlashBuffSkill("pishan"){
-        frequency = Compulsory;
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *gao = effect.from;
-        Room *room = gao->getRoom();
-        room->playSkillEffect(objectName());
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = gao;
-        log.arg = objectName();
-        room->sendLog(log);
-
-        room->slashResult(effect, NULL);
-        return true;
-    }
-};
-
-class Shixie: public PhaseChangeSkill{
-public:
-    Shixie():PhaseChangeSkill("shixie"){
-        frequency = Compulsory;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *han) const{
-        if(han->getPhase() == Player::Finish){
-            Room *room = han->getRoom();
-            if(han->getSlashCount() == 0){
-                room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = han;
-                log.arg = objectName();
-                room->sendLog(log);
-
-                room->loseHp(han);
-            }
-        }
-        return false;
-    }
-};
-
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -669,10 +624,6 @@ InterChangePackage::InterChangePackage()
 
     General *zhangwang = new General(this, "zhangwang", "kou", 4);
     zhangwang->addSkill(new Jielue);
-
-    General *gaochonghan = new General(this, "gaochonghan", "jiang", 7);
-    gaochonghan->addSkill(new Pishan);
-    gaochonghan->addSkill(new Shixie);
 
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
