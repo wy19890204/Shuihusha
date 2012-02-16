@@ -118,6 +118,11 @@ end
 -- goulian
 sgs.ai_skill_invoke["goulian"] = sgs.ai_skill_invoke["liba"]
 
+-- jinjia
+function sgs.ai_armor_value.jinjia(card)
+	if not card then return 4 end
+end
+
 -- sinue
 sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	local cards = self.player:getHandcards()
@@ -196,3 +201,6 @@ guibing_skill.getTurnUseCard = function(self)
 	return slash
 end
 sgs.ai_skill_use_func["GuibingCard"] = sgs.ai_skill_use_func["ZhangshiCard"]
+function sgs.ai_cardneed.guibing(to, card, self)
+	return card:isBlack()
+end

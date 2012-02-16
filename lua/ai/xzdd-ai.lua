@@ -82,6 +82,10 @@ shenhuo_skill.getTurnUseCard = function(self)
 	assert(skillcard)
 	return skillcard
 end
+function sgs.ai_cardneed.shenhuo(to, card, self)
+	return (card:getSuit() == sgs.Card_Diamond or card:getSuit() == sgs.Card_Heart)
+		and card:inherits("TrickCard")
+end
 
 -- tongxia
 sgs.ai_skill_invoke["tongxia"] = true
@@ -184,6 +188,16 @@ sgs.ai_skill_choice["feiqiang"] = function(self, choices)
 	return "gong"
 end
 
+-- linse
+function sgs.ai_trick_prohibit.linse(card)
+	return card:inherits("Dismantlement") or card:inherits("Snatch")
+end
+
+-- feiyan
+function sgs.ai_trick_prohibit.feiyan(card)
+	return card:inherits("SupplyShortage") or card:inherits("Snatch")
+end
+
 -- shentou
 shentou_skill={}
 shentou_skill.name = "shentou"
@@ -207,6 +221,9 @@ shentou_skill.getTurnUseCard = function(self)
 	local skillcard = sgs.Card_Parse(card_str)
 	assert(skillcard)
 	return skillcard
+end
+function sgs.ai_cardneed.shentou(to, card, self)
+	return card:getSuit() == sgs.Card_Club
 end
 
 --[[

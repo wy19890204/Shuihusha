@@ -275,6 +275,9 @@ sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
 	self:sort(self.enemies, "hp")
 	return self.enemies[1]
 end
+function sgs.ai_cardneed.kongying(to, card, self)
+	return card:inherits("Jink")
+end
 
 -- zhengfa
 local zhengfa_skill={}

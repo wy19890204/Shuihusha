@@ -546,7 +546,7 @@ end
 
 function sgs.ai_armor_value.eight_diagram(player, self)
 	if self:hasWizard(self:getEnemies(player),true) then return 2
-	elseif self:hasWizard(self:getFriends(player),true) or player:hasSkill("tiandu") then return 5
+	elseif self:hasWizard(self:getFriends(player),true) or player:hasSkill("yueli") then return 5
 	else return 4 end
 end
 

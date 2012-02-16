@@ -12,6 +12,11 @@ end
 sgs.ai_skill_invoke["jiuhan"] = true
 sgs.ai_skill_invoke["linmo"] = true
 
+-- jueming
+function sgs.ai_trick_prohibit.jueming(card, self, to)
+	return to ~= self.room:getCurrent() and to:getHp() == 1 and (card:inherits("Duel") or card:inherits("Assassinate"))
+end
+
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)
 	if self.player:getHandcardNum() < 2 then return false end
