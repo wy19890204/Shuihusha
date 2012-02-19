@@ -15,8 +15,11 @@ return {
 	["dongfangxiao"] = "东方哮",
 	["#_weibao"] = "金装锏",
 	["weibao"] = "韦豹",
+
 	["#_cuimeng"] = "连珠箭",
 	["cuimeng"] = "崔猛",
+	["designer:cuimeng"] = "天启姐",
+
 	["#_yaogang"] = "赛存孝",
 	["yaogang"] = "姚刚",
 	["#_suyi"] = "宿命郎君",

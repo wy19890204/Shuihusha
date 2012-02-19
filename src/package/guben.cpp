@@ -54,6 +54,9 @@ public:
 GubenPackage::GubenPackage()
     :Package("guben")
 {
+    General *cuimeng = new General(this, "cuimeng", "guan", 4);
+    cuimeng->addSkill("paoxiao");
+
     General *gaochonghan = new General(this, "gaochonghan", "jiang", 7);
     gaochonghan->addSkill(new Pishan);
     gaochonghan->addSkill(new Shixie);
