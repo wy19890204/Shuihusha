@@ -637,6 +637,48 @@ public:
     }
 };
 
+BomingCard::BomingCard(){
+    once = true;
+}
+
+bool BomingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->hasEquip() && Self->inMyAttackRange(to_select) && Self != to_select;
+}
+
+void BomingCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    DummyCard *dummy = new DummyCard;
+    int dmgnum = effect.to->getEquips().length();
+    dummy->addSubcard(effect.to->getWeapon());
+    dummy->addSubcard(effect.to->getArmor());
+    dummy->addSubcard(effect.to->getDefensiveHorse());
+    dummy->addSubcard(effect.to->getOffensiveHorse());
+    DamageStruct damage;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    damage.card = dummy;
+    damage.damage = dmgnum;
+    room->damage(damage);
+    room->loseHp(effect.from, dmgnum);
+}
+
+class Boming: public ZeroCardViewAsSkill{
+public:
+    Boming():ZeroCardViewAsSkill("Boming"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("BomingCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new BomingCard;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -688,9 +730,13 @@ InterChangePackage::InterChangePackage()
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qingshang);
 
+    General *shixiu = new General(this, "shixiu", "kou", 4, false);
+    shixiu->addSkill(new Boming);
+
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
     addMetaObject<XianhaiCard>();
+    addMetaObject<BomingCard>();
 }
 
 ADD_PACKAGE(InterChange);

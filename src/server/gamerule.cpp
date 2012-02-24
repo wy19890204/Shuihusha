@@ -33,6 +33,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     switch(player->getPhase()){
     case Player::Start: {
             player->setMark("SlashCount", 0);
+            if(player->getMark("@shang") > 0)
+                room->loseHp(player, player->getMark("@shang"));
             break;
         }
     case Player::Judge: {
