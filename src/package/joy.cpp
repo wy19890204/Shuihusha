@@ -774,6 +774,155 @@ public:
     }
 };
 
+class Timer: public PhaseChangeSkill{
+public:
+    Timer():PhaseChangeSkill("timer"){
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getMaxHP() > player->getHp())
+            return "maxhp";
+        else
+            return "hp";
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Start){
+            Room *room = player->getRoom();
+            if(room->askForChoice(player, objectName(), "hp+maxhp") == "hp")
+                room->loseHp(player);
+            else
+                room->loseMaxHp(player);
+        }
+        return false;
+    }
+};
+
+class Lingyu: public TriggerSkill{
+public:
+    Lingyu():TriggerSkill("lingyu"){
+        events << CardUsed;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(!use.card->inherits("Peach"))
+            return true;
+        return false;
+    }
+};
+
+class Wurao: public TriggerSkill{
+public:
+    Wurao():TriggerSkill("wurao"){
+        events << Predamaged;
+        frequency = Compulsory;
+    }
+
+    static int getMaqueCardNum(ServerPlayer *me){
+        int hand = me->getHandcardNum();
+        int fu = 0;
+        for(int i = 1; i <= 4; i ++)
+            fu = fu + me->getPile("fu" + QString::number(i)).length();
+        return hand + fu;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        return true;
+    }
+};
+
+class Eding: public TriggerSkill{
+public:
+    Eding():TriggerSkill("eding"){
+        events << GameStart << CardLostDone << CardGotDone;
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &) const{
+        if(event == GameStart){
+            int num = player->getHandcardNum();
+            player->drawCards(13 - num);
+        }
+        else{
+            Room *room = player->getRoom();
+            int num = Wurao::getMaqueCardNum(player);
+            if(num > 13)
+                room->askForDiscard(player, objectName(), num - 13);
+            else if(num < 13)
+                room->drawCards(player, 13 - num);
+        }
+        return false;
+    }
+};
+
+class Zhuangche: public TriggerSkill{
+public:
+    Zhuangche():TriggerSkill("zhuangche"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *bird = room->findPlayerBySkillName(objectName());
+        if(!bird)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->to_place == Player::DiscardedPile){
+            const Card *card = Sanguosha->getCard(move->card_id);
+            room->setPlayerProperty(bird, "peng", move->card_id);
+            int number = card->getNumber();
+            int i = 0;
+            foreach(const Card *tmp, bird->getHandcards())
+                if(tmp->getNumber() == number)
+                    i ++;
+            if(i == 2)
+                room->askForUseCard(bird, "@@zhuangche", "@zhuangche");
+        }
+        return false;
+    }
+};
+
+class Zouma: public PhaseChangeSkill{
+public:
+    Zouma():PhaseChangeSkill("zouma"){
+        frequency = Compulsory;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Start){
+            player->skip(Player::Judge);
+            player->skip(Player::Play);
+            player->skip(Player::Discard);
+        }
+        else if(player->getPhase() == Player::Draw){
+            Room *room = player->getRoom();
+            player->drawCards(1);
+            while(room->askForUseCard(player, "@@zouma", "@zouma"));
+            return true;
+        }
+        return false;
+    }
+};
+
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
@@ -782,6 +931,14 @@ JoyGeneralPackage::JoyGeneralPackage()
     miheng->addSkill(new Numa);
     miheng->addSkill(new Jieao);
     skills << new Fanchun;
+
+    General *maque = new General(this, "maque", "god", 12);
+    maque->addSkill(new Timer);
+    maque->addSkill(new Lingyu);
+    maque->addSkill(new Wurao);
+    maque->addSkill(new Eding);
+    maque->addSkill(new Zhuangche);
+    maque->addSkill(new Zouma);
 
     addMetaObject<YuluCard>();
     addMetaObject<ViewMyWordsCard>();
