@@ -19,15 +19,15 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
+                }else if(player->getGeneralName() == "songjiang"){
+                    if(player->askForSkillInvoke("reselect"))
+                        room->transfigure(player, "jiangsong", true);
+                }else if(player->getGeneralName() == "yangxiong2"){
+                    if(player->askForSkillInvoke("reselect"))
+                        room->transfigure(player, "peiruhai", true);
                 }else if(player->getGeneralName() == "zhangsan"){
                     if(player->askForSkillInvoke("reselect"))
                         room->transfigure(player, "lisi", true);
-                }else if(player->getGeneralName() == "zhugeliang"){
-                    if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "wolong", true);
-                }else if(player->getGeneralName() == "caopi"){
-                    if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "caozhi", true);
                 }
 
                 break;
@@ -129,11 +129,13 @@ CoupleScenario::CoupleScenario()
     map["yangxiong"] = "panqiaoyun";
     map["shijin"] = "liruilan";
     map["andaoquan"] = "liqiaonu";
+    map["wusong"] = "yulan";
     //map["chaijin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
 
     full_map = map;
     full_map["ximenqing"] = "wuda";
+    full_map["jiangsong"] = "yanxijiao";
     full_map["zhangsan"] = "lisi";
 }
 

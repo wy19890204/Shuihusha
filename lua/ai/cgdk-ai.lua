@@ -186,7 +186,7 @@ end
 sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 	local up, down
 	for _, enemy in ipairs(self.enemies) do
-		if emeny:faceUp() then
+		if enemy:faceUp() then
 			up = enemy
 			break
 		end
