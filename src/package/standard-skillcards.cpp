@@ -147,3 +147,26 @@ void UbuneCard::onEffect(const CardEffectStruct &effect) const{
         equipped->use(room, effect.to, QList<ServerPlayer *>());
     }
 }
+
+FanduiCard::FanduiCard(){
+    will_throw = false;
+}
+
+bool FanduiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return !to_select->getPileNames().isEmpty();
+}
+
+void FanduiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QStringList piles = effect.to->getPileNames();
+    QString pile = piles.first();
+    if(piles.length() > 1)
+        pile = room->askForChoice(effect.from, "fandui", piles.join("+"));
+
+    QList<int> card_ids = effect.to->getPile(pile);
+    room->fillAG(card_ids, effect.from);
+    room->throwCard(room->askForAG(hx, card_ids, false, "fandui"));
+    room->broadcastInvoke("clearAG");
+}

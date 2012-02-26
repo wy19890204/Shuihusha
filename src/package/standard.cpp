@@ -611,6 +611,16 @@ public:
     }
 };
 
+class Fandui:public ZeroCardViewAsSkill{
+public:
+    Fandui():ZeroCardViewAsSkill("fandui"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new FanduiCard;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
@@ -628,6 +638,11 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill("yuanyin");
+
+    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
+    //zhuanjia->addSkill(new Zhichi);
+    zhuanjia->addSkill(new Fandui);
+    addMetaObject<FanduiCard>();
 
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
