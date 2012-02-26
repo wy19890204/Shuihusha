@@ -98,4 +98,13 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class ZhuangcheCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ZhuangcheCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 #endif // JOYPACKAGE_H

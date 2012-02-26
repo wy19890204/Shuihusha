@@ -47,6 +47,11 @@ function SmartAI:isNoZhenshaMark()
 	return true
 end
 
+-- shengui
+function sgs.ai_trick_prohibit.shengui(card, self, to)
+	return not to:faceUp() and self.player:getGeneral():isMale()
+end
+
 -- meicha
 meicha_skill={}
 meicha_skill.name = "meicha"

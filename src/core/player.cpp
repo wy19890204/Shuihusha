@@ -779,31 +779,41 @@ bool Player::canSlashWithoutCrossbow() const{
 }
 
 void Player::jilei(const QString &type){
-    if(type == "basic")
+    if(type == ".")
+        jilei_set.clear();
+    else
+        jilei_set << type;
+    /*if(type == "basic")
         jilei_set << Card::Basic;
     else if(type == "equip")
         jilei_set << Card::Equip;
     else if(type == "trick")
         jilei_set << Card::Trick;
     else
-        jilei_set.clear();
+        jilei_set.clear();*/
 }
 
 bool Player::isJilei(const Card *card) const{
-    Card::CardType type = card->getTypeId();
-    if(type == Card::Skill){
+    QString type = card->getType();
+    if(type == "skill_card"){
         if(!card->willThrow())
             return false;
 
         foreach(int card_id, card->getSubcards()){
             const Card *c = Sanguosha->getCard(card_id);
-            if(jilei_set.contains(c->getTypeId())&&!hasEquip(c))
+            if((jilei_set.contains(c->getType()) ||
+               jilei_set.contains(c->getSuitString()) ||
+               jilei_set.contains(c->objectName()))
+                && !hasEquip(c))
                 return true;
         }
 
         return false;
     }else
-        return jilei_set.contains(type)&&!hasEquip(card);
+        return (jilei_set.contains(type) ||
+                 jilei_set.contains(card->getSuitString()) ||
+                 jilei_set.contains(card->objectName()))
+                  && !hasEquip(card);
 }
 
 void Player::copyFrom(Player* p)
@@ -834,7 +844,7 @@ void Player::copyFrom(Player* p)
     b->judging_area     = QList<const Card *> (a->judging_area);
     b->delayed_tricks   = QList<const DelayedTrick *> (a->delayed_tricks);
     b->fixed_distance   = QHash<const Player *, int> (a->fixed_distance);
-    b->jilei_set        = QSet<Card::CardType> (a->jilei_set);
+    b->jilei_set        = QSet<QString> (a->jilei_set);
 
     b->tag              = QVariantMap(a->tag);
 }

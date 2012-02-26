@@ -578,6 +578,105 @@ public:
     }
 };
 
+class Qingdong: public TriggerSkill{
+public:
+    Qingdong():TriggerSkill("qingdong"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName()) &&
+                target->getGeneral()->isMale() &&
+                target->getPhase() == Player::NotActive;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *conan, QVariant &data) const{
+        Room *room = conan->getRoom();
+        ServerPlayer *yulan = room->findPlayerBySkillName(objectName());
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(conan->isDead() || !yulan)
+            return false;
+        if(move->from_place == Player::Hand && yulan->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(diamond):(.*)");
+            judge.good = false;
+            judge.reason = objectName();
+            judge.who = conan;
+
+            room->judge(judge);
+            if(judge.isGood()){
+                int cd = conan->getMaxHP() - conan->getHandcardNum();
+                conan->drawCards(qMin(4, qMax(0, cd)));
+            }
+        }
+        return false;
+    }
+};
+
+class Qingshang: public TriggerSkill{
+public:
+    Qingshang():TriggerSkill("qingshang"){
+        events << Death;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStar damage = data.value<DamageStar>();
+        ServerPlayer *killer = damage ? damage->from : NULL;
+
+        if(killer){
+            if(killer != player)
+                killer->gainMark("@shang");
+        }
+        return false;
+    }
+};
+
+BomingCard::BomingCard(){
+    once = true;
+}
+
+bool BomingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->hasEquip() && Self->inMyAttackRange(to_select) && Self != to_select;
+}
+
+void BomingCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    DummyCard *dummy = new DummyCard;
+    int dmgnum = effect.to->getEquips().length();
+    foreach(const Card *equip, effect.to->getEquips())
+        dummy->addSubcard(equip);
+    DamageStruct damage;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    damage.card = dummy;
+    damage.damage = dmgnum;
+    room->damage(damage);
+    room->loseHp(effect.from, dmgnum);
+}
+
+class Boming: public ZeroCardViewAsSkill{
+public:
+    Boming():ZeroCardViewAsSkill("boming"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("BomingCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new BomingCard;
+    }
+};
+
 InterChangePackage::InterChangePackage()
     :Package("interchange")
 {
@@ -625,9 +724,17 @@ InterChangePackage::InterChangePackage()
     General *zhangwang = new General(this, "zhangwang", "kou", 4);
     zhangwang->addSkill(new Jielue);
 
+    General *yulan = new General(this, "yulan", "guan", 3, false);
+    yulan->addSkill(new Qingdong);
+    yulan->addSkill(new Qingshang);
+
+    General *shixiu = new General(this, "shixiu", "kou", 4);
+    shixiu->addSkill(new Boming);
+
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
     addMetaObject<XianhaiCard>();
+    addMetaObject<BomingCard>();
 }
 
 ADD_PACKAGE(InterChange);

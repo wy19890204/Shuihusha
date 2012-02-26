@@ -16,6 +16,9 @@ sgs.ai_skill_cardask["@xiagu"] = function(self, data)
 	end
 	return "."
 end
+function sgs.ai_cardneed.xiagu(to, card, self)
+	return card:inherits("EquipCard")
+end
 
 -- kongliang
 sgs.ai_skill_invoke["kong1iang"] = function(self, data)
@@ -90,6 +93,11 @@ sgs.ai_skill_playerchosen["fuqin"] = function(self, targets)
 		else return self.friends[1] end
 	end
 	return self.friends[1]
+end
+
+-- fangzhen
+function sgs.ai_trick_prohibit.fangzhen(card, self, to)
+	return card:inherits("Duel") and self.player:getHp() > to:getHp()
 end
 
 -- taolue

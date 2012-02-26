@@ -307,6 +307,7 @@ public:
             if(!card)
                continue;
             QString choice = card->getType();
+            //QString choice = card->getSuitString();
             room->playSkillEffect(objectName());
 
             target->jilei(choice);

@@ -12,6 +12,11 @@ end
 sgs.ai_skill_invoke["jiuhan"] = true
 sgs.ai_skill_invoke["linmo"] = true
 
+-- jueming
+function sgs.ai_trick_prohibit.jueming(card, self, to)
+	return to ~= self.room:getCurrent() and to:getHp() == 1 and (card:inherits("Duel") or card:inherits("Assassinate"))
+end
+
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)
 	if self.player:getHandcardNum() < 2 then return false end
@@ -181,7 +186,7 @@ end
 sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 	local up, down
 	for _, enemy in ipairs(self.enemies) do
-		if emeny:faceUp() then
+		if enemy:faceUp() then
 			up = enemy
 			break
 		end
@@ -269,4 +274,17 @@ sgs.ai_skill_invoke["renrou"] = function(self, data)
 		end
 	end
 	return shit_num <= 1
+end
+
+-- yunchou
+function sgs.ai_skill_use_func.YunchouCard(card, use)
+	local subcard = card:getSubcards():first()
+	local newuse = "ex_nihilo|..."
+	for _, anewuse in ipairs(newuse:split("|")) do
+		local newusecard = sgs.Card_Parse(("%s:yunchou[%s:%s]=%d"):format(
+			anewuse, subcard:getSuitString(), subcard:getNumberString(), subcard:getEffectiveId()))
+		self:useTrickCard(newusecard, use)
+		if use.card then return end
+	end
+	use.card = nil
 end

@@ -24,6 +24,7 @@ public:
             room->sendLog(log);
             room->playSkillEffect(objectName());
             room->loseMaxHp(hedgehog);
+            hedgehog->drawCards(3);
         }
     }
 };
