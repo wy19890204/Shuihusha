@@ -76,6 +76,7 @@ Engine::Engine()
             << "Guben"
             << "InterChange"
             << "Test"
+            << "Peasa"
 
             << "StandardCard"
             << "Plough"
