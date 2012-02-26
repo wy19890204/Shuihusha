@@ -928,7 +928,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *bird = room->findPlayerBySkillName(objectName());
-        if(!bird)
+        if(!bird || player->getPhase() == Player::Discard)
             return false;
         CardMoveStar move = data.value<CardMoveStar>();
         if(move->from && move->to_place == Player::DiscardedPile){
