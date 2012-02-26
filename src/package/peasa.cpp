@@ -67,7 +67,7 @@ public:
         CardEffectStruct effect = data.value<CardEffectStruct>();
         if(!effect.from || (!effect.card->inherits("Slash") && !effect.card->isNDTrick()))
             return false;
-        if(effect.from->hasFlag("qiuhe") && player->askForSkillInvoke(objectName())){
+        if(!effect.from->hasFlag("qiuhe") && player->askForSkillInvoke(objectName())){
             effect.from->setFlags("qiuhe");
             effect.from->drawCards(1);
             player->obtainCard(effect.card);
@@ -114,6 +114,122 @@ public:
     }
 };
 
+GuiouCard::GuiouCard(){
+}
+
+bool GuiouCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+void GuiouCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->getRoom()->acquireSkill(effect.to, "#guioupro");
+    effect.from->tag["GuiouTarget"] = QVariant::fromValue(effect.to);
+}
+
+class GuiouViewAsSkill: public OneCardViewAsSkill{
+public:
+    GuiouViewAsSkill():OneCardViewAsSkill("guiou"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@guiou";
+    }
+
+    virtual bool viewFilter(const CardItem *watch) const{
+        return watch->getCard()->isBlack();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        GuiouCard *card = new GuiouCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class GuiouPro: public ProhibitSkill{
+public:
+    GuiouPro():ProhibitSkill("#guioupro"){
+    }
+
+    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
+        return card->inherits("TrickCard") && card->isRed();
+    }
+};
+
+class Guiou: public PhaseChangeSkill{
+public:
+    Guiou():PhaseChangeSkill("guiou"){
+        view_as_skill = new GuiouViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::Finish){
+            room->askForUseCard(player, "@@guiou", "@guiou");
+        }
+        else if(player->getPhase() == Player::Start){
+            PlayerStar taregt = player->tag["GuiouTarget"].value<PlayerStar>();
+            if(taregt)
+                room->detachSkillFromPlayer(taregt, "#guioupro");
+        }
+        return false;
+    }
+};
+
+class Xiaoguo: public TriggerSkill{
+public:
+    Xiaoguo():TriggerSkill("xiaoguo"){
+        events << Damage;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card->inherits("Slash"))
+            return false;
+        if(player->askForSkillInvoke(objectName())){
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(spade|club):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = player;
+
+            room->judge(judge);
+            if(judge.isGood()){
+                if(judge.card->getSuit() == Card::Spade)
+                    player->obtainCard(judge.card);
+                else
+                    room->askForUseCard(player, "slash", "@xiaoguo");
+            }
+        }
+        return false;
+    }
+};
+
+class Huace:public MasochismSkill{
+public:
+    Huace():MasochismSkill("huace"){
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        if(damage.damage < 1)
+            return;
+        for(int i = 0; i < damage.damage; i ++){
+            if(player->askForSkillInvoke(objectName())){
+                ServerPlayer *target = room->askForPlayerChosen(player, room->getAllPlayers(), objectName());
+                target->drawCards(target->getLostHp());
+            }
+            else
+                break;
+        }
+    }
+};
+
 PeasaPackage::PeasaPackage()
     :Package("peasa")
 {
@@ -131,6 +247,16 @@ PeasaPackage::PeasaPackage()
 
     General *dingfeng = new General(this, "dingfeng", "min");
     dingfeng->addSkill(new Duanbing);
+
+    General *yuejin = new General(this, "yuejin", "guan");
+    yuejin->addSkill(new Guiou);
+    skills << new GuiouPro;
+    yuejin->addSkill(new Xiaoguo);
+
+    General *xunyou = new General(this, "xunyou", "guan", 3);
+    xunyou->addSkill(new Huace);
+
+    addMetaObject<GuiouCard>();
 }
 
 ADD_PACKAGE(Peasa);
