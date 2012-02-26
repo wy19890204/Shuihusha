@@ -149,7 +149,6 @@ void UbuneCard::onEffect(const CardEffectStruct &effect) const{
 }
 
 FanduiCard::FanduiCard(){
-    will_throw = false;
 }
 
 bool FanduiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -167,6 +166,35 @@ void FanduiCard::onEffect(const CardEffectStruct &effect) const{
 
     QList<int> card_ids = effect.to->getPile(pile);
     room->fillAG(card_ids, effect.from);
-    room->throwCard(room->askForAG(hx, card_ids, false, "fandui"));
+    int card_id = room->askForAG(effect.from, card_ids, false, "fandui");
+    room->throwCard(card_id);
     room->broadcastInvoke("clearAG");
+    room->obtainCard(effect.from, card_id);
+}
+
+ZhichiCard::ZhichiCard(){
+    will_throw = false;
+}
+
+bool ZhichiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+QStringList ZhichiCard::allPiles() const{
+    QStringList piles;
+    piles
+            << "knife" //yangzhi's dao
+            << "vege" //qingzhang's cai
+            << "zi" //xiaorang's zi
+            << "word" //miheng's yulu
+            << "chou" //shenwusong's chou
+            << "stone" //shenzhangqing's shi
+            << "jiyan"; //shenluzhishen's jiyan
+    return piles;
+}
+
+void ZhichiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QString pile = room->askForChoice(effect.from, "zhichi", allPiles().join("+"));
+    effect.to->addToPile(pile, getSubcards().first());
 }

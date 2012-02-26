@@ -621,6 +621,22 @@ public:
     }
 };
 
+class Zhichi: public OneCardViewAsSkill{
+public:
+    Zhichi():OneCardViewAsSkill("zhichi"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ZhichiCard *card = new ZhichiCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
@@ -640,7 +656,8 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill("yuanyin");
 
     General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
-    //zhuanjia->addSkill(new Zhichi);
+    zhuanjia->addSkill(new Zhichi);
+    addMetaObject<ZhichiCard>();
     zhuanjia->addSkill(new Fandui);
     addMetaObject<FanduiCard>();
 
