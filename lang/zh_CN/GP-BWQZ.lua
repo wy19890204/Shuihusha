@@ -131,7 +131,7 @@ return {
 	["$zhengfa6"] = "前有伏兵，后有追兵，似此如之奈何？",
 	["~tongguanf"] = "各位好汉，切莫动手啊！",
 
-	["#_tongguanf"] = "广阳郡王",
+	["#_tongguanf"] = "广阴郡王",
 	["tongguanf"] = "童公公",
 	["cv:tongguanf"] = "椰子【剪刀剧团】",
 	["yan"] = "阉",
