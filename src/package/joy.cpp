@@ -774,6 +774,248 @@ public:
     }
 };
 
+class Timer: public PhaseChangeSkill{
+public:
+    Timer():PhaseChangeSkill("timer"){
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Start){
+            Room *room = player->getRoom();
+            room->loseMaxHp(player);
+        }
+        return false;
+    }
+};
+
+class Lingyu: public TriggerSkill{
+public:
+    Lingyu():TriggerSkill("lingyu"){
+        events << CardUsed;
+    }
+
+    static int getMaqueCardNum(ServerPlayer *me){
+        int hand = me->getHandcardNum();
+        int fu = 0;
+        for(int i = 1; i <= 4; i ++)
+            fu = fu + me->getPile("fu" + QString::number(i)).length();
+        return hand + fu;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        if(use.card->inherits("Peach"))
+            return false;
+        if(use.card->isVirtualCard())
+            return false;
+        return true;
+    }
+};
+
+class Eding: public TriggerSkill{
+public:
+    Eding():TriggerSkill("eding"){
+        events << GameStart << CardLostDone << CardGotDone;
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &) const{
+        if(event == GameStart){
+            int num = player->getHandcardNum();
+            player->drawCards(13 - num);
+        }
+        else{
+            Room *room = player->getRoom();
+            int num = Lingyu::getMaqueCardNum(player);
+            if(num > 13){
+                if(!player->getPile("fu4").isEmpty() && player->getHandcardNum() == 2){
+                    if(player->getHandcards().first()->getNumber() == player->getHandcards().last()->getNumber())
+                        room->gameOver(player->getRole());
+                }
+                if(!player->getPhase() == Player::Draw)
+                    room->askForDiscard(player, objectName(), num - 13);
+            }
+            else if(num < 13)
+                room->drawCards(player, 13 - num);
+        }
+
+
+        return false;
+    }
+};
+
+ZhuangcheCard::ZhuangcheCard(){
+    target_fixed = true;
+    will_throw = false;
+}
+
+void ZhuangcheCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(getSubcards().length() != 3)
+        return;
+
+    for(int i = 1; i <= 4; i ++){
+        if(source->getPile("fu" + QString::number(i)).isEmpty()){
+            foreach(int card_id, getSubcards())
+                source->addToPile("fu" + QString::number(i), card_id);
+            break;
+        }
+    }
+
+    if(!source->getPile("fu4").isEmpty() && source->getHandcardNum() == 2){
+        if(source->getHandcards().first()->getNumber() == source->getHandcards().last()->getNumber())
+            room->gameOver(source->getRole());
+    }
+}
+
+#include "clientplayer.h"
+class ZhuangcheViewAsSkill: public ViewAsSkill{
+public:
+    ZhuangcheViewAsSkill():ViewAsSkill("zhuangche"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        int card_id = Self->property("peng").toInt();
+        const Card *card = Sanguosha->getCard(card_id);
+        if(selected.length() >= 3)
+            return false;
+        if(to_select->isEquipped())
+            return false;
+        return to_select->getCard()->getNumber() == card->getNumber();
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zhuangche";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        ZhuangcheCard *card = new ZhuangcheCard;
+        card->addSubcards(cards);
+        card->addSubcard(Self->property("peng").toInt());
+        return card;
+    }
+};
+
+class Zhuangche: public TriggerSkill{
+public:
+    Zhuangche():TriggerSkill("zhuangche"){
+        events << CardLost;
+        view_as_skill = new ZhuangcheViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *bird = room->findPlayerBySkillName(objectName());
+        if(!bird || player->getPhase() == Player::Discard)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->from && move->to_place == Player::DiscardedPile){
+            const Card *card = Sanguosha->getCard(move->card_id);
+            if(!bird->getPile("fu4").isEmpty() && bird->getHandcardNum() == 1
+               && card->getNumber() == bird->getHandcards().first()->getNumber()){
+                room->gameOver(bird->getRole());
+            }
+            room->setPlayerProperty(bird, "peng", move->card_id);
+            int number = card->getNumber();
+            int i = 0;
+            foreach(const Card *tmp, bird->getHandcards())
+                if(tmp->getNumber() == number)
+                    i ++;
+            if(i == 2){
+                QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
+                room->askForUseCard(bird, "@@zhuangche", prompt);
+            }
+        }
+        return false;
+    }
+};
+
+class ZoumaViewAsSkill: public ViewAsSkill{
+public:
+    ZoumaViewAsSkill():ViewAsSkill("zouma"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 4)
+            return false;
+        if(to_select->isEquipped())
+            return false;
+        if(!selected.isEmpty()){
+            int num1 = selected.last()->getCard()->getNumber();
+            int num2 = to_select->getCard()->getNumber();
+            return (num2 == num1 + 1) || (num1 == num2);
+        }
+        return true;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zouma";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 3)
+            return NULL;
+        ZhuangcheCard *card = new ZhuangcheCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Zouma: public PhaseChangeSkill{
+public:
+    Zouma():PhaseChangeSkill("zouma"){
+        view_as_skill = new ZoumaViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Start){
+            player->skip(Player::Judge);
+            player->skip(Player::Play);
+            player->skip(Player::Discard);
+        }
+        else if(player->getPhase() == Player::Draw){
+            Room *room = player->getRoom();
+            player->drawCards(1);
+            while(room->askForUseCard(player, "@@zouma", "@zouma"));
+
+            if(!player->getPile("fu4").isEmpty() && player->getHandcardNum() == 2){
+                if(player->getHandcards().first()->getNumber() == player->getHandcards().last()->getNumber())
+                    room->gameOver(player->getRole());
+            }
+            if(Lingyu::getMaqueCardNum(player) > 13)
+                room->askForDiscard(player, "eding", Lingyu::getMaqueCardNum(player) - 13);
+            return true;
+        }
+        return false;
+    }
+};
+
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
@@ -783,8 +1025,17 @@ JoyGeneralPackage::JoyGeneralPackage()
     miheng->addSkill(new Jieao);
     skills << new Fanchun;
 
+    General *maque = new General(this, "maque", "god", 12);
+    maque->addSkill(new Timer);
+    maque->addSkill(new Lingyu);
+    maque->addSkill(new Eding);
+    maque->addSkill(new Zhuangche);
+    maque->addSkill(new Zouma);
+    maque->addSkill(new Skill("jizha"));
+
     addMetaObject<YuluCard>();
     addMetaObject<ViewMyWordsCard>();
+    addMetaObject<ZhuangcheCard>();
 
     type = GeneralPack;
 }

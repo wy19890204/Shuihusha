@@ -96,7 +96,7 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
 }
 
 void PackagingEditor::loadPackageList(){
-    QDir dir("extensions");
+    QDir dir("extensions_test");
     QIcon icon("image/system/ark.png");
     foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.ini")){
         const QSettings *settings = new QSettings(info.filePath(), QSettings::IniFormat, package_list);
@@ -280,7 +280,7 @@ void PackagingEditor::makePackage(){
 
     if(!filename.isEmpty()){
         QFileInfo info(filename);
-        QString spec_name = QString("extensions/%1.ini").arg(info.baseName());
+        QString spec_name = QString("extensions_t/%1.ini").arg(info.baseName());
         QSettings settings(spec_name, QSettings::IniFormat);
         file_list_meta->saveToSettings(settings);
         QStringList filelist;
@@ -304,9 +304,10 @@ void PackagingEditor::done7zProcess(int exit_code){
     else
         rescanPackage();
 }
-
+/*
 void MainWindow::on_actionPackaging_triggered()
 {
     PackagingEditor *editor = new PackagingEditor(this);
     editor->show();
 }
+*/

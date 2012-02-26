@@ -651,10 +651,8 @@ void BomingCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     DummyCard *dummy = new DummyCard;
     int dmgnum = effect.to->getEquips().length();
-    dummy->addSubcard(effect.to->getWeapon());
-    dummy->addSubcard(effect.to->getArmor());
-    dummy->addSubcard(effect.to->getDefensiveHorse());
-    dummy->addSubcard(effect.to->getOffensiveHorse());
+    foreach(const Card *equip, effect.to->getEquips())
+        dummy->addSubcard(equip);
     DamageStruct damage;
     damage.from = effect.from;
     damage.to = effect.to;
@@ -666,7 +664,7 @@ void BomingCard::onEffect(const CardEffectStruct &effect) const{
 
 class Boming: public ZeroCardViewAsSkill{
 public:
-    Boming():ZeroCardViewAsSkill("Boming"){
+    Boming():ZeroCardViewAsSkill("boming"){
 
     }
 
@@ -730,7 +728,7 @@ InterChangePackage::InterChangePackage()
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qingshang);
 
-    General *shixiu = new General(this, "shixiu", "kou", 4, false);
+    General *shixiu = new General(this, "shixiu", "kou", 4);
     shixiu->addSkill(new Boming);
 
     addMetaObject<ShensuanCard>();
