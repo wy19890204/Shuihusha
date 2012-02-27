@@ -768,7 +768,7 @@ public:
             const Card *equ = Sanguosha->getCard(move->card_id);
             QVariant chu = QVariant::fromValue((PlayerStar)player);
             if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".black", "@chumai:" + player->objectName(), chu)){
+               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), chu)){
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#InvokeSkill";

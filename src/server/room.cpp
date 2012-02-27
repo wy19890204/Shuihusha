@@ -322,7 +322,7 @@ void Room::judge(JudgeStruct &judge_struct){
             ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
             if(source && source == player){
                 setPlayerFlag(player, "FuckLian");
-                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl", data);
+                const Card *fuck = askForCard(player, "Fuckgaolian", "@fuckl", data);
                 if(fuck){
                     playCardEffect("@fuckgaolian2", player->getGeneral()->isMale());
                     JudgeStar judge = data.value<JudgeStar>();
@@ -2121,7 +2121,7 @@ void Room::damage(const DamageStruct &damage_data){
             ServerPlayer *source = findPlayerWhohasEventCard("ninedaygirl");
             if(source == damage.to){
                 setPlayerFlag(damage.to, "NineGirl");
-                bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+                bool girl = askForUseCard(damage.to, "Ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
                 setPlayerFlag(damage.to, "-NineGirl");
                 if(girl){
                     LogMessage log;
