@@ -35,6 +35,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     // tab 2
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
+    ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
@@ -131,6 +132,9 @@ void ConfigDialog::saveConfig()
 
     Config.NeverNullifyMyTrick = ui->neverNullifyMyTrickCheckBox->isChecked();
     Config.setValue("NeverNullifyMyTrick", Config.NeverNullifyMyTrick);
+
+    Config.ShowAllName = ui->showAllName->isChecked();
+    Config.setValue("ShowAllName", Config.ShowAllName);
 
     Config.SPOpen = ui->spOpen->isChecked();
     Config.setValue("SPOpen", Config.SPOpen);

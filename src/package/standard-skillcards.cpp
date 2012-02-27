@@ -166,10 +166,8 @@ void FanduiCard::onEffect(const CardEffectStruct &effect) const{
 
     QList<int> card_ids = effect.to->getPile(pile);
     room->fillAG(card_ids, effect.from);
-    int card_id = room->askForAG(effect.from, card_ids, false, "fandui");
-    room->throwCard(card_id);
+    room->obtainCard(effect.from, room->askForAG(effect.from, card_ids, false, "fandui"));
     room->broadcastInvoke("clearAG");
-    room->obtainCard(effect.from, card_id);
 }
 
 ZhichiCard::ZhichiCard(){

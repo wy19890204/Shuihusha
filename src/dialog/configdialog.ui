@@ -508,11 +508,27 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QCheckBox" name="spOpen">
+    <widget class="QCheckBox" name="showAllName">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>80</y>
+       <width>239</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show nick name and true name</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="spOpen">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
        <width>239</width>
        <height>16</height>
       </rect>

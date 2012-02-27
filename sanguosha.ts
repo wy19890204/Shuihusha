@@ -866,6 +866,11 @@
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="521"/>
+        <source>Show nick name and true name</source>
+        <translation>以绰号+姓名方式显示日志</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="521"/>
         <source>Open the SP package</source>
         <translation>完全开放SP包</translation>
     </message>
