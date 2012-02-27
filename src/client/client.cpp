@@ -577,13 +577,16 @@ QString Client::getPlayerName(const QString &str){
     if(rx.exactMatch(str)){
         ClientPlayer *player = getPlayer(str);
         general_name = player->getGeneralName();
-        general_name = Sanguosha->translate(general_name);
+        general_name = !Config.ShowAllName ?
+                       Sanguosha->translate(general_name) :
+                       Sanguosha->translate("#_" + general_name) + Sanguosha->translate(general_name);
         if(ServerInfo.EnableSame || player->getGeneralName() == "anjiang")
             general_name = QString("%1[%2]").arg(general_name).arg(player->getSeat());
         return general_name;
 
     }else
-        return Sanguosha->translate(str);
+        return !Config.ShowAllName ? Sanguosha->translate(str) :
+                Sanguosha->translate("#_" + str) + Sanguosha->translate(str);
 }
 
 QString Client::getPattern() const{

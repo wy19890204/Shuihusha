@@ -351,7 +351,6 @@ public:
     }
 };
 
-#include "qjwm.h"
 class Xiaduo: public TriggerSkill{
 public:
     Xiaduo():TriggerSkill("xiaduo"){
@@ -374,7 +373,7 @@ public:
         foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to))
             if(wanglun->distanceTo(tmp) == 1)
                 ones << tmp;
-        if(!ones.isEmpty() && room->askForCard(wanglun, ".equip", "@xiaduo", data)){
+        if(!ones.isEmpty() && room->askForCard(wanglun, "EquipCard", "@xiaduo", data)){
             room->playSkillEffect(objectName());
             ServerPlayer *target = room->askForPlayerChosen(wanglun, ones, objectName());
             LogMessage log;

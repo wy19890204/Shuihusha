@@ -209,13 +209,6 @@ public:
     }
 };
 
-class TouxiPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->inherits("Weapon") || card->inherits("Armor");
-    }
-};
-
 class Touxi: public TriggerSkill{
 public:
     Touxi():TriggerSkill("touxi"){
@@ -241,7 +234,7 @@ public:
                 break;
             }
         }
-        const Card *card = caninvoke ? room->askForCard(duwei, ".Touxi", "@touxi:" + player->objectName(), data): NULL;
+        const Card *card = caninvoke ? room->askForCard(duwei, "Weapon,Armor", "@touxi:" + player->objectName(), data): NULL;
         if(card){
             Assassinate *ass = new Assassinate(card->getSuit(), card->getNumber());
             ass->setSkillName(objectName());
@@ -692,7 +685,6 @@ InterChangePackage::InterChangePackage()
 
     General *duwei = new General(this, "duwei", "jiang");
     duwei->addSkill(new Touxi);
-    patterns[".Touxi"] = new TouxiPattern;
 
     General *puwenying = new General(this, "puwenying", "guan", 3);
     puwenying->addSkill(new Guanxing);

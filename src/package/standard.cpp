@@ -363,85 +363,10 @@ EquipCard::Location Horse::location() const{
         return OffensiveHorseLocation;
 }
 
-class HandcardPattern: public CardPattern{
+class NullPattern: public CardPattern{
 public:
     virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card);
-    }
-};
-
-class AllCardPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return true;
-    }
-};
-
-class SuitPattern: public CardPattern{
-public:
-    SuitPattern(Card::Suit suit)
-        :suit(suit)
-    {
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->getSuit() == suit;
-    }
-
-private:
-    Card::Suit suit;
-};
-
-class AllSuitPattern: public CardPattern{
-public:
-    AllSuitPattern(Card::Suit suit)
-        :suit(suit)
-    {
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->getSuit() == suit;
-    }
-
-private:
-    Card::Suit suit;
-};
-
-class SlashPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->inherits("Slash");
-    }
-};
-
-class NamePattern: public CardPattern{
-public:
-    NamePattern(const QString &name)
-        :name(name)
-    {
-
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->objectName() == name;
-    }
-
-private:
-    QString name;
-};
-
-class PAPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) &&
-                (card->inherits("Peach") || card->inherits("Analeptic"));
-    }
-};
-
-class NCPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->inherits("Nullification");
+        return ! player->hasEquip(card) && card->objectName() == "nullification";
     }
 };
 
@@ -450,21 +375,6 @@ public:
     virtual bool match(const Player *player, const Card *card) const{
         return ! player->hasEquip(card) && card->getTypeId() == Card::Basic;
     }
-};
-
-class ColorPattern: public CardPattern{
-public:
-    ColorPattern(const QString &color)
-        :color(color){
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) &&
-                ((card->isBlack() && color == "black") ||
-                (card->isRed() && color == "red"));
-    }
-private:
-    QString color;
 };
 
 // test main
@@ -611,6 +521,32 @@ public:
     }
 };
 
+class Fandui:public ZeroCardViewAsSkill{
+public:
+    Fandui():ZeroCardViewAsSkill("fandui"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new FanduiCard;
+    }
+};
+
+class Zhichi: public OneCardViewAsSkill{
+public:
+    Zhichi():OneCardViewAsSkill("zhichi"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ZhichiCard *card = new ZhichiCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
@@ -628,6 +564,12 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill("yuanyin");
+
+    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
+    zhuanjia->addSkill(new Zhichi);
+    addMetaObject<ZhichiCard>();
+    zhuanjia->addSkill(new Fandui);
+    addMetaObject<FanduiCard>();
 
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
@@ -649,35 +591,30 @@ TestPackage::TestPackage()
 
     addMetaObject<CheatCard>();
     addMetaObject<ChangeCard>();
-    patterns["."] = new HandcardPattern;
-    patterns[".S"] = new SuitPattern(Card::Spade);
-    patterns[".C"] = new SuitPattern(Card::Club);
-    patterns[".H"] = new SuitPattern(Card::Heart);
-    patterns[".D"] = new SuitPattern(Card::Diamond);
+    patterns["."] = new ExpPattern(".|.|.|hand");
+    patterns[".S"] = new ExpPattern(".|spade|.|hand");
+    patterns[".C"] = new ExpPattern(".|club|.|hand");
+    patterns[".H"] = new ExpPattern(".|heart|.|hand");
+    patterns[".D"] = new ExpPattern(".|diamond|.|hand");
 
-    patterns[".black"] = new ColorPattern("black");
-    patterns[".red"] = new ColorPattern("red");
+    //patterns[".red"] = new ExpPattern(".|.|.|hand|red");
 
-    patterns[".."] = new AllCardPattern;
-    patterns["..S"] = new AllSuitPattern(Card::Spade);
-    patterns["..C"] = new AllSuitPattern(Card::Club);
-    patterns["..H"] = new AllSuitPattern(Card::Heart);
-    patterns["..D"] = new AllSuitPattern(Card::Diamond);
+    patterns[".."] = new ExpPattern(".");
+    //patterns["..D"] = new ExpPattern(".|diamond");
 
-    patterns["slash"] = new SlashPattern;
-    patterns["jink"] = new NamePattern("jink");
-    patterns["peach"] = new NamePattern("peach");
-    patterns["nullification"] = new NamePattern("nullification");
-    patterns["nulliplot"] = new NCPattern;
-    patterns["peach+analeptic"] = new PAPattern;
-    patterns[".basic"] = new BasicPattern;
+    patterns["slash"] = new ExpPattern("Slash");
+    patterns["jink"] = new ExpPattern("Jink");
+    patterns["peach"] = new ExpPattern("Peach");
+    patterns["nullification"] = new NullPattern;
+    patterns["nulliplot"] = new ExpPattern("Nullification");
+    patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 
     //eventcard
-    patterns["jiefachang"] = new NamePattern("jiefachang");
-    patterns["daojia"] = new NamePattern("daojia");
-    patterns["tifanshi"] = new NamePattern("tifanshi");
-    patterns["ninedaygirl"] = new NamePattern("ninedaygirl");
-    patterns["fuckgaolian"] = new NamePattern("fuckgaolian");
+    patterns["jiefachang"] = new ExpPattern("Jiefachang");
+    patterns["daojia"] = new ExpPattern("Daojia");
+    patterns["tifanshi"] = new ExpPattern("Tifanshi");
+    patterns["ninedaygirl"] = new ExpPattern("Ninedaygirl");
+    patterns["fuckgaolian"] = new ExpPattern("Fuckgaolian");
 }
 
 ADD_PACKAGE(Test)

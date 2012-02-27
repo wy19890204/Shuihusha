@@ -147,3 +147,52 @@ void UbuneCard::onEffect(const CardEffectStruct &effect) const{
         equipped->use(room, effect.to, QList<ServerPlayer *>());
     }
 }
+
+FanduiCard::FanduiCard(){
+}
+
+bool FanduiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return !to_select->getPileNames().isEmpty();
+}
+
+void FanduiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QStringList piles = effect.to->getPileNames();
+    QString pile = piles.first();
+    if(piles.length() > 1)
+        pile = room->askForChoice(effect.from, "fandui", piles.join("+"));
+
+    QList<int> card_ids = effect.to->getPile(pile);
+    room->fillAG(card_ids, effect.from);
+    room->obtainCard(effect.from, room->askForAG(effect.from, card_ids, false, "fandui"));
+    room->broadcastInvoke("clearAG");
+}
+
+ZhichiCard::ZhichiCard(){
+    will_throw = false;
+}
+
+bool ZhichiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+QStringList ZhichiCard::allPiles() const{
+    QStringList piles;
+    piles
+            << "knife" //yangzhi's dao
+            << "vege" //qingzhang's cai
+            << "zi" //xiaorang's zi
+            << "word" //miheng's yulu
+            << "chou" //shenwusong's chou
+            << "stone" //shenzhangqing's shi
+            << "jiyan"; //shenluzhishen's jiyan
+    return piles;
+}
+
+void ZhichiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QString pile = room->askForChoice(effect.from, "zhichi", allPiles().join("+"));
+    effect.to->addToPile(pile, getSubcards().first());
+}

@@ -98,7 +98,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
             ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
             if(source && source == effect.to){
                 room->setPlayerFlag(effect.to, "Tifanshi");
-                room->askForUseCard(effect.to, "tifanshi", "@tifanshi");
+                room->askForUseCard(effect.to, "Tifanshi", "@tifanshi");
                 room->setPlayerFlag(effect.to, "-Tifanshi");
             }
         }
