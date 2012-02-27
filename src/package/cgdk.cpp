@@ -872,7 +872,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") &&
+        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive() &&
             damage.to->isKongcheng() && player->askForSkillInvoke(objectName(), data)){
             Room *room = damage.to->getRoom();
             room->playSkillEffect(objectName());
