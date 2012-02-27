@@ -4,7 +4,7 @@ local tt = {
 	["TTXD"] = "替天行道",
 	["coder:TTXD"] = "roxiel",
 
-	["#_songjiang"] = "及时雨",
+	["#songjiang"] = "及时雨",
 	["songjiang"] = "宋江",
 	["designer:songjiang"] = "烨子&凌天翼",
 	["cv:songjiang"] = "猎狐【声声melody】",
@@ -23,7 +23,7 @@ local tt = {
 	["$juyi1"] = "替天行道！",
 	["$juyi2"] = "我等上应天星，合当聚义！",
 
-	["#_lujunyi"] = "玉麒麟",
+	["#lujunyi"] = "玉麒麟",
 	["lujunyi"] = "卢俊义",
 	["cv:lujunyi"] = "猎狐【声声melody】",
 	["baoguo"] = "报国",
@@ -33,7 +33,7 @@ local tt = {
 	["$baoguo1"] = "大丈夫为国尽忠，死而无憾！",
 	["$baoguo2"] = "与其坐拥金山，不如上阵杀敌！",
 
-	["#_chaijin"] = "小旋风",
+	["#chaijin"] = "小旋风",
 	["chaijin"] = "柴进",
 	["designer:chaijin"] = "烨子&小花荣",
 	["cv:chaijin"] = "烨子【剪刀剧团】",
@@ -52,7 +52,7 @@ local tt = {
 	["$haoshen3"] = "碎银铺路，富贵如云。",
 	["$haoshen4"] = "既是兄弟，理应有福同享。",
 
-	["#_zhangqing"] = "没羽箭",
+	["#zhangqing"] = "没羽箭",
 	["zhangqing"] = "张清",
 	["cv:zhangqing"] = "烨子【剪刀剧团】",
 	["yinyu"] = "饮羽",
@@ -71,7 +71,7 @@ local tt = {
 	["$yinyu4"] = "此等破铜烂铁岂能挡我！",
 	["$yinyu5"] = "看你马快，还是我飞石快！",
 
-	["#_yuehe"] = "铁叫子",
+	["#yuehe"] = "铁叫子",
 	["yuehe"] = "乐和",
 	["cv:yuehe"] = "烨子【剪刀剧团】",
 	["yueli"] = "乐理",
@@ -85,7 +85,7 @@ local tt = {
 	["$taohui1"] = "白云起，郁披香；离复合，曲未央。",
 	["$taohui2"] = "此曲只应天上有，人间能得几回闻。",
 
-	["#_muhong"] = "没遮拦",
+	["#muhong"] = "没遮拦",
 	["muhong"] = "穆弘",
 	["cv:muhong"] = "流岚【裔美声社】",
 	["wuzu"] = "无阻",
@@ -96,7 +96,7 @@ local tt = {
 	["$wuzu1"] = "谁敢拦我？",
 	["$wuzu2"] = "游击部，冲！",
 
-	["#_zhoutong"] = "小霸王",
+	["#zhoutong"] = "小霸王",
 	["zhoutong"] = "周通",
 	["cv:zhoutong"] = "烨子【剪刀剧团】",
 	["qiangqu"] = "强娶",
@@ -111,7 +111,7 @@ local tt = {
 	["$huatian3"] = "破晓之前，忘了此错。",
 	["$huatian4"] = "无心插柳，岂是花田之错？",
 
-	["#_qiaodaoqing"] = "幻魔君",
+	["#qiaodaoqing"] = "幻魔君",
 	["qiaodaoqing"] = "乔道清",
 	["cv:qiaodaoqing"] = "烨子【剪刀剧团】",
 	["huanshu"] = "幻术",
@@ -127,7 +127,7 @@ local tt = {
 	["$huanshu3"] = "五雷天心，五雷天心，缘何不灵？",
 	["$mozhang"] = "外道之法，也可乱心？",
 
-	["#_andaoquan"] = "神医",
+	["#andaoquan"] = "神医",
 	["andaoquan"] = "安道全",
 	["cv:andaoquan"] = "东方胤弘【夜澜锦音】",
 	["jishi"] = "济世",
@@ -146,7 +146,7 @@ local tt = {
 	["$fengyue1"] = "一生风月供惆怅。",
 	["$fengyue2"] = "活色生香伴佳人。",
 
-	["#_gongsunsheng"] = "入云龙",
+	["#gongsunsheng"] = "入云龙",
 	["gongsunsheng"] = "公孙胜",
 	["cv:gongsunsheng"] = "流岚【裔美声社】",
 	["yixing"] = "移星",
@@ -163,7 +163,7 @@ local tt = {
 	["$qimen1"] = "汝逢大凶，不宜出兵再战。",
 	["$qimen2"] = "小奇改门户，大奇变格局。",
 
-	["#_gaoqiu"] = "太尉",
+	["#gaoqiu"] = "太尉",
 	["gaoqiu"] = "高俅",
 	["cv:gaoqiu"] = "爪子",
 	["coder:gaoqiu"] = "roxiel、宇文天启",
@@ -181,7 +181,7 @@ local tt = {
 	["$panquan1"] = "圣上有旨！",
 	["$panquan2"] = "共求富贵！",
 
-	["#_husanniang"] = "一丈青",
+	["#husanniang"] = "一丈青",
 	["husanniang"] = "扈三娘",
 	["cv:husanniang"] = "蒲小猫【夜澜锦音】",
 	["hongjin"] = "红锦",

@@ -3,7 +3,7 @@
 return {
 	["god"] = "神",
 
-	["#_shenwusong"] = "清忠祖师",
+	["#shenwusong"] = "清忠祖师",
 	["shenwusong"] = "神武松",
 	["designer:shenwusong"] = "烨子&裁之刃•散",
 	["cv:shenwusong"] = "佚名",
@@ -28,7 +28,7 @@ return {
 --	["$duanbi"] = "自断一臂，力擒此贼！",
 	["~shenwusong"] = "缘尽六合寺。",
 
-	["#_shenwuyong"] = "足智多谋",
+	["#shenwuyong"] = "足智多谋",
 	["shenwuyong"] = "神吴用",
 	["designer:shenwuyong"] = "烨子&凌天翼",
 	["cv:shenwuyong"] = "烨子【剪刀剧团】",
@@ -46,7 +46,7 @@ return {
 	["#Xianji"] = "%from 发动了【%arg2】，%to 的 %arg 受到影响",
 	["#XianjiClear"] = "%from 的先机效果消失",
 
-	["#_shenzhangqing"] = "射石饮羽",
+	["#shenzhangqing"] = "射石饮羽",
 	["shenzhangqing"] = "神张清",
 	["cv:shenzhangqing"] = "佚名",
 	["feihuang"] = "飞蝗",
@@ -61,7 +61,7 @@ return {
 	["$meiyu2"] = "发石如脱兔，其速越寒星！",
 	["~shenzhangqing"] = "人过留名，雁过留声。",
 
-	["#_shenluzhishen"] = "义烈照暨禅师",
+	["#shenluzhishen"] = "义烈照暨禅师",
 	["shenluzhishen"] = "神鲁智深",
 	["designer:shenluzhishen"] = "烨子&凌天翼",
 	["cv:shenluzhishen"] = "佚名",
@@ -78,7 +78,7 @@ return {
 	["$huafo2"] = "将酒来！",
 	["~shenluzhishen"] = "逢夏而擒，遇腊而执。听潮而圆，见信而寂。",
 
-	["#_shenxuning"] = "虎翼上将",
+	["#shenxuning"] = "虎翼上将",
 	["shenxuning"] = "神徐宁",
 	["cv:shenxuning"] = "佚名",
 	["coder:shenxuning"] = "皇叔",

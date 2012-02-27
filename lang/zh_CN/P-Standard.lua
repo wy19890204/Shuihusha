@@ -124,7 +124,7 @@ local t = {
 	[":renwang_shield"] = "防具效果：锁定技，黑色的【杀】对你无效",
 
 -- test
-	["#_ubuntenkei"] = "百撕不得",
+	["#ubuntenkei"] = "百撕不得",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
 	["cv:ubuntenkei"] = "山新",
@@ -154,13 +154,13 @@ local t = {
 	["$ubunf"] = "去死吧变态！",
 	["~ubuntenkei"] = "嗯？不要啊……",
 
-	["#_jiuweigui"] = "陶宗旺",
+	["#jiuweigui"] = "陶宗旺",
 	["jiuweigui"] = "九尾龟",
 	["qiaog"] = "初代巧工",
 	[":qiaog"] = "<b>锁定技</b>，若某一种类的装备牌只有一张在场上，则视为你装备着该装备。\
 ★警告：因初代巧工技能有严重的bug，极容易导致程序崩溃，所以此武将仅供测试和学习",
 
-	["#_zhuanjia"] = "纵横天下",
+	["#zhuanjia"] = "纵横天下",
 	["zhuanjia"] = "砖家叫兽",
 	["zhichi"] = "支持",
 	[":zhichi"] = "出牌阶段，你可以将一张手牌置于任意一名武将牌上，并指定pile名。",

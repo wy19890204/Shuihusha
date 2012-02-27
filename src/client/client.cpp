@@ -579,7 +579,7 @@ QString Client::getPlayerName(const QString &str){
         general_name = player->getGeneralName();
         general_name = !Config.ShowAllName ?
                        Sanguosha->translate(general_name) :
-                       Sanguosha->translate("#_" + general_name) + Sanguosha->translate(general_name);
+                       Sanguosha->translate("#" + general_name) + Sanguosha->translate(general_name);
         if(ServerInfo.EnableSame || player->getGeneralName() == "anjiang")
             general_name = QString("%1[%2]").arg(general_name).arg(player->getSeat());
         return general_name;

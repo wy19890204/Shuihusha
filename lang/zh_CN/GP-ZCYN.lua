@@ -3,7 +3,7 @@
 return {
 	["ZCYN"] = "折冲厌难",
 
-	["#_guansheng"] = "大刀",
+	["#guansheng"] = "大刀",
 	["guansheng"] = "关胜",
 	["cv:guansheng"] = "佚名",
 	["tongwu"] = "通武",
@@ -12,7 +12,7 @@ return {
 	["$tongwu2"]= "攻敌，以长击短；克己，扬长避短!",
 	["~guansheng"] = "愧对家祖啊！",
 
-	["#_ruanxiaoer"] = "立地太岁",
+	["#ruanxiaoer"] = "立地太岁",
 	["ruanxiaoer"] = "阮小二",
 	["cv:ruanxiaoer"] = "烨子【剪刀剧团】",
 	["fuji"] = "伏击",
@@ -23,7 +23,7 @@ return {
 	["~ruanxiaoer"] = "不好，被包围了！",
 --	["~ruanxiaoer"] = "斜阳影下空踏浪，休言村里一渔人。",
 
-	["#_yangxiong"] = "病关索",
+	["#yangxiong"] = "病关索",
 	["yangxiong"] = "杨雄",
 	["designer:yangxiong"] = "裁之刃•散",
 	["cv:yangxiong"] = "爪子",
@@ -35,7 +35,7 @@ return {
 	["$guizi2"] = "斩！",
 	["~yangxiong"] = "背疮疼痛，恨不能战死沙场～",
 
-	["#_haosiwen"] = "井木犴",
+	["#haosiwen"] = "井木犴",
 	["haosiwen"] = "郝思文",
 	["cv:haosiwen"] = "芭小乐【声声melody】",
 	["sixiang"] = "四象",
@@ -47,7 +47,7 @@ return {
 	["$sixiang2"] = "朱雀神鸟，为我先导！",
 	["~haosiwen"] = "井宿八星，都陨落了。",
 
-	["#_pengqi"] = "天目将",
+	["#pengqi"] = "天目将",
 	["pengqi"] = "彭玘",
 	["cv:pengqi"] = "小虎尔赤【影音同画】",
 	["tianyan"] = "天眼",
@@ -56,7 +56,7 @@ return {
 	["$tianyan2"] = "路已探明，大道可行！",
 	["~pengqi"] = "夜幕降临，待天明再战！",
 
-	["#_shiwengong"] = "大教师",
+	["#shiwengong"] = "大教师",
 	["shiwengong"] = "史文恭",
 	["cv:shiwengong"] = "佚名",
 	["dujian"] = "毒箭",
@@ -66,7 +66,7 @@ return {
 --	["~shiwengong"] = "非我不力，实乃毒誓害我。",
 	["~shiwengong"] = "动，动不了了！呃～",
 
-	["#_lingzhen"] = "轰天雷",
+	["#lingzhen"] = "轰天雷",
 	["lingzhen"] = "凌振",
 	["cv:lingzhen"] = "佚名",
 	["coder:lingzhen"] = "凌天翼",
@@ -76,7 +76,7 @@ return {
 	["$paohong2"] = "不投降就去死吧！",
 	["~lingzhen"] = "啊！我不会倒下～",
 
-	["#_ligun"] = "飞天大圣",
+	["#ligun"] = "飞天大圣",
 	["ligun"] = "李衮",
 	["cv:ligun"] = "蓝调【裔美声社】",
 	["hengchong"] = "横冲",
@@ -87,7 +87,7 @@ return {
 	["$hengchong2"] = "汝休想苟活！",
 	["~ligun"] = "冲不出去了！",
 
-	["#_caozheng"] = "操刀鬼",
+	["#caozheng"] = "操刀鬼",
 	["caozheng"] = "曹正",
 	["cv:caozheng"] = "佚名",
 	["tuzai"] = "屠宰",
@@ -96,7 +96,7 @@ return {
 	["$tuzai2"] = "杀人如杀猪！",
 	["~caozheng"] = "这刀太钝了。",
 
-	["#_zourun"] = "独角龙",
+	["#zourun"] = "独角龙",
 	["zourun"] = "邹润",
 	["cv:zourun"] = "蓝调【裔美声社】",
 	["longjiao"] = "龙角",
@@ -106,7 +106,7 @@ return {
 	["~zourun"] = "竟然～撞不倒！",
 --	["~zourun"] = "龙角已断，兄弟分离",
 
-	["#_caifu"] = "铁臂膊",
+	["#caifu"] = "铁臂膊",
 	["caifu"] = "蔡福",
 	["cv:caifu"] = "刺客【怀旧配音联盟】",
 	["juesi"] = "诀死",
@@ -116,7 +116,7 @@ return {
 	["$juesi2"] = "阎王要你三更死，谁敢留您到五更！",
 	["~caifu"] = "尔等竟敢劫法……场……",
 
-	["#_gudasao"] = "母大虫",
+	["#gudasao"] = "母大虫",
 	["gudasao"] = "顾大嫂",
 	["cv:gudasao"] = "南宫泓【「御」】",
 	["cihu"] = "雌虎",

@@ -3,7 +3,7 @@
 return {
 	["BWQZ"] = "博闻强识",
 
-	["#_dingdesun"] = "中箭虎",
+	["#dingdesun"] = "中箭虎",
 	["dingdesun"] = "丁得孙",
 	["designer:dingdesun"] = "烨子&宇文天启",
 	["cv:dingdesun"] = "东方胤弘【夜澜锦音】",
@@ -15,7 +15,7 @@ return {
 	["$fushang1"] = "小伤而已。",
 	["$fushang2"] = "沙场征战，难免负伤。",
 
-	["#_houjian"] = "通臂猿",
+	["#houjian"] = "通臂猿",
 	["houjian"] = "侯健",
 	["designer:houjian"] = "宇文天启",
 	["cv:houjian"] = "卜音悠扬【LE秘密】",
@@ -27,7 +27,7 @@ return {
 	["$yuanyin2"] = "针影闪动，战袍已新。",
 	["~houjian"] = "蚕丝终究是断了。",
 
-	["#_mengkang"] = "玉幡竿",
+	["#mengkang"] = "玉幡竿",
 	["mengkang"] = "孟康",
 	["cv:mengkang"] = "烨子【剪刀剧团】",
 	["zaochuan"] = "造船",
@@ -37,7 +37,7 @@ return {
 	["$zaochuan1"] = "能攀强弩冲头阵，善造艨艟越大江！",
 	["$zaochuan2"] = "楼船林立，可挡朝廷千军万马！",
 
-	["#_jiaoting"] = "没面目",
+	["#jiaoting"] = "没面目",
 	["jiaoting"] = "焦挺",
 	["designer:jiaoting"] = "宇文天启",
 	["cv:jiaoting"] = "小虎尔赤【影音同画】",
@@ -46,7 +46,7 @@ return {
 	["$qinlong1"] = "都出局吧！",
 	["$qinlong2"] = "看吾三十六路擒龙手！",
 
-	["#_shantinggui"] = "圣水将",
+	["#shantinggui"] = "圣水将",
 	["shantinggui"] = "单廷珪",
 	["designer:shantinggui"] = "烨子&宇文天启",
 	["xiaofang"] = "消防",
@@ -56,7 +56,7 @@ return {
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",
 	["~shantinggui"] = "土克水……吾命休矣……",
 
-	["#_qingzhang"] = "菜园子",
+	["#qingzhang"] = "菜园子",
 	["qingzhang"] = "张青",
 	["cv:qingzhang"] = "流岚【裔美声社】",
 	["shouge"] = "收割",
@@ -71,7 +71,7 @@ return {
 	["$qiongtu1"] = "哼，你这穷鬼，还要这些作甚？",
 	["$qiongtu2"] = "这里就是张家店，客官，里边请！",
 
-	["#_kongliang"] = "独火星",
+	["#kongliang"] = "独火星",
 	["kongliang"] = "孔亮",
 	["designer:kongliang"] = "烨子&凌天翼",
 	["nusha"] = "怒杀",
@@ -84,7 +84,7 @@ return {
 	["$wanku1"] = "吾出身富家，性喜玩乐。",
 	["$wanku2"] = "鼠目寸光，如何了却我的心思？！",
 
-	["#_taozongwang"] = "九尾龟",
+	["#taozongwang"] = "九尾龟",
 	["taozongwang"] = "陶宗旺",
 	["cv:taozongwang"] = "东方胤弘【夜澜锦音】",
 	["coder:taozongwang"] = "太阳神上、宇文天启",
@@ -100,7 +100,7 @@ return {
 	["$manli1"] = "千斤铁闸我独扛！",
 	["$manli2"] = "吾之臂力，何人能敌？",
 
-	["#_baisheng"] = "白日鼠",
+	["#baisheng"] = "白日鼠",
 	["baisheng"] = "白胜",
 	["cv:baisheng"] = "明哲【剪刀剧团】",
 	["coder:baisheng"] = "太阳神上",
@@ -115,7 +115,7 @@ return {
 	["$shudan1"] = "我逃～",
 	["$shudan2"] = "别～别杀我！",
 
-	["#_tongguan"] = "广阳郡王",
+	["#tongguan"] = "广阳郡王",
 	["tongguan"] = "童贯",
 	["cv:tongguan"] = "烨子【剪刀剧团】",
 	["aoxiang"] = "媪相",
@@ -131,12 +131,12 @@ return {
 	["$zhengfa6"] = "前有伏兵，后有追兵，似此如之奈何？",
 	["~tongguanf"] = "各位好汉，切莫动手啊！",
 
-	["#_tongguanf"] = "广阴郡王",
+	["#tongguanf"] = "广阴郡王",
 	["tongguanf"] = "童公公",
 	["cv:tongguanf"] = "椰子【剪刀剧团】",
 	["yan"] = "阉",
 
-	["#_wangdingliu"] = "活闪婆",
+	["#wangdingliu"] = "活闪婆",
 	["wangdingliu"] = "王定六",
 	["designer:wangdingliu"] = "烨子&宇文天启",
 	["cv:wangdingliu"] = "芭小乐【声声melody】",
@@ -148,7 +148,7 @@ return {
 	["$kongying1"] = "哈哈哈哈，扑个空吧！",
 	["$kongying2"] = "此步，汝当以何抵对？",
 
-	["#_fangla"] = "永乐圣公",
+	["#fangla"] = "永乐圣公",
 	["fangla"] = "方腊",
 	["cv:fangla"] = "佚名",
 	["yongle"] = "永乐",

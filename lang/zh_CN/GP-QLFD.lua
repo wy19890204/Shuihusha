@@ -3,7 +3,7 @@
 return {
 	["QLFD"] = "绮罗粉黛",
 
-	["#_panjinlian"] = "墙头杏",
+	["#panjinlian"] = "墙头杏",
 	["panjinlian"] = "潘金莲",
 	["designer:panjinlian"] = "烨子&凌天翼",
 	["cv:panjinlian"] = "鬼心【⑤品倦客】",
@@ -22,7 +22,7 @@ return {
 	["$shengui1"] = "小女子从未踏出家门半步。",
 	["$shengui2"] = "奴家有夫家了。",
 
-	["#_panqiaoyun"] = "水性杨花",
+	["#panqiaoyun"] = "水性杨花",
 	["panqiaoyun"] = "潘巧云",
 	["cv:panqiaoyun"] = "梁小啾【「御」】",
 	["designer:panqiaoyun"] = "烨子&大Ｒ",
@@ -41,7 +41,7 @@ return {
 	["$foyuan2"] = "佛牙可否借妹妹一观。",
 	["unknown"] = "未知",
 
-	["#_wangpo"] = "枯藤蔓",
+	["#wangpo"] = "枯藤蔓",
 	["wangpo"] = "王婆",
 	["cv:wangpo"] = "九辨【重华剧社】",
 	["qianxian"] = "牵线",
@@ -54,7 +54,7 @@ return {
 	["$meicha1"] = "我这茶别有风味。",
 	["$meicha2"] = "好个“宽煎叶儿茶”。",
 
-	["#_linniangzi"] = "腊梅傲雪",
+	["#linniangzi"] = "腊梅傲雪",
 	["linniangzi"] = "林娘子",
 	["designer:linniangzi"] = "烨子&大Ｒ",
 	["cv:linniangzi"] = "蒲小猫【夜澜锦音】",
@@ -74,7 +74,7 @@ return {
 	["$zhongzhen1"] = "怎可这般无礼？",
 	["$zhongzhen2"] = "你若再上前一步，我便跳下去。",
 
-	["#_duansanniang"] = "大虫窝",
+	["#duansanniang"] = "大虫窝",
 	["duansanniang"] = "段三娘",
 	["cv:duansanniang"] = "南宫泓【「御」】",
 	["zishi"] = "自恃",
@@ -86,7 +86,7 @@ return {
 	["$zishi1"] = "老娘替你做主了！",
 	["$zishi2"] = "原银在此，将了去！",
 
-	["#_yanxijiao"] = "花魁女",
+	["#yanxijiao"] = "花魁女",
 	["yanxijiao"] = "阎惜娇",
 	["cv:yanxijiao"] = "佚名",
 	["suocai"] = "索财",
@@ -98,7 +98,7 @@ return {
 	["$huakui1"] = "哼！你们都是绿叶！",
 	["$huakui2"] = "艳压群芳，魅惑众人。",
 
-	["#_baixiuying"] = "白罂粟",
+	["#baixiuying"] = "白罂粟",
 	["baixiuying"] = "白秀英",
 	["cv:baixiuying"] = "蒲小猫【夜澜锦音】",
 	["designer:baixiuying"] = "烨子&大Ｒ",
@@ -114,7 +114,7 @@ return {
 	["$zhangshi1"] = "你要替我做主啊～",
 	["$zhangshi2"] = "可不能轻饶了他！",
 
-	["#_liruilan"] = "吊兰",
+	["#liruilan"] = "吊兰",
 	["liruilan"] = "李瑞兰",
 	["cv:liruilan"] = "鬼心【⑤品倦客】",
 	["designer:liruilan"] = "烨子&大Ｒ",
@@ -128,7 +128,7 @@ return {
 	["$yinlang1"] = "恁久才来与我一会。",
 	["$yinlang2"] = "大郎，近来可好？",
 
-	["#_liqiaonu"] = "断肠草",
+	["#liqiaonu"] = "断肠草",
 	["liqiaonu"] = "李巧奴",
 	["cv:liqiaonu"] = "蒲小猫【夜澜锦音】",
 	["chiyuan"] = "痴怨",
@@ -145,7 +145,7 @@ return {
 	["$huoshui1"] = "你若去那梁山，再也休上我门！",
 	["$huoshui2"] = "哼！你去便是了！",
 
-	["#_jincuilian"] = "四叶草",
+	["#jincuilian"] = "四叶草",
 	["jincuilian"] = "金翠莲",
 	["designer:jincuilian"] = "烨子&仙道",
 	["cv:jincuilian"] = "Paddy【№第④声】",
@@ -161,7 +161,7 @@ return {
 	["$zhiyu1"] = "幸得惊扰得提辖。",
 	["$zhiyu2"] = "相逢何必曾相识。",
 
-	["#_jiashi"] = "毒蔷薇",
+	["#jiashi"] = "毒蔷薇",
 	["jiashi"] = "贾氏",
 	["cv:jiashi"] = "呼呼",
 	["coder:jiashi"] = "凌天翼",
@@ -174,7 +174,7 @@ return {
 	["$zhuying1"] = "奴家这厢有礼了～",
 	["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
 
-	["#_ximenqing"] = "大官人",
+	["#ximenqing"] = "大官人",
 	["ximenqing"] = "西门庆",
 
 	["caiquan"] = "猜拳",

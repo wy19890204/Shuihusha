@@ -7,7 +7,7 @@ return {
 	["DefaultCoder"] = "宇文天启",
 	["UnknowNick"] = "无绰号",
 
-	["#_huarong"] = "小李广",
+	["#huarong"] = "小李广",
 	["huarong"] = "花荣",
 	["cv:huarong"] = "烨子【剪刀剧团】",
 	["jingzhun"] = "精准",
@@ -22,7 +22,7 @@ return {
 	["$kaixian1"] = "弓开秋月分明。",
 	["$kaixian2"] = "汝等可敢踏前一步？！",
 
-	["#_liying"] = "扑天雕",
+	["#liying"] = "扑天雕",
 	["liying"] = "李应",
 	["cv:liying"] = "烨子【剪刀剧团】",
 	["kong1iang"] = "控粮",
@@ -31,7 +31,7 @@ return {
 	["$kong1iang1"] = "大军未动，粮草先行！",
 	["$kong1iang2"] = "粮草器械，尽在掌控之中。",
 
-	["#_luzhishen"] = "花和尚",
+	["#luzhishen"] = "花和尚",
 	["luzhishen"] = "鲁智深",
 	["cv:luzhishen"] = "流岚【裔美声社】",
 	["liba"] = "力拔",
@@ -45,7 +45,7 @@ return {
 	["$zuohua2"] = "听潮而圆，听信而寂。",
 	["$zuohua1"] = "钱塘江上潮信来，今日方知我是我。",
 
-	["#_wusong"] = "行者",
+	["#wusong"] = "行者",
 	["wusong"] = "武松",
 	["fuhu"] = "伏虎",
 	["cv:wusong"] = "猎狐【声声melody】",
@@ -55,7 +55,7 @@ return {
 	["$fuhu1"] = "小小大虫，有何可惧？",
 	["$fuhu2"] = "哨棒断了，俺还有一双拳头！",
 
-	["#_shijin"] = "九纹龙",
+	["#shijin"] = "九纹龙",
 	["shijin"] = "史进",
 	["wubang"] = "舞棒",
 	["cv:shijin"] = "烨子【剪刀剧团】",
@@ -69,7 +69,7 @@ return {
 	["$xiagu1"] = "大郎在此，这厮休得无礼。",
 	["$xiagu2"] = "诸位哥哥，小弟来挡！",
 
-	["#_yanqing"] = "浪子",
+	["#yanqing"] = "浪子",
 	["yanqing"] = "燕青",
 	["dalei"] = "打擂",
 	["cv:yanqing"] = "烨子【剪刀剧团】",
@@ -86,7 +86,7 @@ return {
 	["$fuqin1"] = "听听最后的旋律吧！",
 	["$fuqin2"] = "一曲激昂助士气！",
 
-	["#_zhuwu"] = "神机军师",
+	["#zhuwu"] = "神机军师",
 	["zhuwu"] = "朱武",
 	["pozhen"] = "破阵",
 	["cv:zhuwu"] = "烨子【剪刀剧团】",
@@ -103,7 +103,7 @@ return {
 	["$buzhen"] = "汝当作先锋，汝可为接应，\
 大军严守生门，此战可定也！",
 
-	["#_hantao"] = "百胜将",
+	["#hantao"] = "百胜将",
 	["hantao"] = "韩滔",
 	["taolue"] = "韬略",
 	["cv:hantao"] = "猎狐【声声melody】",
@@ -116,7 +116,7 @@ return {
 	["$taolue1"] = "斩杀敌将，犹如儿戏！",
 	["$taolue2"] = "人上有人，天外有天。",
 
-	["#_oupeng"] = "摩云金翅",
+	["#oupeng"] = "摩云金翅",
 	["oupeng"] = "欧鹏",
 	["zhanchi"] = "展翅",
 	["designer:oupeng"] = "烨子&凌天翼",
@@ -130,7 +130,7 @@ return {
 	["$zhanchi2"] = "我要飞得更高！",
 	["$zhanchi3"] = "以吾之血，毕其功于一役！",
 
-	["#_shien"] = "金眼彪",
+	["#shien"] = "金眼彪",
 	["shien"] = "施恩",
 	["cv:shien"] = "明哲【剪刀剧团】",
 	["longluo"] = "笼络",
@@ -145,7 +145,7 @@ return {
 	["$xiaozai1"] = "上下使得银两，可免三百杀威棒！",
 	["$xiaozai2"] = "财可通神，只当破财消灾。",
 
-	["#_luozhenren"] = "半仙",
+	["#luozhenren"] = "半仙",
 	["luozhenren"] = "罗真人",
 	["cv:luozhenren"] = "东方胤弘【夜澜锦音】",
 	["butian"] = "卜天",
@@ -158,7 +158,7 @@ return {
 	["$huaxian1"] = "脚著谢公屐，身登青云梯。",
 	["$huaxian2"] = "天劫已度，上可登仙。",
 
-	["#_wangqing"] = "楚王",
+	["#wangqing"] = "楚王",
 	["wangqing"] = "王庆",
 	["qibing"] = "起兵",
 	["cv:wangqing"] = "猎狐【声声melody】",

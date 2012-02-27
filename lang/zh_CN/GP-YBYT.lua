@@ -4,7 +4,7 @@ local tt = {
 	["YBYT"] = "义薄云天",
 	["coder:YBYT"] = "战栗贵公子",
 
-	["#_qiongying"] = "琼矢镞",
+	["#qiongying"] = "琼矢镞",
 	["qiongying"] = "琼英",
 	["designer:qiongying"] = "烨子&凌天翼",
 	["cv:qiongying"] = "Paddy【№第④声】",
@@ -24,7 +24,7 @@ local tt = {
 	["$yinyu10"] = "飞石不断！",
 	["~qiongying"] = "节儿，保重。",
 
-	["#_xuning"] = "金枪手",
+	["#xuning"] = "金枪手",
 	["xuning"] = "徐宁",
 	["cv:xuning"] = "佚名",
 	["goulian"] = "钩镰",
@@ -37,7 +37,7 @@ local tt = {
 	["$goulian2"] = "钩镰枪并挠钩，正是此法。",
 	["~xuning"] = "虎翼已折，大宋哀矣。",
 
-	["#_baoxu"] = "丧门神",
+	["#baoxu"] = "丧门神",
 	["baoxu"] = "鲍旭",
 	["cv:baoxu"] = "佚名",
 	["sinue"] = "肆虐",
@@ -48,7 +48,7 @@ local tt = {
 --	["~baoxu"] = "被……惩戒了。",
 	["~baoxu"] = "急于抢功可恨误入城池",
 
-	["#_xiangchong"] = "八臂哪吒",
+	["#xiangchong"] = "八臂哪吒",
 	["xiangchong"] = "项充",
 	["cv:xiangchong"] = "爪子",
 	["xuandao"] = "旋刀",
@@ -59,7 +59,7 @@ local tt = {
 	["$xuandao2"] = "飞刀贯心！",
 	["~xiangchong"] = "命绝～睦州城～",
 
-	["#_jindajian"] = "玉臂匠",
+	["#jindajian"] = "玉臂匠",
 	["jindajian"] = "金大坚",
 	["cv:jindajian"] = "卡修【剪刀剧团】",
 	["fangzao"] = "仿造",
@@ -72,7 +72,7 @@ local tt = {
 	["$jiangxin2"] = "精华在笔端，咫尺匠心难！",
 	["~jindajian"] = "印信雕刻竟纰漏百出，吾愧矣！",
 
-	["#_yangchun"] = "白花蛇",
+	["#yangchun"] = "白花蛇",
 	["yangchun"] = "杨春",
 	["cv:yangchun"] = "佚名",
 	["shexin"] = "蛇信",
@@ -81,7 +81,7 @@ local tt = {
 	["$shexin2"] = "辣手摧花！",
 	["~yangchun"] = "居然……比我还狠……",
 
-	["#_songqing"] = "铁扇子",
+	["#songqing"] = "铁扇子",
 	["songqing"] = "宋清",
 	["cv:songqing"] = "烨子【剪刀剧团】",
 	["coder:songqing"] = "战栗贵公子、宇文天启",
@@ -95,7 +95,7 @@ local tt = {
 	["$jiayao2"] = "美酒佳肴，岂不妙哉！",
 	["~songqing"] = "天下哪有不散的宴席。",
 
-	["#_xueyong"] = "病大虫",
+	["#xueyong"] = "病大虫",
 	["xueyong"] = "薛永",
 	["cv:xueyong"] = "爪子",
 	["coder:xueyong"] = "战栗贵公子、宇文天启",
@@ -107,7 +107,7 @@ local tt = {
 	["~xueyong"] = "城管来了，快跑啊……",
 --	["~xueyong"] = "遇到高手了！",
 
-	["#_tanglong"] = "金钱豹子",
+	["#tanglong"] = "金钱豹子",
 	["tanglong"] = "汤隆",
 	["designer:tanglong"] = "宇文天启",
 	["cuihuo"] = "淬火",
@@ -116,7 +116,7 @@ local tt = {
 	[":jintang"] = "<b>锁定技</b>，当你受到装备有武器的角色造成的伤害时，有30%的反伤几率；你每装备一件装备，反伤几率增加15%",
 	["~tanglong"] = "祸起萧墙……破金汤……",
 
-	["#_zouyuan"] = "出林龙",
+	["#zouyuan"] = "出林龙",
 	["zouyuan"] = "邹渊",
 	["cv:zouyuan"] = "佚名",
 	["longao"] = "龙傲",
@@ -127,7 +127,7 @@ local tt = {
 	["$longao2"] = "这般手段，可不适用。",
 	["~zouyuan"] = "今夜山寨里，梦魂安得空回去？",
 
-	["#_zhufu"] = "笑面虎",
+	["#zhufu"] = "笑面虎",
 	["zhufu"] = "朱富",
 	["cv:zhufu"] = "明哲【剪刀剧团】",
 	["coder:zhufu"] = "战栗贵公子、宇文天启",
@@ -143,7 +143,7 @@ local tt = {
 	["$guitai2"] = "且慢！这可是毒药！",
 	["~zhufu"] = "难道笑也有错？",
 
-	["#_gaolian"] = "高唐魔君",
+	["#gaolian"] = "高唐魔君",
 	["gaolian"] = "高廉",	
 	["cv:gaolian"] = "烨子【剪刀剧团】",
 	["guibing"] = "鬼兵",

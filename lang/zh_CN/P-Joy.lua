@@ -38,7 +38,7 @@ return {
 -- generals
 	["joyer"] = "满头包",
 
-	["#_miheng"] = "孤胆愤青",
+	["#miheng"] = "孤胆愤青",
 	["miheng"] = "祢衡",
 	["designer:miheng"] = "Log67、宇文天启",
 	["cv:miheng"] = "",
@@ -98,7 +98,7 @@ return {
 	["#Numa_git"] = "语录词汇匹配失败！你没有获得任何效果",
 	["~miheng"] = "独在异乡为异客，穿越之后倍思亲……",
 
-	["#_maque"] = "国粹精品", -- hp12
+	["#maque"] = "国粹精品", -- hp12
 	["maque"] = "麻雀",
 	["designer:maque"] = "宇文天启",
 	["cv:maque"] = "",

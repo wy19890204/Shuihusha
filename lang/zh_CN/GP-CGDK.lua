@@ -3,7 +3,7 @@
 return {
 	["CGDK"] = "长歌当哭",
 
-	["#_wuyong"] = "智多星",
+	["#wuyong"] = "智多星",
 	["wuyong"] = "吴用",
 	["cv:wuyong"] = "佚名",
 	["coder:wuyong"] = "宇文天启",
@@ -23,7 +23,7 @@ return {
 	["$zhiqu2"] = "天机不可泄露。",
 	["~wuyong"] = "八百里水泊，化作南柯一梦。",
 
-	["#_ruanxiaoqi"] = "活阎罗",
+	["#ruanxiaoqi"] = "活阎罗",
 	["ruanxiaoqi"] = "阮小七",
 	["cv:ruanxiaoqi"] = "爪子",
 	["jueming"] = "绝命",
@@ -37,7 +37,7 @@ return {
 	["$jiuhan2"] = "吾先尝尝这御酒是何滋味。",
 	["~ruanxiaoqi"] = "爷爷生在天地间，不求富贵不做官。",
 
-	["#_xiebao"] = "双尾蝎",
+	["#xiebao"] = "双尾蝎",
 	["xiebao"] = "解宝",
 	["cv:xiebao"] = "佚名",
 	["liehuo"] = "猎获",
@@ -46,7 +46,7 @@ return {
 	["$liehuo2"] = "你跑不了！",
 	["~xiebao"] = "哥！",
 
-	["#_xiaorang"] = "圣手书生",
+	["#xiaorang"] = "圣手书生",
 	["xiaorang"] = "萧让",
 	["cv:xiaorang"] = "卡修【剪刀剧团】",
 	["coder:xiaorang"] = "宇文天启、战栗贵公子",
@@ -62,7 +62,7 @@ return {
 	["$zhaixing2"] = "文不按古！",
 	["~xiaorang"] = "心已无声，生命，可否仿造？",
 
-	["#_yanglin"] = "锦豹子",
+	["#yanglin"] = "锦豹子",
 	["yanglin"] = "杨林",
 	["cv:yanglin"] = "蓝调【裔美声社】",
 	["citan"] = "刺探",
@@ -71,7 +71,7 @@ return {
 	["$citan2"] = "你的行踪暴露了！",
 	["~yanglin"] = "不好！中计了！",
 
-	["#_guosheng"] = "赛仁贵",
+	["#guosheng"] = "赛仁贵",
 	["cv:guosheng"] = "佚名",
 	["guosheng"] = "郭盛",
 	["bingji"] = "并戟",
@@ -80,7 +80,7 @@ return {
 	["$bingji2"] = "来一个，杀一个，来一对，死一双！",
 	["~guosheng"] = "巨石滚落，闪避不及……",
 
-	["#_fanrui"] = "混世魔王",
+	["#fanrui"] = "混世魔王",
 	["fanrui"] = "樊瑞",
 	["cv:fanrui"] = "烨子【剪刀剧团】",
 	["kongmen"] = "空门",
@@ -96,7 +96,7 @@ return {
 	["$qimen4"] = "生门为生，死门为死。",
 	["~fanrui"] = "吉凶自有天数。",
 
-	["#_malin"] = "铁笛仙",
+	["#malin"] = "铁笛仙",
 	["malin"] = "马麟",
 	["cv:malin"] = "烨子【剪刀剧团】",
 	["lingdi"] = "灵笛",
@@ -109,7 +109,7 @@ return {
 	["$qiaodou2"] = "别紧张，听吾一曲，休养生息。",
 	["~malin"] = "笛声如水，难吹万种风情。",
 
-	["#_tongwei"] = "出洞蛟",
+	["#tongwei"] = "出洞蛟",
 	["tongwei"] = "童威",
 	["cv:tongwei"] = "佚名",
 	["dalang"] = "大浪",
@@ -124,7 +124,7 @@ return {
 	["$qianshui2"] = "汝可敢入水与吾一战？",
 	["~tongwei"] = "祗看后浪推前浪。",
 
-	["#_zhengtianshou"] = "白面郎君",
+	["#zhengtianshou"] = "白面郎君",
 	["zhengtianshou"] = "郑天寿",
 	["cv:zhengtianshou"] = "烨子【剪刀剧团】",
 	["coder:zhengtianshou"] = "凌天翼",
@@ -139,7 +139,7 @@ return {
 	["$qiaojiang2"] = "全力以赴，一举拿下！",
 	["~zhengtianshou"] = "有勇无谋，难以取胜！",
 
-	["#_lili"] = "催命判官",
+	["#lili"] = "催命判官",
 	["lili"] = "李立",
 	["cv:lili"] = "爪子",
 	["duoming"] = "夺命",
@@ -152,7 +152,7 @@ return {
 	["$moucai2"] = "钱财乃身外之物，你留着也没用了！",
 	["~lili"] = "生不带来，死不带去。",
 
-	["#_sunerniang"] = "母夜叉",
+	["#sunerniang"] = "母夜叉",
 	["sunerniang"] = "孙二娘",
 	["cv:sunerniang"] = "九辨【重华剧社】",
 	["heidian"] = "黑店",

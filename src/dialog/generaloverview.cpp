@@ -41,9 +41,9 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             : QString::number(general->getMaxHp() - 1) + "/" + QString::number(general->getMaxHp());
         package = Sanguosha->translate(general->getPackage());
 
-        QString nickname = Sanguosha->translate("#_" + general->objectName());
+        QString nickname = Sanguosha->translate("#" + general->objectName());
         QTableWidgetItem *nickname_item;
-        if(!nickname.startsWith("#_"))
+        if(!nickname.startsWith("#"))
             nickname_item = new QTableWidgetItem(nickname);
         else
             nickname_item = new QTableWidgetItem(Sanguosha->translate("UnknowNick"));

@@ -3,7 +3,7 @@
 return {
 	["sp"] = "SP",
 
-	["#_zhaoji"] = "宋徽宗",
+	["#zhaoji"] = "宋徽宗",
 	["zhaoji"] = "赵佶",
 	["designer:zhaoji"] = "烨子&群龙令",
 	["cv:zhaoji"] = "烨子【剪刀剧团】",
@@ -19,7 +19,7 @@ return {
 	["$nongquan2"] = "退朝，退朝。",
 	["~zhaoji"] = "家山回首三千里，目断山南无雁飞。",
 
-	["#_jiangsong"] = "呼保义",
+	["#jiangsong"] = "呼保义",
 	["jiangsong"] = "宋江",
 	["cv:jiangsong"] = "爪子",
 	["yuzhong"] = "愚忠",
@@ -38,7 +38,7 @@ return {
 	["$yuzhong4"] = "此乃迫不得已而为之。",
 	["~jiangsong"] = "宁可朝廷负我，我忠心不负朝廷！",
 	
-	["#_chaogai"] = "托塔天王",
+	["#chaogai"] = "托塔天王",
 	["chaogai"] = "晁盖",
 	["cv:chaogai"] = "爪子",
 	["jiebao"] = "劫宝",
@@ -55,7 +55,7 @@ return {
 	["$dushi"] = "杀得此贼者，当推山寨之主！",
 	["~chaogai"] = "不要忘记替我报仇！",
 
-	["#_wanglun"] = "白衣秀士",
+	["#wanglun"] = "白衣秀士",
 	["wanglun"] = "王伦",
 	["cv:wanglun"] = "烨子【剪刀剧团】",
 	["chengfu"] = "城府",
@@ -72,7 +72,7 @@ return {
 	["$xiaduo2"] = "汝可取得投名状？",
 	["~wanglun"] = "可恨落此下场！",
 
-	["#_ximenjinge"] = "光之子",
+	["#ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
 	["designer:ximenjinge"] = "江山英魂",
 	["youxia"] = "游侠",

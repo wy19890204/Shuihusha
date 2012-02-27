@@ -3,7 +3,7 @@
 return {
 	["XZDD"] = "血战到底",
 
-	["#_linchong"] = "豹子头",
+	["#linchong"] = "豹子头",
 	["linchong"] = "林冲",
 	["cv:linchong"] = "猎狐【声声melody】",
 	["duijue"] = "对决",
@@ -12,7 +12,7 @@ return {
 	["$duijue1"] = "吾乃八十万禁军教头，豹子头林冲是也！",
 	["$duijue2"] = "一枪在手，试问天下英雄！",
 
-	["#_zhutong"] = "美髯公",
+	["#zhutong"] = "美髯公",
 	["zhutong"] = "朱仝",
 	["designer:zhutong"] = "烨子&喀什葛尔胡杨",
 	["cv:zhutong"] = "爪子",
@@ -24,7 +24,7 @@ return {
 	["$yixian1"] = "事不宜迟，兄弟快走！",
 	["$yixian2"] = "上山藏起来！这边我自有计较。",
 
-	["#_yangzhi"] = "青面兽",
+	["#yangzhi"] = "青面兽",
 	["yangzhi"] = "杨志",
 	["cv:yangzhi"] = "猎狐【声声melody】",
 	["maidao"] = "卖刀",
@@ -42,7 +42,7 @@ return {
 	["$fengmang2"] = "吹毛得过！",
 	["$fengmang3"] = "杀人不见血！",
 
-	["#_likui"] = "黑旋风",
+	["#likui"] = "黑旋风",
 	["likui"] = "李逵",
 	["designer:likui"] = "凌天翼",
 	["cv:likui"] = "佚名",
@@ -52,7 +52,7 @@ return {
 	["$shalu1"] = "吃我一斧！",
 	["$shalu2"] = "嘿嘿～",
 
-	["#_zhangshun"] = "浪里白条",
+	["#zhangshun"] = "浪里白条",
 	["zhangshun"] = "张顺",
 	["cv:zhangshun"] = "烨子【剪刀剧团】",
 	["shunshui"] = "顺水",
@@ -65,7 +65,7 @@ return {
 	["$lihun1"] = "涌金门外水滔滔，一点离魂何处飘？",
 	["$lihun2"] = "能感龙君权作神，势杀天定血带刀！",
 
-	["#_weidingguo"] = "神火将",
+	["#weidingguo"] = "神火将",
 	["weidingguo"] = "魏定国",
 	["cv:weidingguo"] = "烨子【剪刀剧团】",
 	["coder:weidingguo"] = "凌天翼",
@@ -85,7 +85,7 @@ return {
 	["$shenhuo3"] = "看我焚诀秘法！",
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
 
-	["#_huangxin"] = "镇三山",
+	["#huangxin"] = "镇三山",
 	["huangxin"] = "黄信",
 	["designer:huangxin"] = "烨子&裁之刃·散",
 	["cv:huangxin"] = "流岚【裔美声社】",
@@ -94,7 +94,7 @@ return {
 	["$tongxia1"] = "穷兵黩武，动费万计。",
 	["$tongxia2"] = "三地军需，由我调拨！",
 
-	["#_yanshun"] = "锦毛虎",
+	["#yanshun"] = "锦毛虎",
 	["yanshun"] = "燕顺",
 	["cv:yanshun"] = "猎狐【声声melody】",
 	["coder:yanshun"] = "凌天翼",
@@ -104,7 +104,7 @@ return {
 	["$huxiao2"] = "小的们，统统给我抓起来！",
 	["$huxiao3"] = "谁敢擅入清风寨？",
 
-	["#_peixuan"] = "铁面孔目",
+	["#peixuan"] = "铁面孔目",
 	["peixuan"] = "裴宣",
 	["cv:peixuan"] = "倔强的小红军【剪刀剧团】",
 	["shenpan"] = "审判",
@@ -117,7 +117,7 @@ return {
 	["$binggong1"] = "可知这寨中规矩？",
 	["$binggong2"] = "定要赏罚分明。",
 
-	["#_lizhong"] = "打虎将",
+	["#lizhong"] = "打虎将",
 	["lizhong"] = "李忠",
 	["cv:lizhong"] = "刺客【怀旧配音联盟】",
 	["coder:lizhong"] = "凌天翼",
@@ -126,7 +126,7 @@ return {
 	["$linse1"] = "嗯？休要打吾主意！",
 	["$linse2"] = "此地无银三百两。",
 
-	["#_gongwang"] = "花项虎",
+	["#gongwang"] = "花项虎",
 	["gongwang"] = "龚旺",
 	["cv:gongwang"] = "猎狐【声声melody】",
 	["feiqiang"] = "飞枪",
@@ -137,7 +137,7 @@ return {
 	["$feiqiang1"] = "杀汝等个措手不及！",
 	["$feiqiang2"] = "看我飞枪！",
 
-	["#_shiqian"] = "鼓上蚤",
+	["#shiqian"] = "鼓上蚤",
 	["shiqian"] = "时迁",
 	["cv:shiqian"] = "爪子",
 	["coder:shiqian"] = "凌天翼",
