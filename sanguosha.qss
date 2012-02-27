@@ -4,6 +4,12 @@ QWidget#skill_bar_container{
 	color:white;
 }
 
+QPushButton[private_pile="true"]{
+    background-color: rgba(43,63,53,100);
+    border-radius: 5px;
+    color: white;
+}
+
 #skill_bar_container QPushButton{
 	background-image: url(image/system/button/back.png);
         border: 1px solid gray;
