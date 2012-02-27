@@ -5,7 +5,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 class Tongwu: public TriggerSkill{
 public:

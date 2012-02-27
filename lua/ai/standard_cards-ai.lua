@@ -6,6 +6,13 @@ local function hasExplicitRebel(room)
 	return false
 end
 
+local function hasGoldArmor(self, enemy)
+	if enemy:hasSkill("jinjia") and not enemy:getArmor() then
+		return true
+	end
+	return self:isEquip("GoldArmor", enemy)
+end
+
 sgs.ai_slash_prohibit = {}
 function SmartAI:slashProhibit(card,enemy)
 	card = card or sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
@@ -24,7 +31,7 @@ function SmartAI:slashProhibit(card,enemy)
 		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
 	else
-		if card:inherits("NatureSlash") and self:isEquip("GoldArmor", enemy) then
+		if card:inherits("NatureSlash") and hasGoldArmor(self, enemy) then
 			return true
 		end
 

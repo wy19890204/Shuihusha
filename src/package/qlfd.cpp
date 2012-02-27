@@ -4,7 +4,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "qlfd.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 YushuiCard::YushuiCard(){
     once = true;

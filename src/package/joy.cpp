@@ -278,7 +278,7 @@ JoyPackage::JoyPackage()
 }
 
 //joy generals : miheng
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "settings.h"
 #include "carditem.h"
 class Jieao: public PhaseChangeSkill{

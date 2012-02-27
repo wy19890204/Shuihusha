@@ -6,7 +6,7 @@
 #include "standard.h"
 #include "clientplayer.h"
 #include "plough.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 class Fushang: public MasochismSkill{
 public:

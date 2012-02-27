@@ -1,4 +1,4 @@
--- translation for TocheckPackage
+-- translation for ManeuveringPackage
 
 return {
 	["tocheck"] = "地煞卡牌包",

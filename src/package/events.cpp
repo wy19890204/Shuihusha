@@ -2,7 +2,7 @@
 #include "skill.h"
 #include "room.h"
 #include "carditem.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "clientplayer.h"
 #include "engine.h"
 

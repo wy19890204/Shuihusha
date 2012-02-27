@@ -2904,7 +2904,7 @@ dofile "lua/ai/value_config.lua"
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
-dofile "lua/ai/tocheck-ai.lua"
+dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/chat-ai.lua"
 dofile "lua/ai/basara-ai.lua"
@@ -2912,7 +2912,7 @@ dofile "lua/ai/hegemony-ai.lua"
 dofile "lua/ai/hulaoguan-ai.lua"
 dofile "lua/ai/guanxing-ai.lua"
 
-local loaded = "standard|standard_cards|tocheck|plough|events"
+local loaded = "standard|standard_cards|maneuvering|plough|events"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 

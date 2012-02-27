@@ -6,7 +6,7 @@
 #include "engine.h"
 #include "ai.h"
 #include "plough.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 class SWPattern: public CardPattern{
 public:
@@ -564,7 +564,7 @@ void ShexinCard::onEffect(const CardEffectStruct &effect) const{
     room->askForAG(effect.from, cardes, true, "shexin");
     QList<const Card *> cards = effect.to->getHandcards();
     foreach(const Card *card, cards){
-        if(card->inherits("EquipCard") || card->inherits("TrickCard")){
+        if(!card->inherits("BasicCard")){
             room->showCard(effect.to, card->getEffectiveId());
             room->getThread()->delay();
             room->throwCard(card);
