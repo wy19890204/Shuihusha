@@ -56,6 +56,10 @@ sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_e
 		return {}
 	end
 end
+function sgs.ai_slash_prohibit.danshu(self, to)
+	local x = to:getLostHp()
+	return self.player:getHandcardNum() <= x + 1
+end
 
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
@@ -116,6 +120,11 @@ end
 sgs.ai_skill_invoke["baoguo"] = true
 sgs.ai_skill_invoke["yinyu"] = true
 
+-- yueli
+function sgs.ai_slash_prohibit.yueli(self, to)
+	if self:isEquip("EightDiagram", to) then return true end
+end
+
 -- taohui
 sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
 	self:sort(self.friends, "handcard")
@@ -135,6 +144,9 @@ sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	local target = self.enemies[1]
 	if target then return "@HuanshuCard=.".."->"..target:objectName() end
 	return "."
+end
+function sgs.ai_slash_prohibit.huanshu(self, to)
+	return not (self:hasSkills("butian|shenpan|yixing") or self:isEquip("MeteorSword"))
 end
 
 -- cuju
