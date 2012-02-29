@@ -174,19 +174,13 @@ QWidget *ServerDialog::createAdvancedTab(){
     endless_timebox->setRange(1, 100);
     endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
     endless_timebox->setToolTip(tr("This box set the swap times"));
-    endless_timebox->setVisible(Config.EnableEndless);
-    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
 
     max_hp_label = new QLabel(tr("Max HP scheme"));
-    max_hp_label->setVisible(Config.Enable2ndGeneral);
-    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
     max_hp_scheme_combobox = new QComboBox;
     max_hp_scheme_combobox->addItem(tr("Sum - 3"));
     max_hp_scheme_combobox->addItem(tr("Minimum"));
     max_hp_scheme_combobox->addItem(tr("Average"));
     max_hp_scheme_combobox->setCurrentIndex(Config.MaxHpScheme);
-    max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
-    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
 
     basara_checkbox = new QCheckBox(tr("Enable Basara"));
     basara_checkbox->setChecked(Config.EnableBasara);
@@ -241,6 +235,14 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
+
+    endless_timebox->setVisible(Config.EnableEndless);
+    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
+    max_hp_label->setVisible(Config.Enable2ndGeneral);
+    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
+    max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
+    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
+
     return widget;
 }
 

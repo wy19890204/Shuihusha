@@ -53,7 +53,7 @@ void Settings::init(){
         QStringList banlist;
         banlist << "CGDK" << "YBYT";
         banlist << "test" << "god" << "sp" << "interchange"
-                << "joy" << "kuso" << "joyer";
+                << "guben" << "joy" << "kuso" << "joyer";
 
         setValue("BanPackages", banlist);
     }
