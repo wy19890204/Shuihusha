@@ -1059,6 +1059,7 @@
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="51"/>
         <location filename="src/dialog/customassigndialog.cpp" line="55"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="70"/>
         <source>Unknown</source>
         <translation>未分配</translation>
     </message>
@@ -1094,17 +1095,32 @@
         <translation>开局信息</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="85"/>
-        <source>Starter</source>
-        <translation>开局者</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="86"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="88"/>
         <source>Start Draw</source>
         <translation>开局摸牌数</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="95"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="89"/>
+        <source>marks</source>
+        <translation>标记</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="90"/>
+        <source>pieces</source>
+        <translation>个</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="93"/>
+        <source>None</source>
+        <translation>无</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="108"/>
+        <source>%1 mark</source>
+        <translation>%1标记</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="136"/>
         <source>General</source>
         <translation>主将</translation>
     </message>
@@ -1134,7 +1150,12 @@
         <translation>分配摸牌堆</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="113"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="154"/>
+        <source>RandomRoles</source>
+        <translation>所有角色随机位置</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="156"/>
         <source>Max Hp</source>
         <translation>体力上限</translation>
     </message>
@@ -1146,12 +1167,12 @@
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="127"/>
         <source>General Self Select</source>
-        <translation>开局自选主将</translation>
+        <translation>主将自选</translation>
     </message>
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="128"/>
         <source>General2 Self Select</source>
-        <translation>开局自选副将</translation>
+        <translation>副将自选</translation>
     </message>
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="130"/>
@@ -1164,7 +1185,12 @@
         <translation>武将横置</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="133"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="176"/>
+        <source>Set Extra Skills</source>
+        <translation>设置额外技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="178"/>
         <source>After this turn </source>
         <translation>次回合结束后</translation>
     </message>
@@ -1210,7 +1236,32 @@
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="191"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="198"/>
+        <source>Default load</source>
+        <translation>载入最近一次的自定义信息</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="239"/>
+        <source>Move Up</source>
+        <translation>上移</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="240"/>
+        <source>Move Down</source>
+        <translation>下移</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="241"/>
+        <source>Move Player List</source>
+        <translation>移动角色列表</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="242"/>
+        <source>Move Pile List</source>
+        <translation>移动摸牌堆列表</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="260"/>
         <source>Equips</source>
         <translation>装备区</translation>
     </message>
@@ -1255,7 +1306,12 @@
         <translation>打开小型场景设置</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="1086"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1290"/>
+        <source>There is not a starter</source>
+        <translation>没有设定开局者</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1447"/>
         <source>Save mini scenario settings</source>
         <translation>小型场景保存设置</translation>
     </message>
@@ -1266,13 +1322,17 @@
         <translation>场景信息文档(*.txt)</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="822"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="979"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="988"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="992"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="1011"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="1025"/>
-        <location filename="src/dialog/customassigndialog.cpp" line="1035"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="87"/>
+        <source>Set as Starter</source>
+        <translation>设为开局者</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1125"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1290"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1318"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1327"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1363"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1373"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -1287,12 +1347,7 @@
         <translation>主公角色设置过多</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="988"/>
-        <source>No lord in the game</source>
-        <translation>没有主公信息</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="992"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1327"/>
         <source>No different camps in the game</source>
         <translation>没有相对立的阵营</translation>
     </message>
@@ -3629,6 +3684,35 @@
         <location filename="src/core/skill.cpp" line="43"/>
         <source> [Wake]</source>
         <translation> [觉醒技]</translation>
+    </message>
+</context>
+<context>
+    <name>SkillAssignDialog</name>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1664"/>
+        <location filename="src/dialog/customassigndialog.cpp" line="1723"/>
+        <source>Skill Chosen</source>
+        <translation>技能选择</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1668"/>
+        <source>Select Skill from Generals</source>
+        <translation>从武将中选择技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1669"/>
+        <source>Delete Current Skill</source>
+        <translation>移除此技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1671"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1672"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
