@@ -138,7 +138,7 @@ public:
 
     // interactive methods
     void activate(ServerPlayer *player, CardUseStruct &card_use);
-    Card::Suit askForSuit(ServerPlayer *player);
+    Card::Suit askForSuit(ServerPlayer *player, const QString &reason);
     QString askForKingdom(ServerPlayer *player);
     bool askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data = QVariant());
     QString askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices);
@@ -171,6 +171,7 @@ public:
     void broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
     void broadcastInvoke(const char *method, const QString &arg = ".", ServerPlayer *except = NULL);
     void startTest(const QString &to_test);
+    void networkDelayTestCommand(ServerPlayer *player, const QString &);
     void showMsgbox(ServerPlayer *player, const QString &title, const QString &explanation = QString());
 
 protected:
@@ -227,6 +228,7 @@ private:
     void makeDamage(const QStringList &texts);
     void makeKilling(const QStringList &texts);
     void makeReviving(const QStringList &texts);
+    void doScript(const QString &script);
 
 private slots:
     void reportDisconnection();

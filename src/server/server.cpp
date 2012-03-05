@@ -184,8 +184,8 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     basara_checkbox = new QCheckBox(tr("Enable Basara"));
     basara_checkbox->setChecked(Config.EnableBasara);
-    basara_checkbox->setEnabled(second_general_checkbox->isChecked());
-    connect(second_general_checkbox,SIGNAL(toggled(bool)),basara_checkbox, SLOT(setEnabled(bool)));
+    updateButtonEnablility(mode_group->checkedButton());
+    connect(mode_group,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(updateButtonEnablility(QAbstractButton*)));
 
     QPushButton *banpair_button = new QPushButton(tr("Ban pairs table ..."));
     BanPairDialog *banpair_dialog = new BanPairDialog(this);
@@ -279,6 +279,33 @@ void ServerDialog::ensureEnableAI(){
     ai_enable_checkbox->setChecked(true);
 }
 
+void ServerDialog::updateButtonEnablility(QAbstractButton *button)
+{
+    if(!button)return;
+    if(button->objectName().contains("scenario")
+            || button->objectName().contains("mini")
+            || button->objectName().contains("1v1")
+            || button->objectName().contains("1v3"))
+    {
+        basara_checkbox->setChecked(false);
+        basara_checkbox->setEnabled(false);
+    }
+    else
+    {
+        basara_checkbox->setEnabled(true);
+    }
+
+    if(button->objectName().contains("mini")){
+        mini_scene_button->setEnabled(true);
+        second_general_checkbox->setChecked(false);
+        second_general_checkbox->setEnabled(false);
+    }
+    else
+    {
+        second_general_checkbox->setEnabled(true);
+        mini_scene_button->setEnabled(false);
+    }
+}
 KOFBanlistDialog::KOFBanlistDialog(QDialog *parent)
     :QDialog(parent)
 {
@@ -487,26 +514,19 @@ QGroupBox *ServerDialog::createGameModeBox(){
         else if(Config.GameMode == "custom_scenario")
             mini_scenes->setChecked(true);
 
+
+
         mini_scene_button = new QPushButton(tr("Custom Mini Scene"));
         connect(mini_scene_button, SIGNAL(clicked()), this, SLOT(doCustomAssign()));
-        mini_scene_button->setEnabled(mini_scenes->isChecked());
-        /*mini_scene_button->setEnabled(mode_group->checkedButton() ?
+
+        mini_scene_button->setEnabled(mode_group->checkedButton() ?
                                           mode_group->checkedButton()->objectName() == "mini" :
-                                          false);*/
-        connect(mini_scenes, SIGNAL(toggled(bool)), mini_scene_button, SLOT(setEnabled(bool)));
+                                          false);
 
         item_list << HLay(scenario_button, scenario_combobox);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
     }
-
-    QRadioButton *button = new QRadioButton(tr("Custom Mode"));
-    button->setObjectName("custom");
-    button->setVisible(false);
-    mode_group->addButton(button);
-    item_list << button;
-    if(button->objectName() == Config.GameMode)
-        button->setChecked(true);
 
     QVBoxLayout *left = new QVBoxLayout;
     QVBoxLayout *right = new QVBoxLayout;

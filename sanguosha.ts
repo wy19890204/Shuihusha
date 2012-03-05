@@ -1059,7 +1059,7 @@
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="51"/>
         <location filename="src/dialog/customassigndialog.cpp" line="55"/>
-        <source>unknown</source>
+        <source>Unknown</source>
         <translation>未分配</translation>
     </message>
     <message>

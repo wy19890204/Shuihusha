@@ -5,6 +5,7 @@
 #include "ai.h"
 #include "settings.h"
 #include "recorder.h"
+#include "lua-wrapper.h"
 
 ServerPlayer::ServerPlayer(Room *room)
     : Player(room), socket(NULL), room(room),
@@ -193,6 +194,15 @@ void ServerPlayer::unicast(const QString &message) const{
 
     if(recorder)
         recorder->recordLine(message);
+}
+
+void ServerPlayer::startNetworkDelayTest(){
+    test_time = QDateTime::currentDateTime();
+    invoke("networkDelayTest");
+}
+
+qint64 ServerPlayer::endNetworkDelayTest(){
+    return test_time.msecsTo(QDateTime::currentDateTime());
 }
 
 void ServerPlayer::startRecord(){
@@ -402,9 +412,15 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
                 return true;
             if(!include_counterplot && card->objectName() == "nullification")
                 return true;
+
+            foreach(const Skill* skill, getVisibleSkillList()){
+                if(skill->inherits("LuaViewAsSkill")){
+                    const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(skill);
+                    if(luaskill->isEnabledAtNullification(this)) return true;
+                }
+            }
         }
     }
-
     return false;
 }
 
@@ -470,8 +486,8 @@ void ServerPlayer::turnOver(){
     room->getThread()->trigger(TurnedOver, this);
 }
 
-void ServerPlayer::play(){
-    if(getMark("poison") > 0 && !isAllNude()){
+void ServerPlayer::play(QList<Player::Phase> set_phases){
+	if(getMark("poison") > 0 && !isAllNude()){
         LogMessage log;
         log.from = this;
         log.type = "$Poison_lost";
@@ -482,29 +498,13 @@ void ServerPlayer::play(){
         room->sendLog(log);
     }
 
-    static QList<Phase> all_phases;
-    if(all_phases.isEmpty()){
-        all_phases << Start << Judge << Draw << Play
+    if(!set_phases.isEmpty()){
+        if(!set_phases.contains(NotActive))
+            set_phases << NotActive;
+    }
+    else
+        set_phases << Start << Judge << Draw << Play
                 << Discard << Finish << NotActive;
-    }
-
-    phases = all_phases;
-    while(!phases.isEmpty()){
-        Phase phase = phases.takeFirst();
-        setPhase(phase);
-        room->broadcastProperty(this, "phase");
-        room->getThread()->trigger(PhaseChange, this);
-
-        if(isDead() && phase != NotActive){
-            phases.clear();
-            phases << NotActive;
-        }
-    }
-}
-
-void ServerPlayer::play(QList<Player::Phase> &set_phases){
-    if(!set_phases.contains(NotActive))
-        set_phases << NotActive;
 
     phases = set_phases;
     while(!phases.isEmpty()){

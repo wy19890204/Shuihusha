@@ -38,6 +38,7 @@ SOURCES += src/main.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
 	src/dialog/halldialog.cpp \
+	src/package/package.cpp \
 	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-skillcards.cpp \
