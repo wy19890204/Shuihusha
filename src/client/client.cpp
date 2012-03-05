@@ -37,6 +37,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["hallEntered"] = &Client::hallEntered;
 
     callbacks["setup"] = &Client::setup;
+    callbacks["networkDelayTest"] = &Client::networkDelayTest;
     callbacks["addPlayer"] = &Client::addPlayer;
     callbacks["removePlayer"] = &Client::removePlayer;
     callbacks["startInXs"] = &Client::startInXs;
@@ -51,6 +52,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["revivePlayer"] = &Client::revivePlayer;
     callbacks["showCard"] = &Client::showCard;
     callbacks["setMark"] = &Client::setMark;
+    callbacks["doFilter"] = &Client::doFilter;
     callbacks["log"] = &Client::log;
     callbacks["speak"] = &Client::speak;
     callbacks["acquireSkill"] = &Client::acquireSkill;
@@ -177,6 +179,10 @@ void Client::signup(){
         }
         request(signup_str);
     }
+}
+
+void Client::networkDelayTest(const QString &){
+    request("networkDelayTest .");
 }
 
 void Client::request(const QString &message){
@@ -402,6 +408,7 @@ void Client::startInXs(const QString &left_seconds){
     int seconds = left_seconds.toInt();
     lines_doc->setHtml(tr("Game will start in <b>%1</b> seconds").arg(left_seconds));
 
+    emit start_in_xs();
     if(seconds == 0 && Sanguosha->getScenario(ServerInfo.GameMode) == NULL){
         emit avatars_hiden();
     }
@@ -541,7 +548,7 @@ void Client::hpChange(const QString &change_str){
 }
 
 void Client::setStatus(Status status){
-    if(this->status != status){
+    if(this->status != status||status == NotActive){
         this->status = status;
         emit status_changed(status);
     }
@@ -1196,6 +1203,10 @@ void Client::setMark(const QString &mark_str){
 
     ClientPlayer *player = getPlayer(who);
     player->setMark(mark, value);
+}
+
+void Client::doFilter(const QString &){
+    emit do_filter();
 }
 
 void Client::chooseSuit(){
