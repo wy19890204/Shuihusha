@@ -111,6 +111,11 @@ end
 -- panxin
 sgs.ai_skill_invoke["panxin"] = sgs.ai_skill_invoke["dujian"]
 
+-- foyuan
+function sgs.ai_slash_prohibit.foyuan(self)
+	if self.player:getGeneral():isMale() and not self.player:hasEquip() then return true end
+end
+
 -- banzhuang
 local banzhuang_skill={}
 banzhuang_skill.name = "banzhuang"

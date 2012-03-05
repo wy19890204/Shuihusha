@@ -1,3 +1,3 @@
 general:select|general2:select|role:rebel
-general:luzhishen|role:lord|maxhp:4|hp:4|equip:halberd|skill:huafo|starter:true
+general:luzhishen|role:lord|maxhp:4|hp:4|equip:halberd|acquireSkills:huafo|starter:true
 general:jincuilian|role:loyalist|maxhp:3|hp:3

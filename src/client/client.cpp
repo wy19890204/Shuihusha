@@ -585,7 +585,8 @@ QString Client::getPlayerName(const QString &str){
         return general_name;
 
     }else
-        return Sanguosha->translate(str);
+        return !Config.ShowAllName ? Sanguosha->translate(str) :
+                Sanguosha->translate("#" + str) + Sanguosha->translate(str);
 }
 
 QString Client::getPattern() const{

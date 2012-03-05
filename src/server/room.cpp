@@ -69,6 +69,8 @@ void Room::initCallbacks(){
     callbacks["trustCommand"] = &Room::trustCommand;
     callbacks["kickCommand"] = &Room::kickCommand;
     callbacks["surrenderCommand"] = &Room::surrenderCommand;
+
+    callbacks["networkDelayTestCommand"] = &Room::networkDelayTestCommand;
     callbacks["msgCommand"] = &Room::commonCommand;
 }
 
@@ -322,7 +324,7 @@ void Room::judge(JudgeStruct &judge_struct){
             ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
             if(source && source == player){
                 setPlayerFlag(player, "FuckLian");
-                const Card *fuck = askForCard(player, "fuckgaolian", "@fuckl", data);
+                const Card *fuck = askForCard(player, "Fuckgaolian", "@fuckl", data);
                 if(fuck){
                     playCardEffect("@fuckgaolian2", player->getGeneral()->isMale());
                     JudgeStar judge = data.value<JudgeStar>();
@@ -534,8 +536,9 @@ bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, co
     bool invoked;
     AI *ai = player->getAI();
     if(ai){
-        thread->delay(Config.AIDelay);
         invoked = ai->askForSkillInvoke(skill_name, data);
+        if(invoked)
+            thread->delay(Config.AIDelay);
     }else{
         QString invoke_str;
         if(data.type() == QVariant::String)
@@ -706,7 +709,7 @@ trust:
 }
 
 int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason){
-    if(!who->hasFlag("dongchaee")){
+    if(!who->hasFlag("dongchaee") && who != player){
         if(flags == "h" || (flags == "he" && !who->hasEquip()))
             return who->getRandomHandCardId();
     }
@@ -773,8 +776,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     }else if(pattern.startsWith("@") || !player->isNude()){
         AI *ai = player->getAI();
         if(ai){
-            thread->delay(Config.AIDelay);
             card = ai->askForCard(pattern, prompt, data);
+            if(card)
+                thread->delay(Config.AIDelay);
         }else{
             player->invoke("askForCard", QString("%1:%2").arg(pattern).arg(prompt));
             getResult("responseCardCommand", player);
@@ -858,8 +862,10 @@ bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QSt
 
     AI *ai = player->getAI();
     if(ai){
-        thread->delay(Config.AIDelay);
         answer = ai->askForUseCard(pattern, prompt);
+
+        if(answer != ".")
+            thread->delay(Config.AIDelay);
     }else{
         player->invoke("askForUseCard", QString("%1:%2").arg(pattern).arg(prompt));
         getResult("useCardCommand", player);
@@ -1466,7 +1472,7 @@ void Room::reportDisconnection(){
 
         bool someone_is_online = false;
         foreach(ServerPlayer *player, players){
-            if(player->getState() == "online"){
+            if(player->getState() == "online" || player->getState() == "trust"){
                 someone_is_online = true;
                 break;
             }
@@ -1648,6 +1654,7 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
         QString greetingStr = tr("<font color=#EEB422>Player <b>%1</b> joined the game</font>")
                 .arg(Config.ContestMode ? tr("Contestant") : screen_name);
         speakCommand(player, greetingStr.toUtf8().toBase64());
+        player->startNetworkDelayTest();
 
         // introduce all existing player to the new joined
         foreach(ServerPlayer *p, players){
@@ -2121,7 +2128,7 @@ void Room::damage(const DamageStruct &damage_data){
             ServerPlayer *source = findPlayerWhohasEventCard("ninedaygirl");
             if(source == damage.to){
                 setPlayerFlag(damage.to, "NineGirl");
-                bool girl = askForUseCard(damage.to, "ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+                bool girl = askForUseCard(damage.to, "Ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
                 setPlayerFlag(damage.to, "-NineGirl");
                 if(girl){
                     LogMessage log;
@@ -2730,16 +2737,16 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
     thread->trigger(ChoiceMade, player, data);
 }
 
-Card::Suit Room::askForSuit(ServerPlayer *player){
+Card::Suit Room::askForSuit(ServerPlayer *player, const QString& reason){
     AI *ai = player->getAI();
     if(ai)
-        return ai->askForSuit();
+        return ai->askForSuit(reason);
 
     player->invoke("askForSuit");
     getResult("chooseSuitCommand", player);
 
     if(result.isEmpty())
-        return askForSuit(player);
+        return askForSuit(player, reason);
 
     Card::Suit suit;
     if(result == ".")
@@ -3121,6 +3128,7 @@ void Room::makeCheat(const QString &cheat_str){
     QRegExp damage_rx(":(.+)->(\\w+):([NTFRL])(\\d+)");
     QRegExp killing_rx(":KILL:(.+)->(\\w+)");
     QRegExp revive_rx(":REVIVE:(.+)");
+    QRegExp doscript_rx(":SCRIPT:(.+)");
 
     if(damage_rx.exactMatch(cheat_str))
         makeDamage(damage_rx.capturedTexts());
@@ -3128,6 +3136,14 @@ void Room::makeCheat(const QString &cheat_str){
         makeKilling(killing_rx.capturedTexts());
     }else if(revive_rx.exactMatch(cheat_str)){
         makeReviving(revive_rx.capturedTexts());
+    }else if(doscript_rx.exactMatch(cheat_str)){
+        QString script = doscript_rx.capturedTexts().value(1);
+        if(!script.isEmpty()){
+            QByteArray data = QByteArray::fromBase64(script.toAscii());
+            data = qUncompress(data);
+            script = data;
+            doScript(script);
+        }
     }
 }
 
@@ -3433,6 +3449,13 @@ void Room::selectRoleCommand(ServerPlayer *player, const QString &arg){
         result = "abstained";
 
     sem->release();
+}
+
+void Room::networkDelayTestCommand(ServerPlayer *player, const QString &){
+    qint64 delay = player->endNetworkDelayTest();
+    QString reportStr = tr("<font color=#EEB422>The network delay of player <b>%1</b> is %2 milliseconds.</font>")
+            .arg(Config.ContestMode ? tr("Contestant") : player->screenName()).arg(QString::number(delay));
+    speakCommand(player, reportStr.toUtf8().toBase64());
 }
 
 bool Room::isVirtual()

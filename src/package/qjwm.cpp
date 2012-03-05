@@ -1,7 +1,7 @@
 #include "qjwm.h"
 #include "skill.h"
 #include "standard.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
@@ -201,7 +201,7 @@ public:
         foreach(ServerPlayer *wusong, wusOng){
             if(wusong->canSlash(damage.from, false)
                     && !wusong->isKongcheng() && damage.from != wusong){
-                const Card *card = room->askForCard(wusong, ".basic", "@fuhu:" + damage.from->objectName(), data);
+                const Card *card = room->askForCard(wusong, "BasicCard", "@fuhu:" + damage.from->objectName(), data);
                 if(!card)
                     continue;
                 Slash *slash = new Slash(Card::NoSuit, 0);
@@ -260,13 +260,6 @@ public:
     }
 };
 
-class EquipPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->getTypeId() == Card::Equip;
-    }
-};
-
 class Xiagu: public TriggerSkill{
 public:
     Xiagu():TriggerSkill("xiagu"){
@@ -295,7 +288,7 @@ public:
                     }
                 }
                 if(caninvoke){
-                    const Card *card = room->askForCard(jiuwenlong, ".equip", "@xiagu", data);
+                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", data);
                     if(card){
                         LogMessage log;
                         log.type = "$Xiagu";
@@ -1029,7 +1022,7 @@ public:
         int x = damage.damage, i;
         for(i=0; i<x; i++){
             if(wangqing->isWounded() && player->getKingdom() == "min"
-               && room->askForCard(player, "..H", "@jiachu:" + wangqing->objectName())){
+               && room->askForCard(player, ".|heart", "@jiachu:" + wangqing->objectName())){
                 RecoverStruct rev;
                 rev.who = player;
                 room->playSkillEffect(objectName());
@@ -1066,7 +1059,6 @@ QJWMPackage::QJWMPackage()
     General *shijin = new General(this, "shijin", "kou");
     shijin->addSkill(new Wubang);
     shijin->addSkill(new Xiagu);
-    patterns[".equip"] = new EquipPattern;
 
     General *yanqing = new General(this, "yanqing", "min", 3);
     yanqing->addSkill(new Dalei);

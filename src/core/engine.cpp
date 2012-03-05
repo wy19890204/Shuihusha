@@ -73,11 +73,11 @@ Engine::Engine()
 
     QStringList scene_names;
     scene_names
-            << "CoupleScenario"
-            << "ZombieScenario"
-            << "LegendScenario"
-            << "ImpasseScenario"
-            << "CustomScenario";
+            << "Couple"
+            << "Zombie"
+            << "Legend"
+            << "Impasse"
+            << "Custom";
 
     for(int i=1; i<=20; i++){
         scene_names << QString("MiniScene_%1").arg(i, 2, 10, QChar('0'));
@@ -325,7 +325,7 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersionNumber() const{
-    return "20120214";
+    return "20120227";
 }
 
 QString Engine::getVersion() const{
@@ -338,7 +338,7 @@ QString Engine::getVersion() const{
 }
 
 QString Engine::getVersionName() const{
-    return "V3.2.0";
+    return "V3.2.4";
 }
 
 QString Engine::getMODName() const{

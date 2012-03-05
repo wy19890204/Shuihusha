@@ -5,7 +5,7 @@
 #include "carditem.h"
 #include "god.h"
 #include "standard.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {

@@ -66,13 +66,6 @@ bool Shit::HasShit(const Card *card){
         return card->objectName() == "shit";
 }
 
-class PiPattern: public CardPattern{
-public:
-    virtual bool match(const Player *, const Card *card) const{
-        return card->inherits("Jink") || card->inherits("Assassinate");
-    }
-};
-
 Stink::Stink(Suit suit, int number):BasicCard(suit, number){
     setObjectName("stink");
     target_fixed = true;
@@ -90,7 +83,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
-    const Card *pipi = room->askForCard(nextfriend, ".haochou", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
+    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
 
@@ -133,7 +126,6 @@ KusoPackage::KusoPackage()
     foreach(Card *card, cards)
         card->setParent(this);
 
-    patterns[".haochou"] = new PiPattern;
     type = CardPack;
 }
 
@@ -286,7 +278,7 @@ JoyPackage::JoyPackage()
 }
 
 //joy generals : miheng
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "settings.h"
 #include "carditem.h"
 class Jieao: public PhaseChangeSkill{

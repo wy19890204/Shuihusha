@@ -3,7 +3,7 @@
 #include "engine.h"
 #include "standard.h"
 #include "settings.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "lua.hpp"
 #include "scenario.h"
 #include "aux-skills.h"
@@ -177,7 +177,7 @@ bool TrustAI::useCard(const Card *card){
         return false;
 }
 
-Card::Suit TrustAI::askForSuit(){
+Card::Suit TrustAI::askForSuit(const QString &){
     return Card::AllSuits[qrand() % 4];
 }
 

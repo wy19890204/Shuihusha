@@ -16,6 +16,9 @@ sgs.ai_skill_invoke["linmo"] = true
 function sgs.ai_trick_prohibit.jueming(card, self, to)
 	return to ~= self.room:getCurrent() and to:getHp() == 1 and (card:inherits("Duel") or card:inherits("Assassinate"))
 end
+function sgs.ai_slash_prohibit.jueming(self, to)
+	if to ~= self.room:getCurrent() and to:getHp() == 1 then return true end
+end
 
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)

@@ -38,12 +38,13 @@ SOURCES += src/main.cpp \
 	src/dialog/roleassigndialog.cpp \
 	src/dialog/scenario-overview.cpp \
 	src/dialog/halldialog.cpp \
+	src/package/package.cpp \
 	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
 	src/package/plough.cpp \
-	src/package/tocheck.cpp \
+	src/package/maneuvering.cpp \
 	src/package/events.cpp \
 	src/package/qjwm.cpp \
 	src/package/xzzd.cpp \
@@ -155,7 +156,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/standard-skillcards.h \
 	src/package/standard.h \
 	src/package/plough.h \
-	src/package/tocheck.h \
+	src/package/maneuvering.h \
 	src/package/events.h \
 	src/package/qjwm.h \
 	src/package/xzzd.h \

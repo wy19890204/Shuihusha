@@ -5,7 +5,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 class Tongwu: public TriggerSkill{
 public:
@@ -78,7 +78,7 @@ public:
         DyingStruct dying = data.value<DyingStruct>();
         if(!bear || !dying.who)
             return false;
-        if(dying.who == poolguy && room->askForCard(bear, "..S", "@guizi:" + poolguy->objectName(), data)){
+        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@guizi:" + poolguy->objectName(), data)){
             room->playSkillEffect(objectName());
             DamageStruct damage;
             damage.from = bear;

@@ -1,5 +1,6 @@
 #include "miniscenarios.h"
 
+#include <QMessageBox>
 #include <QFile>
 
 MiniSceneRule::MiniSceneRule(Scenario *scenario)
@@ -40,8 +41,29 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
 {
     Room* room = player->getRoom();
 
-    if(event == PhaseChange){
-        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL)
+    if(event == PhaseChange)
+    {
+        if(player == room->getTag("Starter").value<PlayerStar>()){
+            if(player->getPhase() == Player::Start){
+                room->setTag("Round", room->getTag("Round").toInt()+1);
+
+                if(!ex_options["beforeStartRound"].isNull()){
+                    if(ex_options["beforeStartRound"].toInt() == room->getTag("Round").toInt()){
+                        room->gameOver(ex_options["beforeStartRoundWinner"].toString());
+                    }
+                }
+            }
+            else if(player->getPhase() == Player::NotActive){
+                if(!ex_options["afterRound"].isNull()){
+                    if(ex_options["afterRound"].toInt() == room->getTag("Round").toInt()){
+                        room->gameOver(ex_options["afterRoundWinner"].toString());
+                    }
+                }
+            }
+        }
+
+        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL
+                )
         {
             if(player->tag["playerHasPlayed"].toBool())
                 room->gameOver(this->players.first()["beforeNext"]);
@@ -73,74 +95,70 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
         room->broadcastInvoke("addHistory","pushPile");
     }
 
-    int i=0;
-    foreach(ServerPlayer * sp,players)
+    int i=0, j=0;
+    for(i = ex_options["randomRoles"].toString() == "true" ?
+        qrand() % players.length() : 0, j = 0; j < players.length(); i++, j++)
     {
+        i = i < players.length() ? i : i % players.length();
+        ServerPlayer *sp = players.at(ex_options["randomRoles"].toString() == "true" ? j : i);
+
         room->setPlayerProperty(sp,"role",this->players.at(i)["role"]);
 
-        if(sp->getState()!= "robot")
+        QString general = this->players.at(i)["general"];
         {
-            QString general = this->players.at(i)["general"];
+            QString original = sp->getGeneralName();
+            if(general == "select")
             {
-                QString original = sp->getGeneralName();
-                if(general == "select")
+                QStringList available,all,existed;
+                existed = existedGenerals();
+                all = Sanguosha->getRandomGenerals(Sanguosha->getGeneralCount());
+                qShuffle(all);
+                for(int i=0;i<5;i++)
                 {
-                    QStringList available,all,existed;
-                    existed = existedGenerals();
-                    all = Sanguosha->getRandomGenerals(Sanguosha->getGeneralCount());
-                    qShuffle(all);
-                    for(int i=0;i<5;i++)
+                    sp->setGeneral(NULL);
+                    QString choice = sp->findReasonable(all);
+                    if(existed.contains(choice))
                     {
-                        sp->setGeneral(NULL);
-                        QString choice = sp->findReasonable(all);
-                        if(existed.contains(choice))
-                        {
-                            all.removeOne(choice);
-                            i--;
-                            continue;
-                        }
-                        available << choice;
                         all.removeOne(choice);
+                        i--;
+                        continue;
                     }
-                    general = room->askForGeneral(sp,available);
+                    available << choice;
+                    all.removeOne(choice);
                 }
-                QString trans = QString("%1:%2").arg(original).arg(general);
-                sp->invoke("transfigure",trans);
-                room->setPlayerProperty(sp,"general",general);
+                general = room->askForGeneral(sp,available);
             }
-            general = this->players.at(i)["general2"];
-            {
-                if(general == "select")
-                {
-                    QStringList available,all,existed;
-                    existed = existedGenerals();
-                    all = Sanguosha->getRandomGenerals(Sanguosha->getGeneralCount());
-                    qShuffle(all);
-                    for(int i=0;i<5;i++)
-                    {
-                        room->setPlayerProperty(sp,"general2", QVariant());
-                        QString choice = sp->findReasonable(all);
-                        if(existed.contains(choice))
-                        {
-                            all.removeOne(choice);
-                            i--;
-                            continue;
-                        }
-                        available << choice;
-                        all.removeOne(choice);
-                    }
-                    general = room->askForGeneral(sp,available);
-                }
-                if(general == sp->getGeneralName())general = this->players.at(i)["general3"];
-                QString trans = QString("%1:%2").arg("anjiang").arg(general);
-                sp->invoke("transfigure",trans);
-                room->setPlayerProperty(sp,"general2",general);
-            }
+            QString trans = QString("%1:%2").arg(original).arg(general);
+            sp->invoke("transfigure",trans);
+            room->setPlayerProperty(sp,"general",general);
         }
-        else
-        {
-            room->setPlayerProperty(sp,"general",this->players.at(i)["general"]);
-            if(this->players.at(i)["general2"]!=NULL)room->setPlayerProperty(sp,"general2",this->players.at(i)["general2"]);
+        general = this->players.at(i)["general2"];
+        if(!general.isEmpty()){
+            if(general == "select")
+            {
+                QStringList available,all,existed;
+                existed = existedGenerals();
+                all = Sanguosha->getRandomGenerals(Sanguosha->getGeneralCount());
+                qShuffle(all);
+                for(int i=0;i<5;i++)
+                {
+                    room->setPlayerProperty(sp,"general2", QVariant());
+                    QString choice = sp->findReasonable(all);
+                    if(existed.contains(choice))
+                    {
+                        all.removeOne(choice);
+                        i--;
+                        continue;
+                    }
+                    available << choice;
+                    all.removeOne(choice);
+                }
+                general = room->askForGeneral(sp,available);
+            }
+            if(general == sp->getGeneralName())general = this->players.at(i)["general3"];
+            QString trans = QString("%1:%2").arg("anjiang").arg(general);
+            sp->invoke("transfigure",trans);
+            room->setPlayerProperty(sp,"general2",general);
         }
 
         room->setPlayerProperty(sp,"kingdom",sp->getGeneral()->getKingdom());
@@ -188,16 +206,6 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
             }
         }
 
-        str = this->players.at(i)["skill"];
-        if(str != NULL)
-        {
-            QStringList skills = str.split(",");
-            foreach(QString skill, skills)
-            {
-                room->acquireSkill(sp, skill);
-            }
-        }
-
         str = this->players.at(i)["win"];
         if(str != NULL){
             room->setPlayerProperty(sp, "win", str);
@@ -211,6 +219,12 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
                 skill->trigger(GameStart, sp, v);
         }
 
+        QString skills = this->players.at(i)["acquireSkills"];
+        if(skills != NULL){
+            foreach(QString skill_name, skills.split(","))
+                room->acquireSkill(sp, skill_name);
+        }
+
         if(this->players.at(i)["chained"] != NULL){
             sp->setChained(true);
             room->broadcastProperty(sp, "chained");
@@ -220,18 +234,15 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
             if(sp->faceUp())
                 sp->turnOver();
         }
-        if(this->players.at(i)["starter"] != NULL)
+        if(this->players.at(i)["starter"] != NULL){
             room->setCurrent(sp);
+            QVariant data = QVariant::fromValue(sp);
+            room->setTag("Starter", data);
+        }
 
-        i++;
-    }
-    i =0;
-    foreach(ServerPlayer *sp,players)
-    {
-        QString str = this->players.at(i)["draw"];
+        str = this->players.at(i)["draw"];
         if(str == NULL)str = "4";
         room->drawCards(sp,str.toInt());
-
         if(this->players.at(i)["marks"] != NULL)
         {
             QStringList marks = this->players.at(i)["marks"].split(",");
@@ -239,11 +250,9 @@ bool MiniSceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
             {
                 QStringList keys = qs.split("*");
                 str = keys.at(1);
-                sp->gainMark(keys.at(0),str.toInt());
+                room->setPlayerMark(sp, keys.at(0), str.toInt());
             }
         }
-
-        i++;
     }
 
     room->setTag("WaitForPlayer",QVariant(true));
@@ -273,6 +282,10 @@ void MiniSceneRule::setPile(QString cardList)
     setup = cardList;
 }
 
+void MiniSceneRule::setOptions(QStringList option){
+    ex_options[option.first()] = option.last();
+}
+
 void MiniSceneRule::loadSetting(QString path)
 {
     QFile file(path);
@@ -283,8 +296,19 @@ void MiniSceneRule::loadSetting(QString path)
         QTextStream stream(&file);
         while(!stream.atEnd()){
             QString aline = stream.readLine();
+            if(aline.isEmpty()) continue;
+
             if(aline.startsWith("setPile"))
                 setPile(aline.split(":").at(1));
+            else if(aline.startsWith("extraOptions")){
+                aline.remove("extraOptions:");
+                QStringList options = aline.split(" ");
+                foreach(QString option, options){
+                    if(options.isEmpty()) continue;
+                    QString key = option.split(":").first(), value = option.split(":").last();
+                    ex_options[key] = QVariant::fromValue(value);
+                }
+            }
             else
                 addNPC(aline);
         }
@@ -312,7 +336,8 @@ void MiniScene::onTagSet(Room *room, const QString &key) const
 {
 
 }
-#define ADD_CUSTOM_SCENARIO(name) extern "C" { Q_DECL_EXPORT Scenario *NewMiniScene_##name() { return new LoadedScenario(#name); } }
+
+#define ADD_CUSTOM_SCENARIO(name) static ScenarioAdder MiniScene##name##ScenarioAdder(QString("MiniScene_") + #name, new LoadedScenario(#name));
 
 ADD_CUSTOM_SCENARIO(01)
 ADD_CUSTOM_SCENARIO(02)

@@ -3,7 +3,7 @@
 #include "engine.h"
 #include "carditem.h"
 #include "settings.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 
 class Jinqiang:public TriggerSkill{
 public:

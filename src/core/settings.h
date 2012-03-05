@@ -38,6 +38,7 @@ public:
     bool EnableSame;
     bool EnableEndless;
     bool EnableBasara;
+    bool EnableHegemony;
     int MaxHpScheme;
     bool AnnounceIP;
     QString Address;

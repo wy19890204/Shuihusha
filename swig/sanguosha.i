@@ -258,7 +258,7 @@ public:
 	void kick();
 	bool pindian(ServerPlayer *target, const char *reason, const Card *card1 = NULL);
 	void turnOver();
-	void play();
+	void play(QList<Player::Phase> set_phases = QList<Player::Phase>());
 
 	QList<Player::Phase> &getPhases();
 	void skip(Player::Phase phase);
@@ -583,6 +583,12 @@ public:
 	static QList<int> StringsToIds(const QStringList &strings);
 };
 
+%extend Card{
+	Weapon* toWeapon(){
+		return qobject_cast<Weapon*>($self);
+	}	
+};
+
 class SkillCard: public Card{
 public:
 	SkillCard();
@@ -851,7 +857,7 @@ public:
 
 	// interactive methods
 	void activate(ServerPlayer *player, CardUseStruct &card_use);
-	Card::Suit askForSuit(ServerPlayer *player);
+	Card::Suit askForSuit(ServerPlayer *player, const char *reason);
 	QString askForKingdom(ServerPlayer *player);
 	bool askForSkillInvoke(ServerPlayer *player, const char *skill_name, const QVariant &data = QVariant());
 	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices);
@@ -888,8 +894,23 @@ public:
 
 	void writeToConsole(const char *msg){
 		$self->output(msg);
+		qWarning(msg);
 	}
 };
+
+%{
+
+void Room::doScript(const QString &script){
+	SWIG_NewPointerObj(L, this, SWIGTYPE_p_Room, 0);
+	lua_setglobal(L, "R");
+
+	SWIG_NewPointerObj(L, current, SWIGTYPE_p_ServerPlayer, 0);
+	lua_setglobal(L, "P");
+
+	luaL_dostring(L, script.toAscii());
+}
+
+%}
 
 class QRegExp{
 public:

@@ -151,7 +151,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                             break;
                         }
                     if(face)
-                        room->askForUseCard(player, "jiefachang", "@jiefachang");
+                        room->askForUseCard(player, "Jiefachang", "@jiefachang");
                 }
             }
             return;
@@ -244,7 +244,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                     ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
                     if(source){
                         room->setPlayerFlag(source, "Daojia");
-                        room->askForUseCard(source, "daojia", "@daojia");
+                        room->askForUseCard(source, "Daojia", "@daojia");
                         room->setPlayerFlag(source, "-Daojia");
                     }
                 }
@@ -600,7 +600,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
                 if(source){
                     room->setPlayerFlag(source, "FuckGao");
-                    room->askForUseCard(source, "fuckgaolian", "@fuckg");
+                    room->askForUseCard(source, "Fuckgaolian", "@fuckg");
                     room->setPlayerFlag(source, "-FuckGao");
                 }
             }

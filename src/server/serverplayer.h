@@ -10,6 +10,7 @@ class Recorder;
 #include "socket.h"
 
 #include <QMutex>
+#include <QDateTime>
 
 class ServerPlayer : public Player
 {
@@ -48,8 +49,7 @@ public:
     void kick();
     bool pindian(ServerPlayer *target, const QString &reason, const Card *card1 = NULL);
     void turnOver();
-    void play();
-    void play(QList<Player::Phase> &set_phases);
+    void play(QList<Player::Phase> set_phases = QList<Player::Phase>());
 
     QList<Player::Phase> &getPhases();
     void skip(Player::Phase phase);
@@ -97,6 +97,9 @@ public:
 
     void copyFrom(ServerPlayer* sp);
 
+    void startNetworkDelayTest();
+    qint64 endNetworkDelayTest();
+
 private:
     ClientSocket *socket;
     QList<const Card *> handcards;
@@ -108,6 +111,7 @@ private:
     QList<Phase> phases;
     ServerPlayer *next;
     QStringList selected; // 3v3 mode use only
+    QDateTime test_time;
 
 private slots:
     void getMessage(char *message);
