@@ -82,6 +82,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         dashboard->setPlayer(Self);
         connect(Self, SIGNAL(general_changed()), dashboard, SLOT(updateAvatar()));
         connect(Self, SIGNAL(general2_changed()), dashboard, SLOT(updateSmallAvatar()));
+        connect(ClientInstance, SIGNAL(do_filter()), dashboard, SLOT(doFilter()));
         connect(dashboard, SIGNAL(card_selected(const Card*)), this, SLOT(enableTargets(const Card*)));
         connect(dashboard, SIGNAL(card_to_use()), this, SLOT(doOkButton()));
 
@@ -2350,11 +2351,51 @@ void RoomScene::saveReplayRecord(){
     QString filename = QFileDialog::getSaveFileName(main_window,
                                                     tr("Save replay record"),
                                                     location,
-                                                    tr("Image replay file (*.png);;Pure text replay file (*.txt)"));
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(!filename.isEmpty()){
         ClientInstance->save(filename);
     }
+}
+
+ScriptExecutor::ScriptExecutor(QWidget *parent)
+    :QDialog(parent)
+{
+    setWindowTitle(tr("Script execution"));
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
+
+    vlayout->addWidget(new QLabel(tr("Please input the script that should be executed at server side:\n P = you, R = your room")));
+
+    QTextEdit *box = new QTextEdit;
+    box->setObjectName("scriptBox");
+    vlayout->addWidget(box);
+
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->addStretch();
+
+    QPushButton *ok_button = new QPushButton(tr("OK"));
+    hlayout->addWidget(ok_button);
+
+    vlayout->addLayout(hlayout);
+
+    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(this, SIGNAL(accepted()), this, SLOT(doScript()));
+
+    setLayout(vlayout);
+}
+
+void ScriptExecutor::doScript(){
+    QTextEdit *box = findChild<QTextEdit *>("scriptBox");
+    if(box == NULL)
+        return;
+
+    QString script = box->toPlainText();
+    QByteArray data = script.toAscii();
+    data = qCompress(data);
+    script = data.toBase64();
+
+    ClientInstance->request("useCard :SCRIPT:" + script);
 }
 
 DeathNoteDialog::DeathNoteDialog(QWidget *parent)
@@ -2510,6 +2551,11 @@ void RoomScene::makeReviving(){
         int index = items.indexOf(item);
         ClientInstance->request("useCard :REVIVE:" + victims.at(index)->objectName());
     }
+}
+
+void RoomScene::doScript(){
+    ScriptExecutor *dialog = new ScriptExecutor(main_window);
+    dialog->exec();
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){

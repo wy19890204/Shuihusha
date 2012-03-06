@@ -1,5 +1,5 @@
-#ifndef TOCHECK_H
-#define TOCHECK_H
+#ifndef MANEUVERING_H
+#define MANEUVERING_H
 
 #include "standard.h"
 
@@ -107,11 +107,11 @@ public:
     virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
-class TocheckPackage: public Package{
+class ManeuveringPackage: public Package{
     Q_OBJECT
 
 public:
-    TocheckPackage();
+    ManeuveringPackage();
 };
 
 #endif // TOCHECK_H
