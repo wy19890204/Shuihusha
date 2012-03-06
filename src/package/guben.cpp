@@ -6,6 +6,35 @@
 #include "engine.h"
 #include "ai.h"
 
+class Jielue: public TriggerSkill{
+public:
+    Jielue():TriggerSkill("jielue"){
+        events << SlashEffect << Pindian;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(event == Pindian){
+            PindianStar pindian = data.value<PindianStar>();
+            if(pindian->reason == objectName() && pindian->isSuccess())
+                pindian->from->obtainCard(pindian->to_card);
+            return false;
+        }
+        if(player->getPhase() != Player::Play)
+            return false;
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.slash->getNumber() == 0)
+            return false;
+        if(effect.slash && !effect.to->isKongcheng() && effect.from->askForSkillInvoke(objectName(), data))
+            effect.from->pindian(effect.to, objectName(), effect.slash);
+        return false;
+    }
+};
+
 class Pishan: public SlashBuffSkill{
 public:
     Pishan():SlashBuffSkill("pishan"){
@@ -56,6 +85,9 @@ GubenPackage::GubenPackage()
 {
     General *cuimeng = new General(this, "cuimeng", "guan", 4);
     cuimeng->addSkill("paoxiao");
+
+    General *yaogang = new General(this, "yaogang", "kou", 4);
+    yaogang->addSkill(new Jielue);
 
     General *gaochonghan = new General(this, "gaochonghan", "jiang", 7);
     gaochonghan->addSkill(new Pishan);

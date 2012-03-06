@@ -24,7 +24,7 @@ sgs.ai_skill_choice["yuzhong"] = function(self, choice)
 		else
 			return "cancel"
 		end
-	elseif choice = "all+me+cancel" then
+	elseif choice == "all+me+cancel" then
 		local king = self.room:getKingdoms()
 		if #self.friends >= king then
 			return "all"

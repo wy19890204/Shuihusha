@@ -542,31 +542,28 @@ public:
     }
 };
 
-class Jielue: public TriggerSkill{
+class Shenyong:public TriggerSkill{
 public:
-    Jielue():TriggerSkill("jielue"){
-        events << SlashEffect << Pindian;
-        frequency = Frequent;
+    Shenyong():TriggerSkill("shenyong"){
+        events << CardAsked;
     }
 
     virtual int getPriority() const{
-        return -1;
+        return 2;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        if(event == Pindian){
-            PindianStar pindian = data.value<PindianStar>();
-            if(pindian->reason == objectName() && pindian->isSuccess())
-                pindian->from->obtainCard(pindian->to_card);
-            return false;
+    virtual bool trigger(TriggerEvent , ServerPlayer *shibao, QVariant &data) const{
+        QString asked = data.toString();
+        if(asked == "jink" && shibao->askForSkillInvoke(objectName())){
+            Room *room = shibao->getRoom();
+            if(room->askForUseCard(shibao, "slash", "@askforslash")){
+                Jink *jink = new Jink(Card::NoSuit, 0);
+                jink->setSkillName(objectName());
+                room->provide(jink);
+                room->setEmotion(shibao, "good");
+                return true;
+            }
         }
-        if(player->getPhase() != Player::Play)
-            return false;
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(effect.slash->getNumber() == 0)
-            return false;
-        if(effect.slash && !effect.to->isKongcheng() && effect.from->askForSkillInvoke(objectName(), data))
-            effect.from->pindian(effect.to, objectName(), effect.slash);
         return false;
     }
 };
@@ -713,8 +710,8 @@ InterChangePackage::InterChangePackage()
     fuan->addSkill(new Tongmou);
     fuan->addSkill(new Xianhai);
 
-    General *zhangwang = new General(this, "zhangwang", "kou", 4);
-    zhangwang->addSkill(new Jielue);
+    General *shibao = new General(this, "shibao", "jiang");
+    shibao->addSkill(new Shenyong);
 
     General *yulan = new General(this, "yulan", "guan", 3, false);
     yulan->addSkill(new Qingdong);
