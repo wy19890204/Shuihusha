@@ -617,6 +617,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
 
 EyanSlashCard::EyanSlashCard(){
     target_fixed = true;
+    can_jilei = true;
 }
 
 void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
