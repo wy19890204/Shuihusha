@@ -165,6 +165,8 @@ void MainWindow::on_actionStart_Server_triggered()
     StartScene *start_scene = qobject_cast<StartScene *>(scene);
     if(start_scene){
         start_scene->switchToServer(server);
+        if(Config.value("EnableMinimizeDialog", false).toBool())
+            this->on_actionMinimize_to_system_tray_triggered();
     }
 }
 
@@ -220,7 +222,7 @@ void MainWindow::on_actionReplay_triggered()
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Select a reply file"),
                                                     location,
-                                                    tr("Image replay file (*.png);;Pure text replay file (*.txt)"));
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(filename.isEmpty())
         return;
@@ -276,6 +278,17 @@ void MainWindow::enterRoom(){
         connect(ui->actionDeath_note, SIGNAL(triggered()), room_scene, SLOT(makeKilling()));
         connect(ui->actionDamage_maker, SIGNAL(triggered()), room_scene, SLOT(makeDamage()));
         connect(ui->actionRevive_wand, SIGNAL(triggered()), room_scene, SLOT(makeReviving()));
+        connect(ui->actionSend_lowlevel_command, SIGNAL(triggered()), this, SLOT(sendLowLevelCommand()));
+        connect(ui->actionExecute_script_at_server_side, SIGNAL(triggered()), room_scene, SLOT(doScript()));
+    }
+    else{
+        ui->menuCheat->setEnabled(false);
+        ui->actionGet_card->disconnect();
+        ui->actionDeath_note->disconnect();
+        ui->actionDamage_maker->disconnect();
+        ui->actionRevive_wand->disconnect();
+        ui->actionSend_lowlevel_command->disconnect();
+        ui->actionExecute_script_at_server_side->disconnect();
     }
 
     connect(room_scene, SIGNAL(restart()), this, SLOT(startConnection()));
@@ -305,6 +318,13 @@ void MainWindow::gotoStartScene(){
     setCentralWidget(view);
     restoreFromConfig();
 
+    ui->menuCheat->setEnabled(false);
+    ui->actionGet_card->disconnect();
+    ui->actionDeath_note->disconnect();
+    ui->actionDamage_maker->disconnect();
+    ui->actionRevive_wand->disconnect();
+    ui->actionSend_lowlevel_command->disconnect();
+    ui->actionExecute_script_at_server_side->disconnect();
     gotoScene(start_scene);
 
     addAction(ui->actionShow_Hide_Menu);
@@ -686,6 +706,7 @@ QGroupBox *MeleeDialog::createGeneralBox(){
 
     loop_checkbox = new QCheckBox(tr("LOOP"));
     loop_checkbox->setObjectName("loop_checkbox");
+    loop_checkbox->setChecked(true);
 
     form_layout->addRow(tr("Num of rooms"), spinbox);
     form_layout->addRow(loop_checkbox, start_button);
@@ -752,8 +773,9 @@ void MeleeDialog::startTest(){
     if(server){
         server->gamesOver();
     }else{
-        server = new Server(this);
+        server = new Server(this->parentWidget());
         server->listen();
+        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
     }
     Config.AIDelay = 0;
     room_count = spinbox->value();
@@ -761,7 +783,6 @@ void MeleeDialog::startTest(){
         Room *room = server->createNewRoom();
         connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
         connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
 
         room->startTest(avatar_button->property("to_test").toString());
     }
@@ -820,7 +841,6 @@ void MeleeDialog::onGameOver(const QString &winner){
         Room *room = server->createNewRoom();
         connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
         connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
 
         room->startTest(avatar_button->property("to_test").toString());
     }
@@ -921,7 +941,7 @@ void MainWindow::on_actionReplay_file_convert_triggered()
     }
 }
 
-void MainWindow::on_actionSend_lowlevel_command_triggered()
+void MainWindow::sendLowLevelCommand()
 {
     QString command = QInputDialog::getText(this, tr("Send low level command"), tr("Please input the raw low level command"));
     if(!command.isEmpty())

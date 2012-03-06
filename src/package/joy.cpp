@@ -949,7 +949,7 @@ public:
             int num2 = selected.last()->getCard()->getNumber();
             int num3 = to_select->getCard()->getNumber();
             return (num2 == num1 + 1 && num3 == num2 + 1) ||
-                    (num1 == num2 && num2 == num1);
+                    (num1 == num2 && num2 == num3);
         }
         return true;
     }

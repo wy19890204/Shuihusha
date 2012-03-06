@@ -866,6 +866,11 @@
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="521"/>
+        <source>Minimize the dialog when server runs</source>
+        <translation>服务器运行时最小化到托盘</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="521"/>
         <source>Show nick name and true name</source>
         <translation>以绰号+姓名方式显示日志</translation>
     </message>
@@ -2048,6 +2053,12 @@
         <translation>发送底层命令 ...</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.ui" line="375"/>
+        <source>Execute script at server side ...</source>
+        <oldsource>Execute script at server side</oldsource>
+        <translation>在服务器端执行脚本 ...</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.ui" line="236"/>
         <source>Alt+M</source>
         <translation></translation>
@@ -3144,6 +3155,27 @@
         <location filename="src/dialog/scenario-overview.cpp" line="14"/>
         <source>Scenario overview</source>
         <translation>扩展模式</translation>
+    </message>
+</context>
+<context>
+    <name>ScriptExecutor</name>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2547"/>
+        <source>Script execution</source>
+        <translation>脚本执行</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2551"/>
+        <source>Please input the script that should be executed at server side:
+ P = you, R = your room</source>
+        <oldsource>Please input the script that should be executed at server side:</oldsource>
+        <translation>请输入在服务器端要执行的脚本内容:
+P = 你自己, R = 你所在的房间</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2560"/>
+        <source>OK</source>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
