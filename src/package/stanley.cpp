@@ -39,6 +39,9 @@ StanleyPackage::StanleyPackage()
     General *ximenjinge = new General(this, "ximenjinge", "jiang");
     ximenjinge->addSkill(new Youxia);
 
+    General *chenliqing = new General(this, "chenliqing", "min", 4, false, true);
+    chenliqing->addSkill(new Skill("dangkou"));
+
     //addMetaObject<XianhaiCard>();
 }
 

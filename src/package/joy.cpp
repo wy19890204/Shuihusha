@@ -787,7 +787,7 @@ public:
 class Lingyu: public TriggerSkill{
 public:
     Lingyu():TriggerSkill("lingyu"){
-        events << CardUsed;
+        events << GameStart << CardLostDone << CardDrawnDone << CardGotDone;
     }
 
     static int getMaqueCardNum(ServerPlayer *me){
@@ -796,24 +796,6 @@ public:
         for(int i = 1; i <= 4; i ++)
             fu = fu + me->getPile("fu" + QString::number(i)).length();
         return hand + fu;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(player->getPhase() == Player::NotActive)
-            return false;
-        if(use.card->inherits("Peach"))
-            return false;
-        if(use.card->isVirtualCard())
-            return false;
-        return true;
-    }
-};
-
-class Eding: public TriggerSkill{
-public:
-    Eding():TriggerSkill("eding"){
-        events << GameStart << CardLostDone << CardGotDone;
     }
 
     virtual int getPriority() const{
@@ -919,25 +901,28 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        ServerPlayer *bird = room->findPlayerBySkillName(objectName());
-        if(!bird || player->getPhase() == Player::Discard)
+        if(player->getPhase() == Player::Discard)
             return false;
+        QList<ServerPlayer *> birds = room->findPlayersBySkillName(objectName());
         CardMoveStar move = data.value<CardMoveStar>();
-        if(move->from && move->to_place == Player::DiscardedPile){
-            const Card *card = Sanguosha->getCard(move->card_id);
-            if(!bird->getPile("fu4").isEmpty() && bird->getHandcardNum() == 1
-               && card->getNumber() == bird->getHandcards().first()->getNumber()){
-                room->gameOver(bird->getRole());
-            }
-            room->setPlayerProperty(bird, "peng", move->card_id);
-            int number = card->getNumber();
-            int i = 0;
-            foreach(const Card *tmp, bird->getHandcards())
-                if(tmp->getNumber() == number)
-                    i ++;
-            if(i == 2){
-                QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
-                room->askForUseCard(bird, "@@zhuangche", prompt);
+        foreach(ServerPlayer *bird, birds){
+            if(move->from && move->to_place == Player::DiscardedPile){
+                const Card *card = Sanguosha->getCard(move->card_id);
+                if(!bird->getPile("fu4").isEmpty() && bird->getHandcardNum() == 1
+                   && card->getNumber() == bird->getHandcards().first()->getNumber()){
+                    room->gameOver(bird->getRole());
+                }
+                room->setPlayerProperty(bird, "peng", move->card_id);
+                int number = card->getNumber();
+                int i = 0;
+                foreach(const Card *tmp, bird->getHandcards())
+                    if(tmp->getNumber() == number)
+                        i ++;
+                if(i == 2){
+                    QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
+                    if(room->askForUseCard(bird, "@@zhuangche", prompt))
+                        break;
+                }
             }
         }
         return false;
@@ -954,10 +939,17 @@ public:
             return false;
         if(to_select->isEquipped())
             return false;
-        if(!selected.isEmpty()){
+        if(selected.length() == 1){
             int num1 = selected.last()->getCard()->getNumber();
             int num2 = to_select->getCard()->getNumber();
             return (num2 == num1 + 1) || (num1 == num2);
+        }
+        if(selected.length() == 2){
+            int num1 = selected.first()->getCard()->getNumber();
+            int num2 = selected.last()->getCard()->getNumber();
+            int num3 = to_select->getCard()->getNumber();
+            return (num2 == num1 + 1 && num3 == num2 + 1) ||
+                    (num1 == num2 && num2 == num1);
         }
         return true;
     }
@@ -1001,7 +993,7 @@ public:
                     room->gameOver(player->getRole());
             }
             if(Lingyu::getMaqueCardNum(player) > 13)
-                room->askForDiscard(player, "eding", Lingyu::getMaqueCardNum(player) - 13);
+                room->askForDiscard(player, "lingyu", Lingyu::getMaqueCardNum(player) - 13);
             return true;
         }
         return false;
@@ -1020,7 +1012,6 @@ JoyGeneralPackage::JoyGeneralPackage()
     General *maque = new General(this, "maque", "god", 12);
     maque->addSkill(new Timer);
     maque->addSkill(new Lingyu);
-    maque->addSkill(new Eding);
     maque->addSkill(new Zhuangche);
     maque->addSkill(new Zouma);
     maque->addSkill(new Skill("jizha"));
