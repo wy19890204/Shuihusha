@@ -781,39 +781,47 @@ bool Player::canSlashWithoutCrossbow() const{
 void Player::jilei(const QString &type){
     if(type == ".")
         jilei_set.clear();
+    else if(type == "basic")
+        jilei_set << "BasicCard";
+    else if(type == "trick")
+        jilei_set << "TrickCard";
+    else if(type == "equip")
+        jilei_set << "EquipCard";
     else
         jilei_set << type;
-    /*if(type == "basic")
-        jilei_set << Card::Basic;
-    else if(type == "equip")
-        jilei_set << Card::Equip;
-    else if(type == "trick")
-        jilei_set << Card::Trick;
-    else
-        jilei_set.clear();*/
 }
 
 bool Player::isJilei(const Card *card) const{
-    QString type = card->getType();
-    if(type == "skill_card"){
-        if(!card->willThrow())
+    if(card->getTypeId() == Card::Skill){
+        if(!card->canJilei())
             return false;
 
         foreach(int card_id, card->getSubcards()){
             const Card *c = Sanguosha->getCard(card_id);
-            if((jilei_set.contains(c->getType()) ||
-               jilei_set.contains(c->getSuitString()) ||
-               jilei_set.contains(c->objectName()))
-                && !hasEquip(c))
-                return true;
+            foreach(QString pattern, jilei_set.toList()){
+                ExpPattern p(pattern);
+                if(p.match(this,c) && !hasEquip(c)) return true;
+            }
         }
+    }
+    else{
+        if(card->getSubcards().isEmpty())
+            foreach(QString pattern, jilei_set.toList()){
+                ExpPattern p(pattern);
+                if(p.match(this,card)) return true;
+            }
+        else{
+            foreach(int card_id, card->getSubcards()){
+                const Card *c = Sanguosha->getCard(card_id);
+                foreach(QString pattern, jilei_set.toList()){
+                    ExpPattern p(pattern);
+                    if(p.match(this,card) && !hasEquip(c)) return true;
+                }
+            }
+        }
+    }
 
-        return false;
-    }else
-        return (jilei_set.contains(type) ||
-                 jilei_set.contains(card->getSuitString()) ||
-                 jilei_set.contains(card->objectName()))
-                  && !hasEquip(card);
+    return false;
 }
 
 void Player::copyFrom(Player* p)

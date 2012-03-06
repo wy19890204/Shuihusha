@@ -86,13 +86,18 @@ UbuncCard::UbuncCard(){
 }
 
 bool UbuncCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
+    return targets.length() < 2;
 }
 
-void UbuncCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    QString kingdom = room->askForChoice(effect.from, "ubunc", "guan+jiang+min+kou+god");
-    room->setPlayerProperty(effect.to, "kingdom", kingdom);
+void UbuncCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(targets.length() == 1){
+        QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
+        room->setPlayerProperty(targets.first(), "kingdom", kingdom);
+    }
+    else{
+        ServerPlayer *first = targets.first();
+        room->swapSeat(first, targets.last());
+    }
 }
 
 UbundCard::UbundCard(){

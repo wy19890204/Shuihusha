@@ -627,6 +627,7 @@ public:
 ZhaixingCard::ZhaixingCard(){
     target_fixed = true;
     will_throw = false;
+    can_jilei = true;
 }
 
 void ZhaixingCard::use(Room *room, ServerPlayer *zhangjiao, const QList<ServerPlayer *> &targets) const{
