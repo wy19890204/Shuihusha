@@ -2927,13 +2927,3 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 		dofile("lua/ai/" .. ascenario .. "-ai.lua")
 	end
 end
-
-sgs.ai_skill_invoke["lianzang"] = function(self, data)
-	local damage = data:toDamage()
-	local target = damage.to
-	if self.player:getMaxHP() < 4 then
-		return false
-	end
-	return true
-end
-

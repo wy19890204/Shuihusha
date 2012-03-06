@@ -1096,7 +1096,7 @@ void Room::swapPile(){
         if(times == 6)
             gameOver(".");
         if(mode == "04_1v3"){
-            int limit = Config.BanPackages.contains("tocheck") ? 3 : 2;
+            int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
             if(times == limit)
                 gameOver(".");
         }

@@ -206,6 +206,7 @@ public:
                     continue;
                 Slash *slash = new Slash(Card::NoSuit, 0);
                 slash->setSkillName(objectName());
+                slash->addSubcard(card);
                 CardUseStruct use;
                 use.card = slash;
                 use.from = wusong;

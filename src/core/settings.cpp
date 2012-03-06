@@ -53,7 +53,8 @@ void Settings::init(){
         QStringList banlist;
         banlist << "CGDK" << "YBYT";
         banlist << "test" << "god" << "sp" << "interchange"
-                << "guben" << "joy" << "kuso" << "joyer";
+                << "guben" << "stanley"
+                << "joy" << "kuso" << "joyer";
 
         setValue("BanPackages", banlist);
     }
@@ -97,6 +98,7 @@ void Settings::init(){
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
+    EnableMinimizeDialog = value("EnableMinimizeDialog", false).toBool();
     EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
     ShowAllName = value("ShowAllName", false).toBool();

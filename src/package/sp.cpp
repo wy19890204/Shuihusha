@@ -300,6 +300,11 @@ public:
         QString choice = room->askForChoice(player, "yuzhong", "all+me+cancel");
         if(choice == "cancel")
             return false;
+        LogMessage log;
+        log.type = "#InvokeSkill";
+        log.from = player;
+        log.arg = "yuzhong";
+        room->sendLog(log);
         if(choice == "all"){
             if(!room->askForUseCard(player, "@@yuzhong", "@yuzhong"))
                 choice = "me";
@@ -392,33 +397,6 @@ public:
     }
 };
 
-class Youxia: public TriggerSkill{
-public:
-    Youxia():TriggerSkill("youxia"){
-        events << CardLost;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *jinge = room->findPlayerBySkillName(objectName());
-        if(player->isKongcheng() && jinge && !jinge->isKongcheng() && jinge->isWounded()){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
-                const Card *card = room->askForCardShow(jinge, player, "youxia");
-                player->obtainCard(card, false);
-                RecoverStruct o;
-                o.card = card;
-                room->recover(jinge, o);
-            }
-        }
-        return false;
-    }
-};
-
 SPPackage::SPPackage()
     :Package("sp")
 {
@@ -441,9 +419,6 @@ SPPackage::SPPackage()
     General *wanglun = new General(this, "wanglun", "kou", 3);
     wanglun->addSkill(new Chengfu);
     wanglun->addSkill(new Xiaduo);
-
-    General *ximenjinge = new General(this, "ximenjinge", "jiang");
-    ximenjinge->addSkill(new Youxia);
 
     addMetaObject<YuzhongCard>();
     addMetaObject<JiebaoCard>();

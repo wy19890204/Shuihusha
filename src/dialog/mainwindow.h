@@ -96,10 +96,9 @@ private:
 private slots:
     void on_actionAbout_Lua_triggered();
     void on_actionAbout_fmod_triggered();
-    void on_actionSend_lowlevel_command_triggered();
     void on_actionReplay_file_convert_triggered();
     void on_actionAI_Melee_triggered();
-    //void on_actionPackaging_triggered();
+    void on_actionPackaging_triggered();
     void on_actionScript_editor_triggered();
     void on_actionPC_Console_Start_triggered();
     void on_actionCard_editor_triggered();
@@ -124,6 +123,7 @@ private slots:
     void enterRoom();
     void gotoScene(QGraphicsScene *scene);
     void gotoStartScene();
+    void sendLowLevelCommand();
     void startGameInAnotherInstance();
     void changeBackground();
 };
