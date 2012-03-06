@@ -24,7 +24,7 @@ sgs.ai_skill_choice["yuzhong"] = function(self, choice)
 		else
 			return "cancel"
 		end
-	else
+	elseif choice = "all+me+cancel" then
 		local king = self.room:getKingdoms()
 		if #self.friends >= king then
 			return "all"
@@ -41,7 +41,11 @@ sgs.ai_skill_use["@@yuzhong"] = function(self, prompt)
 		table.insert(friends, friend)
 		if #friends >= king then break end
 	end
-	return "@YuzhongCard=.->" .. table.concat(friends, "+")
+	if #friends > 0 then
+		return "@YuzhongCard=.->" .. table.concat(friends, "+")
+	else
+		return "."
+	end
 end
 
 -- jiebao

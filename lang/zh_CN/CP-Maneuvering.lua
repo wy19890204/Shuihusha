@@ -1,7 +1,7 @@
 -- translation for ManeuveringPackage
 
 return {
-	["tocheck"] = "地煞卡牌包",
+	["maneuvering"] = "地煞卡牌包",
 
 	["fire_slash"] = "火杀",
 	[":fire_slash"] = "出牌时机：出牌阶段\

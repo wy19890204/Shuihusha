@@ -1,7 +1,7 @@
 -- translation for Stanley Package
 
 return {
-	["stanley"] = "后传&荡寇志",
+	["stanley"] = "后传+荡寇志",
 
 	["#ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",

@@ -300,6 +300,11 @@ public:
         QString choice = room->askForChoice(player, "yuzhong", "all+me+cancel");
         if(choice == "cancel")
             return false;
+        LogMessage log;
+        log.type = "#InvokeSkill";
+        log.from = player;
+        log.arg = "yuzhong";
+        room->sendLog(log);
         if(choice == "all"){
             if(!room->askForUseCard(player, "@@yuzhong", "@yuzhong"))
                 choice = "me";

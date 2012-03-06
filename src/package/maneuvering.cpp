@@ -93,7 +93,6 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
 
         room->setPlayerFlag(effect.to, "drank");
 
-
         if(!Config.BanPackages.contains("events")){
             ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
             if(source && source == effect.to){
@@ -385,8 +384,8 @@ void SupplyShortage::takeEffect(ServerPlayer *target, bool good) const{
         target->skip(Player::Draw);
 }
 
-TocheckPackage::TocheckPackage()
-    :Package("tocheck")
+ManeuveringPackage::ManeuveringPackage()
+    :Package("maneuvering")
 {
     QList<Card *> cards;
 
@@ -460,4 +459,4 @@ TocheckPackage::TocheckPackage()
     type = CardPack;
 }
 
-ADD_PACKAGE(Tocheck)
+ADD_PACKAGE(Maneuvering)

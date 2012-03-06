@@ -26,8 +26,8 @@
 Room::Room(QObject *parent, const QString &mode)
     :QThread(parent), mode(mode), current(NULL), reply_player(NULL), pile1(Sanguosha->getRandomCards()),
       draw_pile(&pile1), discard_pile(&pile2),
-      game_started(false), game_finished(false), L(NULL),
-      thread(NULL), thread_3v3(NULL), sem(new QSemaphore), provided(NULL), has_provided(false), _virtual(false)
+      game_started(false), game_finished(false),
+      L(NULL), thread(NULL), thread_3v3(NULL), sem(new QSemaphore), provided(NULL), _virtual(false)
 {
     player_count = Sanguosha->getPlayerCount(mode);
     scenario = Sanguosha->getScenario(mode);
@@ -770,10 +770,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         return NULL;
     }
     thread->trigger(CardAsked, player, asked);
-    if(has_provided){
+    if(provided){
         card = provided;
         provided = NULL;
-        has_provided = false;
     }else if(pattern.startsWith("@") || !player->isNude()){
         AI *ai = player->getAI();
         if(ai){
@@ -1097,7 +1096,7 @@ void Room::swapPile(){
         if(times == 6)
             gameOver(".");
         if(mode == "04_1v3"){
-            int limit = Config.BanPackages.contains("tocheck") ? 3 : 2;
+            int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
             if(times == limit)
                 gameOver(".");
         }
@@ -3266,10 +3265,8 @@ void Room::takeAG(ServerPlayer *player, int card_id){
 
 void Room::provide(const Card *card){
     Q_ASSERT(provided == NULL);
-    Q_ASSERT(!has_provided);
 
     provided = card;
-    has_provided = true;
 }
 
 QList<ServerPlayer *> Room::getLieges(const QString &kingdom, ServerPlayer *lord) const{
@@ -3514,7 +3511,6 @@ void Room::copyFrom(Room* rRoom)
         owner_map.insert(i, rRoom->owner_map.value(i));
 
     provided = rRoom->provided;
-    has_provided = rRoom->has_provided;
 
     tag = QVariantMap(rRoom->tag);
 
