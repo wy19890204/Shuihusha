@@ -127,7 +127,7 @@ local t = {
 	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
-	["cv:ubuntenkei"] = "山新",
+	["cv:ubuntenkei"] = "佚名",
 	["coder:ubuntenkei"] = "宇文天启 [测试专用]",
 	["ubuna"] = "调参",
 	[":ubuna"] = "出牌阶段，你可以重新设定自己的体力上限",
@@ -153,7 +153,7 @@ local t = {
 	["$qiapai"] = "别碰人家的裙子……",
 	["~ubuntenkei"] = "嗯？不要啊……",
 
-	["#zhuanjia"] = "纵横天下",
+	["#zhuanjia"] = "",
 	["zhuanjia"] = "砖家叫兽",
 	["designer:zhuanjia"] = "宇文天启",
 	["coder:zhuanjia"] = "宇文天启 [测试专用]",
@@ -162,7 +162,7 @@ local t = {
 	["fandui"] = "反对",
 	[":fandui"] = "出牌阶段，你可以获得任意角色移出游戏的一张牌。",
 
-	["#jiuweigui"] = "陶宗旺",
+	["#jiuweigui"] = "",
 	["jiuweigui"] = "九尾龟",
 	["coder:jiuweigui"] = "宇文天启 [测试专用]",
 	["qiaog"] = "初代巧工",
