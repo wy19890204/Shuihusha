@@ -282,7 +282,7 @@ private slots:
     void doDiscardButton();
     void doTimeout();
     void hideAvatars();
-    void changeHp(const QString &who, int delta, DamageStruct::Nature nature);
+    void changeHp(const QString &who, int delta, DamageStruct::Nature nature, bool losthp);
     void moveFocus(const QString &who);
     void setEmotion(const QString &who, const QString &emotion);
     void showSkillInvocation(const QString &who, const QString &skill_name);
