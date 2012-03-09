@@ -189,6 +189,7 @@ public:
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
     QStringList getVisSkist(const QString &exclude) const;
+    int getKingdoms() const;
     QSet<QString> getAcquiredSkills() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;

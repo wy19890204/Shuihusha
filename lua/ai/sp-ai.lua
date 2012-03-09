@@ -38,7 +38,7 @@ sgs.ai_skill_use["@@yuzhong"] = function(self, prompt)
 	local friends = {}
 	self:sort(self.friends, "handcard")
 	for _, friend in ipairs(self.friends) do
-		table.insert(friends, friend)
+		table.insert(friends, friend:objectName())
 		if #friends >= king then break end
 	end
 	if #friends > 0 then

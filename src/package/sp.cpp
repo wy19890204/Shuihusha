@@ -204,12 +204,12 @@ YuzhongCard::YuzhongCard(){
 }
 
 bool YuzhongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int num = Self->getMark("YuZy");
+    int num = Self->getKingdoms();
     return targets.length() < num;
 }
 
 bool YuzhongCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    int num = Self->getMark("YuZy");
+    int num = Self->getKingdoms();
     return targets.length() <= num;
 }
 
@@ -219,7 +219,7 @@ void YuzhongCard::onEffect(const CardEffectStruct &effect) const{
 
 class YuzhongViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    YuzhongViewAsSkill():ZeroCardViewAsSkill("Yuzhong"){
+    YuzhongViewAsSkill():ZeroCardViewAsSkill("yuzhong"){
 
     }
 
@@ -247,17 +247,9 @@ public:
         return true;
     }
 
-    static int getKingdoms(Room *room){
-        QSet<QString> kingdom_set;
-        foreach(ServerPlayer *p, room->getAlivePlayers()){
-            kingdom_set << p->getKingdom();
-        }
-        return kingdom_set.size();
-    }
-
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        int num = getKingdoms(room);
+        int num = room->getKingdoms();
         DamageStar damage = data.value<DamageStar>();
         if(damage && damage->from != damage->to && damage->from->hasSkill(objectName())){
             ServerPlayer *source = damage->from;
@@ -293,7 +285,6 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
-        room->setPlayerMark(player, "YuZy", Yuzhong::getKingdoms(room));
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.to->isLord())
             return false;
@@ -321,7 +312,6 @@ public:
             player->drawCards(2);
         }
 
-        room->setPlayerMark(player, "YuZy", 0);
         return false;
     }
 };
