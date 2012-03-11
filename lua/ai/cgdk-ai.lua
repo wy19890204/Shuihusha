@@ -97,11 +97,11 @@ bingji_skill.name = "bingji"
 table.insert(sgs.ai_skills, bingji_skill)
 bingji_skill.getTurnUseCard = function(self)
 	if not self:slashIsAvailable() or not self.player:isWounded() then return end
-	local first_found, second_found = false, false
+	local first_found = false
+	local second_found = false
 	local first_card, second_card
 	if self.player:getHandcardNum() >= 2 then
 		local cards = self.player:getHandcards()
-		local same_suit=false
 		cards = sgs.QList2Table(cards)
 		for _, fcard in ipairs(cards) do
 			if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo") or fcard:inherits("AOE")) then

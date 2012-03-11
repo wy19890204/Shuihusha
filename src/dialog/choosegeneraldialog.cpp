@@ -74,10 +74,10 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         connect(button, SIGNAL(double_clicked()), this, SLOT(accept()));
 
         // special case
-        /*if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
+        if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
             if(general->getPackage() == "sp")
                 button->setEnabled(false);
-        }*/
+        }
     }
 
     QLayout *layout = NULL;

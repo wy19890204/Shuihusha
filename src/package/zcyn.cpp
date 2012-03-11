@@ -246,7 +246,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to == damage.from || damage.damage < 1 || !damage.card->inherits("Slash"))
+        if(damage.to == damage.from || damage.damage < 1 || !damage.card || !damage.card->inherits("Slash"))
             return false;
         if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
             && player->askForSkillInvoke(objectName(), data)){

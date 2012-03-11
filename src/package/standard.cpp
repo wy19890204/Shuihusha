@@ -386,16 +386,6 @@ public:
     }
 };
 
-class Ubunb:public ZeroCardViewAsSkill{
-public:
-    Ubunb():ZeroCardViewAsSkill("ubunb"){
-    }
-
-    virtual const Card *viewAs() const{
-        return Sanguosha->cloneSkillCard("BuzhenCard");
-    }
-};
-
 class Ubunc:public ZeroCardViewAsSkill{
 public:
     Ubunc():ZeroCardViewAsSkill("ubunc"){
@@ -572,7 +562,6 @@ TestPackage::TestPackage()
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
     addMetaObject<UbunaCard>();
-    ubuntenkei->addSkill(new Ubunb);
     ubuntenkei->addSkill(new Ubunc);
     addMetaObject<UbuncCard>();
     ubuntenkei->addSkill(new Ubund);

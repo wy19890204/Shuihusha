@@ -944,7 +944,7 @@ public:
 
                     room->judge(judge);
                     QString suit_str = judge.card->getSuitString();
-                    QString pattern = QString("..%1").arg(suit_str.at(0).toUpper());
+                    QString pattern = QString(".|%1").arg(suit_str);
                     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
                     if(room->askForCard(dragon, pattern, prompt)){
                         if(dragon->getMark("wudao") == 0)

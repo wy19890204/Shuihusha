@@ -286,7 +286,9 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             room->sendLog(log);
 
             room->setPlayerProperty(player, "hp", player->getHp() - lose);
-            room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(-lose));
+            QString str = QString("%1:%2").arg(player->objectName()).arg(-lose);
+            str.append("L");
+            room->broadcastInvoke("hpChange", str);
 
             if(player->getHp() <= 0)
                 room->enterDying(player, NULL);
@@ -600,7 +602,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
                 if(source){
                     room->setPlayerFlag(source, "FuckGao");
-                    room->askForUseCard(source, "Fuckgaolian", "@fuckg");
+                    room->askForUseCard(source, "FuckGaolian", "@fuckg");
                     room->setPlayerFlag(source, "-FuckGao");
                 }
             }

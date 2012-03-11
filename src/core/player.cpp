@@ -758,6 +758,14 @@ QStringList Player::getVisSkist(const QString &exclude) const{
     return skis;
 }
 
+int Player::getKingdoms() const{
+    QSet<QString> kingdom_set;
+    kingdom_set << getKingdom();
+    foreach(const Player *tmp, getSiblings())
+        kingdom_set << tmp->getKingdom();
+    return kingdom_set.size();
+}
+
 QSet<QString> Player::getAcquiredSkills() const{
     return acquired_skills;
 }

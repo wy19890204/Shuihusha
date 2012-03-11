@@ -28,6 +28,7 @@ public:
         if(target && !target->isKongcheng() &&
            target->getHandcardNum() > bao->getHandcardNum() &&
            room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
+            room->playSkillEffect(objectName());
             bao->obtainCard(target->getRandomHandCard());
         }
         return false;
@@ -320,6 +321,7 @@ public:
 };
 
 BingjiCard::BingjiCard(){
+    mute = true;
 }
 
 bool BingjiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -942,11 +944,10 @@ public:
                 DamageStruct damage = data.value<DamageStruct>();
                 if(damage.to == sun && damage.from && damage.from != damage.to &&
                    !damage.from->isKongcheng()){
-
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
                     if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
-                        room->throwCard(damage.from->getRandomHandCardId());
+                        room->throwCard(damage.from->getRandomHandCard());
                 }
             }
             else if(v == CardLost){

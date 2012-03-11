@@ -526,7 +526,7 @@ void Client::startGame(const QString &){
 }
 
 void Client::hpChange(const QString &change_str){
-    QRegExp rx("(.+):(-?\\d+)([FT]*)");
+    QRegExp rx("(.+):(-?\\d+)([FTL]*)");
 
     if(!rx.exactMatch(change_str))
         return;
@@ -544,7 +544,7 @@ void Client::hpChange(const QString &change_str){
     else
         nature = DamageStruct::Normal;
 
-    emit hp_changed(who, delta, nature);
+    emit hp_changed(who, delta, nature, nature_str == "L");
 }
 
 void Client::setStatus(Status status){
