@@ -52,6 +52,7 @@ Engine::Engine()
             << "ZCYN"
             << "CGDK"
             << "YBYT"
+            << "FCDC"
             << "SP"
             << "God"
             << "Guben"
