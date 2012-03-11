@@ -54,6 +54,7 @@ SOURCES += src/main.cpp \
 	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
+	src/package/fcdc.cpp \
 	src/package/sp.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
@@ -167,6 +168,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/zcyn.h \
 	src/package/cgdk.h \
 	src/package/ybyt.h \
+	src/package/fcdc.h \
 	src/package/sp.h \
 	src/package/god.h \
 	src/package/joy.h \

@@ -104,8 +104,8 @@ local tt = {
 	["#MaiyiCanInvoke"] = "%from 发动了技能【%arg】，令 %to 立即进行一个额外的回合",
 	["$maiyi1"] = "请诸位捧个人场！",
 	["$maiyi2"] = "走过路过，不要错过！",
-	["~xueyong"] = "城管来了，快跑啊……",
---	["~xueyong"] = "遇到高手了！",
+--	["~xueyong"] = "城管来了，快跑啊……",
+	["~xueyong"] = "遇到高手了！",
 
 	["#tanglong"] = "金钱豹子",
 	["tanglong"] = "汤隆",
