@@ -317,7 +317,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 		end
 		if i >= self.player:getHp() then break end
 	end
-	if self.player:getHp() >= #enemies then
+	if self.player:getHp() >= #enemies and #enemies > 0 then
 		return "@ZhengfaCard=.->" .. table.concat(enemies, "+")
 	else
 		return "."

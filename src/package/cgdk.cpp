@@ -942,11 +942,10 @@ public:
                 DamageStruct damage = data.value<DamageStruct>();
                 if(damage.to == sun && damage.from && damage.from != damage.to &&
                    !damage.from->isKongcheng()){
-
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
                     if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
-                        room->throwCard(damage.from->getRandomHandCardId());
+                        room->throwCard(damage.from->getRandomHandCard());
                 }
             }
             else if(v == CardLost){

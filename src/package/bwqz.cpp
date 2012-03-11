@@ -635,20 +635,21 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
-    if(!Self->hasUsed("ZhengfaCard")){
+    if(tonguan->hasFlag("zhengfa-success")){
+        foreach(ServerPlayer *tarmp, targets)
+            room->cardEffect(this, tonguan, tarmp);
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
+    }
+    else{
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
+            room->setPlayerFlag(tonguan, "zhengfa-success");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect");
         }else{
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
             tonguan->turnOver();
         }
-    }
-    else{
-        foreach(ServerPlayer *tarmp, targets)
-            room->cardEffect(this, tonguan, tarmp);
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
     }
 }
 

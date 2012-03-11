@@ -72,7 +72,7 @@ return {
 	["~yanglin"] = "不好！中计了！",
 
 	["#guosheng"] = "赛仁贵",
-	["cv:guosheng"] = "佚名",
+	["cv:guosheng"] = "芭小乐【声声melody】",
 	["guosheng"] = "郭盛",
 	["bingji"] = "并戟",
 	[":bingji"] = "出牌阶段，你可以弃置两张同类别的牌，视为你对至多X名其他角色（至少一名）使用一张【杀】，X为你已损失的体力值。",
