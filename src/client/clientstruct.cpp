@@ -11,7 +11,7 @@ ServerInfoStruct ServerInfo;
 #include <QCheckBox>
 
 bool ServerInfoStruct::parse(const QString &str){
-    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEBAM12]*)");
+    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEZBAM12]*)");
     if(!rx.exactMatch(str)){
         // older version, just take the player count
         int count = str.split(":").at(1).toInt();
@@ -48,6 +48,7 @@ bool ServerInfoStruct::parse(const QString &str){
     EnableScene = flags.contains("C");
     EnableSame = flags.contains("T");
     EnableEndless = flags.contains("E");
+    EnableAnzhan = flags.contains("Z");
     EnableBasara= flags.contains("B");
     EnableAI = flags.contains("A");
     DisableChat = flags.contains("M");
@@ -73,6 +74,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     scene_label = new QLabel;
     same_label = new QLabel;
     endless_label = new QLabel;
+    anzhan_label = new QLabel;
     basara_label = new QLabel;
     free_choose_label = new QLabel;
     enable_ai_label = new QLabel;
@@ -93,6 +95,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     layout->addRow(tr("Scene Mode"), scene_label);
     layout->addRow(tr("Same Mode"), same_label);
     layout->addRow(tr("Endless Mode"), endless_label);
+    layout->addRow(tr("Anzhan Mode"), anzhan_label);
     layout->addRow(tr("Basara Mode"), basara_label);
     layout->addRow(tr("Max HP scheme"), max_hp_label);
     layout->addRow(tr("Free choose"), free_choose_label);
@@ -120,6 +123,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     scene_label->setText(info.EnableScene ? tr("Enabled") : tr("Disabled"));
     same_label->setText(info.EnableSame ? tr("Enabled") : tr("Disabled"));
     endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
+    anzhan_label->setText(info.EnableAnzhan ? tr("Enabled") : tr("Disabled"));
     basara_label->setText(info.EnableBasara ? tr("Enabled") : tr("Disabled"));
 
     if(info.Enable2ndGeneral){
@@ -176,6 +180,7 @@ void ServerInfoWidget::clear(){
     scene_label->clear();
     same_label->clear();
     endless_label->clear();
+    anzhan_label->clear();
     basara_label->clear();
     free_choose_label->clear();
     time_limit_label->clear();

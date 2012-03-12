@@ -157,6 +157,10 @@ void StartScene::printServerInfo(){
     else
         server_log->append(tr("Endless Mode is disabled"));
 
+    server_log->append( Config.EnableAnzhan ?
+                        tr("Anzhan Mode is enabled") :
+                        tr("Anzhan Mode is disabled"));
+
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));

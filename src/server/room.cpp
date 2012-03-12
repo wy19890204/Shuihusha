@@ -1414,7 +1414,16 @@ void Room::prepareForStart(){
             }
         }else
             assignRoles();
-    }else
+    }else if(ServerInfo.EnableAnzhan){
+            int i = (qrand() % player_count) + 1;
+            foreach(PlayerStar bird, getAllPlayers()){
+                if(bird->getSeat() == i){
+                    broadcastProperty(bird, "role", bird->getRole());
+                    setTag("StandsOutBird", QVariant::fromValue(bird));
+                }
+            }
+        }
+    else
         assignRoles();
 
     adjustSeats();
@@ -2194,6 +2203,10 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
         return player->isLord() || player->getRole() == "renegade";
     else if(mode == "04_1v3")
         return false;
+    else if(ServerInfo.EnableAnzhan){
+        PlayerStar head = getTag("StandsOutBird").value<PlayerStar>();
+        return player == head;
+    }
     else
         return player->isLord() && player_count > 4;
 }

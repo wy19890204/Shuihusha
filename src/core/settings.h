@@ -37,6 +37,7 @@ public:
     bool EnableScene;	//changjing
     bool EnableSame;
     bool EnableEndless;
+    bool EnableAnzhan;
     bool EnableBasara;
     bool EnableHegemony;
     int MaxHpScheme;

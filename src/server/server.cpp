@@ -168,6 +168,9 @@ QWidget *ServerDialog::createAdvancedTab(){
     same_checkbox  = new QCheckBox(tr("Enable Same"));
     same_checkbox->setChecked(Config.EnableSame);
 
+    anzhan_checkbox  = new QCheckBox(tr("Enable Anzhan"));
+    anzhan_checkbox->setChecked(Config.EnableAnzhan);
+
     endless_checkbox  = new QCheckBox(tr("Endless Mode"));
     endless_checkbox->setChecked(Config.EnableEndless);
     endless_timebox = new QSpinBox;
@@ -227,6 +230,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
     layout->addLayout(HLay(endless_checkbox, endless_timebox));
+    //layout->addWidget(anzhan_checkbox);
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
@@ -756,6 +760,7 @@ bool ServerDialog::config(){
     Config.EnableScene = scene_checkbox->isChecked();		//changjing
     Config.EnableSame = same_checkbox->isChecked();
     Config.EnableEndless = endless_checkbox->isChecked();
+    Config.EnableAnzhan = anzhan_checkbox->isChecked();
     Config.EnableBasara= basara_checkbox->isChecked() && basara_checkbox->isEnabled();
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
     Config.AnnounceIP = announce_ip_checkbox->isChecked();
@@ -792,6 +797,7 @@ bool ServerDialog::config(){
     Config.setValue("EnableScene", Config.EnableScene);	//changjing
     Config.setValue("EnableSame", Config.EnableSame);	//changjing
     Config.setValue("EnableEndless", Config.EnableEndless);
+    Config.setValue("EnableAnzhan", Config.EnableAnzhan);
     Config.setValue("EndlessTimes", endless_timebox->value());
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
