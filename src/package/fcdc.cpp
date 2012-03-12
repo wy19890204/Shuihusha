@@ -77,8 +77,16 @@ public:
                     break;
                 }
             }
-            if(can_invoke && room->askForUseCard(xiezhen, "@@xunlie", "@xunlie"))
-                return true;
+            if(!can_invoke)
+                return false;
+            QList<const Card *> cards = xiezhen->getCards("he");
+            foreach(const Card *cd, cards){
+                if(cd->inherits("EquipCard")){
+                    if(room->askForUseCard(xiezhen, "@@xunlie", "@xunlie"))
+                        return true;
+                    break;
+                }
+            }
         }
         return false;
     }

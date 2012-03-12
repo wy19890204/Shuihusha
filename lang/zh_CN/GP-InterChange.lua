@@ -70,7 +70,7 @@ return {
 	["zhangmengfang"] = "张蒙方",
 	["designer:zhangmengfang"] = "宇文天启",
 	["tancai"] = "贪财",
-	[":tancai"] = "弃牌阶段弃牌前，你可以摸三张牌。",
+	[":tancai"] = "弃牌阶段弃牌前，你可以摸X+1张牌，X为你已损失的体力值。",
 	["~zhangmengfang"] = "谁敢杀我？",
 
 	["#pangwanchun"] = "小养由基",

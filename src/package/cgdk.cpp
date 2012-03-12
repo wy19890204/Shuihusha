@@ -28,6 +28,7 @@ public:
         if(target && !target->isKongcheng() &&
            target->getHandcardNum() > bao->getHandcardNum() &&
            room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
+            room->playSkillEffect(objectName());
             bao->obtainCard(target->getRandomHandCard());
         }
         return false;

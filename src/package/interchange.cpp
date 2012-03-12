@@ -345,7 +345,7 @@ public:
         if(dujian->getPhase() == Player::Discard &&
            dujian->askForSkillInvoke(objectName())){
             dujian->getRoom()->playSkillEffect(objectName());
-            dujian->drawCards(3, false);
+            dujian->drawCards(dujian->getLostHp() + 1, false);
         }
         return false;
     }

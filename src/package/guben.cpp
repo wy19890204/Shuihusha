@@ -83,15 +83,15 @@ public:
 GubenPackage::GubenPackage()
     :Package("guben")
 {
-    General *cuimeng = new General(this, "cuimeng", "guan", 4);
+    General *cuimeng = new General(this, "cuimeng", "guan");
     cuimeng->addSkill("paoxiao");
-
-    General *yaogang = new General(this, "yaogang", "kou", 4);
-    yaogang->addSkill(new Jielue);
 
     General *gaochonghan = new General(this, "gaochonghan", "jiang", 7);
     gaochonghan->addSkill(new Pishan);
     gaochonghan->addSkill(new Shixie);
+
+    General *zhangkui = new General(this, "zhangkui", "kou");
+    zhangkui->addSkill(new Jielue);
 
     //addMetaObject<XianhaiCard>();
 }
