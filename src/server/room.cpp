@@ -1414,16 +1414,7 @@ void Room::prepareForStart(){
             }
         }else
             assignRoles();
-    }else if(ServerInfo.EnableAnzhan){
-            int i = (qrand() % player_count) + 1;
-            foreach(PlayerStar bird, getAllPlayers()){
-                if(bird->getSeat() == i){
-                    broadcastProperty(bird, "role", bird->getRole());
-                    setTag("StandsOutBird", QVariant::fromValue(bird));
-                }
-            }
-        }
-    else
+    }else
         assignRoles();
 
     adjustSeats();
@@ -1855,10 +1846,25 @@ void Room::assignRoles(){
         QString role = roles.at(i);
 
         player->setRole(role);
-        if(role == "lord")
-            broadcastProperty(player, "role", "lord");
-        else
-            player->sendProperty("role");
+
+        if(ServerInfo.EnableAnzhan){
+            int i = (qrand() % n) + 1;
+            foreach(PlayerStar bird, getAllPlayers()){
+                if(bird->getSeat() == i){
+                    broadcastProperty(bird, "role", bird->getRole());
+                    setTag("StandsOutBird", QVariant::fromValue(bird));
+                }
+                else
+                    bird->sendProperty("role");
+            }
+            break;
+        }
+        else{
+            if(role == "lord")
+                broadcastProperty(player, "role", "lord");
+            else
+                player->sendProperty("role");
+        }
     }
 }
 

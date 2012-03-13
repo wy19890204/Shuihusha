@@ -390,8 +390,12 @@ QString Engine::getSetupString() const{
         flags.append("S");
     if(Config.EnableScene)
         flags.append("C");
+    if(Config.EnableSame)
+        flags.append("T");
     if(Config.EnableEndless)
         flags.append("E");
+    if(Config.EnableAnzhan)
+        flags.append("Z");
     if(Config.EnableBasara)
         flags.append("B");
     if(Config.EnableAI)

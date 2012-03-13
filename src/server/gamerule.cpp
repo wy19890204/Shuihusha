@@ -203,8 +203,15 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 room->sendLog(log);
             }
 
-            if(player->isLord())
-                setGameProcess(room);
+            if(Config.EnableAnzhan){
+                PlayerStar head = room->getTag("StandsOutBird").value<PlayerStar>();
+                if(player == head)
+                    setGameProcess(room);
+            }
+            else{
+                if(player->isLord())
+                    setGameProcess(room);
+            }
 
             int init = !player->hasSkill("beizhan") ? 4 : 6;
             player->drawCards(init, false);
