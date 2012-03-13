@@ -61,6 +61,7 @@ SOURCES += src/main.cpp \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
 	src/package/stanley.cpp \
+	src/package/pass/pass-package.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/miniscenarios.cpp \
@@ -68,6 +69,7 @@ SOURCES += src/main.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
 	src/scenario/zombie-mode-scenario.cpp \
+	src/scenario/pass-mode-scenario.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
 	src/server/gamerule.cpp \
@@ -175,6 +177,7 @@ HEADERS += src/client/aux-skills.h \
 	src/package/interchange.h \
 	src/package/guben.h \
 	src/package/stanley.h \
+	src/package/pass/pass-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/miniscenarios.h \
@@ -182,6 +185,7 @@ HEADERS += src/client/aux-skills.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
 	src/scenario/zombie-mode-scenario.h \
+	src/scenario/pass-mode-scenario.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
 	src/server/gamerule.h \
