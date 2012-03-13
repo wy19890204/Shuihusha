@@ -587,8 +587,8 @@ public:
             if(room->askForSkillInvoke(caocao, objectName() , data)){
                 caocao->gainMark("@jianxiong_p",damage.damage);
                 if(room->obtainable(card, caocao)){
-                    QVariant data = QVariant::fromValue(card);
-                    choice = room->askForChoice(caocao,objectName(),"gain+draw",data);
+                    //QVariant data = QVariant::fromValue(card);
+                    choice = room->askForChoice(caocao,objectName(),"gain+draw");
                 }
                 room->playSkillEffect(objectName());
                 if(choice == "gain"){
@@ -1109,16 +1109,9 @@ public:
         ServerPlayer *caopi = room->findPlayerBySkillName(objectName());
         if(caopi && caopi->isAlive() && room->askForSkillInvoke(caopi, objectName())){
             int effect_type ;
-            if(player->isCaoCao()){
-                effect_type = 3;
-            }else if(player->getGeneral()->isMale())
-                effect_type = 1;
-            else
-               effect_type = 2;
 
             QString result = room->askForChoice(caopi,objectName(),"draw+gethe") ;
             if(result == "draw"){
-                room->playSkillEffect(objectName(), effect_type);
                 caopi->drawCards(qMax(player->getHandcardNum(),player->getEquips().length()));
             }else if(result == "gethe"){
                 room->playSkillEffect(objectName(), effect_type);
@@ -2102,7 +2095,7 @@ void FanjianPassCard::onEffect(const CardEffectStruct &effect) const{
 
     int card_id = getSubcards().first();
     const Card *card = Sanguosha->getCard(card_id);
-    Card::Suit suit = room->askForSuit(target);
+    Card::Suit suit = room->askForSuit(target, "fanjian");
 
     LogMessage log;
     log.type = "#ChooseSuit";
@@ -3178,7 +3171,7 @@ public:
         CardEffectStruct effect = data.value<CardEffectStruct>();
         Room *room = jiaxu->getRoom();
         if(effect.card->inherits("TrickCard") && !effect.multiple && effect.from != effect.to && !effect.to->isKongcheng() && jiaxu->askForSkillInvoke(objectName())){
-            Card::Suit suit = room->askForSuit(jiaxu);
+            Card::Suit suit = room->askForSuit(jiaxu, objectName());
             int card_id = effect.to->getRandomHandCardId();
             const Card *card = Sanguosha->getCard(card_id);
 

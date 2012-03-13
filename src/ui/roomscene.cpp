@@ -132,6 +132,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(player_added(ClientPlayer*)), SLOT(addPlayer(ClientPlayer*)));
     connect(ClientInstance, SIGNAL(player_removed(QString)), SLOT(removePlayer(QString)));
     connect(ClientInstance, SIGNAL(generals_got(QStringList)), this, SLOT(chooseGeneral(QStringList)));
+    connect(ClientInstance, SIGNAL(pass_generals_got(QString)), this, SLOT(chooseGeneralPass(QString)));
     connect(ClientInstance, SIGNAL(seats_arranged(QList<const ClientPlayer*>)), SLOT(arrangeSeats(QList<const ClientPlayer*>)));
     connect(ClientInstance, SIGNAL(status_changed(Client::Status)), this, SLOT(updateStatus(Client::Status)));
     connect(ClientInstance, SIGNAL(avatars_hiden()), this, SLOT(hideAvatars()));
@@ -909,6 +910,16 @@ void RoomScene::chooseGeneral(const QStringList &generals){
         dialog = new FreeChooseDialog(main_window);
     else
         dialog = new ChooseGeneralDialog(generals, main_window);
+
+    dialog->exec();
+}
+
+void RoomScene::chooseGeneralPass(const QString &packages){
+    QApplication::alert(main_window);
+    if(!main_window->isActiveWindow())
+        Sanguosha->playAudio("prelude");
+
+    QDialog *dialog = new PassChooseDialog(main_window,packages);
 
     dialog->exec();
 }

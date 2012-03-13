@@ -29,7 +29,7 @@ bool SaveDataStruct::checkDataFormat() const{
     return format_right;
 }
 
-const QString PassMode::default_hero = "caocao" ;
+const QString PassMode::default_hero = "songjiang" ;
 const QString PassMode::version = "ver1.6.2.1";
 const QString PassMode::savePath = "savedata/pass_mode.sav";
 PassMode::PassMode(QObject *parent)
@@ -49,10 +49,10 @@ PassMode::PassMode(QObject *parent)
                 << "guanyu+liubei+zhangfei" << "lubu+shenguanyu+diaochan";
 
     exp_map.insert("evil", 4);
-    exp_map.insert("wei", 8);
-    exp_map.insert("shu", 8);
-    exp_map.insert("wu", 8);
-    exp_map.insert("qun", 8);
+    exp_map.insert("guan", 8);
+    exp_map.insert("jiang", 8);
+    exp_map.insert("min", 8);
+    exp_map.insert("kou", 8);
     exp_map.insert("god", 16);
 
     skill_map.insert("mashu", 15);
@@ -722,8 +722,8 @@ PassModeScenario::PassModeScenario()
 {
     rule = new PassModeRule(this);
 
-    lord = "lubu";
-    rebels << "guanyu" << "liubei" << "zhangfei";
+    lord = "wanglun";
+    rebels << "linchong" << "chaogai" << "ruanxiaoer";
 
 }
 

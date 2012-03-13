@@ -687,7 +687,7 @@ public:
 	explicit Skill(const char *name, Frequency frequent = NotFrequent);
 	bool isLordSkill() const;
 	QString getDescription() const;
-	QString getText() const;
+	QString getText(const bool full = true) const;
 	bool isVisible() const;
 
 	virtual QString getDefaultChoice(ServerPlayer *player) const;
@@ -805,8 +805,8 @@ public:
 	void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
 	void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);
 	void getResult(const char *reply_func, ServerPlayer *reply_player, bool move_focus = true);
-	void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true);
-	void acquireSkill(ServerPlayer *player, const char *skill_name, bool open = true);
+	void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true, bool trigger_skill = true);
+	void acquireSkill(ServerPlayer *player, const char *skill_name, bool open = true, bool trigger_skill = true);
 	void adjustSeats();
 	void swapPile();
 	int getCardFromPile(const char *card_name);

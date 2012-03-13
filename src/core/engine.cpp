@@ -58,7 +58,7 @@ Engine::Engine()
             << "Guben"
             << "Stanley"
             << "InterChange"
-			<< "Pass"
+            << "Pass"
             << "Test"
 
             << "StandardCard"
@@ -77,7 +77,7 @@ Engine::Engine()
     QStringList scene_names;
     scene_names
             << "Couple"
-			<< "PassMode"
+            << "PassMode"
             << "Zombie"
             << "Legend"
             << "Impasse"

@@ -145,6 +145,7 @@ public slots:
     void drawCards(const QList<const Card *> &cards);
     void drawNCards(ClientPlayer *player, int n);
     void chooseGeneral(const QStringList &generals);
+    void chooseGeneralPass(const QString &packages);
     void arrangeSeats(const QList<const ClientPlayer*> &seats);
     void toggleDiscards();
     void enableTargets(const Card *card);
