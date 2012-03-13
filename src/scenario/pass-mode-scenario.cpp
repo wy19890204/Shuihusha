@@ -55,14 +55,14 @@ PassMode::PassMode(QObject *parent)
     exp_map.insert("kou", 8);
     exp_map.insert("god", 16);
 
-    skill_map.insert("mashu", 15);
+    skill_map.insert("huqi", 15);
     skill_map.insert("kezhi_p", 20);
     skill_map.insert("nuhou_p", 20);
     skill_map.insert("duanyan_p", 25);
     skill_map.insert("fenjin_p", 30);
 //    skill_map.insert("niepan", 30);
     skill_map.insert("quanheng_p", 40);
-    skill_map.insert("xiuluo", 40);
+    skill_map.insert("fengyue", 40);
     skill_map.insert("tipo_p" ,40);
     skill_map.insert("qiangong_p",50);
     skill_map.insert("xiongzi_p", 80);
