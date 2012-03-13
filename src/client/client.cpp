@@ -14,10 +14,12 @@
 #include <QCommandLinkButton>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QTabWidget>
 #include <QLineEdit>
 #include <QLabel>
 #include <QTextDocument>
 #include <QTextCursor>
+#include <QScrollArea>
 
 Client *ClientInstance = NULL;
 
@@ -99,12 +101,14 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["askForUseCard"] = &Client::askForUseCard;
     callbacks["askForSkillInvoke"] = &Client::askForSkillInvoke;
     callbacks["askForChoice"] = &Client::askForChoice;
+    callbacks["askForSkillChoice"] = &Client::askForSkillChoice;
     callbacks["askForNullification"] = &Client::askForNullification;
     callbacks["askForCardShow"] = &Client::askForCardShow;
     callbacks["askForPindian"] = &Client::askForPindian;
     callbacks["askForYiji"] = &Client::askForYiji;
     callbacks["askForPlayerChosen"] = &Client::askForPlayerChosen;
     callbacks["askForGeneral"] = &Client::askForGeneral;
+    callbacks["askForGeneralPass"] = &Client::askForGeneralPass;
 
     callbacks["fillAG"] = &Client::fillAG;
     callbacks["askForAG"] = &Client::askForAG;
@@ -752,6 +756,72 @@ void Client::askForChoice(const QString &ask_str){
     Sanguosha->playAudio("pop-up");
     setStatus(ExecDialog);
 }
+
+void Client::askForSkillChoice(const QString &skills_str){
+    QRegExp rx("(.+)");
+
+    if(!rx.exactMatch(skills_str))
+        return;
+
+    QStringList words = rx.capturedTexts();
+    QStringList skill_infos = words.at(1).split("+");
+
+    QDialog *dialog = new QDialog;
+    dialog->setFixedSize(400,400);
+    dialog->setWindowTitle(tr("Study skill:"));
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    QTabWidget *tab_widget = new QTabWidget;
+
+
+    QVBoxLayout *vLayout = new QVBoxLayout ;
+
+    QWidget *main_tab = new QWidget;
+    main_tab->setLayout(vLayout);
+
+    QWidget *feature_tab = new QWidget;
+    feature_tab->setLayout(vLayout);
+
+    QWidget *common_tab = new QWidget;
+    QScrollArea* scroll = new QScrollArea();
+    common_tab->setLayout(vLayout);
+    scroll->setWidget(common_tab);
+    scroll->setWidgetResizable(true);
+
+    foreach(QString skill_info , skill_infos){
+        QCommandLinkButton *button = new QCommandLinkButton;
+        QStringList skill_info_array = skill_info.split(":") ;
+        QString skill_name = skill_info_array.at(0) ;
+        QString skill_value = skill_info_array.at(1) ;
+
+        const Skill *skill = Sanguosha->getSkill(skill_name) ;
+
+        button->setObjectName(skill->objectName());
+        button->setText(QString("%1 : %2").arg(skill->getText(false)).arg(skill_value));
+        button->setToolTip(skill->getDescription());
+        button->setFont(Config.TinyFont);
+
+        connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
+        connect(button, SIGNAL(clicked()), this, SLOT(selectChoice()));
+
+        vLayout->addWidget(button);
+    }
+
+    tab_widget->addTab(main_tab,"skill_main") ;
+    tab_widget->addTab(feature_tab,"skill_feature") ;
+    tab_widget->addTab(scroll,"skill_common") ;
+
+    layout->addWidget(tab_widget);
+
+    dialog->setObjectName(".");
+    connect(dialog, SIGNAL(rejected()), this, SLOT(selectChoice()));
+    dialog->setLayout(layout);
+
+    ask_dialog = dialog;
+    Sanguosha->playAudio("pop-up");
+    setStatus(ExecDialog);
+}
+
 
 void Client::playSkillEffect(const QString &play_str){
     QRegExp rx("(#?\\w+):([-\\w]+)");
@@ -1462,6 +1532,11 @@ void Client::askForPlayerChosen(const QString &players){
 void Client::askForGeneral(const QString &generals){
     choose_command = "chooseGeneral";
     emit generals_got(generals.split("+"));
+}
+
+void Client::askForGeneralPass(const QString &flag){
+    choose_command = "chooseGeneralPass";
+    emit pass_generals_got(flag);
 }
 
 void Client::replyYiji(const Card *card, const Player *to){

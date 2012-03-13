@@ -134,6 +134,7 @@ public:
     void askForCardShow(const QString &requestor);
     void askForSkillInvoke(const QString &skill_name);
     void askForChoice(const QString &ask_str);
+    void askForSkillChoice(const QString &skills_str);
     void askForDiscard(const QString &discard_str);
     void askForExchange(const QString &exchange_str);
     void askForSuit(const QString &);
@@ -144,6 +145,7 @@ public:
     void askForCardChosen(const QString &ask_str);
     void askForPlayerChosen(const QString &ask_str);
     void askForGeneral(const QString &generals);
+    void askForGeneralPass(const QString &flag);
 
     // 3v3 & 1v1 methods
     void fillGenerals(const QString &generals);
@@ -226,6 +228,7 @@ signals:
     void player_added(ClientPlayer *new_player);
     void player_removed(const QString &player_name);
     void generals_got(const QStringList &generals);
+    void pass_generals_got(const QString packages);
     void seats_arranged(const QList<const ClientPlayer*> &seats);
     void hp_changed(const QString &who, int delta, DamageStruct::Nature nature, bool losthp);
     void status_changed(Client::Status new_status);

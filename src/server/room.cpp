@@ -5,6 +5,7 @@
 #include "ai.h"
 #include "scenario.h"
 #include "gamerule.h"
+#include "pass-mode-scenario.h"
 #include "scenerule.h"	//changjing
 #include "contestdb.h"
 #include "banpairdialog.h"
@@ -48,6 +49,7 @@ void Room::initCallbacks(){
     callbacks["chooseAGCommand"] = &Room::commonCommand;
     callbacks["choosePlayerCommand"] = &Room::commonCommand;
     callbacks["chooseGeneralCommand"] = &Room::commonCommand;
+    callbacks["chooseGeneralPassCommand"] = &Room::commonCommand;
     callbacks["selectChoiceCommand"] = &Room::commonCommand;
     callbacks["replyYijiCommand"] = &Room::commonCommand;
     callbacks["replyGuanxingCommand"] = &Room::commonCommand;
@@ -508,6 +510,10 @@ void Room::detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name
                     QString("%1:%2").arg(player->objectName()).arg(skill_name));
 
     const Skill *skill = Sanguosha->getSkill(skill_name);
+    if(skill->inherits("PassiveSkill")){
+        const PassiveSkill *passive_skill = qobject_cast<const PassiveSkill *>(skill);
+        passive_skill->onDetach(player);
+    }
     if(skill && skill->isVisible()){
         foreach(const Skill *skill, Sanguosha->getRelatedSkills(skill_name))
             detachSkillFromPlayer(player, skill->objectName());
@@ -586,6 +592,23 @@ QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, cons
     }
     QVariant decisionData = QVariant::fromValue("skillChoice:"+skill_name+":"+answer);
     thread->trigger(ChoiceMade, player, decisionData);
+    return answer;
+}
+
+QString Room::askForSkillChoice(ServerPlayer *player, const QString &choices){
+    AI *ai = player->getAI();
+    QString answer;
+    if(ai)
+        answer= "." ;
+    else{
+        player->invoke("askForSkillChoice", choices);
+        getResult("selectChoiceCommand", player);
+
+        if(result.isEmpty())
+            result = "." ;
+
+        answer=result;
+    }
     return answer;
 }
 
@@ -2363,6 +2386,8 @@ void Room::startGame(){
     GameRule *game_rule;
     if(mode == "04_1v3")
         game_rule = new HulaoPassMode(this);
+    else if(mode == "pass_mode")
+        game_rule = new PassMode(this);
     else if(Config.EnableScene)	//changjing
         game_rule = new SceneRule(this);	//changjing
     else
@@ -2668,7 +2693,7 @@ void Room::getResult(const QString &reply_func, ServerPlayer *reply_player, bool
         thread->end();
 }
 
-void Room::acquireSkill(ServerPlayer *player, const Skill *skill, bool open){
+void Room::acquireSkill(ServerPlayer *player, const Skill *skill, bool open , bool trigger_skill){
     QString skill_name = skill->objectName();
     if(player->hasSkill(skill_name))
         return;
@@ -2678,6 +2703,10 @@ void Room::acquireSkill(ServerPlayer *player, const Skill *skill, bool open){
     if(skill->inherits("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
         thread->addTriggerSkill(trigger_skill);
+    }
+    if(trigger_skill && skill->inherits("PassiveSkill")){
+        const PassiveSkill *passive_skill = qobject_cast<const PassiveSkill *>(skill);
+        passive_skill->onAcquire(player);
     }
 
     if(skill->isVisible()){
@@ -2693,10 +2722,10 @@ void Room::acquireSkill(ServerPlayer *player, const Skill *skill, bool open){
     }
 }
 
-void Room::acquireSkill(ServerPlayer *player, const QString &skill_name, bool open){
+void Room::acquireSkill(ServerPlayer *player, const QString &skill_name, bool open , bool trigger_skill){
     const Skill *skill = Sanguosha->getSkill(skill_name);
     if(skill)
-        acquireSkill(player, skill, open);
+        acquireSkill(player, skill, open , trigger_skill);
 }
 
 void Room::setTag(const QString &key, const QVariant &value){
@@ -3117,6 +3146,21 @@ QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, Q
     if(player->getState() == "online"){
         player->invoke("askForGeneral", generals.join("+"));
         getResult("chooseGeneralCommand", player);
+
+        if(result.isEmpty() || result == ".")
+            return default_choice;
+        else
+            return result;
+    }
+
+    return default_choice;
+}
+
+QString Room::askForGeneralPass(ServerPlayer *player, const QString &flag){
+    QString default_choice = PassMode::default_hero ;
+    if(player->getState() == "online"){
+        player->invoke("askForGeneralPass",flag);
+        getResult("chooseGeneralPassCommand", player);
 
         if(result.isEmpty() || result == ".")
             return default_choice;

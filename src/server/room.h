@@ -85,8 +85,8 @@ public:
     void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
     void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);
     void getResult(const QString &reply_func, ServerPlayer *reply_player, bool move_focus = true);
-    void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true);
-    void acquireSkill(ServerPlayer *player, const QString &skill_name, bool open = true);
+    void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true , bool trigger_skill = true);
+    void acquireSkill(ServerPlayer *player, const QString &skill_name, bool open = true , bool trigger_skill = true);
     void adjustSeats();
     void swapPile();
     int getCardFromPile(const QString &card_name);
@@ -142,7 +142,8 @@ public:
     QString askForKingdom(ServerPlayer *player);
     bool askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data = QVariant());
     QString askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices);
-    bool askForDiscard(ServerPlayer *target, const QString &reason, int discard_num, bool optional = false, bool include_equip = false);
+    QString askForSkillChoice(ServerPlayer *player, const QString &choices);
+	bool askForDiscard(ServerPlayer *target, const QString &reason, int discard_num, bool optional = false, bool include_equip = false);
     const Card *askForExchange(ServerPlayer *player, const QString &reason, int discard_num);
     bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
     bool isCanceled(const CardEffectStruct &effect);
@@ -155,6 +156,7 @@ public:
     const Card *askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason);
     ServerPlayer *askForPlayerChosen(ServerPlayer *player, const QList<ServerPlayer *> &targets, const QString &reason);
     QString askForGeneral(ServerPlayer *player, const QStringList &generals, QString default_choice = QString());
+    QString askForGeneralPass(ServerPlayer *player, const QString &flag);
     void askForGeneralAsync(ServerPlayer *player);
     const Card *askForSinglePeach(ServerPlayer *player, ServerPlayer *dying);
 
