@@ -34,7 +34,7 @@ public:
     explicit Skill(const QString &name, Frequency frequent = NotFrequent);
     bool isLordSkill() const;
     QString getDescription() const;
-    QString getText() const;
+    QString getText(const bool full=true) const;
     bool isVisible() const;
 
     virtual QString getDefaultChoice(ServerPlayer *player) const;
@@ -184,6 +184,15 @@ public:
 
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
     virtual void onGameStart(ServerPlayer *player) const = 0;
+};
+
+class PassiveSkill: public GameStartSkill{
+    Q_OBJECT
+public:
+    PassiveSkill(const QString &name);
+    virtual void onGameStart(ServerPlayer *player) const;
+    virtual void onAcquire(ServerPlayer *player) const = 0;
+    virtual void onDetach(ServerPlayer *player) const = 0;
 };
 
 class ProhibitSkill: public Skill{

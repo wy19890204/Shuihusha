@@ -863,6 +863,8 @@ void Player::copyFrom(Player* p)
     b->jilei_set        = QSet<QString> (a->jilei_set);
 
     b->tag              = QVariantMap(a->tag);
+
+    b->skills_enhance   = QSet<QString> (a->skills_enhance);
 }
 
 QList<const Player *> Player::getSiblings() const{
@@ -873,4 +875,12 @@ QList<const Player *> Player::getSiblings() const{
     }
 
     return siblings;
+}
+
+bool Player::isSkillEnhance(const QString skill_name,const int index) const{
+    return skills_enhance.contains(skill_name + QString::number(index));
+}
+
+void Player::enHanceSkill(const QString &skill_name,const int index){
+    skills_enhance << (skill_name + QString::number(index)) ;
 }

@@ -205,6 +205,8 @@ public:
 
     QVariantMap tag;
 
+    bool isSkillEnhance(const QString skill_name,const int index) const;
+    void enHanceSkill(const QString &skill_name,const int index);
 protected:
     QMap<QString, int> marks;
     QMap<QString, QList<int> > piles;
@@ -236,6 +238,7 @@ private:
 
     QSet<QString> jilei_set;
 
+    QSet<QString> skills_enhance;
 signals:
     void general_changed();
     void general2_changed();

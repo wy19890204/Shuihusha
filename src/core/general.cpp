@@ -149,6 +149,13 @@ void General::lastWord() const{
     Sanguosha->playEffect(filename);
 }
 
+QString General::getBasicName() const{
+    QString name = objectName() ;
+    if(name.endsWith("_p"))
+        name.chop(2);
+    return name;
+}
+
 QSize General::BigIconSize(94, 96);
 QSize General::SmallIconSize(122, 50);
 QSize General::TinyIconSize(42, 36);
