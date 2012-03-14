@@ -119,9 +119,9 @@ end
 local passgeneral = {"bubing_e", "nubing_e", "jianshi_e", "qibing_e", "shoujiang_e", "paobing_e", "kuangdaoke_e"}
 
 for _, player in ipairs(passgeneral) do
-	t["coder:" .. player] = t["coder:pass"]
-	t["designer:" .. player] = t["designer:pass"]
-	t["#" .. player] = ""
+	pass_t["coder:" .. player] = pass_t["coder:pass"]
+	pass_t["designer:" .. player] = pass_t["designer:pass"]
+	pass_t["#" .. player] = ""
 end
 
 return pass_t

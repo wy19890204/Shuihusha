@@ -58,7 +58,6 @@ Engine::Engine()
             << "Guben"
             << "Stanley"
             << "InterChange"
-            << "Pass"
             << "Test"
 
             << "StandardCard"
@@ -69,7 +68,8 @@ Engine::Engine()
             << "Kuso"
             << "Joy"
 
-            << "JoyGeneral";
+            << "JoyGeneral"
+            << "Pass";
 
     foreach(QString name, package_names)
         addPackage(name);
@@ -77,8 +77,8 @@ Engine::Engine()
     QStringList scene_names;
     scene_names
             << "Couple"
-            << "PassMode"
             << "Zombie"
+            << "PassMode"
             << "Legend"
             << "Impasse"
             << "Custom";
@@ -329,7 +329,7 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersionNumber() const{
-    return "20120307";
+    return "20120315";
 }
 
 QString Engine::getVersion() const{

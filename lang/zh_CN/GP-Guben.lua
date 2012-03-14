@@ -1,6 +1,6 @@
 -- translation for Guben Package
 
-return {
+local gb = {
 	["guben"] = "古本水浒传",
 
 --hero
@@ -200,7 +200,6 @@ return {
 
 	["#cuimeng"] = "连珠箭",
 	["cuimeng"] = "崔猛",
-	["designer:cuimeng"] = "破晓之云",
 	["liegong_p"] = "连发",
 	[":liegong_p"] = "出牌阶段，当你使用了一张【杀】后，可以将一张与此【杀】相同花色的手牌当作【杀】使用，弃置目标装备区与此【杀】花色相同的牌，且此【杀】无视目标防具，不可被【闪】响应。每阶段限一次。",
 	["gongshen_p"] = "弓神",
@@ -321,3 +320,14 @@ return {
 	["#jianbang"] = "万夫莫当",
 	["jianbang"] = "纪安邦",
 }
+
+local poxiao = {"wujiao",
+		"yinchun", "huanqi", "fatong", "jinbigui", "moqide", "cuimeng", "yaogang", "chenfei",
+		"gaotong", "wanglin"}
+
+for _, player in ipairs(poxiao) do
+	gb["coder:" .. player] = "破晓之云"
+	gb["designer:" .. player] = "破晓之云"
+end
+
+return gb
