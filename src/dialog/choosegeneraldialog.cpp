@@ -327,7 +327,7 @@ PassChooseDialog::PassChooseDialog(QWidget *parent,const QString &flag)
     setWindowTitle(tr("Pass choose generals"));
     QTabWidget *tab_widget = new QTabWidget;
     setFixedSize(575,215);
-    const Package *stdpack = Sanguosha->findChild<const Package *>("QJWM");
+    const Package *stdpack = Sanguosha->findChild<const Package *>(flag);
     QList<const General *> all_generals = stdpack->findChildren<const General *>();
     QMap<QString, QList<const General*> > map;
     foreach(const General *general, all_generals){

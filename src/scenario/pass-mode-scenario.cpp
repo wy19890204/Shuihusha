@@ -37,14 +37,14 @@ PassMode::PassMode(QObject *parent)
 {
     setObjectName("pass_mode_rule");
 
-    enemy_list  << "shizu+gongshou+jianshi" << "jianshi+qibing+jianshi"
-                << "huwei+gongshou+jianshi" << "jianshi+kuangdaoke+shizu"
-                << "huwei+caocao+jianshi" << "kuangdaoke+luxun+shizu"
+    enemy_list  << "bubing+nubing+jianshi" << "jianshi+qibing+jianshi"
+                << "shoujiang+nubing+jianshi" << "jianshi+kuangdaoke+bubing"
+                << "shoujiang+caocao+jianshi" << "kuangdaoke+luxun+bubing"
                 << "qibing+machao+qibing" << "jianshi+zhaoyun+kuangdaoke"
-                << "jianshi+zhouyu+jianshi" << "leishi+guojia+leishi"
-                << "huwei+zhangliao+kuangdaoke" << "shizu+shenlumeng+shizu"
-                << "huwei+sunshangxiang+lumeng" << "zhugeliang+huangyueying+kuangdaoke"
-                << "kuangdaoke+xuchu+xiahoudun" <<"luxun+simayi+leishi"
+                << "jianshi+zhouyu+jianshi" << "paobing+guojia+paobing"
+                << "shoujiang+zhangliao+kuangdaoke" << "bubing+shenlumeng+bubing"
+                << "shoujiang+sunshangxiang+lumeng" << "zhugeliang+huangyueying+kuangdaoke"
+                << "kuangdaoke+xuchu+xiahoudun" <<"luxun+simayi+paobing"
                 << "guojia+caocao+zhenji" << "zhouyu+sunquan+huanggai"
                 << "guanyu+liubei+zhangfei" << "lubu+shenguanyu+diaochan";
 
@@ -244,7 +244,7 @@ void PassMode::initGameStart(ServerPlayer *player) const{
             room->setTag("Stage", 1);
             room->setTag("Times", 1);
 
-            QString name = room->askForGeneralPass(p,"");
+            QString name = room->askForGeneralPass(p, "QJWM");
 
             room->transfigure(p, name, true, true);
             room->setPlayerProperty(p, "maxhp", p->getMaxHP() + 1);
@@ -253,7 +253,7 @@ void PassMode::initGameStart(ServerPlayer *player) const{
             if(p->getKingdom() != general->getKingdom())
                 room->setPlayerProperty(p, "kingdom", general->getKingdom());
             // debug
-            p->enHanceSkill("rende",1);
+            p->enHanceSkill("ganlin",1);
             askForLearnSkill(p);
         }else{
             QStringList enemys = enemy_list.at(0).split("+");

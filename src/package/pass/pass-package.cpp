@@ -202,22 +202,22 @@ public:
         frequency = Frequent;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *shizu, QVariant &data) const{
-        if(event == PhaseChange && shizu->getPhase() == Player::Draw){
-            Room *room = shizu->getRoom();
-            if(shizu->askForSkillInvoke(objectName())){
+    virtual bool trigger(TriggerEvent event, ServerPlayer *bubing, QVariant &data) const{
+        if(event == PhaseChange && bubing->getPhase() == Player::Draw){
+            Room *room = bubing->getRoom();
+            if(bubing->askForSkillInvoke(objectName())){
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(heart|diamond):(.*)");
                 judge.good = true;
                 judge.reason = objectName();
-                judge.who = shizu;
+                judge.who = bubing;
 
                 room->judge(judge);
             }
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
             if(judge->reason == objectName() && judge->card->isRed()){
-                shizu->obtainCard(judge->card);
+                bubing->obtainCard(judge->card);
                 return true;
             }
         }
@@ -233,11 +233,11 @@ public:
     }
 
     virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *gongshou = effect.from;
-        Room *room = gongshou->getRoom();
+        ServerPlayer *nubing = effect.from;
+        Room *room = nubing->getRoom();
 
-        if(gongshou->getHp() <= 1 || gongshou->getAttackRange() > 4){
-            if(gongshou->askForSkillInvoke(objectName(), QVariant::fromValue(effect))){
+        if(nubing->getHp() <= 1 || nubing->getAttackRange() > 4){
+            if(nubing->askForSkillInvoke(objectName(), QVariant::fromValue(effect))){
                 room->slashResult(effect, NULL);
                 return true;
             }
@@ -446,10 +446,10 @@ bool DianjiPassCard::targetFilter(const QList<const Player *> &targets, const Pl
 }
 
 void DianjiPassCard::onEffect(const CardEffectStruct &effect) const{
-    ServerPlayer *leishi = effect.from;
+    ServerPlayer *paobing = effect.from;
     ServerPlayer *target = effect.to;
 
-    Room *room = leishi->getRoom();
+    Room *room = paobing->getRoom();
     room->setEmotion(target, "bad");
 
     JudgeStruct judge;
@@ -464,13 +464,13 @@ void DianjiPassCard::onEffect(const CardEffectStruct &effect) const{
         DamageStruct damage;
         damage.card = NULL;
         damage.damage = 1;
-        damage.from = leishi;
+        damage.from = paobing;
         damage.to = target;
         damage.nature = DamageStruct::Thunder;
 
         room->damage(damage);
     }else
-        room->setEmotion(leishi, "bad");
+        room->setEmotion(paobing, "bad");
 }
 
 
@@ -3563,30 +3563,29 @@ public:
 PassPackage::PassPackage()
     :Package("pass")
 {
-    General *shizu = new General(this,"shizu_e","evil",3, true, true);
-    shizu->addSkill(new ShiqiPass);
+    General *bubing = new General(this, "bubing_e", "evil", 3, true, true);
+    bubing->addSkill(new ShiqiPass);
 
-    General *gongshou = new General(this,"gongshou_e","evil",3, false, true);
-    gongshou->addSkill(new QianggongPass);
-    gongshou->addSkill(new Skill("shenshe_p"));
+    General *nubing = new General(this, "nubing_e", "evil", 3, false, true);
+    nubing->addSkill(new QianggongPass);
 
-    General *jianshi = new General(this,"jianshi_e","evil",3, false, true);
+    General *jianshi = new General(this, "jianshi_e", "evil", 3, false, true);
     jianshi->addSkill(new PojiaPass);
     jianshi->addSkill(new ZhanshangPass);
 
-    General *qibing = new General(this,"qibing_e","evil",3, true, true);
+    General *qibing = new General(this, "qibing_e", "evil", 3, true, true);
     qibing->addSkill(new QishuPass);
     qibing->addSkill(new XunmaPass);
 
-    General *huwei = new General(this,"huwei_e","evil",3, true, true);
-    huwei->addSkill(new ChenwenPass);
-    huwei->addSkill(new ZhongzhuangPass);
+    General *shoujiang = new General(this, "shoujiang_e", "evil", 3, true, true);
+    shoujiang->addSkill(new ChenwenPass);
+    shoujiang->addSkill(new ZhongzhuangPass);
 
-    General *leishi = new General(this,"leishi_e","evil",3, true, true);
-    leishi->addSkill(new DianjiPass);
-    leishi->addSkill(new LeitiPass);
+    General *paobing = new General(this, "paobing_e", "evil", 3, true, true);
+    paobing->addSkill(new DianjiPass);
+    paobing->addSkill(new LeitiPass);
 
-    General *kuangdaoke = new General(this,"kuangdaoke_e","evil",3, true, true);
+    General *kuangdaoke = new General(this, "kuangdaoke_e", "evil", 3, true, true);
     kuangdaoke->addSkill(new LianzhanPass);
     kuangdaoke->addSkill(new DouzhiPass);
 
