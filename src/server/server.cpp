@@ -116,6 +116,10 @@ QWidget *ServerDialog::createPackageTab(){
         default:
             break;
         }
+        if(package->objectName() == "guben")
+            checkbox->setEnabled(false);
+        if(package->objectName() == "pass")
+            checkbox->setVisible(false);
     }
 
     layout1->addStretch();

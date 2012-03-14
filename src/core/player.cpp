@@ -510,11 +510,10 @@ int Player::getMaxCards() const{
         }
     }
 
-    int shensuan = 0;
-    if(hasSkill("shensuan"))
-        shensuan = 2;
+    int shensuan = hasSkill("shensuan") ? 2 : 0;
+    int kezhi = hasSkill("kezhi_p") ? 1 : 0;
 
-    return qMax(hp,0) + extra + shaxue + shensuan;
+    return qMax(hp,0) + extra + shaxue + shensuan + kezhi;
 }
 
 QString Player::getKingdom() const{
@@ -775,6 +774,7 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
 }
 
 bool Player::canSlashWithoutCrossbow() const{
+    int n = 1;
     if(hasFlag("SlashbySlash"))
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
@@ -782,8 +782,10 @@ bool Player::canSlashWithoutCrossbow() const{
     if(hasSkill("qinlong") && !hasEquip())
         return true;
 
+    if(hasSkill("nuhou_p"))
+        n++;
     int slash_count = getSlashCount();
-    return slash_count < 1;
+    return slash_count < n;
 }
 
 void Player::jilei(const QString &type){

@@ -192,6 +192,8 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
     foreach(const General *general, all_generals){
         if(general->getPackage() == "sp" && !Config.SPOpen)
             continue; //hidden generals
+        if(general->getPackage() == "guben" || general->getPackage() == "pass")
+            continue;
         map[general->getKingdom()] << general;
     }
 

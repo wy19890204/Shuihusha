@@ -29,9 +29,9 @@ bool SaveDataStruct::checkDataFormat() const{
     return format_right;
 }
 
-const QString PassMode::default_hero = "songjiang" ;
-const QString PassMode::version = "ver1.6.2.1";
-const QString PassMode::savePath = "savedata/pass_mode.sav";
+const QString PassMode::default_hero = "wujiao";
+const QString PassMode::version = "ver2.0";
+const QString PassMode::savePath = "etc/savedata/pass_mode.sav";
 PassMode::PassMode(QObject *parent)
     :GameRule(parent)
 {
@@ -39,14 +39,16 @@ PassMode::PassMode(QObject *parent)
 
     enemy_list  << "bubing+nubing+jianshi" << "jianshi+qibing+jianshi"
                 << "shoujiang+nubing+jianshi" << "jianshi+kuangdaoke+bubing"
-                << "shoujiang+caocao+jianshi" << "kuangdaoke+luxun+bubing"
-                << "qibing+machao+qibing" << "jianshi+zhaoyun+kuangdaoke"
-                << "jianshi+zhouyu+jianshi" << "paobing+guojia+paobing"
-                << "shoujiang+zhangliao+kuangdaoke" << "bubing+shenlumeng+bubing"
-                << "shoujiang+sunshangxiang+lumeng" << "zhugeliang+huangyueying+kuangdaoke"
-                << "kuangdaoke+xuchu+xiahoudun" <<"luxun+simayi+paobing"
-                << "guojia+caocao+zhenji" << "zhouyu+sunquan+huanggai"
-                << "guanyu+liubei+zhangfei" << "lubu+shenguanyu+diaochan";
+                << "shoujiang+yinchun+jianshi" << "kuangdaoke+fatong+bubing"
+                << "qibing+huanqi+qibing" << "jianshi+jinbigui+kuangdaoke"
+                << "jianshi+zhangkui+jianshi" << "paobing+moqide+paobing"
+                << "shoujiang+kuangdaoke+gaochonghan" << "bubing+bubing+cuimeng"
+                << "shoujiang+yaogang+chenfei" << "chenfei+gaotong+kuangdaoke"
+                << "wanglin+yaogang+zhangkui"
+                //<< "kuangdaoke+xuchu+xiahoudun" <<"luxun+simayi+paobing"
+                //<< "guojia+caocao+zhenji" << "zhouyu+sunquan+huanggai"
+                //<< "guanyu+liubei+zhangfei" << "lubu+shenguanyu+diaochan"
+                ;
 
     exp_map.insert("evil", 4);
     exp_map.insert("guan", 8);
@@ -60,7 +62,7 @@ PassMode::PassMode(QObject *parent)
     skill_map.insert("nuhou_p", 20);
     skill_map.insert("duanyan_p", 25);
     skill_map.insert("fenjin_p", 30);
-//    skill_map.insert("niepan", 30);
+    skill_map.insert("huaxian", 30);
     skill_map.insert("quanheng_p", 40);
     skill_map.insert("fengyue", 40);
     skill_map.insert("tipo_p" ,40);
@@ -244,7 +246,7 @@ void PassMode::initGameStart(ServerPlayer *player) const{
             room->setTag("Stage", 1);
             room->setTag("Times", 1);
 
-            QString name = room->askForGeneralPass(p, "QJWM");
+            QString name = room->askForGeneralPass(p, "guben");
 
             room->transfigure(p, name, true, true);
             room->setPlayerProperty(p, "maxhp", p->getMaxHP() + 1);
