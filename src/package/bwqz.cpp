@@ -778,16 +778,6 @@ public:
     }
 };
 
-class ZhiYPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return !player->hasEquip(card);
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
 class Zhiyuan: public TriggerSkill{
 public:
     Zhiyuan():TriggerSkill("zhiyuan$"){
@@ -806,7 +796,7 @@ public:
                 Room *room = fang1a->getRoom();
                 QList<ServerPlayer *> lieges = room->getLieges("jiang", fang1a);
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".Zy", "@zhiyuan:" + fang1a->objectName(), data);
+                    const Card *card = room->askForCard(tmp, ".NTH!", "@zhiyuan:" + fang1a->objectName(), data);
                     if(card){
                         room->playSkillEffect(objectName());
                         LogMessage lo;
@@ -1035,7 +1025,6 @@ BWQZPackage::BWQZPackage()
     General *fangla = new General(this, "fangla$", "jiang");
     fangla->addSkill(new Yongle);
     fangla->addSkill(new Zhiyuan);
-    patterns[".Zy"] = new ZhiYPattern;
 
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();

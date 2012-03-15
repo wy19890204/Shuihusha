@@ -2727,25 +2727,6 @@ public:
     }
 };
 
-class NothrowHandcardsPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) ;
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-class NothrowPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return true ;
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
 PassPackage::PassPackage()
     :Package("pass")
 {
@@ -2775,7 +2756,6 @@ PassPackage::PassPackage()
     kuangdaoke->addSkill(new LianzhanPass);
     kuangdaoke->addSkill(new DouzhiPass);
 
-
     skills << new Skill("nuhou_p") << new TipoPass << new Skill("kezhi_p") << new Skill("fenjin_p") << new QuanhengPass
            << new DuanyanPass << new XiongziPass << new QiangongPass ;
 
@@ -2797,8 +2777,6 @@ PassPackage::PassPackage()
     addMetaObject<QingnangPassCard>();
     addMetaObject<LuanwuPassCard>();
 
-    patterns[".NTH!"] = new NothrowHandcardsPattern;
-    patterns[".NT!"] = new NothrowPattern;
 }
 
 ADD_PACKAGE(Pass)

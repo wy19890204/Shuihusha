@@ -535,6 +535,26 @@ public:
     }
 };
 
+class NothrowHandcardsPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card) ;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class NothrowPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return true;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
@@ -595,6 +615,9 @@ TestPackage::TestPackage()
     patterns["nullification"] = new NamePattern("nullification");
     patterns["nulliplot"] = new ExpPattern("Nullification");
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
+
+    patterns[".NTH!"] = new NothrowHandcardsPattern;
+    patterns[".NT!"] = new NothrowPattern;
 }
 
 ADD_PACKAGE(Test)
