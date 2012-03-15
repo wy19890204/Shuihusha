@@ -326,7 +326,7 @@ PassChooseDialog::PassChooseDialog(QWidget *parent,const QString &flag)
     :QDialog(parent)
 {
     max_buttons = 0 ;
-    setWindowTitle(tr("Pass choose generals"));
+    setWindowTitle(Sanguosha->translate("pass_choose_generals"));
     QTabWidget *tab_widget = new QTabWidget;
     setFixedSize(575,215);
     const Package *stdpack = Sanguosha->findChild<const Package *>(flag);
