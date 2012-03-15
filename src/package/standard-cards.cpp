@@ -727,19 +727,8 @@ void ExNihilo::onEffect(const CardEffectStruct &effect) const{
 }
 
 Duel::Duel(Suit suit, int number)
-    :SingleTargetTrick(suit, number, true)
-{
+    :SingleTargetTrick(suit, number, true){
     setObjectName("duel");
-}
-
-bool Duel::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(to_select->hasSkill("kongcheng") && to_select->isKongcheng())
-        return false;
-
-    if(to_select == Self)
-        return false;
-
-    return targets.isEmpty();
 }
 
 void Duel::onEffect(const CardEffectStruct &effect) const{

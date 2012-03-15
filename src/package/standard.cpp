@@ -167,6 +167,11 @@ QString SingleTargetTrick::getSubtype() const{
 bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(to_select == Self)
         return false;
+    if(objectName() == "assassinate" || objectName() == "duel"){
+        if(to_select->hasSkill("jueming") && to_select->getHp() == 1 &&
+           to_select->getPhase() == Player::NotActive)
+            return false;
+    }
 
     return targets.isEmpty();
 }
