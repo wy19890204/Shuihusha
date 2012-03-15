@@ -92,12 +92,18 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     layout->addRow(tr("Game mode"), game_mode_label);
     layout->addRow(tr("Player count"), player_count_label);
     layout->addRow(tr("2nd general mode"), two_general_label);
-    layout->addRow(tr("Scene Mode"), scene_label);
-    layout->addRow(tr("Same Mode"), same_label);
-    layout->addRow(tr("Endless Mode"), endless_label);
-    layout->addRow(tr("Anzhan Mode"), anzhan_label);
-    layout->addRow(tr("Basara Mode"), basara_label);
-    layout->addRow(tr("Max HP scheme"), max_hp_label);
+    if(ServerInfo.Enable2ndGeneral)
+        layout->addRow(tr("Max HP scheme"), max_hp_label);
+    if(ServerInfo.EnableScene)
+        layout->addRow(tr("Scene Mode"), scene_label);
+    if(ServerInfo.EnableSame)
+        layout->addRow(tr("Same Mode"), same_label);
+    if(ServerInfo.EnableEndless)
+        layout->addRow(tr("Endless Mode"), endless_label);
+    if(ServerInfo.EnableAnzhan)
+        layout->addRow(tr("Anzhan Mode"), anzhan_label);
+    if(ServerInfo.EnableBasara)
+        layout->addRow(tr("Basara Mode"), basara_label);
     layout->addRow(tr("Free choose"), free_choose_label);
     layout->addRow(tr("Enable AI"), enable_ai_label);
     layout->addRow(tr("Operation time"), time_limit_label);

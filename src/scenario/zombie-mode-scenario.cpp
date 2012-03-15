@@ -1,4 +1,3 @@
-
 #include "zombie-mode-scenario.h"
 #include "engine.h"
 #include "standard-skillcards.h"
@@ -339,7 +338,7 @@ ZombieScenario::ZombieScenario()
 {
     rule = new ZombieRule(this);
 
-    skills<< new Peaching;
+    skills << new Peaching;
 
     General *zombie = new General(this, "zombie", "die", 3, true, true);
     zombie->addSkill(new Xunmeng);

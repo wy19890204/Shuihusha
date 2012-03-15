@@ -720,13 +720,39 @@ bool PassModeRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &d
 }
 
 PassModeScenario::PassModeScenario()
-        :Scenario("pass_mode")
+    :Scenario("pass_mode")
 {
     rule = new PassModeRule(this);
 
     lord = "wanglun";
     rebels << "linchong" << "chaogai" << "ruanxiaoer";
+    /*
+    General *bubing = new General(this, "bubing_e", "evil", 3, true, true);
+    bubing->addSkill(new ShiqiPass);
 
+    General *nubing = new General(this, "nubing_e", "evil", 3, false, true);
+    nubing->addSkill(new QianggongPass);
+
+    General *jianshi = new General(this, "jianshi_e", "evil", 3, false, true);
+    jianshi->addSkill(new PojiaPass);
+    jianshi->addSkill(new ZhanshangPass);
+
+    General *qibing = new General(this, "qibing_e", "evil", 3, true, true);
+    qibing->addSkill(new QishuPass);
+    qibing->addSkill(new XunmaPass);
+
+    General *shoujiang = new General(this, "shoujiang_e", "evil", 3, true, true);
+    shoujiang->addSkill(new ChenwenPass);
+    shoujiang->addSkill(new ZhongzhuangPass);
+
+    General *paobing = new General(this, "paobing_e", "evil", 3, true, true);
+    paobing->addSkill(new DianjiPass);
+    paobing->addSkill(new LeitiPass);
+
+    General *kuangdaoke = new General(this, "kuangdaoke_e", "evil", 3, true, true);
+    kuangdaoke->addSkill(new LianzhanPass);
+    kuangdaoke->addSkill(new DouzhiPass);
+*/
 }
 
 ADD_SCENARIO(PassMode)

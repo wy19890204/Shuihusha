@@ -104,4 +104,5 @@ private:
 typedef SaveDataStruct *SaveDataStar;
 Q_DECLARE_METATYPE(SaveDataStruct)
 Q_DECLARE_METATYPE(SaveDataStar)
+
 #endif // PASSMODESCENARIO_H
