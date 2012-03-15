@@ -8,6 +8,7 @@ local pass_t = {
 	["@exp"] = "经验",
 	["exp"] = "经验值",
 	["damage"] = "伤害",
+	["pass_choose_generals"] = "闯关角色选择",
 --kingdom
 	["evil"] = "炮灰",
 	["evil_god"] = "猛将",
@@ -53,6 +54,11 @@ local pass_t = {
 	["douzhi_p"] = "斗志",
 	[":douzhi_p"] = "回合结束时，你可以将手牌补至体力上限。",
 --exp
+	["study_skill"] = "★技能学习★",
+	["skill_main"] = "主技能",
+	["skill_feature"] = "特征技能",
+	["skill_common"] = "公共技能",
+
 	["nuhou_p"] = "怒吼",
 	[":nuhou_p"] = "<b>锁定技</b>，每回合出杀次数+1。",
 
@@ -119,9 +125,9 @@ end
 local passgeneral = {"bubing_e", "nubing_e", "jianshi_e", "qibing_e", "shoujiang_e", "paobing_e", "kuangdaoke_e"}
 
 for _, player in ipairs(passgeneral) do
-	t["coder:" .. player] = t["coder:pass"]
-	t["designer:" .. player] = t["designer:pass"]
-	t["#" .. player] = ""
+	pass_t["coder:" .. player] = pass_t["coder:pass"]
+	pass_t["designer:" .. player] = pass_t["designer:pass"]
+	pass_t["#" .. player] = ""
 end
 
 return pass_t

@@ -50,9 +50,6 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         nickname_item->setData(Qt::UserRole, general->objectName());
         nickname_item->setTextAlignment(Qt::AlignCenter);
 
-        if(general->isHidden())
-            nickname_item->setBackgroundColor(Qt::gray);
-
         QTableWidgetItem *name_item = new QTableWidgetItem(name);
         name_item->setTextAlignment(Qt::AlignCenter);
         if(general->isLord()){
@@ -60,11 +57,25 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             name_item->setTextAlignment(Qt::AlignCenter);
         }
 
-        if(general->isHidden())
+        if(general->isHidden()){
+            nickname_item->setBackgroundColor(Qt::gray);
+            nickname_item->setTextColor(Qt::white);
+            //nickname_item->setToolTip("hidden");
             name_item->setBackgroundColor(Qt::gray);
+            name_item->setTextColor(Qt::white);
+        }
+        if(general->getPackage() == "guben"){
+            nickname_item->setBackgroundColor(Qt::cyan);
+            name_item->setBackgroundColor(Qt::cyan);
+        }
+        else if(general->getPackage() == "pass"){
+            nickname_item->setBackgroundColor(Qt::darkMagenta);
+            name_item->setBackgroundColor(Qt::darkMagenta);
+        }
 
         QTableWidgetItem *kingdom_item = new QTableWidgetItem(kingdom);
         kingdom_item->setTextAlignment(Qt::AlignCenter);
+        kingdom_item->setBackgroundColor(Sanguosha->getKingdomColor(general->getKingdom()));
 
         QTableWidgetItem *gender_item = new QTableWidgetItem(gender);
         gender_item->setTextAlignment(Qt::AlignCenter);

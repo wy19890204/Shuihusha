@@ -768,13 +768,14 @@ void Client::askForSkillChoice(const QString &skills_str){
 
     QDialog *dialog = new QDialog;
     dialog->setFixedSize(400,400);
-    dialog->setWindowTitle(tr("Study skill:"));
+    dialog->setWindowTitle(Sanguosha->translate("study_skill"));
 
     QHBoxLayout *layout = new QHBoxLayout;
     QTabWidget *tab_widget = new QTabWidget;
 
 
-    QVBoxLayout *vLayout = new QVBoxLayout ;
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    QGridLayout *gLayout = new QGridLayout;
 
     QWidget *main_tab = new QWidget;
     main_tab->setLayout(vLayout);
@@ -784,10 +785,11 @@ void Client::askForSkillChoice(const QString &skills_str){
 
     QWidget *common_tab = new QWidget;
     QScrollArea* scroll = new QScrollArea();
-    common_tab->setLayout(vLayout);
+    common_tab->setLayout(gLayout);
     scroll->setWidget(common_tab);
     scroll->setWidgetResizable(true);
 
+    int i = 1,j = 1;
     foreach(QString skill_info , skill_infos){
         QCommandLinkButton *button = new QCommandLinkButton;
         QStringList skill_info_array = skill_info.split(":") ;
@@ -799,17 +801,22 @@ void Client::askForSkillChoice(const QString &skills_str){
         button->setObjectName(skill->objectName());
         button->setText(QString("%1 : %2").arg(skill->getText(false)).arg(skill_value));
         button->setToolTip(skill->getDescription());
-        button->setFont(Config.TinyFont);
+        //button->setFont(Config.TinyFont);
 
         connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
         connect(button, SIGNAL(clicked()), this, SLOT(selectChoice()));
 
-        vLayout->addWidget(button);
+        gLayout->addWidget(button, i, j);
+        j++;
+        if(j > 2){
+            j = 1;
+            i ++;
+        }
     }
 
-    tab_widget->addTab(main_tab,"skill_main") ;
-    tab_widget->addTab(feature_tab,"skill_feature") ;
-    tab_widget->addTab(scroll,"skill_common") ;
+    tab_widget->addTab(main_tab, Sanguosha->translate("skill_main"));
+    tab_widget->addTab(feature_tab, Sanguosha->translate("skill_feature"));
+    tab_widget->addTab(scroll, Sanguosha->translate("skill_common"));
 
     layout->addWidget(tab_widget);
 
