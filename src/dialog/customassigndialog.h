@@ -13,6 +13,7 @@
 #include <QButtonGroup>
 #include <QLabel>
 #include <QTextEdit>
+#include <QLineEdit>
 
 class LabelButton : public QLabel {
     Q_OBJECT
@@ -199,12 +200,14 @@ public:
 
 private:
     QListWidget *skill_list;
+    QLineEdit *input_skill;
     QPushButton *select_skill, *delete_skill;
     QTextEdit *skill_info;
 
     QStringList update_skills;
 
 private slots:
+    void addInputSkill();
     void selectSkill();
     void deleteSkill();
     void addSkill();
