@@ -2166,7 +2166,8 @@ void Room::damage(const DamageStruct &damage_data){
             ServerPlayer *source = findPlayerWhohasEventCard("ninedaygirl");
             if(source == damage.to){
                 setPlayerFlag(damage.to, "NineGirl");
-                bool girl = askForUseCard(damage.to, "Ninedaygirl", "@ninedaygirl:" + QString::number(damage.damage));
+                QString prompt = QString("@ninedaygirl:::%1").arg(damage.damage);
+                bool girl = askForUseCard(damage.to, "NinedayGirl", prompt);
                 setPlayerFlag(damage.to, "-NineGirl");
                 if(girl){
                     LogMessage log;

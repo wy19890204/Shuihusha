@@ -95,6 +95,10 @@ QWidget *ServerDialog::createPackageTab(){
         if(package == NULL)
             continue;
 
+        if(package->objectName() == "guben" ||
+           package->objectName() == "pass")
+            continue;
+
         QCheckBox *checkbox = new QCheckBox;
         checkbox->setObjectName(extension);
         checkbox->setText(Sanguosha->translate(extension));
@@ -116,10 +120,6 @@ QWidget *ServerDialog::createPackageTab(){
         default:
             break;
         }
-        if(package->objectName() == "guben")
-            checkbox->setEnabled(false);
-        if(package->objectName() == "pass")
-            checkbox->setVisible(false);
     }
 
     layout1->addStretch();
