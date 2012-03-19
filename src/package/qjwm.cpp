@@ -231,30 +231,40 @@ public:
 class Wubang: public TriggerSkill{
 public:
     Wubang():TriggerSkill("wubang"){
-        events << CardLost;
+        events << CardLost << FinishJudge;
         frequency = Frequent;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
+        return !target->hasSkill(objectName());
     }
 
     virtual int getPriority() const{
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
         if(!jiuwenlong || player == jiuwenlong)
             return false;
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->to_place == Player::DiscardedPile){
-            const Card *weapon = Sanguosha->getCard(move->card_id);
-            if(weapon->inherits("Weapon") &&
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->to_place == Player::DiscardedPile){
+                const Card *weapon = Sanguosha->getCard(move->card_id);
+                if(weapon->inherits("Weapon") &&
+                   jiuwenlong->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName());
+                    jiuwenlong->obtainCard(weapon);
+                }
+            }
+        }else if(event == FinishJudge){
+            JudgeStar judge = data.value<JudgeStar>();
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
+               judge->card->inherits("Weapon") &&
                jiuwenlong->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName());
-                jiuwenlong->obtainCard(weapon);
+                jiuwenlong->obtainCard(judge->card);
             }
         }
         return false;

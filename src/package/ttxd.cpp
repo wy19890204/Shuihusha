@@ -1069,7 +1069,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *gaoqiu, QVariant &data) const{
-        if(!gaoqiu->isKongcheng() && gaoqiu->askForSkillInvoke(objectName())){
+        if(!gaoqiu->isKongcheng() && gaoqiu->askForSkillInvoke(objectName(), data)){
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(club|spade):(.*)");
             judge.good = true;
