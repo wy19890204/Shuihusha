@@ -1582,6 +1582,11 @@
         <translation>8 人局 [双内奸]</translation>
     </message>
     <message>
+        <location filename="src/core/engine.cpp" line="107"/>
+        <source>8 players (0 renegade)</source>
+        <translation>8 人局 [无内奸]</translation>
+    </message>
+    <message>
         <location filename="src/core/engine.cpp" line="106"/>
         <source>9 players</source>
         <translation>9 人局</translation>
@@ -1592,7 +1597,17 @@
         <translation>10 人局</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="114"/>
+        <location filename="src/core/engine.cpp" line="111"/>
+        <source>10 players (1 renegade)</source>
+        <translation>10 人局 [单内奸]</translation>
+    </message>
+    <message>
+        <location filename="src/core/engine.cpp" line="112"/>
+        <source>10 players (0 renegade)</source>
+        <translation>10 人局 [无内奸]</translation>
+    </message>
+    <message>
+        <location filename="src/core/engine.cpp" line="119"/>
         <source>Lua script error</source>
         <translation>Lua 脚本错误</translation>
     </message>

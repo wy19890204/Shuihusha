@@ -32,18 +32,19 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
             itor.remove();
     }
 
-
     if(Config.value("3v3/UsingNewMode", false).toBool()){
           QStringList list_remove, list_add;
-          //list_remove << "zhangjiao" << "caoren" << "lumeng" << "zhoutai" << "weiyan";
-          //list_add << "sunjian" << "menghuo" << "xuhuang" << "pangde" << "zhugejin";
+          list_remove << "zhuwu" << "wangqing" << "lujunyi" << "andaoquan" << "chaijin"
+                  << "yuehe" << "gongsunsheng" << "qiaodaoqing";
+          list_add << "dingdesun" << "tongguan" << "fangla" << "liruilan" << "haosiwen"
+                  << "zourun" << "yanglin" << "gaolian";
           foreach(QString general_name, list_remove)
               generals.removeOne(Sanguosha->getGeneral(general_name));
           foreach(QString general_name, list_add)
               generals << Sanguosha->getGeneral(general_name);
     }
 
-    Q_ASSERT(generals.length() == 33);
+    Q_ASSERT(generals.length() == 36);
 
     QStringList general_names;
     foreach(const General *general, generals)
