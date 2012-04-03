@@ -21,6 +21,7 @@ public:
             log.from = xuning;
             log.arg = objectName();
             room->sendLog(log);
+            room->playSkillEffect(objectName());
 
             damage.damage ++;
             data = QVariant::fromValue(damage);
@@ -50,6 +51,7 @@ public:
         }
         QString prompt = QString("@jiebei:%1::%2").arg(from->objectName()).arg(armor->objectName());
         if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, data)){
+            room->playSkillEffect("jiebei", 1);
             xuning->obtainCard(armor);
             ServerPlayer *to = room->askForPlayerChosen(xuning, tos, "jiebei");
             room->moveCardTo(armor, to, Player::Equip);
@@ -66,7 +68,7 @@ public:
                 return false;
             if(move->from_place == Player::Equip && move->from == xuning){
                 if(room->askForSkillInvoke(xuning, objectName())){
-                    room->playSkillEffect(objectName());
+                    room->playSkillEffect(objectName(), 2);
                     xuning->drawCards(2);
                 }
             }
@@ -428,6 +430,7 @@ public:
 };
 
 MeiyuCard::MeiyuCard(){
+    mute = true;
 }
 
 bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
