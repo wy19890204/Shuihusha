@@ -55,7 +55,7 @@ Engine::Engine()
             << "FCDC"
             << "SP"
             << "God"
-            << "Guben"
+            //<< "Guben"
             << "Stanley"
             << "InterChange"
             << "Test"
@@ -69,7 +69,8 @@ Engine::Engine()
             << "Joy"
 
             << "JoyGeneral"
-            << "Pass";
+            //<< "Pass"
+            ;
 
     foreach(QString name, package_names)
         addPackage(name);
@@ -78,7 +79,7 @@ Engine::Engine()
     scene_names
             << "Couple"
             << "Zombie"
-            << "PassMode"
+            //<< "PassMode"
             << "Legend"
             << "Impasse"
             << "Custom";

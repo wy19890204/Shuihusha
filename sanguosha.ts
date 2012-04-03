@@ -3304,6 +3304,11 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="395"/>
+        <source>New Mode</source>
+        <translation>新版3v3</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="496"/>
         <source>Extension mode</source>
         <translation>扩展模式</translation>
     </message>
@@ -3768,6 +3773,16 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/dialog/customassigndialog.cpp" line="1667"/>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1813"/>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1813"/>
+        <source>There is no skill that internal name is %1</source>
+        <translation>没有内部名为 %1 的技能</translation>
     </message>
 </context>
 <context>

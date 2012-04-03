@@ -414,6 +414,7 @@ public:
                 JudgeStruct judge;
                 judge.reason = objectName();
                 judge.who = yuehe;
+                judge.time_consuming = true;
 
                 room->judge(judge);
                 if(judge.card->inherits("BasicCard"))
