@@ -35,7 +35,7 @@ public:
 class General : public QObject
 {
 public:
-	explicit General(Package *package, const char *name, const char *kingdom, int max_hp = 4, bool male = true, bool hidden = false);
+	explicit General(Package *package, const char *name, const char *kingdom, int max_hp = 4, bool male = true, bool hidden = false, bool never_shown = false);
 
 	// property getters/setters
 	int getMaxHp() const;
@@ -45,6 +45,7 @@ public:
 	bool isNeuter() const;
 	bool isLord() const;
 	bool isHidden() const;
+	bool isTotallyHidden() const;
 
 	enum Gender {Male, Female, Neuter};
 	Gender getGender() const;
@@ -67,7 +68,7 @@ public:
 class Player: public QObject
 {
 public:
-	enum Phase {Start, Judge, Draw, Play, Discard, Finish, NotActive};
+	enum Phase {RoundStart, Start, Judge, Draw, Play, Discard, Finish, NotActive};
 	enum Place {Hand, Equip, Judging, Special, DiscardedPile, DrawPile};
 	enum Role {Lord, Loyalist, Rebel, Renegade};
 
@@ -81,7 +82,9 @@ public:
 	int getHp() const;
 	void setHp(int hp);    
 	int getMaxHP() const;
-	void setMaxHP(int max_hp);    
+	int getMaxHp() const;
+	void setMaxHP(int max_hp);
+	void setMaxHp(int max_hp);
 	int getLostHp() const;
 	bool isWounded() const;
 
@@ -206,6 +209,10 @@ public:
 	void jilei(const char *type);
 	bool isJilei(const Card *card) const;
 
+	void setCardLocked(const QString &name);
+	bool isLocked(const Card *card) const;
+	bool hasCardLock(const QString &card_str) const;
+
 	void copyFrom(Player* p);
 
 	QList<const Player *> getSiblings() const;
@@ -237,7 +244,8 @@ public:
 	void unicast(const char *message) const;
 	void drawCard(const Card *card);
 	Room *getRoom() const;
-	void playCardEffect(const Card *card);
+	void playCardEffect(const Card *card) const;
+	void playCardEffect(const char *card_name) const;
 	int getRandomHandCardId() const;
 	const Card *getRandomHandCard() const;
 	void obtainCard(const Card *card, bool unhide = true);
@@ -294,6 +302,7 @@ public:
 	void clearSelected();
 
 	int getGeneralMaxHP() const;
+	int getGeneralMaxHp() const;
 	virtual QString getGameMode() const;
 
 	QString getIp() const;
@@ -414,6 +423,7 @@ struct JudgeStruct{
 	QRegExp pattern;
 	bool good;
 	QString reason;
+	bool time_consuming;
 };
 
 typedef JudgeStruct *JudgeStar;
@@ -473,6 +483,7 @@ enum TriggerEvent{
     CardLostDone,
     CardGot,
     CardGotDone,
+    CardDrawing,
     CardDrawnDone,
 
     CardEffect,
@@ -665,7 +676,6 @@ public:
 	void playAudio(const char *name) const;
 	void playEffect(const char *filename) const;
 	void playSkillEffect(const char *skill_name, int index) const;
-	void playCardEffect(const char *card_name, bool is_male) const;
 
 	const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 	int correctDistance(const Player *from, const Player *to) const;
@@ -691,7 +701,7 @@ public:
 	bool isVisible() const;
 
 	virtual QString getDefaultChoice(ServerPlayer *player) const;
-	virtual int getEffectIndex(ServerPlayer *player, const Card *card) const;
+	virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
 	virtual QDialog *getDialog() const;
 
 	void initMediaSource();
@@ -783,7 +793,6 @@ public:
 	void loseMaxHp(ServerPlayer *victim, int lose = 1);
 	void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
 	void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = false);
-	void playCardEffect(const char *card_name, bool is_male);
 	bool cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to);
 	bool cardEffect(const CardEffectStruct &effect);
 	void judge(JudgeStruct &judge_struct);
@@ -809,6 +818,8 @@ public:
 	void acquireSkill(ServerPlayer *player, const char *skill_name, bool open = true, bool trigger_skill = true);
 	void adjustSeats();
 	void swapPile();
+	QList<int> getDiscardPile();
+	QList<int> getDrawPile();
 	int getCardFromPile(const char *card_name);
 	ServerPlayer *findPlayer(const char *general_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;

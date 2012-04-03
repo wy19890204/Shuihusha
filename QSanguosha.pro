@@ -22,6 +22,7 @@ SOURCES += src/main.cpp \
 	src/core/player.cpp \
 	src/core/settings.cpp \
 	src/core/skill.cpp \
+	src/core/statistics.cpp \
 	src/dialog/banpairdialog.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
@@ -138,6 +139,7 @@ HEADERS += src/client/aux-skills.h \
 	src/core/player.h \
 	src/core/settings.h \
 	src/core/skill.h \
+	src/core/statistics.h \
 	src/dialog/banpairdialog.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
