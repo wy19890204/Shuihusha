@@ -98,7 +98,6 @@ public:
         Room *room = wusong->getRoom();
         if(wusong->getMark("shenchou") != 0)
             return;
-        room->playSkillEffect(objectName());
         const Card *card = damage.card;
         if(card && room->obtainable(card, wusong)){
             LogMessage log;
@@ -222,6 +221,8 @@ bool DuanbiCard::targetFilter(const QList<const Player *> &targets, const Player
 void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     ServerPlayer *target = targets.first();
+    room->broadcastInvoke("animate", "lightbox:$duanbi");
+    source->loseMark("@bi");
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;
     damage.from = source;
@@ -230,12 +231,12 @@ void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->damage(damage);
     room->detachSkillFromPlayer(source, "shenchou");
     source->addMark("shenchou");
-    source->loseMark("@bi");
 }
 
 class Duanbi: public ZeroCardViewAsSkill{
 public:
     Duanbi():ZeroCardViewAsSkill("duanbi"){
+        frequency = Limited;
     }
 
     virtual const Card *viewAs() const{
