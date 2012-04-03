@@ -655,11 +655,12 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false, using_new_3v3 = false;
+    bool exclude_disaters = false, using_new_3v3 = false, using_passmode = false;
 
     if(Config.GameMode == "06_3v3"){
         exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
         using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
+        using_passmode = Config.GameMode == "pass_mode";
     }
 
     if(Config.GameMode == "04_1v3")
@@ -672,6 +673,10 @@ QList<int> Engine::getRandomCards() const{
 
         if(!ban_package.contains(card->getPackage()))
             list << card->getId();
+        else if(card->getPackage() == "guben" && using_passmode)
+            list << card->getId();
+        //else if(card->getPackage() == "Special3v3" && using_new_3v3)
+        //    list << card->getId();
     }
 
     qShuffle(list);
