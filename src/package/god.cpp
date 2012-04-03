@@ -593,6 +593,7 @@ GodPackage::GodPackage()
     General *shenwusong = new General(this, "shenwusong", "god", 5);
     shenwusong->addSkill(new Shenchou);
     shenwusong->addSkill(new Wujie);
+    shenwusong->addRelateSkill("zhusha");
     skills << new Zhusha;
     shenwusong->addSkill(new Duanbi);
     shenwusong->addSkill(new MarkAssignSkill("@bi", 1));
