@@ -90,6 +90,11 @@ Engine::Engine()
     foreach(QString name, scene_names)
         addScenario(name);
 
+    foreach(const Skill *skill, skills.values()){
+        Skill *mutable_skill = const_cast<Skill *>(skill);
+        mutable_skill->initMediaSource();
+    }
+
     // available game modes
     modes["02p"] = tr("2 players");
     modes["02_1v1"] = tr("2 players (KOF style)");
@@ -353,12 +358,11 @@ QStringList Engine::getExtensions() const{
     QStringList extensions;
     QList<const Package *> packages = findChildren<const Package *>();
     foreach(const Package *package, packages){
-        if(package->inherits("Scenario"))
+        if(package->inherits("Scenario")||package->objectName()=="guben")
             continue;
 
         extensions << package->objectName();
     }
-
     return extensions;
 }
 
@@ -651,10 +655,12 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false;
+    bool exclude_disaters = false, using_new_3v3 = false;
 
-    if(Config.GameMode == "06_3v3")
+    if(Config.GameMode == "06_3v3"){
         exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
+        using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
+    }
 
     if(Config.GameMode == "04_1v3")
         exclude_disaters = true;
@@ -717,6 +723,10 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
 
 const Skill *Engine::getSkill(const QString &skill_name) const{
     return skills.value(skill_name, NULL);
+}
+
+QStringList Engine::getSkillNames() const{
+    return skills.keys();
 }
 
 const TriggerSkill *Engine::getTriggerSkill(const QString &skill_name) const{
