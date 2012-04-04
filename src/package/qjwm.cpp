@@ -708,7 +708,7 @@ public:
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), 1);
-                room->broadcastInvoke("animate", "lightbox:$zhanchi1");
+                room->broadcastInvoke("animate", "lightbox:$zhanchi");
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
@@ -729,9 +729,9 @@ public:
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
             if(opt->getMaxHP() > 3)
-                room->playSkillEffect("zhanchi", 2);
+                room->playSkillEffect(objectName(), 1);
             else if(opt->getMaxHP() > 1)
-                room->playSkillEffect("zhanchi", 3);
+                room->playSkillEffect(objectName(), 2);
             room->loseMaxHp(opt);
 
             if(opt->isAlive()){
@@ -1091,6 +1091,7 @@ QJWMPackage::QJWMPackage()
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
     related_skills.insertMulti("zhanchi", "#@vfui-1");
+    oupeng->addRelateSkill("tengfei");
     skills << new Tengfei;
 
     General *shien = new General(this, "shien", "min", 3);
