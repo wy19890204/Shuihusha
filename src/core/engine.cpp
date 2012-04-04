@@ -55,7 +55,7 @@ Engine::Engine()
             << "FCDC"
             << "SP"
             << "God"
-            << "Guben"
+            //<< "Guben"
             << "Stanley"
             << "InterChange"
             << "Test"
@@ -69,7 +69,8 @@ Engine::Engine()
             << "Joy"
 
             << "JoyGeneral"
-            << "Pass";
+            //<< "Pass"
+            ;
 
     foreach(QString name, package_names)
         addPackage(name);
@@ -78,7 +79,7 @@ Engine::Engine()
     scene_names
             << "Couple"
             << "Zombie"
-            << "PassMode"
+            //<< "PassMode"
             << "Legend"
             << "Impasse"
             << "Custom";
@@ -89,6 +90,11 @@ Engine::Engine()
 
     foreach(QString name, scene_names)
         addScenario(name);
+
+    foreach(const Skill *skill, skills.values()){
+        Skill *mutable_skill = const_cast<Skill *>(skill);
+        mutable_skill->initMediaSource();
+    }
 
     // available game modes
     modes["02p"] = tr("2 players");
@@ -103,8 +109,11 @@ Engine::Engine()
     modes["07p"] = tr("7 players");
     modes["08p"] = tr("8 players");
     modes["08pd"] = tr("8 players (2 renegades)");
+    modes["08pz"] = tr("8 players (0 renegade)");
     modes["09p"] = tr("9 players");
-    modes["10p"] = tr("10 players");
+    modes["10pd"] = tr("10 players");
+    modes["10p"] = tr("10 players (1 renegade)");
+    modes["10pz"] = tr("10 players (0 renegade)");
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -329,7 +338,7 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersionNumber() const{
-    return "20120315";
+    return "20120404";
 }
 
 QString Engine::getVersion() const{
@@ -342,7 +351,7 @@ QString Engine::getVersion() const{
 }
 
 QString Engine::getVersionName() const{
-    return "V3.2.5"; // girls day edition.
+    return "V3.4.4"; // double four edition.
 }
 
 QString Engine::getMODName() const{
@@ -353,12 +362,11 @@ QStringList Engine::getExtensions() const{
     QStringList extensions;
     QList<const Package *> packages = findChildren<const Package *>();
     foreach(const Package *package, packages){
-        if(package->inherits("Scenario"))
+        if(package->inherits("Scenario")||package->objectName()=="guben")
             continue;
 
         extensions << package->objectName();
     }
-
     return extensions;
 }
 
@@ -488,7 +496,7 @@ void Engine::getRoles(const QString &mode, char *roles) const{
             "ZCCFFFN", // 7
             "ZCCFFFFN", // 8
             "ZCCCFFFFN", // 9
-            "ZCCCFFFFNN" // 10
+            "ZCCCFFFFFN" // 10
         };
 
         static const char *table2[] = {
@@ -507,7 +515,15 @@ void Engine::getRoles(const QString &mode, char *roles) const{
         };
 
         const char **table = mode.endsWith("d") ? table2 : table1;
-        qstrcpy(roles, table[n]);
+        QString rolechar = table[n];
+        if(mode.endsWith("z"))
+            rolechar.replace("N", "C");
+        else if(Config.EnableHegemony){
+            rolechar.replace("F", "N");
+            rolechar.replace("C", "N");
+        }
+
+        qstrcpy(roles, rolechar.toStdString().c_str());
     }else if(mode.startsWith("@")){
         if(n == 8)
             qstrcpy(roles, "ZCCCNFFF");
@@ -651,10 +667,13 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false;
+    bool exclude_disaters = false, using_new_3v3 = false, using_passmode = false;
 
-    if(Config.GameMode == "06_3v3")
+    if(Config.GameMode == "06_3v3"){
         exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
+        using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
+        using_passmode = Config.GameMode == "pass_mode";
+    }
 
     if(Config.GameMode == "04_1v3")
         exclude_disaters = true;
@@ -666,6 +685,10 @@ QList<int> Engine::getRandomCards() const{
 
         if(!ban_package.contains(card->getPackage()))
             list << card->getId();
+        else if(card->getPackage() == "guben" && using_passmode)
+            list << card->getId();
+        //else if(card->getPackage() == "Special3v3" && using_new_3v3)
+        //    list << card->getId();
     }
 
     qShuffle(list);
@@ -717,6 +740,10 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
 
 const Skill *Engine::getSkill(const QString &skill_name) const{
     return skills.value(skill_name, NULL);
+}
+
+QStringList Engine::getSkillNames() const{
+    return skills.keys();
 }
 
 const TriggerSkill *Engine::getTriggerSkill(const QString &skill_name) const{

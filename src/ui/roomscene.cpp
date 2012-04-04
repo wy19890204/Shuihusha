@@ -22,6 +22,7 @@
 #include <QKeyEvent>
 #include <QCheckBox>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsDropShadowEffect>
 #include <QMenu>
 #include <QGroupBox>
 #include <QLineEdit>
@@ -161,6 +162,8 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(n_cards_drawed(ClientPlayer*,int)), SLOT(drawNCards(ClientPlayer*,int)));
 
     connect(ClientInstance, SIGNAL(assign_asked()), this, SLOT(startAssign()));
+    connect(ClientInstance, SIGNAL(card_used()), this, SLOT(hideDiscards()));
+    connect(ClientInstance, SIGNAL(start_in_xs()), this, SLOT(startInXs()));
 
     {
         guanxing_box = new GuanxingBox;
@@ -924,6 +927,17 @@ void RoomScene::chooseGeneralPass(const QString &packages){
     dialog->exec();
 }
 
+void RoomScene::putToDiscard(CardItem *item)
+{
+    discarded_queue.enqueue(item);
+    item->setEnabled(true);
+    item->setFlag(QGraphicsItem::ItemIsFocusable, false);
+    item->setOpacity(1.0);
+    item->setZValue(0.0001*ClientInstance->discarded_list.length());
+
+    viewDiscards();
+}
+
 void RoomScene::viewDiscards(){
     if(ClientInstance->discarded_list.isEmpty()){
         QMessageBox::information(NULL, tr("No discarded cards"), tr("There are no discarded cards yet"));
@@ -1312,6 +1326,25 @@ void RoomScene::removeWidgetFromSkillDock(QWidget *widget){
 }
 
 void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_name){
+    QGraphicsObject *dest = getAnimationObject(player->objectName());
+    QGraphicsTextItem *item = new QGraphicsTextItem(Sanguosha->translate(skill_name), NULL, this);
+    item->setFont(Config.BigFont);
+
+    QGraphicsDropShadowEffect *drop = new QGraphicsDropShadowEffect;
+    drop->setBlurRadius(5);
+    drop->setOffset(0);
+    drop->setColor(Qt::yellow);
+    item->setGraphicsEffect(drop);
+
+    QPropertyAnimation *move = new QPropertyAnimation(item, "pos");
+    QRectF rect = item->boundingRect();
+    move->setStartValue(QPointF(- rect.width()/2, - rect.height()/2));
+    move->setEndValue(dest->scenePos());
+    move->setDuration(1500);
+
+    move->start(QAbstractAnimation::DeleteWhenStopped);
+    connect(move, SIGNAL(finished()), item, SLOT(deleteLater()));
+
     QString type = "#AcquireSkill";
     QString from_general = player->getGeneralName();
     QString arg = skill_name;
@@ -1765,6 +1798,7 @@ void RoomScene::doTimeout(){
             break;
         }
 
+    case Client::AskForSkillInvoke:
     case Client::AskForYiji:{
             cancel_button->click();
             break;
@@ -2165,6 +2199,11 @@ void RoomScene::hideAvatars(){
     dashboard->hideAvatar();
 }
 
+void RoomScene::startInXs(){
+    if(add_robot) add_robot->hide();
+    if(fill_robots) fill_robots->hide();
+}
+
 void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nature, bool losthp){
     // update
     Photo *photo = name2photo.value(who, NULL);
@@ -2173,7 +2212,13 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     else
         dashboard->update();
 
-    if(delta < 0 && !losthp){
+
+    if(delta < 0){
+        if(losthp){
+            Sanguosha->playAudio("hplost");
+            return;
+        }
+
         QString damage_effect;
         switch(delta){
         case -1: {
@@ -2776,6 +2821,8 @@ void RoomScene::createStateItem(){
     if(circular)
         state_item->setPos(367, -320);
 
+    add_robot = NULL;
+    fill_robots = NULL;
     if(ServerInfo.EnableAI){
         QRectF state_rect = state_item->boundingRect();
         control_panel = addRect(0, 0, state_rect.width(), 150, Qt::NoPen);
@@ -2783,11 +2830,11 @@ void RoomScene::createStateItem(){
         control_panel->setY(state_item->y() + state_rect.height() + 10);
         control_panel->hide();
 
-        Button *add_robot = new Button(tr("Add a robot"));
+        add_robot = new Button(tr("Add a robot"));
         add_robot->setParentItem(control_panel);
         add_robot->setPos(15, 5);
 
-        Button *fill_robots = new Button(tr("Fill robots"));
+        fill_robots = new Button(tr("Fill robots"));
         fill_robots->setParentItem(control_panel);
         fill_robots->setPos(15, 60);
 

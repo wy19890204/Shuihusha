@@ -88,11 +88,13 @@ public:
                 if(target->getHandcardNum()<=target->getHp())
                     invoke_skill = true;
             }
-            if(!invoke_skill)   return false;
+            if(!invoke_skill)
+                return false;
 
             LogMessage log;
-            log.type = "#JishI";
+            log.type = "#TriggerSkill";
             log.from = target;
+            log.arg = objectName();
             room->sendLog(log);
 
             foreach(ServerPlayer *player, others){
@@ -150,6 +152,7 @@ public:
                     log.from = effect.from;
                     log.to << player;
                     log.arg = effect.card->objectName();
+                    log.arg2 = objectName();
 
                     room->sendLog(log);
 
@@ -165,8 +168,9 @@ public:
                 data = QVariant::fromValue(damage);
 
                 LogMessage log;
-                log.type = "#DajiSpec";
+                log.type = "#TriggerSkill";
                 log.from = player;
+                log.arg = objectName();
                 room->sendLog(log);
                 return false;
             }
@@ -190,14 +194,8 @@ public:
                     room->acquireSkill(player, "paoxiao");
             }
             else{
-                if(player->hasSkill("paoxiao")){
+                if(player->hasSkill("paoxiao"))
                     room->detachSkillFromPlayer(player, "paoxiao");
-
-                    LogMessage log;
-                    log.type = "#PaoxiaoLose";
-                    log.from = player;
-                    room->sendLog(log);
-                }
             }
 
             QList<ServerPlayer *> players = room->getAllPlayers();

@@ -111,12 +111,14 @@ public:
     void acquireSkill(const QString &acquire_str);
     void animate(const QString &animate_str);
     void jilei(const QString &jilei_str);
+    void cardLock(const QString &card_str);
     void judgeResult(const QString &result_str);
     void setScreenName(const QString &set_str);
     void setFixedDistance(const QString &set_str);
     void pile(const QString &pile_str);
     void transfigure(const QString &transfigure_tr);
     void updateStateItem(const QString &state_str);
+    void setStatistics(const QString &property_str);
 
     void moveCard(const QString &move_str);
     void moveNCards(const QString &move_str);
@@ -248,6 +250,7 @@ signals:
     void text_spoken(const QString &text);
     void line_spoken(const QString &line);
     void judge_result(const QString &who, const QString &result);
+    void card_used();
 
     void game_started();
     void game_over();

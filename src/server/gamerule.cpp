@@ -31,6 +31,9 @@ int GameRule::getPriority() const{
 void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
+    case Player::RoundStart:{
+            break;
+        }
     case Player::Start: {
             player->setMark("SlashCount", 0);
             if(player->getMark("@shang") > 0)
@@ -50,9 +53,10 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
         }
     case Player::Draw: {
             QVariant num = 2;
-            if(room->getTag("FirstRound").toBool() && room->getMode() == "02_1v1"){
+            if(room->getTag("FirstRound").toBool()){
                 room->setTag("FirstRound", false);
-                num = 1;
+                if(room->getMode() == "02_1v1")
+                    num = 1;
             }
 
             room->getThread()->trigger(DrawNCards, player, num);
@@ -213,11 +217,9 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                     setGameProcess(room);
             }
 
+            room->setTag("FirstRound", true);
             int init = !player->hasSkill("beizhan") ? 4 : 6;
             player->drawCards(init, false);
-
-            if(room->getMode() == "02_1v1")
-                room->setTag("FirstRound", true);
 
             break;
         }
@@ -261,6 +263,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
     case HpRecover:{
             RecoverStruct recover_struct = data.value<RecoverStruct>();
             int recover = recover_struct.recover;
+
+            room->setPlayerStatistics(player, "recover", recover);
 
             int new_hp = qMin(player->getHp() + recover, player->getMaxHP());
             room->setPlayerProperty(player, "hp", new_hp);
@@ -309,37 +313,17 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 break;
             }
 
-            QList<ServerPlayer *> savers;
-            ServerPlayer *current = room->getCurrent();
-            if(current->hasSkill("wansha") && current->isAlive()){
-                room->playSkillEffect("wansha");
-
-                savers << current;
-
-                LogMessage log;
-                log.from = current;
-                if(current != player){
-                    savers << player;
-                    log.type = "#WanshaTwo";
-                    log.to << player;
-                }else{
-                    log.type = "#WanshaOne";
-                }
-
-                room->sendLog(log);
-
-            }else
-                savers = room->getAllPlayers();
+            DyingStruct dying = data.value<DyingStruct>();
 
             LogMessage log;
             log.type = "#AskForPeaches";
             log.from = player;
-            log.to = savers;
+            log.to = dying.savers;
             log.arg = QString::number(1 - player->getHp());
             room->sendLog(log);
 
             RoomThread *thread = room->getThread();
-            foreach(ServerPlayer *saver, savers){
+            foreach(ServerPlayer *saver, dying.savers){
                 if(player->getHp() > 0)
                     break;
 
@@ -367,15 +351,21 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                     use.to << dying.who;
 
                 room->useCard(use, false);
+
+                if(player != dying.who && dying.who->getHp() > 0)
+                    room->setPlayerStatistics(player, "save", 1);
             }
 
             break;
         }
 
     case AskForPeachesDone:{
-            if(player->getHp() <= 0){
+            if(player->getHp() <= 0 && player->isAlive()){
                 DyingStruct dying = data.value<DyingStruct>();
                 room->killPlayer(player, dying.damage);
+
+                if(dying.damage && dying.damage->from)
+                    room->setPlayerStatistics(dying.damage->from, "kill", 1);
             }
 
             break;
@@ -393,6 +383,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
                 room->setPlayerFlag(damage.to, "-ecst");
             }
+			if(damage.from)
+                room->setPlayerStatistics(damage.from, "damage", damage.damage);
             room->applyDamage(player, damage);
             if(player->getHp() <= 0){
                 room->enterDying(player, &damage);
@@ -588,7 +580,10 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             room->sendJudgeResult(judge);
 
-            room->getThread()->delay();
+            int delay = Config.AIDelay;
+            if(judge->time_consuming)
+                delay /= 4;
+            room->getThread()->delay(delay);
 
             break;
         }
@@ -675,7 +670,10 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
         return;
 
     if(killer->getRoom()->getMode() == "06_3v3"){
-        killer->drawCards(3);
+        if(Config.value("3v3/UsingNewMode", false).toBool())
+            killer->drawCards(2);
+        else
+            killer->drawCards(3);
     }
     else{
         if(victim->getRole() == "rebel" && killer != victim){
@@ -770,7 +768,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, ServerPlayer *player, QVariant &
     case CardUsed:{
             CardUseStruct use = data.value<CardUseStruct>();
             if(use.card->inherits("Weapon") && player->askForSkillInvoke("weapon_recast", data)){
-                room->playCardEffect("@recast", player->getGeneral()->isMale());
+                player->playCardEffect("@recast");
                 room->throwCard(use.card);
                 player->drawCards(1, false);
                 return false;

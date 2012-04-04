@@ -128,6 +128,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *wusong) const{
         Room *room = wusong->getRoom();
 
+        room->broadcastInvoke("animate", "lightbox:$wujie");
         room->setPlayerMark(wusong, "wujie", 1);
         room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHP() + 1));
 
@@ -593,6 +594,7 @@ GodPackage::GodPackage()
     General *shenwusong = new General(this, "shenwusong", "god", 5);
     shenwusong->addSkill(new Shenchou);
     shenwusong->addSkill(new Wujie);
+    shenwusong->addRelateSkill("zhusha");
     skills << new Zhusha;
     shenwusong->addSkill(new Duanbi);
     shenwusong->addSkill(new MarkAssignSkill("@bi", 1));

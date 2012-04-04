@@ -117,7 +117,18 @@ void Card::setSuit(Suit suit){
 }
 
 bool Card::sameColorWith(const Card *other) const{
-    return isBlack() == other->isBlack();
+    return getColor() == other->getColor();
+}
+
+Card::Color Card::getColor() const{
+    switch(suit){
+    case Spade:
+    case Club: return Black;
+    case Heart:
+    case Diamond: return Red;
+    default:
+        return Colorless;
+    }
 }
 
 bool Card::isEquipped() const{
@@ -476,8 +487,8 @@ void Card::clearSubcards(){
     subcards.clear();
 }
 
-bool Card::isAvailable(const Player *) const{
-    return true;
+bool Card::isAvailable(const Player *player) const{
+    return !player->isJilei(this) && !player->isLocked(this);
 }
 
 const Card *Card::validate(const CardUseStruct *) const{
