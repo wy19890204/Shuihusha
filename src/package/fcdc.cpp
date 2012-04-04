@@ -92,13 +92,71 @@ public:
     }
 };
 
+class Shenjian: public TriggerSkill{
+public:
+    Shenjian():TriggerSkill("shenjian"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.card->inherits("ArcheryAttack")){
+            LogMessage log;
+            log.type = "#SkillNullify";
+            log.from = player;
+            log.arg = objectName();
+            log.arg2 = "archery_attack";
+            player->getRoom()->sendLog(log);
+
+            return true;
+        }else
+            return false;
+    }
+};
+
+LianzhuCard::LianzhuCard(){
+    once = true;
+    target_fixed = true;
+}
+
+void LianzhuCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    card_use.from->turnOver();
+    ArcheryAttack *ar = new ArcheryAttack(Card::NoSuit, 0);
+    ar->setSkillName("lianzhu");
+    CardUseStruct use;
+    use.card = ar;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
+class Lianzhu: public ZeroCardViewAsSkill{
+public:
+    Lianzhu():ZeroCardViewAsSkill("lianzhu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("LianzhuCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new LianzhuCard;
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
 
+    General *pangwanchun = new General(this, "pangwanchun", "jiang");
+    pangwanchun->addSkill(new Shenjian);
+    pangwanchun->addSkill(new Lianzhu);
+
     addMetaObject<XunlieCard>();
+    addMetaObject<LianzhuCard>();
 }
 
 ADD_PACKAGE(FCDC);

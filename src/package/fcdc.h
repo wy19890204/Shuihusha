@@ -20,4 +20,12 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class LianzhuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LianzhuCard();
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
 #endif // FCDCPACKAGE_H

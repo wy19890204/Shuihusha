@@ -73,13 +73,6 @@ return {
 	[":tancai"] = "弃牌阶段弃牌前，你可以摸X+1张牌，X为你已损失的体力值。",
 	["~zhangmengfang"] = "谁敢杀我？",
 
-	["#pangwanchun"] = "小养由基",
-	["pangwanchun"] = "庞万春",
-	["designer:pangwanchun"] = "宇文天启",
-	["luanji"] = "乱击",
-	[":luanji"] = "出牌阶段，你可将一张红色手牌和一张锦囊牌当【万箭齐发】使用，且造成的伤害均为火焰伤害。",
-	["~pangwanchun"] = "中埋伏了……",
-
 	["#litianrun"] = "镇国大将",
 	["litianrun"] = "厉天闰",
 	["designer:litianrun"] = "猪猪天使",
