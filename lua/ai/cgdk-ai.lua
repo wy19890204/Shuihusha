@@ -209,8 +209,13 @@ sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 	end
 end
 
--- qiaodou&moucai
-sgs.ai_skill_invoke["qiaodou"] = sgs.ai_skill_invoke["qiongtu"]
+-- qiaodou
+sgs.ai_skill_invoke["qiaodou"] = function(self, data)
+	local sb = data:toPlayer()
+	return sb:faceUp() and self:isEnemy(sb)
+end
+
+-- moucai
 sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 
 -- duoming
