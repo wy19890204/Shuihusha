@@ -128,6 +128,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *wusong) const{
         Room *room = wusong->getRoom();
 
+        room->broadcastInvoke("animate", "lightbox:$wujie");
         room->setPlayerMark(wusong, "wujie", 1);
         room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHP() + 1));
 

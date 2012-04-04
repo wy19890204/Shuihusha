@@ -27,7 +27,7 @@ function SmartAI:slashProhibit(card,enemy)
 		if card:inherits("FireSlash") or self.player:hasWeapon("fan") or self.player:hasSkill("fenhui") then
 			if self:isEquip("Vine", enemy) and not (enemy:isChained() and self:isGoodChainTarget(enemy)) then return true end
 		end
-		if enemy:isChained() and (card:inherits("NatureSlash") or self.player:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
+		if enemy:isChained() and (card:inherits("NatureSlash") or self:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
 			self:slashIsEffective(card,enemy) then return true end
 		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(card,enemy) then return true end
 		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
@@ -150,10 +150,10 @@ function SmartAI:useCardSlash(card, use)
 		and self:slashIsEffective(card, target) then
 			-- fill the card use struct
 			local usecard = card
-			local mi = self:searchForEcstasy(use,enemy,card)
-			if mi and self:getCardsNum("Jink", enemy) > 0 and self:getCardId("Slash") then
+			local mi = self:searchForEcstasy(use,target,card)
+			if mi and self:getCardsNum("Jink", target) > 0 and self:getCardId("Slash") then
 				use.card = mi
-				if use.to then use.to:append(enemy) end
+				if use.to then use.to:append(target) end
 				return
 			end
 			if not use.to or use.to:isEmpty() then

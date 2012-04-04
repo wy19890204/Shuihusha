@@ -3235,7 +3235,7 @@ function SmartAI:useEquipCard(card, use)
 	elseif card:inherits("Armor") then
 		local lion = self:getCard("SilverLion")
 		if lion and self.player:isWounded() and not self:isEquip("SilverLion") and not card:inherits("SilverLion") and
-			not (self:hasSkills("jinjia") and not self.player:getArmor()) then
+			not (self:hasSkill("jinjia") and not self.player:getArmor()) then
 			use.card = lion
 			return
 		end

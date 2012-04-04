@@ -796,6 +796,8 @@ void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     if(clearflag)
         clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, this);
+    if(clearflag)
+        clearflag->clearHistory();
     room->setCurrent(current);
 }
 

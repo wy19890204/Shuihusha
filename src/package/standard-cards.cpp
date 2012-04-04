@@ -44,8 +44,6 @@ void Slash::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
         log.type = "#UnsetDrank";
         log.from = source;
         room->sendLog(log);
-
-        room->setPlayerFlag(source, "-drank");
     }
 }
 
@@ -62,6 +60,7 @@ void Slash::onEffect(const CardEffectStruct &card_effect) const{
     effect.to = card_effect.to;
     effect.drank = effect.from->hasFlag("drank");
 
+    room->setPlayerFlag(effect.from, "-drank");
     room->slashEffect(effect);
 }
 
@@ -603,7 +602,28 @@ ArcheryAttack::ArcheryAttack(Card::Suit suit, int number)
 
 void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
-    const Card *jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
+    const Card *jink = NULL;
+    if(effect.from->hasSkill("shenjian")){
+        const Card *first_jink = NULL, *second_jink = NULL;
+        LogMessage log;
+        log.type = "#Shenjian";
+        log.from = effect.from;
+        log.arg = "shenjian";
+        log.to << effect.to;
+        room->sendLog(log);
+        first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
+        if(first_jink)
+            second_jink = room->askForCard(effect.to, "jink", "@shenjian2jink:" + effect.from->objectName());
+
+        if(first_jink && second_jink){
+            //jink = new DummyCard;
+            //jink->addSubcard(first_jink);
+            //jink->addSubcard(second_jink);
+            jink = first_jink;
+        }
+    }
+    else
+        jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
     if(jink)
         room->setEmotion(effect.to, "jink");
     else{
