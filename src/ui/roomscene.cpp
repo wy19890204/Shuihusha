@@ -2212,7 +2212,13 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     else
         dashboard->update();
 
-    if(delta < 0 && !losthp){
+
+    if(delta < 0){
+        if(losthp){
+            Sanguosha->playAudio("hplost");
+            return;
+        }
+
         QString damage_effect;
         switch(delta){
         case -1: {
