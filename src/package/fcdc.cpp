@@ -92,12 +92,45 @@ public:
     }
 };
 
+class Fengxing: public TriggerSkill{
+public:
+    Fengxing():TriggerSkill("fengxing"){
+        events << PhaseChange << CardLost;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent v, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(v == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand && player->isAlive()){
+                if(player->getHandcardNum() <= player->getMaxHP()){
+                    LogMessage log;
+                    log.type = "#TriggerSkill";
+                    log.from = player;
+                    log.arg = objectName();
+                    room->sendLog(log);
+                    player->drawCards(1);
+                }
+            }
+        }
+        else{
+            if(player->getPhase() == Player::Judge ||
+               player->getPhase() == Player::Draw ||
+               player->getPhase() == Player::Discard)
+                return true;
+        }
+        return false;
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
-
+    General *maling = new General(this, "maling", "jiang", 3);
+    maling->addSkill(new Fengxing);
     addMetaObject<XunlieCard>();
 }
 
