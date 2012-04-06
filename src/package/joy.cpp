@@ -1012,9 +1012,9 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     LogMessage log;
     ServerPlayer *target = targets.first();
     foreach(int hd, source->handCards())
-        source->addToPile("chuiniu", hd, false);
+        source->addToPile("niu", hd, false);
     foreach(int hd, target->handCards())
-        target->addToPile("chuiniu", hd, false);
+        target->addToPile("niu", hd, false);
 
     while(source->getHandcardNum() < 3){
         source->drawCards(1, false, false);
@@ -1032,15 +1032,14 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     static QMap<ServerPlayer*, int> cmap;
     static QMap<ServerPlayer*, int> nmap;
     forever{
-        QString qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6+pass");
+        QString qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6+pass");
         if(qs == "pass")
             break;
-        else{
-            nmap[first] = qs.toInt();
-        }
+        else
+            cmap[first] = qs.toInt();
 
-        qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6");
-        cmap[first] = qs.toInt();
+        qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6");
+        nmap[first] = qs.toInt();
 
         if(cmap[first] <= cmap[second] && nmap[first] <= nmap[second])
             continue;
@@ -1071,12 +1070,13 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
                (first != source && count < cmap.value(first));
 
     room->getThread()->delay();
-    QList<int> uvnn = source->getPile("chuiniu");
-    uvnn.append(target->getPile("chuiniu"));
+    QList<int> uvnn = source->getPile("niu");
+    uvnn.append(target->getPile("niu"));
     log.type = "#ChuiniuWin";
     if(win){
         log.from = source;
         room->setEmotion(source, "good");
+        room->sendLog(log);
         foreach(int x, uvnn)
             room->throwCard(x);
         DummyCard *cards = target->wholeHandCards();
@@ -1086,12 +1086,13 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     else{
         log.from = target;
         room->setEmotion(target, "good");
+        room->sendLog(log);
         target->throwAllHandCards();
         foreach(int x, uvnn)
             room->obtainCard(target, x, false);
         room->setEmotion(source, "bad");
+        room->setPlayerFlag(source, "drank");
     }
-    room->sendLog(log);
 }
 
 class ChuiniuViewAsSkill: public ZeroCardViewAsSkill{
