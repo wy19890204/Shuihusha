@@ -256,8 +256,8 @@ signals:
     void game_over();
     void standoff();
 
-    void cards_drawed(const QList<const Card *> &cards);
-    void n_cards_drawed(ClientPlayer *player, int n);
+    void cards_drawed(const QList<const Card *> &cards, bool unhide);
+    void n_cards_drawed(ClientPlayer *player, int n, bool unhide);
 
     void card_moved(const CardMoveStructForClient &move);
     void n_cards_moved(int n, const QString &from, const QString &to);

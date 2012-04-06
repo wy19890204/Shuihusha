@@ -2484,7 +2484,7 @@ void Room::broadcastProperty(ServerPlayer *player, const char *property_name, co
         broadcast(QString("#%1 %2 %3").arg(player->objectName()).arg(property_name).arg(value));
 }
 
-void Room::drawCards(ServerPlayer *player, int n){
+void Room::drawCards(ServerPlayer *player, int n, bool unhide){
     if(n <= 0)
         return;
 
@@ -2511,9 +2511,9 @@ void Room::drawCards(ServerPlayer *player, int n){
     if(cards_str.isEmpty())
         return;
 
-    player->invoke("drawCards", cards_str.join("+"));
+    player->invoke("drawCards", cards_str.join("+").append(unhide ? "+S1" : "+S0"));
 
-    QString draw_str = QString("%1:%2").arg(player->objectName()).arg(n);
+    QString draw_str = QString("%1:%2:%3").arg(player->objectName()).arg(n).arg(unhide ? 1 : 0);
 
     QString dongchaee = tag.value("Dongchaee").toString();
     if(player->objectName() == dongchaee){

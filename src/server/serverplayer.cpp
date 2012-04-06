@@ -134,8 +134,8 @@ void ServerPlayer::throwAllCards(){
         room->throwCard(trick);
 }
 
-void ServerPlayer::drawCards(int n, bool set_emotion){
-    room->drawCards(this, n);
+void ServerPlayer::drawCards(int n, bool set_emotion, bool unhide){
+    room->drawCards(this, n, unhide);
 
     if(set_emotion)
         room->setEmotion(this, "draw-card");

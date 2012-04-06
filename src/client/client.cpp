@@ -316,8 +316,11 @@ void Client::removePlayer(const QString &player_name){
 
 void Client::drawCards(const QString &cards_str){
     QList<const Card*> cards;
+    bool unhide = cards_str.right(2) == "S1" ? true : false;
     QStringList card_list = cards_str.split("+");
     foreach(QString card_str, card_list){
+        if(card_str.left(1) == "S")
+            continue;
         int card_id = card_str.toInt();
         const Card *card = Sanguosha->getCard(card_id);
         cards << card;
@@ -327,17 +330,18 @@ void Client::drawCards(const QString &cards_str){
     pile_num -= cards.length();
     updatePileNum();
 
-    emit cards_drawed(cards);
+    emit cards_drawed(cards, unhide);
 }
 
 void Client::drawNCards(const QString &draw_str){
-    QRegExp pattern("(\\w+):(\\d+)");
+    QRegExp pattern("(\\w+):(\\d+):(\\d+)");
     if(!pattern.exactMatch(draw_str))
         return;
 
     QStringList texts = pattern.capturedTexts();
     ClientPlayer *player = findChild<ClientPlayer*>(texts.at(1));
     int n = texts.at(2).toInt();
+    bool unhide = texts.at(3).toInt() == 1 ? true : false;
 
     if(player && n>0){
         if(!Self->hasFlag("marshalling")){
@@ -346,7 +350,7 @@ void Client::drawNCards(const QString &draw_str){
         }
 
         player->handCardChange(n);
-        emit n_cards_drawed(player, n);
+        emit n_cards_drawed(player, n, unhide);
     }
 }
 

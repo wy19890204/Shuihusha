@@ -158,8 +158,8 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(card_moved(CardMoveStructForClient)), this, SLOT(moveCard(CardMoveStructForClient)));
     connect(ClientInstance, SIGNAL(n_cards_moved(int,QString,QString)), this, SLOT(moveNCards(int,QString,QString)));
 
-    connect(ClientInstance, SIGNAL(cards_drawed(QList<const Card*>)), this, SLOT(drawCards(QList<const Card*>)));
-    connect(ClientInstance, SIGNAL(n_cards_drawed(ClientPlayer*,int)), SLOT(drawNCards(ClientPlayer*,int)));
+    connect(ClientInstance, SIGNAL(cards_drawed(QList<const Card*>,bool)), this, SLOT(drawCards(QList<const Card*>,bool)));
+    connect(ClientInstance, SIGNAL(n_cards_drawed(ClientPlayer*,int,bool)), SLOT(drawNCards(ClientPlayer*,int,bool)));
 
     connect(ClientInstance, SIGNAL(assign_asked()), this, SLOT(startAssign()));
     connect(ClientInstance, SIGNAL(card_used()), this, SLOT(hideDiscards()));
@@ -642,7 +642,7 @@ void RoomScene::arrangeSeats(const QList<const ClientPlayer*> &seats){
     }
 }
 
-void RoomScene::drawCards(const QList<const Card *> &cards){
+void RoomScene::drawCards(const QList<const Card *> &cards, bool unhide){
     foreach(const Card * card, cards){
         CardItem *item = new CardItem(card);
         item->setPos(DrawPilePos);
@@ -650,10 +650,11 @@ void RoomScene::drawCards(const QList<const Card *> &cards){
         dashboard->addCardItem(item);
     }
 
-    log_box->appendLog("#DrawNCards", Self->getGeneralName(), QStringList(), QString(), QString::number(cards.length()));
+    if(unhide)
+        log_box->appendLog("#DrawNCards", Self->getGeneralName(), QStringList(), QString(), QString::number(cards.length()));
 }
 
-void RoomScene::drawNCards(ClientPlayer *player, int n){
+void RoomScene::drawNCards(ClientPlayer *player, int n, bool unhide){
     QSequentialAnimationGroup *group =  new QSequentialAnimationGroup;
     QParallelAnimationGroup *moving = new QParallelAnimationGroup;
     QParallelAnimationGroup *disappering = new QParallelAnimationGroup;
@@ -688,13 +689,14 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
 
     photo->update();
 
-    log_box->appendLog(
-            "#DrawNCards",
-            player->getGeneralName(),
-            QStringList(),
-            QString(),
-            QString::number(n)
-            );
+    if(unhide)
+        log_box->appendLog(
+                "#DrawNCards",
+                player->getGeneralName(),
+                QStringList(),
+                QString(),
+                QString::number(n)
+                );
 }
 
 void RoomScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
