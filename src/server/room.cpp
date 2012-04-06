@@ -2511,7 +2511,7 @@ void Room::drawCards(ServerPlayer *player, int n, bool unhide){
     if(cards_str.isEmpty())
         return;
 
-    player->invoke("drawCards", cards_str.join("+").append(unhide ? "+S1" : "+S0"));
+    player->invoke("drawCards", cards_str.join("+").append(unhide ? "" : "H"));
 
     QString draw_str = QString("%1:%2:%3").arg(player->objectName()).arg(n).arg(unhide ? 1 : 0);
 

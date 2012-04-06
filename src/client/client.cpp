@@ -316,11 +316,13 @@ void Client::removePlayer(const QString &player_name){
 
 void Client::drawCards(const QString &cards_str){
     QList<const Card*> cards;
-    bool unhide = cards_str.right(2) == "S1" ? true : false;
+    bool unhide = true;
     QStringList card_list = cards_str.split("+");
     foreach(QString card_str, card_list){
-        if(card_str.left(1) == "S")
-            continue;
+        if(card_str.right(1) == "H"){
+            unhide = false;
+            card_str.chop(1);
+        }
         int card_id = card_str.toInt();
         const Card *card = Sanguosha->getCard(card_id);
         cards << card;
