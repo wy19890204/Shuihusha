@@ -1041,7 +1041,9 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6");
         nmap[first] = qs.toInt();
 
-        if(cmap[first] <= cmap[second] && nmap[first] <= nmap[second])
+        if(cmap[first] < cmap[second])
+            continue;
+        if(cmap[first] == cmap[second] && nmap[first] <= nmap[second])
             continue;
 
         log.type = "#Chuiniuing";
@@ -1057,17 +1059,17 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     allhands.append(target->getHandcards());
     int count = 0;
     foreach(const Card *card, allhands){
-        if(card->getNumber() == nmap.value(first) || card->getNumber() == 1)
+        if(card->getNumber() == nmap.value(second) || card->getNumber() == 1)
             count ++;
     }
     log.type = "#ChuiniuEnd";
-    log.from = first;
+    log.from = second;
     log.arg = QString::number(count);
-    log.arg2 = QString::number(nmap.value(first));
+    log.arg2 = QString::number(nmap.value(second));
     room->sendLog(log);
 
-    bool win = (first == source && count >= cmap.value(first)) ||
-               (first != source && count < cmap.value(first));
+    bool win = (second == source && count >= cmap.value(second)) ||
+               (second != source && count < cmap.value(second));
 
     room->getThread()->delay();
     QList<int> uvnn = source->getPile("niu");
@@ -1102,7 +1104,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("ChuiniuCard");
+        return true;
     }
 
     virtual const Card *viewAs() const{
