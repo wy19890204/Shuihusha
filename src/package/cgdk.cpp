@@ -721,6 +721,7 @@ public:
                 targets << tmp;
         if(targets.isEmpty() || !player->askForSkillInvoke(objectName()))
             return false;
+        room->playSkillEffect(objectName());
         PlayerStar from = room->askForPlayerChosen(player, targets, "dalangfrom");
         while(!from->getJudgingArea().isEmpty()){
             QList<int> card_ids;

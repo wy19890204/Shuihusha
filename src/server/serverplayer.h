@@ -28,7 +28,8 @@ public:
     void unicast(const QString &message) const;
     void drawCard(const Card *card);
     Room *getRoom() const;
-    void playCardEffect(const Card *card);
+    void playCardEffect(const Card *card) const;
+    void playCardEffect(const QString &card_name) const;
     int getRandomHandCardId() const;
     const Card *getRandomHandCard() const;
     void obtainCard(const Card *card, bool unhide = true);
@@ -38,7 +39,7 @@ public:
     void bury();
     void throwAllMarks();
     void clearPrivatePiles();
-    void drawCards(int n, bool set_emotion = true);
+    void drawCards(int n, bool set_emotion = true, bool unhide = true);
     bool askForSkillInvoke(const QString &skill_name, const QVariant &data = QVariant());
     QList<int> forceToDiscard(int discard_num, bool include_equip);
     QList<int> handCards() const;
@@ -86,6 +87,7 @@ public:
     void clearSelected();
 
     int getGeneralMaxHP() const;
+    int getGeneralMaxHp() const;
     virtual QString getGameMode() const;
 
     QString getIp() const;

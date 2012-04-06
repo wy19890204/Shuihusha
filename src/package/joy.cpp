@@ -150,7 +150,7 @@ public:
                    p->askForSkillInvoke("grab_peach", data))
                 {
                     room->throwCard(p->getOffensiveHorse());
-                    room->playCardEffect(objectName(), p->getGeneral()->isMale());
+                    p->playCardEffect(objectName());
                     p->obtainCard(use.card);
 
                     return true;
@@ -1000,6 +1000,118 @@ public:
     }
 };
 
+ChuiniuCard::ChuiniuCard(){
+    once = true;
+}
+
+bool ChuiniuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getHandcardNum() < Self->getHandcardNum();
+}
+
+void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    LogMessage log;
+    ServerPlayer *target = targets.first();
+    foreach(int hd, source->handCards())
+        source->addToPile("niu", hd, false);
+    foreach(int hd, target->handCards())
+        target->addToPile("niu", hd, false);
+
+    while(source->getHandcardNum() < 3){
+        source->drawCards(1, false, false);
+        if(source->getHandcards().last()->getNumber() > 6)
+            room->throwCard(source->getHandcards().last());
+    }
+    while(target->getHandcardNum() < 3){
+        target->drawCards(1, false, false);
+        if(target->getHandcards().last()->getNumber() > 6)
+            room->throwCard(target->getHandcards().last());
+    }
+
+    ServerPlayer *first = source;
+    ServerPlayer *second = target;
+    static QMap<ServerPlayer*, int> cmap;
+    static QMap<ServerPlayer*, int> nmap;
+    forever{
+        QString qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6+pass");
+        if(qs == "pass")
+            break;
+        else
+            cmap[first] = qs.toInt();
+
+        qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6");
+        nmap[first] = qs.toInt();
+
+        if(cmap[first] < cmap[second])
+            continue;
+        if(cmap[first] == cmap[second] && nmap[first] <= nmap[second])
+            continue;
+
+        log.type = "#Chuiniuing";
+        log.from = first;
+        log.arg = QString::number(cmap.value(first));
+        log.arg2 = QString::number(nmap.value(first));
+        room->sendLog(log);
+
+        qSwap(first, second);
+    }
+
+    QList<const Card *> allhands = source->getHandcards();
+    allhands.append(target->getHandcards());
+    int count = 0;
+    foreach(const Card *card, allhands){
+        if(card->getNumber() == nmap.value(second) || card->getNumber() == 1)
+            count ++;
+    }
+    log.type = "#ChuiniuEnd";
+    log.from = second;
+    log.arg = QString::number(count);
+    log.arg2 = QString::number(nmap.value(second));
+    room->sendLog(log);
+
+    bool win = (second == source && count >= cmap.value(second)) ||
+               (second != source && count < cmap.value(second));
+
+    room->getThread()->delay();
+    QList<int> uvnn = source->getPile("niu");
+    uvnn.append(target->getPile("niu"));
+    log.type = "#ChuiniuWin";
+    if(win){
+        log.from = source;
+        room->setEmotion(source, "good");
+        room->sendLog(log);
+        foreach(int x, uvnn)
+            room->throwCard(x);
+        DummyCard *cards = target->wholeHandCards();
+        room->obtainCard(source, cards, false);
+        room->setEmotion(target, "bad");
+    }
+    else{
+        log.from = target;
+        room->setEmotion(target, "good");
+        room->sendLog(log);
+        target->throwAllHandCards();
+        foreach(int x, uvnn)
+            room->obtainCard(target, x, false);
+        room->setEmotion(source, "bad");
+        room->setPlayerFlag(source, "drank");
+    }
+}
+
+class Chuiniu: public ZeroCardViewAsSkill{
+public:
+    Chuiniu():ZeroCardViewAsSkill("chuiniu"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("ChuiniuCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new ChuiniuCard;
+    }
+};
+
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
@@ -1021,9 +1133,13 @@ JoyGeneralPackage::JoyGeneralPackage()
     maque->addSkill(new Zouma);
     maque->addSkill(new Skill("jizha"));
 
+    General *chuiniu = new General(this, "chuiniu", "god", 5);
+    chuiniu->addSkill(new Chuiniu);
+
     addMetaObject<YuluCard>();
     addMetaObject<ViewMyWordsCard>();
     addMetaObject<ZhuangcheCard>();
+    addMetaObject<ChuiniuCard>();
 
     type = GeneralPack;
 }

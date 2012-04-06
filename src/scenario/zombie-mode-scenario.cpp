@@ -233,6 +233,7 @@ public:
             log.type = "#ZaibianGood";
             log.from = zombie;
             log.arg = QString::number(x);
+            log.arg2 = objectName();
             room->sendLog(log);
             zombie->drawCards(x);
         }
@@ -310,8 +311,11 @@ public:
 };
 
 GanranEquip::GanranEquip(Card::Suit suit, int number)
-    :IronChain(suit, number){
+    :IronChain(suit, number)
+{
+
 }
+
 
 class Ganran: public FilterSkill{
 public:

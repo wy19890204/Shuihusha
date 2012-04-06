@@ -20,17 +20,25 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setTitle(tr("Effects"));
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
+    ui->skillTextEdit->setProperty("description", true);
 }
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
+    QList<const General *> copy_generals = generals;
+    QMutableListIterator<const General *> itor = copy_generals;
+    while(itor.hasNext()){
+        if(itor.next()->isTotallyHidden())
+            itor.remove();
+    }
+
     ui->tableWidget->clearContents();
-    ui->tableWidget->setRowCount(generals.length());
+    ui->tableWidget->setRowCount(copy_generals.length());
     ui->tableWidget->setIconSize(QSize(20,20));
     QIcon lord_icon("image/system/roles/lord.png");
 
     int i;
-    for(i=0; i<generals.length(); i++){
-        const General *general = generals[i];
+    for(i=0; i<copy_generals.length(); i++){
+        const General *general = copy_generals[i];
 
         QString name, kingdom, gender, max_hp, package;
 
@@ -195,6 +203,13 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
     QList<const Skill *> skills = general->getVisibleSkillList();
+
+    foreach(QString skill_name, general->getRelatedSkillNames()){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill)
+            skills << skill;
+    }
+
     ui->skillTextEdit->clear();
 
     resetButtons();

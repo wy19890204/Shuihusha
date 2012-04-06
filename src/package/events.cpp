@@ -39,14 +39,14 @@ void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->throwCard(this);
     ServerPlayer *target = targets.first();
     if(source->getPhase() == Player::Play){
-        room->playCardEffect("@jiefachang2", source->getGeneral()->isMale());
+        source->playCardEffect("@jiefachang2");
         if(target->getJudgingArea().length() > 1)
             room->throwCard(room->askForCardChosen(source, target, "j", "jiefachang"));
         else
             room->throwCard(target->getJudgingArea().last());
     }
     else{
-        room->playCardEffect("@jiefachang1", source->getGeneral()->isMale());
+        source->playCardEffect("@jiefachang1");
         target->turnOver();
     }
 }
@@ -72,12 +72,12 @@ bool Daojia::targetsFeasible(const QList<const Player *> &targets, const Player 
 void Daojia::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     if(targets.isEmpty()){
-        room->playCardEffect("@daojia2", source->getGeneral()->isMale());
+        source->playCardEffect("@daojia2");
         source->drawCards(1);
         room->moveCardTo(this, NULL, Player::DrawPile, true);
     }
     else{
-        room->playCardEffect("@daojia1", source->getGeneral()->isMale());
+        source->playCardEffect("@daojia1");
         ServerPlayer *target = targets.first();
         source->obtainCard(target->getArmor());
     }
@@ -104,7 +104,7 @@ bool Tifanshi::targetsFeasible(const QList<const Player *> &targets, const Playe
 void Tifanshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     if(targets.isEmpty()){
-        room->playCardEffect("@tifanshi1", source->getGeneral()->isMale());
+        source->playCardEffect("@tifanshi1");
         int reco = 0;
         foreach(ServerPlayer *tmp, room->getAlivePlayers())
             if(tmp->getRole() == "rebel")
@@ -113,7 +113,7 @@ void Tifanshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
             source->drawCards(reco);
     }
     else{
-        room->playCardEffect("@tifanshi2", source->getGeneral()->isMale());
+        source->playCardEffect("@tifanshi2");
         ServerPlayer *target = targets.first();
         room->askForDiscard(target, "tifanshi", 1, false, true);
     }
@@ -140,14 +140,14 @@ bool NinedayGirl::targetsFeasible(const QList<const Player *> &targets, const Pl
 void NinedayGirl::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     if(!targets.isEmpty()){
-        room->playCardEffect("@ninedaygirl2", source->getGeneral()->isMale());
+        source->playCardEffect("@ninedaygirl2");
         ServerPlayer *target = targets.first();
         int card_id = target->getRandomHandCardId();
         room->showCard(target, card_id);
         room->obtainCard(source, card_id);
     }
     else
-        room->playCardEffect("@ninedaygirl1", source->getGeneral()->isMale());
+        source->playCardEffect("@ninedaygirl1");
 }
 
 FuckGaolian::FuckGaolian(Suit suit, int number):EventsCard(suit, number){
@@ -175,7 +175,7 @@ bool FuckGaolian::isAvailable(const Player *) const{
 void FuckGaolian::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     if(!targets.isEmpty()){
-        room->playCardEffect("@fuckgaolian1", source->getGeneral()->isMale());
+        source->playCardEffect("@fuckgaolian1");
         ServerPlayer *target = targets.first();
         DamageStruct damage;
         damage.from = source;
