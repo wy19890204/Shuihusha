@@ -1016,12 +1016,12 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         target->addToPile("chuiniu", hd, false);
 
     while(source->getHandcardNum() < 3){
-        source->drawCards(1);
+        source->drawCards(1, false);
         if(source->getHandcards().last()->getNumber() > 6)
             room->throwCard(source->getHandcards().last());
     }
     while(target->getHandcardNum() < 3){
-        target->drawCards(1);
+        target->drawCards(1, false);
         if(target->getHandcards().last()->getNumber() > 6)
             room->throwCard(target->getHandcards().last());
     }
@@ -1032,49 +1032,62 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     static QMap<ServerPlayer*, int> nmap;
     forever{
         QString qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6+pass");
-        if(qs == "pass"){
+        if(qs == "pass")
             break;
-        }
         else{
             nmap[first] = qs.toInt();
         }
 
-        qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6+pass");
-        if(qs == "pass"){
-            break;
-        }
-        else{
-            cmap[first] = qs.toInt();
-        }
+        qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6");
+        cmap[first] = qs.toInt();
 
         if(cmap[first] <= cmap[second] && nmap[first] <= nmap[second])
             continue;
+
+        LogMessage log;
+        log.type = "#Chuiniuing";
+        log.from = first;
+        log.arg = QString::number(cmap.value(first));
+        log.arg2 = QString::number(nmap.value(first));
+        room->sendLog(log);
 
         qSwap(first, second);
     }
 
     QList<const Card *> allhands = source->getHandcards();
-    allhands += target->getHandcards();
+    allhands.append(target->getHandcards());
     int count = 0;
     foreach(const Card *card, allhands){
         if(card->getNumber() == nmap.value(first) || card->getNumber() == 1)
             count ++;
     }
+    LogMessage log;
+    log.type = "#ChuiniuEnd";
+    log.from = first;
+    log.arg = QString::number(count);
+    log.arg2 = QString::number(nmap.value(first));
+    room->sendLog(log);
+
     bool win = (first == source && count >= cmap.value(first)) ||
                (first != source && count < cmap.value(first));
 
+    room->getThread()->delay();
     QList<int> uvnn = source->getPile("chuiniu");
-    uvnn += target->getPile("chuiniu");
+    uvnn.append(target->getPile("chuiniu"));
     if(win){
+        room->setEmotion(source, "good");
         foreach(int x, uvnn)
             room->throwCard(x);
         DummyCard *cards = target->wholeHandCards();
         room->obtainCard(source, cards, false);
+        room->setEmotion(target, "bad");
     }
     else{
+        room->setEmotion(target, "good");
         target->throwAllHandCards();
         foreach(int x, uvnn)
             room->obtainCard(target, x, false);
+        room->setEmotion(source, "bad");
     }
 }
 
