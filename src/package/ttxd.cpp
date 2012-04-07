@@ -297,14 +297,24 @@ public:
     }
 };
 
-class Yinyu: public PhaseChangeSkill{
+class Yinyu: public TriggerSkill{
 public:
-    Yinyu():PhaseChangeSkill("yinyu"){
-
+    Yinyu():TriggerSkill("yinyu"){
+        events << PhaseChange << SlashProceed;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *qing) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *qing, QVariant &data) const{
         Room *room = qing->getRoom();
+        if(event == SlashProceed){
+            if(qing->hasFlag("Hitit")){
+                SlashEffectStruct effect = data.value<SlashEffectStruct>();
+                int index = effect.from->getMark("mengshi") > 0 ? 8: 3;
+                room->playSkillEffect("yinyu", index);
+                room->slashResult(effect, NULL);
+                return true;
+            }
+            return false;
+        }
         if(qing->getPhase() == Player::Start){
             if(qing->askForSkillInvoke(objectName())){
                 JudgeStruct judge;

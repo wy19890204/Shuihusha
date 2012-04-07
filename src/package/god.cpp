@@ -450,9 +450,9 @@ void MeiyuCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->useCard(use, false);
 }
 
-class Meiyu: public ZeroCardViewAsSkill{
+class MeiyuViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    Meiyu():ZeroCardViewAsSkill("meiyu"){
+    MeiyuViewAsSkill():ZeroCardViewAsSkill("meiyu"){
     }
 
     virtual const Card *viewAs() const{
@@ -461,6 +461,25 @@ public:
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->getPile("stone").isEmpty();
+    }
+};
+
+class Meiyu: public TriggerSkill{
+public:
+    Meiyu():TriggerSkill("meiyu"){
+        events << Predamage;
+        view_as_skill = new MeiyuViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *moyujian, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card || !damage.card->inherits("Slash") || damage.damage < 1)
+            return false;
+        if(damage.card->getSkillName() == "meiyu" && damage.to->isAlive()){
+            moyujian->getRoom()->loseMaxHp(damage.to, damage.damage);
+            return true;
+        }
+        return false;
     }
 };
 

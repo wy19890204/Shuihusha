@@ -497,17 +497,6 @@ void ServerPlayer::turnOver(){
 }
 
 void ServerPlayer::play(QList<Player::Phase> set_phases){
-	if(getMark("poison") > 0 && !isAllNude()){
-        LogMessage log;
-        log.from = this;
-        log.type = "$Poison_lost";
-        int index = qrand() % getCards("hej").length();
-        const Card *card = getCards("hej").at(index);
-        room->throwCard(card->getId());
-        log.card_str = card->getEffectIdString();
-        room->sendLog(log);
-    }
-
     if(!set_phases.isEmpty()){
         if(!set_phases.contains(NotActive))
             set_phases << NotActive;

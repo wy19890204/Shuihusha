@@ -33,6 +33,16 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
+            if(player->getMark("poison") > 0 && !player->isAllNude()){
+                LogMessage log;
+                log.from = player;
+                log.type = "$Poison_lost";
+                int index = qrand() % player->getCards("hej").length();
+                const Card *card = player->getCards("hej").at(index);
+                log.card_str = card->getEffectIdString();
+                room->throwCard(card);
+                room->sendLog(log);
+            }
             break;
         }
     case Player::Start: {
@@ -383,8 +393,9 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
                 room->setPlayerFlag(damage.to, "-ecst");
             }
-			if(damage.from)
+            if(damage.from)
                 room->setPlayerStatistics(damage.from, "damage", damage.damage);
+
             room->applyDamage(player, damage);
             if(player->getHp() <= 0){
                 room->enterDying(player, &damage);
@@ -457,12 +468,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
             QString slasher = effect.from->objectName();
-            const Card *jink = !effect.from->hasFlag("Hitit") ?
-                               room->askForCard(effect.to, "jink", "slash-jink:" + slasher) : NULL;
-            if(effect.from->hasFlag("Hitit")){
-                int index = effect.from->getMark("mengshi") > 0 ? 8: 3;
-                room->playSkillEffect("yinyu", index);
-            }
+            const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, data);
             room->slashResult(effect, jink);
 
             break;
@@ -471,27 +477,24 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
     case SlashHit:{
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-            if(effect.slash->getSkillName() == "meiyu"){
-                room->loseMaxHp(effect.to);
-            }
-            else{
-                DamageStruct damage;
-                damage.card = effect.slash;
+            DamageStruct damage;
+            damage.card = effect.slash;
 
-                damage.damage = 1;
-                if(effect.drank)
-                    damage.damage ++;
+            damage.damage = 1;
+            if(effect.drank)
+                damage.damage ++;
 
-                if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
-                    damage.damage ++;
-                damage.from = effect.from;
-                damage.to = effect.to;
-                damage.nature = effect.nature;
+            if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")
+                damage.damage ++;
 
-                room->damage(damage);
-            }
+            damage.from = effect.from;
+            damage.to = effect.to;
+            damage.nature = effect.nature;
+
+            room->damage(damage);
 
             effect.to->removeMark("qinggang");
+
             break;
         }
 
