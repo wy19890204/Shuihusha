@@ -462,10 +462,13 @@ public:
 class Ubunf: public TriggerSkill{
 public:
     Ubunf():TriggerSkill("ubunf"){
-        events << Dying;
+        events << Dying << PreDeath;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(event == PreDeath){
+            return player->getHp() > 0;
+        }
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
             player->getRoom()->playSkillEffect(objectName());

@@ -16,6 +16,7 @@ GameRule::GameRule(QObject *parent)
             << CardAsk << CardUseAsk << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
+            << PreDeath << AskForRetrial
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
             << DamageDone << DamageComplete
             << StartJudge << FinishJudge << Pindian;
@@ -314,6 +315,9 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             if(player->getHp() <= 0)
                 room->enterDying(player, NULL);
 
+            if(Config.EnableEndless){
+                player->gainMark("@endless", lose);
+            }
             break;
     }
 
@@ -440,6 +444,13 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 }
             }
 
+            if(Config.EnableEndless){
+                if(damage.from)
+                    damage.from->gainMark("@endless", damage.damage);
+                else
+                    damage.to->gainMark("@endless", damage.damage);
+            }
+
             break;
         }
 
@@ -522,6 +533,25 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             break;
         }
 
+    case PreDeath:{
+            DamageStar damage = data.value<DamageStar>();
+            ServerPlayer *killer = damage ? damage->from : NULL;
+
+            if(Config.EnableEndless){
+                if(player->getMaxHP() <= 0)
+                    room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
+                if(player->getHp() <= 0)
+                    room->setPlayerProperty(player, "hp", 1);
+                if(killer && !player->isKongcheng())
+                    killer->gainMark("@endless", qMin(3, player->getHandcardNum()));
+                if(player->getMark("@endless") > 0)
+                    player->loseMark("@endless", player->getMark("@endless") / 2);
+                return true;
+            }
+
+            break;
+        }
+
     case Death:{
             player->bury();
 
@@ -530,22 +560,10 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
-            if(killer){
-                if(player->hasSkill("zuohua")){
-                    LogMessage log;
-                    log.type = "#Zuohua";
-                    log.from = player;
-                    log.to << killer;
-                    log.arg = "zuohua";
-                    room->playSkillEffect("zuohua", 1);
-                    room->sendLog(log);
-                }
-                else
-                    rewardAndPunish(killer, player);
-            }
-            else if(player->hasSkill("zuohua")){
+            if(killer)
+                rewardAndPunish(killer, player);
+            else if(player->hasSkill("zuohua"))
                 room->playSkillEffect("zuohua", 2);
-            }
 
             setGameProcess(room);
 
@@ -587,6 +605,33 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             if(judge->time_consuming)
                 delay /= 4;
             room->getThread()->delay(delay);
+
+            break;
+        }
+
+    case AskForRetrial:{
+            if(!Config.BanPackages.contains("events")){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
+                if(source && source == player){
+                    room->setPlayerFlag(player, "FuckLian");
+                    const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", data);
+                    if(fuck){
+                        player->playCardEffect("@fuckgaolian2");
+                        JudgeStar judge = data.value<JudgeStar>();
+                        source->obtainCard(judge->card);
+                        judge->card = fuck;
+                        room->moveCardTo(judge->card, NULL, Player::Special);
+                        LogMessage log;
+                        log.type = "$ChangedJudge";
+                        log.from = player;
+                        log.to << judge->who;
+                        log.card_str = QString::number(fuck->getId());
+                        room->sendLog(log);
+                        room->sendJudgeResult(judge);
+                    }
+                    room->setPlayerFlag(player, "-FuckLian");
+                }
+            }
 
             break;
         }
@@ -671,6 +716,17 @@ void GameRule::changeGeneral1v1(ServerPlayer *player) const{
 void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const{
     if(killer->isDead())
         return;
+
+    if(victim->hasSkill("zuohua")){
+        LogMessage log;
+        log.type = "#Zuohua";
+        log.from = victim;
+        log.to << killer;
+        log.arg = "zuohua";
+        victim->getRoom()->playSkillEffect("zuohua", 1);
+        victim->getRoom()->sendLog(log);
+        return;
+    }
 
     if(killer->getRoom()->getMode() == "06_3v3"){
         if(Config.value("3v3/UsingNewMode", false).toBool())

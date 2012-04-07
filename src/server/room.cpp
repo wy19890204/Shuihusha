@@ -257,25 +257,13 @@ void Room::updateStateItem(){
 }
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+    QVariant data = QVariant::fromValue(reason);
+    if(thread->trigger(PreDeath, victim, data))
+        return;
     ServerPlayer *killer = reason ? reason->from : NULL;
-    if(Config.EnableEndless){
-        if(victim->getMaxHP() <= 0)
-            this->setPlayerProperty(victim, "maxhp", victim->getGeneral()->getMaxHp());
-        if(victim->getHp() <= 0)
-            this->setPlayerProperty(victim, "hp", 1);
-        if(killer && !victim->isKongcheng())
-            killer->gainMark("@endless", qMin(3, victim->getHandcardNum()));
-        if(victim->getMark("@endless") > 0)
-            victim->loseMark("@endless", victim->getMark("@endless") / 2);
-        return;
-    }
-    if(victim->getHp() > 0 && victim->hasSkill("ubunf"))
-        return;
-
     if(Config.ContestMode && killer){
         killer->addVictim(victim);
     }
-    thread->trigger(PreDeath, victim);
 
     victim->setAlive(false);
 
@@ -309,7 +297,6 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     broadcastProperty(victim, "alive");
 
-    QVariant data = QVariant::fromValue(reason);
     thread->trigger(GameOverJudge, victim, data);
 
 
@@ -348,28 +335,6 @@ void Room::judge(JudgeStruct &judge_struct){
 
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
-        if(!Config.BanPackages.contains("events")){
-            ServerPlayer *source = findPlayerWhohasEventCard("fuckgaolian");
-            if(source && source == player){
-                setPlayerFlag(player, "FuckLian");
-                const Card *fuck = askForCard(player, "FuckGaolian", "@fuckl", data);
-                if(fuck){
-                    player->playCardEffect("@fuckgaolian2");
-                    JudgeStar judge = data.value<JudgeStar>();
-                    source->obtainCard(judge->card);
-                    judge->card = fuck;
-                    moveCardTo(judge->card, NULL, Player::Special);
-                    LogMessage log;
-                    log.type = "$ChangedJudge";
-                    log.from = player;
-                    log.to << judge->who;
-                    log.card_str = QString::number(fuck->getId());
-                    sendLog(log);
-                    sendJudgeResult(judge);
-                }
-                setPlayerFlag(player, "-FuckLian");
-            }
-        }
         if(thread->trigger(AskForRetrial, player, data))
             break;
     }
@@ -2081,9 +2046,6 @@ void Room::useCard(const CardUseStruct &card_use, bool add_history){
 void Room::loseHp(ServerPlayer *victim, int lose){
     QVariant data = lose;
     thread->trigger(HpLost, victim, data);
-    if(Config.EnableEndless){
-        victim->gainMark("@endless", lose);
-    }
 }
 
 void Room::loseMaxHp(ServerPlayer *victim, int lose){
@@ -2236,13 +2198,6 @@ void Room::damage(const DamageStruct &damage_data){
         return;
 
     thread->trigger(DamageComplete, damage_data.to, data);
-    if(Config.EnableEndless){
-        DamageStruct newdamage = data.value<DamageStruct>();
-        if(newdamage.from)
-            newdamage.from->gainMark("@endless", newdamage.damage);
-        else
-            newdamage.to->gainMark("@endless", newdamage.damage);
-    }
 }
 
 void Room::sendDamageLog(const DamageStruct &data){

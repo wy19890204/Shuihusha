@@ -134,6 +134,7 @@ end
 
 -- fuqin
 sgs.ai_skill_choice["fuqin"] = function(self, choice)
+	if choice == "qing+nil" then return "qing" end
 	local source = self.player:getTag("FuqinSource"):toPlayer()
 	if self:isFriend(source) then
 		return "qing"
