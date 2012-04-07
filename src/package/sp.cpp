@@ -182,6 +182,20 @@ public:
     }
 };
 
+class Shaxue: public PhaseChangeSkill{
+public:
+    Shaxue():PhaseChangeSkill("shaxue$"){
+        frequency = Compulsory;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Discard &&
+           player->getHandcardNum() > player->getHp() && player->getHandcardNum() <= player->getMaxCards())
+            player->getRoom()->playSkillEffect(objectName());
+        return false;
+    }
+};
+
 class Shuntian: public TriggerSkill{
 public:
     Shuntian():TriggerSkill("shuntian"){
@@ -417,7 +431,7 @@ SPPackage::SPPackage()
     General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
-    chaogai->addSkill(new Skill("shaxue$", Skill::Compulsory));
+    chaogai->addSkill(new Shaxue);
 
     General *jiangsong = new General(this, "jiangsong", "guan");
     jiangsong->addSkill(new Yuzhong);

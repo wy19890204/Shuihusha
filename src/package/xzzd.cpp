@@ -677,6 +677,19 @@ public:
     }
 };
 
+class LinseEffect: public PhaseChangeSkill{
+public:
+    LinseEffect():PhaseChangeSkill("#linse-effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *lz) const{
+        if(lz->getPhase() == Player::Discard &&
+           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
+            lz->getRoom()->playSkillEffect("linse");
+        return false;
+    }
+};
+
 class FeiQPattern: public CardPattern{
 public:
     virtual bool match(const Player *player, const Card *card) const{
@@ -797,6 +810,8 @@ XZDDPackage::XZDDPackage()
     General *lizhong = new General(this, "lizhong", "kou", 4);
     lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
+    lizhong->addSkill(new LinseEffect);
+    related_skills.insertMulti("linse", "#linse-effect");
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);

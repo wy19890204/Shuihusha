@@ -293,6 +293,22 @@ public:
     }
 };
 
+class FanzhanClear: public TriggerSkill{
+public:
+    FanzhanClear():TriggerSkill("#fanzhan-clear"){
+        events << Death;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+        player->getRoom()->removeTag("Fanzhan");
+        return false;
+    }
+};
+
 class Shuilao: public OneCardViewAsSkill{
 public:
     Shuilao():OneCardViewAsSkill("shuilao"){
@@ -660,6 +676,8 @@ InterChangePackage::InterChangePackage()
     General *puwenying = new General(this, "puwenying", "guan", 3);
     puwenying->addSkill(new Guanxing);
     puwenying->addSkill(new Fanzhan);
+    puwenying->addSkill(new FanzhanClear);
+    related_skills.insertMulti("fanzhan", "#fanzhan-clear");
 
     General *tongmeng = new General(this, "tongmeng", "min", 3);
     tongmeng->addSkill(new Shuilao);

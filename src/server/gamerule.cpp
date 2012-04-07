@@ -82,12 +82,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
         }
 
     case Player::Discard:{
-            if(player->hasSkill("linse") &&
-               player->getHandcardNum() > player->getHp())
-                room->playSkillEffect("linse");
-            if(player->hasSkill("shaxue") &&
-               player->getHandcardNum() > player->getHp() && player->getHandcardNum() <= player->getMaxCards())
-                room->playSkillEffect("shaxue");
             int discard_num = player->getHandcardNum() - player->getMaxCards();
             if(player->hasFlag("jilei")){
                 QSet<const Card *> jilei_cards;
@@ -135,16 +129,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     room->sendLog(log);
                     room->setPlayerFlag(tmp, "-ecst");
                 }
-                if(tmp->hasFlag("EyanTarget"))
-                    room->setPlayerFlag(tmp, "-EyanTarget");
-                if(tmp->hasSkill("eyanslash"))
-                    room->detachSkillFromPlayer(tmp, "eyanslash");
             }
 
             player->clearFlags();
-
-            if(!room->findPlayerBySkillName("fanzhan"))
-                room->removeTag("Fanzhan");
 
             if(!Config.BanPackages.contains("events")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("jiefachang");
