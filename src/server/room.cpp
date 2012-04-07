@@ -806,16 +806,6 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
-    if(player->hasSkill("chengfu") && player->getPhase() == Player::NotActive && asked.toString() == "slash"){
-        playSkillEffect("chengfu", qrand() % 2 + 3);
-        LogMessage log;
-        log.type = "#ChengfuEffect";
-        log.from = player;
-        log.arg = asked.toString();
-        log.arg2 = "chengfu";
-        sendLog(log);
-        return NULL;
-    }
     if(player->hasFlag("ecst") && (asked.toString() == "slash" || asked.toString() == "jink")){
         LogMessage log;
         log.type = "#EcstasyEffect";
@@ -824,7 +814,8 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         sendLog(log);
         return NULL;
     }
-    thread->trigger(CardAsked, player, asked);
+    if(thread->trigger(CardAsked, player, asked))
+        return NULL;
     if(has_provided){
         card = provided;
         provided = NULL;
@@ -897,16 +888,6 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
-    if(player->hasSkill("chengfu") && answer == "slash" && player->getPhase() == Player::NotActive){
-        playSkillEffect("chengfu", qrand() % 2 + 3);
-        LogMessage log;
-        log.type = "#ChengfuEffect";
-        log.from = player;
-        log.arg = answer;
-        log.arg2 = "chengfu";
-        sendLog(log);
-        return NULL;
-    }
     if(player->hasFlag("ecst") && answer == "slash"){
         LogMessage log;
         log.type = "#EcstasyEffect";
@@ -915,6 +896,8 @@ bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QSt
         sendLog(log);
         return NULL;
     }
+    //if(thread->trigger(CardUseAsked, player, asked))
+    //    return NULL;
 
     AI *ai = player->getAI();
     if(ai){
