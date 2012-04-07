@@ -389,7 +389,7 @@ public:
             RecoverStruct rev;
             rev.who = player;
             for(int p = 0; p < damage.damage; p++){
-                if(player->askForSkillInvoke(objectName()))
+                if(player->askForSkillInvoke(objectName(), data))
                     room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
             }
         }
