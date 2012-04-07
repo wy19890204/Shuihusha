@@ -282,7 +282,7 @@ public:
         if(v == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand && player->isAlive()){
-                if(player->getHandcardNum() <= player->getMaxHP()){
+                if(player->getHandcardNum() < player->getMaxHP()){
                     LogMessage log;
                     log.type = "#TriggerSkill";
                     log.from = player;

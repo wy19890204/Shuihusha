@@ -1,5 +1,11 @@
--- the common
+-- The common
 return {
+	["Shuihusha"] = "水浒杀",
+	["DefaultDesigner"] = "烨子",
+	["DefaultCV"] = "水浒杀配音室",
+	["DefaultCoder"] = "宇文天启",
+	["UnknowNick"] = "无绰号",
+
 	["spade"] = "黑桃",
 	["club"] = "梅花",
 	["heart"] = "红桃",

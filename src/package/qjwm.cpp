@@ -522,7 +522,7 @@ public:
         if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
             Room *room = zhuwu->getRoom();
             if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
-                room->broadcastInvoke("animate", "lightbox:$buzhen:5000");
+                room->broadcastInvoke("animate", "lightbox:$Buzhen:5000");
                 zhuwu->loseMark("@buvr");
                 room->getThread()->delay(4500);
                 return true;
