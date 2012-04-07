@@ -806,16 +806,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
-    if(player->hasFlag("ecst") && (asked.toString() == "slash" || asked.toString() == "jink")){
-        LogMessage log;
-        log.type = "#EcstasyEffect";
-        log.from = player;
-        log.arg = asked.toString();
-        sendLog(log);
+    if(thread->trigger(CardAsk, player, asked))
         return NULL;
-    }
-    if(thread->trigger(CardAsked, player, asked))
-        return NULL;
+    thread->trigger(CardAsked, player, asked);
     if(has_provided){
         card = provided;
         provided = NULL;
@@ -888,16 +881,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QString answer;
-    if(player->hasFlag("ecst") && answer == "slash"){
-        LogMessage log;
-        log.type = "#EcstasyEffect";
-        log.from = player;
-        log.arg = answer;
-        sendLog(log);
+    QVariant asked = pattern;
+    if(thread->trigger(CardUseAsk, player, asked))
         return NULL;
-    }
-    //if(thread->trigger(CardUseAsked, player, asked))
-    //    return NULL;
 
     AI *ai = player->getAI();
     if(ai){

@@ -319,47 +319,48 @@ public:
 class Chengfu: public TriggerSkill{
 public:
     Chengfu():TriggerSkill("chengfu"){
-        events << CardLost << CardAsked << PhaseChange;
+        events << CardLost << CardAsk << CardUseAsk << PhaseChange;
         frequency = Compulsory;
     }
 
     virtual bool trigger(TriggerEvent t, ServerPlayer *conan, QVariant &data) const{
         Room *room = conan->getRoom();
-        if(conan->getPhase() == Player::NotActive){
-            if(t == PhaseChange){
+        if(t == PhaseChange){
+            if(conan->getPhase() == Player::NotActive)
                 room->setPlayerCardLock(conan, "Slash");
-            }
-            else if(t == CardAsked){
-                QString asked = data.toString();
-                if(asked == "slash"){
-                    room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                    LogMessage log;
-                    log.type = "#ChengfuEffect";
-                    log.from = conan;
-                    log.arg = asked;
-                    log.arg2 = objectName();
-                    room->sendLog(log);
-                }
-            }
-            else{
-                CardMoveStar move = data.value<CardMoveStar>();
-                if(conan->isDead())
-                    return false;
-                if(move->from_place == Player::Hand || move->from_place == Player::Equip){
-                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                    LogMessage log;
-                    log.type = "#TriggerSkill";
-                    log.from = conan;
-                    log.arg = objectName();
-                    room->sendLog(log);
-
-                    conan->drawCards(1);
-                }
+            else if(conan->getPhase() == Player::RoundStart)
+                room->setPlayerCardLock(conan, "-Slash");
+            return false;
+        }
+        else if((t == CardAsk || t == CardUseAsk) &&
+                conan->getPhase() == Player::NotActive){
+            QString asked = data.toString();
+            if(asked == "slash"){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                LogMessage log;
+                log.type = "#ChengfuEffect";
+                log.from = conan;
+                log.arg = asked;
+                log.arg2 = objectName();
+                room->sendLog(log);
+                return true;
             }
         }
-        else if(conan->getPhase() == Player::RoundStart)
-            room->setPlayerCardLock(conan, "-Slash");
+        else if(t == CardLost && conan->getPhase() == Player::NotActive){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(conan->isDead())
+                return false;
+            if(move->from_place == Player::Hand || move->from_place == Player::Equip){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = conan;
+                log.arg = objectName();
+                room->sendLog(log);
 
+                conan->drawCards(1);
+            }
+        }
         return false;
     }
 };

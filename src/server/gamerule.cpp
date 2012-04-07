@@ -12,7 +12,8 @@ GameRule::GameRule(QObject *parent)
 {
     setParent(parent);
 
-    events << GameStart << TurnStart << PhaseChange << CardUsed << CardFinished
+    events << GameStart << TurnStart << PhaseChange << CardUsed
+            << CardAsk << CardUseAsk << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
@@ -244,6 +245,18 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 card->use(room, card_use.from, card_use.to);
             }
 
+            break;
+        }
+    case CardAsk :
+    case CardUseAsk: {
+            if(player->hasFlag("ecst") && (data.toString() == "slash" || data.toString() == "jink")){
+                LogMessage log;
+                log.type = "#EcstasyEffect";
+                log.from = player;
+                log.arg = data.toString();
+                room->sendLog(log);
+                return true;
+            }
             break;
         }
     case CardFinished: {
