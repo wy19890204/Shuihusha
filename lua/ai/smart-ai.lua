@@ -443,12 +443,20 @@ sgs.ai_compare_funcs = {
 		return a:getHp() < b:getHp()
 	end,
 
+	hp2 = function(a, b)
+		return a:getHp() > b:getHp()
+	end,
+
 	maxhp = function(a, b)
 		return a:getMaxHP() < b:getMaxHP()
 	end,
 
 	handcard = function(a, b)
 		return a:getHandcardNum() < b:getHandcardNum()
+	end,
+
+	handcard2 = function(a, b)
+		return a:getHandcardNum() > b:getHandcardNum()
 	end,
 
 	value = function(a, b)
