@@ -56,6 +56,8 @@ public:
     void setPlayerFlag(ServerPlayer *player, const QString &flag);
     void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
     void setPlayerMark(ServerPlayer *player, const QString &mark, int value);
+    void setPlayerCardLock(ServerPlayer *player, const QString &name);
+    void setPlayerStatistics(ServerPlayer *player, const QString &property_name, const QVariant &value);
     void useCard(const CardUseStruct &card_use, bool add_history = true);
     void damage(const DamageStruct &data);
     void sendDamageLog(const DamageStruct &data);
@@ -63,7 +65,6 @@ public:
     void loseMaxHp(ServerPlayer *victim, int lose = 1);
     void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
     void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = false);
-    void playCardEffect(const QString &card_name, bool is_male);
     bool cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to);
     bool cardEffect(const CardEffectStruct &effect);
     void judge(JudgeStruct &judge_struct);
@@ -85,10 +86,12 @@ public:
     void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
     void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);
     void getResult(const QString &reply_func, ServerPlayer *reply_player, bool move_focus = true);
-    void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true);
-    void acquireSkill(ServerPlayer *player, const QString &skill_name, bool open = true);
+    void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true , bool trigger_skill = true);
+    void acquireSkill(ServerPlayer *player, const QString &skill_name, bool open = true , bool trigger_skill = true);
     void adjustSeats();
     void swapPile();
+    QList<int> getDiscardPile();
+    QList<int> getDrawPile();
     int getCardFromPile(const QString &card_name);
     QList<ServerPlayer *> findPlayersBySkillName(const QString &skill_name, bool include_dead = false) const;
     ServerPlayer *findPlayer(const QString &general_name, bool include_dead = false) const;
@@ -127,7 +130,7 @@ public:
     ServerPlayer *getCardOwner(int card_id) const;
     void setCardMapping(int card_id, ServerPlayer *owner, Player::Place place);
 
-    void drawCards(ServerPlayer *player, int n);
+    void drawCards(ServerPlayer *player, int n, bool unhide = true);
     void obtainCard(ServerPlayer *target, const Card *card, bool unhide = true);
     void obtainCard(ServerPlayer *target, int card_id, bool unhide = true);
 
@@ -142,7 +145,8 @@ public:
     QString askForKingdom(ServerPlayer *player);
     bool askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data = QVariant());
     QString askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices);
-    bool askForDiscard(ServerPlayer *target, const QString &reason, int discard_num, bool optional = false, bool include_equip = false);
+    QString askForSkillChoice(ServerPlayer *player, const QString &choices);
+	bool askForDiscard(ServerPlayer *target, const QString &reason, int discard_num, bool optional = false, bool include_equip = false);
     const Card *askForExchange(ServerPlayer *player, const QString &reason, int discard_num);
     bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
     bool isCanceled(const CardEffectStruct &effect);
@@ -155,6 +159,7 @@ public:
     const Card *askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason);
     ServerPlayer *askForPlayerChosen(ServerPlayer *player, const QList<ServerPlayer *> &targets, const QString &reason);
     QString askForGeneral(ServerPlayer *player, const QStringList &generals, QString default_choice = QString());
+    QString askForGeneralPass(ServerPlayer *player, const QString &flag);
     void askForGeneralAsync(ServerPlayer *player);
     const Card *askForSinglePeach(ServerPlayer *player, ServerPlayer *dying);
 

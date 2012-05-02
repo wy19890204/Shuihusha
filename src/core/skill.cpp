@@ -32,17 +32,17 @@ QString Skill::getDescription() const{
     return Sanguosha->translate(":" + objectName());
 }
 
-QString Skill::getText() const{
+QString Skill::getText(const bool full) const{
     QString skill_name = Sanguosha->translate(objectName());
-
-    switch(frequency){
-    case Skill::NotFrequent:
-    case Skill::Frequent: break;
-    case Skill::Limited: skill_name.append(tr(" [Limited]")); break;
-    case Skill::Compulsory: skill_name.append(tr(" [Compulsory]")); break;
-    case Skill::Wake: skill_name.append(tr(" [Wake]")); break;
+    if(full){
+        switch(frequency){
+        case Skill::NotFrequent:
+        case Skill::Frequent: break;
+        case Skill::Limited: skill_name.append(tr(" [Limited]")); break;
+        case Skill::Compulsory: skill_name.append(tr(" [Compulsory]")); break;
+        case Skill::Wake: skill_name.append(tr(" [Wake]")); break;
+        }
     }
-
     return skill_name;
 }
 
@@ -54,28 +54,26 @@ QString Skill::getDefaultChoice(ServerPlayer *) const{
     return default_choice;
 }
 
-int Skill::getEffectIndex(ServerPlayer *, const Card *) const{
+int Skill::getEffectIndex(const ServerPlayer *, const Card *) const{
     return -1;
 }
 
 void Skill::initMediaSource(){
     sources.clear();
 
-    if(parent()){
-        int i;
-        for(i=1; ;i++){
-            QString effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-            if(QFile::exists(effect_file))
-                sources << effect_file;
-            else
-                break;
-        }
+    int i;
+    for(i=1; ;i++){
+        QString effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
+        if(QFile::exists(effect_file))
+            sources << effect_file;
+        else
+            break;
+    }
 
-        if(sources.isEmpty()){
-            QString effect_file = QString("audio/skill/%1.ogg").arg(objectName());
-            if(QFile::exists(effect_file))
-                sources << effect_file;
-        }
+    if(sources.isEmpty()){
+        QString effect_file = QString("audio/skill/%1.ogg").arg(objectName());
+        if(QFile::exists(effect_file))
+            sources << effect_file;
     }
 }
 
@@ -101,10 +99,6 @@ void Skill::playEffect(int index) const{
         if(ClientInstance)
             ClientInstance->setLines(filename);
     }
-}
-
-bool Skill::useCardSoundEffect() const{
-    return false;
 }
 
 void Skill::setFlag(ServerPlayer *player) const{
@@ -215,6 +209,13 @@ int TriggerSkill::getPriority() const{
 
 bool TriggerSkill::triggerable(const ServerPlayer *target) const{
     return target->isAlive() && target->hasSkill(objectName());
+}
+
+PassiveSkill::PassiveSkill(const QString &name)
+    :GameStartSkill(name){
+}
+void PassiveSkill::onGameStart(ServerPlayer *player) const{
+    onAcquire(player);
 }
 
 ScenarioRule::ScenarioRule(Scenario *scenario)

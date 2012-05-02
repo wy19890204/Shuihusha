@@ -14,10 +14,12 @@
 #include <QCommandLinkButton>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QTabWidget>
 #include <QLineEdit>
 #include <QLabel>
 #include <QTextDocument>
 #include <QTextCursor>
+#include <QScrollArea>
 
 Client *ClientInstance = NULL;
 
@@ -68,6 +70,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["setFixedDistance"] = &Client::setFixedDistance;
     callbacks["transfigure"] = &Client::transfigure;
     callbacks["jilei"] = &Client::jilei;
+    callbacks["cardLock"] = &Client::cardLock;
     callbacks["pile"] = &Client::pile;
 
     callbacks["updateStateItem"] = &Client::updateStateItem;
@@ -82,6 +85,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["drawCards"] = &Client::drawCards;
     callbacks["clearPile"] = &Client::clearPile;
     callbacks["setPileNumber"] = &Client::setPileNumber;
+    callbacks["setStatistics"] = &Client::setStatistics;
 
     // interactive methods
     callbacks["activate"] = &Client::activate;
@@ -99,12 +103,14 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["askForUseCard"] = &Client::askForUseCard;
     callbacks["askForSkillInvoke"] = &Client::askForSkillInvoke;
     callbacks["askForChoice"] = &Client::askForChoice;
+    callbacks["askForSkillChoice"] = &Client::askForSkillChoice;
     callbacks["askForNullification"] = &Client::askForNullification;
     callbacks["askForCardShow"] = &Client::askForCardShow;
     callbacks["askForPindian"] = &Client::askForPindian;
     callbacks["askForYiji"] = &Client::askForYiji;
     callbacks["askForPlayerChosen"] = &Client::askForPlayerChosen;
     callbacks["askForGeneral"] = &Client::askForGeneral;
+    callbacks["askForGeneralPass"] = &Client::askForGeneralPass;
 
     callbacks["fillAG"] = &Client::fillAG;
     callbacks["askForAG"] = &Client::askForAG;
@@ -310,8 +316,13 @@ void Client::removePlayer(const QString &player_name){
 
 void Client::drawCards(const QString &cards_str){
     QList<const Card*> cards;
+    bool unhide = true;
     QStringList card_list = cards_str.split("+");
     foreach(QString card_str, card_list){
+        if(card_str.right(1) == "H"){
+            unhide = false;
+            card_str.chop(1);
+        }
         int card_id = card_str.toInt();
         const Card *card = Sanguosha->getCard(card_id);
         cards << card;
@@ -321,17 +332,18 @@ void Client::drawCards(const QString &cards_str){
     pile_num -= cards.length();
     updatePileNum();
 
-    emit cards_drawed(cards);
+    emit cards_drawed(cards, unhide);
 }
 
 void Client::drawNCards(const QString &draw_str){
-    QRegExp pattern("(\\w+):(\\d+)");
+    QRegExp pattern("(\\w+):(\\d+):(\\d+)");
     if(!pattern.exactMatch(draw_str))
         return;
 
     QStringList texts = pattern.capturedTexts();
     ClientPlayer *player = findChild<ClientPlayer*>(texts.at(1));
     int n = texts.at(2).toInt();
+    bool unhide = texts.at(3).toInt() == 1 ? true : false;
 
     if(player && n>0){
         if(!Self->hasFlag("marshalling")){
@@ -340,7 +352,7 @@ void Client::drawNCards(const QString &draw_str){
         }
 
         player->handCardChange(n);
-        emit n_cards_drawed(player, n);
+        emit n_cards_drawed(player, n, unhide);
     }
 }
 
@@ -562,6 +574,10 @@ void Client::jilei(const QString &jilei_str){
     Self->jilei(jilei_str);
 }
 
+void Client::cardLock(const QString &card_str){
+    Self->setCardLocked(card_str);
+}
+
 void Client::judgeResult(const QString &result_str){
     QStringList texts = result_str.split(":");
     QString who = texts.at(0);
@@ -753,6 +769,79 @@ void Client::askForChoice(const QString &ask_str){
     setStatus(ExecDialog);
 }
 
+void Client::askForSkillChoice(const QString &skills_str){
+    QRegExp rx("(.+)");
+
+    if(!rx.exactMatch(skills_str))
+        return;
+
+    QStringList words = rx.capturedTexts();
+    QStringList skill_infos = words.at(1).split("+");
+
+    QDialog *dialog = new QDialog;
+    dialog->setFixedSize(400,400);
+    dialog->setWindowTitle(Sanguosha->translate("study_skill"));
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    QTabWidget *tab_widget = new QTabWidget;
+
+
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    QGridLayout *gLayout = new QGridLayout;
+
+    QWidget *main_tab = new QWidget;
+    main_tab->setLayout(vLayout);
+
+    QWidget *feature_tab = new QWidget;
+    feature_tab->setLayout(vLayout);
+
+    QWidget *common_tab = new QWidget;
+    QScrollArea* scroll = new QScrollArea();
+    common_tab->setLayout(gLayout);
+    scroll->setWidget(common_tab);
+    scroll->setWidgetResizable(true);
+
+    int i = 1,j = 1;
+    foreach(QString skill_info , skill_infos){
+        QCommandLinkButton *button = new QCommandLinkButton;
+        QStringList skill_info_array = skill_info.split(":") ;
+        QString skill_name = skill_info_array.at(0) ;
+        QString skill_value = skill_info_array.at(1) ;
+
+        const Skill *skill = Sanguosha->getSkill(skill_name) ;
+
+        button->setObjectName(skill->objectName());
+        button->setText(QString("%1 : %2").arg(skill->getText(false)).arg(skill_value));
+        button->setToolTip(skill->getDescription());
+        //button->setFont(Config.TinyFont);
+
+        connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
+        connect(button, SIGNAL(clicked()), this, SLOT(selectChoice()));
+
+        gLayout->addWidget(button, i, j);
+        j++;
+        if(j > 2){
+            j = 1;
+            i ++;
+        }
+    }
+
+    tab_widget->addTab(main_tab, Sanguosha->translate("skill_main"));
+    tab_widget->addTab(feature_tab, Sanguosha->translate("skill_feature"));
+    tab_widget->addTab(scroll, Sanguosha->translate("skill_common"));
+
+    layout->addWidget(tab_widget);
+
+    dialog->setObjectName(".");
+    connect(dialog, SIGNAL(rejected()), this, SLOT(selectChoice()));
+    dialog->setLayout(layout);
+
+    ask_dialog = dialog;
+    Sanguosha->playAudio("pop-up");
+    setStatus(ExecDialog);
+}
+
+
 void Client::playSkillEffect(const QString &play_str){
     QRegExp rx("(#?\\w+):([-\\w]+)");
     if(!rx.exactMatch(play_str))
@@ -780,7 +869,7 @@ void Client::askForNullification(const QString &ask_str){
         source = getPlayer(source_name);
 
     if(Config.NeverNullifyMyTrick && source == Self){
-        if(trick_card->inherits("SingleTargetTrick")){
+        if(trick_card->inherits("SingleTargetTrick") || trick_card->objectName() == "iron_chain"){
             responseCard(NULL);
             return;
         }
@@ -896,6 +985,12 @@ void Client::speakToServer(const QString &text){
 }
 
 void Client::addHistory(const QString &add_str){
+    if(add_str == "pushPile")
+    {
+        emit card_used();
+        return;
+    }
+
     QRegExp rx("(.+)(#\\d+)?");
     if(rx.exactMatch(add_str)){
         QStringList texts = rx.capturedTexts();
@@ -983,6 +1078,26 @@ void Client::setPileNumber(const QString &pile_str){
     pile_num = pile_str.toInt();
 
     updatePileNum();
+}
+
+void Client::setStatistics(const QString &property_str){
+    QRegExp rx("(\\w+):(\\w+)");
+    if(!rx.exactMatch(property_str))
+        return;
+
+    QStringList texts = rx.capturedTexts();
+    QString property_name = texts.at(1);
+    QString value_str = texts.at(2);
+
+    StatisticsStruct *statistics = Self->getStatistics();
+    bool ok;
+    value_str.toInt(&ok);
+    if(ok)
+        statistics->setStatistics(property_name, value_str.toInt());
+    else
+        statistics->setStatistics(property_name, value_str);
+
+    Self->setStatistics(statistics);
 }
 
 void Client::updatePileNum(){
@@ -1462,6 +1577,11 @@ void Client::askForPlayerChosen(const QString &players){
 void Client::askForGeneral(const QString &generals){
     choose_command = "chooseGeneral";
     emit generals_got(generals.split("+"));
+}
+
+void Client::askForGeneralPass(const QString &flag){
+    choose_command = "chooseGeneralPass";
+    emit pass_generals_got(flag);
 }
 
 void Client::replyYiji(const Card *card, const Player *to){

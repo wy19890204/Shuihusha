@@ -87,11 +87,12 @@ private:
     QCheckBox *disable_chat_checkbox;
     QCheckBox *second_general_checkbox;
     QCheckBox *scene_checkbox;	//changjing
-    QCheckBox *same_checkbox;	//changjing
+    QCheckBox *same_checkbox;
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
+    QCheckBox *anzhan_checkbox;
     QCheckBox *basara_checkbox;
-	QCheckBox *hegemony_checkbox;
+    QCheckBox *hegemony_checkbox;
     QLabel *max_hp_label;
     QComboBox *max_hp_scheme_combobox;
     QCheckBox *announce_ip_checkbox;
@@ -105,6 +106,7 @@ private:
     QCheckBox *ai_chat_checkbox;
     QSpinBox *ai_delay_spinbox;
     QRadioButton *standard_3v3_radiobutton;
+    QRadioButton *new_3v3_radiobutton;
     QComboBox *role_choose_combobox;
     QCheckBox *exclude_disaster_checkbox;
 

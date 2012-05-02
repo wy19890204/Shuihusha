@@ -182,6 +182,20 @@ public:
     }
 };
 
+class Shaxue: public PhaseChangeSkill{
+public:
+    Shaxue():PhaseChangeSkill("shaxue$"){
+        frequency = Compulsory;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->getPhase() == Player::Discard &&
+           player->getHandcardNum() > player->getHp() && player->getHandcardNum() <= player->getMaxCards())
+            player->getRoom()->playSkillEffect(objectName());
+        return false;
+    }
+};
+
 class Shuntian: public TriggerSkill{
 public:
     Shuntian():TriggerSkill("shuntian"){
@@ -319,28 +333,47 @@ public:
 class Chengfu: public TriggerSkill{
 public:
     Chengfu():TriggerSkill("chengfu"){
-        events << CardLost;
+        events << CardLost << CardAsk << CardUseAsk << PhaseChange;
         frequency = Compulsory;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill(objectName()) && target->getPhase() == Player::NotActive;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *conan, QVariant &data) const{
+    virtual bool trigger(TriggerEvent t, ServerPlayer *conan, QVariant &data) const{
         Room *room = conan->getRoom();
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(conan->isDead())
+        if(t == PhaseChange){
+            if(conan->getPhase() == Player::NotActive)
+                room->setPlayerCardLock(conan, "Slash");
+            else if(conan->getPhase() == Player::RoundStart)
+                room->setPlayerCardLock(conan, "-Slash");
             return false;
-        if(move->from_place == Player::Hand || move->from_place == Player::Equip){
-            room->playSkillEffect(objectName(), qrand() % 2 + 1);
-            LogMessage log;
-            log.type = "#TriggerSkill";
-            log.from = conan;
-            log.arg = objectName();
-            room->sendLog(log);
+        }
+        else if((t == CardAsk || t == CardUseAsk) &&
+                conan->getPhase() == Player::NotActive){
+            QString asked = data.toString();
+            if(asked == "slash"){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                LogMessage log;
+                log.type = "#ChengfuEffect";
+                log.from = conan;
+                log.arg = asked;
+                log.arg2 = objectName();
+                room->sendLog(log);
+                return true;
+            }
+        }
+        else if(t == CardLost && conan->getPhase() == Player::NotActive){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(conan->isDead())
+                return false;
+            if(move->from_place == Player::Hand || move->from_place == Player::Equip){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = conan;
+                log.arg = objectName();
+                room->sendLog(log);
 
-            conan->drawCards(1);
+                conan->drawCards(1);
+            }
         }
         return false;
     }
@@ -398,7 +431,7 @@ SPPackage::SPPackage()
     General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
-    chaogai->addSkill(new Skill("shaxue$", Skill::Compulsory));
+    chaogai->addSkill(new Shaxue);
 
     General *jiangsong = new General(this, "jiangsong", "guan");
     jiangsong->addSkill(new Yuzhong);

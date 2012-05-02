@@ -150,7 +150,10 @@ function sgs.ai_slash_prohibit.huanshu(self, to)
 end
 
 -- cuju
-sgs.ai_skill_invoke["cuju"] = true
+sgs.ai_skill_invoke["cuju"] = function(self, data)
+	local damage = data:toDamage()
+	return damage.damage > 0
+end
 sgs.ai_skill_use["@@cuju"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]

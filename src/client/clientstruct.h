@@ -18,6 +18,7 @@ struct ServerInfoStruct{
     bool EnableScene;
     bool EnableSame;
     bool EnableEndless;
+    bool EnableAnzhan;
     bool EnableBasara;
     bool EnableAI;
     bool DisableChat;
@@ -48,6 +49,7 @@ private:
     QLabel *scene_label;
     QLabel *same_label;
     QLabel *endless_label;
+    QLabel *anzhan_label;
     QLabel *basara_label;
     QLabel *max_hp_label;
     QLabel *free_choose_label;

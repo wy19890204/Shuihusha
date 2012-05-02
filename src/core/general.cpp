@@ -5,9 +5,10 @@
 #include "client.h"
 
 #include <QSize>
+#include <QFile>
 
-General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden)
-    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden)
+General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
 {
     static QChar lord_symbol('$');
     if(name.contains(lord_symbol)){
@@ -55,6 +56,10 @@ bool General::isLord() const{
 
 bool General::isHidden() const{
     return hidden;
+}
+
+bool General::isTotallyHidden() const{
+    return never_shown;
 }
 
 QString General::getPixmapPath(const QString &category) const{
@@ -123,6 +128,14 @@ QSet<const TriggerSkill *> General::getTriggerSkills() const{
     return skills;
 }
 
+void General::addRelateSkill(const QString &skill_name){
+    related_skills << skill_name;
+}
+
+QStringList General::getRelatedSkillNames() const{
+    return related_skills;
+}
+
 QString General::getPackage() const{
     QObject *p = parent();
     if(p)
@@ -147,6 +160,13 @@ QString General::getSkillDescription() const{
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.ogg").arg(objectName());
     Sanguosha->playEffect(filename);
+}
+
+QString General::getBasicName() const{
+    QString name = objectName() ;
+    if(name.endsWith("_p"))
+        name.chop(2);
+    return name;
 }
 
 QSize General::BigIconSize(94, 96);

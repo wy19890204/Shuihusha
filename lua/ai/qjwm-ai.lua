@@ -71,8 +71,70 @@ sgs.ai_skill_invoke["zhanchi"] = function(self, data)
 	end
 end
 
+-- dalei
+local dalei_skill={}
+dalei_skill.name = "dalei"
+table.insert(sgs.ai_skills, dalei_skill)
+dalei_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("DaleiCard") or self.player:isKongcheng() then return end
+	if self.player:getHp() > 1 then
+		self:sort(self.enemies, "handcard")
+		for _, enemy in ipairs(self.enemies) do
+			if not enemy:isKongcheng() and enemy:getGeneral():isMale()
+				and self.player:inMyAttackRange(enemy) then
+				self.daleitarget = enemy
+				break
+			end
+		end
+		local max_card = self:getMaxCard()
+		if self.daleitarget and max_card then
+			return sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
+		end
+	else
+		for _, friend in ipairs(self.friends_noself) do
+			if friend:getHandcardNum() > 3 and not friend:isWounded()
+				and friend:getGeneral():isMale() then
+				self.daleitarget = friend
+				break
+			end
+		end
+		local min_num = 14, min_card
+		for _, hcard in sgs.qlist(self.player:getHandcards()) do
+			if hcard:getNumber() < min_num then
+				min_num = hcard:getNumber()
+				min_card = hcard
+			end
+		end
+		if self.daleitarget and min_card then
+			return sgs.Card_Parse("@DaleiCard=" .. min_card:getEffectiveId())
+		end
+	end
+end
+sgs.ai_skill_use_func["DaleiCard"]=function(card, use, self)
+	if use.to then use.to:append(self.daleitarget) end
+	use.card=card
+	return
+end
+sgs.ai_skill_invoke["dalei"] = function(self, data)
+	local damage = data:toDamage()
+	self:sort(self.friends, "hp")
+	local caninvoke = false
+	for _, friend in ipairs(self.friends) do
+		if friend:isWounded() and friend ~= damage.to then
+			caninvoke = true
+			self.daleitarget = friend
+			break
+		end
+	end
+	return caninvoke
+end
+sgs.ai_skill_playerchosen["dalei"] = function(self, targets)
+	return self.daleitarget
+end
+
 -- fuqin
 sgs.ai_skill_choice["fuqin"] = function(self, choice)
+	if choice == "qing+nil" then return "qing" end
 	local source = self.player:getTag("FuqinSource"):toPlayer()
 	if self:isFriend(source) then
 		return "qing"
@@ -194,6 +256,7 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 				table.insert(players, t)
 			end
 		end
+		if #players == 0 then return "." end
 		local r = math.random(1, #players)
 		local target = players[r]
 		local cards = self.player:getHandcards()

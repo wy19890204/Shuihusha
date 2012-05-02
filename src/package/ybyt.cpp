@@ -243,6 +243,7 @@ public:
             Room *room = xuning->getRoom();
 
             damage.to->setChained(false);
+            room->playSkillEffect(objectName());
             room->broadcastProperty(damage.to, "chained");
             if(!damage.to->faceUp())
                 damage.to->turnOver();
@@ -270,6 +271,7 @@ public:
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature != DamageStruct::Normal){
+                room->playSkillEffect(objectName(), 1);
                 LogMessage log;
                 log.from = player;
                 log.type = "#JinjiaNullify";
@@ -282,6 +284,7 @@ public:
         }else if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.card && damage.card->inherits("Slash")){
+                room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#ThrowJinjiaWeapon";
                 log.from = player;
@@ -798,6 +801,7 @@ public:
 
             QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
             if(choice == "zhuan" && targets.length() > 0){
+                room->playSkillEffect(objectName(), 1);
                 ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
 
                 effect.from = effect.from;
@@ -805,6 +809,7 @@ public:
                 data = QVariant::fromValue(effect);
             }
             if(choice == "qi" && !effect.from->isNude()){
+                room->playSkillEffect(objectName(), 2);
                 int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
                 room->throwCard(to_throw);
             }

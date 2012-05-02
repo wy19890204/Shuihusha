@@ -51,9 +51,9 @@ void Settings::init(){
 
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "CGDK" << "YBYT";
+        banlist << "CGDK" << "YBYT" << "FCDC";
         banlist << "test" << "god" << "sp" << "interchange"
-                << "guben" << "stanley"
+                << "guben" << "stanley" << "pass"
                 << "joy" << "kuso" << "joyer";
 
         setValue("BanPackages", banlist);
@@ -70,6 +70,7 @@ void Settings::init(){
     EnableScene = value("EnableScene", false).toBool();	//changjing
     EnableSame = value("EnableSame", false).toBool();
     EnableEndless = value("EnableEndless", false).toBool();
+    EnableAnzhan = value("EnableAnzhan", false).toBool();
     EnableBasara = value("EnableBasara", false).toBool();
     EnableHegemony = value("EnableHegemony", false).toBool();
     MaxHpScheme = value("MaxHpScheme", 0).toInt();

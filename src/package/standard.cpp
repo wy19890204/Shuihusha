@@ -167,6 +167,11 @@ QString SingleTargetTrick::getSubtype() const{
 bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(to_select == Self)
         return false;
+    if(objectName() == "assassinate" || objectName() == "duel"){
+        if(to_select->hasSkill("jueming") && to_select->getHp() == 1 &&
+           to_select->getPhase() == Player::NotActive)
+            return false;
+    }
 
     return targets.isEmpty();
 }
@@ -457,10 +462,13 @@ public:
 class Ubunf: public TriggerSkill{
 public:
     Ubunf():TriggerSkill("ubunf"){
-        events << Dying;
+        events << Dying << PreDeath;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(event == PreDeath){
+            return player->getHp() > 0;
+        }
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
             player->getRoom()->playSkillEffect(objectName());
@@ -535,6 +543,26 @@ public:
     }
 };
 
+class NothrowHandcardsPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card) ;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class NothrowPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return true;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
 TestPackage::TestPackage()
     :Package("test")
 {
@@ -574,7 +602,7 @@ TestPackage::TestPackage()
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
-    new General(this, "anjiang", "god", 4, true, true);
+    new General(this, "anjiang", "god", 4, true, true, true);
 
     addMetaObject<CheatCard>();
     addMetaObject<ChangeCard>();
@@ -595,6 +623,9 @@ TestPackage::TestPackage()
     patterns["nullification"] = new NamePattern("nullification");
     patterns["nulliplot"] = new ExpPattern("Nullification");
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
+
+    patterns[".NTH!"] = new NothrowHandcardsPattern;
+    patterns[".NT!"] = new NothrowPattern;
 }
 
 ADD_PACKAGE(Test)

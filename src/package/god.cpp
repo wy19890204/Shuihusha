@@ -21,6 +21,7 @@ public:
             log.from = xuning;
             log.arg = objectName();
             room->sendLog(log);
+            room->playSkillEffect(objectName());
 
             damage.damage ++;
             data = QVariant::fromValue(damage);
@@ -50,6 +51,7 @@ public:
         }
         QString prompt = QString("@jiebei:%1::%2").arg(from->objectName()).arg(armor->objectName());
         if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, data)){
+            room->playSkillEffect("jiebei", 1);
             xuning->obtainCard(armor);
             ServerPlayer *to = room->askForPlayerChosen(xuning, tos, "jiebei");
             room->moveCardTo(armor, to, Player::Equip);
@@ -66,7 +68,7 @@ public:
                 return false;
             if(move->from_place == Player::Equip && move->from == xuning){
                 if(room->askForSkillInvoke(xuning, objectName())){
-                    room->playSkillEffect(objectName());
+                    room->playSkillEffect(objectName(), 2);
                     xuning->drawCards(2);
                 }
             }
@@ -96,7 +98,6 @@ public:
         Room *room = wusong->getRoom();
         if(wusong->getMark("shenchou") != 0)
             return;
-        room->playSkillEffect(objectName());
         const Card *card = damage.card;
         if(card && room->obtainable(card, wusong)){
             LogMessage log;
@@ -127,6 +128,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *wusong) const{
         Room *room = wusong->getRoom();
 
+        room->broadcastInvoke("animate", "lightbox:$wujie");
         room->setPlayerMark(wusong, "wujie", 1);
         room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHP() + 1));
 
@@ -220,6 +222,8 @@ bool DuanbiCard::targetFilter(const QList<const Player *> &targets, const Player
 void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     ServerPlayer *target = targets.first();
+    room->broadcastInvoke("animate", "lightbox:$duanbi");
+    source->loseMark("@bi");
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;
     damage.from = source;
@@ -228,12 +232,12 @@ void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->damage(damage);
     room->detachSkillFromPlayer(source, "shenchou");
     source->addMark("shenchou");
-    source->loseMark("@bi");
 }
 
 class Duanbi: public ZeroCardViewAsSkill{
 public:
     Duanbi():ZeroCardViewAsSkill("duanbi"){
+        frequency = Limited;
     }
 
     virtual const Card *viewAs() const{
@@ -428,6 +432,7 @@ public:
 };
 
 MeiyuCard::MeiyuCard(){
+    mute = true;
 }
 
 bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -445,9 +450,9 @@ void MeiyuCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->useCard(use, false);
 }
 
-class Meiyu: public ZeroCardViewAsSkill{
+class MeiyuViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    Meiyu():ZeroCardViewAsSkill("meiyu"){
+    MeiyuViewAsSkill():ZeroCardViewAsSkill("meiyu"){
     }
 
     virtual const Card *viewAs() const{
@@ -456,6 +461,25 @@ public:
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->getPile("stone").isEmpty();
+    }
+};
+
+class Meiyu: public TriggerSkill{
+public:
+    Meiyu():TriggerSkill("meiyu"){
+        events << Predamage;
+        view_as_skill = new MeiyuViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *moyujian, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card || !damage.card->inherits("Slash") || damage.damage < 1)
+            return false;
+        if(damage.card->getSkillName() == "meiyu" && damage.to->isAlive()){
+            moyujian->getRoom()->loseMaxHp(damage.to, damage.damage);
+            return true;
+        }
+        return false;
     }
 };
 
@@ -589,6 +613,7 @@ GodPackage::GodPackage()
     General *shenwusong = new General(this, "shenwusong", "god", 5);
     shenwusong->addSkill(new Shenchou);
     shenwusong->addSkill(new Wujie);
+    shenwusong->addRelateSkill("zhusha");
     skills << new Zhusha;
     shenwusong->addSkill(new Duanbi);
     shenwusong->addSkill(new MarkAssignSkill("@bi", 1));

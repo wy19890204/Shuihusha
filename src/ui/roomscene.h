@@ -142,9 +142,10 @@ public:
 public slots:
     void addPlayer(ClientPlayer *player);
     void removePlayer(const QString &player_name);
-    void drawCards(const QList<const Card *> &cards);
-    void drawNCards(ClientPlayer *player, int n);
+    void drawCards(const QList<const Card *> &cards, bool unhide);
+    void drawNCards(ClientPlayer *player, int n, bool unhide);
     void chooseGeneral(const QStringList &generals);
+    void chooseGeneralPass(const QString &packages);
     void arrangeSeats(const QList<const ClientPlayer*> &seats);
     void toggleDiscards();
     void enableTargets(const Card *card);
@@ -169,6 +170,7 @@ protected:
     virtual void timerEvent(QTimerEvent *event);
 
 private:
+    Button* add_robot, *fill_robots;
     QList<Photo*> photos;
     QMap<QString, Photo*> name2photo;
     Photo *focused;
@@ -237,6 +239,7 @@ private:
 
     void viewDiscards();
     void hideDiscards();
+    void putToDiscard(CardItem* item);
 
     void selectTarget(int order, bool multiple);
     void selectNextTarget(bool multiple);
@@ -281,6 +284,7 @@ private slots:
     void doCancelButton();
     void doDiscardButton();
     void doTimeout();
+    void startInXs();
     void hideAvatars();
     void changeHp(const QString &who, int delta, DamageStruct::Nature nature, bool losthp);
     void moveFocus(const QString &who);

@@ -297,14 +297,24 @@ public:
     }
 };
 
-class Yinyu: public PhaseChangeSkill{
+class Yinyu: public TriggerSkill{
 public:
-    Yinyu():PhaseChangeSkill("yinyu"){
-
+    Yinyu():TriggerSkill("yinyu"){
+        events << PhaseChange << SlashProceed;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *qing) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *qing, QVariant &data) const{
         Room *room = qing->getRoom();
+        if(event == SlashProceed){
+            if(qing->hasFlag("Hitit")){
+                SlashEffectStruct effect = data.value<SlashEffectStruct>();
+                int index = effect.from->getMark("mengshi") > 0 ? 8: 3;
+                room->playSkillEffect("yinyu", index);
+                room->slashResult(effect, NULL);
+                return true;
+            }
+            return false;
+        }
         if(qing->getPhase() == Player::Start){
             if(qing->askForSkillInvoke(objectName())){
                 JudgeStruct judge;
@@ -414,6 +424,7 @@ public:
                 JudgeStruct judge;
                 judge.reason = objectName();
                 judge.who = yuehe;
+                judge.time_consuming = true;
 
                 room->judge(judge);
                 if(judge.card->inherits("BasicCard"))
@@ -1069,7 +1080,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *gaoqiu, QVariant &data) const{
-        if(!gaoqiu->isKongcheng() && gaoqiu->askForSkillInvoke(objectName())){
+        if(!gaoqiu->isKongcheng() && gaoqiu->askForSkillInvoke(objectName(), data)){
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(club|spade):(.*)");
             judge.good = true;

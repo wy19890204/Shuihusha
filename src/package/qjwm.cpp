@@ -231,30 +231,40 @@ public:
 class Wubang: public TriggerSkill{
 public:
     Wubang():TriggerSkill("wubang"){
-        events << CardLost;
+        events << CardLost << FinishJudge;
         frequency = Frequent;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
+        return !target->hasSkill(objectName());
     }
 
     virtual int getPriority() const{
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
         if(!jiuwenlong || player == jiuwenlong)
             return false;
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->to_place == Player::DiscardedPile){
-            const Card *weapon = Sanguosha->getCard(move->card_id);
-            if(weapon->inherits("Weapon") &&
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->to_place == Player::DiscardedPile){
+                const Card *weapon = Sanguosha->getCard(move->card_id);
+                if(weapon->inherits("Weapon") &&
+                   jiuwenlong->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName());
+                    jiuwenlong->obtainCard(weapon);
+                }
+            }
+        }else if(event == FinishJudge){
+            JudgeStar judge = data.value<JudgeStar>();
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
+               judge->card->inherits("Weapon") &&
                jiuwenlong->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName());
-                jiuwenlong->obtainCard(weapon);
+                jiuwenlong->obtainCard(judge->card);
             }
         }
         return false;
@@ -379,7 +389,7 @@ public:
             RecoverStruct rev;
             rev.who = player;
             for(int p = 0; p < damage.damage; p++){
-                if(player->askForSkillInvoke(objectName()))
+                if(player->askForSkillInvoke(objectName(), data))
                     room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
             }
         }
@@ -512,7 +522,7 @@ public:
         if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
             Room *room = zhuwu->getRoom();
             if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
-                room->broadcastInvoke("animate", "lightbox:$buzhen:5000");
+                room->broadcastInvoke("animate", "lightbox:$Buzhen:5000");
                 zhuwu->loseMark("@buvr");
                 room->getThread()->delay(4500);
                 return true;
@@ -698,7 +708,7 @@ public:
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), 1);
-                room->broadcastInvoke("animate", "lightbox:$zhanchi1");
+                room->broadcastInvoke("animate", "lightbox:$zhanchi");
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
@@ -719,9 +729,9 @@ public:
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
             if(opt->getMaxHP() > 3)
-                room->playSkillEffect("zhanchi", 2);
+                room->playSkillEffect(objectName(), 1);
             else if(opt->getMaxHP() > 1)
-                room->playSkillEffect("zhanchi", 3);
+                room->playSkillEffect(objectName(), 2);
             room->loseMaxHp(opt);
 
             if(opt->isAlive()){
@@ -1081,6 +1091,7 @@ QJWMPackage::QJWMPackage()
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
     related_skills.insertMulti("zhanchi", "#@vfui-1");
+    oupeng->addRelateSkill("tengfei");
     skills << new Tengfei;
 
     General *shien = new General(this, "shien", "min", 3);

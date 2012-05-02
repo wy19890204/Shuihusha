@@ -293,6 +293,22 @@ public:
     }
 };
 
+class FanzhanClear: public TriggerSkill{
+public:
+    FanzhanClear():TriggerSkill("#fanzhan-clear"){
+        events << Death;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+        player->getRoom()->removeTag("Fanzhan");
+        return false;
+    }
+};
+
 class Shuilao: public OneCardViewAsSkill{
 public:
     Shuilao():OneCardViewAsSkill("shuilao"){
@@ -348,32 +364,6 @@ public:
             dujian->drawCards(dujian->getLostHp() + 1, false);
         }
         return false;
-    }
-};
-
-class Luanji:public ViewAsSkill{
-public:
-    Luanji():ViewAsSkill("luanji"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.isEmpty())
-            return !to_select->isEquipped() && to_select->getCard()->isRed();
-        else if(selected.length() == 1)
-            return to_select->getCard()->inherits("TrickCard");
-        else
-            return false;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 2){
-            const Card *first = cards.first()->getCard();
-            ArcheryAttack *aa = new ArcheryAttack(first->getSuit(), 0);
-            aa->addSubcards(cards);
-            aa->setSkillName(objectName());
-            return aa;
-        }else
-            return NULL;
     }
 };
 
@@ -686,6 +676,8 @@ InterChangePackage::InterChangePackage()
     General *puwenying = new General(this, "puwenying", "guan", 3);
     puwenying->addSkill(new Guanxing);
     puwenying->addSkill(new Fanzhan);
+    puwenying->addSkill(new FanzhanClear);
+    related_skills.insertMulti("fanzhan", "#fanzhan-clear");
 
     General *tongmeng = new General(this, "tongmeng", "min", 3);
     tongmeng->addSkill(new Shuilao);
@@ -696,9 +688,6 @@ InterChangePackage::InterChangePackage()
 
     General *zhangmengfang = new General(this, "zhangmengfang", "guan");
     zhangmengfang->addSkill(new Tancai);
-
-    General *pangwanchun = new General(this, "pangwanchun", "jiang");
-    pangwanchun->addSkill(new Luanji);
 
     General *litianrun = new General(this, "litianrun", "jiang");
     litianrun->addSkill(new Jingtian);

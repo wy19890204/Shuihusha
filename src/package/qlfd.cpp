@@ -658,17 +658,23 @@ public:
     }
 };
 
-class Eyan: public TriggerSkill{
+class Eyan: public PhaseChangeSkill{
 public:
-    Eyan():TriggerSkill("eyan"){
+    Eyan():PhaseChangeSkill("eyan"){
         view_as_skill = new EyanViewAsSkill;
-        events << PhaseChange;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *gaoshun, QVariant &data) const{
-        ServerPlayer *target = gaoshun->tag["EyanTarget"].value<PlayerStar>();
-        if(gaoshun->getPhase() == Player::Finish && target)
-            gaoshun->tag.remove("EyanTarget");
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        ServerPlayer *target = player->tag["EyanTarget"].value<PlayerStar>();
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::Finish && target)
+            player->tag.remove("EyanTarget");
+        else if(player->getPhase() == Player::NotActive){
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                if(tmp->hasFlag("EyanTarget"))
+                    room->setPlayerFlag(tmp, "-EyanTarget");
+            }
+        }
         return false;
     }
 };

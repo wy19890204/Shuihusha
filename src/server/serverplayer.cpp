@@ -21,21 +21,31 @@ Room *ServerPlayer::getRoom() const{
     return room;
 }
 
-void ServerPlayer::playCardEffect(const Card *card){
-    if(card->isVirtualCard() && !card->isMute()){
-        QString skill_name = card->getSkillName();
-        const Skill *skill = Sanguosha->getSkill(skill_name);
-        int index = -1;
-        if(skill){
-            if(skill->useCardSoundEffect()){
-                room->playCardEffect(card->objectName(), getGeneral()->isMale());
-                return;
-            }
-            index = skill->getEffectIndex(this, card);
-        }
+void ServerPlayer::playCardEffect(const QString &card_name) const{
+    QString gender = getGender() == General::Male ? "M" : "F";
+    room->broadcastInvoke("playCardEffect", QString("%1:%2").arg(card_name).arg(gender));
+}
+
+void ServerPlayer::playCardEffect(const Card *card) const{
+    if(card->isMute())
+        return;
+
+    if(!card->isVirtualCard())
+        playCardEffect(card->objectName());
+
+    QString skill_name = card->getSkillName();
+    const Skill *skill = Sanguosha->getSkill(skill_name);
+    if(skill == NULL)
+        return;
+
+    int index = skill->getEffectIndex(this, card);
+    if(index == 0)
+        return;
+
+    if(index == -1 && skill->getSources().isEmpty())
+        playCardEffect(card->objectName());
+    else
         room->playSkillEffect(skill_name, index);
-    }else
-        room->playCardEffect(card->objectName(), getGeneral()->isMale());
 }
 
 int ServerPlayer::getRandomHandCardId() const{
@@ -124,8 +134,8 @@ void ServerPlayer::throwAllCards(){
         room->throwCard(trick);
 }
 
-void ServerPlayer::drawCards(int n, bool set_emotion){
-    room->drawCards(this, n);
+void ServerPlayer::drawCards(int n, bool set_emotion, bool unhide){
+    room->drawCards(this, n, unhide);
 
     if(set_emotion)
         room->setEmotion(this, "draw-card");
@@ -487,23 +497,12 @@ void ServerPlayer::turnOver(){
 }
 
 void ServerPlayer::play(QList<Player::Phase> set_phases){
-	if(getMark("poison") > 0 && !isAllNude()){
-        LogMessage log;
-        log.from = this;
-        log.type = "$Poison_lost";
-        int index = qrand() % getCards("hej").length();
-        const Card *card = getCards("hej").at(index);
-        room->throwCard(card->getId());
-        log.card_str = card->getEffectIdString();
-        room->sendLog(log);
-    }
-
     if(!set_phases.isEmpty()){
         if(!set_phases.contains(NotActive))
             set_phases << NotActive;
     }
     else
-        set_phases << Start << Judge << Draw << Play
+        set_phases << RoundStart << Start << Judge << Draw << Play
                 << Discard << Finish << NotActive;
 
     phases = set_phases;
@@ -529,7 +528,7 @@ void ServerPlayer::skip(Player::Phase phase){
 
     static QStringList phase_strings;
     if(phase_strings.isEmpty()){
-        phase_strings << "start" << "judge" << "draw"
+        phase_strings << "round_start" << "start" << "judge" << "draw"
                 << "play" << "discard" << "finish" << "not_active";
     }
 
@@ -657,6 +656,9 @@ int ServerPlayer::getGeneralMaxHP() const{
     return max_hp;
 }
 
+int ServerPlayer::getGeneralMaxHp() const{
+    return getGeneralMaxHP();
+}
 QString ServerPlayer::getGameMode() const{
     return room->getMode();
 }
@@ -783,6 +785,8 @@ void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     if(clearflag)
         clearflag->clearFlags();
     room->getThread()->trigger(TurnStart, this);
+    if(clearflag)
+        clearflag->clearHistory();
     room->setCurrent(current);
 }
 
