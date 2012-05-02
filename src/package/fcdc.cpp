@@ -302,6 +302,48 @@ public:
     }
 };
 
+#include "plough.h"
+class Mitan: public FilterSkill{
+public:
+    Mitan():FilterSkill("mitan"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard") ||
+                to_select->getCard()->inherits("EventsCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Wiretap *wp = new Wiretap(c->getSuit(), c->getNumber());
+        wp->setSkillName(objectName());
+        wp->addSubcard(card_item->getCard());
+
+        return wp;
+    }
+};
+
+class Jibao: public PhaseChangeSkill{
+public:
+    Jibao():PhaseChangeSkill("jibao"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::RoundStart)
+            room->setPlayerMark(player, "jibao", player->getHandcardNum());
+        else if(player->getPhase() == Player::NotActive){
+            if(player->getMark("jibao") == player->getHandcardNum() &&
+               !player->isKongcheng() &&
+               player->askForSkillInvoke(objectName())){
+                room->askForDiscard(player, objectName(), 1);
+                player->gainAnExtraTurn(player);
+            }
+        }
+        return false;
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
@@ -318,6 +360,10 @@ FCDCPackage::FCDCPackage()
 
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
+
+    General *daizong = new General(this, "daizong", "jiang", 3);
+    daizong->addSkill(new Mitan);
+    daizong->addSkill(new Jibao);
 
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();

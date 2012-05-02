@@ -1115,11 +1115,12 @@ public:
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
+/*
     General *tiger = new General(this, "tiger", "god", 3, true, true);
     tiger->addSkill(new Skill("pu"));
     tiger->addSkill(new Skill("xian"));
     tiger->addSkill(new Skill("jian"));
-
+*/
     General *miheng = new General(this, "miheng", "god", 3);
     miheng->addSkill(new Yulu);
     miheng->addSkill(new Numa);

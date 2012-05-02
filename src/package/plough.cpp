@@ -73,7 +73,9 @@ void Wiretap::onEffect(const CardEffectStruct &effect) const{
     QList<int> all = effect.to->handCards();
     room->showAllCards(effect.to, effect.from);
     room->fillAG(all, effect.from);
-    room->askForAG(effect.from, all, true, "wiretap");
+    int mitan = room->askForAG(effect.from, all, true, "wiretap");
+    if(effect.from->hasSkill("mitan"))
+        room->showCard(effect.to, mitan);
     effect.from->invoke("clearAG");
 }
 
