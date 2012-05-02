@@ -92,6 +92,99 @@ public:
     }
 };
 
+class Qinxin: public TriggerSkill{
+public:
+    Qinxin():TriggerSkill("qinxin"){
+        events << PhaseChange;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
+            return false;
+        Card::Suit suit = room->askForSuit(player, objectName());
+        JudgeStruct judge;
+        judge.pattern = QRegExp("(.*):(.*):(.*)");
+        judge.reason = objectName();
+        judge.who = player;
+        room->judge(judge);
+
+        if(judge.card->getSuit() == suit){
+            RecoverStruct rec;
+            rec.who = player;
+            room->recover(player, rec, true);
+        }
+        else
+            player->obtainCard(judge.card);
+
+        return false;
+    }
+};
+
+YinjianCard::YinjianCard(){
+
+}
+
+bool YinjianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
+    if(!to_select->getGeneral()->isMale() || targets.length() > 1)
+        return false;
+    if(targets.isEmpty())
+        return true;
+    else{
+        QString kingdom = targets.first()->getKingdom();
+        return to_select->getKingdom() != kingdom;
+    }
+    return false;
+}
+
+bool YinjianCard::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
+    return targets.length() == 2;
+}
+
+void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<ServerPlayer *> players = targets;
+    QStringList to_select;
+    to_select << targets.first()->getGeneralName() << targets.last()->getGeneralName();
+    QString select = room->askForChoice(source, "yinjian", to_select.join("+"));
+
+    ServerPlayer *target = room->findPlayer(select);
+    players.removeOne(target);
+    ServerPlayer *other = players.first();
+
+    QList<const Card *> handcards = source->getHandcards();
+    if(source->getHandcardNum() <= 2){
+        foreach(const Card *cd, handcards)
+            room->moveCardTo(cd, target, Player::Hand, false);
+    }
+    else{
+        int i;
+        for(i=0; i<2; i++){
+            int id = room->askForCardChosen(source, source, "h", "yinjian");
+            room->moveCardTo(Sanguosha->getCard(id), target, Player::Hand, false);
+        }
+    }
+
+    int id = room->askForCardChosen(target, target, "h", "yinjian");
+    room->moveCardTo(Sanguosha->getCard(id), other, Player::Hand, false);
+
+}
+
+class Yinjian: public ZeroCardViewAsSkill{
+public:
+    Yinjian():ZeroCardViewAsSkill("yinjian"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new YinjianCard;
+    }
+
+protected:
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("YinjianCard");
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
