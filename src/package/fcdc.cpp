@@ -437,6 +437,50 @@ protected:
     }
 };
 
+class Duoquan: public TriggerSkill{
+public:
+    Duoquan():TriggerSkill("duoquan"){
+        events << Death;
+        frequency = Limited;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStar damage = data.value<DamageStar>();
+        ServerPlayer *killer = damage ? damage->from : NULL;
+        Room *room = player->getRoom();
+        ServerPlayer *caijing = room->findPlayerBySkillName(objectName());
+        if(caijing && caijing != killer){
+            QVariant shiti = QVariant::fromValue((PlayerStar)player);
+            if(!room->askForSkillInvoke(caijing, objectName(), shiti))
+                return false;
+            QStringList skills;
+            foreach(const Skill *skill, player->getVisibleSkillList()){
+                if(skill->parent() && skill->getLocation() == Skill::Right &&
+                   skill->getFrequency() != Skill::Limited &&
+                   skill->getFrequency() != Skill::Wake &&
+                   !skill->isLordSkill()){
+                    QString sk = skill->objectName();
+                    skills << sk;
+                }
+            }
+            if(!skills.isEmpty()){
+                QString skill = room->askForChoice(caijing, objectName(), skills.join("+"));
+                room->acquireSkill(caijing, skill);
+            }
+            DummyCard *all_cards = player->wholeHandCards();
+            if(all_cards){
+                room->obtainCard(caijing, all_cards, false);
+                delete all_cards;
+            }
+        }
+        return false;
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
@@ -461,6 +505,9 @@ FCDCPackage::FCDCPackage()
     General *lishishi = new General(this, "lishishi", "jiang", 3);
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
+
+    General *caijing = new General(this, "caijing", "guan");
+    caijing->addSkill(new Duoquan);
 
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
