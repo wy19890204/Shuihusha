@@ -8,8 +8,9 @@ class Recorder;
 
 #include "player.h"
 #include "socket.h"
+#include "protocol.h"
 
-#include <QMutex>
+#include <QSemaphore>
 #include <QDateTime>
 
 class ServerPlayer : public Player
@@ -22,6 +23,7 @@ public:
     explicit ServerPlayer(Room *room);
 
     void setSocket(ClientSocket *socket);
+    void invoke(const QSanProtocol::QSanPacket* packet);
     void invoke(const char *method, const QString &arg = ".");
     QString reportHeader() const;
     void sendProperty(const char *property_name, const Player *player = NULL) const;
@@ -39,7 +41,7 @@ public:
     void bury();
     void throwAllMarks();
     void clearPrivatePiles();
-    void drawCards(int n, bool set_emotion = true, bool unhide = true);
+    void drawCards(int n, bool set_emotion = true, const QString &reason = QString());
     bool askForSkillInvoke(const QString &skill_name, const QVariant &data = QVariant());
     QList<int> forceToDiscard(int discard_num, bool include_equip);
     QList<int> handCards() const;
@@ -63,6 +65,8 @@ public:
     void setAI(AI *ai);
     AI *getAI() const;
     AI *getSmartAI() const;
+
+    bool isOnline() const;
 
     virtual int aliveCount() const;
     virtual int getHandcardNum() const;
@@ -94,6 +98,7 @@ public:
     void introduceTo(ServerPlayer *player);
     void marshal(ServerPlayer *player) const;
 
+    void addToPile(const QString &pile_name, const Card *card, bool open = true);
     void addToPile(const QString &pile_name, int card_id, bool open = true);
     void gainAnExtraTurn(ServerPlayer *clearflag = NULL);
 
@@ -101,6 +106,40 @@ public:
 
     void startNetworkDelayTest();
     qint64 endNetworkDelayTest();
+
+    //Synchronization helpers
+    enum SemaphoreType {
+        SEMA_MUTEX, // used to protect mutex access to member variables        
+        SEMA_COMMAND_INTERACTIVE // used to wait for response from client        
+    };
+    inline QSemaphore* getSemaphore(SemaphoreType type){ return semas[type]; }
+    inline void acquireLock(SemaphoreType type){ semas[type]->acquire(); }
+    inline bool tryAcquireLock(SemaphoreType type, int timeout = 0){
+        return semas[type]->tryAcquire(1, timeout); 
+    }
+    inline void releaseLock(SemaphoreType type){ semas[type]->release(); }
+    inline void drainLock(SemaphoreType type){ while ((semas[type]->tryAcquire())) ; }
+    inline void drainAllLocks(){
+        for(int i=0; i< S_NUM_SEMAPHORES; i++){
+            drainLock((SemaphoreType)i);
+        }
+    }
+    inline QString getClientReplyString(){return m_clientResponseString;}
+    inline void setClientReplyString(const QString &val){m_clientResponseString = val;}
+    inline Json::Value getClientReply(){return _m_clientResponse;}
+    inline void setClientReply(const Json::Value &val){_m_clientResponse = val;}    
+    int m_expectedReplySerial; // Suggest the acceptable serial number of an expected response.
+    bool m_isClientResponseReady; //Suggest whether a valid player's reponse has been received.
+    bool m_isWaitingReply; // Suggest if the server player is waiting for client's response.
+    Json::Value m_cheatArgs; // Store the cheat code received from client.
+    QSanProtocol::CommandType m_expectedReplyCommand; // Store the command to be sent to the client.
+    Json::Value m_commandArgs; // Store the command args to be sent to the client.
+
+
+protected:    
+    //Synchronization helpers
+    QSemaphore **semas;
+    static const int S_NUM_SEMAPHORES;    
 
 private:
     ClientSocket *socket;
@@ -114,6 +153,8 @@ private:
     ServerPlayer *next;
     QStringList selected; // 3v3 mode use only
     QDateTime test_time;
+    QString m_clientResponseString;
+    Json::Value _m_clientResponse;    
 
 private slots:
     void getMessage(char *message);

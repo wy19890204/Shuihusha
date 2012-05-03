@@ -5,12 +5,22 @@
 #include "ai.h"
 #include "settings.h"
 #include "recorder.h"
+#include "banpair.h"
 #include "lua-wrapper.h"
 
+using namespace QSanProtocol;
+
+const int ServerPlayer::S_NUM_SEMAPHORES = 6;
+
 ServerPlayer::ServerPlayer(Room *room)
-    : Player(room), socket(NULL), room(room),
-    ai(NULL), trust_ai(new TrustAI(this)), recorder(NULL), next(NULL)
+    : Player(room), m_isClientResponseReady(false), m_isWaitingReply(false),
+    socket(NULL), room(room),
+    ai(NULL), trust_ai(new TrustAI(this)), recorder(NULL), next(NULL), _m_clientResponse(Json::nullValue)
 {
+    semas = new QSemaphore*[S_NUM_SEMAPHORES];
+    for(int i=0; i< S_NUM_SEMAPHORES; i++){
+        semas[i] = new QSemaphore(0);
+    }        
 }
 
 void ServerPlayer::drawCard(const Card *card){
@@ -70,11 +80,7 @@ void ServerPlayer::throwAllEquips(){
     DummyCard *card = new DummyCard;
     foreach(const Card *equip, equips)
         card->addSubcard(equip);
-    room->throwCard(card);
-
-    CardStar card_star = card;
-    QVariant data = QVariant::fromValue(card_star);
-    room->getThread()->trigger(CardDiscarded, this, data);
+    room->throwCard(card, this);
     card->deleteLater();
 }
 
@@ -83,10 +89,7 @@ void ServerPlayer::throwAllHandCards(){
     if(card == NULL)
         return;
 
-    room->throwCard(card);
-    CardStar card_star = card;
-    QVariant data = QVariant::fromValue(card_star);
-    room->getThread()->trigger(CardDiscarded, this, data);
+    room->throwCard(card, this);
     card->deleteLater();
 }
 
@@ -120,9 +123,13 @@ void ServerPlayer::clearPrivatePiles(){
 }
 
 void ServerPlayer::bury(){
+    clearFlags();
+    clearHistory();
     throwAllCards();
     throwAllMarks();
     clearPrivatePiles();
+
+    room->clearPlayerCardLock(this);
 }
 
 void ServerPlayer::throwAllCards(){
@@ -134,8 +141,8 @@ void ServerPlayer::throwAllCards(){
         room->throwCard(trick);
 }
 
-void ServerPlayer::drawCards(int n, bool set_emotion, bool unhide){
-    room->drawCards(this, n, unhide);
+void ServerPlayer::drawCards(int n, bool set_emotion, const QString &reason){
+    room->drawCards(this, n, reason);
 
     if(set_emotion)
         room->setEmotion(this, "draw-card");
@@ -235,6 +242,23 @@ QStringList ServerPlayer::getSelected() const{
 QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreasonable){
 
     foreach(QString name, generals){
+        if(Config.Enable2ndGeneral){
+            if(getGeneral()){
+                if(BanPair::isBanned(getGeneralName(), name))
+                    continue;
+            }else{
+                if(BanPair::isBanned(name))
+                    continue;
+            }
+
+            if(Config.EnableHegemony)
+            {
+                if(getGeneral())
+                    if(getGeneral()->getKingdom()
+                            != Sanguosha->getGeneral(name)->getKingdom())
+                        continue;
+            }
+        }
         if(Config.EnableBasara)
         {
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();
@@ -277,6 +301,11 @@ void ServerPlayer::castMessage(const QString &message){
         qDebug("%s: %s", qPrintable(objectName()), qPrintable(message));
 #endif
     }
+}
+
+void ServerPlayer::invoke(const QSanPacket* packet)
+{
+    unicast(QString(packet->toString().c_str()));
 }
 
 void ServerPlayer::invoke(const char *method, const QString &arg){
@@ -328,9 +357,10 @@ void ServerPlayer::removeCard(const Card *card, Place place){
     case Special:{
             int card_id = card->getEffectiveId();
             QString pile_name = getPileName(card_id);
-            Q_ASSERT(!pile_name.isEmpty());
-
-            piles[pile_name].removeOne(card_id);
+            
+            //@todo: sanity check required
+            if (!pile_name.isEmpty())
+                piles[pile_name].removeOne(card_id);
 
             break;
         }
@@ -507,10 +537,17 @@ void ServerPlayer::play(QList<Player::Phase> set_phases){
 
     phases = set_phases;
     while(!phases.isEmpty()){
+        PhaseChangeStruct phase_change;
+
         Phase phase = phases.takeFirst();
+        phase_change.from = this->getPhase();
+        phase_change.to = phase;
+
         setPhase(phase);
         room->broadcastProperty(this, "phase");
-        room->getThread()->trigger(PhaseChange, this);
+
+        QVariant data = QVariant::fromValue(phase_change);
+        room->getThread()->trigger(PhaseChange, this, data);
 
         if(isDead() && phase != NotActive){
             phases.clear();
@@ -583,6 +620,10 @@ void ServerPlayer::loseAllMarks(const QString &mark_name){
     if(n > 0){
         loseMark(mark_name, n);
     }
+}
+
+bool ServerPlayer::isOnline() const {
+    return getState() == "online";
 }
 
 void ServerPlayer::setAI(AI *ai) {
@@ -769,6 +810,18 @@ void ServerPlayer::marshal(ServerPlayer *player) const{
         if(value > 0)
             player->invoke("addHistory", QString("%1#%2").arg(item).arg(value));
     }
+}
+
+void ServerPlayer::addToPile(const QString &pile_name, const Card *card, bool open){
+    if(card->isVirtualCard()){
+        QList<int> cards_id = card->getSubcards();
+        foreach(int card_id, cards_id)
+            piles[pile_name] << card_id;
+    }
+    else
+        piles[pile_name] << card->getEffectiveId();
+
+    room->moveCardTo(card, this, Player::Special, open);
 }
 
 void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){
