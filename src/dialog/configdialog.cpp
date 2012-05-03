@@ -26,10 +26,9 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->fitInViewCheckBox->setChecked(Config.FitInView);
     ui->circularViewCheckBox->setChecked(Config.value("CircularView", false).toBool());
     ui->noIndicatorCheckBox->setChecked(Config.value("NoIndicator", false).toBool());
+    ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
 
     ui->bgmVolumeSlider->setValue(100 * Config.BGMVolume);
-    ui->bgmVolumeSlider->setEnabled(Config.EnableBgMusic);
-    connect(ui->enableBgMusicCheckBox, SIGNAL(toggled(bool)), ui->bgmVolumeSlider, SLOT(setEnabled(bool)));
     ui->effectVolumeSlider->setValue(100 * Config.EffectVolume);
 
     // tab 2

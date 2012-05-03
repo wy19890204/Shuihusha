@@ -9,6 +9,7 @@
 #include "scenario-overview.h"
 #include "window.h"
 #include "halldialog.h"
+#include "pixmapanimation.h"
 
 #include <cmath>
 #include <QGraphicsView>
@@ -31,6 +32,7 @@ class FitView : public QGraphicsView
 public:
     FitView(QGraphicsScene *scene) : QGraphicsView(scene) {
         setSceneRect(Config.Rect);
+        setRenderHints(QPainter::TextAntialiasing | QPainter::Antialiasing);
     }
 
 protected:
@@ -39,10 +41,16 @@ protected:
         if(Config.FitInView)
             fitInView(sceneRect(), Qt::KeepAspectRatio);
 
+        if(matrix().m11()>1)setMatrix(QMatrix());
+
         if(scene()->inherits("RoomScene")){
             RoomScene *room_scene = qobject_cast<RoomScene *>(scene());
-            room_scene->adjustItems();
+            room_scene->adjustItems(matrix());
         }
+
+        MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
+        if(main_window)
+            main_window->setBackgroundBrush();
     }
 };
 
@@ -253,6 +261,7 @@ void MainWindow::enterRoom(){
 
     ui->actionStart_Game->setEnabled(false);
     ui->actionStart_Server->setEnabled(false);
+	ui->actionAI_Melee->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -269,7 +278,10 @@ void MainWindow::enterRoom(){
     connect(ui->actionKick, SIGNAL(triggered()), room_scene, SLOT(kick()));
     connect(ui->actionSurrender, SIGNAL(triggered()), room_scene, SLOT(surrender()));
     connect(ui->actionSaveRecord, SIGNAL(triggered()), room_scene, SLOT(saveReplayRecord()));
-    connect(ui->actionExpand_dashboard, SIGNAL(triggered()), room_scene, SLOT(adjustDashboard()));
+    connect(ui->actionExpand_dashboard, SIGNAL(toggled(bool)), room_scene, SLOT(adjustDashboard(bool)));
+
+    bool expand = Config.value("UI/ExpandDashboard", true).toBool();
+    ui->actionExpand_dashboard->setChecked(expand);
 
     if(ServerInfo.FreeChoose){
         ui->menuCheat->setEnabled(true);
@@ -294,6 +306,7 @@ void MainWindow::enterRoom(){
     connect(room_scene, SIGNAL(restart()), this, SLOT(startConnection()));
     connect(room_scene, SIGNAL(return_to_start()), this, SLOT(gotoStartScene()));
 
+    room_scene->adjustItems();
     gotoScene(room_scene);
 }
 
@@ -348,7 +361,7 @@ void MainWindow::on_actionGeneral_Overview_triggered()
 
 void MainWindow::on_actionCard_Overview_triggered()
 {
-    CardOverview *overview = new CardOverview(this);
+    CardOverview *overview = CardOverview::GetInstance(this);
     overview->loadFromAll();
     overview->show();
 }
@@ -374,9 +387,13 @@ void MainWindow::on_actionAbout_triggered()
     QString signature = tr("\"A Short Song\" by Cao Cao");
     content.append(QString("<p align='right'><i>%1</i></p>").arg(signature));
 
+    QString email = "moligaloo@gmail.com";
     content.append(tr("This is the open source clone of the popular <b>Sanguosha</b> game,"
                       "totally written in C++ Qt GUI framework <br />"
-                      "My Email: moligaloo@gmail.com <br/>"));
+                      "My Email: <a href='mailto:%1' style = \"color:#0072c1; \">%1</a> <br/>"
+                      "My QQ: 365840793 <br/>"
+                      "My Weibo: http://weibo.com/moligaloo <br/>"
+                      ).arg(email));
 
     QString config;
 
@@ -411,16 +428,20 @@ void MainWindow::on_actionAbout_triggered()
     window->appear();
 }
 
-void MainWindow::changeBackground(){
+void MainWindow::setBackgroundBrush(){
     if(scene){
         QPixmap pixmap(Config.BackgroundBrush);
         QBrush brush(pixmap);
 
         if(pixmap.width() > 100 && pixmap.height() > 100){
-            qreal dx = -width()/2.0;
-            qreal dy = -height()/2.0;
-            qreal sx = width() / qreal(pixmap.width());
-            qreal sy = height() / qreal(pixmap.height());
+            qreal _width = width()/view->matrix().m11();
+            qreal _height= height()/view->matrix().m22();
+
+            qreal dx = -_width/2.0;
+            qreal dy = -_height/2.0;
+            qreal sx = _width / qreal(pixmap.width());
+            qreal sy = _height / qreal(pixmap.height());
+
 
             QTransform transform;
             transform.translate(dx, dy);
@@ -430,6 +451,10 @@ void MainWindow::changeBackground(){
 
         scene->setBackgroundBrush(brush);
     }
+}
+
+void MainWindow::changeBackground(){
+    setBackgroundBrush();
 
     if(scene->inherits("RoomScene")){
         RoomScene *room_scene = qobject_cast<RoomScene *>(scene);
@@ -515,7 +540,7 @@ void MainWindow::on_actionRole_assign_table_triggered()
 
     content = QString("<table border='1'>%1</table").arg(content);
 
-    Window *window = new Window(tr("Role assign table"), QSize(232, 342));
+    Window *window = new Window(tr("Role assign table"), QSize(280, 380));
     scene->addItem(window);
 
     window->addContent(content);
@@ -754,7 +779,7 @@ public:
         setFlag(ItemIsMovable);
     }
 
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *){
         foreach(QGraphicsItem *item, childItems()){
             item->setVisible(! item->isVisible());
         }
@@ -971,6 +996,8 @@ void MeleeDialog::updateResultBox(QString role, int win){
 
 void MainWindow::on_actionView_ban_list_triggered()
 {
+    BanlistDialog *dialog = new BanlistDialog(this, true);
+    dialog->exec();
 }
 
 #include "audio.h"
@@ -978,7 +1005,7 @@ void MainWindow::on_actionView_ban_list_triggered()
 void MainWindow::on_actionAbout_fmod_triggered()
 {
     QString content = tr("FMOD is a proprietary audio library made by Firelight Technologies");
-    content.append("<p align='center'> <img src='image/system/fmod.png' /> </p> <br/>");
+    content.append("<p align='center'> <img src='image/logo/fmod.png' /> </p> <br/>");
 
     QString address = "http://www.fmod.org";
     content.append(tr("Official site: <a href='%1' style = \"color:#0072c1; \">%1</a> <br/>").arg(address));
@@ -1002,7 +1029,7 @@ void MainWindow::on_actionAbout_fmod_triggered()
 void MainWindow::on_actionAbout_Lua_triggered()
 {
     QString content = tr("Lua is a powerful, fast, lightweight, embeddable scripting language.");
-    content.append("<p align='center'> <img src='image/system/lua.png' /> </p> <br/>");
+    content.append("<p align='center'> <img src='image/logo/lua.png' /> </p> <br/>");
 
     QString address = "http://www.lua.org";
     content.append(tr("Official site: <a href='%1' style = \"color:#0072c1; \">%1</a> <br/>").arg(address));

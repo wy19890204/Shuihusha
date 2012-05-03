@@ -79,6 +79,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setBackgroundBrush();
 
 protected:
     virtual void closeEvent(QCloseEvent *);
@@ -92,6 +93,9 @@ private:
     QSystemTrayIcon *systray;
 
     void restoreFromConfig();
+
+public slots:
+    void startConnection();
 
 private slots:
     void on_actionAbout_Lua_triggered();
@@ -117,7 +121,6 @@ private slots:
     void on_actionStart_Server_triggered();
     void on_actionExit_triggered();
 
-    void startConnection();
     void checkVersion(const QString &server_version, const QString &server_mod);
     void networkError(const QString &error_msg);
     void enterRoom();
