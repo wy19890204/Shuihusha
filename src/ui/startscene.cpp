@@ -10,7 +10,7 @@
 StartScene::StartScene()
 {
     // game logo
-    logo = new Pixmap("image/system/logo.png");
+    logo = new Pixmap("image/logo/logo.png");
     logo->shift();
     logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
@@ -160,11 +160,11 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));
-/*
+
     server_log->append( Config.EnableHegemony ?
                         tr("Hegemony Mode is enabled") :
                         tr("Hegemony Mode is disabled"));
-*/
+
     if(Config.EnableAI){
         server_log->append(tr("This server is AI enabled, AI delay is %1 milliseconds").arg(Config.AIDelay));
         server_log->append( Config.value("AIChat", true).toBool() ?

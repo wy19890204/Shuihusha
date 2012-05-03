@@ -18,12 +18,15 @@
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QMenu>
+#include <QGraphicsDropShadowEffect>
+
+#include "pixmapanimation.h"
 
 Photo::Photo()
     :Pixmap("image/system/photo-back.png"),
     player(NULL),
     handcard("image/system/handcard.png"),
-    chain("image/system/chain.png"), action_item(NULL), save_me_item(NULL), permanent(false),
+    action_item(NULL), save_me_item(NULL), permanent(false),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     order_item(NULL), hide_avatar(false)
 {
@@ -35,27 +38,39 @@ Photo::Photo()
     back_icon->hide();
     back_icon->setZValue(1.0);
 
+    chain_icon = new Pixmap("image/system/chain.png");
+    chain_icon->setParentItem(this);
+    chain_icon->setPos(boundingRect().width() - 22, 5);
+    chain_icon->hide();
+
     progress_bar = new QProgressBar;
-    progress_bar->setOrientation(Qt::Vertical);
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
     progress_bar->setValue(0);
     progress_bar->hide();
-    progress_bar->setMaximumWidth(10);
-    progress_bar->setMaximumHeight(pixmap.height());
+    progress_bar->setMaximumHeight(15);
+    progress_bar->setMaximumWidth(pixmap.width());
+    progress_bar->setTextVisible(false);
     timer_id = 0;
 
     frame_item = new QGraphicsPixmapItem(this);
     frame_item->setPos(-6, -6);
+    frame_item->setZValue(-1.0);
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(this);
     widget->setWidget(progress_bar);
-    widget->setPos(pixmap.width() - 15, 0);
+    widget->setPos( -6 , - 25);
 
     skill_name_item = new QGraphicsSimpleTextItem(this);
     skill_name_item->setBrush(Qt::white);
     skill_name_item->setFont(Config.SmallFont);
     skill_name_item->moveBy(10, 30);
+
+    QGraphicsDropShadowEffect * drp = new QGraphicsDropShadowEffect;
+    drp->setBlurRadius(10);
+    drp->setColor(Qt::yellow);
+    drp->setOffset(0);
+    skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
     emotion_item->moveBy(10, 0);
@@ -104,6 +119,7 @@ void Photo::setOrder(int order){
 void Photo::revivePlayer(){
     updateAvatar();
     updateSmallAvatar();
+    this->setOpacity(1.0);
 
     role_combobox->show();
 }
@@ -112,8 +128,8 @@ void Photo::createRoleCombobox(){
     role_combobox = new RoleCombobox(this);
 
     QString role = player->getRole();
-    if(!role.isEmpty())
-        role_combobox->fix(role);
+    if(!ServerInfo.EnableHegemony && !role.isEmpty())
+            role_combobox->fix(role);
 
     connect(player, SIGNAL(role_changed(QString)), role_combobox, SLOT(fix(QString)));
 }
@@ -127,7 +143,7 @@ void Photo::showProcessBar(){
     progress_bar->setValue(0);
     progress_bar->show();
 
-    if(ServerInfo.OperationTimeout != 0);
+    if(ServerInfo.OperationTimeout != 0)
         timer_id = startTimer(500);
 }
 
@@ -158,6 +174,8 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
 
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));
+
+    PixmapAnimation::GetPixmapAnimation(this,emotion);
 }
 
 void Photo::tremble(){
@@ -572,6 +590,7 @@ void Photo::updatePile(const QString &pile_name){
         }
 
         QMenu *menu = button->menu();
+        menu->setProperty("private_pile","true");
         //menu->clear();
 
         QList<const Card *> cards;
@@ -673,10 +692,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     drawEquip(painter, defensive_horse, 2);
     drawEquip(painter, offensive_horse, 3);
 
-    // draw iron chain
-    if(player->isChained())
-        painter->drawPixmap(28, 16, chain);
-
+    chain_icon->setVisible(player->isChained());
     back_icon->setVisible(! player->faceUp());
 }
 
@@ -713,7 +729,8 @@ void Photo::killPlayer(){
         MakeGray(small_avatar);
 
     kingdom_frame = QPixmap();
-    role_combobox->hide();
+    if(!ServerInfo.EnableHegemony)
+        role_combobox->hide();
 
     if(save_me_item)
         save_me_item->hide();

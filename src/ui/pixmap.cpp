@@ -8,6 +8,9 @@
 Pixmap::Pixmap(const QString &filename, bool center_as_origin)
     :pixmap(filename), markable(false), marked(false)
 {
+
+#ifndef QT_NO_DEBUG
+//only complains about pixmap loading errors under debug mode
     if(pixmap.isNull()){
         QImageReader reader(filename);
         QString error_string = reader.errorString();
@@ -16,7 +19,7 @@ Pixmap::Pixmap(const QString &filename, bool center_as_origin)
                           .arg(filename).arg(metaObject()->className()).arg(error_string);
         QMessageBox::warning(NULL, tr("Warning"), warning);
     }
-
+#endif
     if(center_as_origin)
         setTransformOriginPoint(pixmap.width()/2, pixmap.height()/2);
 }
@@ -90,11 +93,15 @@ QVariant Pixmap::itemChange(GraphicsItemChange change, const QVariant &value){
 
         emit selected_changed();
     }else if(change == ItemEnabledHasChanged){
-        if(value.toBool()){
-            setOpacity(1.0);
-        }else{
-            setOpacity(0.7);
+        if(this->inherits("CardItem"))
+        {
+            if(value.toBool()){
+                setOpacity(1.0);
+            }else{
+                setOpacity(0.7);
+            }
         }
+        else emit enable_changed();
     }
 
     return QGraphicsObject::itemChange(change, value);

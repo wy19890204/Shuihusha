@@ -14,20 +14,24 @@ CONFIG += warn_on audio
 # CONFIG += chatvoice
 # Also, this function can only enabled under Windows system as it make use of Microsoft TTS
 
-SOURCES += src/main.cpp \
+SOURCES += \
+	src/main.cpp \
 	src/client/aux-skills.cpp \
 	src/client/client.cpp \
 	src/client/clientplayer.cpp \
 	src/client/clientstruct.cpp \
+	src/core/banpair.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
 	src/core/general.cpp \
+	src/core/jsonutils.cpp \
 	src/core/lua-wrapper.cpp \
 	src/core/player.cpp \
+	src/core/protocol.cpp \
 	src/core/settings.cpp \
 	src/core/skill.cpp \
 	src/core/statistics.cpp \
-	src/dialog/banpairdialog.cpp \
+	src/core/util.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
 	src/dialog/choosegeneraldialog.cpp \
@@ -45,6 +49,7 @@ SOURCES += src/main.cpp \
 	src/package/package.cpp \
 	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
+	src/package/standard-generals.cpp \
 	src/package/standard-skillcards.cpp \
 	src/package/standard.cpp \
 	src/package/plough.cpp \
@@ -65,7 +70,7 @@ SOURCES += src/main.cpp \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
 	src/package/stanley.cpp \
-	src/package/pass/pass-package.cpp \
+	src/scenario/scenario.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/miniscenarios.cpp \
@@ -73,11 +78,10 @@ SOURCES += src/main.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
 	src/scenario/zombie-mode-scenario.cpp \
-	src/scenario/pass-mode-scenario.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
 	src/server/gamerule.cpp \
-        src/server/generalselector.cpp \
+	src/server/generalselector.cpp \
 	src/server/room.cpp \
 	src/server/roomthread.cpp \
 	src/server/roomthread1v1.cpp \
@@ -87,13 +91,17 @@ SOURCES += src/main.cpp \
 	src/ui/button.cpp \
 	src/ui/cardcontainer.cpp \
 	src/ui/carditem.cpp \
+	src/ui/chatwidget.cpp \
 	src/ui/clientlogbox.cpp \
 	src/ui/dashboard.cpp \
 	src/ui/indicatoritem.cpp \
+	src/ui/irregularbutton.cpp \
 	src/ui/photo.cpp \
 	src/ui/pixmap.cpp \
+	src/ui/pixmapanimation.cpp \
 	src/ui/rolecombobox.cpp \
 	src/ui/roomscene.cpp \
+	src/ui/sprite.cpp \
 	src/ui/startscene.cpp \
 	src/ui/window.cpp \
 	src/util/detector.cpp \
@@ -129,22 +137,32 @@ SOURCES += src/main.cpp \
 	src/lua/lbaselib.c \
 	src/lua/lauxlib.c \
 	src/lua/lapi.c \
+	src/jsoncpp/src/json_writer.cpp \
+	src/jsoncpp/src/json_valueiterator.inl \
+	src/jsoncpp/src/json_value.cpp \
+	src/jsoncpp/src/json_reader.cpp \
+	src/jsoncpp/src/json_internalmap.inl \
+	src/jsoncpp/src/json_internalarray.inl \
 	swig/sanguosha_wrap.cxx
 
-HEADERS += src/client/aux-skills.h \
+HEADERS += \
+	src/client/aux-skills.h \
 	src/client/client.h \
 	src/client/clientplayer.h \
 	src/client/clientstruct.h \
 	src/core/audio.h \
+	src/core/banpair.h \
 	src/core/card.h \
 	src/core/engine.h \
 	src/core/general.h \
+	src/core/jsonutils.h \
 	src/core/lua-wrapper.h \
 	src/core/player.h \
+	src/core/protocol.h \
 	src/core/settings.h \
 	src/core/skill.h \
 	src/core/statistics.h \
-	src/dialog/banpairdialog.h \
+	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
 	src/dialog/choosegeneraldialog.h \
@@ -153,7 +171,6 @@ HEADERS += src/client/aux-skills.h \
 	src/dialog/customassigndialog.h \
 	src/dialog/distanceviewdialog.h \
 	src/dialog/generaloverview.h \
-	src/dialog/generalselector.h \
 	src/dialog/halldialog.h \
 	src/dialog/mainwindow.h \
 	src/dialog/packagingeditor.h \
@@ -183,7 +200,6 @@ HEADERS += src/client/aux-skills.h \
 	src/package/interchange.h \
 	src/package/guben.h \
 	src/package/stanley.h \
-	src/package/pass/pass-package.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/miniscenarios.h \
@@ -191,10 +207,10 @@ HEADERS += src/client/aux-skills.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
 	src/scenario/zombie-mode-scenario.h \
-	src/scenario/pass-mode-scenario.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
 	src/server/gamerule.h \
+	src/server/generalselector.h \
 	src/server/room.h \
 	src/server/roomthread.h \
 	src/server/roomthread1v1.h \
@@ -205,13 +221,17 @@ HEADERS += src/client/aux-skills.h \
 	src/ui/button.h \
 	src/ui/cardcontainer.h \
 	src/ui/carditem.h \
+	src/ui/chatwidget.h \
 	src/ui/clientlogbox.h \
 	src/ui/dashboard.h \
 	src/ui/indicatoritem.h \
+	src/ui/irregularbutton.h \
 	src/ui/photo.h \
 	src/ui/pixmap.h \
+	src/ui/pixmapanimation.h \
 	src/ui/rolecombobox.h \
 	src/ui/roomscene.h \
+	src/ui/sprite.h \
 	src/ui/startscene.h \
 	src/ui/window.h \
 	src/util/detector.h \
@@ -241,9 +261,21 @@ HEADERS += src/client/aux-skills.h \
 	src/lua/ldebug.h \
 	src/lua/lcode.h \
 	src/lua/lauxlib.h \
-	src/lua/lapi.h
+	src/lua/lapi.h \
+	src/jsoncpp/src/json_tool.h \
+	src/jsoncpp/src/json_batchallocator.h \
+	src/jsoncpp/include/json/writer.h \
+	src/jsoncpp/include/json/value.h \
+	src/jsoncpp/include/json/reader.h \
+	src/jsoncpp/include/json/json.h \
+	src/jsoncpp/include/json/forwards.h \
+	src/jsoncpp/include/json/features.h \
+	src/jsoncpp/include/json/config.h \
+	src/jsoncpp/include/json/autolink.h \
+	src/jsoncpp/include/json/assertions.h
 	
-FORMS += src/dialog/cardoverview.ui \
+FORMS += \
+	src/dialog/cardoverview.ui \
 	src/dialog/configdialog.ui \
 	src/dialog/connectiondialog.ui \
 	src/dialog/generaloverview.ui \
@@ -259,12 +291,18 @@ INCLUDEPATH += src/server
 INCLUDEPATH += src/ui
 INCLUDEPATH += src/util
 INCLUDEPATH += src/lua
+INCLUDEPATH += src/jsoncpp/include
 
 win32{
 	RC_FILE += resource/icon.rc
 }
 
-LIBS += -L. -lm
+macx{
+	ICON = resource/icon/sgs.icns
+}
+
+
+LIBS += -L.
 
 CONFIG(audio){
 	DEFINES += AUDIO_SUPPORT
@@ -279,6 +317,13 @@ CONFIG(joystick){
 	SOURCES += src/ui/joystick.cpp
 	win32: LIBS += -lplibjs -lplibul -lwinmm
 	unix: LIBS += -lplibjs -lplibul
+}
+
+CONFIG(chatvoice){
+	win32{
+		CONFIG += qaxcontainer
+		DEFINES += CHAT_VOICE
+	}
 }
 
 TRANSLATIONS += sanguosha.ts
