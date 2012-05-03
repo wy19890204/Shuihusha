@@ -84,7 +84,7 @@ bool FreeDiscardSkill::isEnabledAtPlay(const Player *) const{
     return true;
 }
 
-bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
     return true;
 }
 
@@ -100,35 +100,6 @@ const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
 }
 
 // -------------------------------------------
-RendeCard::RendeCard(){
-    will_throw = false;
-}
-
-void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = NULL;
-    if(targets.isEmpty()){
-        foreach(ServerPlayer *player, room->getAlivePlayers()){
-            if(player != source){
-                target = player;
-                break;
-            }
-        }
-    }else
-        target = targets.first();
-
-    room->obtainCard(target, this, false);
-
-    int old_value = source->getMark("rende");
-    int new_value = old_value + subcards.length();
-    room->setPlayerMark(source, "rende", new_value);
-
-    if(old_value < 2 && new_value >= 2){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = source;
-        room->recover(source, recover);
-    }
-}
 
 YijiViewAsSkill::YijiViewAsSkill()
     :ViewAsSkill("yiji")
@@ -141,7 +112,7 @@ void YijiViewAsSkill::setCards(const QString &card_str){
     ids = Card::StringsToIds(cards);
 }
 
-bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
     return ids.contains(to_select->getCard()->getId());
 }
 
@@ -167,7 +138,7 @@ public:
         set = names.toSet();
     }
 
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
         return targets.isEmpty() && set.contains(to_select->objectName());
     }
 
