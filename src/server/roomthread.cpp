@@ -3,9 +3,13 @@
 #include "engine.h"
 #include "gamerule.h"
 #include "ai.h"
+#include "jsonutils.h"
 #include "settings.h"
 
 #include <QTime>
+#include <json/json.h>
+
+using namespace QSanProtocol::Utils;
 
 LogMessage::LogMessage()
     :from(NULL)
@@ -15,7 +19,7 @@ LogMessage::LogMessage()
 QString LogMessage::toString() const{
     QStringList tos;
     foreach(ServerPlayer *player, to)
-        tos << player->objectName();
+        if (player != NULL) tos << player->objectName();
 
     return QString("%1:%2->%3:%4:%5:%6")
             .arg(type)
@@ -117,6 +121,10 @@ bool JudgeStruct::isBad() const{
     return ! isGood();
 }
 
+PhaseChangeStruct::PhaseChangeStruct()
+    :from(Player::NotActive), to(Player::NotActive)
+{}
+
 CardUseStruct::CardUseStruct()
     :card(NULL), from(NULL)
 {
@@ -126,10 +134,36 @@ bool CardUseStruct::isValid() const{
     return card != NULL;
 }
 
+bool CardUseStruct::tryParse(const Json::Value &usage, Room *room){
+    if (usage.size() < 2 || !usage[0].isString() || !usage[1].isArray())
+        return false;
+
+    card = Card::Parse(toQString(usage[0]));
+
+    const Json::Value &targets = usage[1];
+
+    for (unsigned int i = 0; i < targets.size(); i++)
+    {
+        if (!targets[i].isString()) return false;
+        this->to << room->findChild<ServerPlayer *>(toQString(targets[i]));
+    }
+    return true;
+}
+
 void CardUseStruct::parse(const QString &str, Room *room){
-    QStringList words = str.split("->");
+    QStringList words = str.split("->", QString::KeepEmptyParts);
+    
+    Q_ASSERT(words.length() == 1 || words.length() == 2);
+
     QString card_str = words.at(0);
-    QString target_str = words.at(1);
+    QString target_str = ".";
+    
+    //@todo: it's observed that when split on "a->."
+    // only returns one QString, which is "a". Suspect
+    // it's a bug with QT regular expression. Figure out
+    // the cause of the issue.
+    if (words.length() == 2 && !words.at(1).isEmpty()) 
+        target_str = words.at(1);    
 
     card = Card::Parse(card_str);
 
@@ -147,8 +181,10 @@ QString EventTriplet::toString() const{
             .arg(data->toString()).arg(data->typeName());
 }
 
+//@todo: setParent here is illegitimate in QT and is equivalent to calling
+// setParent(NULL). Find another way to do it if we really need a parent.
 RoomThread::RoomThread(Room *room)
-    :QThread(room), room(room)
+    :room(room)
 {
 }
 
@@ -164,7 +200,7 @@ void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
 }
 
 void RoomThread::constructTriggerTable(const GameRule *rule){
-    foreach(ServerPlayer *player, room->players){
+    foreach(ServerPlayer *player, room->getPlayers()){
         addPlayerSkills(player, false);
     }
 
@@ -175,7 +211,7 @@ static const int GameOver = 1;
 
 void RoomThread::run3v3(){
     QList<ServerPlayer *> warm, cool;
-    foreach(ServerPlayer *player, room->players){
+    foreach(ServerPlayer *player, room->m_players){
         switch(player->getRoleEnum()){
         case Player::Lord: warm.prepend(player); break;
         case Player::Loyalist: warm.append(player); break;
@@ -230,7 +266,7 @@ void RoomThread::action3v3(ServerPlayer *player){
     room->setPlayerFlag(player, "actioned");
 
     bool all_actioned = true;
-    foreach(ServerPlayer *player, room->alive_players){
+    foreach(ServerPlayer *player, room->m_alivePlayers){
         if(!player->hasFlag("actioned")){
             all_actioned = false;
             break;
@@ -238,7 +274,7 @@ void RoomThread::action3v3(ServerPlayer *player){
     }
 
     if(all_actioned){
-        foreach(ServerPlayer *player, room->alive_players){
+        foreach(ServerPlayer *player, room->m_alivePlayers){
             room->setPlayerFlag(player, "-actioned");
         }
     }
@@ -247,13 +283,12 @@ void RoomThread::action3v3(ServerPlayer *player){
 void RoomThread::run(){
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
-    if(setjmp(env) == GameOver){
-        quit();
+    if(setjmp(env) == GameOver){        
         return;
     }
 
     // start game, draw initial 4 cards
-    foreach(ServerPlayer *player, room->players){
+    foreach(ServerPlayer *player, room->getPlayers()){
         trigger(GameStart, player);
     }
 
@@ -262,7 +297,7 @@ void RoomThread::run(){
     }else if(room->getMode() == "04_1v3"){
         ServerPlayer *shenlvbu = room->getLord();
         if(shenlvbu->getGeneralName() == "shenlvbu1"){
-            QList<ServerPlayer *> league = room->players;
+            QList<ServerPlayer *> league = room->getPlayers();
             league.removeOne(shenlvbu);
 
             forever{
@@ -294,14 +329,18 @@ void RoomThread::run(){
         }else{
             second_phase:
 
-            foreach(ServerPlayer *player, room->players){
+            foreach(ServerPlayer *player, room->getPlayers()){
                 if(player != shenlvbu){
                     if(player->hasFlag("actioned"))
                         room->setPlayerFlag(player, "-actioned");
 
                     if(player->getPhase() != Player::NotActive){
+                        PhaseChangeStruct phase;
+                        phase.from = player->getPhase();
                         room->setPlayerProperty(player, "phase", "not_active");
-                        trigger(PhaseChange, player);
+                        phase.to = player->getPhase();
+                        QVariant data = QVariant::fromValue(phase);
+                        trigger(PhaseChange, player, data);
                     }
                 }
             }
@@ -317,10 +356,11 @@ void RoomThread::run(){
 
     }else{
         if(room->getMode() == "02_1v1")
-            room->setCurrent(room->players.at(1));
+            room->setCurrent(room->getPlayers().at(1));
 
-        forever{
+        forever {
             trigger(TurnStart, room->getCurrent());
+            if (room->isFinished()) break;
             room->setCurrent(room->getCurrent()->getNextAlive());
         }
     }

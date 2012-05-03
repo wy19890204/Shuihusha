@@ -36,6 +36,27 @@ AI::Relation AI::GetRelation3v3(const ServerPlayer *a, const ServerPlayer *b){
         return Enemy;
 }
 
+
+AI::Relation AI::GetRelationHegemony(const ServerPlayer *a, const ServerPlayer *b){
+    const bool aShown = a->getRoom()->getTag(a->objectName()).toStringList().isEmpty();
+    const bool bShown = b->getRoom()->getTag(b->objectName()).toStringList().isEmpty();
+
+    const QString aName = aShown ?
+                a->getGeneralName() :
+                a->getRoom()->getTag(a->objectName()).toStringList().first();
+    const QString bName = bShown ?
+                b->getGeneralName() :
+                b->getRoom()->getTag(b->objectName()).toStringList().first();
+
+    const QString aKingdom = Sanguosha->getGeneral(aName)->getKingdom();
+    const QString bKingdom = Sanguosha->getGeneral(bName)->getKingdom();
+
+
+    qDebug() << aKingdom << bKingdom <<aShown << bShown;
+
+    return aKingdom == bKingdom ? Friend :Enemy;
+}
+
 AI::Relation AI::GetRelation(const ServerPlayer *a, const ServerPlayer *b){
     RoleMapping map, map_good, map_bad;
     if(map.isEmpty()){
@@ -92,6 +113,8 @@ AI::Relation AI::relationTo(const ServerPlayer *other) const{
 
     if(room->getMode() == "06_3v3")
         return GetRelation3v3(self, other);
+    else if(Config.EnableHegemony)
+        return GetRelationHegemony(self, other);
     return GetRelation(self, other);
 }
 
@@ -125,7 +148,7 @@ QList<ServerPlayer *> AI::getFriends() const{
     return friends;
 }
 
-void AI::filterEvent(TriggerEvent event, ServerPlayer *player, const QVariant &data){
+void AI::filterEvent(TriggerEvent , ServerPlayer *, const QVariant &){
     // dummy
 }
 
@@ -194,21 +217,23 @@ QString TrustAI::askForKingdom(){
     return role;
 }
 
-bool TrustAI::askForSkillInvoke(const QString &skill_name, const QVariant &data){
+bool TrustAI::askForSkillInvoke(const QString &, const QVariant &){
     return false;
 }
 
 QString TrustAI::askForChoice(const QString &skill_name, const QString &choice){
     const Skill *skill = Sanguosha->getSkill(skill_name);
-    if(skill)
-        return skill->getDefaultChoice(self);
-    else{
-        QStringList choices = choice.split("+");
-        return choices.at(qrand() % choices.length());
+    if(skill){
+        QString default_choice = skill->getDefaultChoice(self);
+        if(choice.contains(default_choice))
+            return default_choice;
     }
+
+    QStringList choices = choice.split("+");
+    return choices.at(qrand() % choices.length());
 }
 
-QList<int> TrustAI::askForDiscard(const QString &reason, int discard_num, bool optional, bool include_equip){
+QList<int> TrustAI::askForDiscard(const QString &, int discard_num, bool optional, bool include_equip){
     QList<int> to_discard;
 
     if(optional)
@@ -217,26 +242,22 @@ QList<int> TrustAI::askForDiscard(const QString &reason, int discard_num, bool o
         return self->forceToDiscard(discard_num, include_equip);
 }
 
-#include "plough.h"
 const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *, ServerPlayer *to, bool positive){
     if(self == to && trick->isAggressive() && positive){
-        QList<const Card *> cards = self->getCards("he");
+        QList<const Card *> cards = self->getHandcards();
 
         foreach(const Card *card, cards){
             if(card->inherits("Nullification"))
                 return card;
         }
 
-        if(self->hasSkill("zhiqu-n") || self->hasSkill("zhiqu-c")){
-            QString type = trick->inherits("SingleTargetTrick") ?
-                               "nullification" : "nulliplot";
+        if(self->hasSkill("kanpo")){
             foreach(const Card *card, cards){
-                if(card->inherits("EquipCard")){
-                    Card *ncard = type == "nullification" ?
-                                  new Nullification(card->getSuit(), card->getNumber()) :
-                                  new Counterplot(card->getSuit(), card->getNumber());
+                if(card->isBlack()){
+                    Nullification *ncard = new Nullification(card->getSuit(), card->getNumber());
                     ncard->addSubcard(card);
-                    ncard->setSkillName("zhiqu");
+                    ncard->setSkillName("kanpo");
+
                     return ncard;
                 }
             }
@@ -253,6 +274,9 @@ int TrustAI::askForCardChosen(ServerPlayer *who, const QString &flags, const QSt
 }
 
 const Card *TrustAI::askForCard(const QString &pattern, const QString &prompt, const QVariant &data){
+    Q_UNUSED(prompt);
+    Q_UNUSED(data);
+
     response_skill->setPattern(pattern);
     QList<const Card *> cards = self->getHandcards();
     foreach(const Card *card, cards){
@@ -298,6 +322,8 @@ const Card *TrustAI::askForPindian(ServerPlayer *requestor, const QString &reaso
 }
 
 ServerPlayer *TrustAI::askForPlayerChosen(const QList<ServerPlayer *> &targets, const QString &reason){
+    Q_UNUSED(reason);
+
     int r = qrand() % targets.length();
     return targets.at(r);
 }
@@ -373,12 +399,8 @@ QString LuaAI::askForUseCard(const QString &pattern, const QString &prompt){
 
     lua_State *L = room->getLuaState();
 
-    lua_rawgeti(L, LUA_REGISTRYINDEX, callback);
-
-    lua_pushstring(L, __func__);
-
+    pushCallback(L, __FUNCTION__);
     lua_pushstring(L, pattern.toAscii());
-
     lua_pushstring(L, prompt.toAscii());
 
     int error = lua_pcall(L, 3, 1, 0);
@@ -397,7 +419,7 @@ QString LuaAI::askForUseCard(const QString &pattern, const QString &prompt){
 QList<int> LuaAI::askForDiscard(const QString &reason, int discard_num, bool optional, bool include_equip){
     lua_State *L = room->getLuaState();
 
-    pushCallback(L, __func__);
+    pushCallback(L, __FUNCTION__);
     lua_pushstring(L, reason.toAscii());
     lua_pushinteger(L, discard_num);
     lua_pushboolean(L, optional);
@@ -439,7 +461,7 @@ QString LuaAI::askForChoice(const QString &skill_name, const QString &choices){
 
     lua_State *L = room->getLuaState();
 
-    pushCallback(L, __func__);
+    pushCallback(L, __FUNCTION__);
     lua_pushstring(L, skill_name.toAscii());
     lua_pushstring(L, choices.toAscii());
 
@@ -457,7 +479,7 @@ QString LuaAI::askForChoice(const QString &skill_name, const QString &choices){
 int LuaAI::askForAG(const QList<int> &card_ids, bool refusable, const QString &reason){
     lua_State *L = room->getLuaState();
 
-    pushCallback(L, __func__);
+    pushCallback(L, __FUNCTION__);
     pushQIntList(L, card_ids);
     lua_pushboolean(L, refusable);
     lua_pushstring(L, reason.toAscii());
@@ -500,7 +522,7 @@ void LuaAI::reportError(lua_State *L){
 void LuaAI::askForGuanxing(const QList<int> &cards, QList<int> &up, QList<int> &bottom, bool up_only){
     lua_State *L = room->getLuaState();
 
-    pushCallback(L, __func__);
+    pushCallback(L, __FUNCTION__);
     pushQIntList(L, cards);
     lua_pushboolean(L, up_only);
 
