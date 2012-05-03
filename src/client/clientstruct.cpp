@@ -11,7 +11,7 @@ ServerInfoStruct ServerInfo;
 #include <QCheckBox>
 
 bool ServerInfoStruct::parse(const QString &str){
-    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEZBAM12]*)");
+    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEZBHAM12]*)");
     if(!rx.exactMatch(str)){
         // older version, just take the player count
         int count = str.split(":").at(1).toInt();
@@ -50,6 +50,7 @@ bool ServerInfoStruct::parse(const QString &str){
     EnableEndless = flags.contains("E");
     EnableAnzhan = flags.contains("Z");
     EnableBasara= flags.contains("B");
+    EnableHegemony = flags.contains("H");
     EnableAI = flags.contains("A");
     DisableChat = flags.contains("M");
 
@@ -76,6 +77,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     endless_label = new QLabel;
     anzhan_label = new QLabel;
     basara_label = new QLabel;
+    hegemony_label = new QLabel;
     free_choose_label = new QLabel;
     enable_ai_label = new QLabel;
     time_limit_label = new QLabel;
@@ -104,6 +106,8 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
         layout->addRow(tr("Anzhan Mode"), anzhan_label);
     if(ServerInfo.EnableBasara)
         layout->addRow(tr("Basara Mode"), basara_label);
+    if(ServerInfo.EnableHegemony)
+        layout->addRow(tr("Hegemony Mode"), hegemony_label);
     layout->addRow(tr("Free choose"), free_choose_label);
     layout->addRow(tr("Enable AI"), enable_ai_label);
     layout->addRow(tr("Operation time"), time_limit_label);
@@ -131,6 +135,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
     anzhan_label->setText(info.EnableAnzhan ? tr("Enabled") : tr("Disabled"));
     basara_label->setText(info.EnableBasara ? tr("Enabled") : tr("Disabled"));
+    hegemony_label->setText(info.EnableHegemony ? tr("Enabled") : tr("Disabled"));
 
     if(info.Enable2ndGeneral){
         switch(info.MaxHPScheme){
@@ -188,6 +193,7 @@ void ServerInfoWidget::clear(){
     endless_label->clear();
     anzhan_label->clear();
     basara_label->clear();
+    hegemony_label->clear();
     free_choose_label->clear();
     time_limit_label->clear();
     list_widget->clear();
