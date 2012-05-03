@@ -222,7 +222,7 @@ public:
     ServerPlayer *getCardOwner(int card_id) const;
     void setCardMapping(int card_id, ServerPlayer *owner, Player::Place place);
 
-    void drawCards(ServerPlayer *player, int n, bool unhide = true);
+    void drawCards(ServerPlayer *player, int n, const QString &reason = QString());
     void obtainCard(ServerPlayer *target, const Card *card, bool unhide = true);
     void obtainCard(ServerPlayer *target, int card_id, bool unhide = true);
 

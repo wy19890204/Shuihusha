@@ -465,7 +465,11 @@ void Room::slashEffect(const SlashEffectStruct &effect){
 
     QVariant data = QVariant::fromValue(effect);
 
-    setEmotion(effect.from, "killer");
+    if(effect.nature ==DamageStruct::Thunder)setEmotion(effect.from, "thunder_slash");
+    else if(effect.nature == DamageStruct::Fire)setEmotion(effect.from, "fire_slash");
+    else if(effect.slash->isBlack())setEmotion(effect.from, "slash_black");
+    else if(effect.slash->isRed())setEmotion(effect.from, "slash_red");
+    else setEmotion(effect.from, "killer");
     setEmotion(effect.to, "victim");
 
     setTag("LastSlashEffect", data);
@@ -813,88 +817,88 @@ bool Room::verifyNullificationResponse(ServerPlayer* player, const Json::Value& 
 }
 
 bool Room::askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive){
-    const Card *last_trick = getTag("LastTrick").value<CardStar>(); //获取最后一张锦囊记录
-    PlayerStar final_player = from; //记录最后使用锦囊的角色
-    if(!last_trick) //标记第一张锦囊
-        last_trick = trick;
-    QString trick_name = last_trick->objectName(); //锦囊名
-    QList<ServerPlayer *> players = getAllPlayers();
-    foreach(ServerPlayer *player, players){
-        if(!player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
-            continue;
+    _NullificationAiHelper aiHelper;
+    aiHelper.m_from = from;
+    aiHelper.m_to = to;
+    aiHelper.m_trick = trick;
+    return _askForNullification(trick, from, to, positive, aiHelper);
+}
 
-trust:
-        final_player = getTag("Counploter").value<PlayerStar>();
-        if(final_player && final_player->hasSkill("pozhen"))
-            break;
-        AI *ai = player->getAI();
-        const Card *card = NULL;
-        if(ai){
-            card = ai->askForNullification(trick, from, to, positive);
-            if(card)
-                thread->delay(Config.AIDelay);
-        }else{
-            QString ask_str;
+bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive, _NullificationAiHelper aiHelper){
+    QString trick_name = trick->objectName();
+    QList<ServerPlayer *> validHumanPlayers;
+    QList<ServerPlayer *> validAiPlayers;
+    
+    Json::Value arg(Json::arrayValue);
+    arg[0] = toJsonString(trick_name);
+    arg[1] = from ? toJsonString(from->objectName()) : Json::Value::null;
+    arg[2] = to ? toJsonString(to->objectName()) : Json::Value::null;
 
-            if(positive)
-                ask_str = QString("%1:%2->%3").arg(trick_name)
-                        .arg(from ? from->objectName() : ".")
-                        .arg(to->objectName());
+    foreach (ServerPlayer *player, m_players){
+        if(player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
+        {
+            if (player->isOnline())
+            {
+                player->m_commandArgs = arg;
+                validHumanPlayers << player;
+            }
             else
-                ask_str = QString("nullification:.->%1").arg(to->objectName());
-
-            player->invoke("askForNullification", ask_str);
-            getResult("responseCardCommand", player, false);
-
-            if(result.isEmpty())
-                goto trust;
-
-            if(result != ".")
-                card = Card::Parse(result);
+                validAiPlayers << player;
         }
-
-        if(card == NULL)
-            continue;
-
-        bool continable = false;
-        card = card->validateInResposing(player, &continable);
-        if(card){
-            CardUseStruct use;
-            use.card = card;
-            use.from = player;
-            useCard(use);
-            setTag("LastTrick", QVariant::fromValue((CardStar)card)); //记录锦囊
-
-            LogMessage log;
-            log.type = "#NullificationDetails";
-            log.from = from;
-            log.to << to;
-            log.arg = trick_name;
-            sendLog(log);
-
-            QString animation_str = QString(card->objectName() + ":%1:%2")
-                                    .arg(player->objectName()).arg(to->objectName());
-            broadcastInvoke("animate", animation_str);
-
-            final_player = player; //记录锦囊使用者
-            setPlayerProperty(final_player, "iscounplot", card->objectName() == "counterplot"); //该锦囊是不是将计就计
-            setPlayerProperty(final_player, "counplot", QVariant::fromValue((CardStar)last_trick)); //暂存可以拿走的锦囊
-            setTag("Counploter", QVariant::fromValue(final_player));
-
-            QVariant decisionData = QVariant::fromValue(use);
-            thread->trigger(ChoiceMade, player, decisionData);
-            setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
-
-            return !askForNullification(trick, from, to, !positive);
-        }else if(continable)
-            goto trust;
     }
-    removeTag("LastTrick"); //尘埃落定
-    final_player = getTag("Counploter").value<PlayerStar>();
-    if(final_player && final_player->property("iscounplot").toBool()) //若最后一张是将计就计，可以拿走该锦囊
-        final_player->obtainCard(final_player->property("counplot").value<CardStar>());
-    removeTag("Counploter");
-    return false;
+
+    ServerPlayer* repliedPlayer = NULL;
+    time_t timeOut = getCommandTimeout(S_COMMAND_NULLIFICATION);
+    if (!validHumanPlayers.empty())
+        repliedPlayer = doBroadcastRaceRequest(validHumanPlayers, S_COMMAND_NULLIFICATION, timeOut, &Room::verifyNullificationResponse);
+
+    const Card* card = NULL;
+    if (repliedPlayer != NULL && repliedPlayer->getClientReply().isString())
+        card = Card::Parse(toQString(repliedPlayer->getClientReply()));
+    if (card == NULL)
+    {
+        foreach (ServerPlayer* player, validAiPlayers)
+        {
+            AI *ai = player->getAI();
+            if (ai == NULL) continue;
+            card = ai->askForNullification(aiHelper.m_trick, aiHelper.m_from, aiHelper.m_to, positive);
+            if (card != NULL)
+            {
+                repliedPlayer = player;
+                thread->delay(Config.AIDelay);
+                break;
+            }
+        }
+    }
+
+    if (card == NULL) return false;
+
+    bool continuable = false;
+    card = card->validateInResposing(repliedPlayer, &continuable);
+    if (card == NULL) return false;
+
+    CardUseStruct use;
+    use.card = card;
+    use.from = repliedPlayer;
+    useCard(use);
+
+    LogMessage log;
+    log.type = "#NullificationDetails";
+    log.from = from;
+    log.to << to;
+    log.arg = trick_name;
+    sendLog(log);
+
+    QString animation_str = QString(card->objectName() + ":%1:%2")
+                            .arg(repliedPlayer->objectName()).arg(to->objectName());
+    broadcastInvoke("animate", animation_str);
+
+    QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
+    thread->trigger(ChoiceMade, repliedPlayer, decisionData);
+    setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
+    if(repliedPlayer->hasSkill("pozhen"))
+        return true;
+    return !_askForNullification((TrickCard*)card, repliedPlayer, to, !positive, aiHelper);
 }
 
 int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason){

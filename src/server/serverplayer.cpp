@@ -441,26 +441,27 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
-    if(hasSkill("zhiqu-c") || hasSkill("zhiqu-n")){
-        foreach(const Card *card, getCards("he")){
-            if(card->inherits("EquipCard") || card->inherits("Nullification"))
-                return true;
-        }
-    }else{
-        foreach(const Card *card, handcards){
-            if(include_counterplot && card->inherits("Nullification"))
-                return true;
-            if(!include_counterplot && card->objectName() == "nullification")
-                return true;
+    foreach(const Card *card, handcards){
+        if(include_counterplot && card->inherits("Nullification"))
+            return true;
+        if(!include_counterplot && card->objectName() == "nullification")
+            return true;
+    }
 
-            foreach(const Skill* skill, getVisibleSkillList()){
-                if(skill->inherits("LuaViewAsSkill")){
-                    const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(skill);
-                    if(luaskill->isEnabledAtNullification(this)) return true;
-                }
+    foreach(const Skill* skill, getVisibleSkillList()){
+        if(skill->inherits("LuaViewAsSkill")){
+            const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(skill);
+            if(luaskill->isEnabledAtNullification(this)) return true;
+        }else if(skill->inherits("TriggerSkill")){
+            const TriggerSkill* trigger_skill = qobject_cast<const TriggerSkill*>(skill);
+            if(trigger_skill && trigger_skill->getViewAsSkill()
+                    && trigger_skill->getViewAsSkill()->inherits("LuaViewAsSkill")){
+                const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(trigger_skill->getViewAsSkill());
+                if(luaskill && luaskill->isEnabledAtNullification(this)) return true;
             }
         }
     }
+
     return false;
 }
 
