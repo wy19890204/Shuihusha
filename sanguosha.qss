@@ -1,13 +1,75 @@
 
-QWidget#skill_bar_container{
+
+ QLineEdit#chat_edit{
+    background-color: rgba(20,20,20,200);
+    color: white;
+    border: 10px transparent;
+    height: 20px;
+    border-image: url(image/system/border.png)10 10 10 10 ;
+ }
+
+QStatusBar::item {
+     border: 0px solid grey;
+ }
+ 
+QStatusBar{
 	background-image: url(image/system/skill-dock.png);
 	color:white;
+}
+
+QMenu[private_pile="true"]{
+    background-color: rgba(43,63,53,100);
+    border-radius: 5px;
+    color: white;
 }
 
 QPushButton[private_pile="true"]{
     background-color: rgba(43,63,53,100);
     border-radius: 5px;
     color: white;
+}
+
+QPushButton[game_control="true"]{
+    border: 0px solid gray;
+    font: 12px;
+    border-radius: 5px;
+    padding: 6px 12px 6px 12px;
+}
+
+QPushButton#free-discard{
+    background-image: url(image/system/button/free-discard.png);
+}
+
+QPushButton#free-discard:disabled{
+    background-image: url(image/system/button/free-discard-disabled.png);
+}
+
+QPushButton#reverse-select{
+    background-image: url(image/system/button/reverse-select.png);
+}
+
+QPushButton#reverse-select:disabled{
+    background-image: url(image/system/button/reverse-select-disabled.png);
+}
+
+QPushButton#pause{
+    background-image: url(image/system/button/pause.png);
+}
+
+QPushButton#play{
+    background-image: url(image/system/button/play.png);
+}
+
+QPushButton#slow-down{
+    background-image: url(image/system/button/slow-down.png);
+}
+
+QPushButton#speed-up{
+    background-image: url(image/system/button/speed-up.png);
+}
+
+QPushButton#uniform{
+    background-image: url(image/system/button/uniform.png);
 }
 
 #skill_bar_container QPushButton{
