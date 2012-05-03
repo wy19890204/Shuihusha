@@ -3,7 +3,7 @@
 #include "room.h"
 #include "engine.h"
 #include "nativesocket.h"
-#include "banpairdialog.h"
+#include "banpair.h"
 #include "scenario.h"
 #include "contestdb.h"
 #include "choosegeneraldialog.h"
@@ -59,22 +59,26 @@ QWidget *ServerDialog::createBasicTab(){
     timeout_spinbox->setMaximum(30);
     timeout_spinbox->setValue(Config.OperationTimeout);
     timeout_spinbox->setSuffix(tr(" seconds"));
-
     nolimit_checkbox = new QCheckBox(tr("No limit"));
     nolimit_checkbox->setChecked(false);
     connect(nolimit_checkbox, SIGNAL(toggled(bool)), timeout_spinbox, SLOT(setDisabled(bool)));
     nolimit_checkbox->setChecked(Config.OperationNoLimit);
 
+    // add 1v1 banlist edit button
+    QPushButton *edit_button = new QPushButton(tr("Banlist ..."));
+    edit_button->setFixedWidth(100);
+    connect(edit_button, SIGNAL(clicked()), this, SLOT(edit1v1Banlist()));
+
     QFormLayout *form_layout = new QFormLayout;
     QHBoxLayout *hlay = new QHBoxLayout;
     hlay->addWidget(timeout_spinbox);
     hlay->addWidget(nolimit_checkbox);
-    //hlay->addWidget(edit_button);
+    hlay->addWidget(edit_button);
     form_layout->addRow(tr("Server name"), server_name_edit);
     QHBoxLayout * lay = new QHBoxLayout;
     lay->addWidget(timeout_spinbox);
     lay->addWidget(nolimit_checkbox);
-    //lay->addWidget(edit_button);
+    lay->addWidget(edit_button);
     form_layout->addRow(tr("Operation timeout"), lay);
     form_layout->addRow(createGameModeBox());
 
@@ -103,14 +107,12 @@ QWidget *ServerDialog::createPackageTab(){
         if(package == NULL)
             continue;
 
-        if(package->objectName() == "guben" ||
-           package->objectName() == "pass")
-            continue;
-
+        bool forbid_package = Config.value("ForbidPackages").toString().contains(extension);
         QCheckBox *checkbox = new QCheckBox;
         checkbox->setObjectName(extension);
         checkbox->setText(Sanguosha->translate(extension));
-        checkbox->setChecked(! ban_packages.contains(extension));
+        checkbox->setChecked(!ban_packages.contains(extension) && !forbid_package);
+        checkbox->setEnabled(!forbid_package);
 
         extension_group->addButton(checkbox);
 
@@ -202,14 +204,10 @@ QWidget *ServerDialog::createAdvancedTab(){
     updateButtonEnablility(mode_group->checkedButton());
     connect(mode_group,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(updateButtonEnablility(QAbstractButton*)));
 
-    QPushButton *banpair_button = new QPushButton(tr("Ban pairs table ..."));
-    BanPairDialog *banpair_dialog = new BanPairDialog(this);
-    connect(banpair_button, SIGNAL(clicked()), banpair_dialog, SLOT(exec()));
-
-    connect(second_general_checkbox, SIGNAL(toggled(bool)), banpair_button, SLOT(setEnabled(bool)));
-
-	hegemony_checkbox = new QCheckBox(tr("Enable Hegemony"));
-    hegemony_checkbox->setEnabled(false);
+    hegemony_checkbox = new QCheckBox(tr("Enable Hegemony"));
+    hegemony_checkbox->setChecked(Config.EnableHegemony);
+    hegemony_checkbox->setEnabled(basara_checkbox->isChecked());
+    connect(basara_checkbox,SIGNAL(toggled(bool)),hegemony_checkbox, SLOT(setEnabled(bool)));
 
     announce_ip_checkbox = new QCheckBox(tr("Annouce my IP in WAN"));
     announce_ip_checkbox->setChecked(Config.AnnounceIP);
@@ -269,7 +267,7 @@ QWidget *ServerDialog::createAITab(){
     ai_enable_checkbox->setChecked(Config.EnableAI);
 
     role_predictable_checkbox = new QCheckBox(tr("Role predictable"));
-    role_predictable_checkbox->setChecked(Config.value("RolePredictable", true).toBool());
+    role_predictable_checkbox->setChecked(Config.value("RolePredictable", false).toBool());
 
     ai_chat_checkbox = new QCheckBox(tr("AI Chat"));
     ai_chat_checkbox->setChecked(Config.value("AIChat", true).toBool());
@@ -322,61 +320,159 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
         mini_scene_button->setEnabled(false);
     }
 }
-KOFBanlistDialog::KOFBanlistDialog(QDialog *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Select generals that are excluded in 1v1 mode"));
 
+void BanlistDialog::switchTo(int item)
+{
+    this->item = item;
+    list = lists.at(item);
+    if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
+}
+
+
+BanlistDialog::BanlistDialog(QWidget *parent, bool view)
+    :QDialog(parent),add2nd(NULL)
+{
+    setWindowTitle(tr("Select generals that are excluded"));
+
+    if(ban_list.isEmpty())
+        ban_list << "Roles" << "1v1" << "Basara" << "Hegemony" << "Pairs";
     QVBoxLayout *layout = new QVBoxLayout;
 
-    list = new QListWidget;
-    list->setIconSize(General::TinyIconSize);
-    list->setViewMode(QListView::IconMode);
-    list->setDragDropMode(QListView::NoDragDrop);
+    QTabWidget *tab = new QTabWidget;
+    layout->addWidget(tab);
+    connect(tab,SIGNAL(currentChanged(int)),this,SLOT(switchTo(int)));
 
-    QStringList banlist = Config.value("1v1/Banlist").toStringList();
-    foreach(QString name, banlist){
-        addGeneral(name);
+    foreach(QString item, ban_list)
+    {
+        if(item == "Pairs") continue;
+        QWidget *apage = new QWidget;
+
+        list = new QListWidget;
+        list->setObjectName(item);
+
+        QStringList banlist = Config.value(QString("Banlist/%1").arg(item)).toStringList();
+        foreach(QString name, banlist){
+            addGeneral(name);
+        }
+
+        lists << list;
+
+        QVBoxLayout * vlay = new QVBoxLayout;
+        vlay->addWidget(list);
+        //vlay->addLayout(hlayout);
+        apage->setLayout(vlay);
+
+        tab->addTab(apage,Sanguosha->translate(item));
     }
+
+    QWidget *apage = new QWidget;
+
+    list = new QListWidget;
+    list->setObjectName("Pairs");
+    this->list = list;
+    foreach(QString banned, BanPair::getAllBanSet().toList()){
+        addGeneral(banned);
+    }
+    foreach(QString banned, BanPair::getSecondBanSet().toList()){
+        add2ndGeneral(banned);
+    }
+    foreach(BanPair pair, BanPair::getBanPairSet().toList()){
+        addPair(pair.first, pair.second);
+    }
+
+    QVBoxLayout *vlay = new QVBoxLayout;
+    vlay->addWidget(list);
+    apage->setLayout(vlay);
+    tab->addTab(apage,Sanguosha->translate("Pairs"));
+    lists << list;
 
     QPushButton *add = new QPushButton(tr("Add ..."));
     QPushButton *remove = new QPushButton(tr("Remove"));
+    if(!view)add2nd = new QPushButton(tr("Add 2nd general ..."));
     QPushButton *ok = new QPushButton(tr("OK"));
 
-    connect(remove, SIGNAL(clicked()), this, SLOT(removeGeneral()));
     connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(this, SIGNAL(accepted()), this, SLOT(save()));
+    connect(this, SIGNAL(accepted()), this, SLOT(saveAll()));
+    connect(remove, SIGNAL(clicked()), this, SLOT(doRemoveButton()));
+    connect(add, SIGNAL(clicked()), this, SLOT(doAddButton()));
+    if(!view)connect(add2nd, SIGNAL(clicked()), this, SLOT(doAdd2ndButton()));
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
-    hlayout->addWidget(add);
-    hlayout->addWidget(remove);
-    hlayout->addWidget(ok);
+    if(!view){
+        hlayout->addWidget(add2nd);
+        add2nd->hide();
+        hlayout->addWidget(add);
+        hlayout->addWidget(remove);
+        list = lists.first();
+    }
 
-    layout->addWidget(list);
+    hlayout->addWidget(ok);
     layout->addLayout(hlayout);
+
     setLayout(layout);
 
-    FreeChooseDialog *chooser = new FreeChooseDialog(this, false);
-    connect(add, SIGNAL(clicked()), chooser, SLOT(exec()));
+    foreach(QListWidget * alist , lists)
+    {
+        if(alist->objectName() == "Pairs")continue;
+        alist->setIconSize(General::TinyIconSize);
+        alist->setViewMode(QListView::IconMode);
+        alist->setDragDropMode(QListView::NoDragDrop);
+    }
+}
+
+void BanlistDialog::addGeneral(const QString &name){
+    if(list->objectName() == "Pairs"){
+        QString text = QString(tr("Banned for all: %1")).arg(Sanguosha->translate(name));
+        QListWidgetItem *item = new QListWidgetItem(text);
+        item->setData(Qt::UserRole, QVariant::fromValue(name));
+        list->addItem(item);
+    }
+    else{
+        const General *general = Sanguosha->getGeneral(name);
+        QIcon icon(general->getPixmapPath("tiny"));
+        QString text = Sanguosha->translate(name);
+        QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+        item->setSizeHint(QSize(60,60));
+        item->setData(Qt::UserRole, name);
+    }
+}
+
+void BanlistDialog::add2ndGeneral(const QString &name){
+    QString text = QString(tr("Banned for second general: %1")).arg(Sanguosha->translate(name));
+    QListWidgetItem *item = new QListWidgetItem(text);
+    item->setData(Qt::UserRole, QVariant::fromValue(QString("+%1").arg(name)));
+    list->addItem(item);
+}
+
+void BanlistDialog::addPair(const QString &first, const QString &second){
+    QString trfirst = Sanguosha->translate(first);
+    QString trsecond = Sanguosha->translate(second);
+    QListWidgetItem *item = new QListWidgetItem(QString("%1 + %2").arg(trfirst, trsecond));
+    item->setData(Qt::UserRole, QVariant::fromValue(QString("%1+%2").arg(first, second)));
+    list->addItem(item);
+}
+
+void BanlistDialog::doAddButton(){
+    FreeChooseDialog *chooser = new FreeChooseDialog(this, (list->objectName() == "Pairs"));
     connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(addGeneral(QString)));
+    connect(chooser, SIGNAL(pair_chosen(QString,QString)), this, SLOT(addPair(QString, QString)));
+    chooser->exec();
 }
 
-void KOFBanlistDialog::addGeneral(const QString &name){
-    const General *general = Sanguosha->getGeneral(name);
-    QIcon icon(general->getPixmapPath("tiny"));
-    QString text = Sanguosha->translate(name);
-    QListWidgetItem *item = new QListWidgetItem(icon, text, list);
-    item->setData(Qt::UserRole, name);
+void BanlistDialog::doAdd2ndButton(){
+    FreeChooseDialog *chooser = new FreeChooseDialog(this, false);
+    connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(add2ndGeneral(QString)));
+    chooser->exec();
 }
 
-void KOFBanlistDialog::removeGeneral(){
+void BanlistDialog::doRemoveButton(){
     int row = list->currentRow();
     if(row != -1)
         delete list->takeItem(row);
 }
 
-void KOFBanlistDialog::save(){
+void BanlistDialog::save(){
     QSet<QString> banset;
 
     int i;
@@ -385,11 +481,21 @@ void KOFBanlistDialog::save(){
     }
 
     QStringList banlist = banset.toList();
-    Config.setValue("1v1/Banlist", QVariant::fromValue(banlist));
+    Config.setValue(QString("Banlist/%1").arg(ban_list.at(item)), QVariant::fromValue(banlist));
+}
+
+void BanlistDialog::saveAll()
+{
+    for(int i=0;i<lists.length();i++)
+    {
+        switchTo(i);
+        save();
+    }
+    BanPair::loadBanPairs();
 }
 
 void ServerDialog::edit1v1Banlist(){
-    KOFBanlistDialog *dialog = new KOFBanlistDialog(this);
+    BanlistDialog *dialog = new BanlistDialog(this);
     dialog->exec();
 }
 
@@ -461,13 +567,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
             button->setObjectName(itor.key());
             mode_group->addButton(button);
 
-            if(itor.key() == "02_1v1"){
-                // add 1v1 banlist edit button
-                QPushButton *edit_button = new QPushButton(tr("Banlist ..."));
-                connect(edit_button, SIGNAL(clicked()), this, SLOT(edit1v1Banlist()));
-                item_list << HLay(button, edit_button);
-
-            }else if(itor.key() == "06_3v3"){
+            if(itor.key() == "06_3v3"){
                 // add 3v3 options
                 QGroupBox *box = create3v3Box();
                 connect(button, SIGNAL(toggled(bool)), box, SLOT(setEnabled(bool)));
@@ -555,7 +655,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
     for(int i=0; i<item_list.length(); i++){
         QObject *item = item_list.at(i);
 
-        QVBoxLayout *side = i < item_list.length()/2 ? left : right;
+        QVBoxLayout *side = i < item_list.length()/2 - 2 ? left : right;
 
         if(item->isWidgetType()){
             QWidget *widget = qobject_cast<QWidget *>(item);
@@ -686,10 +786,8 @@ void Select3v3GeneralDialog::fillListWidget(QListWidget *list, const Package *pa
         item->setIcon(QIcon(general->getPixmapPath("tiny")));
 
         bool checked = false;
-        QStringList default_package;
-        default_package << "QJWM" << "TTXD" << "XZDD";
         if(ex_generals.isEmpty()){
-            checked = default_package.contains(pack->objectName());
+            checked = pack->objectName() == "standard";
         }else
             checked = ex_generals.contains(general->objectName());
 
@@ -779,6 +877,7 @@ bool ServerDialog::config(){
     Config.EnableEndless = endless_checkbox->isChecked();
     Config.EnableAnzhan = anzhan_checkbox->isChecked();
     Config.EnableBasara= basara_checkbox->isChecked() && basara_checkbox->isEnabled();
+    Config.EnableHegemony = hegemony_checkbox->isChecked() && hegemony_checkbox->isEnabled();
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
     Config.AnnounceIP = announce_ip_checkbox->isChecked();
     Config.Address = address_edit->text();
@@ -817,6 +916,7 @@ bool ServerDialog::config(){
     Config.setValue("EnableAnzhan", Config.EnableAnzhan);
     Config.setValue("EndlessTimes", endless_timebox->value());
     Config.setValue("EnableBasara",Config.EnableBasara);
+    Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
@@ -844,7 +944,6 @@ bool ServerDialog::config(){
     }
 
     Config.BanPackages = ban_packages.toList();
-    Config.BanPackages << "guben";
     Config.setValue("BanPackages", Config.BanPackages);
 
     if(Config.ContestMode){
@@ -889,13 +988,6 @@ void Server::daemonize(){
 
 Room *Server::createNewRoom(){
     Room *new_room = new Room(this, Config.GameMode);
-    QString error_msg = new_room->createLuaState();
-
-    if(!error_msg.isEmpty()){
-        QMessageBox::information(NULL, tr("Lua scripts error"), error_msg);
-        return NULL;
-    }
-
     current = new_room;
     rooms.insert(current);
 

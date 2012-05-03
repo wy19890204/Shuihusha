@@ -2,7 +2,8 @@
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
-#include "settings.h"
+#include "general.h"
+#include "room.h"
 
 NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
     :Slash(suit, number)
@@ -285,7 +286,7 @@ void FireAttack::onEffect(const CardEffectStruct &effect) const{
     QString suit_str = card->getSuitString();
     QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
     QString prompt = QString("@fire-attack:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-    if(room->askForCard(effect.from, pattern, prompt)){
+    if(room->askForCard(effect.from, pattern, prompt, QVariant(), CardDiscarded)){
         DamageStruct damage;
         damage.card = this;
         damage.from = effect.from;
@@ -348,6 +349,7 @@ void IronChain::onEffect(const CardEffectStruct &effect) const{
     effect.to->setChained(chained);
 
     effect.to->getRoom()->broadcastProperty(effect.to, "chained");
+    effect.to->getRoom()->setEmotion(effect.to, "chain");
 }
 
 SupplyShortage::SupplyShortage(Card::Suit suit, int number)

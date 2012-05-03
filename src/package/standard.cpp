@@ -6,8 +6,8 @@
 #include "clientplayer.h"
 #include "engine.h"
 #include "client.h"
+#include "exppattern.h"
 #include "standard-skillcards.h"
-#include "carditem.h"
 
 QString BasicCard::getType() const{
     return "basic";
@@ -86,7 +86,7 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }
 
     if(equipped)
-        room->throwCard(equipped);
+        room->throwCard(equipped, source);
 
     LogMessage log;
     log.from = target;
@@ -248,7 +248,7 @@ const DelayedTrick *DelayedTrick::CastFrom(const Card *card){
     int number = card->getNumber();
     if(card->inherits("DelayedTrick"))
         return qobject_cast<const DelayedTrick *>(card);
-    else if(card->isNDTrick()){
+    else if(card->getSuit() == Card::Diamond){
         trick = new Indulgence(suit, number);
         trick->addSubcard(card->getId());
     }
@@ -604,8 +604,6 @@ TestPackage::TestPackage()
     new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);
 
-    addMetaObject<CheatCard>();
-    addMetaObject<ChangeCard>();
     patterns["."] = new ExpPattern(".|.|.|hand");
     patterns[".S"] = new ExpPattern(".|spade|.|hand");
     patterns[".C"] = new ExpPattern(".|club|.|hand");
