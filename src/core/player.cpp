@@ -243,7 +243,7 @@ QString Player::getGeneralName() const{
     if(general)
         return general->objectName();
     else
-        return "";
+        return QString();
 }
 
 void Player::setGeneral2Name(const QString &general_name){
@@ -341,7 +341,7 @@ bool Player::hasLordSkill(const QString &skill_name) const{
     if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
-    if(isLord())
+    if(isLord() || ServerInfo.EnableHegemony)
         return hasInnateSkill(skill_name);
 
     if(hasSkill("weidi")){
@@ -915,8 +915,6 @@ void Player::copyFrom(Player* p)
     b->jilei_set        = QSet<QString> (a->jilei_set);
 
     b->tag              = QVariantMap(a->tag);
-
-    b->skills_enhance   = QSet<QString> (a->skills_enhance);
 }
 
 QList<const Player *> Player::getSiblings() const{
@@ -927,12 +925,4 @@ QList<const Player *> Player::getSiblings() const{
     }
 
     return siblings;
-}
-
-bool Player::isSkillEnhance(const QString skill_name,const int index) const{
-    return skills_enhance.contains(skill_name + QString::number(index));
-}
-
-void Player::enHanceSkill(const QString &skill_name,const int index){
-    skills_enhance << (skill_name + QString::number(index)) ;
 }

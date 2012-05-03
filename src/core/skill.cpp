@@ -32,17 +32,17 @@ QString Skill::getDescription() const{
     return Sanguosha->translate(":" + objectName());
 }
 
-QString Skill::getText(const bool full) const{
+QString Skill::getText() const{
     QString skill_name = Sanguosha->translate(objectName());
-    if(full){
-        switch(frequency){
-        case Skill::NotFrequent:
-        case Skill::Frequent: break;
-        case Skill::Limited: skill_name.append(tr(" [Limited]")); break;
-        case Skill::Compulsory: skill_name.append(tr(" [Compulsory]")); break;
-        case Skill::Wake: skill_name.append(tr(" [Wake]")); break;
-        }
+
+    switch(frequency){
+    case Skill::NotFrequent:
+    case Skill::Frequent: break;
+    case Skill::Limited: skill_name.append(tr(" [Limited]")); break;
+    case Skill::Compulsory: skill_name.append(tr(" [Compulsory]")); break;
+    case Skill::Wake: skill_name.append(tr(" [Wake]")); break;
     }
+
     return skill_name;
 }
 
@@ -211,13 +211,6 @@ bool TriggerSkill::triggerable(const ServerPlayer *target) const{
     return target->isAlive() && target->hasSkill(objectName());
 }
 
-PassiveSkill::PassiveSkill(const QString &name)
-    :GameStartSkill(name){
-}
-void PassiveSkill::onGameStart(ServerPlayer *player) const{
-    onAcquire(player);
-}
-
 ScenarioRule::ScenarioRule(Scenario *scenario)
     :TriggerSkill(scenario->objectName())
 {
@@ -228,7 +221,7 @@ int ScenarioRule::getPriority() const{
     return 3;
 }
 
-bool ScenarioRule::triggerable(const ServerPlayer *target) const{
+bool ScenarioRule::triggerable(const ServerPlayer *) const{
     return true;
 }
 
@@ -271,7 +264,7 @@ DrawCardsSkill::DrawCardsSkill(const QString &name)
     events << DrawNCards;
 }
 
-bool DrawCardsSkill::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+bool DrawCardsSkill::trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
     int n = data.toInt();
     data = getDrawNum(player, n);
     return false;

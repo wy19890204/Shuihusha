@@ -53,7 +53,6 @@ public:
     QString getPixmapPath(const QString &category) const;
     QString getPackage() const;
     QString getSkillDescription() const;
-    QString getBasicName() const;
 
     static QSize BigIconSize;
     static QSize SmallIconSize;

@@ -49,7 +49,6 @@ public:
         Basic,
         Trick,
         Equip,
-        Events,
     };
 
     // constructor
@@ -117,6 +116,11 @@ public:
     bool isMute() const;
     bool willThrow() const;
     bool canJilei() const;
+    bool isOwnerDiscarded() const;
+
+    void setFlags(const QString &flag) const;
+    bool hasFlag(const QString &flag) const;
+    void clearFlags() const;
 
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
     virtual void use(Room *room, ServerPlayer *source,  const QList<ServerPlayer *> &targets) const;
@@ -144,11 +148,14 @@ protected:
     bool mute;
     bool will_throw;
     bool can_jilei;
+    bool owner_discarded;
 
 private:
     Suit suit;
     int number;
     int id;
+
+    mutable QStringList flags;
 };
 
 class SkillCard: public Card{
