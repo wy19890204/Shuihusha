@@ -77,7 +77,6 @@ void Room::initCallbacks(){
 
     //Client request
     callbacks["networkDelayTestCommand"] = &Room::networkDelayTestCommand;
-    callbacks["msgCommand"] = &Room::commonCommand;
 }
 
 ServerPlayer *Room::getCurrent() const{
@@ -4016,16 +4015,4 @@ Room* Room::duplicate()
     room->fillRobotsCommand(NULL, 0);
     room->copyFrom(this);
     return room;
-}
-
-void Room::showMsgbox(ServerPlayer *player, const QString &title, const QString &explanation){
-    QString msg_str;
-    if(explanation.isNull())
-        msg_str = QString("%1:%2").arg(title).arg(explanation);
-    else
-        msg_str = title;
-    player->invoke("msgBox", msg_str);
-}
-
-void Room::commonCommand(ServerPlayer *player, const QString &arg){
 }

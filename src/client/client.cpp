@@ -160,9 +160,6 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["recoverGeneral"] = &Client::recoverGeneral;
     callbacks["revealGeneral"] = &Client::revealGeneral;   
 
-    //msg
-    callbacks["msgBox"] = &Client::msgBox;
-
     ask_dialog = NULL;
     m_isUseCard = false;
 
@@ -1985,24 +1982,4 @@ void Client::onPlayerChooseOrder(){
 void Client::updateStateItem(const QString &state_str)
 {
     emit role_state_changed(state_str);
-}
-
-void Client::msgBox(const QString &msg_str){
-    QString head, foot;
-    if(msg_str.contains(QChar(':'))){
-        QStringList texts = msg_str.split(":");
-        head = texts.first();
-        foot = texts.last();
-    }else
-        head = msg_str;
-    //skill_to_invoke = msg_str;
-
-    QString text = Sanguosha->translate(head);
-    if(foot.isNull())
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(":" + head)));
-    else
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(foot)));
-
-    prompt_doc->setHtml(text);
-    setStatus(MsgBox);
 }

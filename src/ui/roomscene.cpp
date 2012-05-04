@@ -2162,15 +2162,8 @@ void RoomScene::updateStatus(Client::Status status){
 
             break;
         }
-    case Client::MsgBox:{
-            prompt_box->appear();
-            ok_button->setEnabled(true);
-            cancel_button->setEnabled(false);
-            discard_button->setEnabled(false);
-
-            break;
-        }
     }
+
 
     foreach(QAbstractButton *button, skill_buttons){
         const ViewAsSkill *skill = button2skill.value(button, NULL);
