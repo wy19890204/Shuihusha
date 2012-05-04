@@ -263,7 +263,7 @@ public:
             room->playSkillEffect(objectName());
 
             int n = qMin(5, room->alivePlayerCount());
-            room->doGuanxing(zhuge, room->getNCards(n, false), false);
+            room->askForGuanxing(zhuge, room->getNCards(n, false), false);
         }
 
         return false;

@@ -12,8 +12,6 @@
 #include <QMenu>
 #include <QPixmapCache>
 
-using namespace QSanProtocol;
-
 Dashboard::Dashboard(QGraphicsItem *button_widget)
     :left_pixmap("image/system/dashboard-equip.png"), right_pixmap("image/system/dashboard-avatar.png"),
     button_widget(button_widget), selected(NULL), avatar(NULL),
@@ -35,7 +33,6 @@ Dashboard::Dashboard(QGraphicsItem *button_widget)
     sort_type = 0;
 
     animations = new EffectAnimation();
-    _addProgressBar();
 }
 
 void Dashboard::createLeft(){
@@ -432,39 +429,21 @@ QPushButton *Dashboard::addButton(const QString &name, int x, bool from_left){
     return button;
 }
 
-void Dashboard::_addProgressBar()
-{    
-    m_progressBar.setFixedSize(300, 15);
-    m_progressBar.setTextVisible(false);
+QProgressBar *Dashboard::addProgressBar(){
+    QProgressBar *progress_bar = new QProgressBar;
+    progress_bar->setMinimum(0);
+    progress_bar->setMaximum(100);
+    progress_bar->setFixedSize(300, 15);
+    progress_bar->setTextVisible(false);
+
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(right);
-    widget->setWidget(&m_progressBar);
+    widget->setWidget(progress_bar);
     widget->setParentItem(middle);
     widget->setPos(300, - 25);
 
-    m_progressBar.hide();    
-}
+    progress_bar->hide();
 
-void Dashboard::hideProgressBar()
-{
-    m_mutex.lock();
-    m_progressBar.hide();
-    m_mutex.unlock();
-    
-}
-
-void Dashboard::showProgressBar()
-{
-    m_mutex.lock();
-    m_progressBar.show();
-    m_mutex.unlock();
-}
-
-void Dashboard::changeProgress(Countdown countdown)
-{
-    m_mutex.lock();
-    m_progressBar.setValue(countdown.m_current);
-    m_progressBar.setMaximum(countdown.m_max);    
-    m_mutex.unlock();
+    return progress_bar;
 }
 
 void Dashboard::drawHp(QPainter *painter) const{
