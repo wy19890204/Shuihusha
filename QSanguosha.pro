@@ -70,7 +70,6 @@ SOURCES += \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
 	src/package/stanley.cpp \
-	src/scenario/scenario.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/miniscenarios.cpp \

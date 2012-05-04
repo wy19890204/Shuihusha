@@ -381,6 +381,7 @@ private:
 };
 
 // test main
+#include "carditem.h"
 class Ubuna:public ZeroCardViewAsSkill{
 public:
     Ubuna():ZeroCardViewAsSkill("ubuna"){

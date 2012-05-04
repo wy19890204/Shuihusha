@@ -72,15 +72,6 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             name_item->setBackgroundColor(Qt::gray);
             name_item->setTextColor(Qt::white);
         }
-        if(general->getPackage() == "guben"){
-            nickname_item->setBackgroundColor(Qt::cyan);
-            name_item->setBackgroundColor(Qt::cyan);
-        }
-        else if(general->getPackage() == "pass"){
-            nickname_item->setBackgroundColor(Qt::darkMagenta);
-            name_item->setBackgroundColor(Qt::darkMagenta);
-        }
-
         QTableWidgetItem *kingdom_item = new QTableWidgetItem(kingdom);
         kingdom_item->setTextAlignment(Qt::AlignCenter);
         kingdom_item->setBackgroundColor(Sanguosha->getKingdomColor(general->getKingdom()));
@@ -294,13 +285,8 @@ void GeneralOverview::playEffect()
 #include "client.h"
 void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
 {
-    if(!ServerInfo.FreeChoose)
-        return;
-    if(Self){
-        int row = ui->tableWidget->currentRow();
-        if(row >= 0){
-            QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-            ClientInstance->changeGeneral(general_name);
-        }
+    if(ServerInfo.FreeChoose && Self){
+        QString general_name = item->data(Qt::UserRole).toString();
+        ClientInstance->requestCheatChangeGeneral(general_name);
     }
 }

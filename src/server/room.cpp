@@ -1015,11 +1015,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 }
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
-    QString answer;
     QVariant asked = pattern;
     if(thread->trigger(CardUseAsk, player, asked))
         return NULL;
 
+    CardUseStruct card_use;
     bool isCardUsed = false;
     AI *ai = player->getAI();
     if(ai){
@@ -1392,7 +1392,7 @@ ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool includ
 }
 
 ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
-    foreach(ServerPlayer *player, m_alive_players){
+    foreach(ServerPlayer *player, m_alivePlayers){
         if(player->isKongcheng())
             continue;
         foreach(const Card *cd, player->getHandcards()){
@@ -2076,6 +2076,7 @@ void Room::chooseGenerals(){
     if(!Config.EnableHegemony)
     {
         QStringList lord_list;
+        ServerPlayer *the_lord = getLord();
         if(Config.EnableSame)
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
         else if(the_lord->getState() == "robot")
@@ -2190,7 +2191,7 @@ void Room::run(){
         setPlayerProperty(lord, "general", "shenlvbu1");
 
         const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *windpack = Sanguosha->findChild<const Package *>("wind");
+        //const Package *windpack = Sanguosha->findChild<const Package *>("wind");
 
         QList<const General *> generals = stdpack->findChildren<const General *>();
         //generals << windpack->findChildren<const General *>();
@@ -3775,7 +3776,7 @@ QList<ServerPlayer *> Room::getLieges(const QString &kingdom, ServerPlayer *lord
 
 QList<ServerPlayer *> Room::getMenorWomen(const QString &gender, ServerPlayer *except) const{
     QList<ServerPlayer *> targets;
-    foreach(ServerPlayer *player, m_alive_players){
+    foreach(ServerPlayer *player, m_alivePlayers){
         if(except && player == except)
             continue;
         if((player->getGeneral()->isMale() && gender == "male") ||
@@ -3801,7 +3802,7 @@ QList<ServerPlayer *> Room::getNextandPrevious(ServerPlayer *self, bool includem
 
 int Room::getKingdoms() const{
     QSet<QString> kingdom_set;
-    foreach(ServerPlayer *tmp, m_alive_players)
+    foreach(ServerPlayer *tmp, m_alivePlayers)
         kingdom_set << tmp->getKingdom();
     return kingdom_set.size();
 }
@@ -4024,5 +4025,4 @@ void Room::showMsgbox(ServerPlayer *player, const QString &title, const QString 
     else
         msg_str = title;
     player->invoke("msgBox", msg_str);
-    getResult("msgCommand", player);
 }
