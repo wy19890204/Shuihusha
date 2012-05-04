@@ -109,7 +109,7 @@ public:
 class Yixian: public TriggerSkill{
 public:
     Yixian():TriggerSkill("yixian"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual int getPriority() const{

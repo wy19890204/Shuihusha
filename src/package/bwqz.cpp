@@ -472,7 +472,7 @@ public:
 class Manli: public TriggerSkill{
 public:
     Manli():TriggerSkill("manli"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *turtle, QVariant &data) const{

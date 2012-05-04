@@ -237,7 +237,7 @@ public:
 class Dujian: public TriggerSkill{
 public:
     Dujian():TriggerSkill("dujian"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual int getPriority() const{
@@ -324,7 +324,7 @@ public:
 class Juesi: public TriggerSkill{
 public:
     Juesi():TriggerSkill("juesi"){
-        events << Predamage;
+        events << DamageProceed;
         frequency = Compulsory;
     }
 

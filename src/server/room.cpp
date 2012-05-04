@@ -2597,18 +2597,7 @@ void Room::damage(const DamageStruct &damage_data){
         if(thread->trigger(DamageProceed, damage_data.from, data))
             return;
     }
-/*
-    if(damage_data.chain && damage_data.from &&
-       (damage_data.from->hasSkill("yixian") ||
-        damage_data.from->hasSkill("qiangqu") ||
-        damage_data.from->hasSkill("fanwu") ||
-        damage_data.from->hasSkill("manli") ||
-        damage_data.from->hasSkill("dujian") ||
-        damage_data.from->hasSkill("juesi"))){
-        if(thread->trigger(Predamage, damage_data.from, data))
-            return;
-    }
-*/
+
     // predamaged
     bool broken = thread->trigger(Predamaged, damage_data.to, data);
     if(broken)
