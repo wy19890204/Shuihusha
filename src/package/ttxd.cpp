@@ -506,7 +506,7 @@ public:
 class Qiangqu:public TriggerSkill{
 public:
     Qiangqu():TriggerSkill("qiangqu"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{

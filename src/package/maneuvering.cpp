@@ -4,6 +4,7 @@
 #include "carditem.h"
 #include "general.h"
 #include "room.h"
+#include "settings.h"
 
 NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
     :Slash(suit, number)

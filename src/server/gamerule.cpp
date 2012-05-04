@@ -264,8 +264,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             break;
         }
     case CardFinished: {
+            CardUseStruct use = data.value<CardUseStruct>();
             if(data.canConvert<CardUseStruct>()){
-                CardUseStruct use = data.value<CardUseStruct>();
                 if(use.card->inherits("Snatch") && !Config.BanPackages.contains("events")){
                     ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
                     if(source){

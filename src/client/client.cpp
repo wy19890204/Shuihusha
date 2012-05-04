@@ -160,9 +160,6 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["recoverGeneral"] = &Client::recoverGeneral;
     callbacks["revealGeneral"] = &Client::revealGeneral;   
 
-    //msg
-    callbacks["msgBox"] = &Client::msgBox;
-
     ask_dialog = NULL;
     m_isUseCard = false;
 
@@ -387,13 +384,8 @@ void Client::removePlayer(const QString &player_name){
 
 void Client::drawCards(const QString &cards_str){
     QList<const Card*> cards;
-    bool unhide = true;
     QStringList card_list = cards_str.split("+");
     foreach(QString card_str, card_list){
-        if(card_str.right(1) == "H"){
-            unhide = false;
-            card_str.chop(1);
-        }
         int card_id = card_str.toInt();
         const Card *card = Sanguosha->getCard(card_id);
         cards << card;
@@ -403,18 +395,17 @@ void Client::drawCards(const QString &cards_str){
     pile_num -= cards.length();
     updatePileNum();
 
-    emit cards_drawed(cards, unhide);
+    emit cards_drawed(cards);
 }
 
 void Client::drawNCards(const QString &draw_str){
-    QRegExp pattern("(\\w+):(\\d+):(\\d+)");
+    QRegExp pattern("(\\w+):(\\d+)");
     if(!pattern.exactMatch(draw_str))
         return;
 
     QStringList texts = pattern.capturedTexts();
     ClientPlayer *player = findChild<ClientPlayer*>(texts.at(1));
     int n = texts.at(2).toInt();
-    bool unhide = texts.at(3).toInt() == 1 ? true : false;
 
     if(player && n>0){
         if(!Self->hasFlag("marshalling")){
@@ -423,7 +414,7 @@ void Client::drawNCards(const QString &draw_str){
         }
 
         player->handCardChange(n);
-        emit n_cards_drawed(player, n, unhide);
+        emit n_cards_drawed(player, n);
     }
 }
 
@@ -784,7 +775,7 @@ void Client::_askForCardOrUseCard(const Json::Value &cardUsage){
         const Skill *skill = Sanguosha->getSkill(skill_name);
         if(skill){
             QString text = prompt_doc->toHtml();
-            text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
+            text.append(tr("<br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
             prompt_doc->setHtml(text);
         }
     }
@@ -818,7 +809,7 @@ void Client::askForSkillInvoke(const Json::Value &arg){
 
     const Skill *skill = Sanguosha->getSkill(skill_name);
     if(skill){
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
+        text.append(tr("<br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
     }
 
     prompt_doc->setHtml(text);
@@ -1991,24 +1982,4 @@ void Client::onPlayerChooseOrder(){
 void Client::updateStateItem(const QString &state_str)
 {
     emit role_state_changed(state_str);
-}
-
-void Client::msgBox(const QString &msg_str){
-    QString head, foot;
-    if(msg_str.contains(QChar(':'))){
-        QStringList texts = msg_str.split(":");
-        head = texts.first();
-        foot = texts.last();
-    }else
-        head = msg_str;
-    //skill_to_invoke = msg_str;
-
-    QString text = Sanguosha->translate(head);
-    if(foot.isNull())
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(":" + head)));
-    else
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(Sanguosha->translate(foot)));
-
-    prompt_doc->setHtml(text);
-    setStatus(MsgBox);
 }

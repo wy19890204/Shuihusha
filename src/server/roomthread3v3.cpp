@@ -18,7 +18,7 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     QList<const General *> generals;
 
     const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-    const Package *windpack = Sanguosha->findChild<const Package *>("wind");
+    //const Package *windpack = Sanguosha->findChild<const Package *>("wind");
 
     generals << stdpack->findChildren<const General *>()
              //<< windpack->findChildren<const General *>()

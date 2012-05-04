@@ -49,6 +49,7 @@ public:
         Basic,
         Trick,
         Equip,
+        Events,
     };
 
     // constructor

@@ -261,7 +261,6 @@ public:
     void trustCommand(ServerPlayer *player, const QString &arg);
     void kickCommand(ServerPlayer *player, const QString &arg);
     void processResponse(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket* arg);
-    void commonCommand(ServerPlayer *player, const QString &arg);
     void addRobotCommand(ServerPlayer *player, const QString &arg);
     void fillRobotsCommand(ServerPlayer *player, const QString &arg);
     void broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
@@ -269,7 +268,6 @@ public:
     void broadcastInvoke(const char *method, const QString &arg = ".", ServerPlayer *except = NULL);
     void startTest(const QString &to_test);
     void networkDelayTestCommand(ServerPlayer *player, const QString &);
-    void showMsgbox(ServerPlayer *player, const QString &title, const QString &explanation = QString());
 
 protected:
     virtual void run();

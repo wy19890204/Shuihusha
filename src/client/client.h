@@ -33,7 +33,6 @@ public:
         AskForYiji,
         AskForGuanxing,
         AskForGongxin,
-        MsgBox,
     };
 
     explicit Client(QObject *parent, const QString &filename = QString());
@@ -178,8 +177,6 @@ public:
 
     void attachSkill(const QString &skill_name);
     void detachSkill(const QString &skill_name);
-    
-    void msgBox(const QString &msg_str);
 
     // public fields
     bool m_isDiscardActionRefusable;

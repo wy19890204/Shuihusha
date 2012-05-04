@@ -38,6 +38,7 @@ QString Card::Suit2String(Suit suit){
     }
 }
 
+
 QStringList Card::IdsToStrings(const QList<int> &ids){
     QStringList strings;
     foreach(int card_id, ids)
@@ -214,7 +215,7 @@ QString Card::getLogName() const{
     QString number_string;
 
     if(suit != Card::NoSuit)
-        suit_char = QString("<img src='image/system/log/%1.png' />").arg(getSuitString());
+        suit_char = QString("<img src='image/system/log/%1.png' height = 12/>").arg(getSuitString());
     else
         suit_char = tr("NoSuit");
 

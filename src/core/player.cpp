@@ -501,9 +501,9 @@ void Player::setFaceUp(bool face_up){
 }
 
 int Player::getMaxCards() const{
-    int extra = 0;
+    int extra = 0, total = 0;
     if(Config.MaxHpScheme == 2 && general2){
-        int total = general->getMaxHp() + general2->getMaxHp();
+        total = general->getMaxHp() + general2->getMaxHp();
         if(total % 2 != 0)
             extra = 1;
     }
@@ -521,9 +521,10 @@ int Player::getMaxCards() const{
     }
 
     int shensuan = hasSkill("shensuan") ? 2 : 0;
-    int kezhi = hasSkill("kezhi_p") ? 1 : 0;
 
-    return qMax(hp,0) + extra + shaxue + shensuan + kezhi;
+    total = qMax(hp,0) + extra + shaxue + shensuan;
+
+    return total;
 }
 
 QString Player::getKingdom() const{
@@ -794,9 +795,6 @@ bool Player::canSlashWithoutCrossbow() const{
         return true;
     if(hasSkill("qinlong") && !hasEquip())
         return true;
-
-    if(hasSkill("nuhou_p"))
-        n++;
     int slash_count = getSlashCount();
     return slash_count < n;
 }

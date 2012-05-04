@@ -141,7 +141,7 @@ public:
 class Fanwu: public TriggerSkill{
 public:
     Fanwu():TriggerSkill("fanwu"){
-        events << Predamage;
+        events << DamageProceed;
         view_as_skill = new FanwuViewAsSkill;
     }
 
