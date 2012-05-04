@@ -4026,3 +4026,6 @@ void Room::showMsgbox(ServerPlayer *player, const QString &title, const QString 
         msg_str = title;
     player->invoke("msgBox", msg_str);
 }
+
+void Room::commonCommand(ServerPlayer *player, const QString &arg){
+}

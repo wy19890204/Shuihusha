@@ -1737,11 +1737,6 @@ void RoomScene::useSelectedCard(){
 
             break;
         }
-    case Client::MsgBox:{
-            prompt_box->disappear();
-            ClientInstance->invokeSkill(true);
-            break;
-        }
     }
 
     const ViewAsSkill *skill = dashboard->currentSkill();
