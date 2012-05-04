@@ -126,43 +126,24 @@ void Settings::init(){
 
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
-    roles_ban << "zhugejin";
+    roles_ban << "ubuntenkei";
 
     kof_ban << "andaoquan" << "shenwuyong" << "wangdingliu" << "zhaoji";
 
-    basara_ban << "dongzhuo" << "zuoci" << "shenzhugeliang" << "shenlvbu" << "zhanggongqi" << "zhugejin";
+    basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
 
     hegemony_ban.append(basara_ban);
-    hegemony_ban << "xiahoujuan" << "zhugejin";
+    hegemony_ban << "jiangsong";
     foreach(QString general, Sanguosha->getLimitedGeneralNames()){
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
     }
 
-    pairs_ban << "shencaocao" << "dongzhuo" << "zuoci" << "zhoutai" << "+luboyan" << "liaohua"
-              << "caocao+caochong" << "xushu+zhugeliang" << "simayi+caizhaoji" << "wisjiangwei+zhanggongqi"
-                << "zhenji+zhangjiao" << "zhenji+simayi" << "huanggai+yuanshao"
-                << "huanggai+wuguotai" << "dengshizai+caoren" << "dengshizai+shenlvbu" << "dengshizai+bgm_diaochan"
-                << "luxun+liubei" << "luxun+wolong" << "luxun+yuji" << "luxun+daqiao"
-                << "huangyueying+wolong" << "huangyueying+yuanshao" << "huangyueying+ganning"
-                << "yanliangwenchou+sunce" << "yanliangwenchou+huanggai" << "yanliangwenchou+huangyueying"
-                << "dengai+guojia" << "dengai+simayi" << "dengai+zhangjiao"
-                << "dengai+shenzhugeliang" << "dengai+shensimayi"
-                << "jiangboyue+huangyueying" << "jiangboyue+wolong" << "jiangboyue+yuanshao"
-                << "jiangboyue+yanliangwenchou" << "jiangboyue+ganning" << "jiangboyue+luxun" << "jiangboyue+zhanggongqi"
-                << "weiyan+huanggai" << "caoren+shenlvbu" << "bgm_pangtong+huanggai"
-                << "fazheng+xiahoudun" << "luxun+zhanggongqi" << "sunquan+lingtong"
-                << "sunquan+sunshangxiang" << "wuguotai+guojia" << "wuguotai+xunyu"
-                << "caizhaoji+caoren" << "caizhaoji+dengshizai" << "yuanshu+zhanghe" << "caizhaoji+caozhi" << "caizhaoji+shenlvbu"
-                << "yuanshu+lvmeng" << "yuanshu+caochong" << "huatuo+guojia"
-                << "huatuo+xunyu" << "huatuo+xiahoujuan" << "huatuo+zhanggongqi"
-                << "lukang+liubei" << "lukang+wolong" << "lukang+yuji" << "jiangboyue+lukang"
-                << "lukang+zhanggongqi" << "bgm_diaochan+caoren" << "bgm_diaochan+shenlvbu"
-                << "bgm_diaochan+caizhaoji" << "caozhi+shenlvbu" << "caoren+caozhi"
-                << "guanxingzhangbao+luxun" << "guanxingzhangbao+sunce" << "bgm_caoren+caoren"
-                << "bgm_caoren+caozhi" << "bgm_caoren+shenlvbu" << "bgm_caoren+bgm_diaochan"
-                << "bgm_caoren+dengshizai" << "bgm_caoren+caizhaoji" << "bgm_pangtong+huanggai"
-                << "huanggai+guanxingzhangbao";
+    pairs_ban << "shenwuyong"
+              << "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
+              << "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
+              << "oupeng+wangqing" << "gaoqiu+luozhenren" << "jiashi+shenzhangqing"
+              << "husanniang+zhaoji" << "dingdesun+wangqing";
 
     QStringList banlist = value("Banlist/Roles").toStringList();
     foreach(QString ban_general, roles_ban){
@@ -200,7 +181,7 @@ void Settings::init(){
     setValue("Banlist/Pairs", banlist);
 
     QStringList forbid_packages;
-    forbid_packages << "Special3v3";
+    forbid_packages << "test";
     setValue("ForbidPackages", forbid_packages.join("+"));
 
 //ui
