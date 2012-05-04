@@ -359,9 +359,9 @@ function sgs.ai_weapon_value.qinggang_sword(self, enemy)
 end
 
 sgs.ai_skill_invoke.ice_sword=function(self, data)
-	if self.player:hasFlag("drank") then return false end
-	local effect = data:toSlashEffect() 
-	local target = effect.to
+	local damage = data:toDamage()
+	local target = damage.to
+	if damage.card:hasFlag("drank") then return false end	
 	if self:isFriend(target) then
 		if self:isWeak(target) then return true
 		elseif target:getLostHp()<1 then return false end
@@ -392,10 +392,10 @@ end
 
 sgs.ai_skill_cardask["@axe"] = function(self, data, pattern, target)
 	if target and self:isFriend(target) then return "." end
-
+	local effect = data:toSlashEffect()
 	local allcards = self.player:getCards("he")
 	allcards = sgs.QList2Table(allcards)
-	if self.player:hasFlag("drank") or #allcards-2 >= self.player:getHp() or (self.player:hasSkill("kuanggu") and self.player:isWounded()) then
+	if effect.slash:hasFlag("drank") or #allcards-2 >= self.player:getHp() or (self.player:hasSkill("kuanggu") and self.player:isWounded()) then
 		local cards = self.player:getCards("h")
 		cards = sgs.QList2Table(cards)
 		local index
@@ -439,6 +439,7 @@ function sgs.ai_slash_weaponfilter.axe(to, self)
 end
 
 function sgs.ai_weapon_value.axe(self, enemy)
+	if self:hasSkills("manli|liba|meicha|juesi|dujian",self.player) then return 6 end
 	if enemy and enemy:getHp() < 3 then return 3 - enemy:getHp() end
 end
 
@@ -458,6 +459,37 @@ function sgs.ai_weapon_value.blade(self, enemy)
 	if not enemy then return self:getCardsNum("Slash") end
 end
 
+function sgs.ai_cardsview.spear(class_name, player)
+	if class_name == "Slash" then
+		local cards = player:getCards("he")	
+		cards = sgs.QList2Table(cards)
+		for _, acard in ipairs(cards) do
+			if acard:inherits("Slash") then return end
+		end
+		local cards = player:getCards("h")	
+		cards=sgs.QList2Table(cards)
+		local newcards = {}
+		for _, card in ipairs(cards) do
+			if not card:inherits("Peach") then table.insert(newcards, card) end
+		end
+		if #newcards<(player:getHp()+1) then return nil end
+		if #newcards<2 then return nil end
+
+		local suit1 = newcards[1]:getSuitString()
+		local card_id1 = newcards[1]:getEffectiveId()
+	
+		local suit2 = newcards[2]:getSuitString()
+		local card_id2 = newcards[2]:getEffectiveId()
+
+		local suit="no_suit"
+		if newcards[1]:isBlack() == newcards[2]:isBlack() then suit = suit1 end
+
+		local card_str = ("slash:spear[%s:%s]=%d+%d"):format(suit, 0, card_id1, card_id2)
+
+		return card_str
+	end
+end
+
 local spear_skill={}
 spear_skill.name="spear"
 table.insert(sgs.ai_skills,spear_skill)
@@ -467,7 +499,6 @@ spear_skill.getTurnUseCard=function(self,inclusive)
 
 	if #cards<(self.player:getHp()+1) then return nil end
 	if #cards<2 then return nil end
-	if self:getCard("Slash") then return nil end
 
 	self:sortByUseValue(cards,true)
 
@@ -493,13 +524,13 @@ function sgs.ai_slash_weaponfilter.fan(to)
 end
 
 sgs.ai_skill_invoke.kylin_bow = function(self, data)
-	local effect = data:toSlashEffect()
+	local damage = data:toDamage()
 
-	if self:hasSkills(sgs.lose_equip_skill, effect.to) then
-		return self:isFriend(effect.to)
+	if self:hasSkills(sgs.lose_equip_skill, damage.to) then
+		return self:isFriend(damage.to)
 	end
 
-	return self:isEnemy(effect.to)
+	return self:isEnemy(damage.to)
 end
 
 function sgs.ai_slash_weaponfilter.kylin_bow(to)
@@ -634,13 +665,15 @@ function SmartAI:useCardDuel(duel, use)
 	local friends = self:exclude(self.friends_noself, duel)
 	local target 
 	local n1 = self:getCardsNum("Slash")
-	if self.player:hasSkill("wushuang") then n1 = n1 * 2 end	local ptarget = self:getPriorTarget()
+	if self.player:hasSkill("wushuang") then n1 = n1 * 2 end
+	local ptarget = self:getPriorTarget()
 	if ptarget then
 		local target = ptarget
 		local n2 = target:getHandcardNum()
 		if target:hasSkill("wushuang") then n2 = n2*2 end
 		local useduel
-		if target and self:objectiveLevel(target) > 3 and self:hasTrickEffective(duel, target) then
+		if target and self:objectiveLevel(target) > 3 and self:hasTrickEffective(duel, target) 
+			and not self:cantbeHurt(target) then
 			if n1 >= n2 then
 				useduel = true
 			elseif n2 > n1*2 + 1 then
@@ -821,7 +854,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 	end
 
 	self:sort(self.enemies,"defense")
-	if sgs.getDefense(self.enemies[1]) >= 8 then self:sort(self.enemies, "threat") end
+	if #self.enemies > 0 and sgs.getDefense(self.enemies[1]) >= 8 then self:sort(self.enemies, "threat") end
 	local enemies = self:exclude(self.enemies, card)
 	self:sort(self.friends_noself,"defense")
 	local friends = self:exclude(self.friends_noself, card)
@@ -965,7 +998,8 @@ function SmartAI:useCardCollateral(card, use)
 	self:sort(self.enemies,"threat")
 
 	for _, friend in ipairs(self.friends_noself) do
-		if friend:getWeapon() and self:hasSkills(sgs.lose_equip_skill, friend) then
+		if friend:getWeapon() and self:hasSkills(sgs.lose_equip_skill, friend) 
+			and not self.room:isProhibited(self.player, friend, card) then
 
 			for _, enemy in ipairs(self.enemies) do
 				if friend:canSlash(enemy) then
@@ -1018,7 +1052,7 @@ sgs.ai_card_intention.Collateral = function(card, from, tos)
 		sgs.updateIntention(from, tos[1], 80)
 	elseif sgs.compareRoleEvaluation(tos[1], "rebel", "loyalist") == sgs.compareRoleEvaluation(tos[2], "rebel", "loyalist") then
 		sgs.updateIntention(from, tos[2], 80)
-	elseif from:getWeapon() and from:inMyAttackRange(tos[2]) then
+	elseif from:getWeapon() and from:distanceTo(tos[2]) <= from:getAttackRange() then
 		sgs.updateIntention(from, tos[1], 80)
 	elseif tos[1]:isKongcheng() then
 		sgs.updateIntention(from, tos[1], 80)
@@ -1031,7 +1065,7 @@ sgs.dynamic_value.control_card.Collateral = true
 sgs.ai_skill_cardask["collateral-slash"] = function(self, data, pattern, target, target2)
 	if target and target2 and not self:hasSkills(sgs.lose_equip_skill) and self:isEnemy(target2) then
 		for _, slash in ipairs(self:getCards("Slash")) do
-			if self:slashIsEffective(slash, target) then 
+			if self:slashIsEffective(slash, target2) then 
 				return slash:toString()
 			end 
 		end

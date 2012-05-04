@@ -1,5 +1,3 @@
--- this scripts contains the AI classes for generals of tocheck package
-
 function SmartAI:useCardThunderSlash(...)
 	self:useCardSlash(...)
 end
@@ -59,18 +57,17 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
 	self:fillSkillCards(cards)
+	local allcards = self.player:getCards("he")
+	allcards = sgs.QList2Table(allcards)
 
-	if (sgs.getDefense(self.player) <sgs.getDefense(enemy)) and
-		(self.player:getHandcardNum() < 1+self.player:getHp()) or
-		self.player:hasFlag("drank") then
-			return
+	if enemy:getArmor() and enemy:getArmor():objectName() == "silver_lion" then
+		return
 	end
 
-	if enemy:getArmor() then
-		if ((enemy:getArmor():objectName()) == "eight_diagram")
-			or ((enemy:getArmor():objectName()) == "silver_lion") then
-			if (self.player:getHandcardNum() <= 1+self.player:getHp()) then
-				return
+	if ((enemy:getArmor() and enemy:getArmor():objectName() == "eight_diagram") or enemy:getHandcardNum() > 2) 
+		and not ((self:isEquip("Axe") and #allcards > 4) or self.player:getHandcardNum() > 1+self.player:getHp()) then
+		return
+	end
 			end
 		end
 	end
@@ -170,6 +167,9 @@ function SmartAI:isGoodChainTarget(who)
 		if friend:objectName() == self.player:objectName() and not self:isGoodChainPartner(self.player) then
 			return false
 		end
+		if self:cantbeHurt(friend) then
+			return false
+		end
 		if self:isGoodChainPartner(friend) then 
 			good = good+1 
 		end
@@ -179,6 +179,9 @@ function SmartAI:isGoodChainTarget(who)
 	end
 	for _, enemy in ipairs(self:getChainedEnemies(self.player)) do
 		if enemy:getHp() < 3 and enemy:getRole() == "lord" and self.player:getRole() == "renegade" then
+			return false
+		end
+		if self:cantbeHurt(enemy) then
 			return false
 		end
 		if self:isGoodChainPartner(enemy) then 
@@ -273,6 +276,7 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 	for _, enemy in ipairs(self.enemies) do
 		if (self:objectiveLevel(enemy) > 3) and not enemy:isKongcheng() and not self.room:isProhibited(self.player, enemy, fire_attack)  
 			and self:damageIsEffective(enemy, sgs.DamageStruct_Fire, self.player) and self:hasTrickEffective(fire_attack, enemy)
+			and not self:cantbeHurt(enemy)
 			and not (enemy:isChained() and not self:isGoodChainTarget(enemy)) then
 
 			local cards = enemy:getHandcards()
@@ -285,7 +289,7 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 			end
 
 			if success  then
-				if self:isEquip("Vine", enemy) or enemy:getMark("@kuangfeng") > 0 or
+				if self:isEquip("Vine", enemy) or
 					(enemy:isChained() and self:isGoodChainTarget(enemy)) or
 					(enemy:hasSkill("fushang") and enemy:getHp() > 3 and not enemy:hasSkill("fenhui")) then
 					table.insert(targets_succ, 1, enemy)
@@ -302,7 +306,8 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 	if #targets_succ > 0 then
 		use.card = fire_attack
 		if use.to then use.to:append(targets_succ[1]) end
-	elseif self.player:isChained() and self:isGoodChainTarget(self.player) and self:isGoodChainPartner(self.player) and self.player:getHandcardNum() > 1 then
+	elseif self.player:isChained() and self:isGoodChainTarget(self.player) and (self:isGoodChainPartner(self.player) 
+	or (self:isEquip("SilverLion") and self:hasSkill("fankui"))) and self.player:getHandcardNum() > 1 then
 		use.card = fire_attack
 		if use.to then use.to:append(self.player) end
 	elseif #targets_fail > 0 and self:getOverflow(self.player) > 0 then
