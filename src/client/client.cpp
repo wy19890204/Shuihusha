@@ -387,13 +387,8 @@ void Client::removePlayer(const QString &player_name){
 
 void Client::drawCards(const QString &cards_str){
     QList<const Card*> cards;
-    bool unhide = true;
     QStringList card_list = cards_str.split("+");
     foreach(QString card_str, card_list){
-        if(card_str.right(1) == "H"){
-            unhide = false;
-            card_str.chop(1);
-        }
         int card_id = card_str.toInt();
         const Card *card = Sanguosha->getCard(card_id);
         cards << card;
@@ -403,18 +398,17 @@ void Client::drawCards(const QString &cards_str){
     pile_num -= cards.length();
     updatePileNum();
 
-    emit cards_drawed(cards, unhide);
+    emit cards_drawed(cards);
 }
 
 void Client::drawNCards(const QString &draw_str){
-    QRegExp pattern("(\\w+):(\\d+):(\\d+)");
+    QRegExp pattern("(\\w+):(\\d+)");
     if(!pattern.exactMatch(draw_str))
         return;
 
     QStringList texts = pattern.capturedTexts();
     ClientPlayer *player = findChild<ClientPlayer*>(texts.at(1));
     int n = texts.at(2).toInt();
-    bool unhide = texts.at(3).toInt() == 1 ? true : false;
 
     if(player && n>0){
         if(!Self->hasFlag("marshalling")){
@@ -423,7 +417,7 @@ void Client::drawNCards(const QString &draw_str){
         }
 
         player->handCardChange(n);
-        emit n_cards_drawed(player, n, unhide);
+        emit n_cards_drawed(player, n);
     }
 }
 
@@ -784,7 +778,7 @@ void Client::_askForCardOrUseCard(const Json::Value &cardUsage){
         const Skill *skill = Sanguosha->getSkill(skill_name);
         if(skill){
             QString text = prompt_doc->toHtml();
-            text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
+            text.append(tr("<br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
             prompt_doc->setHtml(text);
         }
     }
@@ -818,7 +812,7 @@ void Client::askForSkillInvoke(const Json::Value &arg){
 
     const Skill *skill = Sanguosha->getSkill(skill_name);
     if(skill){
-        text.append(tr("<br/><br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
+        text.append(tr("<br/> <b>Notice</b>: %1<br/>").arg(skill->getDescription()));
     }
 
     prompt_doc->setHtml(text);
