@@ -364,7 +364,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     }
 
     {
-        prompt_box = new Window(tr("QSanguosha"), QSize(480, 200));
+        prompt_box = new Window(tr("Shuihusha"), QSize(480, 200));
         prompt_box->setOpacity(0);
         prompt_box->setFlag(QGraphicsItem::ItemIsMovable);
         prompt_box->shift();

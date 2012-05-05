@@ -33,8 +33,8 @@ sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 		local dmgnum = damage.damage
 		if self.player:getHp() + pile - dmgnum > 0 then
 			if self.player:getHp() + pile - dmgnum == 1 and pile > 0 then return "." end
-			local card = self:getUnuseCard()
-			if card then return card:getEffectiveId() end
+			local cards = sgs.QList2Table(self.player:getHandcards())
+			if cards[1] then return cards[1]:getEffectiveId() end
 		end
 	end
 	return "."
@@ -439,7 +439,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 				if hcard:inherits("EquipCard") then
 					self:sort(self.friends_noself)
 					for _, friend in ipairs(self.friends_noself) do
-						if not self:hasSameEquip(hcard, friend) or friend:hasSkill("xiagu")
+						if not self:getSameEquip(hcard, friend) or friend:hasSkill("xiagu")
 							or (self:hasSkills("feiqiang|cuihuo|yinlang|huxiao", friend) and not friend:containsTrick("indulgence"))  then
 							use.card = sgs.Card_Parse("@GanlinCard=" .. hcard:getId())
 							if use.to then use.to:append(friend) end
