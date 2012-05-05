@@ -2123,13 +2123,13 @@ function SmartAI:getCardNeedPlayer(cards)
 		for _, hcard in ipairs(cards) do
 			if not hcard:inherits("Shit") then
 				if hcard:inherits("Analeptic") or hcard:inherits("Peach") then
-					self:sort(friends, "hp")
+					self:sort(self.friends_noself, "hp")
 					if #self.friends>1 and self.friends_noself[1]:getHp() == 1 then
 						return hcard, self.friends_noself[1]
 					end
 				end
-				self:sort(friends, "handcard")
-				for _, friend in ipairs(friends) do
+				self:sort(self.friends_noself, "handcard")
+				for _, friend in ipairs(self.friends_noself) do
 					if not self:needKongcheng(friend) then
 						for _, askill in sgs.qlist(friend:getVisibleSkillList()) do
 							local callback = sgs.ai_cardneed[askill:objectName()]
@@ -2140,7 +2140,7 @@ function SmartAI:getCardNeedPlayer(cards)
 					end
 				end
 				if self:getUseValue(hcard)<6 then
-					for _, friend in ipairs(friends) do
+					for _, friend in ipairs(self.friends_noself) do
 						if not self:needKongcheng(friend) then
 							if sgs[friend:getGeneralName() .. "_suit_value"] and
 								(sgs[friend:getGeneralName() .. "_suit_value"][hcard:getSuitString()] or 0)>=3.9 then
@@ -2159,7 +2159,7 @@ function SmartAI:getCardNeedPlayer(cards)
 					self:sort(self.friends_noself, "defense")
 					local v = 0
 					local target
-					for _, friend in ipairs(friends) do
+					for _, friend in ipairs(self.friends_noself) do
 						if not friend:getArmor() and self:evaluateArmor(hcard, friend) > v and not friend:containsTrick("indulgence") 
 							and not self:needKongcheng(friend) then
 							v = self:evaluateArmor(hcard, friend)
@@ -2172,8 +2172,8 @@ function SmartAI:getCardNeedPlayer(cards)
 				end
 				if hcard:inherits("EquipCard") then
 					self:sort(self.friends_noself)
-					for _, friend in ipairs(friends) do
-						if (not self:getSameEquip(hcard, friend)
+					for _, friend in ipairs(self.friends_noself) do
+						if (not self:hasSameEquip(hcard, friend)
 							or (self:hasSkills(sgs.lose_equip_skill, friend) and not friend:containsTrick("indulgence"))) and
 							not self:needKongcheng(friend) then
 							return hcard, friend

@@ -98,24 +98,31 @@ sgs.dynamic_value.control_card.Drivolt = true
 
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
---	if self.player:hasSkill("wuyan") then return end
 	local targets = {}
 	if #self.friends_noself > 0 then
 		self:sort(self.friends_noself, "handcard2")
-		table.insert(targets, self.friends_noself[1])
+		if self.friends_noself[1]:getHandcardNum() > 0 then
+			table.insert(targets, self.friends_noself[1])
+		end
 	end
 	if #self.enemies > 0 then
 		self:sort(self.enemies, "handcard2")
-		table.insert(targets, self.enemies[1])
+		if self.enemies[1]:getHandcardNum() > 0 then
+			table.insert(targets, self.enemies[1])
+		end
 	end
+	if #targets == 0 then
+		for _, t in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+			if not t:isKongcheng() then
+				table.insert(targets, t)
+			end
+		end
+	end
+	if #targets == 0 then return "." end
 	use.card = wiretap
 	if use.to then
-		local r = math.random(1, 2)
-		if targets[r] ~= self.player then
-			use.to:append(targets[r])
-		else
-			return "."
-		end
+		local r = math.random(1, #targets)
+		use.to:append(targets[r])
 	end
 end
 
