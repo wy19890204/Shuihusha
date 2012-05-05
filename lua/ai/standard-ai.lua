@@ -1,4 +1,3 @@
-
 local qixi_skill={}
 qixi_skill.name="qixi"
 table.insert(sgs.ai_skills,qixi_skill)
@@ -161,34 +160,6 @@ sgs.ai_skill_use_func["JieyinCard"]=function(card,use,self)
 		end
 	end
 end
-
-local kurou_skill={}
-kurou_skill.name="kurou"
-table.insert(sgs.ai_skills,kurou_skill)
-kurou_skill.getTurnUseCard=function(self,inclusive)
-	if  (self.player:getHp() > 3 and self.player:getHandcardNum() > self.player:getHp()) or		
-		(self.player:getHp() - self.player:getHandcardNum() >= 2) then
-		return sgs.Card_Parse("@KurouCard=.")
-	end
-		
-	--if not inclusive then return nil end
-		
-	if self.player:getWeapon() and self.player:getWeapon():inherits("Crossbow") then
-		for _, enemy in ipairs(self.enemies) do
-			if self.player:canSlash(enemy,true) and self.player:getHp()>1 then
-				return sgs.Card_Parse("@KurouCard=.")
-			end
-		end
-	end
-end
-
-sgs.ai_skill_use_func["KurouCard"]=function(card,use,self)
-	
-	if not use.isDummy then self:speak("kurou") end
-	
-	use.card=card
-end
-
 
 local rende_skill={}
 rende_skill.name="rende"
