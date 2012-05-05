@@ -911,7 +911,7 @@ bool ServerDialog::config(){
     Config.setValue("DisableChat", Config.DisableChat);
     Config.setValue("Enable2ndGeneral", Config.Enable2ndGeneral);
     Config.setValue("EnableScene", Config.EnableScene);	//changjing
-    Config.setValue("EnableSame", Config.EnableSame);	//changjing
+    Config.setValue("EnableSame", Config.EnableSame);
     Config.setValue("EnableEndless", Config.EnableEndless);
     Config.setValue("EnableAnzhan", Config.EnableAnzhan);
     Config.setValue("EndlessTimes", endless_timebox->value());

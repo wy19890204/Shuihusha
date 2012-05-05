@@ -36,7 +36,6 @@ AI::Relation AI::GetRelation3v3(const ServerPlayer *a, const ServerPlayer *b){
         return Enemy;
 }
 
-
 AI::Relation AI::GetRelationHegemony(const ServerPlayer *a, const ServerPlayer *b){
     const bool aShown = a->getRoom()->getTag(a->objectName()).toStringList().isEmpty();
     const bool bShown = b->getRoom()->getTag(b->objectName()).toStringList().isEmpty();
@@ -115,6 +114,7 @@ AI::Relation AI::relationTo(const ServerPlayer *other) const{
         return GetRelation3v3(self, other);
     else if(Config.EnableHegemony)
         return GetRelationHegemony(self, other);
+
     return GetRelation(self, other);
 }
 
