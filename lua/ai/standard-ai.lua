@@ -1,4 +1,3 @@
-
 local qixi_skill={}
 qixi_skill.name="qixi"
 table.insert(sgs.ai_skills,qixi_skill)
@@ -440,82 +439,6 @@ sgs.ai_skill_use_func["RendeCard"] = function(card, use, self)
 				end
 			end
 		end
-	end
-end
-
-local zhiheng_skill={}
-zhiheng_skill.name="zhiheng"
-table.insert(sgs.ai_skills, zhiheng_skill)
-zhiheng_skill.getTurnUseCard=function(self)
-	if not self.player:hasUsed("ZhihengCard") then 
-		return sgs.Card_Parse("@ZhihengCard=.")
-	end
-end
-
-sgs.ai_skill_use_func["ZhihengCard"] = function(card, use, self)
-	local unpreferedCards={}
-	local cards=sgs.QList2Table(self.player:getHandcards())
-	
-	if self.player:getHp() < 3 then
-		local zcards = self.player:getCards("he")
-		for _, zcard in sgs.qlist(zcards) do
-			if not zcard:inherits("Peach") and not zcard:inherits("ExNihilo") then
-				if self:getAllPeachNum()>0 or not zcard:inherits("Shit") then table.insert(unpreferedCards,zcard:getId()) end
-			end	
-		end
-	end
-	
-	if #unpreferedCards == 0 then 
-		if self:getCardsNum("Slash")>1 then 
-			self:sortByKeepValue(cards)
-			for _,card in ipairs(cards) do
-				if card:inherits("Slash") then table.insert(unpreferedCards,card:getId()) end
-			end
-			table.remove(unpreferedCards,1)
-		end
-		
-		local num=self:getCardsNum("Jink")-1							
-		if self.player:getArmor() then num=num+1 end
-		if num>0 then
-			for _,card in ipairs(cards) do
-				if card:inherits("Jink") and num>0 then 
-					table.insert(unpreferedCards,card:getId())
-					num=num-1
-				end
-			end
-		end
-		for _,card in ipairs(cards) do
-			if card:inherits("EquipCard") then
-				if (card:inherits("Weapon") and self.player:getHandcardNum() < 3) or
-				card:inherits("OffensiveHorse") or
-				(self:hasSameEquip(card, self.player) and not card:inherits("DefensiveHorse")) or
-				card:inherits("AmazingGrace") or
-				card:inherits("Lightning") then
-					table.insert(unpreferedCards,card:getId())
-				end
-			end
-		end
-	
-		if self.player:getWeapon() and self.player:getHandcardNum()<3 then
-			table.insert(unpreferedCards, self.player:getWeapon():getId())
-		end
-				
-		if (self:isEquip("SilverLion") and self.player:isWounded()) or self:isEquip("GaleShell") then
-			table.insert(unpreferedCards, self.player:getArmor():getId())
-		end	
-
-		if self.player:getOffensiveHorse() and self.player:getWeapon() then
-			table.insert(unpreferedCards, self.player:getOffensiveHorse():getId())
-		end
-	end	
-	
-	for index = #unpreferedCards, 1, -1 do
-		if self.player:isJilei(sgs.Sanguosha:getCard(unpreferedCards[index])) then table.remove(unpreferedCards, index) end
-	end
-	
-	if #unpreferedCards>0 then 
-		use.card = sgs.Card_Parse("@ZhihengCard="..table.concat(unpreferedCards,"+")) 
-		return 
 	end
 end
 
