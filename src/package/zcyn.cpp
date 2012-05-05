@@ -48,7 +48,7 @@ public:
             return false;
         Room *room = p->getRoom();
         ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
-        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p))){
+        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p), CardDiscarded)){
             Assassinate *ass = new Assassinate(Card::NoSuit, 0);
             ass->setSkillName(objectName());
             ass->setCancelable(false);
@@ -78,7 +78,7 @@ public:
         DyingStruct dying = data.value<DyingStruct>();
         if(!bear || !dying.who)
             return false;
-        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@guizi:" + poolguy->objectName(), data)){
+        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@guizi:" + poolguy->objectName(), data, CardDiscarded)){
             room->playSkillEffect(objectName());
             DamageStruct damage;
             damage.from = bear;
@@ -363,7 +363,7 @@ public:
         QString suit_str = effect.slash->getSuitString();
         QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
         QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-        CardStar card = room->askForCard(player, pattern, prompt, data);
+        CardStar card = room->askForCard(player, pattern, prompt, data, CardDiscarded);
         if(card){
             room->playSkillEffect(objectName());
             room->slashResult(effect, NULL);

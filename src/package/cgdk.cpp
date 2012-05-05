@@ -947,7 +947,7 @@ public:
                    !damage.from->isKongcheng()){
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
-                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data))
+                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data, CardDiscarded))
                         room->throwCard(damage.from->getRandomHandCard());
                 }
             }
@@ -960,7 +960,7 @@ public:
                         room->playSkillEffect(objectName(), 1);
                         room->sendLog(log);
 
-                        const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data);
+                        const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data, NonTrigger);
                         if(card)
                             sun->obtainCard(card);
                         else

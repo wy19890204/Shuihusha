@@ -112,6 +112,7 @@ void MainWindow::restoreFromConfig(){
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
+    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard").toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -280,8 +281,8 @@ void MainWindow::enterRoom(){
     connect(ui->actionSaveRecord, SIGNAL(triggered()), room_scene, SLOT(saveReplayRecord()));
     connect(ui->actionExpand_dashboard, SIGNAL(toggled(bool)), room_scene, SLOT(adjustDashboard(bool)));
 
-    bool expand = Config.value("UI/ExpandDashboard", true).toBool();
-    ui->actionExpand_dashboard->setChecked(expand);
+    ui->actionExpand_dashboard->toggle();
+    ui->actionExpand_dashboard->toggle();
 
     if(ServerInfo.FreeChoose){
         ui->menuCheat->setEnabled(true);

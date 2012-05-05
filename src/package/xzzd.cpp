@@ -690,13 +690,6 @@ public:
     }
 };
 
-class FeiQPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->objectName() == "jink";
-    }
-};
-
 FeiqiangCard::FeiqiangCard(){
     once = true;
     mute = true;
@@ -708,7 +701,7 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(!room->askForCard(effect.to, ".FeiQ", "@feiqiang:" + effect.from->objectName())){
+    if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), QVariant::fromValue(effect), CardDiscarded)){
         QString choice = effect.to->getCards("e").isEmpty() ? "gong"
             : room->askForChoice(effect.from, "feiqiang", "gong+wang");
         if(choice == "gong"){
@@ -815,7 +808,6 @@ XZDDPackage::XZDDPackage()
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);
-    patterns[".FeiQ"] = new FeiQPattern;
 
     General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);

@@ -154,7 +154,7 @@ public:
                 duck->setMark("baoguo", 0);
             }
             else if(duck != player && !duck->isNude() && damage.damage > 0
-                && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data)){
+                && room->askForCard(duck, "..", "@baoguo:" + player->objectName() + ":" + QString::number(damage.damage), data, CardDiscarded)){
                 room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#Baoguo";
@@ -679,7 +679,7 @@ public:
         ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
         if(!lingtianyi || lingtianyi->isKongcheng())
             return false;
-        const Card *card = room->askForCard(lingtianyi, ".", "@jishi:" + target->objectName(), QVariant::fromValue(player));
+        const Card *card = room->askForCard(lingtianyi, ".", "@jishi:" + target->objectName(), QVariant::fromValue(player), CardDiscarded);
         if(!card)
             return false;
         RecoverStruct lty;
@@ -957,7 +957,7 @@ public:
                     QString suit_str = judge.card->getSuitString();
                     QString pattern = QString(".|%1").arg(suit_str);
                     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-                    if(room->askForCard(dragon, pattern, prompt)){
+                    if(room->askForCard(dragon, pattern, prompt, QVariant(), CardDiscarded)){
                         if(dragon->getMark("wudao") == 0)
                             room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         else

@@ -33,7 +33,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->playSkillEffect("yuanpei", 1);
-    const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName());
+    const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName(), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.from->drawCards(1);
@@ -914,7 +914,7 @@ public:
             return false;
 
         if(!zhufu->isNude() && zhufu->isWounded()){
-            const Card *card = room->askForCard(zhufu, ".|heart", "@guitai:" + effect.to->objectName(), data);
+            const Card *card = room->askForCard(zhufu, ".|heart", "@guitai:" + effect.to->objectName(), data, CardDiscarded);
             if(card){
                 room->playSkillEffect(objectName());
                 LogMessage log;

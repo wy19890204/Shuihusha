@@ -81,7 +81,7 @@ public:
         if(!xing || xing->getMark("@vi") < 1)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data)){
+        if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
             xing->loseMark("@vi");
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
@@ -277,7 +277,7 @@ bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const P
 
 void QianxianCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect));
+    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(club){
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
@@ -600,7 +600,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
     const Card *slash = NULL;
     if(effect.from->canSlash(target)){
         QVariant source = QVariant::fromValue((PlayerStar)effect.from);
-        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source);
+        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source, NonTrigger);
     }
     if(slash){
         CardUseStruct use;
@@ -628,7 +628,7 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(!card_use.from->canSlash(target, false))
         return;
 
-    const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash");
+    const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", QVariant(), NonTrigger);
     if(slash){
         CardUseStruct use;
         use.card = slash;
@@ -775,7 +775,7 @@ public:
             const Card *equ = Sanguosha->getCard(move->card_id);
             QVariant chu = QVariant::fromValue((PlayerStar)player);
             if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), chu)){
+               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), chu, CardDiscarded)){
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#InvokeSkill";
@@ -889,7 +889,7 @@ public:
             return false;
         RecoverStruct rec = data.value<RecoverStruct>();
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), data))
+            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), data, CardDiscarded))
                 break;
             LogMessage age;
             age.type = "#Chiyuan";
@@ -959,7 +959,7 @@ public:
         if(!rec.who || rec.who == cuilian)
             return false;
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName(), data))
+            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName(), data, CardDiscarded))
                 break;
             room->playSkillEffect(objectName());
             LogMessage s;

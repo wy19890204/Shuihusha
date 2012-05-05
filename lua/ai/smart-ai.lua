@@ -3394,6 +3394,33 @@ function SmartAI:damageMinusHp(self, enemy, type)
 	return -10
 end
 
+function SmartAI:cantbeHurt(player)
+--	local maxfriendmark = 0
+--	local maxenemymark = 0
+	local dyingfriend = 0
+	if player:hasSkill("cuju") then
+		for _, friend in ipairs(self.friends) do
+			if friend:getHp() < 2 and self:getCardsNum("Peach") == 0 then
+				dyingfriend = dyingfriend + 1
+			end
+		end
+		if dyingfriend > 0 and player:getHandcardNum() > 0 then
+			return true
+		end
+	end
+	return false
+end
+
+function SmartAI:needDeath(player)
+-- like wuhun return true
+	return false
+end
+
+function SmartAI:doNotSave(player)
+-- like niepan return true
+	return false
+end
+
 dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/general_config.lua"
 dofile "lua/ai/value_config.lua"

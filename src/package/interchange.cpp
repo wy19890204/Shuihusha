@@ -234,7 +234,7 @@ public:
                 break;
             }
         }
-        const Card *card = caninvoke ? room->askForCard(duwei, "Weapon,Armor", "@touxi:" + player->objectName(), data): NULL;
+        const Card *card = caninvoke ? room->askForCard(duwei, "Weapon,Armor", "@touxi:" + player->objectName(), data, NonTrigger): NULL;
         if(card){
             Assassinate *ass = new Assassinate(card->getSuit(), card->getNumber());
             ass->setSkillName(objectName());
