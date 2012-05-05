@@ -692,7 +692,6 @@ public:
 
 FeiqiangCard::FeiqiangCard(){
     once = true;
-    mute = true;
 }
 
 bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -704,13 +703,10 @@ void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), QVariant::fromValue(effect), CardDiscarded)){
         QString choice = effect.to->getCards("e").isEmpty() ? "gong"
             : room->askForChoice(effect.from, "feiqiang", "gong+wang");
-        if(choice == "gong"){
-            room->playSkillEffect("feiqiang", 1);
+        if(choice == "gong")
             room->loseHp(effect.to);
-        }else{
-            room->playSkillEffect("feiqiang", 2);
+        else
             effect.to->throwAllEquips();
-        }
     }
 }
 

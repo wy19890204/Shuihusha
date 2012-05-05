@@ -375,19 +375,18 @@ public:
 };
 
 YinjianCard::YinjianCard(){
-
+    once = true;
+    will_throw = false;
 }
 
 bool YinjianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
-    if(!to_select->getGeneral()->isMale() || targets.length() > 1)
+    if(targets.length() >= 2 || !to_select->getGeneral()->isMale())
         return false;
-    if(targets.isEmpty())
-        return true;
-    else{
+    if(targets.length() == 1){
         QString kingdom = targets.first()->getKingdom();
         return to_select->getKingdom() != kingdom;
     }
-    return false;
+    return true;
 }
 
 bool YinjianCard::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
@@ -402,36 +401,34 @@ void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
 
     ServerPlayer *target = room->findPlayer(select);
     players.removeOne(target);
-    ServerPlayer *other = players.first();
+    PlayerStar other = players.last();
 
-    QList<const Card *> handcards = source->getHandcards();
-    if(source->getHandcardNum() <= 2){
-        foreach(const Card *cd, handcards)
-            room->moveCardTo(cd, target, Player::Hand, false);
-    }
-    else{
-        int i;
-        for(i=0; i<2; i++){
-            int id = room->askForCardChosen(source, source, "h", "yinjian");
-            room->moveCardTo(Sanguosha->getCard(id), target, Player::Hand, false);
-        }
-    }
+    target->obtainCard(this, false);
 
-    int id = room->askForCardChosen(target, target, "h", "yinjian");
-    room->moveCardTo(Sanguosha->getCard(id), other, Player::Hand, false);
-
+    const Card *card = room->askForCard(target, ".", "@yinjian:" + other->objectName(), QVariant::fromValue(other), NonTrigger);
+    room->obtainCard(other, card->getEffectiveId(), false);
 }
 
-class Yinjian: public ZeroCardViewAsSkill{
+class Yinjian: public ViewAsSkill{
 public:
-    Yinjian():ZeroCardViewAsSkill("yinjian"){
+    Yinjian():ViewAsSkill("yinjian"){
     }
 
-    virtual const Card *viewAs() const{
-        return new YinjianCard;
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 2)
+            return false;
+        return !to_select->isEquipped();
     }
 
-protected:
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            YinjianCard *card = new YinjianCard();
+            card->addSubcards(cards);
+            return card;
+        }else
+            return NULL;
+    }
+
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->hasUsed("YinjianCard");
     }
@@ -502,7 +499,7 @@ FCDCPackage::FCDCPackage()
     daizong->addSkill(new Mitan);
     daizong->addSkill(new Jibao);
 
-    General *lishishi = new General(this, "lishishi", "jiang", 3);
+    General *lishishi = new General(this, "lishishi", "jiang", 3, false);
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
 
