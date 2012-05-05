@@ -63,7 +63,7 @@ public:
                 }
             }
             if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
-                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian");
+                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", NonTrigger);
                 room->setPlayerMark(huarong, "kaixian", card->getNumber());
                 LogMessage log;
                 log.type = "$Kaixian";
@@ -201,12 +201,11 @@ public:
         foreach(ServerPlayer *wusong, wusOng){
             if(wusong->canSlash(damage.from, false)
                     && !wusong->isKongcheng() && damage.from != wusong){
-                const Card *card = room->askForCard(wusong, "BasicCard", "@fuhu:" + damage.from->objectName(), data);
+                const Card *card = room->askForCard(wusong, "BasicCard", "@fuhu:" + damage.from->objectName(), data, CardDiscarded);
                 if(!card)
                     continue;
                 Slash *slash = new Slash(Card::NoSuit, 0);
                 slash->setSkillName(objectName());
-                slash->addSubcard(card);
                 CardUseStruct use;
                 use.card = slash;
                 use.from = wusong;
@@ -221,6 +220,7 @@ public:
 
                     room->setPlayerFlag(wusong, "drank");
                 }
+                room->throwCard(card, wusong);
                 room->useCard(use);
             }
         }
@@ -299,7 +299,7 @@ public:
                     }
                 }
                 if(caninvoke){
-                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", data);
+                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", data, CardDiscarded);
                     if(card){
                         LogMessage log;
                         log.type = "$Xiagu";
@@ -924,7 +924,7 @@ public:
         QString prompt = prompt_list.join(":");
 
         player->tag["Judge"] = data;
-        const Card *card = room->askForCard(player, "@butian", prompt, data);
+        const Card *card = room->askForCard(player, "@butian", prompt, data, CardDiscarded);
 
         if(card){
             int index = qrand() % 2 + 1;
@@ -1033,7 +1033,7 @@ public:
         int x = damage.damage, i;
         for(i=0; i<x; i++){
             if(wangqing->isWounded() && player->getKingdom() == "min"
-               && room->askForCard(player, ".|heart", "@jiachu:" + wangqing->objectName())){
+               && room->askForCard(player, ".|heart", "@jiachu:" + wangqing->objectName(), CardDiscarded)){
                 RecoverStruct rev;
                 rev.who = player;
                 room->playSkillEffect(objectName());
