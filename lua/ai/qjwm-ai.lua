@@ -210,7 +210,6 @@ sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
 		return "@ButianCard=" .. cards[1]:getEffectiveId()
-		end
 	end
 	return "."
 end
