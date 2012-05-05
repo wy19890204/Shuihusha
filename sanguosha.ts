@@ -2,26 +2,41 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="zh_CN">
 <context>
-    <name>BanPairDialog</name>
+    <name>BanlistDialog</name>
     <message>
-        <location filename="src/dialog/banpairdialog.cpp" line="82"/>
-        <source>Ban pair table</source>
-        <translation>双将禁配表</translation>
+        <location filename="src/server/server.cpp" line="330"/>
+        <source>Select generals that are excluded</source>
+        <translation>选择排除的武将</translation>
     </message>
     <message>
-        <location filename="src/dialog/banpairdialog.cpp" line="89"/>
-        <source>Add</source>
-        <translation>添加</translation>
+        <location filename="src/server/server.cpp" line="384"/>
+        <source>Add ...</source>
+        <translation>添加 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/banpairdialog.cpp" line="90"/>
+        <location filename="src/server/server.cpp" line="385"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="src/dialog/banpairdialog.cpp" line="91"/>
-        <source>Save</source>
-        <translation>保存</translation>
+        <location filename="src/server/server.cpp" line="386"/>
+        <source>Add 2nd general ...</source>
+        <translation>禁作副将 ...</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="387"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="421"/>
+        <source>Banned for all: %1</source>
+        <translation>%1 (单禁)</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="437"/>
+        <source>Banned for second general: %1</source>
+        <translation>%1 (禁作副将)</translation>
     </message>
 </context>
 <context>
