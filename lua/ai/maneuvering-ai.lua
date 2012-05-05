@@ -68,9 +68,6 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 		and not ((self:isEquip("Axe") and #allcards > 4) or self.player:getHandcardNum() > 1+self.player:getHp()) then
 		return
 	end
-			end
-		end
-	end
 
 	local card_str = self:getCardId("Analeptic")
 	if card_str then return sgs.Card_Parse(card_str) end

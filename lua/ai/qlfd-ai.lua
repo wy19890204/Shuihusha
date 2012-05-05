@@ -494,7 +494,8 @@ end
 -- baoen
 sgs.ai_skill_cardask["@baoen"] = function(self, data)
 	local rev = data:toRecover()
-	local card = self:getUnuseCard()
-	if self:isEnemy(rev.who) or not card then return "." end
-	return card:getEffectiveId() or "."
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, true)
+	if self:isEnemy(rev.who) or not cards[1] then return "." end
+	return cards[1]:getEffectiveId() or "."
 end

@@ -142,8 +142,8 @@ shexin_skill.name = "shexin"
 table.insert(sgs.ai_skills, shexin_skill)
 shexin_skill.getTurnUseCard = function(self)
     if not self.player:hasUsed("ShexinCard") and not self.player:isNude() then
-		self:sort(self.enemies, "handcard")
-		if self.enemies[#self.enemies]:getHandcardNum() <= 3 then return end
+		self:sort(self.enemies, "handcard2")
+		if self.enemies[1]:getHandcardNum() <= 3 then return end
 		local cards = self.player:getCards("he")
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
@@ -155,9 +155,9 @@ shexin_skill.getTurnUseCard = function(self)
 	end
 end
 sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
-	self:sort(self.enemies, "handcard")
+	self:sort(self.enemies, "handcard2")
 	if use.to then
-		use.to:append(self.enemies[#self.enemies])
+		use.to:append(self.enemies[1])
 	end
     use.card=card
 end

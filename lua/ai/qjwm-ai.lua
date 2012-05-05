@@ -208,9 +208,8 @@ sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
 
 	if self:needRetrial(judge) then
 		local cards = sgs.QList2Table(self.player:getHandcards())
-		if self:getUnuseCard() then
-			local card_id = self:getUnuseCard():getEffectiveId()
-			return "@ButianCard=" .. card_id
+		self:sortByUseValue(cards, true)
+		return "@ButianCard=" .. cards[1]:getEffectiveId()
 		end
 	end
 	return "."

@@ -101,12 +101,12 @@ function SmartAI:useCardWiretap(wiretap, use)
 --	if self.player:hasSkill("wuyan") then return end
 	local targets = {}
 	if #self.friends_noself > 0 then
-		self:sort(self.friends_noself, "handcard")
-		table.insert(targets, self.friends_noself[#self.friends_noself])
+		self:sort(self.friends_noself, "handcard2")
+		table.insert(targets, self.friends_noself[1])
 	end
 	if #self.enemies > 0 then
-		self:sort(self.enemies, "handcard")
-		table.insert(targets, self.enemies[#self.enemies])
+		self:sort(self.enemies, "handcard2")
+		table.insert(targets, self.enemies[1])
 	end
 	use.card = wiretap
 	if use.to then
