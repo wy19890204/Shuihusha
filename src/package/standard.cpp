@@ -623,8 +623,8 @@ TestPackage::TestPackage()
     patterns["nulliplot"] = new ExpPattern("Nullification");
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 
-    patterns[".NTH!"] = new NothrowHandcardsPattern;
-    patterns[".NT!"] = new NothrowPattern;
+    patterns[".NTH"] = new NothrowHandcardsPattern;
+    patterns[".NT"] = new NothrowPattern;
 }
 
 ADD_PACKAGE(Test)

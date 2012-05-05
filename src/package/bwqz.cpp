@@ -796,7 +796,7 @@ public:
                 Room *room = fang1a->getRoom();
                 QList<ServerPlayer *> lieges = room->getLieges("jiang", fang1a);
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".NTH!", "@zhiyuan:" + fang1a->objectName(), data);
+                    const Card *card = room->askForCard(tmp, ".NTH", "@zhiyuan:" + fang1a->objectName(), data);
                     if(card){
                         room->playSkillEffect(objectName());
                         LogMessage lo;
