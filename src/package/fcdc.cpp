@@ -303,9 +303,9 @@ public:
 };
 
 #include "plough.h"
-class Mitan: public FilterSkill{
+class Mitan: public OneCardViewAsSkill{
 public:
-    Mitan():FilterSkill("mitan"){
+    Mitan():OneCardViewAsSkill("mitan"){
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{

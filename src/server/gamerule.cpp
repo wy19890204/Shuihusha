@@ -21,7 +21,7 @@ GameRule::GameRule(QObject *)
             << AskForPeaches << Death << Dying << GameOverJudge
             << PreDeath << AskForRetrial
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete
+            << DamageDone << DamageComplete << Predamaged
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -430,7 +430,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 room->setPlayerProperty(player, "chained", false);
 
                 // iron chain effect
-                QList<ServerPlayer *> chained_players = room->getAlivePlayers();
+                QList<ServerPlayer *> chained_players = room->getOtherPlayers(player);
                 foreach(ServerPlayer *chained_player, chained_players){
                     if(chained_player->isChained()){
                         room->getThread()->delay();
@@ -460,6 +460,29 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             break;
         }
 
+    case Predamaged:{
+            //ninegirl
+            if(!Config.BanPackages.contains("events")){
+                DamageStruct damage = data.value<DamageStruct>();
+                if(damage.damage > 1){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("ninedaygirl");
+                    if(source == damage.to){
+                        room->setPlayerFlag(damage.to, "NineGirl");
+                        QString prompt = QString("@ninedaygirl:::%1").arg(damage.damage);
+                        bool girl = room->askForUseCard(damage.to, "NinedayGirl", prompt);
+                        room->setPlayerFlag(damage.to, "-NineGirl");
+                        if(girl){
+                            LogMessage log;
+                            log.from = damage.to;
+                            log.type = "#NineGirl";
+                            log.arg = QString::number(damage.damage);
+                            room->sendLog(log);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
     case CardEffected:{
             if(data.canConvert<CardEffectStruct>()){
                 CardEffectStruct effect = data.value<CardEffectStruct>();
