@@ -302,96 +302,6 @@ public:
     }
 };
 
-class Qinxin: public TriggerSkill{
-public:
-    Qinxin():TriggerSkill("qinxin"){
-        events << PhaseChange;
-        frequency = Frequent;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
-        Room *room = player->getRoom();
-        if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
-            return false;
-        Card::Suit suit = room->askForSuit(player, objectName());
-        JudgeStruct judge;
-        judge.pattern = QRegExp("(.*):(.*):(.*)");
-        judge.reason = objectName();
-        judge.who = player;
-        room->judge(judge);
-
-        if(judge.card->getSuit() == suit){
-            RecoverStruct rec;
-            rec.who = player;
-            room->recover(player, rec, true);
-        }
-        else
-            player->obtainCard(judge.card);
-
-        return false;
-    }
-};
-
-YinjianCard::YinjianCard(){
-    once = true;
-    will_throw = false;
-}
-
-bool YinjianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
-    if(targets.length() >= 2 || !to_select->getGeneral()->isMale())
-        return false;
-    if(targets.length() == 1){
-        QString kingdom = targets.first()->getKingdom();
-        return to_select->getKingdom() != kingdom;
-    }
-    return true;
-}
-
-bool YinjianCard::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
-    return targets.length() == 2;
-}
-
-void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<ServerPlayer *> players = targets;
-    QStringList to_select;
-    to_select << targets.first()->getGeneralName() << targets.last()->getGeneralName();
-    QString select = room->askForChoice(source, "yinjian", to_select.join("+"));
-
-    ServerPlayer *target = room->findPlayer(select);
-    players.removeOne(target);
-    PlayerStar other = players.last();
-
-    target->obtainCard(this, false);
-
-    int id = room->askForCardChosen(target, target, "h", "yinjian");
-    room->obtainCard(other, id, false);
-}
-
-class Yinjian: public ViewAsSkill{
-public:
-    Yinjian():ViewAsSkill("yinjian"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() >= 2)
-            return false;
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 2){
-            YinjianCard *card = new YinjianCard();
-            card->addSubcards(cards);
-            return card;
-        }else
-            return NULL;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("YinjianCard");
-    }
-};
-
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
@@ -409,14 +319,9 @@ FCDCPackage::FCDCPackage()
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
 
-    General *lishishi = new General(this, "lishishi", "jiang", 3, false);
-    lishishi->addSkill(new Qinxin);
-    lishishi->addSkill(new Yinjian);
-
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
     addMetaObject<HuazhuCard>();
-    addMetaObject<YinjianCard>();
 }
 
 ADD_PACKAGE(FCDC);

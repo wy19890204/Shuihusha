@@ -26,15 +26,11 @@ void YushuiCard::onEffect(const CardEffectStruct &effect) const{
 
     room->recover(effect.from, recover, true);
     room->recover(effect.to, recover, true);
-    effect.from->drawCards(2);
-    effect.to->drawCards(2);
-    effect.from->turnOver();
-    effect.to->turnOver();
 }
 
 class Yushui: public OneCardViewAsSkill{
 public:
-    Yushui():OneCardViewAsSkill("yushui"){
+    Yushui():OneCardViewAsSkill("meihuo"){
 
     }
 
@@ -43,7 +39,7 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->getSuit() == Card::Heart;
+        return !to_select->isEquipped() && to_select->getCard()->getSuit() == Card::Heart;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -51,16 +47,6 @@ public:
         card->addSubcard(card_item->getCard()->getId());
 
         return card;
-    }
-};
-
-class Shengui: public ProhibitSkill{
-public:
-    Shengui():ProhibitSkill("shengui"){
-    }
-
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
-        return !to->faceUp() && from->getGeneral()->isMale() && card->inherits("TrickCard") && !card->inherits("Collateral");
     }
 };
 
@@ -81,17 +67,22 @@ public:
         if(!xing || xing->getMark("@vi") < 1)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Analeptic") && room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
+        if(!use.card->inherits("Analeptic") || !use.from->isWounded())
+            return false;
+        if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
             xing->loseMark("@vi");
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
             LogMessage log;
-            log.type = "#Zhensha";
             log.from = xing;
             log.to << use.from;
             log.arg = objectName();
+            room->setPlayerProperty(use.from, "maxhp", use.from->getHp());
+            if(use.from->isAlive())
+                log.type = "#ZhenshaA";
+            else
+                log.type = "#ZhenshaD";
             room->sendLog(log);
-            room->killPlayer(use.from);
         }
         return false;
     }
@@ -1090,13 +1081,6 @@ public:
 QLFDPackage::QLFDPackage()
     :Package("QLFD")
 {
-    General *panjinlian = new General(this, "panjinlian", "min", 3, false);
-    panjinlian->addSkill(new Yushui);
-    panjinlian->addSkill(new Zhensha);
-    panjinlian->addSkill(new Shengui);
-    panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
-    related_skills.insertMulti("zhensha", "#@vi-1");
-
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
     panqiaoyun->addSkill(new Panxin);

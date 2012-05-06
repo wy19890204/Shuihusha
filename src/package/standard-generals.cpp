@@ -2257,6 +2257,123 @@ public:
     }
 };
 
+class Shengui: public TriggerSkill{
+public:
+    Shengui():TriggerSkill("shengui"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && effect.to == player && effect.from->getGeneral()->isMale()
+            && effect.card->isNDTrick() && !effect.to->getArmor()){
+            LogMessage log;
+            log.type = "#ComskillNullify";
+            log.from = effect.from;
+            Room *room = player->getRoom();
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
+    }
+};
+
+class Qinxin: public TriggerSkill{
+public:
+    Qinxin():TriggerSkill("qinxin"){
+        events << PhaseChange;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
+            return false;
+        Card::Suit suit = room->askForSuit(player, objectName());
+        JudgeStruct judge;
+        judge.pattern = QRegExp("(.*):(.*):(.*)");
+        judge.reason = objectName();
+        judge.who = player;
+        room->judge(judge);
+
+        if(judge.card->getSuit() == suit){
+            RecoverStruct rec;
+            rec.who = player;
+            room->recover(player, rec, true);
+        }
+        else
+            player->obtainCard(judge.card);
+
+        return false;
+    }
+};
+
+YinjianCard::YinjianCard(){
+    once = true;
+    will_throw = false;
+}
+
+bool YinjianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
+    if(targets.length() >= 2 || !to_select->getGeneral()->isMale())
+        return false;
+    if(targets.length() == 1){
+        QString kingdom = targets.first()->getKingdom();
+        return to_select->getKingdom() != kingdom;
+    }
+    return true;
+}
+
+bool YinjianCard::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
+    return targets.length() == 2;
+}
+
+void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<ServerPlayer *> players = targets;
+    QStringList to_select;
+    to_select << targets.first()->getGeneralName() << targets.last()->getGeneralName();
+    QString select = room->askForChoice(source, "yinjian", to_select.join("+"));
+
+    ServerPlayer *target = room->findPlayer(select);
+    players.removeOne(target);
+    PlayerStar other = players.last();
+
+    target->obtainCard(this, false);
+
+    int id = room->askForCardChosen(target, target, "h", "yinjian");
+    room->obtainCard(other, id, false);
+}
+
+class Yinjian: public ViewAsSkill{
+public:
+    Yinjian():ViewAsSkill("yinjian"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 2)
+            return false;
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            YinjianCard *card = new YinjianCard();
+            card->addSubcards(cards);
+            return card;
+        }else
+            return NULL;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("YinjianCard");
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -2369,6 +2486,17 @@ StandardPackage::StandardPackage()
     wangqing->addSkill(new Qibing);
     wangqing->addSkill(new Jiachu);
 
+    General *panjinlian = new General(this, "panjinlian", "min", 3, false);
+    panjinlian->addSkill(new Yushui);
+    panjinlian->addSkill(new Zhensha);
+    panjinlian->addSkill(new Shengui);
+    panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
+    related_skills.insertMulti("zhensha", "#@vi-1");
+
+    General *lishishi = new General(this, "lishishi", "min", 3, false);
+    lishishi->addSkill(new Qinxin);
+    lishishi->addSkill(new Yinjian);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
@@ -2385,6 +2513,7 @@ StandardPackage::StandardPackage()
     addMetaObject<CujuCard>();
     addMetaObject<JiashuCard>();
     addMetaObject<YongleCard>();
+    addMetaObject<YinjianCard>();
 }
 
 ADD_PACKAGE(Standard)
