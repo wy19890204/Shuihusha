@@ -7,51 +7,6 @@
 #include "clientplayer.h"
 #include "engine.h"
 
-class Shalu: public TriggerSkill{
-public:
-    Shalu():TriggerSkill("shalu"){
-        events << Damage << PhaseChange;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent e, ServerPlayer *likui, QVariant &data) const{
-        Room *room = likui->getRoom();
-        if(e == PhaseChange){
-            if(likui->getPhase() == Player::NotActive)
-                room->setPlayerMark(likui, "shalu", 0);
-            return false;
-        }
-        DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.card || damage.from != likui)
-            return false;
-        if(damage.card->inherits("Slash")){
-            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
-                && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
-                && !likui->hasFlag("SlashbySlash"))
-                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
-            if(!room->askForSkillInvoke(likui, objectName(), data))
-                return false;
-            room->playSkillEffect(objectName(), 1);
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(spade|club):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = likui;
-
-            room->judge(judge);
-            if(judge.isGood()){
-                room->playSkillEffect(objectName(), 2);
-                likui->obtainCard(judge.card);
-                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
-            }
-        }
-        return false;
-    }
-};
-
 class Shunshui: public TriggerSkill{
 public:
     Shunshui():TriggerSkill("shunshui"){
@@ -463,9 +418,6 @@ public:
 
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){
-
-    General *likui = new General(this, "likui", "jiang");
-    likui->addSkill(new Shalu);
 
     General *zhangshun = new General(this, "zhangshun", "kou", 3);
     zhangshun->addSkill(new Shunshui);

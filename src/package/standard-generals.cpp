@@ -1230,6 +1230,178 @@ public:
     }
 };
 
+class Goulian: public TriggerSkill{
+public:
+    Goulian():TriggerSkill("goulian"){
+        events << DamageProceed;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() != Player::Play)
+            return false;
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.chain || !damage.card || (!damage.card->inherits("Slash") && !damage.card->inherits("Duel")))
+            return false;
+
+        QStringList horses;
+        if(damage.to->getDefensiveHorse())
+            horses << "defensive_horse";
+        if(damage.to->getOffensiveHorse())
+            horses << "offensive_horse";
+
+        if(horses.isEmpty())
+            return false;
+
+        Room *room = player->getRoom();
+        if(!player->askForSkillInvoke(objectName(), data))
+            return false;
+
+        QString horse_type;
+        if(horses.length() == 2)
+            horse_type = room->askForChoice(player, objectName(), horses.join("+"));
+        else
+            horse_type = horses.first();
+
+        if(horse_type == "defensive_horse")
+            room->throwCard(damage.to->getDefensiveHorse(), damage.to);
+        else if(horse_type == "offensive_horse")
+            room->throwCard(damage.to->getOffensiveHorse(), damage.to);
+
+        return false;
+    }
+};
+
+class Jinjia: public TriggerSkill{
+public:
+    Jinjia():TriggerSkill("jinjia"){
+        events << Damaged << SlashEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(event == SlashEffected){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            if(effect.nature != DamageStruct::Normal){
+                room->playSkillEffect(objectName(), 1);
+                LogMessage log;
+                log.from = player;
+                log.type = "#JinjiaNullify";
+                log.arg = objectName();
+                log.arg2 = effect.slash->objectName();
+                room->sendLog(log);
+
+                return true;
+            }
+        }else if(event == Damaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.card && damage.card->inherits("Slash")){
+                room->playSkillEffect(objectName(), 2);
+                LogMessage log;
+                log.type = "#ThrowJinjiaWeapon";
+                log.from = player;
+                log.arg = objectName();
+                if(damage.from->getWeapon()){
+                    room->sendLog(log);
+                    room->throwCard(damage.from->getWeapon());
+                }
+            }
+        }
+        return false;
+    }
+};
+
+#include "plough.h"
+class Mitan: public OneCardViewAsSkill{
+public:
+    Mitan():OneCardViewAsSkill("mitan"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard") ||
+                to_select->getCard()->inherits("EventsCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Wiretap *wp = new Wiretap(c->getSuit(), c->getNumber());
+        wp->setSkillName(objectName());
+        wp->addSubcard(card_item->getCard());
+
+        return wp;
+    }
+};
+
+class Jibao: public PhaseChangeSkill{
+public:
+    Jibao():PhaseChangeSkill("jibao"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::RoundStart)
+            room->setPlayerMark(player, "jibao", player->getHandcardNum());
+        else if(player->getPhase() == Player::NotActive){
+            if(player->getMark("jibao") == player->getHandcardNum() &&
+               !player->isKongcheng() &&
+               player->askForSkillInvoke(objectName())){
+                room->askForDiscard(player, objectName(), 1);
+                player->gainAnExtraTurn(player);
+            }
+        }
+        return false;
+    }
+};
+
+class Shalu: public TriggerSkill{
+public:
+    Shalu():TriggerSkill("shalu"){
+        events << Damage << PhaseChange;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent e, ServerPlayer *likui, QVariant &data) const{
+        Room *room = likui->getRoom();
+        if(e == PhaseChange){
+            if(likui->getPhase() == Player::NotActive)
+                room->setPlayerMark(likui, "shalu", 0);
+            return false;
+        }
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card || damage.from != likui)
+            return false;
+        if(damage.card->inherits("Slash")){
+            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
+                && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
+                && !likui->hasFlag("SlashbySlash"))
+                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
+            if(!room->askForSkillInvoke(likui, objectName(), data))
+                return false;
+            room->playSkillEffect(objectName(), 1);
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(spade|club):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = likui;
+
+            room->judge(judge);
+            if(judge.isGood()){
+                room->playSkillEffect(objectName(), 2);
+                likui->obtainCard(judge.card);
+                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
+            }
+        }
+        return false;
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -1282,6 +1454,17 @@ StandardPackage::StandardPackage()
     yangzhi->addSkill(new Maidao);
     skills << new MAIdao;
     yangzhi->addSkill(new Fengmang);
+
+    General *xuning = new General(this, "xuning", "jiang");
+    xuning->addSkill(new Goulian);
+    xuning->addSkill(new Jinjia);
+
+    General *daizong = new General(this, "daizong", "jiang", 3);
+    daizong->addSkill(new Mitan);
+    daizong->addSkill(new Jibao);
+
+    General *likui = new General(this, "likui", "kou");
+    likui->addSkill(new Shalu);
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();

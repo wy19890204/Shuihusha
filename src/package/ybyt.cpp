@@ -229,76 +229,6 @@ public:
     }
 };
 
-class Goulian: public TriggerSkill{
-public:
-    Goulian():TriggerSkill("goulian"){
-        events << Predamage;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        PlayerStar xuning = damage.from;
-        if(damage.to != xuning && damage.nature == DamageStruct::Normal && damage.to->isChained() &&
-           xuning->askForSkillInvoke(objectName(), data)){
-            Room *room = xuning->getRoom();
-
-            damage.to->setChained(false);
-            room->playSkillEffect(objectName());
-            room->broadcastProperty(damage.to, "chained");
-            if(!damage.to->faceUp())
-                damage.to->turnOver();
-
-            room->throwCard(damage.to->getDefensiveHorse());
-            room->throwCard(damage.to->getOffensiveHorse());
-        }
-        return false;
-    }
-};
-
-class Jinjia: public TriggerSkill{
-public:
-    Jinjia():TriggerSkill("jinjia"){
-        events << Damaged << SlashEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        if(event == SlashEffected){
-            SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            if(effect.nature != DamageStruct::Normal){
-                room->playSkillEffect(objectName(), 1);
-                LogMessage log;
-                log.from = player;
-                log.type = "#JinjiaNullify";
-                log.arg = objectName();
-                log.arg2 = effect.slash->objectName();
-                room->sendLog(log);
-
-                return true;
-            }
-        }else if(event == Damaged){
-            DamageStruct damage = data.value<DamageStruct>();
-            if(damage.card && damage.card->inherits("Slash")){
-                room->playSkillEffect(objectName(), 2);
-                LogMessage log;
-                log.type = "#ThrowJinjiaWeapon";
-                log.from = player;
-                log.arg = objectName();
-                if(damage.from->getWeapon()){
-                    room->sendLog(log);
-                    room->throwCard(damage.from->getWeapon());
-                }
-            }
-        }
-        return false;
-    }
-};
-
 SinueCard::SinueCard(){
 }
 
@@ -987,10 +917,6 @@ YBYTPackage::YBYTPackage()
     patterns[".Yuanp"] = new SWPattern;
     qiongying->addSkill(new Mengshi);
     related_skills.insertMulti("mengshi", "yinyu");
-
-    General *xuning = new General(this, "xuning", "jiang");
-    xuning->addSkill(new Goulian);
-    xuning->addSkill(new Jinjia);
 
     General *baoxu = new General(this, "baoxu", "kou");
     baoxu->addSkill(new Sinue);

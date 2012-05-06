@@ -413,30 +413,30 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
 
         QStringList horses;
-    if(damage.card && damage.card->inherits("Slash") && !damage.chain){
-        if(damage.to->getDefensiveHorse())
-            horses << "dhorse";
-        if(damage.to->getOffensiveHorse())
-            horses << "ohorse";
+        if(damage.card && damage.card->inherits("Slash") && !damage.chain){
+            if(damage.to->getDefensiveHorse())
+                horses << "dhorse";
+            if(damage.to->getOffensiveHorse())
+                horses << "ohorse";
 
-        if(horses.isEmpty())
-            return false;
+            if(horses.isEmpty())
+                return false;
 
-        Room *room = player->getRoom();
-        if(!player->askForSkillInvoke(objectName(), data))
-            return false;
+            Room *room = player->getRoom();
+            if(!player->askForSkillInvoke(objectName(), data))
+                return false;
 
-        QString horse_type;
-        if(horses.length() == 2)
-            horse_type = room->askForChoice(player, objectName(), horses.join("+"));
-        else
-            horse_type = horses.first();
+            QString horse_type;
+            if(horses.length() == 2)
+                horse_type = room->askForChoice(player, objectName(), horses.join("+"));
+            else
+                horse_type = horses.first();
 
-        if(horse_type == "dhorse")
-            room->throwCard(damage.to->getDefensiveHorse(), damage.to);
-        else if(horse_type == "ohorse")
-            room->throwCard(damage.to->getOffensiveHorse(), damage.to);
-    }
+            if(horse_type == "dhorse")
+                room->throwCard(damage.to->getDefensiveHorse(), damage.to);
+            else if(horse_type == "ohorse")
+                room->throwCard(damage.to->getOffensiveHorse(), damage.to);
+        }
 
         return false;
     }
