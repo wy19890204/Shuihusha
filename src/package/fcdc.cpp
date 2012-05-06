@@ -405,8 +405,8 @@ void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
 
     target->obtainCard(this, false);
 
-    const Card *card = room->askForCard(target, ".", "@yinjian:" + other->objectName(), QVariant::fromValue(other), NonTrigger);
-    room->obtainCard(other, card->getEffectiveId(), false);
+    int id = room->askForCardChosen(target, target, "h", "yinjian");
+    room->obtainCard(other, id, false);
 }
 
 class Yinjian: public ViewAsSkill{

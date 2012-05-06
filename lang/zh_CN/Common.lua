@@ -78,7 +78,7 @@ return {
 	["#Recover"] = "%from 恢复了 %arg 点体力",
 	["#AskForPeaches"] = "%from 向 %to 求【肉】，一共需要 %arg 块【肉】",
 	["#ChooseKingdom"] = "%from 选择了 %arg 作为他的势力",
-	["#NullificationDetails"] = "无懈的对象是 %from 对 %to 的锦囊【%arg】",
+	["#NullificationDetails"] = "%from 对 %to 的锦囊【%arg】被抵消",
 	["#SkillAvoid"] = "%from 的 %arg 技能被触发，这张 %arg2 不能指定其作为目标",
 	["#Transfigure"] = "%from 变身为 %arg",
 	["#AcquireSkill"] = "%from 获得了技能 【%arg】",

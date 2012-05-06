@@ -33,7 +33,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->playSkillEffect("yuanpei", 1);
-    const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName(), NonTrigger);
+    const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.from->drawCards(1);

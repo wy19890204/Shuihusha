@@ -394,7 +394,7 @@ public:
                 && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());
                 int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
-                room->obtainCard(zhangqing, card_id);
+                room->obtainCard(zhangqing, card_id, false);
             }
         }
         return false;
@@ -755,11 +755,11 @@ bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
     foreach(ServerPlayer *tmp, targets){
         const Card *card = tmp->getRandomHandCard();
-        fangla->obtainCard(card);
+        fangla->obtainCard(card, false);
     }
     foreach(ServerPlayer *tmp, targets){
         const Card *card = room->askForCardShow(fangla, tmp, "yongle");
-        tmp->obtainCard(card);
+        tmp->obtainCard(card, false);
     }
 }
 

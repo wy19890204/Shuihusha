@@ -891,13 +891,18 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     QString animation_str = QString(card->objectName() + ":%1:%2")
                             .arg(repliedPlayer->objectName()).arg(to->objectName());
     broadcastInvoke("animate", animation_str);
+    //const Card *last_trick = trick;
+    if(trick_name == "counterplot")
+        from->obtainCard(trick);
 
     QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
     thread->trigger(ChoiceMade, repliedPlayer, decisionData);
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
+    bool istrue = false;
     if(repliedPlayer->hasSkill("pozhen"))
-        return true;
-    return !_askForNullification((TrickCard*)card, repliedPlayer, to, !positive, aiHelper);
+        istrue = true;
+    istrue = !_askForNullification((TrickCard*)card, repliedPlayer, to, !positive, aiHelper);
+    return istrue;
 }
 
 int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason){

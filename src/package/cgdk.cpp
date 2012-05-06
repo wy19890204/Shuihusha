@@ -29,7 +29,7 @@ public:
            target->getHandcardNum() > bao->getHandcardNum() &&
            room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
             room->playSkillEffect(objectName());
-            bao->obtainCard(target->getRandomHandCard());
+            bao->obtainCard(target->getRandomHandCard(), false);
         }
         return false;
     }
@@ -310,7 +310,7 @@ public:
                 int to_move = room->askForAG(yanglin, card_ids, true, objectName());
                 if(to_move > -1){
                     ServerPlayer *target = room->askForPlayerChosen(yanglin, room->getOtherPlayers(player), objectName());
-                    target->obtainCard(Sanguosha->getCard(to_move));
+                    room->obtainCard(target, to_move, false);
                     card_ids.removeOne(to_move);
                 }
                 yanglin->invoke("clearAG");
@@ -1001,7 +1001,7 @@ public:
                 erniang->obtainCard(player->getOffensiveHorse());
                 DummyCard *all_cards = player->wholeHandCards();
                 if(all_cards){
-                    room->obtainCard(erniang, all_cards, false);
+                    room->moveCardTo(all_cards, erniang, Player::Hand, false);
                     delete all_cards;
                 }
                 QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);

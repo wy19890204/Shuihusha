@@ -443,9 +443,9 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
     foreach(const Card *card, handcards){
         if(include_counterplot && card->inherits("Nullification"))
-            return true;
+            return true; // all trick
         if(!include_counterplot && card->objectName() == "nullification")
-            return true;
+            return true; // not (ntdtrick and single trick)
     }
 
     foreach(const Skill* skill, getVisibleSkillList()){

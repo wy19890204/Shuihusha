@@ -261,9 +261,10 @@ sgs.ai_card_intention.Slash = function(card,from,tos)
 end
 
 sgs.ai_skill_cardask["slash-jink"] = function(self, data, pattern, target)
+	local effect = data:toSlashEffect()
+	local cards = sgs.QList2Table(self.player:getHandcards())
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) and not target:hasSkill("duoming") then return "." end
 	--if not target then self.room:writeToConsole(debug.traceback()) end
-	if target:objectName() == self.player:objectName() then return "." end
 	if not target then return end
 	if self:isFriend(target) then
 		if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
@@ -275,7 +276,7 @@ sgs.ai_skill_cardask["slash-jink"] = function(self, data, pattern, target)
 		else
 			return self:getCardId("Jink") or "."
 		end
-		if not self:hasSkills(sgs.need_kongcheng) then
+		if not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) and not target:hasSkill("duoming") then
 			if self:isEquip("Axe", target) then
 				if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
 				if target:getHandcardNum() - target:getHp() > 2 then return "." end
@@ -552,9 +553,14 @@ sgs.ai_skill_invoke.eight_diagram = function(self, data)
 end
 
 function sgs.ai_armor_value.eight_diagram(player, self)
-	if self:hasWizard(self:getEnemies(player),true) then return 2
-	elseif self:hasWizard(self:getFriends(player),true) or player:hasSkill("yueli") then return 5
-	else return 4 end
+	local haszj = self:hasSkills("kongying", self:getEnemies(player))
+	if haszj then 
+		return 2
+	end
+	if player:hasSkill("yueli") then 
+		return 5
+	end
+	return 4 
 end
 
 function sgs.ai_armor_value.renwang_shield()
