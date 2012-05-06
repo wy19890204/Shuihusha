@@ -50,7 +50,7 @@ SOURCES += \
 	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
-	src/package/standard-skillcards.cpp \
+	src/package/common-skillcards.cpp \
 	src/package/standard.cpp \
 	src/package/plough.cpp \
 	src/package/maneuvering.cpp \
@@ -179,7 +179,8 @@ HEADERS += \
 	src/package/exppattern.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
-	src/package/standard-skillcards.h \
+	src/package/standard-generals.h \
+	src/package/common-skillcards.h \
 	src/package/standard.h \
 	src/package/plough.h \
 	src/package/maneuvering.h \

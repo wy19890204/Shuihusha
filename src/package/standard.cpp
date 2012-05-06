@@ -7,7 +7,7 @@
 #include "engine.h"
 #include "client.h"
 #include "exppattern.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 
 QString BasicCard::getType() const{
     return "basic";

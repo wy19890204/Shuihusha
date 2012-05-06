@@ -3,7 +3,7 @@
 
 #include "package.h"
 #include "card.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 
 class XZDDPackage: public Package{
     Q_OBJECT
