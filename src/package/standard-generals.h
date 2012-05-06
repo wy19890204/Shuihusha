@@ -172,4 +172,13 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class CujuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE CujuCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 #endif // STANDARDGENERALS_H

@@ -4,15 +4,6 @@
 #include "package.h"
 #include "card.h"
 
-class CujuCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE CujuCard();
-
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
 class HuanshuCard: public SkillCard{
     Q_OBJECT
 
