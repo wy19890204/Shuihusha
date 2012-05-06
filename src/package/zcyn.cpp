@@ -7,31 +7,6 @@
 #include "engine.h"
 #include "maneuvering.h"
 
-class Tongwu: public TriggerSkill{
-public:
-    Tongwu():TriggerSkill("tongwu"){
-        events << SlashMissed;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude() && effect.jink){
-            Room *room = erge->getRoom();
-            if(erge->askForSkillInvoke(objectName(), data)){
-                room->playSkillEffect(objectName());
-                erge->obtainCard(effect.jink);
-                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
-                target->obtainCard(effect.jink);
-            }
-        }
-        return false;
-    }
-};
-
 #include "plough.h"
 class Fuji:public PhaseChangeSkill{
 public:
@@ -508,9 +483,6 @@ public:
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
-    General *guansheng = new General(this, "guansheng", "jiang");
-    guansheng->addSkill(new Tongwu);
-
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);
 

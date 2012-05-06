@@ -321,20 +321,6 @@ public:
     }
 };
 
-class Huqi: public DistanceSkill{
-public:
-    Huqi():DistanceSkill("huqi")
-    {
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(from->hasSkill(objectName()))
-            return -1;
-        else
-            return 0;
-    }
-};
-
 class Qiangqu:public TriggerSkill{
 public:
     Qiangqu():TriggerSkill("qiangqu"){
@@ -827,7 +813,7 @@ TTXDPackage::TTXDPackage()
 
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
-    muhong->addSkill(new Huqi);
+    muhong->addSkill("huqi");
 
     General *zhoutong = new General(this, "zhoutong", "kou", 3);
     zhoutong->addSkill(new Qiangqu);

@@ -4,6 +4,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
+#include "plough.h"
 
 class Liehuo: public TriggerSkill{
 public:

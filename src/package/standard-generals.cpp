@@ -586,6 +586,186 @@ public:
     }
 };
 
+class Huqi: public DistanceSkill{
+public:
+    Huqi():DistanceSkill("huqi"){
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        if(from->hasSkill(objectName()))
+            return -1;
+        else
+            return 0;
+    }
+};
+
+class Tongwu: public TriggerSkill{
+public:
+    Tongwu():TriggerSkill("tongwu"){
+        events << SlashMissed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(!effect.to->isNude() && effect.jink){
+            Room *room = erge->getRoom();
+            if(erge->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName());
+                erge->obtainCard(effect.jink);
+                ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
+                target->obtainCard(effect.jink);
+            }
+        }
+        return false;
+    }
+};
+
+DuijueCard::DuijueCard(){
+}
+
+bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(to_select->hasSkill("fangzhen") && Self->getHp() > to_select->getHp())
+        return false;
+    return to_select != Self;
+}
+
+void DuijueCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    JudgeStruct judge;
+    judge.pattern = QRegExp("(.*):(spade):(.*)");
+    judge.good = true;
+    judge.reason = "duijue";
+    judge.who = effect.to;
+
+    room->judge(judge);
+    if(judge.isBad()){
+        Duel *duel = new Duel(judge.card->getSuit(), judge.card->getNumber());
+        duel->setSkillName("duijue");
+        duel->setCancelable(false);
+
+        CardUseStruct use;
+        use.from = effect.from;
+        use.to << effect.to;
+        use.card = duel;
+        room->useCard(use);
+    }
+}
+
+class DuijueViewAsSkill:public ZeroCardViewAsSkill{
+public:
+    DuijueViewAsSkill():ZeroCardViewAsSkill("duijue"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@duijue";
+    }
+
+    virtual const Card *viewAs() const{
+        return new DuijueCard;
+    }
+};
+
+class Duijue: public TriggerSkill{
+public:
+    Duijue():TriggerSkill("duijue"){
+        view_as_skill = new DuijueViewAsSkill;
+        events << Damage << Damaged;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card || !damage.card->inherits("Slash"))
+            return false;
+        Room *room = player->getRoom();
+        room->askForUseCard(player, "@@duijue", "@duijue");
+        return false;
+    }
+};
+
+class Jingzhun: public SlashBuffSkill{
+public:
+    Jingzhun():SlashBuffSkill("jingzhun"){
+        frequency = Compulsory;
+    }
+
+    virtual bool buff(const SlashEffectStruct &effect) const{
+        ServerPlayer *huarong = effect.from;
+        Room *room = huarong->getRoom();
+
+        if(huarong->distanceTo(effect.to) == huarong->getAttackRange()){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Jingzhun";
+            log.from = huarong;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->slashResult(effect, NULL);
+            return true;
+        }
+        return false;
+    }
+};
+
+class KaixianPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card) &&
+                card->getNumber() <= 5;
+    }
+
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class Kaixian: public PhaseChangeSkill{
+public:
+    Kaixian():PhaseChangeSkill("kaixian"){
+
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *huarong) const{
+        Room *room = huarong->getRoom();
+        if(huarong->getPhase() == Player::Start && !huarong->isKongcheng()){
+            bool caninvoke = false;
+            foreach(const Card *cd, huarong->getHandcards()){
+                if(cd->getNumber() <= 5){
+                    caninvoke = true;
+                    break;
+                }
+            }
+            if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
+                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", QVariant(), NonTrigger);
+                room->setPlayerMark(huarong, "kaixian", card->getNumber());
+                LogMessage log;
+                log.type = "$Kaixian";
+                log.from = huarong;
+                log.card_str = card->getEffectIdString();
+                room->sendLog(log);
+
+                room->playSkillEffect(objectName());
+            }
+        }
+        else if(huarong->getPhase() == Player::NotActive)
+            room->setPlayerMark(huarong, "kaixian", 0);
+
+        return false;
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -607,10 +787,24 @@ StandardPackage::StandardPackage()
     gongsunsheng->addSkill(new QimenClear);
     related_skills.insertMulti("qimen", "#qimencls");
 
+    General *guansheng = new General(this, "guansheng", "jiang");
+    guansheng->addSkill(new Huqi);
+    guansheng->addSkill(new Tongwu);
+
+    General *linchong = new General(this, "linchong", "jiang");
+    linchong->addSkill(new Duijue);
+
+    General *huarong = new General(this, "huarong", "guan");
+    huarong->addSkill(new Jingzhun);
+    huarong->addSkill(new Kaixian);
+    patterns.insert(".kaixian!", new KaixianPattern);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
     addMetaObject<YixingCard>();
+    addMetaObject<DuijueCard>();
+
 }
 
 ADD_PACKAGE(Standard)

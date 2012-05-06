@@ -6,81 +6,6 @@
 #include "carditem.h"
 #include "engine.h"
 
-class Jingzhun: public SlashBuffSkill{
-public:
-    Jingzhun():SlashBuffSkill("jingzhun"){
-        frequency = Compulsory;
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *huarong = effect.from;
-        Room *room = huarong->getRoom();
-        if(huarong->getPhase() != Player::Play)
-            return false;
-
-        if(huarong->distanceTo(effect.to) == huarong->getAttackRange()){
-            room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#Jingzhun";
-            log.from = huarong;
-            log.to << effect.to;
-            log.arg = objectName();
-            room->sendLog(log);
-
-            room->slashResult(effect, NULL);
-            return true;
-        }
-        return false;
-    }
-};
-
-class KaixianPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return !player->hasEquip(card) &&
-                card->getNumber() <= 5;
-    }
-
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
-class Kaixian: public PhaseChangeSkill{
-public:
-    Kaixian():PhaseChangeSkill("kaixian"){
-
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *huarong) const{
-        Room *room = huarong->getRoom();
-        if(huarong->getPhase() == Player::Start && !huarong->isKongcheng()){
-            bool caninvoke = false;
-            foreach(const Card *cd, huarong->getHandcards()){
-                if(cd->getNumber() <= 5){
-                    caninvoke = true;
-                    break;
-                }
-            }
-            if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
-                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", QVariant(), NonTrigger);
-                room->setPlayerMark(huarong, "kaixian", card->getNumber());
-                LogMessage log;
-                log.type = "$Kaixian";
-                log.from = huarong;
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
-
-                room->playSkillEffect(objectName());
-            }
-        }
-        else if(huarong->getPhase() == Player::NotActive)
-            room->setPlayerMark(huarong, "kaixian", 0);
-
-        return false;
-    }
-};
-
 class Kong1iang: public TriggerSkill{
 public:
     Kong1iang():TriggerSkill("kong1iang"){
@@ -1051,11 +976,6 @@ public:
 
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
-
-    General *huarong = new General(this, "huarong", "guan", 4);
-    huarong->addSkill(new Jingzhun);
-    huarong->addSkill(new Kaixian);
-    patterns.insert(".kaixian!", new KaixianPattern);
 
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);

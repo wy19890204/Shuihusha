@@ -7,75 +7,6 @@
 #include "clientplayer.h"
 #include "engine.h"
 
-DuijueCard::DuijueCard(){
-}
-
-bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    if(to_select->hasSkill("fangzhen") && Self->getHp() > to_select->getHp())
-        return false;
-    return to_select != Self;
-}
-
-void DuijueCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    JudgeStruct judge;
-    judge.pattern = QRegExp("(.*):(spade):(.*)");
-    judge.good = true;
-    judge.reason = "duijue";
-    judge.who = effect.to;
-
-    room->judge(judge);
-    if(judge.isBad()){
-        Duel *duel = new Duel(judge.card->getSuit(), judge.card->getNumber());
-        duel->setSkillName("duijue");
-        duel->setCancelable(false);
-
-        CardUseStruct use;
-        use.from = effect.from;
-        use.to << effect.to;
-        use.card = duel;
-        room->useCard(use);
-    }
-}
-
-class DuijueViewAsSkill:public ZeroCardViewAsSkill{
-public:
-    DuijueViewAsSkill():ZeroCardViewAsSkill("duijue"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@duijue";
-    }
-
-    virtual const Card *viewAs() const{
-        return new DuijueCard;
-    }
-};
-
-class Duijue: public TriggerSkill{
-public:
-    Duijue():TriggerSkill("duijue"){
-        view_as_skill = new DuijueViewAsSkill;
-        events << Damage << Damaged;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.card || !damage.card->inherits("Slash"))
-            return false;
-        Room *room = player->getRoom();
-        room->askForUseCard(player, "@@duijue", "@duijue");
-        return false;
-    }
-};
-
 SijiuCard::SijiuCard()
     :QingnangCard(){
 }
@@ -761,9 +692,6 @@ public:
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){
 
-    General *linchong = new General(this, "linchong", "jiang");
-    linchong->addSkill(new Duijue);
-
     General *zhutong = new General(this, "zhutong", "min");
     zhutong->addSkill(new Sijiu);
     zhutong->addSkill(new Yixian);
@@ -809,7 +737,6 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    addMetaObject<DuijueCard>();
     addMetaObject<SijiuCard>();
     addMetaObject<MaidaoCard>();
     addMetaObject<Maida0Card>();
