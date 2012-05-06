@@ -4,16 +4,6 @@
 #include "package.h"
 #include "card.h"
 
-class HaoshenCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE HaoshenCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-};
-
 class CujuCard: public SkillCard{
     Q_OBJECT
 

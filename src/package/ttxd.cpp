@@ -6,129 +6,6 @@
 #include "room.h"
 #include "maneuvering.h"
 
-class Danshu: public TriggerSkill{
-public:
-    Danshu():TriggerSkill("danshu"){
-        events << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-
-        if(effect.card->inherits("Slash") && effect.to->isWounded()){
-            Room *room = player->getRoom();
-
-            room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#Danshu";
-            log.from = effect.from;
-            log.to << effect.to;
-            log.arg = objectName();
-            log.arg2 = QString::number(effect.to->getLostHp());
-            room->sendLog(log);
-
-            return !room->askForDiscard(effect.from, objectName(), effect.to->getLostHp(), true);
-        }
-        return false;
-    }
-};
-
-HaoshenCard::HaoshenCard(){
-    will_throw = false;
-    mute = true;
-}
-
-bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    if(Self->getPhase() == Player::Draw)
-        return to_select != Self && to_select->getHandcardNum() != to_select->getMaxHP();
-    else
-        return to_select != Self;
-    return false;
-}
-
-void HaoshenCard::use(Room *room, ServerPlayer *chaijin, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
-    int num = target->getMaxHP() - target->getHandcardNum();
-    if(chaijin->getPhase() == Player::Draw && num > 0){
-        if(num > 2)
-            room->playSkillEffect("haoshen", 1);
-        else
-            room->playSkillEffect("haoshen", 3);
-        target->drawCards(num);
-    }
-    else if(chaijin->getPhase() == Player::Play){
-        target->obtainCard(this, false);
-        if(this->getSubcards().length() > 2)
-            room->playSkillEffect("haoshen", 2);
-        else
-            room->playSkillEffect("haoshen", 4);
-    }
-}
-
-class HaoshenViewAsSkill: public ViewAsSkill{
-public:
-    HaoshenViewAsSkill():ViewAsSkill("haoshen"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->getPhase() == Player::Draw)
-            return selected.isEmpty();
-        else{
-            int length = (Self->getHandcardNum() + 1) / 2;
-            return selected.length() < length;
-        }
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->getPhase() == Player::Play && cards.length() != (Self->getHandcardNum() + 1) / 2)
-            return NULL;
-        HaoshenCard *card = new HaoshenCard;
-        card->addSubcards(cards);
-        return card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@haoshen";
-    }
-};
-
-class Haoshen: public PhaseChangeSkill{
-public:
-    Haoshen():PhaseChangeSkill("haoshen"){
-        view_as_skill = new HaoshenViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return 3;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target);
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *chaijin) const{
-        Room *room = chaijin->getRoom();
-
-        switch(chaijin->getPhase()){
-        case Player::Draw: return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-draw");
-        case Player::Play:
-            if(!chaijin->isKongcheng())
-                return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-play");
-        default: return false;
-        }
-
-        return false;
-    }
-};
-
 class Yinyu: public TriggerSkill{
 public:
     Yinyu():TriggerSkill("yinyu"){
@@ -800,10 +677,6 @@ public:
 TTXDPackage::TTXDPackage()
     :Package("TTXD")
 {
-    General *chaijin = new General(this, "chaijin", "guan", 3);
-    chaijin->addSkill(new Danshu);
-    chaijin->addSkill(new Haoshen);
-
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
 
@@ -839,7 +712,6 @@ TTXDPackage::TTXDPackage()
     husanniang->addSkill(new Hongjin);
     husanniang->addSkill(new Wuji);
 
-    addMetaObject<HaoshenCard>();
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
     addMetaObject<WujiCard>();

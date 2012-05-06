@@ -687,6 +687,8 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.card || !damage.card->inherits("Slash"))
             return false;
+        if(event == Damaged && damage.from == player)
+            return false;
         Room *room = player->getRoom();
         room->askForUseCard(player, "@@duijue", "@duijue");
         return false;
@@ -766,6 +768,193 @@ public:
     }
 };
 
+class Danshu: public TriggerSkill{
+public:
+    Danshu():TriggerSkill("danshu"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+
+        if(effect.card->inherits("Slash") && effect.to->isWounded()){
+            Room *room = player->getRoom();
+
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Danshu";
+            log.from = effect.from;
+            log.to << effect.to;
+            log.arg = objectName();
+            log.arg2 = QString::number(effect.to->getLostHp());
+            room->sendLog(log);
+
+            return !room->askForDiscard(effect.from, objectName(), effect.to->getLostHp(), true);
+        }
+        return false;
+    }
+};
+
+HaoshenCard::HaoshenCard(){
+    will_throw = false;
+    mute = true;
+}
+
+bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(Self->getPhase() == Player::Draw)
+        return to_select->getHandcardNum() != to_select->getMaxHP();
+    else
+        return to_select != Self;
+    return false;
+}
+
+void HaoshenCard::use(Room *room, ServerPlayer *chaijin, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = targets.first();
+    int num = target->getMaxHP() - target->getHandcardNum();
+    if(chaijin->getPhase() == Player::Draw && num > 0){
+        if(num > 2)
+            room->playSkillEffect("haoshen", 1);
+        else
+            room->playSkillEffect("haoshen", 3);
+        target->drawCards(qMin(5, num));
+    }
+    else if(chaijin->getPhase() == Player::Play){
+        target->obtainCard(this, false);
+        if(this->getSubcards().length() > 2)
+            room->playSkillEffect("haoshen", 2);
+        else
+            room->playSkillEffect("haoshen", 4);
+    }
+}
+
+class HaoshenViewAsSkill: public ViewAsSkill{
+public:
+    HaoshenViewAsSkill():ViewAsSkill("haoshen"){
+
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(Self->getPhase() == Player::Draw)
+            return selected.isEmpty();
+        else{
+            int length = (Self->getHandcardNum() + 1) / 2;
+            return selected.length() < length;
+        }
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(Self->getPhase() == Player::Play && cards.length() != (Self->getHandcardNum() + 1) / 2)
+            return NULL;
+        HaoshenCard *card = new HaoshenCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@haoshen";
+    }
+};
+
+class Haoshen: public PhaseChangeSkill{
+public:
+    Haoshen():PhaseChangeSkill("haoshen"){
+        view_as_skill = new HaoshenViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target);
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *chaijin) const{
+        Room *room = chaijin->getRoom();
+
+        switch(chaijin->getPhase()){
+        case Player::Draw: return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-draw");
+        case Player::Play:
+            if(!chaijin->isKongcheng())
+                return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-play");
+        default: return false;
+        }
+
+        return false;
+    }
+};
+
+SijiuCard::SijiuCard()
+    :QingnangCard(){
+}
+
+bool SijiuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() > 0)
+        return false;
+    return to_select->isWounded() && to_select != Self;
+}
+
+class Sijiu: public OneCardViewAsSkill{
+public:
+    Sijiu():OneCardViewAsSkill("sijiu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return true;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Peach");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        SijiuCard *qingnang_card = new SijiuCard;
+        qingnang_card->addSubcard(card_item->getCard()->getId());
+        return qingnang_card;
+    }
+};
+
+class Yixian: public TriggerSkill{
+public:
+    Yixian():TriggerSkill("yixian"){
+        events << DamageProceed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to == damage.from || damage.damage < 1)
+            return false;
+        if(!damage.to->isAllNude() && player->askForSkillInvoke(objectName(), data)){
+            Room *room = player->getRoom();
+            room->playSkillEffect(objectName());
+            int dust = !damage.to->hasEquip() && damage.to->getJudgingArea().isEmpty() ? damage.to->getRandomHandCardId() :
+                          room->askForCardChosen(player, damage.to, "hej", objectName());
+            room->throwCard(dust);
+
+            LogMessage log;
+            log.type = "$Yixian";
+            log.from = player;
+            log.to << damage.to;
+            log.card_str = QString::number(dust);
+            room->sendLog(log);
+            player->drawCards(1);
+            return true;
+        }
+        return false;
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -799,12 +988,21 @@ StandardPackage::StandardPackage()
     huarong->addSkill(new Kaixian);
     patterns.insert(".kaixian!", new KaixianPattern);
 
+    General *chaijin = new General(this, "chaijin", "guan", 3);
+    chaijin->addSkill(new Danshu);
+    chaijin->addSkill(new Haoshen);
+
+    General *zhutong = new General(this, "zhutong", "guan");
+    zhutong->addSkill(new Sijiu);
+    zhutong->addSkill(new Yixian);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
     addMetaObject<YixingCard>();
     addMetaObject<DuijueCard>();
-
+    addMetaObject<HaoshenCard>();
+    addMetaObject<SijiuCard>();
 }
 
 ADD_PACKAGE(Standard)

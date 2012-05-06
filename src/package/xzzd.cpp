@@ -7,70 +7,6 @@
 #include "clientplayer.h"
 #include "engine.h"
 
-SijiuCard::SijiuCard()
-    :QingnangCard(){
-}
-
-bool SijiuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() > 0)
-        return false;
-    return to_select->isWounded();
-}
-
-class Sijiu: public OneCardViewAsSkill{
-public:
-    Sijiu():OneCardViewAsSkill("sijiu"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return true;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("Peach");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        SijiuCard *qingnang_card = new SijiuCard;
-        qingnang_card->addSubcard(card_item->getCard()->getId());
-        return qingnang_card;
-    }
-};
-
-class Yixian: public TriggerSkill{
-public:
-    Yixian():TriggerSkill("yixian"){
-        events << DamageProceed;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to == damage.from || damage.damage < 1)
-            return false;
-        if(!damage.to->isAllNude() && player->askForSkillInvoke(objectName(), data)){
-            Room *room = player->getRoom();
-            room->playSkillEffect(objectName());
-            int dust = !damage.to->hasEquip() && damage.to->getJudgingArea().isEmpty() ? damage.to->getRandomHandCardId() :
-                          room->askForCardChosen(player, damage.to, "hej", objectName());
-            room->throwCard(dust);
-
-            LogMessage log;
-            log.type = "$Yixian";
-            log.from = player;
-            log.to << damage.to;
-            log.card_str = QString::number(dust);
-            room->sendLog(log);
-            player->drawCards(1);
-            return true;
-        }
-        return false;
-    }
-};
-
 MaidaoCard::MaidaoCard(){
     will_throw = false;
     target_fixed = true;
@@ -692,10 +628,6 @@ public:
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){
 
-    General *zhutong = new General(this, "zhutong", "min");
-    zhutong->addSkill(new Sijiu);
-    zhutong->addSkill(new Yixian);
-
     General *yangzhi = new General(this, "yangzhi", "guan");
     yangzhi->addSkill(new Maidao);
     skills << new Maida0;
@@ -737,7 +669,6 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    addMetaObject<SijiuCard>();
     addMetaObject<MaidaoCard>();
     addMetaObject<Maida0Card>();
     addMetaObject<BinggongCard>();

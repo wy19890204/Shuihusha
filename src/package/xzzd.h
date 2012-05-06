@@ -3,21 +3,12 @@
 
 #include "package.h"
 #include "card.h"
-#include "common-skillcards.h"
 
 class XZDDPackage: public Package{
     Q_OBJECT
 
 public:
     XZDDPackage();
-};
-
-class SijiuCard: public QingnangCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE SijiuCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
 class MaidaoCard: public SkillCard{
