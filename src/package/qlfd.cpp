@@ -6,88 +6,6 @@
 #include "qlfd.h"
 #include "maneuvering.h"
 
-YushuiCard::YushuiCard(){
-    once = true;
-}
-
-bool YushuiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-
-    return to_select->getGeneral()->isMale() && to_select->isWounded();
-}
-
-void YushuiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-
-    RecoverStruct recover;
-    recover.card = this;
-    recover.who = effect.from;
-
-    room->recover(effect.from, recover, true);
-    room->recover(effect.to, recover, true);
-}
-
-class Yushui: public OneCardViewAsSkill{
-public:
-    Yushui():OneCardViewAsSkill("meihuo"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("YushuiCard");
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        YushuiCard *card = new YushuiCard;
-        card->addSubcard(card_item->getCard()->getId());
-
-        return card;
-    }
-};
-
-class Zhensha:public TriggerSkill{
-public:
-    Zhensha():TriggerSkill("zhensha"){
-        frequency = Limited;
-        events << CardUsed;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *xing = room->findPlayerBySkillName(objectName());
-        if(!xing || xing->getMark("@vi") < 1)
-            return false;
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(!use.card->inherits("Analeptic") || !use.from->isWounded())
-            return false;
-        if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
-            xing->loseMark("@vi");
-            room->playSkillEffect(objectName());
-            room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
-            LogMessage log;
-            log.from = xing;
-            log.to << use.from;
-            log.arg = objectName();
-            room->setPlayerProperty(use.from, "maxhp", use.from->getHp());
-            if(use.from->isAlive())
-                log.type = "#ZhenshaA";
-            else
-                log.type = "#ZhenshaD";
-            room->sendLog(log);
-        }
-        return false;
-    }
-};
-
 FanwuCard::FanwuCard(){
     will_throw = false;
 }
@@ -487,91 +405,6 @@ public:
             duan3niang->tag.remove("ZishiSource");
         }
         return qMax(n, 0);
-    }
-};
-
-SuocaiCard::SuocaiCard(){
-    will_throw = false;
-}
-
-bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && !to_select->isKongcheng() && to_select->getGeneral()->isMale();
-}
-
-void SuocaiCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *yanp = targets.first();
-    source->pindian(yanp, "suocai", this);
-}
-
-class SuocaiPindian: public OneCardViewAsSkill{
-public:
-    SuocaiPindian():OneCardViewAsSkill("suocai"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("SuocaiCard") && !player->isKongcheng();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        SuocaiCard *card = new SuocaiCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return ! to_select->isEquipped();
-    }
-};
-
-class Suocai: public TriggerSkill{
-public:
-    Suocai():TriggerSkill("suocai"){
-        events << Pindian;
-        view_as_skill = new SuocaiPindian;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        PindianStar pindian = data.value<PindianStar>();
-        if(player == pindian->from && pindian->reason == objectName()){
-           if(pindian->isSuccess()){
-               player->obtainCard(pindian->from_card);
-               player->obtainCard(pindian->to_card);
-           }
-           else{
-               DamageStruct damage;
-               damage.from = pindian->to;
-               damage.to = pindian->from;
-               damage.card = pindian->to_card;
-               player->getRoom()->damage(damage);
-           }
-        }
-        return false;
-    }
-};
-
-class Huakui: public MasochismSkill{
-public:
-    Huakui():MasochismSkill("huakui"){
-        frequency = Frequent;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
-        Room *room = other->getRoom();
-        QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
-        if(lolita.isEmpty())
-            return;
-        foreach(ServerPlayer *loli, lolita){
-            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
-                loli->drawCards(1);
-        }
     }
 };
 
@@ -1102,10 +935,6 @@ QLFDPackage::QLFDPackage()
     General *duansanniang = new General(this, "duansanniang", "min", 4, false);
     duansanniang->addSkill(new Zishi);
 
-    General *yanxijiao = new General(this, "yanxijiao", "min", 3, false);
-    yanxijiao->addSkill(new Suocai);
-    yanxijiao->addSkill(new Huakui);
-
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
     baixiuying->addSkill(new Zhangshi);
@@ -1130,13 +959,11 @@ QLFDPackage::QLFDPackage()
     ximenqing->addSkill("#losthp");
     ximenqing->addSkill(new Caiquan);
 
-    addMetaObject<YushuiCard>();
     addMetaObject<FanwuCard>();
     addMetaObject<QianxianCard>();
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();
     addMetaObject<ZishiCard>();
-    addMetaObject<SuocaiCard>();
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
     addMetaObject<ZhangshiCard>();

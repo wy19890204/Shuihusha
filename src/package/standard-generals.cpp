@@ -2257,6 +2257,88 @@ public:
     }
 };
 
+MeihuoCard::MeihuoCard(){
+    once = true;
+}
+
+bool MeihuoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+
+    return to_select->getGeneral()->isMale() && to_select->isWounded();
+}
+
+void MeihuoCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+
+    RecoverStruct recover;
+    recover.card = this;
+    recover.who = effect.from;
+
+    room->recover(effect.from, recover, true);
+    room->recover(effect.to, recover, true);
+}
+
+class Meihuo: public OneCardViewAsSkill{
+public:
+    Meihuo():OneCardViewAsSkill("meihuo"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("MeihuoCard");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        MeihuoCard *card = new MeihuoCard;
+        card->addSubcard(card_item->getCard()->getId());
+
+        return card;
+    }
+};
+
+class Zhensha:public TriggerSkill{
+public:
+    Zhensha():TriggerSkill("zhensha"){
+        frequency = Limited;
+        events << CardUsed;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        ServerPlayer *xing = room->findPlayerBySkillName(objectName());
+        if(!xing || xing->getMark("@vi") < 1)
+            return false;
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(!use.card->inherits("Analeptic") || !use.from->isWounded())
+            return false;
+        if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
+            xing->loseMark("@vi");
+            room->playSkillEffect(objectName());
+            room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
+            LogMessage log;
+            log.from = xing;
+            log.to << use.from;
+            log.arg = objectName();
+            room->setPlayerProperty(use.from, "maxhp", use.from->getHp());
+            if(use.from->isAlive())
+                log.type = "#ZhenshaA";
+            else
+                log.type = "#ZhenshaD";
+            room->sendLog(log);
+        }
+        return false;
+    }
+};
+
 class Shengui: public TriggerSkill{
 public:
     Shengui():TriggerSkill("shengui"){
@@ -2374,6 +2456,91 @@ public:
     }
 };
 
+SuocaiCard::SuocaiCard(){
+    will_throw = false;
+}
+
+bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && !to_select->isKongcheng() && to_select->getGeneral()->isMale();
+}
+
+void SuocaiCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *yanp = targets.first();
+    source->pindian(yanp, "suocai", this);
+}
+
+class SuocaiPindian: public OneCardViewAsSkill{
+public:
+    SuocaiPindian():OneCardViewAsSkill("suocai"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("SuocaiCard") && !player->isKongcheng();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        SuocaiCard *card = new SuocaiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return ! to_select->isEquipped();
+    }
+};
+
+class Suocai: public TriggerSkill{
+public:
+    Suocai():TriggerSkill("suocai"){
+        events << Pindian;
+        view_as_skill = new SuocaiPindian;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        PindianStar pindian = data.value<PindianStar>();
+        if(player == pindian->from && pindian->reason == objectName()){
+           if(pindian->isSuccess()){
+               player->obtainCard(pindian->from_card);
+               player->obtainCard(pindian->to_card);
+           }
+           else{
+               DamageStruct damage;
+               damage.from = pindian->to;
+               damage.to = pindian->from;
+               damage.card = pindian->to_card;
+               player->getRoom()->damage(damage);
+           }
+        }
+        return false;
+    }
+};
+
+class Huakui: public MasochismSkill{
+public:
+    Huakui():MasochismSkill("huakui"){
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
+        Room *room = other->getRoom();
+        QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
+        if(lolita.isEmpty())
+            return;
+        foreach(ServerPlayer *loli, lolita){
+            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
+                loli->drawCards(1);
+        }
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -2487,7 +2654,7 @@ StandardPackage::StandardPackage()
     wangqing->addSkill(new Jiachu);
 
     General *panjinlian = new General(this, "panjinlian", "min", 3, false);
-    panjinlian->addSkill(new Yushui);
+    panjinlian->addSkill(new Meihuo);
     panjinlian->addSkill(new Zhensha);
     panjinlian->addSkill(new Shengui);
     panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
@@ -2496,6 +2663,10 @@ StandardPackage::StandardPackage()
     General *lishishi = new General(this, "lishishi", "min", 3, false);
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
+
+    General *yanxijiao = new General(this, "yanxijiao", "min", 3, false);
+    yanxijiao->addSkill(new Suocai);
+    yanxijiao->addSkill(new Huakui);
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
@@ -2514,6 +2685,8 @@ StandardPackage::StandardPackage()
     addMetaObject<JiashuCard>();
     addMetaObject<YongleCard>();
     addMetaObject<YinjianCard>();
+    addMetaObject<MeihuoCard>();
+    addMetaObject<SuocaiCard>();
 }
 
 ADD_PACKAGE(Standard)

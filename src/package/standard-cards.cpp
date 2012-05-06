@@ -686,9 +686,6 @@ bool Collateral::targetFilter(const QList<const Player *> &targets, const Player
         if(to_select->hasSkill("weimu") && isBlack())
             return false;
 
-        if(to_select->hasSkill("shengui") && Self->getGeneral()->isMale() && !to_select->faceUp())
-            return false;
-
         return to_select->getWeapon() && to_select != Self;
     }else if(targets.length() == 1){
         const Player *first = targets.first();
