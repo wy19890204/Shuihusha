@@ -702,58 +702,6 @@ public:
     }
 };
 
-class Qibing:public DrawCardsSkill{
-public:
-    Qibing():DrawCardsSkill("qibing"){
-        frequency = Compulsory;
-    }
-
-    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
-        Room *room = wangq->getRoom();
-        room->playSkillEffect(objectName());
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.from = wangq;
-        log.arg = objectName();
-        room->sendLog(log);
-
-        return qMin(wangq->getHp(), 4);
-    }
-};
-
-class Jiachu:public MasochismSkill{
-public:
-    Jiachu():MasochismSkill("jiachu$"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasLordSkill(objectName()) && target->getKingdom() == "min";
-    }
-
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
-        Room *room = player->getRoom();
-        ServerPlayer *wangqing = room->getLord();
-        if(!wangqing || !wangqing->hasLordSkill(objectName()))
-            return;
-        int x = damage.damage, i;
-        for(i=0; i<x; i++){
-            if(wangqing->isWounded() && player->getKingdom() == "min"
-               && room->askForCard(player, ".|heart", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
-                RecoverStruct rev;
-                rev.who = player;
-                room->playSkillEffect(objectName());
-
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = player;
-                log.arg = "jiachu";
-                room->sendLog(log);
-                room->recover(wangqing, rev);
-            }
-        }
-    }
-};
-
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
 
@@ -786,10 +734,6 @@ QJWMPackage::QJWMPackage()
     General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
-
-    General *wangqing = new General(this, "wangqing$", "min");
-    wangqing->addSkill(new Qibing);
-    wangqing->addSkill(new Jiachu);
 
     General *luozhenren = new General(this, "luozhenren", "kou", 3);
     luozhenren->addSkill(new Butian);

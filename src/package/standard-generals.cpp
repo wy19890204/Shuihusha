@@ -2121,6 +2121,142 @@ public:
     }
 };
 
+YongleCard::YongleCard(){
+}
+
+int YongleCard::getKingdoms(const Player *Self) const{
+    QSet<QString> kingdom_set;
+    QList<const Player *> players = Self->getSiblings();
+    players << Self;
+    foreach(const Player *player, players){
+        if(player->isDead())
+            continue;
+        kingdom_set << player->getKingdom();
+    }
+    return kingdom_set.size();
+}
+
+bool YongleCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int x = getKingdoms(Self);
+    return targets.length() < x && !to_select->isKongcheng();
+}
+
+bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    int x = getKingdoms(Self);
+    return targets.length() <= x && !targets.isEmpty();
+}
+
+void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
+    foreach(ServerPlayer *tmp, targets){
+        const Card *card = tmp->getRandomHandCard();
+        fangla->obtainCard(card, false);
+    }
+    foreach(ServerPlayer *tmp, targets){
+        const Card *card = room->askForCardShow(fangla, tmp, "yongle");
+        tmp->obtainCard(card, false);
+    }
+}
+
+class Yongle: public ZeroCardViewAsSkill{
+public:
+    Yongle():ZeroCardViewAsSkill("yongle"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("YongleCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new YongleCard;
+    }
+};
+
+class Zhiyuan: public TriggerSkill{
+public:
+    Zhiyuan():TriggerSkill("zhiyuan$"){
+        events << CardLost;
+        //frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasLordSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
+        if(fang1a->isKongcheng()){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand){
+                Room *room = fang1a->getRoom();
+                QList<ServerPlayer *> lieges = room->getLieges("jiang", fang1a);
+                foreach(ServerPlayer *tmp, lieges){
+                    const Card *card = room->askForCard(tmp, ".", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
+                    if(card){
+                        room->playSkillEffect(objectName());
+                        LogMessage lo;
+                        lo.type = "#InvokeSkill";
+                        lo.from = tmp;
+                        lo.arg = objectName();
+                        room->sendLog(lo);
+                        room->obtainCard(fang1a, card, false);
+                        break;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+};
+
+class Qibing:public DrawCardsSkill{
+public:
+    Qibing():DrawCardsSkill("qibing"){
+        frequency = Compulsory;
+    }
+
+    virtual int getDrawNum(ServerPlayer *wangq, int n) const{
+        Room *room = wangq->getRoom();
+        room->playSkillEffect(objectName());
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = wangq;
+        log.arg = objectName();
+        room->sendLog(log);
+
+        return qMin(wangq->getHp(), 4);
+    }
+};
+
+class Jiachu:public MasochismSkill{
+public:
+    Jiachu():MasochismSkill("jiachu$"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasLordSkill(objectName()) && target->getKingdom() == "min";
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        ServerPlayer *wangqing = room->getLord();
+        if(!wangqing || !wangqing->hasLordSkill(objectName()))
+            return;
+        if(wangqing->isWounded() && player->getKingdom() == "min"
+           && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
+            RecoverStruct rev;
+            rev.who = player;
+            room->playSkillEffect(objectName());
+
+            LogMessage log;
+            log.type = "#InvokeSkill";
+            log.from = player;
+            log.arg = objectName();
+            room->sendLog(log);
+            room->recover(wangqing, rev);
+        }
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -2225,6 +2361,14 @@ StandardPackage::StandardPackage()
     caijing->addSkill(new MarkAssignSkill("@quan", 1));
     related_skills.insertMulti("duoquan", "#@quan-1");
 
+    General *fangla = new General(this, "fangla$", "jiang");
+    fangla->addSkill(new Yongle);
+    fangla->addSkill(new Zhiyuan);
+
+    General *wangqing = new General(this, "wangqing$", "min");
+    wangqing->addSkill(new Qibing);
+    wangqing->addSkill(new Jiachu);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
@@ -2240,6 +2384,7 @@ StandardPackage::StandardPackage()
     addMetaObject<YanshouCard>();
     addMetaObject<CujuCard>();
     addMetaObject<JiashuCard>();
+    addMetaObject<YongleCard>();
 }
 
 ADD_PACKAGE(Standard)

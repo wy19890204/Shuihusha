@@ -727,93 +727,6 @@ public:
     }
 };
 
-YongleCard::YongleCard(){
-}
-
-int YongleCard::getKingdoms(const Player *Self) const{
-    QSet<QString> kingdom_set;
-    QList<const Player *> players = Self->getSiblings();
-    players << Self;
-    foreach(const Player *player, players){
-        if(player->isDead())
-            continue;
-        kingdom_set << player->getKingdom();
-    }
-    return kingdom_set.size();
-}
-
-bool YongleCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int x = getKingdoms(Self);
-    return targets.length() < x && !to_select->isKongcheng();
-}
-
-bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    int x = getKingdoms(Self);
-    return targets.length() <= x && !targets.isEmpty();
-}
-
-void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
-    foreach(ServerPlayer *tmp, targets){
-        const Card *card = tmp->getRandomHandCard();
-        fangla->obtainCard(card, false);
-    }
-    foreach(ServerPlayer *tmp, targets){
-        const Card *card = room->askForCardShow(fangla, tmp, "yongle");
-        tmp->obtainCard(card, false);
-    }
-}
-
-class Yongle: public ZeroCardViewAsSkill{
-public:
-    Yongle():ZeroCardViewAsSkill("yongle"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("YongleCard");
-    }
-
-    virtual const Card *viewAs() const{
-        return new YongleCard;
-    }
-};
-
-class Zhiyuan: public TriggerSkill{
-public:
-    Zhiyuan():TriggerSkill("zhiyuan$"){
-        events << CardLost;
-        //frequency = Frequent;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasLordSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
-        if(fang1a->isKongcheng()){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place == Player::Hand){
-                Room *room = fang1a->getRoom();
-                QList<ServerPlayer *> lieges = room->getLieges("jiang", fang1a);
-                foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".NTH", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
-                    if(card){
-                        room->playSkillEffect(objectName());
-                        LogMessage lo;
-                        lo.type = "#InvokeSkill";
-                        lo.from = tmp;
-                        lo.arg = objectName();
-                        room->sendLog(lo);
-                        room->obtainCard(fang1a, card, false);
-                        break;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-};
-
 class Qiaogongplus: public TriggerSkill{
 public:
     Qiaogongplus():TriggerSkill("qiaog"){
@@ -1022,16 +935,11 @@ BWQZPackage::BWQZPackage()
     wangdingliu->addSkill(new Kongying);
     wangdingliu->addSkill(new Jibu);
 
-    General *fangla = new General(this, "fangla$", "jiang");
-    fangla->addSkill(new Yongle);
-    fangla->addSkill(new Zhiyuan);
-
     addMetaObject<YuanyinCard>();
     addMetaObject<ShougeCard>();
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
-    addMetaObject<YongleCard>();
     skills << new Qiaogongplus;
 }
 
