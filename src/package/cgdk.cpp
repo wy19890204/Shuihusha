@@ -36,60 +36,6 @@ public:
     }
 };
 
-class Jueming: public ProhibitSkill{
-public:
-    Jueming():ProhibitSkill("jueming"){
-    }
-
-    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
-        if(to->getPhase() == Player::NotActive && to->getHp() == 1)
-            return card->inherits("Slash") || card->inherits("Duel") || card->inherits("Assassinate");
-        else
-            return false;
-    }
-};
-
-class JuemingEffect:public TriggerSkill{
-public:
-    JuemingEffect():TriggerSkill("#jueming_effect"){
-        events << HpChanged;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
-        Room *room = nana->getRoom();
-        if(nana->getHp() == 1 && nana->getPhase() == Player::NotActive)
-            room->playSkillEffect("jueming");
-        return false;
-    }
-};
-
-class Jiuhan:public TriggerSkill{
-public:
-    Jiuhan():TriggerSkill("jiuhan"){
-        events << HpRecover;
-        frequency = Frequent;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
-        Room *room = nana->getRoom();
-        RecoverStruct rec = data.value<RecoverStruct>();
-        if(rec.who == nana && rec.card->inherits("Analeptic") &&
-           nana->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#Jiuhan";
-            log.from = nana;
-            log.arg = objectName();
-            log.arg2 = QString::number(1);
-            room->sendLog(log);
-            rec.recover ++;
-
-            data = QVariant::fromValue(rec);
-        }
-        return false;
-    }
-};
-
 class Citan: public PhaseChangeSkill{
 public:
     Citan():PhaseChangeSkill("citan"){
@@ -825,12 +771,6 @@ public:
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
-    General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
-    ruanxiaoqi->addSkill(new Jueming);
-    ruanxiaoqi->addSkill(new JuemingEffect);
-    related_skills.insertMulti("jueming", "#jueming_effect");
-    ruanxiaoqi->addSkill(new Jiuhan);
-
     General *xiebao = new General(this, "xiebao", "min");
     xiebao->addSkill(new Liehuo);
 

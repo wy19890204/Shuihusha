@@ -37,42 +37,6 @@ public:
     }
 };
 
-class Guizi: public TriggerSkill{
-public:
-    Guizi():TriggerSkill("guizi"){
-        events << Dying;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *poolguy, QVariant &data) const{
-        Room *room = poolguy->getRoom();
-        ServerPlayer *bear = room->findPlayerBySkillName(objectName());
-        DyingStruct dying = data.value<DyingStruct>();
-        if(!bear || !dying.who)
-            return false;
-        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@guizi:" + poolguy->objectName(), data, CardDiscarded)){
-            room->playSkillEffect(objectName());
-            DamageStruct damage;
-            damage.from = bear;
-
-            LogMessage log;
-            log.type = "#Guizi";
-            log.from = bear;
-            log.to << poolguy;
-            log.arg = objectName();
-            room->sendLog(log);
-
-            room->getThread()->delay(1500);
-            room->killPlayer(poolguy, &damage);
-            return true;
-        }
-        return false;
-    }
-};
-
 SixiangCard::SixiangCard(){
 }
 
@@ -485,9 +449,6 @@ ZCYNPackage::ZCYNPackage()
 {
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);
-
-    General *yangxiong = new General(this, "yangxiong", "jiang");
-    yangxiong->addSkill(new Guizi);
 
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);

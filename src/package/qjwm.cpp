@@ -157,139 +157,6 @@ public:
     }
 };
 
-DaleiCard::DaleiCard(){
-    once = true;
-    will_throw = false;
-}
-
-bool DaleiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->getGeneral()->isMale() &&
-            !to_select->isKongcheng() && to_select != Self;
-}
-
-void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *> &targets) const{
-    bool success = xiaoyi->pindian(targets.first(), "dalei", this);
-    if(success){
-        room->setPlayerFlag(xiaoyi, "dalei_success");
-        room->setPlayerFlag(targets.first(), "dalei_target");
-    }else{
-        DamageStruct damage;
-        damage.from = targets.first();
-        damage.to = xiaoyi;
-        room->damage(damage);
-    }
-}
-
-class DaleiViewAsSkill: public OneCardViewAsSkill{
-public:
-    DaleiViewAsSkill():OneCardViewAsSkill("dalei"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("DaleiCard") && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new DaleiCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Dalei: public TriggerSkill{
-public:
-    Dalei():TriggerSkill("dalei"){
-        view_as_skill = new DaleiViewAsSkill;
-        events << Damage << PhaseChange;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        if(!player->hasFlag("dalei_success"))
-            return false;
-        if(event == PhaseChange){
-            if(player->getPhase() == Player::NotActive){
-                room->setPlayerFlag(player, "-dalei_success");
-                foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                    if(tmp->hasFlag("dalei_target"))
-                        room->setPlayerFlag(tmp, "-dalei_target");
-                }
-            }
-            return false;
-        }
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->hasFlag("dalei_target")){
-            RecoverStruct rev;
-            rev.who = player;
-            for(int p = 0; p < damage.damage; p++){
-                if(player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
-            }
-        }
-        return false;
-    }
-};
-
-class Fuqin: public MasochismSkill{
-public:
-    Fuqin():MasochismSkill("fuqin"){
-    }
-
-    virtual QString getDefaultChoice(ServerPlayer *player) const{
-        if(player->getLostHp() > 2)
-            return "qing";
-        else
-            return "yan";
-    }
-
-    virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
-        Room *room = yan->getRoom();
-        int lstn = yan->getLostHp();
-        if(damage.from){
-            PlayerStar from = damage.from;
-            yan->tag["FuqinSource"] = QVariant::fromValue(from);
-        }
-        QString choice = damage.from ?
-                         room->askForChoice(yan, objectName(), "yan+qing+nil"):
-                         room->askForChoice(yan, objectName(), "qing+nil");
-        if(choice == "nil")
-            return;
-        LogMessage log;
-        log.from = yan;
-        log.arg = objectName();
-        if(choice == "yan"){
-            room->playSkillEffect(objectName(), 1);
-            if(!damage.from || damage.from->isNude())
-                return;
-            int i = 0;
-            for(; i < lstn; i++){
-                int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
-                room->throwCard(card_id);
-                if(damage.from->isNude())
-                    break;
-            }
-            log.to << damage.from;
-            log.arg2 = QString::number(i);
-            log.type = "#FuqinYan";
-        }
-        else{
-            room->playSkillEffect(objectName(), 2);
-            ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
-            target->drawCards(lstn);
-            log.to << target;
-            log.arg2 = QString::number(lstn);
-            log.type = "#FuqinQin";
-        }
-        room->sendLog(log);
-        yan->tag.remove("FuqinSource");
-    }
-};
-
 class Pozhen: public TriggerSkill{
 public:
     Pozhen():TriggerSkill("pozhen"){
@@ -897,10 +764,6 @@ QJWMPackage::QJWMPackage()
     shijin->addSkill(new Wubang);
     shijin->addSkill(new Xiagu);
 
-    General *yanqing = new General(this, "yanqing", "min", 3);
-    yanqing->addSkill(new Dalei);
-    yanqing->addSkill(new Fuqin);
-
     General *zhuwu = new General(this, "zhuwu", "kou", 3);
     zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
@@ -932,7 +795,6 @@ QJWMPackage::QJWMPackage()
     luozhenren->addSkill(new Butian);
     luozhenren->addSkill(new Huaxian);
 
-    addMetaObject<DaleiCard>();
     addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();

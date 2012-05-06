@@ -1402,6 +1402,228 @@ public:
     }
 };
 
+class Jueming: public ProhibitSkill{
+public:
+    Jueming():ProhibitSkill("jueming"){
+    }
+
+    virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{
+        if(to->getHp() == 1)
+            return card->inherits("Slash") || card->inherits("Duel") || card->inherits("Assassinate");
+        else
+            return false;
+    }
+};
+
+class JuemingEffect:public TriggerSkill{
+public:
+    JuemingEffect():TriggerSkill("#jueming_effect"){
+        events << HpChanged;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
+        Room *room = nana->getRoom();
+        if(nana->getHp() == 1 && nana->getPhase() == Player::NotActive)
+            room->playSkillEffect("jueming");
+        return false;
+    }
+};
+
+class Jiuhan:public TriggerSkill{
+public:
+    Jiuhan():TriggerSkill("jiuhan"){
+        events << HpRecover;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *nana, QVariant &data) const{
+        Room *room = nana->getRoom();
+        RecoverStruct rec = data.value<RecoverStruct>();
+        if(rec.who == nana && rec.card->inherits("Analeptic") &&
+           nana->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Jiuhan";
+            log.from = nana;
+            log.arg = objectName();
+            log.arg2 = QString::number(1);
+            room->sendLog(log);
+            rec.recover ++;
+
+            data = QVariant::fromValue(rec);
+        }
+        return false;
+    }
+};
+
+class Xingxing: public TriggerSkill{
+public:
+    Xingxing():TriggerSkill("xingxing"){
+        events << Dying;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *poolguy, QVariant &data) const{
+        Room *room = poolguy->getRoom();
+        ServerPlayer *bear = room->findPlayerBySkillName(objectName());
+        DyingStruct dying = data.value<DyingStruct>();
+        if(!bear || !dying.who)
+            return false;
+        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
+            room->playSkillEffect(objectName());
+            DamageStruct damage;
+            damage.from = bear;
+
+            LogMessage log;
+            log.type = "#Xingxing";
+            log.from = bear;
+            log.to << poolguy;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->getThread()->delay(1500);
+            room->killPlayer(poolguy, &damage);
+            return true;
+        }
+        return false;
+    }
+};
+
+DaleiCard::DaleiCard(){
+    once = true;
+    will_throw = false;
+}
+
+bool DaleiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isMale() &&
+            !to_select->isKongcheng() && to_select != Self;
+}
+
+void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *> &targets) const{
+    bool success = xiaoyi->pindian(targets.first(), "dalei", this);
+    if(success){
+        room->setPlayerFlag(xiaoyi, "dalei_success");
+        room->setPlayerFlag(targets.first(), "dalei_target");
+    }else{
+        DamageStruct damage;
+        damage.from = targets.first();
+        damage.to = xiaoyi;
+        room->damage(damage);
+    }
+}
+
+class DaleiViewAsSkill: public OneCardViewAsSkill{
+public:
+    DaleiViewAsSkill():OneCardViewAsSkill("dalei"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("DaleiCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new DaleiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Dalei: public TriggerSkill{
+public:
+    Dalei():TriggerSkill("dalei"){
+        view_as_skill = new DaleiViewAsSkill;
+        events << Damage << PhaseChange;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(!player->hasFlag("dalei_success"))
+            return false;
+        if(event == PhaseChange){
+            if(player->getPhase() == Player::NotActive){
+                room->setPlayerFlag(player, "-dalei_success");
+                foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                    if(tmp->hasFlag("dalei_target"))
+                        room->setPlayerFlag(tmp, "-dalei_target");
+                }
+            }
+            return false;
+        }
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to->hasFlag("dalei_target")){
+            RecoverStruct rev;
+            rev.who = player;
+            for(int p = 0; p < damage.damage; p++){
+                if(player->askForSkillInvoke(objectName(), data))
+                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
+            }
+        }
+        return false;
+    }
+};
+
+class Fuqin: public MasochismSkill{
+public:
+    Fuqin():MasochismSkill("fuqin"){
+    }
+
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 2)
+            return "qing";
+        else
+            return "yan";
+    }
+
+    virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
+        Room *room = yan->getRoom();
+        int lstn = yan->getLostHp();
+        if(damage.from){
+            PlayerStar from = damage.from;
+            yan->tag["FuqinSource"] = QVariant::fromValue(from);
+        }
+        QString choice = damage.from ?
+                         room->askForChoice(yan, objectName(), "yan+qing+nil"):
+                         room->askForChoice(yan, objectName(), "qing+nil");
+        if(choice == "nil")
+            return;
+        LogMessage log;
+        log.from = yan;
+        log.arg = objectName();
+        if(choice == "yan"){
+            room->playSkillEffect(objectName(), 1);
+            if(!damage.from || damage.from->isNude())
+                return;
+            int i = 0;
+            for(; i < lstn; i++){
+                int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
+                room->throwCard(card_id);
+                if(damage.from->isNude())
+                    break;
+            }
+            log.to << damage.from;
+            log.arg2 = QString::number(i);
+            log.type = "#FuqinYan";
+        }
+        else{
+            room->playSkillEffect(objectName(), 2);
+            ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
+            target->drawCards(lstn);
+            log.to << target;
+            log.arg2 = QString::number(lstn);
+            log.type = "#FuqinQin";
+        }
+        room->sendLog(log);
+        yan->tag.remove("FuqinSource");
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -1466,6 +1688,19 @@ StandardPackage::StandardPackage()
     General *likui = new General(this, "likui", "kou");
     likui->addSkill(new Shalu);
 
+    General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
+    ruanxiaoqi->addSkill(new Jueming);
+    ruanxiaoqi->addSkill(new JuemingEffect);
+    related_skills.insertMulti("jueming", "#jueming_effect");
+    ruanxiaoqi->addSkill(new Jiuhan);
+
+    General *yangxiong = new General(this, "yangxiong", "jiang");
+    yangxiong->addSkill(new Xingxing);
+
+    General *yanqing = new General(this, "yanqing", "min", 3);
+    yanqing->addSkill(new Dalei);
+    yanqing->addSkill(new Fuqin);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
@@ -1476,6 +1711,7 @@ StandardPackage::StandardPackage()
     addMetaObject<MaidaoCard>();
     addMetaObject<MAIdaoCard>();
     addMetaObject<FengmangCard>();
+    addMetaObject<DaleiCard>();
 }
 
 ADD_PACKAGE(Standard)

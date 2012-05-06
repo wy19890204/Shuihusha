@@ -635,7 +635,7 @@ bool Player::canSlash(const Player *other, bool distance_limit) const{
     if(other->hasSkill("fangzhen") && this->getHp() > other->getHp())
         return false;
 
-    if(other->hasSkill("jueming") && other->getPhase() == Player::NotActive && other->getHp() == 1)
+    if(other->hasSkill("jueming") && other->getHp() == 1)
         return false;
 
     if(other == this)
