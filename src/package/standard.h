@@ -6,13 +6,6 @@
 #include "roomthread.h"
 #include "skill.h"
 
-class StandardPackage:public Package{
-    Q_OBJECT
-
-public:
-    StandardPackage();
-};
-
 class TestPackage: public Package{
     Q_OBJECT
 

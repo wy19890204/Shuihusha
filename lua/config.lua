@@ -17,6 +17,7 @@ config = {
 	"Kuso",
 	"Joy",
 
+        "Standard",
 	"QJWM",
 	"TTXD",
 	"XZDD",
