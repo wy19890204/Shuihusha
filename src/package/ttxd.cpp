@@ -358,111 +358,6 @@ public:
     }
 };
 
-class Jishi: public TriggerSkill{
-public:
-    Jishi():TriggerSkill("jishi"){
-        events << TurnStart;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->isWounded();
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *target, QVariant &) const{
-        PlayerStar player = target;
-        Room *room = player->getRoom();
-        ServerPlayer *lingtianyi = room->findPlayerBySkillName(objectName());
-        if(!lingtianyi || lingtianyi->isKongcheng())
-            return false;
-        const Card *card = room->askForCard(lingtianyi, ".", "@jishi:" + target->objectName(), QVariant::fromValue(player), CardDiscarded);
-        if(!card)
-            return false;
-        RecoverStruct lty;
-        lty.card = card;
-        lty.who = lingtianyi;
-
-        room->playSkillEffect(objectName());
-        LogMessage log;
-        log.from = lingtianyi;
-        log.to << target;
-        log.type = "#UseSkill";
-        log.arg = objectName();
-        room->sendLog(log);
-
-        room->recover(player, lty);
-        return false;
-    }
-};
-
-class Fengyue: public PhaseChangeSkill{
-public:
-    Fengyue():PhaseChangeSkill("fengyue"){
-        frequency = Frequent;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *yinzei) const{
-        if(yinzei->getPhase() == Player::Finish){
-            Room *room = yinzei->getRoom();
-            int girl = room->getMenorWomen("female").length();
-            if(girl > 0 && room->askForSkillInvoke(yinzei, objectName())){
-                room->playSkillEffect(objectName());
-                yinzei->drawCards(qMin(girl, 2));
-            }
-        }
-        return false;
-    }
-};
-
-YanshouCard::YanshouCard(){
-}
-
-bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Player *, const Player *Self) const{
-    return targets.isEmpty();
-}
-
-void YanshouCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    room->broadcastInvoke("animate", "lightbox:$yanshou");
-    effect.from->loseMark("@life");
-    LogMessage log;
-    log.type = "#Yanshou";
-    log.from = effect.from;
-    log.to << effect.to;
-    log.arg = QString::number(1);
-
-    room->sendLog(log);
-    room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
-}
-
-class Yanshou: public ViewAsSkill{
-public:
-    Yanshou():ViewAsSkill("yanshou"){
-        frequency = Limited;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@life") > 0;
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() >= 2)
-            return false;
-        return to_select->getCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
-            return NULL;
-        YanshouCard *card = new YanshouCard;
-        card->addSubcards(cards);
-        return card;
-    }
-};
-
 class Hengxing:public DrawCardsSkill{
 public:
     Hengxing():DrawCardsSkill("hengxing"){
@@ -580,71 +475,6 @@ public:
     }
 };
 
-WujiCard::WujiCard(){
-    target_fixed = true;
-}
-
-void WujiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->throwCard(this);
-    if(source->isAlive())
-        room->drawCards(source, subcards.length());
-}
-
-class Hongjin: public TriggerSkill{
-public:
-    Hongjin():TriggerSkill("hongjin"){
-        events << Damage;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *hu3niang, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-
-        if(damage.to->isAlive() && damage.to->getGeneral()->isMale()){
-            Room *room = hu3niang->getRoom();
-            hu3niang->tag["HongjinTarget"] = QVariant::fromValue((PlayerStar)damage.to);
-            QString voly = damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
-            QString ball = room->askForChoice(hu3niang, objectName(), voly);
-            if(ball == "cancel")
-                return false;
-            LogMessage log;
-            log.type = "#InvokeSkill";
-            log.from = hu3niang;
-            log.arg = objectName();
-            room->sendLog(log);
-
-            if(ball == "throw"){
-                room->playSkillEffect(objectName(), 1);
-                int card_id = room->askForCardChosen(hu3niang, damage.to, "he", objectName());
-                room->throwCard(card_id);
-            }
-            else{
-                room->playSkillEffect(objectName(), 2);
-                hu3niang->drawCards(1);
-            }
-        }
-        hu3niang->tag.remove("HongjinTarget");
-        return false;
-    }
-};
-
-class Wuji:public ViewAsSkill{
-public:
-    Wuji():ViewAsSkill("wuji"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
-        return to_select->getCard()->inherits("Slash");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-        WujiCard *uji_card = new WujiCard;
-        uji_card->addSubcards(cards);
-        return uji_card;
-    }
-};
-
 class Mozhang: public PhaseChangeSkill{
 public:
     Mozhang():PhaseChangeSkill("mozhang"){
@@ -696,26 +526,13 @@ TTXDPackage::TTXDPackage()
     qiaodaoqing->addSkill(new Huanshu);
     qiaodaoqing->addSkill(new Mozhang);
 
-    General *andaoquan = new General(this, "andaoquan", "min", 3);
-    andaoquan->addSkill(new Jishi);
-    andaoquan->addSkill(new Yanshou);
-    andaoquan->addSkill(new MarkAssignSkill("@life", 1));
-    related_skills.insertMulti("yanshou", "#@life-1");
-    andaoquan->addSkill(new Fengyue);
-
     General *gaoqiu = new General(this, "gaoqiu$", "guan", 3);
     gaoqiu->addSkill(new Hengxing);
     gaoqiu->addSkill(new Cuju);
     gaoqiu->addSkill(new Panquan);
 
-    General *husanniang = new General(this, "husanniang", "jiang", 3, false);
-    husanniang->addSkill(new Hongjin);
-    husanniang->addSkill(new Wuji);
-
     addMetaObject<HuanshuCard>();
     addMetaObject<CujuCard>();
-    addMetaObject<WujiCard>();
-    addMetaObject<YanshouCard>();
 }
 
 ADD_PACKAGE(TTXD)

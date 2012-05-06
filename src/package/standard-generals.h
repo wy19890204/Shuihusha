@@ -153,4 +153,23 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class YanshouCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE YanshouCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+};
+
+class WujiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE WujiCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 #endif // STANDARDGENERALS_H

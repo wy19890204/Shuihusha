@@ -662,112 +662,6 @@ public:
     }
 };
 
-class EquiPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return player->hasEquip(card);
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
-class Heidian: public TriggerSkill{
-public:
-    Heidian():TriggerSkill("heidian"){
-        events << Damaged << CardLost;
-        frequency = Compulsory;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent v, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> sunny = room->findPlayersBySkillName(objectName());
-        if(sunny.isEmpty())
-            return false;
-        LogMessage log;
-        log.type = "#TriggerSkill";
-        log.arg = objectName();
-        foreach(ServerPlayer *sun, sunny){
-            log.from = sun;
-            if(v == Damaged){
-                DamageStruct damage = data.value<DamageStruct>();
-                if(damage.to == sun && damage.from && damage.from != damage.to &&
-                   !damage.from->isKongcheng()){
-                    room->playSkillEffect(objectName(), 2);
-                    room->sendLog(log);
-                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data, CardDiscarded))
-                        room->throwCard(damage.from->getRandomHandCard());
-                }
-            }
-            else if(v == CardLost){
-                if(player == sun)
-                    continue;
-                if(player->isKongcheng()){
-                    CardMoveStar move = data.value<CardMoveStar>();
-                    if(move->from_place == Player::Hand && player->isAlive()){
-                        room->playSkillEffect(objectName(), 1);
-                        room->sendLog(log);
-
-                        const Card *card = room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data, NonTrigger);
-                        if(card)
-                            sun->obtainCard(card);
-                        else
-                            room->loseHp(player);
-                    }
-                }
-            }
-        }
-        return false;
-    }
-};
-
-class Renrou: public TriggerSkill{
-public:
-    Renrou():TriggerSkill("renrou"){
-        events << Death;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        if(player->isNude())
-            return false;
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> ernian = room->findPlayersBySkillName(objectName());
-        if(ernian.isEmpty())
-            return false;
-        QVariant shiti = QVariant::fromValue((PlayerStar)player);
-        foreach(ServerPlayer *erniang, ernian){
-            if(erniang->isAlive() && room->askForSkillInvoke(erniang, objectName(), shiti)){
-                room->playSkillEffect(objectName(), 1);
-                int cardnum = player->getCardCount(true);
-                erniang->obtainCard(player->getWeapon());
-                erniang->obtainCard(player->getArmor());
-                erniang->obtainCard(player->getDefensiveHorse());
-                erniang->obtainCard(player->getOffensiveHorse());
-                DummyCard *all_cards = player->wholeHandCards();
-                if(all_cards){
-                    room->moveCardTo(all_cards, erniang, Player::Hand, false);
-                    delete all_cards;
-                }
-                QList<int> yiji_cards = erniang->handCards().mid(erniang->getHandcardNum() - cardnum);
-                bool isyiji = false;
-                while(room->askForYiji(erniang, yiji_cards))
-                    isyiji = true;
-                if(isyiji)
-                    room->playSkillEffect(objectName(), 2);
-            }
-        }
-        return false;
-    }
-};
-
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -803,11 +697,6 @@ CGDKPackage::CGDKPackage()
     General *lili = new General(this, "lili", "kou", 3);
     lili->addSkill(new Duoming);
     lili->addSkill(new Moucai);
-
-    General *sunerniang = new General(this, "sunerniang", "kou", 3, false);
-    sunerniang->addSkill(new Heidian);
-    sunerniang->addSkill(new Renrou);
-    patterns[".Equi"] = new EquiPattern;
 
     addMetaObject<BingjiCard>();
     addMetaObject<LingdiCard>();
