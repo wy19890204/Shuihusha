@@ -1255,6 +1255,7 @@ public:
         Room *room = player->getRoom();
         if(!player->askForSkillInvoke(objectName(), data))
             return false;
+        room->playSkillEffect(objectName());
 
         QString horse_type;
         if(horses.length() == 2)
@@ -1469,9 +1470,9 @@ public:
         Room *room = poolguy->getRoom();
         ServerPlayer *bear = room->findPlayerBySkillName(objectName());
         DyingStruct dying = data.value<DyingStruct>();
-        if(!bear || !dying.who)
+        if(!bear || !dying.who || !bear->inMyAttackRange(dying.who))
             return false;
-        if(dying.who == poolguy && room->askForCard(bear, ".|spade", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
+        if(dying.who == poolguy && room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
             room->playSkillEffect(objectName());
             DamageStruct damage;
             damage.from = bear;
@@ -2022,6 +2023,57 @@ public:
     }
 };
 
+JiashuCard::JiashuCard(){
+    will_throw = false;
+    once = true;
+}
+
+bool JiashuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void JiashuCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    Room *room = effect.from->getRoom();
+
+    Card::Suit suit = room->askForSuit(effect.from, "jiashu");
+    LogMessage log;
+    log.type = "#Jiashu";
+    log.from = effect.to;
+    QString suit_str = Suit2String(suit);
+    log.arg = suit_str;
+    room->sendLog(log);
+    QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
+    QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
+    const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
+    if(card){
+        effect.from->obtainCard(card);
+        effect.to->drawCards(1);
+    }
+    else
+        room->loseHp(effect.to);
+}
+
+class Jiashu: public OneCardViewAsSkill{
+public:
+    Jiashu():OneCardViewAsSkill("jiashu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("JiashuCard");
+    }
+
+    virtual bool viewFilter(const CardItem *book) const{
+        return !book->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        JiashuCard *card = new JiashuCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 class Duoquan: public TriggerSkill{
 public:
     Duoquan():TriggerSkill("duoquan"){
@@ -2038,7 +2090,7 @@ public:
         ServerPlayer *killer = damage ? damage->from : NULL;
         Room *room = player->getRoom();
         ServerPlayer *caijing = room->findPlayerBySkillName(objectName());
-        if(caijing && caijing != killer){
+        if(caijing && caijing != killer && caijing->getMark("@quan") > 0){
             QVariant shiti = QVariant::fromValue((PlayerStar)player);
             if(!room->askForSkillInvoke(caijing, objectName(), shiti))
                 return false;
@@ -2056,6 +2108,9 @@ public:
                 QString skill = room->askForChoice(caijing, objectName(), skills.join("+"));
                 room->acquireSkill(caijing, skill);
             }
+            room->playSkillEffect(objectName());
+            room->broadcastInvoke("animate", "lightbox:$duoquan");
+            caijing->loseMark("@quan");
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
                 room->obtainCard(caijing, all_cards, false);
@@ -2165,7 +2220,10 @@ StandardPackage::StandardPackage()
     gaoqiu->addSkill(new Panquan);
 
     General *caijing = new General(this, "caijing", "guan");
+    caijing->addSkill(new Jiashu);
     caijing->addSkill(new Duoquan);
+    caijing->addSkill(new MarkAssignSkill("@quan", 1));
+    related_skills.insertMulti("duoquan", "#@quan-1");
 
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
@@ -2180,6 +2238,8 @@ StandardPackage::StandardPackage()
     addMetaObject<DaleiCard>();
     addMetaObject<WujiCard>();
     addMetaObject<YanshouCard>();
+    addMetaObject<CujuCard>();
+    addMetaObject<JiashuCard>();
 }
 
 ADD_PACKAGE(Standard)

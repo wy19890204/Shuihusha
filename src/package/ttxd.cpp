@@ -410,7 +410,6 @@ TTXDPackage::TTXDPackage()
     qiaodaoqing->addSkill(new Mozhang);
 
     addMetaObject<HuanshuCard>();
-    addMetaObject<CujuCard>();
 }
 
 ADD_PACKAGE(TTXD)
