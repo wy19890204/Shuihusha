@@ -66,93 +66,6 @@ public:
     }
 };
 
-class Liba: public TriggerSkill{
-public:
-    Liba():TriggerSkill("liba"){
-        events << Predamage;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *luda, QVariant &data) const{
-        Room *room = luda->getRoom();
-        if(luda->getPhase() != Player::Play)
-            return false;
-        DamageStruct damage = data.value<DamageStruct>();
-
-        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
-            && !damage.to->isKongcheng()){
-            if(room->askForSkillInvoke(luda, objectName(), data)){
-                room->playSkillEffect(objectName());
-                int card_id = damage.to->getRandomHandCardId();
-                const Card *card = Sanguosha->getCard(card_id);
-                room->showCard(damage.to, card_id);
-                room->getThread()->delay();
-                if(!card->inherits("BasicCard")){
-                    room->throwCard(card_id);
-                    LogMessage log;
-                    log.type = "$ForceDiscardCard";
-                    log.from = luda;
-                    log.to << damage.to;
-                    log.card_str = card->getEffectIdString();
-                    room->sendLog(log);
-
-                    damage.damage ++;
-                }
-                data = QVariant::fromValue(damage);
-            }
-        }
-        return false;
-    }
-};
-
-class Fuhu: public TriggerSkill{
-public:
-    Fuhu():TriggerSkill("fuhu"){
-        events << DamageComplete;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.card || !damage.card->inherits("Slash"))
-            return false;
-        QList<ServerPlayer *> wusOng = room->findPlayersBySkillName(objectName());
-        if(wusOng.isEmpty())
-            return false;
-
-        foreach(ServerPlayer *wusong, wusOng){
-            if(wusong->canSlash(damage.from, false)
-                    && !wusong->isKongcheng() && damage.from != wusong){
-                const Card *card = room->askForCard(wusong, "BasicCard", "@fuhu:" + damage.from->objectName(), data, CardDiscarded);
-                if(!card)
-                    continue;
-                Slash *slash = new Slash(Card::NoSuit, 0);
-                slash->setSkillName(objectName());
-                CardUseStruct use;
-                use.card = slash;
-                use.from = wusong;
-                use.to << damage.from;
-
-                if(card->inherits("Analeptic")){
-                    LogMessage log;
-                    log.type = "$Fuhu";
-                    log.from = wusong;
-                    log.card_str = card->getEffectIdString();
-                    room->sendLog(log);
-
-                    room->setPlayerFlag(wusong, "drank");
-                }
-                room->throwCard(card, wusong);
-                room->useCard(use);
-            }
-        }
-        return false;
-    }
-};
-
 class Wubang: public TriggerSkill{
 public:
     Wubang():TriggerSkill("wubang"){
@@ -979,13 +892,6 @@ QJWMPackage::QJWMPackage()
 
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);
-
-    General *luzhishen = new General(this, "luzhishen", "kou");
-    luzhishen->addSkill(new Liba);
-    luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
-
-    General *wusong = new General(this, "wusong", "kou");
-    wusong->addSkill(new Fuhu);
 
     General *shijin = new General(this, "shijin", "kou");
     shijin->addSkill(new Wubang);

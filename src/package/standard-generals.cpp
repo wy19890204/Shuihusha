@@ -297,7 +297,8 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("TrickCard");
+        const Card *card = to_select->getCard();
+        return card->inherits("TrickCard") || card->inherits("EventsCard");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -476,7 +477,7 @@ public:
         QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
 
         QStringList attachskills;
-        attachskills << "spear" << "axe" << "jui" << "maida0";
+        attachskills << "spear" << "axe" << "jui" << "mAIdao";
         foreach(QString skill_name, Qimen_data.skills){
             if(skill_name == "spear" && (!player->getWeapon() || player->getWeapon()->objectName() != "spear"))
                 continue;
@@ -955,6 +956,280 @@ public:
     }
 };
 
+class Liba: public TriggerSkill{
+public:
+    Liba():TriggerSkill("liba"){
+        events << Predamage;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *luda, QVariant &data) const{
+        Room *room = luda->getRoom();
+        if(luda->getPhase() != Player::Play)
+            return false;
+        DamageStruct damage = data.value<DamageStruct>();
+
+        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
+            && !damage.to->isKongcheng()){
+            if(room->askForSkillInvoke(luda, objectName(), data)){
+                room->playSkillEffect(objectName());
+                int card_id = damage.to->getRandomHandCardId();
+                const Card *card = Sanguosha->getCard(card_id);
+                room->showCard(damage.to, card_id);
+                room->getThread()->delay();
+                if(!card->inherits("BasicCard")){
+                    room->throwCard(card_id);
+                    LogMessage log;
+                    log.type = "$ForceDiscardCard";
+                    log.from = luda;
+                    log.to << damage.to;
+                    log.card_str = card->getEffectIdString();
+                    room->sendLog(log);
+
+                    damage.damage ++;
+                }
+                data = QVariant::fromValue(damage);
+            }
+        }
+        return false;
+    }
+};
+
+class Fuhu: public TriggerSkill{
+public:
+    Fuhu():TriggerSkill("fuhu"){
+        events << DamageComplete;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || !damage.card || !damage.card->inherits("Slash"))
+            return false;
+        QList<ServerPlayer *> wusOng = room->findPlayersBySkillName(objectName());
+        if(wusOng.isEmpty())
+            return false;
+
+        foreach(ServerPlayer *wusong, wusOng){
+            if(wusong->canSlash(damage.from, false)
+                    && !wusong->isKongcheng() && damage.from != wusong){
+                const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), data, CardDiscarded);
+                if(!card)
+                    continue;
+                Slash *slash = new Slash(Card::NoSuit, 0);
+                slash->setSkillName(objectName());
+                CardUseStruct use;
+                use.card = slash;
+                use.from = wusong;
+                use.to << damage.from;
+
+                if(card->inherits("Analeptic") || card->inherits("Weapon")){
+                    LogMessage log;
+                    log.type = "$Fuhu";
+                    log.from = wusong;
+                    log.card_str = card->getEffectIdString();
+                    room->sendLog(log);
+
+                    room->setPlayerFlag(wusong, "drank");
+                }
+                room->throwCard(card, wusong);
+                room->useCard(use);
+            }
+        }
+        return false;
+    }
+};
+
+MaidaoCard::MaidaoCard(){
+    will_throw = false;
+    target_fixed = true;
+    mute = true;
+}
+
+void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->getRoom()->playSkillEffect("maidao", qrand() % 2 + 1);
+    foreach(int x, getSubcards())
+        source->addToPile("knife", x);
+}
+
+class MaidaoViewAsSkill: public ViewAsSkill{
+public:
+    MaidaoViewAsSkill(): ViewAsSkill("maidao"){
+
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Weapon");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        MaidaoCard *card = new MaidaoCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Maidao: public GameStartSkill{
+public:
+    Maidao():GameStartSkill("maidao"){
+        view_as_skill = new MaidaoViewAsSkill;
+    }
+
+    virtual void onGameStart(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->attachSkillToPlayer(player, "mAIdao");
+        }
+    }
+};
+
+FengmangCard::FengmangCard(){
+}
+
+bool FengmangCard::targetFilter(const QList<const Player *> &targets, const Player *to_s, const Player *Self) const{
+    return targets.isEmpty() && to_s != Self;
+}
+
+void FengmangCard::use(Room *room, ServerPlayer *yang, const QList<ServerPlayer *> &targets) const{
+    const Card *dmgcard = NULL;
+    if(getSubcards().isEmpty()){
+        const QList<int> &knife = yang->getPile("knife");
+        int card_id;
+        if(knife.length() == 1)
+            card_id = knife.first();
+        else{
+            room->fillAG(knife, yang);
+            card_id = room->askForAG(yang, knife, false, objectName());
+            yang->invoke("clearAG");
+        }
+
+        dmgcard = Sanguosha->getCard(card_id);
+        room->throwCard(card_id);
+    }
+    else{
+        dmgcard = Sanguosha->getCard(getSubcards().first());
+        room->throwCard(this);
+    }
+    DamageStruct dmg;
+    dmg.card = dmgcard;
+    dmg.from = yang;
+    dmg.to = targets.first();
+    room->damage(dmg);
+}
+
+class FengmangViewAsSkill: public ViewAsSkill{
+public:
+    FengmangViewAsSkill():ViewAsSkill("fengmang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@fengmang";
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 1)
+            return false;
+        return to_select->getCard()->inherits("EventsCard");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty() && Self->getPile("knife").isEmpty())
+            return NULL;
+        if(cards.length() > 1)
+            return NULL;
+        FengmangCard *card = new FengmangCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+class Fengmang: public PhaseChangeSkill{
+public:
+    Fengmang():PhaseChangeSkill("fengmang"){
+        view_as_skill = new FengmangViewAsSkill;
+    }
+
+    static int getEventsCount(ServerPlayer *player){
+        int x = 0;
+        foreach(const Card *card, player->getHandcards())
+            if(card->inherits("EventsCard"))
+                x ++;
+        return x;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *yang) const{
+        Room *room = yang->getRoom();
+        if(yang->getPhase() != Player::Start)
+            return false;
+        while(!yang->getPile("knife").isEmpty() || getEventsCount(yang) > 0)
+            if(!room->askForUseCard(yang, "@@fengmang", "@fengmang"))
+                break;
+        return false;
+    }
+};
+
+MAIdaoCard::MAIdaoCard(){
+    will_throw = false;
+    mute = true;
+}
+
+bool MAIdaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty() || to_select == Self)
+        return false;
+    return to_select->hasSkill("maidao") && !to_select->getPile("knife").isEmpty();
+}
+
+void MAIdaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = targets.first();
+    room->playSkillEffect("maidao", qrand() % 2 + 3);
+    target->obtainCard(this, false);
+
+    const QList<int> &knife = target->getPile("knife");
+    if(knife.isEmpty())
+        return;
+    int card_id;
+    if(knife.length() == 1)
+        card_id = knife.first();
+    else{
+        room->fillAG(knife, source);
+        card_id = room->askForAG(source, knife, false, "mAIdao");
+        source->invoke("clearAG");
+    }
+    source->obtainCard(Sanguosha->getCard(card_id));
+}
+
+class MAIdao: public ViewAsSkill{
+public:
+    MAIdao():ViewAsSkill("mAIdao"){
+
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() > 2)
+            return false;
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+
+        MAIdaoCard *card = new MAIdaoCard();
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
 StandardPackage::StandardPackage()
     :Package("standard")
 {
@@ -996,6 +1271,18 @@ StandardPackage::StandardPackage()
     zhutong->addSkill(new Sijiu);
     zhutong->addSkill(new Yixian);
 
+    General *luzhishen = new General(this, "luzhishen", "kou");
+    luzhishen->addSkill(new Liba);
+    luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
+
+    General *wusong = new General(this, "wusong", "kou");
+    wusong->addSkill(new Fuhu);
+
+    General *yangzhi = new General(this, "yangzhi", "guan");
+    yangzhi->addSkill(new Maidao);
+    skills << new MAIdao;
+    yangzhi->addSkill(new Fengmang);
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
@@ -1003,6 +1290,9 @@ StandardPackage::StandardPackage()
     addMetaObject<DuijueCard>();
     addMetaObject<HaoshenCard>();
     addMetaObject<SijiuCard>();
+    addMetaObject<MaidaoCard>();
+    addMetaObject<MAIdaoCard>();
+    addMetaObject<FengmangCard>();
 }
 
 ADD_PACKAGE(Standard)

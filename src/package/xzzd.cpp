@@ -7,174 +7,6 @@
 #include "clientplayer.h"
 #include "engine.h"
 
-MaidaoCard::MaidaoCard(){
-    will_throw = false;
-    target_fixed = true;
-    mute = true;
-}
-
-void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    source->getRoom()->playSkillEffect("maidao", qrand() % 2 + 1);
-    source->addToPile("knife", this->getSubcards().first());
-}
-
-class MaidaoViewAsSkill: public OneCardViewAsSkill{
-public:
-    MaidaoViewAsSkill():OneCardViewAsSkill("maidao"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("Weapon");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        MaidaoCard *card = new MaidaoCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Maidao: public GameStartSkill{
-public:
-    Maidao():GameStartSkill("maidao"){
-        view_as_skill = new MaidaoViewAsSkill;
-    }
-
-    virtual void onGameStart(ServerPlayer *yangvi) const{
-        Room *room = yangvi->getRoom();
-        QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
-            room->attachSkillToPlayer(player, "maida0");
-        }
-    }
-};
-
-class Fengmang: public PhaseChangeSkill{
-public:
-    Fengmang():PhaseChangeSkill("fengmang"){
-
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *yang) const{
-        Room *room = yang->getRoom();
-        if(yang->getPhase() != Player::Start)
-            return false;
-        while(!yang->getPile("knife").isEmpty()){
-            if(!yang->askForSkillInvoke(objectName()))
-                return false;
-            const QList<int> &knife = yang->getPile("knife");
-            int card_id;
-            if(knife.length() == 1)
-                card_id = knife.first();
-            else{
-                room->fillAG(knife, yang);
-                card_id = room->askForAG(yang, knife, false, objectName());
-                yang->invoke("clearAG");
-            }
-
-            QList<ServerPlayer *> players;
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(yang)){
-                if(yang->canSlash(tmp, false))
-                    players << tmp;
-            }
-            if(players.isEmpty())
-                return false;
-            ServerPlayer *target = room->askForPlayerChosen(yang, players, objectName());
-
-            const Card *card = Sanguosha->getCard(card_id);
-            const Weapon *weapon = qobject_cast<const Weapon *>(card);
-            yang->tag["Daozi"] = weapon->getRange();
-            room->throwCard(card_id);
-            Slash *slash = new Slash(Card::NoSuit, 0);
-            slash->setSkillName(objectName());
-            slash->addSubcard(Sanguosha->getCard(card_id));
-            CardUseStruct use;
-            use.card = slash;
-            use.from = yang;
-            use.to << target;
-            room->playSkillEffect(objectName());
-
-            room->useCard(use);
-        }
-        return false;
-    }
-};
-
-class FengmangBuff: public SlashBuffSkill{
-public:
-    FengmangBuff():SlashBuffSkill("#fengmangbuff"){
-
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        if(effect.slash && effect.slash->getSkillName() != "fengmang")
-            return false;
-        int weapon_range = effect.from->tag.value("Daozi", 0).toInt();
-        int range = effect.from->distanceTo(effect.to);
-        Room *room = effect.from->getRoom();
-        if(range <= weapon_range){
-            room->playSkillEffect(objectName());
-            room->slashResult(effect, NULL);
-            return true;
-        }
-        effect.from->tag.remove("Daozi");
-        return false;
-    }
-};
-
-Maida0Card::Maida0Card(){
-    will_throw = false;
-    mute = true;
-}
-
-bool Maida0Card::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty() || to_select == Self)
-        return false;
-    return to_select->hasSkill("maidao") && !to_select->getPile("knife").isEmpty();
-}
-
-void Maida0Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
-    room->playSkillEffect("maidao", qrand() % 2 + 3);
-    target->obtainCard(this, false);
-
-    const QList<int> &knife = target->getPile("knife");
-    if(knife.isEmpty())
-        return;
-    int card_id;
-    if(knife.length() == 1)
-        card_id = knife.first();
-    else{
-        room->fillAG(knife, source);
-        card_id = room->askForAG(source, knife, false, "maida0");
-        source->invoke("clearAG");
-    }
-    source->obtainCard(Sanguosha->getCard(card_id));
-}
-
-class Maida0: public ViewAsSkill{
-public:
-    Maida0():ViewAsSkill("maida0"){
-
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() > 2)
-            return false;
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
-            return NULL;
-
-        Maida0Card *card = new Maida0Card();
-        card->addSubcards(cards);
-        return card;
-    }
-};
-
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
@@ -514,6 +346,10 @@ public:
         card->addSubcards(cards);
         return card;
     }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@binggong";
+    }
 };
 
 class Binggong: public PhaseChangeSkill{
@@ -628,13 +464,6 @@ public:
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){
 
-    General *yangzhi = new General(this, "yangzhi", "guan");
-    yangzhi->addSkill(new Maidao);
-    skills << new Maida0;
-    yangzhi->addSkill(new Fengmang);
-    yangzhi->addSkill(new FengmangBuff);
-    related_skills.insertMulti("fengmang", "#fengmangbuff");
-
     General *likui = new General(this, "likui", "jiang");
     likui->addSkill(new Shalu);
 
@@ -669,8 +498,6 @@ XZDDPackage::XZDDPackage()
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    addMetaObject<MaidaoCard>();
-    addMetaObject<Maida0Card>();
     addMetaObject<BinggongCard>();
     addMetaObject<FeiqiangCard>();
 }
