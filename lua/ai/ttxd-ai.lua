@@ -155,6 +155,7 @@ sgs.ai_skill_invoke["cuju"] = function(self, data)
 	return damage.damage > 0
 end
 sgs.ai_skill_use["@@cuju"] = function(self, prompt)
+	if self.player:isKongcheng() then return "." end
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
 	local card = self.player:getRandomHandCard()

@@ -1,20 +1,20 @@
--- yushui
-yushui_skill={}
-yushui_skill.name = "yushui"
-table.insert(sgs.ai_skills, yushui_skill)
-yushui_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("YushuiCard") or not self.player:isWounded() then return end
-	local cards = self.player:getCards("he")
-    cards = sgs.QList2Table(cards)
+-- meihuo
+meihuo_skill={}
+meihuo_skill.name = "meihuo"
+table.insert(sgs.ai_skills, meihuo_skill)
+meihuo_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("MeihuoCard") or not self.player:isWounded() then return end
+	local cards = self.player:getCards("h")
+	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards)  do
 		if card:getSuit() == sgs.Card_Heart then
-		    return sgs.Card_Parse("@YushuiCard=" .. card:getEffectiveId())
+		    return sgs.Card_Parse("@MeihuoCard=" .. card:getEffectiveId())
 		end
 	end
 	return
 end
-sgs.ai_skill_use_func["YushuiCard"] = function(card, use, self)
+sgs.ai_skill_use_func["MeihuoCard"] = function(card, use, self)
 	for _, friend in ipairs(self.friends) do
 		if friend:isWounded() and friend:getGeneral():isMale() then
 			use.card = card
@@ -32,7 +32,7 @@ sgs.ai_skill_cardask["@zhensha"] = function(self, data)
 	cards = sgs.QList2Table(cards)
 	for _, fcard in ipairs(cards) do
 		if fcard:getSuit() == sgs.Card_Spade then
-			if carduse.from:isLord() or carduse.from:getHp() > 1 then
+			if carduse.from:isLord() or carduse.from:getLostHp() > 1 then
 				return fcard:getEffectiveId()
 			end
 		end
@@ -49,7 +49,9 @@ end
 
 -- shengui
 function sgs.ai_trick_prohibit.shengui(card, self, to)
-	return not to:faceUp() and self.player:getGeneral():isMale()
+	if card:isNDTrick() and self.player:getGeneral():isMale() and
+		not to:getArmor() then return true
+	end
 end
 
 -- meicha

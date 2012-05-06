@@ -1,4 +1,4 @@
-
+-- huace
 local huace_skill={}
 huace_skill.name = "huace"
 table.insert(sgs.ai_skills, huace_skill)
@@ -61,7 +61,7 @@ huace_skill.getTurnUseCard = function(self)
 	end
 end
 
-sgs.ai_skill_use_func.HuaceCard = function(card, use, self)
+sgs.ai_skill_use_func["HuaceCard"] = function(card, use, self)
 	local userstring = card:toString()
 	userstring = (userstring:split(":"))[3]
 	local huacecard = sgs.Sanguosha:cloneCard(userstring, card:getSuit(), card:getNumber())
