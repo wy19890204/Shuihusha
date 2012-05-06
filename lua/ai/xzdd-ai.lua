@@ -37,15 +37,21 @@ sgs.ai_skill_use_func["MaidaoCard"] = function(card, use, self)
 end
 
 -- fengmang
-sgs.ai_skill_invoke["fengmang"] = true
-sgs.ai_skill_playerchosen["fengmang"] = function(self, targets)
-	self:sort(self.enemies, "hp")
-	for _, target in ipairs(self.enemies) do
-		if not self:slashProhibit(nil, target) then
-			return target
+sgs.ai_skill_use["@@fengmang"] = function(self, prompt)
+	self:sort(self.enemies)
+	local target = self.enemies[1]
+	local cards = self.player:getHandcards()
+	local card
+	for _, c in sgs.qlist(cards) do
+		if c:inherits("EventsCard") then
+			card = c
+			break
 		end
 	end
-	return self.enemies[1]
+	if card then return "@FengmangCard=" .. card:getEffectiveId() .. "->" .. target:objectName()
+	else return "@FengmangCard=.->" .. target:objectName()
+	end
+	return "."
 end
 
 -- shalu&shunshui&lihun
@@ -226,12 +232,11 @@ function sgs.ai_cardneed.shentou(to, card, self)
 	return card:getSuit() == sgs.Card_Club
 end
 
---[[
--- maida0
-maida0_skill={}
-maida0_skill.name = "maida0"
-table.insert(sgs.ai_skills, maida0_skill)
-maida0_skill.getTurnUseCard = function(self)
+-- mAIdao
+mAIdao_skill = {}
+mAIdao_skill.name = "mAIdao"
+table.insert(sgs.ai_skills, mAIdao_skill)
+mAIdao_skill.getTurnUseCard = function(self)
 	local yangzhi = self.room:findPlayerBySkillName("maidao")
 	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and self:isEnemy(yangzhi) then
 		local cards = self.player:getCards("h")
@@ -243,15 +248,14 @@ maida0_skill.getTurnUseCard = function(self)
 			if self:getUseValue(cards[i]) > 4 then return end
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
-		return "@Maida0Card=" .. table.concat(card_ids, "+")
+		return "@MAIdaoCard=" .. table.concat(card_ids, "+")
 	end
 	return
 end
-sgs.ai_skill_use_func["Maida0Card"] = function(card, use, self)
+sgs.ai_skill_use_func["MAIdaoCard"] = function(card, use, self)
 	local yangzhi = self.room:findPlayerBySkillName("maidao")
 	use.card = card
 	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and use.to then
 		use.to:append(yangzhi)
 	end
 end
---]]

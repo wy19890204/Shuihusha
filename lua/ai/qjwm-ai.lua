@@ -54,11 +54,21 @@ sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	if not self:slashIsEffective(slash, damage.from) then return "." end
 	if self:isEnemy(damage.from) then
-		local cards = self.player:getHandcards()
-		for _, card in sgs.qlist(cards) do
-			if card:inherits("BasicCard") then
-				return card:getEffectiveId()
+		local cards = self.player:getCards("he")
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local default
+		for _, card in ipairs(cards) do
+			if card:isBlack() then
+				if not default then default = card end
+				if self:getCardsNum("Jink", damage.from) == 0 and
+					(card:inherits("Analeptic") or card:inherits("Weapon")) then
+					return card:getEffectiveId()
+				end
 			end
+		end
+		if default then
+			return default:getEffectiveId()
 		end
 	end
 	return "."

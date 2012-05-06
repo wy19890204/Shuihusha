@@ -1,64 +1,77 @@
-local qixi_skill={}
-qixi_skill.name="qixi"
-table.insert(sgs.ai_skills,qixi_skill)
-qixi_skill.getTurnUseCard=function(self,inclusive)
-	local cards = self.player:getCards("he")
-	cards=sgs.QList2Table(cards)
-	
-	local black_card
-	
-	self:sortByUseValue(cards,true)
-	
-	local has_weapon=false
-	
-	for _,card in ipairs(cards)  do
-		if card:inherits("Weapon") and card:isRed() then has_weapon=true end
+
+local huace_skill={}
+huace_skill.name = "huace"
+table.insert(sgs.ai_skills, huace_skill)
+huace_skill.getTurnUseCard = function(self)
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	local aoename = "savage_assault|archery_attack"
+	local aoenames = aoename:split("|")
+	local aoe
+	local i
+	local good, bad = 0, 0
+	local huacetrick = "savage_assault|archery_attack|ex_nihilo|god_salvation"
+	local huacetricks = huacetrick:split("|")
+	for i=1, #huacetricks do
+		local forbiden = huacetricks[i]
+		forbid = sgs.Sanguosha:cloneCard(forbiden, sgs.Card_NoSuit, 0)
+		if self.player:isLocked(forbid) then return end
 	end
-	
-	for _,card in ipairs(cards)  do
-		if card:isBlack()  and ((self:getUseValue(card)<sgs.ai_use_value["Dismantlement"]) or inclusive or self:getOverflow()>0) then
-			local shouldUse=true
-
-			if card:inherits("Armor") then
-				if not self.player:getArmor() then shouldUse=false 
-				elseif self:hasEquip(card) and not (card:inherits("SilverLion") and self.player:isWounded()) then shouldUse=false
-				end
-			end
-
-			if card:inherits("Weapon") then
-				if not self.player:getWeapon() then shouldUse=false
-				elseif self:hasEquip(card) and not has_weapon and not card:inherits("YitianSword") then shouldUse=false
-				end
-			end
-			
-			if card:inherits("Slash") then
-				local dummy_use = {isDummy = true}
-				if self:getCardsNum("Slash") == 1 then
-					self:useBasicCard(card, dummy_use)
-					if dummy_use.card then shouldUse = false end
-				end
-			end
-
-			if shouldUse then
-				black_card = card
-				break
-			end
-			
+	if self.player:hasUsed("HuaceCard") then return end
+	for _, friend in ipairs(self.friends) do
+		if friend:isWounded() then
+			good = good + 10/(friend:getHp())
+			if friend:isLord() then good = good + 10/(friend:getHp()) end
 		end
 	end
 
-	if black_card then
-		local suit = black_card:getSuitString()
-		local number = black_card:getNumberString()
-		local card_id = black_card:getEffectiveId()
-		local card_str = ("dismantlement:qixi[%s:%s]=%d"):format(suit, number, card_id)
-		local dismantlement = sgs.Card_Parse(card_str)
-		
-		assert(dismantlement)
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:isWounded() then
+			bad = bad + 10/(enemy:getHp())
+			if enemy:isLord() then
+				bad = bad + 10/(enemy:getHp())
+			end
+		end
+	end
 
-		return dismantlement
+	local card
+	self:sortByUseValue(cards, true)
+	for _, acard in ipairs(cards)  do
+		if acard:inherits("EventsCard") or acard:inherits("TrickCard") then
+			card = acard:getEffectiveId()
+			break
+		end
+	end
+
+	for i=1, #aoenames do
+		local newhuace = aoenames[i]
+		aoe = sgs.Sanguosha:cloneCard(newhuace, sgs.Card_NoSuit, 0)
+		if self:getAoeValue(aoe) > -5 then
+			local parsed_card=sgs.Card_Parse("@HuaceCard=" .. card .. ":" .. newhuace)
+			return parsed_card
+		end
+	end
+	if good > bad then
+		local parsed_card = sgs.Card_Parse("@HuaceCard=" .. card .. ":" .. "god_salvation")
+		return parsed_card
+	end
+	if self:getCardsNum("Jink") == 0 and self:getCardsNum("Peach") == 0 then
+		local parsed_card = sgs.Card_Parse("@HuaceCard=" .. card .. ":" .. "ex_nihilo")
+		return parsed_card
 	end
 end
+
+sgs.ai_skill_use_func.HuaceCard = function(card, use, self)
+	local userstring = card:toString()
+	userstring = (userstring:split(":"))[3]
+	local huacecard = sgs.Sanguosha:cloneCard(userstring, card:getSuit(), card:getNumber())
+	self:useTrickCard(huacecard,use) 
+	if not use.card then return end
+	use.card = card
+end
+
+-- yunchou
+sgs.ai_skill_invoke["yunchou"] = true
 
 local wusheng_skill={}
 wusheng_skill.name="wusheng"

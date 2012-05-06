@@ -64,10 +64,10 @@ end
 -- haoshen
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then
-		self:sort(self.friends_noself)
+		self:sort(self.friends, "handcard")
 		local max_x = 2
 		local target
-		for _, friend in ipairs(self.friends_noself) do
+		for _, friend in ipairs(self.friends) do
 			local x = friend:getMaxHP() - friend:getHandcardNum()
 			if x > max_x then
 				max_x = x

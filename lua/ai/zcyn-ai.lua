@@ -125,11 +125,11 @@ sgs.ai_skill_invoke["@cihu"] = function(self, prompt)
 	return "."
 end
 
--- guizi
-sgs.ai_skill_cardask["@guizi"] = function(self, data)
+-- xingxing
+sgs.ai_skill_cardask["@xingxing"] = function(self, data)
 	local dy = data:toDying()
 	if self:isEnemy(dy.who) then
-		local cards = self.player:getCards("he")
+		local cards = self.player:getCards("h")
 		for _, card in sgs.qlist(cards) do
 			if card:getSuit() == sgs.Card_Spade then
 				return card:getEffectiveId()
