@@ -51,6 +51,8 @@ end
 -- fuhu
 sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 	local damage = data:toDamage()
+	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
+	if not self:slashIsEffective(slash, damage.from) then return "." end
 	if self:isEnemy(damage.from) then
 		local cards = self.player:getHandcards()
 		for _, card in sgs.qlist(cards) do
