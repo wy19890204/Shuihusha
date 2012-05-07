@@ -254,6 +254,7 @@ local huace_skill={}
 huace_skill.name = "huace"
 table.insert(sgs.ai_skills, huace_skill)
 huace_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("HuaceCard") then return end
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
 	local aoename = "savage_assault|archery_attack"
@@ -268,7 +269,6 @@ huace_skill.getTurnUseCard = function(self)
 		forbid = sgs.Sanguosha:cloneCard(forbiden, sgs.Card_NoSuit, 0)
 		if self.player:isLocked(forbid) then return end
 	end
-	if self.player:hasUsed("HuaceCard") then return end
 	for _, friend in ipairs(self.friends) do
 		if friend:isWounded() then
 			good = good + 10/(friend:getHp())
@@ -636,6 +636,57 @@ function sgs.ai_armor_value.jinjia(card)
 end
 
 -- daizong
+-- mitan
+mitan_skill={}
+mitan_skill.name = "mitan"
+table.insert(sgs.ai_skills, mitan_skill)
+mitan_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("Wiretap") then return end
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local card
+	self:sortByUseValue(cards, true)
+	for _,acard in ipairs(cards) do
+		if (acard:inherits("EventsCard") or acard:inherits("TrickCard")) then
+			card = acard
+			break
+		end
+	end
+	if not card then return nil end
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	local card_str = ("wiretap:mitan[%s:%s]=%d"):format(suit, number, card_id)
+	local wire = sgs.Card_Parse(card_str)
+	assert(wire)
+	return wire
+end
+sgs.ai_skill_askforag["mitan"] = function(self, card_ids)
+	local effect = self.room:getTag("Wiretap"):toCardEffect()
+	local cards = {}
+	for _, card_id in ipairs(card_ids)  do
+		table.insert(cards, sgs.Sanguosha:getCard(card_id))
+	end
+	if self:isEnemy(effect.to) then
+		self:sortByUseValue(cards)
+		return cards[1]:getEffectiveId()
+	else
+		return -1
+	end
+end
+
+-- jibao
+sgs.ai_skill_invoke["jibao"] = function(self, data)
+	return self.player:getHandcardNum() > 2 then
+end
+sgs.ai_skill_discard["jibao"] = function(self, discard_num, optional, include_equip)
+	local to_discard = {}
+	local cards = self.player:getHandcards()
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	table.insert(to_discard, cards[1]:getId())
+	return to_discard
+end
 
 -- likui
 -- shalu
@@ -954,3 +1005,89 @@ sgs.ai_skill_cardask["@jiachu"] = function(self)
 	end
 	return "."
 end
+
+-- panjinlian
+-- meihuo
+meihuo_skill={}
+meihuo_skill.name = "meihuo"
+table.insert(sgs.ai_skills, meihuo_skill)
+meihuo_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("MeihuoCard") or not self.player:isWounded() then return end
+	local cards = self.player:getCards("h")
+	cards = sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards)  do
+		if card:getSuit() == sgs.Card_Heart then
+		    return sgs.Card_Parse("@MeihuoCard=" .. card:getEffectiveId())
+		end
+	end
+	return
+end
+sgs.ai_skill_use_func["MeihuoCard"] = function(card, use, self)
+	for _, friend in ipairs(self.friends) do
+		if friend:isWounded() and friend:getGeneral():isMale() then
+			use.card = card
+			if use.to then use.to:append(friend) end
+			return
+		end
+	end
+end
+
+-- zhensha
+sgs.ai_skill_cardask["@zhensha"] = function(self, data)
+	local carduse = data:toCardUse()
+	if self:isFriend(carduse.from) then return "." end
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	for _, fcard in ipairs(cards) do
+		if fcard:getSuit() == sgs.Card_Spade then
+			if carduse.from:isLord() or carduse.from:getLostHp() > 1 then
+				return fcard:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
+
+function SmartAI:isNoZhenshaMark()
+	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
+		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
+	end
+	return true
+end
+
+-- shengui
+function sgs.ai_trick_prohibit.shengui(card, self, to)
+	if card:isNDTrick() and self.player:getGeneral():isMale() and
+		not to:getArmor() then return true
+	end
+end
+
+-- lishishi
+
+-- yanxijiao
+-- suocai
+local suocai_skill={}
+suocai_skill.name = "suocai"
+table.insert(sgs.ai_skills, suocai_skill)
+suocai_skill.getTurnUseCard = function(self)
+    if not self.player:hasUsed("SuocaiCard") and not self.player:isKongcheng() then
+		local max_card = self:getMaxCard()
+		if max_card and self.player:getHandcardNum() > 2 then
+			return sgs.Card_Parse("@SuocaiCard=" .. max_card:getEffectiveId())
+		end
+	end
+end
+sgs.ai_skill_use_func["SuocaiCard"]=function(card,use,self)
+	self:sort(self.enemies, "handcard")
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isKongcheng() and enemy:getGeneral():isMale() then
+            use.card = card
+		    if use.to then use.to:append(enemy) end
+            return
+		end
+	end
+end
+
+-- huakui
+sgs.ai_skill_invoke["huakui"] = true

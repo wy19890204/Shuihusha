@@ -70,6 +70,7 @@ Wiretap::Wiretap(Suit suit, int number)
 
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+    room->setTag("Wiretap", QVariant::fromValue(effect));
     QList<int> all = effect.to->handCards();
     //room->showAllCards(effect.to, effect.from);
     room->fillAG(all, effect.from);
@@ -77,6 +78,7 @@ void Wiretap::onEffect(const CardEffectStruct &effect) const{
     if(effect.from->hasSkill("mitan"))
         room->showCard(effect.to, mitan);
     effect.from->invoke("clearAG");
+    room->removeTag("Wiretap");
 }
 
 Assassinate::Assassinate(Suit suit, int number)
