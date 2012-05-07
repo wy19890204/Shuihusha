@@ -941,6 +941,47 @@ sgs.ai_skill_invoke["panquan"] = function(self, data)
 end
 
 -- caijing
+-- jiashu
+jiashu_skill={}
+jiashu_skill.name = "jiashu"
+table.insert(sgs.ai_skills, jiashu_skill)
+jiashu_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("JiashuCard") or self.player:isKongcheng() then return end
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	self.jiashusuit = cards[1]:getSuitString()
+	return sgs.Card_Parse("@JiashuCard=" .. cards[1]:getEffectiveId())
+end
+sgs.ai_skill_use_func["JiashuCard"] = function(card, use, self)
+	self:sort(self.enemies, "handcard")
+	use.card = card
+	if use.to then use.to:append(self.enemies[1]) end
+end
+function sgs.ai_skill_suit.jiashu()
+	local map = {}
+	if self.jiashusuit == "spade" then
+		map = {1,2,3}
+	elseif self.jiashusuit == "club" then
+		map = {0,2,3}
+	elseif self.jiashusuit == "heart" then
+		map = {0,1,3}
+	elseif self.jiashusuit == "diamond" then
+		map = {0,1,2}
+	end
+	return map[math.random(1,3)]
+end
+
+-- duoquan
+sgs.ai_skill_invoke["duoquan"] = function(self, data)
+	if self.player:getMark("@quan") == 0 then return false end
+	local shiti = data:toPlayer()
+	if shiti:getHandcardNum() <= 3 then
+		return sgs.ai_chaofeng[shiti:getGeneralName()] > 4
+	else
+		return shiti:getHandcardNum() > 3
+	end
+end
 
 -- fangla
 -- yongle
@@ -1064,6 +1105,42 @@ function sgs.ai_trick_prohibit.shengui(card, self, to)
 end
 
 -- lishishi
+-- qinxin
+sgs.ai_skill_invoke["qinxin"] = true
+
+-- yinjian
+local yinjian_skill={}
+yinjian_skill.name = "yinjian"
+table.insert(sgs.ai_skills, yinjian_skill)
+yinjian_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() < 2 then return end
+	for _, friend in ipairs(self.friends_noself) do
+		if friend:getGeneral():isMale() then
+			self.yinjianfrom = friend
+			break
+		end
+	end
+	if not self.yinjianfrom then return end
+	for _, friend in ipairs(self.friends) do
+		if friend:getGeneral():isMale() and friend ~= self.yinjianfrom
+			and friend:getKingdom() ~= self.yinjianfrom:getKingdom() then
+			self.yinjianto = friend
+			break
+		end
+	end
+	if not self.yinjianto then return end
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	return sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
+end
+sgs.ai_skill_use_func["YinjianCard"]=function(card,use,self)
+	if use.to then
+		use.to:append(self.yinjianfrom)
+		use.to:append(self.yinjianto)
+	end
+	use.card=card
+end
 
 -- yanxijiao
 -- suocai
