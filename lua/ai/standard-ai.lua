@@ -504,6 +504,7 @@ end
 sgs.ai_skill_cardchosen["yixian"] = function(self, who)
 	if self:isFriend(who) and not who:getJudgingArea():isEmpty() then
 		return who:delayedTricks():first()
+	end
 	if self:isEnemy(who) then
 		local cards = who:getCards("he")
 		cards = sgs.QList2Table(ecards)
@@ -653,6 +654,7 @@ end
 sgs.ai_skill_invoke["jiuhan"] = function(self, data)
 	if self.player:getLostHp() > self.player:getMaxHP() then
 		return true
+	end
 	return math.random(1, 3) == 2
 end
 
@@ -841,3 +843,114 @@ sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 	use.card = card
 end
 
+-- sun2niang
+-- heidian
+sgs.ai_skill_cardask["@heidian2"] = function(self)
+	local ecards = self.player:getCards("e")
+	ecards=sgs.QList2Table(cards)
+	self:sortByUseValue(ecards, true)
+	return ecards[1]:getEffectiveId() or "."
+end
+
+-- renrou
+sgs.ai_skill_invoke["renrou"] = function(self, data)
+	local shiti = data:toPlayer()
+	local cards = shiti:getHandcards()
+	local shit_num = 0
+	for _, card in sgs.qlist(cards) do
+		if card:inherits("Shit") then
+			shit_num = shit_num + 1
+			if card:getSuit() == sgs.Card_Spade then
+				shit_num = shit_num + 1
+			end
+		end
+	end
+	return shit_num <= 1
+end
+
+-- gaoqiu
+-- cuju
+sgs.ai_skill_invoke["cuju"] = function(self, data)
+	local damage = data:toDamage()
+	return damage.damage > 0
+end
+sgs.ai_skill_use["@@cuju"] = function(self, prompt)
+	if self.player:isKongcheng() then return "." end
+	self:sort(self.enemies, "hp")
+	local target = self.enemies[1]
+	local card = self.player:getRandomHandCard()
+	if target then return "@CujuCard="..card:getEffectiveId().."->"..target:objectName() end
+	return "."
+end
+
+-- panquan
+sgs.ai_skill_invoke["panquan"] = function(self, data)
+	local gaoqiu = self.room:getLord()
+	return self:isFriend(gaoqiu)
+end
+
+-- caijing
+
+-- fangla
+-- yongle
+local yongle_skill={}
+yongle_skill.name = "yongle"
+table.insert(sgs.ai_skills, yongle_skill)
+yongle_skill.getTurnUseCard = function(self)
+    if self.player:hasUsed("YongleCard") then return end
+	return sgs.Card_Parse("@YongleCard=.")
+end
+sgs.ai_skill_use_func["YongleCard"]=function(card,use,self)
+	local king = self.room:getKingdoms()
+	local enemies = {}
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isKongcheng() then
+			table.insert(enemies, enemy)
+			if #enemies >= king then break end
+		end
+	end
+	use.card = card
+	if use.to then
+		for _, enemy in ipairs(enemies) do
+			use.to:append(enemy)
+		end
+	end
+end
+sgs.ai_cardshow["yongle"] = function(self, requestor)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	return cards[1]
+end
+
+-- zhiyuan
+sgs.ai_skill_cardask["@zhiyuan"] = function(self)
+	local lord = self.room:getLord()
+	if self:isFriend(lord) and not self.player:isKongcheng() then
+		local cards = self.player:getCards("h")
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards)
+		return cards[1]:getEffectiveId()
+	elseif self:isEnemy(lord) and lord:hasUsed("YongleCard") then
+		local shit = self:getCardId("Shit")
+		if shit and type(shit) == "number" then
+			return shit
+		end
+	end
+	return "."
+end
+
+-- wangqing
+-- jiachu
+sgs.ai_skill_cardask["@jiachu"] = function(self)
+	local target = self.room:getLord()
+	if self:isFriend(target) then
+		local allcards = self.player:getCards("he")
+		for _, card in sgs.qlist(allcards) do
+			if card:getSuit() == sgs.Card_Heart then
+				return card:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end

@@ -251,30 +251,6 @@ wugou_skill.getTurnUseCard = function(self)
 	end
 end
 
--- heidian
-sgs.ai_skill_cardask["@heidian2"] = function(self)
-	local ecards = self.player:getCards("e")
-	ecards=sgs.QList2Table(cards)
-	self:sortByUseValue(ecards, true)
-	return ecards[1]:getEffectiveId() or "."
-end
-
--- renrou
-sgs.ai_skill_invoke["renrou"] = function(self, data)
-	local shiti = data:toPlayer()
-	local cards = shiti:getHandcards()
-	local shit_num = 0
-	for _, card in sgs.qlist(cards) do
-		if card:inherits("Shit") then
-			shit_num = shit_num + 1
-			if card:getSuit() == sgs.Card_Spade then
-				shit_num = shit_num + 1
-			end
-		end
-	end
-	return shit_num <= 1
-end
-
 -- yunchou
 function sgs.ai_skill_use_func.YunchouCard(card, use)
 	local subcard = card:getSubcards():first()

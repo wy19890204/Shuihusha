@@ -2176,7 +2176,6 @@ class Zhiyuan: public TriggerSkill{
 public:
     Zhiyuan():TriggerSkill("zhiyuan$"){
         events << CardLost;
-        //frequency = Frequent;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{

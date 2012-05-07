@@ -2038,6 +2038,18 @@ function SmartAI:askForCard(pattern, prompt, data)
 	elseif pattern == "jink" then
 		return sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) or self:getCardId("Jink") or "."
 	end
+
+	if pattern == "." or pattern == ".." then
+		local cards
+		if pattern == "." then
+			cards = self.player:getHandcards()
+		elseif pattern == ".." then
+			cards = self.player:getCards("he")
+		end
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		return cards[1]:getEffectiveId()
+	end
 end
 
 function SmartAI:askForUseCard(pattern, prompt)

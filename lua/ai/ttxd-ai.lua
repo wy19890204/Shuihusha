@@ -45,26 +45,6 @@ function sgs.ai_slash_prohibit.huanshu(self, to)
 	return not (self:hasSkills("butian|shenpan|yixing") or self:isEquip("MeteorSword"))
 end
 
--- cuju
-sgs.ai_skill_invoke["cuju"] = function(self, data)
-	local damage = data:toDamage()
-	return damage.damage > 0
-end
-sgs.ai_skill_use["@@cuju"] = function(self, prompt)
-	if self.player:isKongcheng() then return "." end
-	self:sort(self.enemies, "hp")
-	local target = self.enemies[1]
-	local card = self.player:getRandomHandCard()
-	if target then return "@CujuCard="..card:getEffectiveId().."->"..target:objectName() end
-	return "."
-end
-
--- panquan
-sgs.ai_skill_invoke["panquan"] = function(self, data)
-	local gaoqiu = self.room:getLord()
-	return self:isFriend(gaoqiu)
-end
-
 -- qiangqu
 sgs.ai_skill_invoke["qiangqu"] = function(self, data)
 	local damage = data:toDamage()
