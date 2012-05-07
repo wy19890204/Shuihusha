@@ -1104,13 +1104,6 @@ function SmartAI:isNoZhenshaMark()
 	return true
 end
 
--- shengui
-function sgs.ai_trick_prohibit.shengui(card, self, to)
-	if card:isNDTrick() and self.player:getGeneral():isMale() and
-		not to:getArmor() then return true
-	end
-end
-
 -- lishishi
 -- qinxin
 sgs.ai_skill_invoke["qinxin"] = true

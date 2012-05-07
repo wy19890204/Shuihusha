@@ -3174,6 +3174,9 @@ function SmartAI:hasTrickEffective(card, player)
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
+		if player:hasSkill("shengui") and self.player:getGeneral():isMale() and not player:getArmor() then
+			return true
+		end
 		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
 			return false
 		end
