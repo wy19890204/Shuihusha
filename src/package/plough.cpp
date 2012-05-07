@@ -36,6 +36,11 @@ bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *t
 
 void Ecstasy::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+
+    QString animation_str = QString("ecstasy:%1:%2")
+                            .arg(effect.from->objectName()).arg(effect.to->objectName());
+    room->broadcastInvoke("animate", animation_str);
+
     room->setPlayerFlag(effect.to, "ecst");
 }
 

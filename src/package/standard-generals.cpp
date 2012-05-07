@@ -1753,10 +1753,10 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *hu3niang, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
 
-        if(damage.to->isAlive() && damage.to->getGeneral()->isMale()){
+        if(damage.to->getGeneral()->isMale()){
             Room *room = hu3niang->getRoom();
             hu3niang->tag["HongjinTarget"] = QVariant::fromValue((PlayerStar)damage.to);
-            QString voly = damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
+            QString voly = damage.to->isDead() || damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
             QString ball = room->askForChoice(hu3niang, objectName(), voly);
             if(ball == "cancel")
                 return false;
@@ -2531,8 +2531,6 @@ public:
     virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
         Room *room = other->getRoom();
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
-        if(lolita.isEmpty())
-            return;
         foreach(ServerPlayer *loli, lolita){
             if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
                 loli->drawCards(1);

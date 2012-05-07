@@ -2392,6 +2392,15 @@ function SmartAI:activate(use)
 	self:assignKeep(self.player:getHp(),true)
 	self.toUse  = self:getTurnUse()
 	self:sortByDynamicUsePriority(self.toUse)
+
+	if self.player:hasSkill("jibao") then
+		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())
+		if final > 2 and self.player:getMark("jibao") == final then
+			self.toUse = nil
+			return
+		end
+	end
+
 	for _, card in ipairs(self.toUse) do
 		if not self.player:isJilei(card) and not self.player:isLocked(card) then
 			local type = card:getTypeId()
@@ -3173,6 +3182,9 @@ function SmartAI:hasTrickEffective(card, player)
 		if self.room:isProhibited(self.player, player, card) then return false end
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
+		end
+		if player:hasSkill("shengui") and self.player:getGeneral():isMale() and not player:getArmor() then
+			return true
 		end
 		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
 			return false

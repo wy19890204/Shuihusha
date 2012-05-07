@@ -1144,10 +1144,10 @@ StandardCardPackage::StandardCardPackage()
 
         horses.at(0)->setObjectName("lhh");
         horses.at(1)->setObjectName("kirin");
-        horses.at(2)->setObjectName("silver");
+        horses.at(2)->setObjectName("white");
         horses.at(3)->setObjectName("chitu");
         horses.at(4)->setObjectName("snow");
-        horses.at(5)->setObjectName("white");
+        horses.at(5)->setObjectName("silver");
 
         cards << horses;
 
