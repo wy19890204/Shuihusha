@@ -283,7 +283,7 @@ huace_skill.getTurnUseCard = function(self)
 			end
 		end
 	end
-	local card
+	local card = -1
 	self:sortByUseValue(cards, true)
 	for _, acard in ipairs(cards)  do
 		if acard:inherits("EventsCard") or acard:inherits("TrickCard") then
@@ -291,6 +291,7 @@ huace_skill.getTurnUseCard = function(self)
 			break
 		end
 	end
+	if card < 0 then return end
 	for i=1, #aoenames do
 		local newhuace = aoenames[i]
 		aoe = sgs.Sanguosha:cloneCard(newhuace, sgs.Card_NoSuit, 0)
@@ -566,7 +567,13 @@ maidao_skill.name = "maidao"
 table.insert(sgs.ai_skills, maidao_skill)
 maidao_skill.getTurnUseCard = function(self)
 	if self.player:getWeapon() then
-		local cards = self.player:getCards("h")
+		local range = sgs.weapon_range[self.player:getWeapon():className()]
+		local cards
+		if range < 4 then
+			cards = self.player:getCards("he")
+		else
+			cards = self.player:getCards("h")
+		end
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards)  do
 			if acard:inherits("Weapon") then
@@ -677,7 +684,7 @@ end
 
 -- jibao
 sgs.ai_skill_invoke["jibao"] = function(self, data)
-	return self.player:getHandcardNum() > 2 then
+	return self.player:getHandcardNum() > 2
 end
 sgs.ai_skill_discard["jibao"] = function(self, discard_num, optional, include_equip)
 	local to_discard = {}
