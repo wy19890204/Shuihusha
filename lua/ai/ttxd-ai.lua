@@ -34,13 +34,6 @@ sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
 	return self.friends[1]
 end
 
--- jishi
-sgs.ai_skill_cardask["@jishi"] = function(self, data)
-	local who = data:toPlayer()
-	if self:isEnemy(who) or self.player:isKongcheng() then return "." end
-	return self.player:getRandomHandCard():getEffectiveId() or "."
-end
-
 -- huanshu
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
@@ -100,75 +93,4 @@ sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
 		self:sort(self.enemies, "hp")
 		return self.enemies[1]
 	end
-end
-
--- yanshou
-yanshou_skill={}
-yanshou_skill.name = "yanshou"
-table.insert(sgs.ai_skills, yanshou_skill)
-yanshou_skill.getTurnUseCard = function(self)
-	if self.player:getMark("@life") < 1 then return end
-	local cards = self.player:getHandcards()
-	local hearts = {}
-    cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	for _, card in ipairs(cards) do
-		if card:getSuit() == sgs.Card_Heart then
-		    table.insert(hearts, card:getId())
-		end
-		if #hearts == 2 then break end
-	end
-	if #hearts ~= 2 then return end
-	return sgs.Card_Parse("@YanshouCard=" .. table.concat(hearts, "+"))
-end
-sgs.ai_skill_use_func["YanshouCard"]=function(card,use,self)
-	self:sort(self.friends, "maxhp")
-	for _, friend in ipairs(self.friends) do
-		if friend:hasSkill("yuanyin") or (friend:hasSkill("yanshou") and not friend:isLord())
-			or friend:hasSkill("wudao") then
-			use.card = card
-			if use.to then
-				use.to:append(friend)
-			end
-			return
-		end
-	end
-	use.card = card
-	if use.to then use.to:append(self.friends[1]) end
-end
-
--- hongjin
-sgs.ai_skill_choice["hongjin"] = function(self, choices)
-	local who = self.player:getTag("HongjinTarget"):toPlayer()
-	if self:isFriend(who) then
-		return "draw"
-	else
-		if who:getHandcardNum() == 1 or (who:isKongcheng() and not who:isNude()) then
-			return "throw"
-		else
-			return "draw"
-		end
-	end
-end
-
--- wuji
-wuji_skill={}
-wuji_skill.name = "wuji"
-table.insert(sgs.ai_skills, wuji_skill)
-wuji_skill.getTurnUseCard = function(self)
---	if self:slashIsAvailable() then return end
-	local cards = self.player:getCards("h")
-	local slashs = {}
-    cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards,true)
-	for _,card in ipairs(cards)  do
-		if card:inherits("Slash") then
-		    table.insert(slashs, card:getId())
-		end
-	end
-	if #slashs == 0 then return end
-	return sgs.Card_Parse("@WujiCard=" .. table.concat(slashs, "+"))
-end
-sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
-	use.card = card
 end

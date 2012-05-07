@@ -115,14 +115,6 @@ sgs.ai_skill_cardask["@guitai"] = function(self, data)
 	end
 end
 
--- goulian
-sgs.ai_skill_invoke["goulian"] = sgs.ai_skill_invoke["liba"]
-
--- jinjia
-function sgs.ai_armor_value.jinjia(card)
-	if not card then return 4 end
-end
-
 -- sinue
 sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	local cards = self.player:getHandcards()
@@ -130,7 +122,7 @@ sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	self:sortByUseValue(cards, true)
 	for _, enemy in ipairs(self.enemies) do
 		if self.player:distanceTo(enemy) == 1 then
-			return "@SinueCard=" .. cards[1]:getEffectiveId()
+			return "@SinueCard=" .. cards[1]:getEffectiveId() .. "->."
 		end
 	end
 	return "."
