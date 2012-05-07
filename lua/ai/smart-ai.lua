@@ -3424,6 +3424,7 @@ end
 dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/general_config.lua"
 dofile "lua/ai/value_config.lua"
+dofile "lua/ai/guanxing-ai.lua"
 dofile "lua/ai/standard-ai.lua"
 dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
