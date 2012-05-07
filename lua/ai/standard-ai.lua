@@ -374,36 +374,45 @@ sgs.ai_skill_playerchosen["qimen"] = function(self, targets)
 --	return self.qimentarget
 end
 
-local longdan_skill={}
-longdan_skill.name="longdan"
-table.insert(sgs.ai_skills,longdan_skill)
-longdan_skill.getTurnUseCard=function(self)
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
+-- guansheng
+-- tongwu
+sgs.ai_skill_invoke["tongwu"] = true
+sgs.ai_skill_playerchosen["tongwu"] = function(self, targets)
+	if not self:getCard("Jink") then return self.player end
+	local targetlist=sgs.QList2Table(targets)
+	self:sort(targetlist, "handcard")
+	for _, target in ipairs(targetlist) do
+		if self:isFriend(target) then
+			return target
+		end
+	end
+	return self.player
+end
 
-	local jink_card
-
-	self:sortByUseValue(cards,true)
-
-	for _,card in ipairs(cards)  do
-		if card:inherits("Jink") then
-			jink_card = card
+-- linchong
+-- duijue
+sgs.ai_skill_use["@@duijue"] = function(self, prompt)
+	self:sort(self.enemies, "hp")
+	local n1 = self:getCardsNum("Slash")
+	local final
+	for _, enemy in ipairs(self.enemies) do
+		if n1 + 1 > self:getCardsNum("Slash", enemy) then
+			final = enemy
 			break
 		end
 	end
-
-	if not jink_card then return nil end
-	local suit = jink_card:getSuitString()
-	local number = jink_card:getNumberString()
-	local card_id = jink_card:getEffectiveId()
-	local card_str = ("slash:longdan[%s:%s]=%d"):format(suit, number, card_id)
-	local slash = sgs.Card_Parse(card_str)
-	assert(slash)
-
-	return slash
-
+	if final then
+		return "@DuijueCard=.->" .. final:objectName()
+	else
+		return "."
+	end
 end
 
+-- huarong
+-- kaixian
+sgs.ai_skill_invoke["kaixian"] = true
+
+-- chaijin
 local jieyin_skill={}
 jieyin_skill.name="jieyin"
 table.insert(sgs.ai_skills,jieyin_skill)

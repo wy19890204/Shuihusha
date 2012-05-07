@@ -1,5 +1,3 @@
--- kaixian
-sgs.ai_skill_invoke["kaixian"] = true
 
 --xiagu
 sgs.ai_skill_cardask["@xiagu"] = function(self, data)

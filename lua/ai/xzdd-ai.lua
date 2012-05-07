@@ -1,20 +1,3 @@
--- duijue
-sgs.ai_skill_use["@@duijue"] = function(self, prompt)
-	self:sort(self.enemies, "hp")
-	local n1 = self:getCardsNum("Slash")
-	local final
-	for _, enemy in ipairs(self.enemies) do
-		if n1 + 1 > self:getCardsNum("Slash", enemy) then
-			final = enemy
-			break
-		end
-	end
-	if final then
-		return "@DuijueCard=.->"..final:objectName()
-	else
-		return "."
-	end
-end
 
 -- maidao
 maidao_skill={}
