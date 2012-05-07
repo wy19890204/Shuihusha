@@ -39,7 +39,7 @@ void Ecstasy::onEffect(const CardEffectStruct &effect) const{
 
     QString animation_str = QString("ecstasy:%1:%2")
                             .arg(effect.from->objectName()).arg(effect.to->objectName());
-    broadcastInvoke("animate", animation_str);
+    room->broadcastInvoke("animate", animation_str);
 
     room->setPlayerFlag(effect.to, "ecst");
 }
