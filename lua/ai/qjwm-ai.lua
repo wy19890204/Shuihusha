@@ -163,17 +163,3 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 	end
 end
 
--- jiachu
-sgs.ai_skill_cardask["@jiachu"] = function(self)
-	local target = self.room:getLord()
-	if self:isFriend(target) then
-		local allcards = self.player:getCards("he")
-		for _, card in sgs.qlist(allcards) do
-			if card:getSuit() == sgs.Card_Heart then
-				return card:getEffectiveId()
-			end
-		end
-	end
-	return "."
-end
-
