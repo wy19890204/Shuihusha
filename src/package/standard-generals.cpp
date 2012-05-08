@@ -10,15 +10,18 @@
 
 GanlinCard::GanlinCard(){
     will_throw = false;
+    mute = true;
 }
 
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
 
+    room->playSkillEffect("ganlin", qrand() % 2 + 1);
     room->obtainCard(target, this, false);
     int n = source->getLostHp() - source->getHandcardNum();
     if(n > 0 && source->askForSkillInvoke("ganlin")){
         source->drawCards(n);
+        room->playSkillEffect("ganlin", qrand() % 2 + 3);
         room->setPlayerFlag(source, "Ganlin");
     }
 };
@@ -68,6 +71,7 @@ public:
 JuyiCard::JuyiCard(){
     once = true;
     target_fixed = true;
+    mute = true;
 }
 
 void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
@@ -77,6 +81,7 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     if(song->isKongcheng() && source->isKongcheng())
         return;
     if(room->askForChoice(song, "jui", "agree+deny") == "agree"){
+        room->playSkillEffect("juyi", qrand() % 2 + 1);
         DummyCard *card1 = source->wholeHandCards();
         DummyCard *card2 = song->wholeHandCards();
         if(card1){
@@ -95,6 +100,8 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         log.to << song;
         room->sendLog(log);
     }
+    else
+        room->playSkillEffect("juyi", qrand() % 2 + 3);
 }
 
 class JuyiViewAsSkill: public ZeroCardViewAsSkill{
