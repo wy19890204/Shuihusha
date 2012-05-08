@@ -2395,7 +2395,7 @@ function SmartAI:activate(use)
 
 	if self.player:hasSkill("jibao") then
 		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())
-		if self.player:getMark("jibao") == final then
+		if final > 2 and self.player:getMark("jibao") == final then
 			self.toUse = nil
 			return
 		end
