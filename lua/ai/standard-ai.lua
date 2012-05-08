@@ -683,16 +683,12 @@ sgs.ai_skill_askforag["mitan"] = function(self, card_ids)
 end
 
 -- jibao
-sgs.ai_skill_invoke["jibao"] = function(self, data)
-	return self.player:getHandcardNum() > 2
-end
-sgs.ai_skill_discard["jibao"] = function(self, discard_num, optional, include_equip)
-	local to_discard = {}
+sgs.ai_skill_cardask["@jibao"] = function(self)
+	if self.player:getHandcardNum() <= 2 then return "." end
 	local cards = self.player:getHandcards()
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
-	table.insert(to_discard, cards[1]:getId())
-	return to_discard
+	return cards[1]:getEffectiveId()
 end
 
 -- likui
@@ -1135,12 +1131,12 @@ yinjian_skill.getTurnUseCard = function(self)
 	self:sortByUseValue(cards, true)
 	return sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
 end
-sgs.ai_skill_use_func["YinjianCard"]=function(card,use,self)
+sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
+	use.card=card
 	if use.to then
 		use.to:append(self.yinjianfrom)
 		use.to:append(self.yinjianto)
 	end
-	use.card=card
 end
 
 -- yanxijiao
