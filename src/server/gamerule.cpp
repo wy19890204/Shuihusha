@@ -434,6 +434,24 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 if(!new_general.isEmpty())
                     changeGeneral1v1(player);
             }
+            //nanastars
+            if(!Config.BanPackages.contains("events")){
+                DamageStruct damage = data.value<DamageStruct>();
+                ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
+                if(damage.from && damage.from != player && source == player){
+                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
+                        int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
+                        source->playCardEffect("@nanastars2");
+                        while(!damage.from->isNude()){
+                            int card_id = room->askForCardChosen(source, damage.from, "he", "nanastars");
+                            room->obtainCard(source, card_id, false);
+                            x --;
+                            if(x == 0)
+                                break;
+                        }
+                    }
+                }
+            }
 
             bool chained = player->isChained();
             if(!chained)

@@ -217,7 +217,8 @@ void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
         takeEffect(effect.to, judge_struct.isGood());
     }
     else if(movable){
-        onNullified(effect.to);
+        if(objectName() != "tsunami" || !effect.to->getOffensiveHorse() || effect.to->getOffensiveHorse()->objectName() != "haiqiu")
+            onNullified(effect.to);
     }
 }
 
@@ -232,6 +233,10 @@ void DelayedTrick::onNullified(ServerPlayer *target) const{
                 continue;
 
             if(room->isProhibited(target, player, this))
+                continue;
+
+            if(player->getOffensiveHorse() && player->getOffensiveHorse()->objectName() == "haiqiu"
+                && objectName() != "tsunami")
                 continue;
 
             room->moveCardTo(this, player, Player::Judging, true);
