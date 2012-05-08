@@ -200,6 +200,30 @@ bool Jiangjieshi::isAvailable(const Player *) const{
     return false;
 }
 
+NanaStars::NanaStars(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("nanastars");
+}
+
+bool NanaStars::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->containsTrick("treasury");
+}
+
+void NanaStars::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    source->playCardEffect("@nanastars1");
+    foreach(const Card *card, targets.first()->getJudgingArea()){
+        if(card->inherits("Treasury")){
+            room->throwCard(card);
+            room->drawCards(5);
+            break;
+        }
+    }
+}
+
+bool NanaStars::isAvailable(const Player *) const{
+    return false;
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {
@@ -210,8 +234,8 @@ EventsPackage::EventsPackage()
             << new Daojia(Card::Club, 12)
             << new NinedayGirl(Card::Heart, 2)
             << new FuckGaolian(Card::Heart, 8)
-            << new Jiangjieshi(Card::Club, 9);
-            //<< new NanaStars(Card::Diamond, 10)
+            << new Jiangjieshi(Card::Club, 9)
+            << new NanaStars(Card::Diamond, 10);
 
     foreach(Card *card, cards)
         card->setParent(this);

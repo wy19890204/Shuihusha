@@ -282,6 +282,11 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                         room->setPlayerFlag(source, "-Tifanshi");
                     }
                 }
+                if(use.card->inherits("Ecstasy")){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
+                    if(source)
+                        room->askForUseCard(source, "NanaStars", "@nanastars");
+                }
             }
 
             room->clearCardFlag(use.card);
