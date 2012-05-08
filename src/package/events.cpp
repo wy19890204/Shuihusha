@@ -194,7 +194,9 @@ EventsPackage::EventsPackage()
             << new Tifanshi(Card::Spade, 7)
             << new Daojia(Card::Club, 12)
             << new NinedayGirl(Card::Heart, 2)
-            << new FuckGaolian(Card::Heart, 8);
+            << new FuckGaolian(Card::Heart, 8)
+            << new Jiangjieshi(Card::Club, 9)
+            << new NanaStars(Card::Diamond, 10);
 
     foreach(Card *card, cards)
         card->setParent(this);

@@ -1,11 +1,11 @@
 #include "plough.h"
+#include "maneuvering.h"
 #include "skill.h"
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
 #include "god.h"
 #include "standard.h"
-#include "maneuvering.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {
@@ -296,65 +296,65 @@ PloughPackage::PloughPackage()
     cards
     // spade
             << new Assassinate(Card::Spade, 1)
-            << new SilverLion(Card::Spade, 2)
+            << new Tsunami(Card::Spade, 2)
             << new MeteorSword(Card::Spade, 3)
-            << new ThunderSlash(Card::Spade, 5)
-            << new ThunderSlash(Card::Spade, 6)
-            << new Counterplot(Card::Spade, 7)
-            << new IronChain(Card::Spade, 8)
-            << new Ecstasy(Card::Spade, 9)
-            << new GoldArmor(Card::Spade, 10)
-            << new Wiretap(Card::Spade, 11)
-            << new IronChain(Card::Spade, 12)
-            << new Counterplot(Card::Spade, 13)
+            << new Ecstasy(Card::Spade, 4)
+            << new Ecstasy(Card::Spade, 5)
+            << new Ecstasy(Card::Spade, 6)
+            << new Slash(Card::Spade, 7)
+            << new Slash(Card::Spade, 8)
+            << new ThunderSlash(Card::Spade, 9)
+            << new ThunderSlash(Card::Spade, 10)
+            << new ThunderSlash(Card::Spade, 11)
+            << new Wiretap(Card::Spade, 12)
+            << new Drivolt(Card::Spade, 13)
 
     // diamond
             << new Dismantlement(Card::Diamond, 1)
             << new Peach(Card::Diamond, 2)
-            << new Peach(Card::Diamond, 3)
-            << new FireSlash(Card::Diamond, 4)
-            << new Jink(Card::Diamond, 5)
-            << new Tsunami(Card::Diamond, 6)
-            << new Wiretap(Card::Diamond, 7)
+            << new FireSlash(Card::Diamond, 3)
+            << new Slash(Card::Diamond, 4)
+            << new Slash(Card::Diamond, 5)
+            << new Jink(Card::Diamond, 6)
+            << new Jink(Card::Diamond, 7)
             << new Treasury(Card::Diamond, 8)
             << new Analeptic(Card::Diamond, 9)
-            << new Jink(Card::Diamond, 10)
+            << new Slash(Card::Diamond, 10)
             << new SunBow(Card::Diamond, 11)
             << new Assassinate(Card::Diamond, 12)
             << new Counterplot(Card::Diamond, 13)
 
     // club
-            << new Tsunami(Card::Club, 1)
+            << new Provistore(Card::Club, 1)
             << new Ecstasy(Card::Club, 2)
             << new Ecstasy(Card::Club, 3)
-            << new Analeptic(Card::Club, 4)
-            << new Ecstasy(Card::Club, 5)
-            << new Provistore(Card::Club, 6)
+            << new Slash(Card::Club, 4)
+            << new Slash(Card::Club, 5)
+            << new ThunderSlash(Card::Club, 6)
             << new DoubleWhip(Card::Club, 7)
-            << new IronChain(Card::Club, 8)
-            << new ThunderSlash(Card::Club, 9)
+            << new Analeptic(Card::Club, 9)
             << new GoldArmor(Card::Club, 10)
-            << new IronChain(Card::Club, 11)
-            << new Drivolt(Card::Club, 12)
-            << new ArcheryAttack(Card::Club, 13)
+            << new Wiretap(Card::Club, 11)
+            << new IronChain(Card::Club, 12)
+            << new IronChain(Card::Club, 13)
 
     // heart
-            << new Provistore(Card::Heart, 1)
-            << new Jink(Card::Heart, 2)
-            << new Analeptic(Card::Heart, 3)
-            << new FireSlash(Card::Heart, 4)
-            << new Peach(Card::Heart, 5)
+            << new Drivolt(Card::Heart, 1)
+            << new FireSlash(Card::Heart, 2)
+            << new Slash(Card::Heart, 3)
+            << new Provistore(Card::Heart, 4)
+            << new Jink(Card::Heart, 5)
             << new Jink(Card::Heart, 6)
-            << new Wiretap(Card::Heart, 7)
-            << new Ecstasy(Card::Heart, 8)
-            << new Ecstasy(Card::Heart, 9)
+            << new Jink(Card::Heart, 7)
+            << new Jink(Card::Heart, 8)
+            << new Analeptic(Card::Heart, 9)
             << new Peach(Card::Heart, 10)
-            << new Counterplot(Card::Heart, 11)
-            << new Drivolt(Card::Heart, 13);
+            << new Peach(Card::Heart, 11)
+            << new Counterplot(Card::Heart, 13);
 
     DefensiveHorse *jade = new DefensiveHorse(Card::Heart, 12);
     jade->setObjectName("jade");
-    OffensiveHorse *brown = new OffensiveHorse(Card::Spade, 4);
+    OffensiveHorse *brown = new OffensiveHorse(Card::Club, 8);
     brown->setObjectName("brown");
 
     cards << jade << brown;

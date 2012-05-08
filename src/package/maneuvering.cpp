@@ -1,4 +1,5 @@
 #include "maneuvering.h"
+#include "plough.h"
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
@@ -394,7 +395,8 @@ ManeuveringPackage::ManeuveringPackage()
     QList<Card *> cards;
 
     // spade
-    cards << new GudingBlade(Card::Spade, 1)
+    cards
+            << new GudingBlade(Card::Spade, 1)
             << new Vine(Card::Spade, 2)
             << new Analeptic(Card::Spade, 3)
             << new ThunderSlash(Card::Spade, 4)
@@ -406,10 +408,11 @@ ManeuveringPackage::ManeuveringPackage()
             << new SupplyShortage(Card::Spade,10)
             << new IronChain(Card::Spade, 11)
             << new IronChain(Card::Spade, 12)
-            << new Nullification(Card::Spade, 13);
+            << new Counterplot(Card::Spade, 13);
 
     // club
-    cards << new SilverLion(Card::Club, 1)
+    cards
+            << new SilverLion(Card::Club, 1)
             << new Vine(Card::Club, 2)
             << new Analeptic(Card::Club, 3)
             << new SupplyShortage(Card::Club, 4)
@@ -424,7 +427,8 @@ ManeuveringPackage::ManeuveringPackage()
             << new IronChain(Card::Club, 13);
 
     // heart
-    cards << new Nullification(Card::Heart, 1)
+    cards
+            << new Nullification(Card::Heart, 1)
             << new FireAttack(Card::Heart, 2)
             << new FireAttack(Card::Heart, 3)
             << new FireSlash(Card::Heart, 4)
@@ -439,7 +443,8 @@ ManeuveringPackage::ManeuveringPackage()
             << new Nullification(Card::Heart, 13);
 
     // diamond
-    cards << new Fan(Card::Diamond, 1)
+    cards
+            << new Fan(Card::Diamond, 1)
             << new Peach(Card::Diamond, 2)
             << new Peach(Card::Diamond, 3)
             << new FireSlash(Card::Diamond, 4)
