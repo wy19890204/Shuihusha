@@ -214,7 +214,7 @@ void NanaStars::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     foreach(const Card *card, targets.first()->getJudgingArea()){
         if(card->inherits("Treasury")){
             room->throwCard(card);
-            room->drawCards(5);
+            source->drawCards(5);
             break;
         }
     }
