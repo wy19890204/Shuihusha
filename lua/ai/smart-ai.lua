@@ -2393,10 +2393,12 @@ function SmartAI:activate(use)
 	self.toUse  = self:getTurnUse()
 	self:sortByDynamicUsePriority(self.toUse)
 
-	if self.player:hasSkill("jibao") and
-		math.min(self.player:getHandcardNum(), self.player:getMaxCards()) == player->getMark("jibao") then
-		self.toUse = nil
-		return
+	if self.player:hasSkill("jibao") then
+		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())
+		if final > 2 and self.player:getMark("jibao") == final then
+			self.toUse = nil
+			return
+		end
 	end
 
 	for _, card in ipairs(self.toUse) do

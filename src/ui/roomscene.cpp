@@ -3619,6 +3619,7 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["jink"] = &RoomScene::animatePopup;
         map["nullification"] = &RoomScene::doMovingAnimation;
         map["counterplot"] = &RoomScene::doMovingAnimation;
+        map["ecstasy"] = &RoomScene::doMovingAnimation;
 
         map["analeptic"] = &RoomScene::doAppearingAnimation;
         map["fire"] = &RoomScene::doAppearingAnimation;
