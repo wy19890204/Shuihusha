@@ -174,6 +174,10 @@ public:
         }
         return false;
     }
+    
+    virtual int getPriority() const{
+        return 2;
+    }
 };
 
 HuaceCard::HuaceCard(){
