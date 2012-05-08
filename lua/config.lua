@@ -14,45 +14,45 @@ config = {
 	"Maneuvering",
 	"ExCard",
 	"Events",
-	"Kuso",
-	"Joy",
+--	"Kuso",
+--	"Joy",
 
-        "Standard",
-	"QJWM",
-	"TTXD",
-	"XZDD",
-	"BWQZ",
-	"QLFD",
-	"ZCYN",
-	"CGDK",
-	"YBYT",
-	"FCDC",
+	"Standard",
+--	"QJWM",
+--	"TTXD",
+--	"XZDD",
+--	"BWQZ",
+--	"QLFD",
+--	"ZCYN",
+--	"CGDK",
+--	"YBYT",
+--	"FCDC",
 --	"SP",
 --	"God",
 --	"Stanley",
 --	"InterChange",
 	"Test",
 
-	"JoyGeneral",
+--	"JoyGeneral",
 	},
 
 	scene_names = {
-        "Couple",
-        "Zombie",
-	"Legend",
-        "Impasse",
-        "Custom",
+--	"Couple",
+--	"Zombie",
+--	"Legend",
+--	"Impasse",
+	"Custom",
 	},
 
-        color_guan = "#547998",
-        color_jiang = "#D0796C",
-        color_min = "#4DB873",
-        color_kou = "#8A807A",
-        color_god = "#96943D",
+	color_guan = "#547998",
+	color_jiang = "#D0796C",
+	color_min = "#4DB873",
+	color_kou = "#8A807A",
+	color_god = "#96943D",
 }
-
+--[[
 for i=1, 20 do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
 end
-
+]]
