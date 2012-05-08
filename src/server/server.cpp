@@ -257,6 +257,9 @@ QWidget *ServerDialog::createAdvancedTab(){
     max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
 
+    //hide
+    scene_checkbox->setVisible(false);
+
     return widget;
 }
 
@@ -547,6 +550,8 @@ QGroupBox *ServerDialog::create3v3Box(){
     else
         standard_3v3_radiobutton->setChecked(true);
 
+    //hide
+    new_3v3_radiobutton->setVisible(false);
     return box;
 }
 
@@ -647,6 +652,12 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(scenario_button, scenario_combobox);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
+        //hide
+        scenario_button->setVisible(false);
+        scenario_combobox->setVisible(false);
+        mini_scenes->setVisible(false);
+        mini_scene_combobox->setVisible(false);
+        mini_scene_button->setVisible(false);
     }
 
     QVBoxLayout *left = new QVBoxLayout;

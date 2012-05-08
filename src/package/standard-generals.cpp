@@ -2401,7 +2401,7 @@ public:
         if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
-        room->playSkillEffect(objectName(), 1);
+        room->playSkillEffect(objectName());
         JudgeStruct judge;
         judge.pattern = QRegExp("(.*):(.*):(.*)");
         judge.reason = objectName();
@@ -2416,7 +2416,6 @@ public:
         else
             player->obtainCard(judge.card);
 
-        room->playSkillEffect(objectName(), 2);
         return false;
     }
 };

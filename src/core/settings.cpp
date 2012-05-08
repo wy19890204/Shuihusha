@@ -59,7 +59,7 @@ void Settings::init(){
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
     GameMode = value("GameMode", "02p").toString();
 
-
+/*
     if(!contains("BanPackages")){
         QStringList banlist;
         banlist << "CGDK" << "YBYT" << "FCDC";
@@ -68,7 +68,7 @@ void Settings::init(){
                 << "joy" << "kuso" << "joyer";
 
         setValue("BanPackages", banlist);
-    }
+    }*/
     BanPackages = value("BanPackages").toStringList();
 
     ContestMode = value("ContestMode", false).toBool();
@@ -128,23 +128,23 @@ void Settings::init(){
 
     roles_ban << "ubuntenkei";
 
-    kof_ban << "andaoquan" << "shenwuyong" << "wangdingliu" << "zhaoji";
+    kof_ban << "andaoquan"/* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
 
-    basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
+    //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
 
     hegemony_ban.append(basara_ban);
-    hegemony_ban << "jiangsong";
+    //hegemony_ban << "jiangsong";
     foreach(QString general, Sanguosha->getLimitedGeneralNames()){
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
     }
-
+/*
     pairs_ban << "shenwuyong"
               << "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
               << "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
               << "oupeng+wangqing" << "gaoqiu+luozhenren" << "jiashi+shenzhangqing"
               << "husanniang+zhaoji" << "dingdesun+wangqing";
-
+*/
     QStringList banlist = value("Banlist/Roles").toStringList();
     foreach(QString ban_general, roles_ban){
         if(!banlist.contains(ban_general))

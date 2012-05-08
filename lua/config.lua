@@ -18,29 +18,29 @@ config = {
 --	"Joy",
 
 	"Standard",
---	"QJWM",
---	"TTXD",
---	"XZDD",
---	"BWQZ",
---	"QLFD",
---	"ZCYN",
---	"CGDK",
---	"YBYT",
---	"FCDC",
---	"SP",
---	"God",
---	"Stanley",
---	"InterChange",
+--[[	"QJWM",
+	"TTXD",
+	"XZDD",
+	"BWQZ",
+	"QLFD",
+	"ZCYN",
+	"CGDK",
+	"YBYT",
+	"FCDC",
+	"SP",
+	"God",
+	"Stanley",
+	"InterChange",]]
 	"Test",
 
 --	"JoyGeneral",
 	},
 
 	scene_names = {
---	"Couple",
---	"Zombie",
---	"Legend",
---	"Impasse",
+	"Couple",
+	"Zombie",
+	"Legend",
+	"Impasse",
 	"Custom",
 	},
 
@@ -50,9 +50,9 @@ config = {
 	color_kou = "#8A807A",
 	color_god = "#96943D",
 }
---[[
+
 for i=1, 20 do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
 end
-]]
+
