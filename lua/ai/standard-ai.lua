@@ -1023,6 +1023,7 @@ sgs.ai_cardshow["yongle"] = function(self, requestor)
 end
 
 -- zhiyuan
+sgs.ai_skill_invoke["zhiyuan"] = true
 sgs.ai_skill_cardask["@zhiyuan"] = function(self)
 	local lord = self.room:getLord()
 	if self:isFriend(lord) and not self.player:isKongcheng() then
