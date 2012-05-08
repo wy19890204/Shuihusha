@@ -185,6 +185,21 @@ void FuckGaolian::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     }
 }
 
+Jiangjieshi::Jiangjieshi(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("jiangjieshi");
+    target_fixed = true;
+}
+
+void Jiangjieshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    source->playCardEffect("@jiangjieshi1");
+    room->setPlayerFlag(source, "drunken");
+}
+
+bool Jiangjieshi::isAvailable(const Player *) const{
+    return false;
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {
@@ -195,8 +210,8 @@ EventsPackage::EventsPackage()
             << new Daojia(Card::Club, 12)
             << new NinedayGirl(Card::Heart, 2)
             << new FuckGaolian(Card::Heart, 8)
-            << new Jiangjieshi(Card::Club, 9)
-            << new NanaStars(Card::Diamond, 10);
+            << new Jiangjieshi(Card::Club, 9);
+            //<< new NanaStars(Card::Diamond, 10)
 
     foreach(Card *card, cards)
         card->setParent(this);

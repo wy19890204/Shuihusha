@@ -1205,7 +1205,9 @@ ExCardPackage::ExCardPackage()
             << new RenwangShield(Card::Club, 2)
             << new Lightning(Card::Heart, 12)
             << new Nullification(Card::Diamond, 12)
-            << new Tsunami(Card::Diamond, 1);
+            << new Tsunami(Card::Diamond, 1)
+            << new Inspiration(Card::Spade, 4)
+            << new Haiqiu(Card::Club, 5);
 
     foreach(Card *card, cards)
         card->setParent(this);

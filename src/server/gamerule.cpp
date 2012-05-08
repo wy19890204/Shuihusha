@@ -265,8 +265,8 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
         }
     case CardFinished: {
             CardUseStruct use = data.value<CardUseStruct>();
-            if(data.canConvert<CardUseStruct>()){
-                if(use.card->inherits("Snatch") && !Config.BanPackages.contains("events")){
+            if(data.canConvert<CardUseStruct>() && !Config.BanPackages.contains("events")){
+                if(use.card->inherits("Snatch")){
                     ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
                     if(source){
                         room->setPlayerFlag(source, "Daojia");
@@ -274,7 +274,16 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                         room->setPlayerFlag(source, "-Daojia");
                     }
                 }
+                if(use.card->inherits("Analeptic")){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
+                    if(source && source == use.from){
+                        room->setPlayerFlag(source, "Tifanshi");
+                        room->askForUseCard(source, "Tifanshi", "@tifanshi");
+                        room->setPlayerFlag(source, "-Tifanshi");
+                    }
+                }
             }
+
             room->clearCardFlag(use.card);
             break;
         }
@@ -530,6 +539,17 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 room->sendLog(log);
 
                 damage.damage ++;
+            }
+            if(effect.from->hasFlag("drunken")){
+                LogMessage log;
+                log.type = "#DrunkenBuff";
+                log.from = effect.from;
+                log.to << effect.to;
+                log.arg = "jiangjieshi";
+                room->sendLog(log);
+
+                damage.damage ++;
+                room->setPlayerFlag(player, "-drunken");
             }
 
             if(effect.to->hasSkill("jueqing") || effect.to->getGeneralName() == "zhangchunhua")

@@ -362,4 +362,28 @@ PloughPackage::PloughPackage()
         card->setParent(this);
 }
 
+// ex
+Inspiration::Inspiration(Suit suit, int number)
+    :GlobalEffect(suit, number)
+{
+    setObjectName("inspiration");
+}
+
+void Inspiration::onEffect(const CardEffectStruct &effect) const{
+    effect.to->getRoom()->getThread()->delay();
+    int x = qMin(3, effect.to->getLostHp());
+    if(x > 0)
+        effect.to->drawCards(x);
+}
+
+Haiqiu::Haiqiu(Card::Suit suit, int number)
+    :OffensiveHorse(suit, number)
+{
+    setObjectName("haiqiu");
+}
+
+QString Haiqiu::getEffectPath(bool ) const{
+    return "audio/card/common/haiqiu.ogg";
+}
+
 ADD_PACKAGE(Plough)
