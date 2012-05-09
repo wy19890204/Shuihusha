@@ -235,3 +235,20 @@ end
 sgs.dynamic_value.control_usecard.Provistore = true
 sgs.dynamic_value.benefit.Provistore = true
 
+-- feng xiong hua ji
+function SmartAI:useCardInspiration(inspiration, use)
+	self:sort(self.friends, "hp")
+	local f = 0
+	for _, friend in ipairs(self.friends) do
+		f = f + friend:getLostHp()
+	end
+	self:sort(self.enemies, "hp")
+	local e = 0
+	for _, enemy in ipairs(self.enemies) do
+		e = e + enemy:getLostHp()
+	end
+	if e > f then return "." end
+	use.card = inspiration
+end
+
+sgs.dynamic_value.benefit.Inspiration = true

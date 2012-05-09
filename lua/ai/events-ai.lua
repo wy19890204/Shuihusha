@@ -1,10 +1,10 @@
 function SmartAI:useEventsCard(card, use)
 	if card:inherits("Tifanshi") then
 		return
+	elseif card:inherits("FuckGaolian") or card:inherits("Jiangjieshi") or card:inherits("NanaStars") then
+		return
 	elseif card:inherits("Daojia") then
-		return
-	elseif card:inherits("FuckGaolian") then
-		return
+		return math.random(1, 3) == 2
 	elseif card:inherits("NinedayGirl") then
 		for _, enemy in ipairs(self.enemies) do
 			if not enemy:isKongcheng() then
@@ -26,7 +26,7 @@ function SmartAI:useEventsCard(card, use)
 end
 
 -- daojia
-sgs.ai_skill_use["daojia"] = function(self, prompt)
+sgs.ai_skill_use["Daojia"] = function(self, prompt)
 	local evc = self:getCard("Daojia")
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:getArmor() then
@@ -37,7 +37,7 @@ sgs.ai_skill_use["daojia"] = function(self, prompt)
 end
 
 -- fuckgaolian
-sgs.ai_skill_use["fuckgaolian"] = function(self, prompt)
+sgs.ai_skill_use["FuckGaolian"] = function(self, prompt)
 	local evc = self:getCard("FuckGaolian")
 	self:sort(self.enemies, "hp")
 	local enemy = self.enemies[1]
@@ -55,4 +55,20 @@ sgs.ai_skill_cardask["@fuckl"] = function(self, data)
 		end
 	end
 	return "."
+end
+
+-- nanastars
+sgs.ai_skill_use["NanaStars"] = function(self, prompt)
+	local evc = self:getCard("NanaStars")
+	for _, target in sgs.qlist(self.room:getAllPlayers()) do
+		if target:containsTrick("treasury") then
+		return ("%s->%s"):format(evc:toString(), target:objectName())
+	end
+	return
+end
+sgs.ai_skill_cardask["@7stars"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isFriend(damage.from) then return end
+	local star = self:getCard("NanaStars")
+	return star:getEffectiveId()
 end
