@@ -727,160 +727,6 @@ public:
     }
 };
 
-class Qiaogongplus: public TriggerSkill{
-public:
-    Qiaogongplus():TriggerSkill("qiaog"){
-        events << CardLost << CardFinished;
-    }
-
-    virtual bool triggerable(const ServerPlayer *ta) const{
-        //return !ta->hasSkill(objectName());
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *gui = room->findPlayerBySkillName(objectName());
-        if(!gui)
-            return false;
-        if(event == CardLost){ // 失去装备
-            CardMoveStar move = data.value<CardMoveStar>();
-            QList<ServerPlayer *> hasweapon;
-            bool tao = false;
-            if(move->from->isDead() || move->from_place != Player::Equip)
-                return false;
-            int card_id = move->card_id;
-            const Card *equ = Sanguosha->getCard(card_id);
-            if(player == gui){ // 如果是阿龟自己失去装备，则须用自己装备覆盖原装备主人的装备区
-                foreach(ServerPlayer *tmp, room->getOtherPlayers(gui)){
-                    foreach(const Card *e, tmp->getEquips()){
-                        if(e == equ){ //寻找主人
-                            const EquipCard *equipped = qobject_cast<const EquipCard *>(equ);
-                            QList<ServerPlayer *> targets;
-                            targets << tmp;
-                            equipped->use(room, tmp, targets);
-                            //room->moveCardTo(equ, tmp, Player::Equip, false);
-                            return false;
-                        }
-                    }
-                }
-                return false;
-            }
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
-                //如果出现有某人失去装备后满足阿龟条件的情况
-                foreach(const Card *e, tmp->getEquips()){
-                    if(e->getSubtype() == equ->getSubtype()){
-                        if(tmp != gui && !hasweapon.contains(tmp))
-                            hasweapon << tmp; //将除了阿龟外还有该类装备的人存储
-                        else if(tmp == gui)
-                            tao = true; //阿龟有该类装备
-                    }
-                }
-            }
-            if(hasweapon.isEmpty() && tao){ // 场上只有阿龟有该类装备
-                //room->moveCardTo(equ, gui, Player::Equip, false);
-                room->throwCard(card_id);
-            }
-            else if(hasweapon.length() == 1 && !gui->getEquips().contains(equ)){
-     /*           //场上除了阿龟外是否有且只有一人有该类装备
-        // 两种情况，一种是该人和阿龟装备不同，这是因为阿龟装的是自己的装备
-      // 还有一种情况，装备相同，那是不可能的，因为只有唯一才可能出现装备相同的情况
-      // 两种情况都不用考虑，所以注释掉。
-                ServerPlayer *target = hasweapon.first(); //找到该人
-                const Card *bequ = NULL; //找到该装备
-                foreach(const Card *e, target->getEquips()){
-                    if(e->getSubtype() == equ->getSubtype()){
-                        bequ = e;
-                        break;
-                    }
-                }
-                bool flag = false;
-                foreach(const Card *tmp, gui->getEquips()){ //阿龟卸载装备
-                    if(tmp->getSubtype() == bequ->getSubtype() && bequ != tmp){
-                        room->throwCard(tmp->getId());
-                        flag = true;
-                    }
-                }
-                if(!flag)
-                    return false; // 如果阿龟装的是自己本来就有的装备，则中止
-                QList<int> card_ids;
-                int card_id = bequ->getId();
-                card_ids << card_id;
-                room->fillAG(card_ids, gui);
-                room->takeAG(gui, card_id);
-                card_ids.removeOne(card_id);
-                room->broadcastInvoke("clearAG");
-                gui->obtainCard(bequ);
-                room->moveCardTo(bequ, gui, Player::Equip, false);
-                ~*room->throwCard(card_id);
-
-                room->moveCardTo(bequ, gui, Player::Equip, false);
-                QList<int> card_ids;
-                card_ids << bequ->getId();
-                int card_id = bequ->getId();
-                room->fillAG(card_ids, gui);
-                //card_ids.removeOne(card_id);
-                room->takeAG(gui, card_id);
-                room->broadcastInvoke("clearAG");
-                room->moveCardTo(equ, NULL, Player::DrawPile);
-                gui->drawCards(1);
-                room->moveCardTo(equ, target, Player::Equip, false);
-                //room->throwCard(card_id);*~
-            */}
-        }
-        else if(event == CardFinished){ //其他角色装备装备后
-            CardUseStruct card_use = data.value<CardUseStruct>();
-            const Card *equ = card_use.card;
-            int card_id = card_use.card->getId();
-            if(!equ->inherits("EquipCard"))
-                return false;
-            if(player == gui){ //如果是阿龟自己，中止，因为原装备被顶掉后会自动触发CardLost
-                return false;
-            }
-            bool flag = false; //标记，false为该类型装备在场上只有一件
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
-                //if(tmp == gui) //不考虑阿龟装备情况
-                //    continue;
-                QList<const Card*> equipos;
-                foreach(const Card *e, tmp->getEquips()){
-                    if(e->getSubtype() == equ->getSubtype()){
-                        flag = true; //若除自己外还有人有同类装备，标记
-                        equipos << e; //记录现有装备
-                    }
-                }
-                if(flag){ // 若不满足条件，则阿龟复制的装备也不能存在
-                    foreach(const Card *e, gui->getEquips()){
-                        foreach(const Card *tmp, equipos){
-                            if(e == tmp){
-                                room->throwCard(e->getId());
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-            if(!flag){ //场上只存在一个同类装备（就是自己装备的那个）
-                //room->moveCardTo(equ, gui, Player::Equip, false);
-                QList<int> card_ids;
-                QList<const Card *> cards = player->getEquips();
-                foreach(const Card *tmp, cards)
-                    if(tmp->getId() == card_id)
-                        card_ids << tmp->getId();
-                room->fillAG(card_ids, gui);
-                //card_id = room->askForAG(gui, card_ids, false, objectName());
-                room->takeAG(gui, card_id);
-                card_ids.removeOne(card_id);
-                room->broadcastInvoke("clearAG");
-                gui->obtainCard(equ);
-                room->moveCardTo(equ, gui, Player::Equip, false);
-                //room->throwCard(card_id);
-            }
-        }
-        return false;
-    }
-};
-
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
@@ -912,7 +758,6 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-    //taozongwang->addSkill(new Qiaogongplus);
 
     General *baisheng = new General(this, "baisheng", "min", 3);
     baisheng->addSkill(new Menghan);
@@ -940,7 +785,6 @@ BWQZPackage::BWQZPackage()
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();
-    skills << new Qiaogongplus;
 }
 
 ADD_PACKAGE(BWQZ);

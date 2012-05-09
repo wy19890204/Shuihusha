@@ -567,10 +567,6 @@ public:
 TestPackage::TestPackage()
     :Package("test")
 {/*
-    General *jiuweigui = new General(this, "jiuweigui", "god", 3, true, true, true);
-    jiuweigui->addSkill("qiaog");
-    jiuweigui->addSkill("manli");
-
     General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true, true);
     shenlvbu1->addSkill("huanshu");
     shenlvbu1->addSkill("wubang");
@@ -581,13 +577,13 @@ TestPackage::TestPackage()
     shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill("yuanyin");
-*/
+
     General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
     zhuanjia->addSkill(new Zhichi);
     addMetaObject<ZhichiCard>();
     zhuanjia->addSkill(new Fandui);
     addMetaObject<FanduiCard>();
-
+*/
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
     addMetaObject<UbunaCard>();
