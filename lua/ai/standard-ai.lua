@@ -1095,6 +1095,7 @@ sgs.ai_skill_cardask["@zhensha"] = function(self, data)
 end
 
 function SmartAI:isNoZhenshaMark()
+	if not self.player:isWounded() return true end
 	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
 		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
 	end

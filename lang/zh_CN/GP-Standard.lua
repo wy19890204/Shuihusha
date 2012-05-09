@@ -250,7 +250,7 @@ return {
 
 	["#yangxiong"] = "病关索", -- jiang 4hp (zcyn)
 	["yangxiong"] = "杨雄",
-	["designer:yangxiong"] = "裁之刃•散",
+	["designer:yangxiong"] = "裁之刃•散&宇文天启",
 	["cv:yangxiong"] = "莫名【忆昔端华工作室】",
 	["xingxing"] = "行刑",
 	[":xingxing"] = "当你攻击范围内的任一其他角色进入濒死状态时，你可以弃置一张♠手牌，令其立即死亡。若如此做，则视为你杀死该角色。",
