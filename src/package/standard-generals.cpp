@@ -2209,7 +2209,7 @@ public:
                 if(!lieges.isEmpty())
                     room->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
+                    const Card *card = room->askForCard(tmp, ".|.|.|hand!", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
                     if(card){
                         LogMessage lo;
                         lo.type = "#InvokeSkill";
@@ -2401,7 +2401,7 @@ public:
         if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
-        room->playSkillEffect(objectName());
+        room->playSkillEffect(objectName(), 1);
         JudgeStruct judge;
         judge.pattern = QRegExp("(.*):(.*):(.*)");
         judge.reason = objectName();
@@ -2416,6 +2416,7 @@ public:
         else
             player->obtainCard(judge.card);
 
+        room->playSkillEffect(objectName(), 2);
         return false;
     }
 };

@@ -13,6 +13,7 @@ public:
 private:
     QString exp;
     bool matchOne(const Player *player,const Card *card, QString exp) const;
+    bool willThrow() const;
 };
 
 #endif // EXPPATTERN_H
