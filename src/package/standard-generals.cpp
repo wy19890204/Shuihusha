@@ -2209,7 +2209,7 @@ public:
                 if(!lieges.isEmpty())
                     room->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
+                    const Card *card = room->askForCard(tmp, ".|.|.|hand!", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
                     if(card){
                         LogMessage lo;
                         lo.type = "#InvokeSkill";
