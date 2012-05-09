@@ -62,7 +62,8 @@ sgs.ai_skill_use["NanaStars"] = function(self, prompt)
 	local evc = self:getCard("NanaStars")
 	for _, target in sgs.qlist(self.room:getAllPlayers()) do
 		if target:containsTrick("treasury") then
-		return ("%s->%s"):format(evc:toString(), target:objectName())
+			return ("%s->%s"):format(evc:toString(), target:objectName())
+		end
 	end
 	return
 end

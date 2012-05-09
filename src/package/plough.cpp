@@ -81,7 +81,8 @@ void Wiretap::onEffect(const CardEffectStruct &effect) const{
     room->fillAG(all, effect.from);
     int mitan = room->askForAG(effect.from, all, true, "wiretap");
     if(effect.from->hasSkill("mitan") && mitan > -1){
-        room->playSkillEffect("mitan", 2);
+        if(getSkillName() != "mitan")
+            room->playSkillEffect("mitan", 2);
         room->showCard(effect.to, mitan);
     }
     effect.from->invoke("clearAG");

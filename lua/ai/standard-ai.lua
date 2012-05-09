@@ -961,7 +961,7 @@ sgs.ai_skill_use_func["JiashuCard"] = function(card, use, self)
 	use.card = card
 	if use.to then use.to:append(self.enemies[1]) end
 end
-function sgs.ai_skill_suit.jiashu()
+sgs.ai_skill_suit["jiashu"] = function(self)
 	local map = {}
 	if self.jiashusuit == "spade" then
 		map = {1,2,3}
@@ -1095,7 +1095,7 @@ sgs.ai_skill_cardask["@zhensha"] = function(self, data)
 end
 
 function SmartAI:isNoZhenshaMark()
-	if not self.player:isWounded() return true end
+	if not self.player:isWounded() then return true end
 	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
 		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
 	end
