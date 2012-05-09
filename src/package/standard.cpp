@@ -235,10 +235,6 @@ void DelayedTrick::onNullified(ServerPlayer *target) const{
             if(room->isProhibited(target, player, this))
                 continue;
 
-            if(player->getOffensiveHorse() && player->getOffensiveHorse()->objectName() == "haiqiu"
-                && objectName() != "tsunami")
-                continue;
-
             room->moveCardTo(this, player, Player::Judging, true);
             break;
         }

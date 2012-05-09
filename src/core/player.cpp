@@ -591,6 +591,8 @@ bool Player::containsTrick(const QString &trick_name) const{
             return true;
     }
 
+    if(getOffensiveHorse() && getOffensiveHorse()->objectName() == "haiqiu")
+        return trick_name != "tsunami";
     return false;
 }
 
