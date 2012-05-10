@@ -441,6 +441,12 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
+    if(hasSkill("huace") && getPhase() == Player::Play && !hasUsed("HuaceCard")){
+        foreach(const Card *card, getHandcards()){
+            if(card->inherits("TrickCard"))
+                return true;
+        }
+    }
     foreach(const Card *card, handcards){
         if(include_counterplot && card->inherits("Nullification"))
             return true; // all trick

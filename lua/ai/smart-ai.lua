@@ -1659,7 +1659,7 @@ function SmartAI:askForSuit(reason)
 	if not reason then return sgs.ai_skill_suit.fanjian() end -- this line is kept for back-compatibility
 	local callback = sgs.ai_skill_suit[reason]
 	if type(callback) == "function" then
-		if callback() then return callback(self) end
+		if callback(self) then return callback(self) end
 	end
 	return math.random(0,3)
 end
@@ -3184,7 +3184,7 @@ function SmartAI:hasTrickEffective(card, player)
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
 		if player:hasSkill("shengui") and self.player:getGeneral():isMale() and not player:getArmor() then
-			return true
+			return false
 		end
 		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
 			return false

@@ -2252,37 +2252,37 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="619"/>
         <source>Shuihusha staff:</source>
-        <translation>水浒杀制作团队：</translation>
+        <translation>太阳神水浒杀制作团队：</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="621"/>
         <source>Design/Plan/Art: Nicholas</source>
-        <translation>设计/策划/美工：烨子</translation>
+        <translation>设计/策划：烨子风暴</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="622"/>
         <source>Coder: Ubun Tenkei, Roxiel</source>
-        <translation>主程序：宇文天启</translation>
+        <translation>程序设计：宇文天启/战栗贵公子/皇叔/roxiel</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="623"/>
         <source>Voice: Tianzihui Club</source>
-        <translation>配音：天子会配音小组</translation>
+        <translation>美工：烨子风暴/绿豆沙</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="624"/>
         <source>Chores: LTY</source>
-        <translation>杂务：凌天翼</translation>
+        <translation>监制/文案：凌天翼/大R</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="625"/>
         <source>QQ Group: 88873329</source>
-        <translation>QQ群：88873329</translation>
+        <translation>配音：（详见武将一览）</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="626"/>
         <source>Url: shuihusha.5d6d.com</source>
-        <translation>论坛：shuihusha.5d6d.com</translation>
+        <translation>出品：天子会工作室</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="635"/>

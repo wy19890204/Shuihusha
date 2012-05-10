@@ -1157,8 +1157,9 @@ sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 	use.card=card
 	if use.to then
 		use.to:append(self.yinjianfrom)
+		self.yinjianfrom = nil
 		use.to:append(self.yinjianto)
-		self.player:drawCards(1)
+		self.yinjianto = nil
 	end
 end
 

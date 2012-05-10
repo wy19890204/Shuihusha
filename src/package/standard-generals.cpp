@@ -274,6 +274,9 @@ bool HuaceCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 bool HuaceCard::targetFixed() const{
+    if(ClientInstance->getStatus() == Client::Responsing)
+        return true;
+
     CardStar card = Self->tag["Huace"].value<CardStar>();
     return card && card->targetFixed();
 }
@@ -295,6 +298,23 @@ const Card *HuaceCard::validate(const CardUseStruct *card_use) const{
     return use_card;
 }
 
+const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuable) const{
+    *continuable = true;
+    Room *room = player->getRoom();
+    QString string;
+    if(user_string == "nulliplot")
+        string = room->askForChoice(player, "huace-nullchoice", "nullification+counterplot");
+    else
+        string = "nullification";
+    const Card *card = Sanguosha->getCard(subcards.first());
+    Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
+    use_card->setSkillName("huace");
+    use_card->addSubcard(card);
+    room->throwCard(this);
+
+    return use_card;
+}
+
 class Huace:public OneCardViewAsSkill{
 public:
     Huace():OneCardViewAsSkill("huace"){
@@ -304,12 +324,26 @@ public:
         return !player->hasUsed("HuaceCard");
     }
 
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return (pattern == "nullification" || pattern == "nulliplot") &&
+                !player->hasUsed("HuaceCard") &&
+                !player->isKongcheng() &&
+                player->getPhase() == Player::Play;
+    }
+
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getCard();
         return card->inherits("TrickCard");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
+        if(ClientInstance->getStatus() == Client::Responsing){
+            HuaceCard *card = new HuaceCard;
+            card->setUserString(ClientInstance->getPattern());
+            card->addSubcard(card_item->getFilteredCard());
+            return card;
+        }
+
         CardStar c = Self->tag["Huace"].value<CardStar>();
         if(c){
             HuaceCard *card = new HuaceCard;
@@ -1248,6 +1282,8 @@ public:
             return false;
 
         QStringList horses;
+        if(damage.to->getArmor())
+            horses << "armor";
         if(damage.to->getDefensiveHorse())
             horses << "defensive_horse";
         if(damage.to->getOffensiveHorse())
@@ -1262,7 +1298,7 @@ public:
         room->playSkillEffect(objectName());
 
         QString horse_type;
-        if(horses.length() == 2)
+        if(horses.length() > 1)
             horse_type = room->askForChoice(player, objectName(), horses.join("+"));
         else
             horse_type = horses.first();
@@ -1271,6 +1307,8 @@ public:
             room->throwCard(damage.to->getDefensiveHorse(), damage.to);
         else if(horse_type == "offensive_horse")
             room->throwCard(damage.to->getOffensiveHorse(), damage.to);
+        else if(horse_type == "armor")
+            room->throwCard(damage.to->getArmor(), damage.to);
 
         return false;
     }
