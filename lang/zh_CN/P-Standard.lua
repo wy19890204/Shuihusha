@@ -80,11 +80,11 @@ local t = {
 	[":+1 horse"] = "其他角色计算与你的距离时，始终+1。（你可以理解为一种防御上的优势）不同名称的+1马，其效果是相同的",
 	["lhh"] = "千里嘶风",
 	["kirin"] = "麒麟兽",
-	["silver"] = "银色拳花",
+	["white"] = "雪白卷毛",
 	[":-1 horse"] = "你计算与其他角色的距离时，始终-1。（你可以理解为一种进攻上的优势）不同名称的-1马，其效果是相同的",
 	["chitu"] = "赤兔",
 	["snow"] = "雪豹",
-	["white"] = "雪白卷毛",
+	["silver"] = "银色拳花",
 
 	["amazing_grace"] = "五谷丰登",
 	[":amazing_grace"] = "出牌时机：出牌阶段。\
@@ -197,8 +197,8 @@ local t = {
 ★警告：因初代巧工技能有严重的bug，极容易导致程序崩溃，所以此武将仅供测试和学习",
 }
 
-local ohorses = {"chitu", "snow", "white", "brown"}
-local dhorses = {"silver", "kirin", "lhh", "momohana", "jade"}
+local ohorses = {"chitu", "snow", "silver", "brown"}
+local dhorses = {"white", "kirin", "lhh", "momohana", "jade"}
 
 for _, horse in ipairs(ohorses) do
 	t[":" .. horse] = t[":-1 horse"]

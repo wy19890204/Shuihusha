@@ -63,7 +63,7 @@ void Drivolt::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     room->loseHp(effect.to);
     if(effect.to->isAlive()){
-        room->askForDiscard(effect.to, "Drivolt", qMin(2, effect.to->getCardCount(true)), false, true);
+        room->askForDiscard(effect.to, "drivolt", qMin(2, effect.to->getCardCount(true)), false, true);
         effect.to->drawCards(3);
     }
 }

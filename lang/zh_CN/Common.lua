@@ -2,7 +2,7 @@
 return {
 	["Shuihusha"] = "水浒杀",
 	["DefaultDesigner"] = "烨子",
-	["DefaultCV"] = "水浒杀配音室",
+	["DefaultCV"] = "佚名",
 	["DefaultCoder"] = "宇文天启",
 	["UnknowNick"] = "无绰号",
 

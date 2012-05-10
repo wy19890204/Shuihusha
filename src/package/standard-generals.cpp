@@ -635,6 +635,7 @@ public:
 };
 
 DuijueCard::DuijueCard(){
+    mute = true;
 }
 
 bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -1304,12 +1305,12 @@ public:
         }else if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.card && damage.card->inherits("Slash")){
-                room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#ThrowJinjiaWeapon";
                 log.from = player;
                 log.arg = objectName();
                 if(damage.from->getWeapon()){
+                    room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
                     room->throwCard(damage.from->getWeapon());
                 }
@@ -2057,7 +2058,7 @@ void JiashuCard::onEffect(const CardEffectStruct &effect) const{
     Card::Suit suit = room->askForSuit(effect.from, "jiashu");
     LogMessage log;
     log.type = "#Jiashu";
-    log.from = effect.to;
+    log.from = effect.from;
     QString suit_str = Suit2String(suit);
     log.arg = suit_str;
     room->sendLog(log);
@@ -2557,8 +2558,10 @@ public:
         Room *room = other->getRoom();
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *loli, lolita){
-            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName()))
+            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
                 loli->drawCards(1);
+            }
         }
     }
 };
