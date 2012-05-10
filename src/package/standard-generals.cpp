@@ -2544,25 +2544,42 @@ public:
     }
 };
 
-class Huakui: public MasochismSkill{
+class Huakui: public TriggerSkill{
 public:
-    Huakui():MasochismSkill("huakui"){
+    Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
+        events << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
 
-    virtual void onDamaged(ServerPlayer *other, const DamageStruct &damage) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *other, QVariant &data) const{
         Room *room = other->getRoom();
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *loli, lolita){
             if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
+                int card_id = room->drawCard();
+                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
                 room->playSkillEffect(objectName());
-                loli->drawCards(1);
+                room->setEmotion(loli, "draw-card");
+                room->getThread()->delay();
+
+                LogMessage log;
+                log.type = "$TakeAG";
+                log.from = loli;
+                log.card_str = QString::number(card_id);
+                room->sendLog(log);
+
+                room->obtainCard(loli, card_id);
             }
         }
+        return false;
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 };
 

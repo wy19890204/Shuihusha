@@ -372,6 +372,10 @@ Inspiration::Inspiration(Suit suit, int number)
     setObjectName("inspiration");
 }
 
+bool Inspiration::isCancelable(const CardEffectStruct &effect) const{
+    return effect.to->isWounded();
+}
+
 void Inspiration::onEffect(const CardEffectStruct &effect) const{
     int x = qMin(3, effect.to->getLostHp());
     if(x > 0)
