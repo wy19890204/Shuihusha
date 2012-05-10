@@ -162,7 +162,7 @@ public:
                 }
             }
             else if(duck != player && !duck->isNude() && damage.damage > 0
-                && room->askForCard(duck, ".", "@baoguo:" + player->objectName() + "::" + QString::number(damage.damage), data, CardDiscarded)){
+                && room->askForCard(duck, "BasicCard", "@baoguo:" + player->objectName() + "::" + QString::number(damage.damage), data, CardDiscarded)){
                 LogMessage log;
                 log.type = "#Baoguo";
                 log.from = duck;
@@ -306,7 +306,7 @@ public:
 
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getCard();
-        return card->inherits("TrickCard") || card->inherits("EventsCard");
+        return card->inherits("TrickCard");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{

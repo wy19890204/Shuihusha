@@ -34,7 +34,7 @@ CardItem::CardItem(const Card *card)
     frame->hide();
 
     avatar = NULL;
-
+    owner_pixmap = NULL;
     owner_text = new QGraphicsSimpleTextItem(this);
     QPen pen(Qt::black);
     pen.setWidthF(0.5);
@@ -298,24 +298,36 @@ void CardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if(card){
         painter->drawPixmap(0, 14, cardsuit_pixmap);
         painter->drawPixmap(0, 2, number_pixmap);
+        if(owner_pixmap)painter->drawPixmap(0,0,*owner_pixmap);
     }
 }
 
 
-void CardItem::writeCardDesc(QString desc)
+void CardItem::writeCardDesc(QString card_owner)
 {
      if(card){
-         owner_text->setText(desc);
+         int x, y;
+         x=(93-card_owner.toLocal8Bit().length()*6)/2;
+         y=115;
+         owner_pixmap = new QPixmap(pixmap.size());
+         owner_pixmap->fill(QColor(0,0,0,0));
+         QPainter painter(owner_pixmap);
+         static QFont card_desc_font("SimSun", 9, QFont::Normal);
+         painter.setFont(card_desc_font);
+         painter.setPen(Qt::black);
 
-         QRectF owner_rect = owner_text->boundingRect();
-         qreal x = (pixmap.width() - owner_rect.width())/2;
-         qreal y = pixmap.height() - owner_rect.height() - 7;
+         painter.drawText(x, y-1, card_owner);
+         painter.drawText(x, y+1, card_owner);
+         painter.drawText(x-1, y, card_owner);
+         painter.drawText(x+1, y, card_owner);
 
-         owner_text->setPos(x, y);
-         owner_text->show();
+         painter.setPen(Qt::yellow);
+         painter.drawText(x, y, card_owner);
      }
 }
 
 void CardItem::deleteCardDesc(){
     owner_text->hide();
+    delete owner_pixmap;
+    owner_pixmap = NULL;
 }

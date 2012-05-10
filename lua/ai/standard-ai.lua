@@ -241,7 +241,13 @@ sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 		if self.player:getHp() + pile - dmgnum > 0 then
 			if self.player:getHp() + pile - dmgnum == 1 and pile > 0 then return "." end
 			local cards = sgs.QList2Table(self.player:getHandcards())
-			if cards[1] then return cards[1]:getEffectiveId() end
+			self:sortByUseValue(cards, false)
+			for _, fcard in ipairs(cards) do
+				if fcard:inherits("BasicCard") and
+					not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+					return fcard:getEffectiveId()
+				end
+			end
 		end
 	end
 	return "."
@@ -286,7 +292,7 @@ huace_skill.getTurnUseCard = function(self)
 	local card = -1
 	self:sortByUseValue(cards, true)
 	for _, acard in ipairs(cards)  do
-		if acard:inherits("EventsCard") or acard:inherits("TrickCard") then
+		if acard:inherits("TrickCard") then
 			card = acard:getEffectiveId()
 			break
 		end
@@ -770,6 +776,7 @@ end
 sgs.ai_skill_use_func["DaleiCard"]=function(card, use, self)
 	if use.to then use.to:append(self.daleitarget) end
 	use.card=card
+	self.daleitarget = nil
 	return
 end
 sgs.ai_skill_invoke["dalei"] = function(self, data)
@@ -786,7 +793,9 @@ sgs.ai_skill_invoke["dalei"] = function(self, data)
 	return caninvoke
 end
 sgs.ai_skill_playerchosen["dalei"] = function(self, targets)
-	return self.daleitarget
+	local target = self.daleitarget
+	self.daleitarget = nil
+	return target
 end
 
 -- fuqin
