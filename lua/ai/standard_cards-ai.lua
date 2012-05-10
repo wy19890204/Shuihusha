@@ -295,7 +295,7 @@ sgs.ai_use_priority.Slash = 2.4
 
 function SmartAI:useCardPeach(card, use)
 	if not self.player:isWounded() then return end
-	if not (self.player:hasSkill("rende") and self:getOverflow() > 1 and #self.friends_noself > 0) then
+	if not (self:getOverflow() > 1 and #self.friends_noself > 0) then
 		local peaches = 0
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
@@ -305,6 +305,13 @@ function SmartAI:useCardPeach(card, use)
 
 		for _, friend in ipairs(self.friends_noself) do
 			if (self.player:getHp()-friend:getHp() > peaches) and (friend:getHp() < 3) then return end
+		end
+		
+		if self.player:hasSkill("meihuo") and self:getOverflow() > 0 then
+			self:sort(self.friends, "hp")
+			for _, friend in ipairs(self.friends) do
+				if friend:isWounded() and friend:getGeneral():isMale() then return end
+			end
 		end
 
 		use.card = card

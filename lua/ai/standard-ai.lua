@@ -828,7 +828,15 @@ end
 sgs.ai_skill_cardask["@jishi"] = function(self, data)
 	local who = data:toPlayer()
 	if self:isEnemy(who) or self.player:isKongcheng() then return "." end
-	return self.player:getRandomHandCard():getEffectiveId() or "."
+	local cards = self.player:getHandcards()
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:inherits("TrickCard") or card:inherits("BasicCard") then
+		    return card:getEffectiveId()
+		end
+	end
+	return "."
 end
 
 -- fengyue
@@ -1062,6 +1070,10 @@ end
 
 -- panjinlian
 -- meihuo
+sgs.ai_use_priority.MeihuoCard = 2.5
+sgs.ai_card_intention.MeihuoCard = -80
+sgs.dynamic_value.benefit.MeihuoCard = true
+
 meihuo_skill={}
 meihuo_skill.name = "meihuo"
 table.insert(sgs.ai_skills, meihuo_skill)

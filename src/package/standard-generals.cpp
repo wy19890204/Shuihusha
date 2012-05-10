@@ -1663,7 +1663,7 @@ public:
                 break;
             if(lingtianyi->isKongcheng())
                 continue;
-            const Card *card = room->askForCard(lingtianyi, ".", "@jishi:" + player->objectName(), QVariant::fromValue((PlayerStar)player), CardDiscarded);
+            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), QVariant::fromValue((PlayerStar)player), CardDiscarded);
             if(card){
                 RecoverStruct lty;
                 lty.card = card;
@@ -2052,21 +2052,21 @@ bool JiashuCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void JiashuCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->obtainCard(this);
+    effect.to->obtainCard(this, false);
     Room *room = effect.from->getRoom();
 
     Card::Suit suit = room->askForSuit(effect.from, "jiashu");
     LogMessage log;
-    log.type = "#Jiashu";
+    log.type = "#DeclareSuit";
     log.from = effect.from;
     QString suit_str = Suit2String(suit);
     log.arg = suit_str;
     room->sendLog(log);
-    QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
+    QString pattern = QString(".|%1|.|hand$").arg(suit_str);
     QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
     const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
     if(card){
-        effect.from->obtainCard(card);
+        effect.from->obtainCard(card, false);
         effect.to->drawCards(1);
     }
     else
@@ -2404,9 +2404,16 @@ public:
         if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
+        LogMessage log;
+        log.type = "#DeclareSuit";
+        log.from = player;
+        log.arg = Card::Suit2String(suit);
+        room->sendLog(log);
+
         JudgeStruct judge;
-        judge.pattern = QRegExp("(.*):(.*):(.*)");
+        judge.pattern = QRegExp("(.*):(" + Card::Suit2String(suit) + "):(.*)");
         judge.reason = objectName();
+        judge.good = player->isWounded() ? true : false;
         judge.who = player;
         room->judge(judge);
 
