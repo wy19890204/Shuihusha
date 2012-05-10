@@ -2170,6 +2170,8 @@ void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer 
         fangla->obtainCard(card, false);
     }
     foreach(ServerPlayer *tmp, targets){
+        if(tmp->isDead())
+            continue;
         const Card *card = room->askForCardShow(fangla, tmp, "yongle");
         tmp->obtainCard(card, false);
     }
@@ -2209,7 +2211,7 @@ public:
                 if(!lieges.isEmpty())
                     room->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".|.|.|hand!", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
+                    const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
                     if(card){
                         LogMessage lo;
                         lo.type = "#InvokeSkill";
@@ -2401,7 +2403,6 @@ public:
         if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
-        room->playSkillEffect(objectName(), 1);
         JudgeStruct judge;
         judge.pattern = QRegExp("(.*):(.*):(.*)");
         judge.reason = objectName();
@@ -2416,7 +2417,7 @@ public:
         else
             player->obtainCard(judge.card);
 
-        room->playSkillEffect(objectName(), 2);
+        room->playSkillEffect(objectName());
         return false;
     }
 };
@@ -2441,19 +2442,12 @@ bool YinjianCard::targetsFeasible(const QList<const Player *> &targets, const Pl
 }
 
 void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<ServerPlayer *> players = targets;
-    QStringList to_select;
-    to_select << targets.first()->getGeneralName() << targets.last()->getGeneralName();
-    QString select = room->askForChoice(source, "yinjian", to_select.join("+"));
+    ServerPlayer *from = targets.first();
+    ServerPlayer *to = targets.last();
 
-    ServerPlayer *target = room->findPlayer(select);
-    players.removeOne(target);
-    PlayerStar other = players.last();
+    from->obtainCard(this, false);
 
-    target->obtainCard(this, false);
-
-    int id = room->askForCardChosen(target, target, "h", "yinjian");
-    room->obtainCard(other, id, false);
+    room->obtainCard(to, room->askForCardShow(from, source, "yinjian"), false);
 }
 
 class Yinjian: public ViewAsSkill{

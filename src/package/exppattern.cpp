@@ -14,7 +14,7 @@ bool ExpPattern::match(const Player *player, const Card *card) const
 }
 
 bool ExpPattern::willThrow() const{
-    return this->exp.right(1) != "!";
+    return this->exp.right(1) != "$";
 }
 
 // '|' means 'and', '#' means 'or'.
@@ -26,7 +26,7 @@ bool ExpPattern::willThrow() const{
 bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) const
 {
     //QString eXp = exp;
-    if(exp.right(1) == "!")
+    if(exp.right(1) == "$")
         exp.chop(1);
     QStringList factors = exp.split('|');
 
