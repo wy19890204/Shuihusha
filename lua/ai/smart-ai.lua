@@ -3006,7 +3006,7 @@ function SmartAI:aoeIsEffective(card, to)
 		return false
 	end
 	--Panjinlian's shengui
-	if to:hasSkill("shengui") and not to:faceUp() and self.player:getGeneral():isMale() then
+	if to:hasSkill("shengui") and self.player:getGeneral():isMale() and not to:getArmor() then
 		return false
 	end
 	--Wangding6's kongying

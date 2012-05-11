@@ -401,8 +401,9 @@ sgs.ai_skill_use["@@duijue"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local n1 = self:getCardsNum("Slash")
 	local final
+	local card = sgs.Sanguosha:cloneCard("duel", sgs.Card_NoSuit, 0)
 	for _, enemy in ipairs(self.enemies) do
-		if n1 + 1 > self:getCardsNum("Slash", enemy) then
+		if n1 + 1 > self:getCardsNum("Slash", enemy) and self:hasTrickEffective(card, enemy) then
 			final = enemy
 			break
 		end
@@ -579,7 +580,7 @@ maidao_skill.getTurnUseCard = function(self)
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards)  do
 			if acard:inherits("Weapon") then
-				return sgs.Card_Parse("@MaidaoCard=" .. acard:getId())
+				return sgs.Card_Parse("@MaidaoCard=" .. acard:getEffectiveId())
 			end
 		end
 	end
@@ -623,15 +624,17 @@ mAIdao_skill.getTurnUseCard = function(self)
 			if self:getUseValue(cards[i]) > 4 then return end
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
-		return "@MAIdaoCard=" .. table.concat(card_ids, "+")
+		self.yangzhi = yangzhi
+		if #card_ids == 2 then
+			return "@MAIdaoCard=" .. table.concat(card_ids, "+")
+		end
 	end
 	return
 end
 sgs.ai_skill_use_func["MAIdaoCard"] = function(card, use, self)
-	local yangzhi = self.room:findPlayerBySkillName("maidao")
 	use.card = card
-	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and use.to then
-		use.to:append(yangzhi)
+	if use.to then
+		use.to:append(self.yangzhi)
 	end
 end
 
@@ -656,7 +659,7 @@ mitan_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if (acard:inherits("EventsCard") or acard:inherits("TrickCard")) then
+		if (acard:inherits("EventsCard") or acard:inherits("TrickCard")) and self:getUseValue(acard) < 4 then
 			card = acard
 			break
 		end
@@ -1149,7 +1152,10 @@ sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 		if to then
 			local cards = sgs.QList2Table(self.player:getCards("h"))
 			self:sortByUseValue(cards, true)
-			use.card = sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
+			local yinjiancards = {}
+			table.insert(yinjiancards, cards[1]:getEffectiveId())
+			table.insert(yinjiancards, cards[2]:getEffectiveId())
+			use.card = sgs.Card_Parse("@YinjianCard=" .. table.concat(yinjiancards, "+"))
 			if use.to then
 				use.to:append(from)
 				use.to:append(to)
