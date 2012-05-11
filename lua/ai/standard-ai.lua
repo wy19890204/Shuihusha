@@ -260,9 +260,8 @@ local huace_skill={}
 huace_skill.name = "huace"
 table.insert(sgs.ai_skills, huace_skill)
 huace_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("HuaceCard") then return end
-	local cards = self.player:getHandcards()
-	cards = sgs.QList2Table(cards)
+	if self.player:hasUsed("HuaceCard") or self.player:isKongcheng() then return end
+	local cards = sgs.QList2Table(self.player:getHandcards())
 	local aoename = "savage_assault|archery_attack"
 	local aoenames = aoename:split("|")
 	local aoe
@@ -513,22 +512,19 @@ sgs.ai_skill_cardchosen["yixian"] = function(self, who)
 		return who:delayedTricks():first()
 	end
 	if self:isEnemy(who) then
-		local cards = who:getCards("he")
-		cards = sgs.QList2Table(ecards)
+		local cards = sgs.QList2Table(who:getCards("he"))
 		if #cards > 0 then
 			self:sortByUseValue(cards)
 			return cards[1]
 		end
 	elseif self:isFriend(who) then
-		local cards = who:getCards("he")
-		cards = sgs.QList2Table(ecards)
+		local cards = sgs.QList2Table(who:getCards("he"))
 		if #cards > 0 then
 			self:sortByUseValue(cards, true)
 			return cards[1]
 		end
 	end
-	local cards = who:getCards("hej")
-	cards = sgs.QList2Table(ecards)
+	local cards = sgs.QList2Table(who:getCards("hej"))
 	return cards[1]
 end
 
@@ -917,8 +913,7 @@ end
 -- sun2niang
 -- heidian
 sgs.ai_skill_cardask["@heidian2"] = function(self)
-	local ecards = self.player:getCards("e")
-	ecards=sgs.QList2Table(cards)
+	local ecards = sgs.QList2Table(self.player:getCards("e"))
 	self:sortByUseValue(ecards, true)
 	return ecards[1]:getEffectiveId() or "."
 end
@@ -1132,7 +1127,10 @@ local yinjian_skill={}
 yinjian_skill.name = "yinjian"
 table.insert(sgs.ai_skills, yinjian_skill)
 yinjian_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() < 2 then return end
+    if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() <= 2 then return end
+	return sgs.Card_Parse("@YinjianCard=.")
+end
+sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 	local from, to
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:getGeneral():isMale() then
@@ -1140,27 +1138,24 @@ yinjian_skill.getTurnUseCard = function(self)
 			break
 		end
 	end
-	if not from then return end
-	for _, friend in ipairs(self.friends) do
-		if friend:getGeneral():isMale() and friend ~= from
-			and friend:getKingdom() ~= from:getKingdom() then
-			to = friend
-			break
+	if from then
+		for _, friend in ipairs(self.friends) do
+			if friend:getGeneral():isMale() and friend ~= from
+				and friend:getKingdom() ~= from:getKingdom() then
+				to = friend
+				break
+			end
 		end
-	end
-	if not to then return end
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	self.yinjianfrom = from
-	self.yinjianto = to
-	return sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
-end
-sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
-	use.card=card
-	if use.to then
-		use.to:append(self.yinjianfrom)
-		use.to:append(self.yinjianto)
+		if to then
+			local cards = sgs.QList2Table(self.player:getCards("h"))
+			self:sortByUseValue(cards, true)
+			use.card = sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
+			if use.to then
+				use.to:append(from)
+				use.to:append(to)
+			end
+			return
+		end
 	end
 end
 

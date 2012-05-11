@@ -2973,11 +2973,11 @@ function SmartAI:useSkillCard(card,use)
 	if not use.card then return end
 	local subcards = sgs.QList2Table(use.card:getSubcards())
 	local shit = 0
-	if #subcards > 0 then
+--[[	if #subcards > 0 then
 		for _, card in ipairs(subcards) do
 			if sgs.Sanguosha:getCard(card):inherits("Shit") then shit = shit + 1 end
 		end
-	end
+	end]]
 	if shit - self.player:getHp() > self:getAllPeachNum() then use.card = nil end
 end
 
