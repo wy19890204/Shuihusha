@@ -772,10 +772,9 @@ dalei_skill.getTurnUseCard = function(self)
 		end
 	end
 end
-sgs.ai_skill_use_func["DaleiCard"]=function(card, use, self)
+sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
+	use.card = card
 	if use.to then use.to:append(self.daleitarget) end
-	use.card=card
-	self.daleitarget = nil
 	return
 end
 sgs.ai_skill_invoke["dalei"] = function(self, data)
@@ -785,16 +784,14 @@ sgs.ai_skill_invoke["dalei"] = function(self, data)
 	for _, friend in ipairs(self.friends) do
 		if friend:isWounded() and friend ~= damage.to then
 			caninvoke = true
-			self.daleitarget = friend
+			self.daleirecover = friend
 			break
 		end
 	end
 	return caninvoke
 end
 sgs.ai_skill_playerchosen["dalei"] = function(self, targets)
-	local target = self.daleitarget
-	self.daleitarget = nil
-	return target
+	return self.daleirecover
 end
 
 -- fuqin

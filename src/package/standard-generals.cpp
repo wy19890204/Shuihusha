@@ -1556,11 +1556,12 @@ bool DaleiCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *> &targets) const{
     room->playSkillEffect("dalei", qrand() % 2 + 1);
-    bool success = xiaoyi->pindian(targets.first(), "dalei", this);
+    PlayerStar target = targets.first();
+    bool success = xiaoyi->pindian(target, "dalei", this);
     if(success){
         room->playSkillEffect("dalei", 3);
         room->setPlayerFlag(xiaoyi, "dalei_success");
-        room->setPlayerFlag(targets.first(), "dalei_target");
+        room->setPlayerProperty(xiaoyi, "dalei_target", QVariant::fromValue(target));
     }else{
         room->playSkillEffect("dalei", 4);
         DamageStruct damage;
@@ -1605,20 +1606,18 @@ public:
         if(event == PhaseChange){
             if(player->getPhase() == Player::NotActive){
                 room->setPlayerFlag(player, "-dalei_success");
-                foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                    if(tmp->hasFlag("dalei_target"))
-                        room->setPlayerFlag(tmp, "-dalei_target");
-                }
+                room->setPlayerProperty(player, "dalei_target", QVariant());
             }
             return false;
         }
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->hasFlag("dalei_target")){
+        PlayerStar target = player->property("dalei_target").value<PlayerStar>();
+        if(damage.to == target){
             RecoverStruct rev;
             rev.who = player;
             for(int p = 0; p < damage.damage; p++){
                 if(player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(damage.to), objectName()), rev);
+                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(target), objectName()), rev);
             }
         }
         return false;

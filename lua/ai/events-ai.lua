@@ -14,11 +14,14 @@ function SmartAI:useEventsCard(card, use)
 			end
 		end
 	elseif card:inherits("Jiefachang") then
-		for _, friend in ipairs(self.friends) do
-			if friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage") then
-				use.card = card
-				if use.to then use.to:append(friend) end
-				return
+		for _, target in sgs.qlist(self.room:getAllPlayers()) do
+			local juds = target:getJudgingArea():length()
+			if juds > 0 and self:isFriend(target) then
+				if target:containsTrick("indulgence") or target:containsTrick("supply_shortage") then
+					use.card = card
+					if use.to then use.to:append(target) end
+					return
+				end
 			end
 		end
 	end
