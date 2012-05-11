@@ -1133,33 +1133,34 @@ yinjian_skill.name = "yinjian"
 table.insert(sgs.ai_skills, yinjian_skill)
 yinjian_skill.getTurnUseCard = function(self)
     if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() < 2 then return end
+	local from, to
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:getGeneral():isMale() then
-			self.yinjianfrom = friend
+			from = friend
 			break
 		end
 	end
-	if not self.yinjianfrom then return end
+	if not from then return end
 	for _, friend in ipairs(self.friends) do
-		if friend:getGeneral():isMale() and friend ~= self.yinjianfrom
-			and friend:getKingdom() ~= self.yinjianfrom:getKingdom() then
-			self.yinjianto = friend
+		if friend:getGeneral():isMale() and friend ~= from
+			and friend:getKingdom() ~= from:getKingdom() then
+			to = friend
 			break
 		end
 	end
-	if not self.yinjianto then return end
+	if not to then return end
 	local cards = self.player:getCards("h")
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
+	self.yinjianfrom = from
+	self.yinjianto = to
 	return sgs.Card_Parse("@YinjianCard=" .. cards[1]:getEffectiveId() + cards[2]:getEffectiveId())
 end
 sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 	use.card=card
 	if use.to then
 		use.to:append(self.yinjianfrom)
-		self.yinjianfrom = nil
 		use.to:append(self.yinjianto)
-		self.yinjianto = nil
 	end
 end
 

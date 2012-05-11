@@ -1275,8 +1275,6 @@ public:
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        if(player->getPhase() != Player::Play)
-            return false;
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.chain || !damage.card || (!damage.card->inherits("Slash") && !damage.card->inherits("Duel")))
             return false;
@@ -2581,7 +2579,6 @@ public:
                 DamageStruct damage;
                 damage.from = pindian->to;
                 damage.to = pindian->from;
-                damage.card = pindian->to_card;
                 room->damage(damage);
             }
         }

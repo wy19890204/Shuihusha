@@ -84,7 +84,7 @@ struct CircularRoomLayout : public RoomLayout{
         chat_box_pos = QPointF(367, -38);
         button1_pos = QPointF(-565,205);
         button2_pos = QPointF(-565, 260);
-        state_item_pos = QPointF(367, -320);
+        state_item_pos = QPointF(367, -325); // -320
     }
 };
 

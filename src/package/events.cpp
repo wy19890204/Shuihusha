@@ -38,7 +38,7 @@ bool Jiefachang::targetFilter(const QList<const Player *> &targets, const Player
 void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     ServerPlayer *target = targets.first();
-    if(source->getPhase() == Player::Play){
+    if(source->getPhase() == Player::Play && !target->getJudgingArea().isEmpty()){
         source->playCardEffect("@jiefachang2");
         if(target->getJudgingArea().length() > 1)
             room->throwCard(room->askForCardChosen(source, target, "j", "jiefachang"));
