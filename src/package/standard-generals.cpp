@@ -796,6 +796,7 @@ public:
             }
             if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
                 const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", QVariant(), NonTrigger);
+                room->showCard(huarong, card->getId());
                 room->setPlayerMark(huarong, "kaixian", card->getNumber());
                 LogMessage log;
                 log.type = "$Kaixian";
@@ -1514,7 +1515,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+        return true;
     }
 
     virtual bool trigger(TriggerEvent, ServerPlayer *poolguy, QVariant &data) const{
@@ -1524,7 +1525,7 @@ public:
         if(!dying.who || dying.who != poolguy)
             return false;
         foreach(ServerPlayer *bear, bears){
-            if(!bear->inMyAttackRange(dying.who))
+            if(bear == poolguy || !bear->inMyAttackRange(poolguy))
                 continue;
             if(room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
                 room->playSkillEffect(objectName());

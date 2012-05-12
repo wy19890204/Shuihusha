@@ -23,6 +23,7 @@ ganlin_skill.name = "ganlin"
 table.insert(sgs.ai_skills, ganlin_skill)
 ganlin_skill.getTurnUseCard = function(self)
 	if self.player:hasFlag("Ganlin") or self.player:isKongcheng() then return end
+	if self:slashIsAvailable() then return end
 	for _, player in ipairs(self.friends_noself) do
 		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage"))
 			or (not player:containsTrick("indulgence") and (self:hasSkills("banzhuang|shouge", player)))
@@ -231,6 +232,10 @@ end
 
 -- lujunyi
 sgs.ai_chaofeng.lujunyi = 5
+sgs.lujunyi_keep_value =
+{
+	BasicCard = 6,
+}
 -- baoguo
 sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
@@ -477,6 +482,10 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 end
 
 -- zhutong
+sgs.zhutong_keep_value =
+{
+	Peach = 6,
+}
 -- sijiu
 sijiu_skill={}
 sijiu_skill.name = "sijiu"
@@ -537,6 +546,17 @@ sgs.ai_skill_invoke["liba"] = function(self, data)
 end
 
 -- wusong
+sgs.wusong_suit_value =
+{
+	spade = 3.9,
+	club = 3.9
+}
+sgs.wusong_keep_value =
+{
+	Analeptic = 5.5,
+	Weapon = 5,
+}
+
 -- fuhu
 sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 	local damage = data:toDamage()
@@ -564,6 +584,11 @@ sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 end
 
 -- yangzhi
+sgs.yangzhi_keep_value =
+{
+	EventsCard = 6,
+}
+
 -- maidao
 maidao_skill={}
 maidao_skill.name = "maidao"
@@ -718,6 +743,11 @@ sgs.ai_skill_invoke["jiuhan"] = function(self, data)
 end
 
 -- yangxiong
+sgs.yangxiong_suit_value =
+{
+	spade = 4
+}
+
 -- xingxing
 sgs.ai_skill_cardask["@xingxing"] = function(self, data)
 	local dy = data:toDying()
@@ -821,6 +851,12 @@ sgs.ai_skill_playerchosen["fuqin"] = function(self, targets)
 end
 
 -- andaoquan
+sgs.andaoquan_keep_value =
+{
+	TrickCard = 5.5,
+	BasicCard = 6,
+}
+
 -- jishi
 sgs.ai_skill_cardask["@jishi"] = function(self, data)
 	local who = data:toPlayer()
@@ -942,7 +978,10 @@ sgs.ai_skill_invoke["cuju"] = function(self, data)
 	return damage.damage > 0
 end
 sgs.ai_skill_use["@@cuju"] = function(self, prompt)
-	if self.player:isKongcheng() then return "." end
+	local gongsunsheng = self.room:findPlayerBySkillName("yixing")
+	if self.player:isKongcheng() and (not gongsunsheng or self:isEnemy(gongsunsheng)) then
+		return "."
+	end
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
 	local card = self.player:getRandomHandCard()
@@ -1065,6 +1104,12 @@ sgs.ai_skill_cardask["@jiachu"] = function(self)
 end
 
 -- panjinlian
+sgs.panjinlian_suit_value =
+{
+	heart = 5,
+	spade = 5.5,
+}
+
 -- meihuo
 sgs.ai_use_priority.MeihuoCard = 2.5
 sgs.ai_card_intention.MeihuoCard = -80
