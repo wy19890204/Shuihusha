@@ -655,7 +655,7 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *erge, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude() && effect.jink){
+        if(!effect.to->isNude() && effect.jink && !effect.jink->isVirtualCard()){
             Room *room = erge->getRoom();
             if(erge->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName());
@@ -1519,25 +1519,29 @@ public:
 
     virtual bool trigger(TriggerEvent, ServerPlayer *poolguy, QVariant &data) const{
         Room *room = poolguy->getRoom();
-        ServerPlayer *bear = room->findPlayerBySkillName(objectName());
+        QList<ServerPlayer *>bears = room->findPlayersBySkillName(objectName());
         DyingStruct dying = data.value<DyingStruct>();
-        if(!bear || !dying.who || !bear->inMyAttackRange(dying.who))
+        if(!dying.who || dying.who != poolguy)
             return false;
-        if(dying.who == poolguy && room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
-            room->playSkillEffect(objectName());
-            DamageStruct damage;
-            damage.from = bear;
+        foreach(ServerPlayer *bear, bears){
+            if(!bear->inMyAttackRange(dying.who))
+                continue;
+            if(room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
+                room->playSkillEffect(objectName());
+                DamageStruct damage;
+                damage.from = bear;
 
-            LogMessage log;
-            log.type = "#Xingxing";
-            log.from = bear;
-            log.to << poolguy;
-            log.arg = objectName();
-            room->sendLog(log);
+                LogMessage log;
+                log.type = "#Xingxing";
+                log.from = bear;
+                log.to << poolguy;
+                log.arg = objectName();
+                room->sendLog(log);
 
-            room->getThread()->delay(1500);
-            room->killPlayer(poolguy, &damage);
-            return true;
+                room->getThread()->delay(1500);
+                room->killPlayer(poolguy, &damage);
+                return true;
+            }
         }
         return false;
     }
@@ -2101,7 +2105,7 @@ void JiashuCard::onEffect(const CardEffectStruct &effect) const{
     QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
     const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
     if(card){
-        effect.from->obtainCard(card, false);
+        effect.from->obtainCard(card);
         effect.to->drawCards(1);
     }
     else
@@ -2255,7 +2259,6 @@ public:
                         lo.arg = objectName();
                         room->sendLog(lo);
                         room->obtainCard(fang1a, card, false);
-                        break;
                     }
                 }
             }
@@ -2389,7 +2392,7 @@ public:
             log.from = xing;
             log.to << use.from;
             log.arg = objectName();
-            room->setPlayerProperty(use.from, "maxhp", use.from->getHp());
+            room->loseMaxHp(use.from, use.from->getLostHp());
             if(use.from->isAlive())
                 log.type = "#ZhenshaA";
             else

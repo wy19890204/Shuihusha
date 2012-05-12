@@ -1,6 +1,12 @@
 function SmartAI:useEventsCard(card, use)
 	if card:inherits("Tifanshi") then
-		return
+		for _, enemy in ipairs(self.enemies) do
+			if enemy:getHandcardNum() == 1 then
+				use.card = card
+				if use.to then use.to:append(enemy) end
+				return
+			end
+		end
 	elseif card:inherits("FuckGaolian") or card:inherits("Jiangjieshi") or card:inherits("NanaStars") then
 		return
 	elseif card:inherits("Daojia") then
@@ -39,6 +45,21 @@ sgs.ai_skill_use["Daojia"] = function(self, prompt)
 	return
 end
 
+-- tifanshi
+sgs.ai_skill_use["Tifanshi"] = function(self, prompt)
+	local evc = self:getCard("Tifanshi")
+	local num = 0
+	for _, player in sgs.qlist(room:getAlivePlayers()) do
+		if player:getRole() == "rebel" then
+			num = num + 1
+		end
+	end
+	if num > 1 then
+		return ("%s->."):format(evc:toString())
+	end
+	return
+end
+
 -- fuckgaolian
 sgs.ai_skill_use["FuckGaolian"] = function(self, prompt)
 	local evc = self:getCard("FuckGaolian")
@@ -72,7 +93,9 @@ sgs.ai_skill_use["NanaStars"] = function(self, prompt)
 end
 sgs.ai_skill_cardask["@7stars"] = function(self, data)
 	local damage = data:toDamage()
-	if self:isFriend(damage.from) then return end
-	local star = self:getCard("NanaStars")
-	return star:getEffectiveId()
+	if self:isEnemy(damage.from) then
+		local star = self:getCard("NanaStars")
+		return star:getEffectiveId()
+	end
+	return "."
 end

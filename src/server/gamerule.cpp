@@ -442,6 +442,13 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                     if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
                         int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
                         source->playCardEffect("@nanastars2");
+
+                        LogMessage log;
+                        log.type = "#NanaStars";
+                        log.from = source;
+                        log.to << damage.from;
+                        log.arg = "nanastars";
+                        room->sendLog(log);
                         while(!damage.from->isNude()){
                             int card_id = room->askForCardChosen(source, damage.from, "he", "nanastars");
                             room->obtainCard(source, card_id, false);

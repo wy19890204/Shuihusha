@@ -739,24 +739,29 @@ dalei_skill.name = "dalei"
 table.insert(sgs.ai_skills, dalei_skill)
 dalei_skill.getTurnUseCard = function(self)
     if self.player:hasUsed("DaleiCard") or self.player:isKongcheng() then return end
+	return sgs.Card_Parse("@DaleiCard=.")
+end
+sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
+	local target
 	if self.player:getHp() > 1 then
 		self:sort(self.enemies, "handcard")
 		for _, enemy in ipairs(self.enemies) do
 			if not enemy:isKongcheng() and enemy:getGeneral():isMale()
 				and self.player:inMyAttackRange(enemy) then
-				self.daleitarget = enemy
+				target = enemy
 				break
 			end
 		end
 		local max_card = self:getMaxCard()
-		if self.daleitarget and max_card then
-			return sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
+		if target and max_card then
+			use.card = sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
+			if use.to then use.to:append(target) end
 		end
 	else
 		for _, friend in ipairs(self.friends_noself) do
 			if friend:getHandcardNum() > 3 and not friend:isWounded()
 				and friend:getGeneral():isMale() then
-				self.daleitarget = friend
+				target = friend
 				break
 			end
 		end
@@ -767,15 +772,11 @@ dalei_skill.getTurnUseCard = function(self)
 				min_card = hcard
 			end
 		end
-		if self.daleitarget and min_card then
-			return sgs.Card_Parse("@DaleiCard=" .. min_card:getEffectiveId())
+		if target and min_card then
+			use.card = sgs.Card_Parse("@DaleiCard=" .. min_card:getEffectiveId())
+			if use.to then use.to:append(target) end
 		end
 	end
-end
-sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
-	use.card = card
-	if use.to then use.to:append(self.daleitarget) end
-	return
 end
 sgs.ai_skill_invoke["dalei"] = function(self, data)
 	local damage = data:toDamage()
@@ -893,7 +894,7 @@ wuji_skill={}
 wuji_skill.name = "wuji"
 table.insert(sgs.ai_skills, wuji_skill)
 wuji_skill.getTurnUseCard = function(self)
---	if self:slashIsAvailable() then return end
+	if self:slashIsAvailable() then return end
 	local cards = self.player:getCards("h")
 	local slashs = {}
     cards=sgs.QList2Table(cards)
