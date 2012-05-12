@@ -23,7 +23,7 @@ ganlin_skill.name = "ganlin"
 table.insert(sgs.ai_skills, ganlin_skill)
 ganlin_skill.getTurnUseCard = function(self)
 	if self.player:hasFlag("Ganlin") or self.player:isKongcheng() then return end
-	if self:slashIsAvailable() then return end
+	if self:slashIsAvailable() and self:getCardsNum("Slash") > 0 then return end
 	for _, player in ipairs(self.friends_noself) do
 		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage"))
 			or (not player:containsTrick("indulgence") and (self:hasSkills("banzhuang|shouge", player)))
@@ -930,7 +930,7 @@ wuji_skill={}
 wuji_skill.name = "wuji"
 table.insert(sgs.ai_skills, wuji_skill)
 wuji_skill.getTurnUseCard = function(self)
-	if self:slashIsAvailable() then return end
+	if self:slashIsAvailable() and self:getCardsNum("Slash") > 0 then return end
 	local cards = self.player:getCards("h")
 	local slashs = {}
     cards=sgs.QList2Table(cards)
