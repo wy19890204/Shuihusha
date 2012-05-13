@@ -45,6 +45,17 @@ sgs.ai_skill_use["Daojia"] = function(self, prompt)
 	return
 end
 
+-- jiefachang
+sgs.ai_skill_use["Jiefachang"] = function(self, prompt)
+	local evc = self:getCard("Jiefachang")
+	for _, friend in ipairs(self.friends) do
+		if not friend:faceUp() then
+			return ("%s->%s"):format(evc:toString(), friend:objectName())
+		end
+	end
+	return
+end
+
 -- tifanshi
 sgs.ai_skill_use["Tifanshi"] = function(self, prompt)
 	local evc = self:getCard("Tifanshi")

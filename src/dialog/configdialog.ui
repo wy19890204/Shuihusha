@@ -315,6 +315,9 @@
       <property name="text">
        <string>Circular view</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="noIndicatorCheckBox">
       <property name="geometry">

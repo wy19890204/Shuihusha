@@ -312,6 +312,8 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     use_card->addSubcard(card);
     room->throwCard(this);
 
+    //player->addHistory("HuaceCard", 1);
+    Self->addHistory("HuaceCard", 1);
     return use_card;
 }
 
@@ -1053,6 +1055,8 @@ public:
             return false;
 
         foreach(ServerPlayer *wusong, wusOng){
+            if(damage.from->isDead())
+                break;
             if(wusong->canSlash(damage.from, false)
                     && !wusong->isKongcheng() && damage.from != wusong){
                 const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), data, CardDiscarded);
@@ -1621,8 +1625,12 @@ public:
             RecoverStruct rev;
             rev.who = player;
             for(int p = 0; p < damage.damage; p++){
-                if(player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, room->getOtherPlayers(target), objectName()), rev);
+                QList<ServerPlayer *> targets;
+                foreach(ServerPlayer *tmp, room->getOtherPlayers(target))
+                    if(tmp->isWounded())
+                        targets << tmp;
+                if(!targets.isEmpty() && player->askForSkillInvoke(objectName(), data))
+                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev);
             }
         }
         return false;
@@ -1644,10 +1652,8 @@ public:
     virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
         Room *room = yan->getRoom();
         int lstn = yan->getLostHp();
-        if(damage.from){
-            PlayerStar from = damage.from;
-            yan->tag["FuqinSource"] = QVariant::fromValue(from);
-        }
+        if(damage.from)
+            yan->tag["FuqinSource"] = QVariant::fromValue((PlayerStar)damage.from);
         QString choice = damage.from ?
                          room->askForChoice(yan, objectName(), "yan+qing+nil"):
                          room->askForChoice(yan, objectName(), "qing+nil");

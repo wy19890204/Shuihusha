@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20120504",
-	version_name = "终结版",
+	version = "20120514",
+	version_name = "终结版F1",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -37,10 +37,10 @@ config = {
 	},
 
 	scene_names = {
-	"Couple",
+--[[	"Couple",
 	"Zombie",
 	"Legend",
-	"Impasse",
+	"Impasse",]]
 	"Custom",
 	},
 

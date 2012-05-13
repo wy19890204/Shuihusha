@@ -37,6 +37,8 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
+    // hide
+    ui->spOpen->setVisible(false);
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
 

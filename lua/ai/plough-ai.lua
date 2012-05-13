@@ -65,7 +65,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
 	use.card = drivolt
 	self:sort(self.enemies, "hp")
-	if self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
+	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
 		if use.to then use.to:append(self.enemies[1]) end
 		return
 	end

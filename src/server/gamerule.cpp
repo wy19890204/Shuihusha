@@ -284,8 +284,17 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 }
                 if(use.card->inherits("Ecstasy")){
                     ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
-                    if(source)
-                        room->askForUseCard(source, "NanaStars", "@nanastars");
+                    if(source){
+                        bool invoke = false;
+                        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                            if(tmp->containsTrick("treasury")){
+                                invoke = true;
+                                break;
+                            }
+                        }
+                        if(invoke)
+                            room->askForUseCard(source, "NanaStars", "@nanastars");
+                    }
                 }
             }
 
