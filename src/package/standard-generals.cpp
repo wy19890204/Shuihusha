@@ -483,10 +483,6 @@ public:
     Qimen():PhaseChangeSkill("qimen"){
     }
 
-    virtual int getPriority() const{
-        return 2;
-    }
-
     static void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun){
         QStringList skills;
         bool has_qimen = target == gongsun;
@@ -564,7 +560,7 @@ public:
             }
             return false;
         }
-        else if(target->getPhase() == Player::Start){
+        else if(target->getPhase() == Player::RoundStart){
             foreach(ServerPlayer *dragon, dragons){
                 if(!dragon->isNude() && room->askForSkillInvoke(dragon, objectName(), QVariant::fromValue(target))){
                     ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
@@ -788,7 +784,7 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *huarong) const{
         Room *room = huarong->getRoom();
-        if(huarong->getPhase() == Player::Start && !huarong->isKongcheng()){
+        if(huarong->getPhase() == Player::RoundStart && !huarong->isKongcheng()){
             bool caninvoke = false;
             foreach(const Card *cd, huarong->getHandcards()){
                 if(cd->getNumber() <= 5){
@@ -2176,6 +2172,11 @@ public:
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$duoquan");
             caijing->loseMark("@quan");
+
+            caijing->obtainCard(player->getWeapon());
+            caijing->obtainCard(player->getArmor());
+            caijing->obtainCard(player->getDefensiveHorse());
+            caijing->obtainCard(player->getOffensiveHorse());
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
                 room->obtainCard(caijing, all_cards, false);
@@ -2250,7 +2251,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
-        if(fang1a->isKongcheng()){
+        if(fang1a->isKongcheng() && fang1a->isLord()){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand){
                 Room *room = fang1a->getRoom();
@@ -2446,7 +2447,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &) const{
         Room *room = player->getRoom();
-        if(player->getPhase() != Player::Start || !player->askForSkillInvoke(objectName()))
+        if(player->getPhase() != Player::RoundStart || !player->askForSkillInvoke(objectName()))
             return false;
         Card::Suit suit = room->askForSuit(player, objectName());
         LogMessage log;
@@ -2604,6 +2605,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
+    }
+
+    virtual int getPriority() const{
+        return 2;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *other, QVariant &data) const{
