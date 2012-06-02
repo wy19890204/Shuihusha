@@ -1432,7 +1432,7 @@ public:
         if(damage.card->inherits("Slash")){
             if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
                 && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
-                && !likui->hasFlag("SlashbySlash"))
+                && !(likui->hasSkill("yinyu") && likui->getMark("@ylyus") > 0))
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
             if(!room->askForSkillInvoke(likui, objectName(), data))
                 return false;

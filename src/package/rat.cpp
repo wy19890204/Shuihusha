@@ -111,7 +111,7 @@ public:
     virtual bool trigger(TriggerEvent event, ServerPlayer *qing, QVariant &data) const{
         Room *room = qing->getRoom();
         if(event == SlashProceed){
-            if(qing->hasFlag("Hitit")){
+            if(qing->getMark("@ylyud")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 int index = effect.from->getMark("mengshi") > 0 ? 8: 3;
                 room->playSkillEffect("yinyu", index);
@@ -120,7 +120,7 @@ public:
             }
             return false;
         }
-        if(qing->getPhase() == Player::Start){
+        if(qing->getPhase() == Player::RoundStart){
             if(qing->askForSkillInvoke(objectName())){
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
@@ -136,20 +136,23 @@ public:
                 case Card::Heart:{
                         index = qing->getMark("mengshi") > 0 ? 10: 5;
                         room->playSkillEffect(objectName(), index);
-                        room->setPlayerFlag(qing, "Longest");
+                        room->setPlayerMark(qing, "@ylyuh", 1);
+                        //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
                         //room->playSkillEffect(objectName(), 3);
-                        room->setPlayerFlag(qing, "Hitit");
+                        room->setPlayerMark(qing, "@ylyud", 1);
+                        //room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
                         index = qing->getMark("mengshi") > 0 ? 6: 1;
                         room->playSkillEffect(objectName(), index);
-                        room->setPlayerFlag(qing, "SlashbySlash");
+                        room->setPlayerMark(qing, "@ylyus", 1);
+                        //room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
                     }
@@ -158,6 +161,7 @@ public:
                         room->playSkillEffect(objectName(), index);
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                             tmp->addMark("qinggang");
+                        room->setPlayerMark(qing, "@ylyuc", 1);
                         log.type = "#Yinyu8";
                         break;
                     }
@@ -168,12 +172,10 @@ public:
             }
         }
         else if(qing->getPhase() == Player::NotActive){
-            if(qing->hasFlag("Longest"))
-                room->setPlayerFlag(qing, "-Longest");
-            if(qing->hasFlag("Hitit"))
-                room->setPlayerFlag(qing, "-Hitit");
-            if(qing->hasFlag("SlashbySlash"))
-                room->setPlayerFlag(qing, "-SlashbySlash");
+            room->setPlayerMark(qing, "@ylyuh", 0);
+            room->setPlayerMark(qing, "@ylyuc", 0);
+            room->setPlayerMark(qing, "@ylyus", 0);
+            room->setPlayerMark(qing, "@ylyud", 0);
             foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                 tmp->removeMark("qinggang");
         }

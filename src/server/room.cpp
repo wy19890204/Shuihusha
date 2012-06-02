@@ -457,7 +457,8 @@ void Room::slashEffect(const SlashEffectStruct &effect){
 
     if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
         playSkillEffect("qinlong");
-    if(effect.from->getMark("SlashCount") > 1 && effect.from->hasFlag("SlashbySlash")){
+    if(effect.from->getMark("SlashCount") > 1 &&
+       effect.from->hasSkill("yinyu") && effect.from->getMark("@ylyus") > 0){
         int index = effect.from->getMark("mengshi") > 0 ? 7: 2;
         playSkillEffect("yinyu", index);
     }
