@@ -1,5 +1,5 @@
-#ifndef TTXDPACKAGE_H
-#define TTXDPACKAGE_H
+#ifndef RATPACKAGE_H
+#define RATPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -14,11 +14,11 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
-class TTXDPackage: public Package{
+class RatPackage: public Package{
     Q_OBJECT
 
 public:
-    TTXDPackage();
+    RatPackage();
 };
 
-#endif // TTXDPACKAGE_H
+#endif // RATPACKAGE_H

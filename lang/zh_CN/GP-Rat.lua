@@ -1,12 +1,12 @@
--- TitianXingDao Shuihusha part 3.
+-- translation for RatPackage
 
-local tt = {
-	["TTXD"] = "替天行道",
-	["coder:TTXD"] = "roxiel",
+return {
+	["rat"] = "子鼠",
 
 	["#zhangqing"] = "没羽箭",
 	["zhangqing"] = "张清",
 	["cv:zhangqing"] = "烨子【剪刀剧团】",
+	["coder:zhangqing"] = "roxiel",
 	["yinyu"] = "饮羽",
 	[":yinyu"] = "回合开始阶段，你可以进行一次判定，获得与判定结果对应的一项技能直到回合结束：\
 	红桃：攻击范围无限；\
@@ -26,6 +26,7 @@ local tt = {
 	["#yuehe"] = "铁叫子",
 	["yuehe"] = "乐和",
 	["cv:yuehe"] = "烨子【剪刀剧团】",
+	["coder:zhangqing"] = "roxiel",
 	["yueli"] = "乐理",
 	[":yueli"] = "若你的判定牌为基本牌，在其生效后可以获得之。",
 	["yueli:yes"] = "拿屎",
@@ -40,6 +41,7 @@ local tt = {
 	["#muhong"] = "没遮拦",
 	["muhong"] = "穆弘",
 	["cv:muhong"] = "流岚【裔美声社】",
+	["coder:zhangqing"] = "roxiel",
 	["wuzu"] = "无阻",
 	[":wuzu"] = "<b>锁定技</b>，你始终无视其他角色的防具。",
 	["$IgnoreArmor"] = "%to 装备着 %card，但 %from 貌似没有看见",
@@ -49,6 +51,7 @@ local tt = {
 	["#zhoutong"] = "小霸王",
 	["zhoutong"] = "周通",
 	["cv:zhoutong"] = "烨子【剪刀剧团】",
+	["coder:zhangqing"] = "roxiel",
 	["qiangqu"] = "强娶",
 	[":qiangqu"] = "当你使用【杀】对已受伤的女性角色造成伤害时，你可以防止此伤害，改为获得该角色的一张牌，然后你和她各回复1点体力。",
 	["#Qiangqu"] = "%from 硬是把 %to 拉入了洞房",
@@ -64,6 +67,7 @@ local tt = {
 	["#qiaodaoqing"] = "幻魔君",
 	["qiaodaoqing"] = "乔道清",
 	["cv:qiaodaoqing"] = "烨子【剪刀剧团】",
+	["coder:zhangqing"] = "roxiel",
 	["huanshu"] = "幻术",
 	[":huanshu"] = "你每受到1点伤害，可以令任一其他角色连续进行两次判定：若均为红色，你对其造成2点火焰伤害；若均为黑色，你对其造成2点雷电伤害。",
 	["@huanshu"] = "请指定一个目标以便于发动【幻术】",
@@ -84,12 +88,3 @@ local tt = {
 	["~zhoutong"] = "虽有霸王相，奈无霸王功啊！",
 	["~qiaodaoqing"] = "这，就是五雷轰顶的滋味吗？",
 }
-
-local gege = {"lujunyi", "zhangqing", "yuehe", "muhong", "zhoutong",
-		"qiaodaoqing", "andaoquan", "gongsunsheng", "husanniang"}
-
-for _, player in ipairs(gege) do
-	tt["coder:" .. player] = tt["coder:TTXD"]
-end
-
-return tt

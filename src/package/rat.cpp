@@ -1,4 +1,4 @@
-#include "ttxd.h"
+#include "rat.h"
 #include "skill.h"
 #include "client.h"
 #include "engine.h"
@@ -387,8 +387,8 @@ public:
     }
 };
 
-TTXDPackage::TTXDPackage()
-    :Package("TTXD")
+RatPackage::RatPackage()
+    :Package("rat")
 {
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
@@ -412,4 +412,4 @@ TTXDPackage::TTXDPackage()
     addMetaObject<HuanshuCard>();
 }
 
-ADD_PACKAGE(TTXD)
+ADD_PACKAGE(Rat)

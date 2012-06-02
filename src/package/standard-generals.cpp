@@ -2607,10 +2607,6 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
-        return 2;
-    }
-
     virtual bool trigger(TriggerEvent , ServerPlayer *other, QVariant &data) const{
         Room *room = other->getRoom();
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
@@ -2635,7 +2631,7 @@ public:
     }
 
     virtual int getPriority() const{
-        return -1;
+        return 2;
     }
 };
 
