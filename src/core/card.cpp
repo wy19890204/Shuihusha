@@ -459,6 +459,9 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
     log.card_str = toString();
     room->sendLog(log);
 
+    if(card_use.card->getSkillName() == "spear")
+        card_use.from->playCardEffect("Espear");
+
     QVariant data = QVariant::fromValue(card_use);
     RoomThread *thread = room->getThread();
     thread->trigger(CardUsed, player, data);

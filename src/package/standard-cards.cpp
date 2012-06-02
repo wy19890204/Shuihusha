@@ -282,7 +282,6 @@ Blade::Blade(Suit suit, int number)
 class SpearSkill: public ViewAsSkill{
 public:
     SpearSkill():ViewAsSkill("spear"){
-
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{

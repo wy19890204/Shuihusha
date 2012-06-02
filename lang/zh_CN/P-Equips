@@ -2,8 +2,14 @@
 
 return {
 -- female
+	["$crossbow1_female"] = "结束吧！",
+	["$crossbow2_female"] = "还不死？",
 	["$double_sword_female"] = "谁说女子不如男？",
+	["$spear_female"] = "喝！",
 
 -- male
+	["$crossbow1_male"] = "结束吧！",
+	["$crossbow2_male"] = "还不死？",
 	["$double_sword_male"] = "战场之上不留情面！",
+	["$spear_male"] = "喝！",
 }
