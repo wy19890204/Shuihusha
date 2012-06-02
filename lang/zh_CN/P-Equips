@@ -9,6 +9,9 @@ return {
 	["$blade1_f"] = "再杀！",
 	["$blade2_f"] = "再给一刀！",
 	["$spear_f"] = "喝！",
+	["$axe_f"] = "挡我者死！",
+	["$halberd_f"] = "横扫千军！",
+	["$kylin_bow_f"] = "看枪！",
 	["$eight_diagram1_f"] = "看吾神行之术！",
 	["$eight_diagram2_f"] = "咦？",
 
@@ -20,6 +23,9 @@ return {
 	["$blade1"] = "再杀！",
 	["$blade2"] = "再给一刀！",
 	["$spear"] = "喝！",
+	["$axe"] = "挡我者死！",
+	["$halberd"] = "横扫千军！",
+	["$kylin_bow"] = "看枪！",
 	["$eight_diagram1"] = "看吾神行之术！",
 	["$eight_diagram2"] = "咦？",
 }

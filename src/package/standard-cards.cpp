@@ -259,12 +259,11 @@ public:
         Room *room = player->getRoom();
         const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), QVariant(), NonTrigger);
         if(card){
-            if(player->hasFlag("blade_used"))
+            if(qrand() % 2 == 1)
                 player->playCardEffect("Eblade2");
-            else{
+            else
                 player->playCardEffect("Eblade1");
-                player->setFlags("blade_used");
-            }
+
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
                 room->setPlayerFlag(player, "-drank");
@@ -391,6 +390,7 @@ public:
 
                 room->sendLog(log);
             }
+            player->playCardEffect("Eaxe");
 
             LogMessage log;
             log.type = "#AxeSkill";
@@ -442,6 +442,7 @@ public:
             Room *room = player->getRoom();
             if(!player->askForSkillInvoke(objectName(), data))
                 return false;
+            player->playCardEffect("Ekylin_bow");
 
             QString horse_type;
             if(horses.length() == 2)
