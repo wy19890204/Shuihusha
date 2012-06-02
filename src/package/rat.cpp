@@ -66,6 +66,42 @@ public:
     }
 };
 
+class Shuangzhan: public TriggerSkill{
+public:
+    Shuangzhan():TriggerSkill("shuangzhan"){
+        events << SlashProceed;
+        //frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *dongping, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        Room *room = dongping->getRoom();
+        int x = 0;
+        foreach(ServerPlayer *tmp, room->getAlivePlayers())
+            if(dongping->inMyAttackRange(tmp))
+                x++;
+        if(x <= 2){
+            room->playSkillEffect(objectName());
+            QString slasher = dongping->objectName();
+
+            const Card *first_jink = NULL, *second_jink = NULL;
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + slasher, QVariant(), JinkUsed);
+            if(first_jink)
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + slasher, QVariant(), JinkUsed);
+
+            Card *jink = NULL;
+            if(first_jink && second_jink){
+                jink = new DummyCard;
+                jink->addSubcard(first_jink);
+                jink->addSubcard(second_jink);
+            }
+            room->slashResult(effect, jink);
+            return true;
+        }
+        return false;
+    }
+};
+
 class Yinyu: public TriggerSkill{
 public:
     Yinyu():TriggerSkill("yinyu"){
@@ -979,6 +1015,9 @@ RatPackage::RatPackage()
 {
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);
+
+    General *dongping = new General(this, "dongping", "guan");
+    dongping->addSkill(new Shuangzhan);
 
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);

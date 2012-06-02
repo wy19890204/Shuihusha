@@ -76,12 +76,10 @@ return {
 	["$feiqiang2"] = "看我飞枪！",
 
 -- last words
-	["~zhangshun"] = "春风缘何起，皆因夜归神。",
 	["~weidingguo"] = "玩火自焚啊！",
 	["~huangxin"] = "三山崛起，力不从心啊！",
 	["~yanshun"] = "虎落平阳被犬欺啊！",
 	["~peixuan"] = "尽是～暗箱操作！",
 	["~lizhong"] = "只可惜了俺祖传的膏药啊！",
 	["~gongwang"] = "啊！",
-	["~shiqian"] = "上天不公，无过于此！",
 }

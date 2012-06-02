@@ -122,10 +122,8 @@ return {
 	["~dingdesun"] = "呃～毒气～攻心！",
 	["~mengkang"] = "火炮突袭，快撤！",
 	["~jiaoting"] = "绝技不复代代相传矣！",
-	["~qingzhang"] = "日头落了。",
 	["~kongliang"] = "吾不识水性啊！",
 	["~taozongwang"] = "兄弟们，快！",
-	["~baisheng"] = "我招～我全招了！",
 	["~wangdingliu"] = "吾，太大意了！",
 
 }
