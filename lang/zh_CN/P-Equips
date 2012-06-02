@@ -1,0 +1,9 @@
+-- translation for Equip Effects
+
+return {
+-- female
+	["$double_sword_female"] = "谁说女子不如男？",
+
+-- male
+	["$double_sword_male"] = "战场之上不留情面！",
+}

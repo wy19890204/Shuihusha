@@ -186,6 +186,7 @@ public:
             if(effect.from->askForSkillInvoke(objectName())){
                 bool draw_card = false;
 
+                effect.from->playCardEffect("Edouble_sword");
                 if(effect.to->isKongcheng())
                     draw_card = true;
                 else{
