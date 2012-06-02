@@ -1271,7 +1271,7 @@ public:
 class Goulian: public TriggerSkill{
 public:
     Goulian():TriggerSkill("goulian"){
-        events << DamageProceed;
+        events << Damage;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
@@ -2249,6 +2249,10 @@ public:
         return target->hasLordSkill(objectName());
     }
 
+    virtual int getPriority() const{
+        return 2;
+    }
+
     virtual bool trigger(TriggerEvent , ServerPlayer *fang1a, QVariant &data) const{
         if(fang1a->isKongcheng() && fang1a->isLord()){
             CardMoveStar move = data.value<CardMoveStar>();
@@ -2405,6 +2409,8 @@ public:
             else
                 log.type = "#ZhenshaD";
             room->sendLog(log);
+            if(use.from->isDead())
+                return true;
         }
         return false;
     }

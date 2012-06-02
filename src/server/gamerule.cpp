@@ -383,8 +383,10 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             DyingStruct dying = data.value<DyingStruct>();
 
             while(dying.who->getHp() <= 0){
+                if(dying.who->isDead())
+                    break;
                 const Card *peach = room->askForSinglePeach(player, dying.who);
-                if(peach == NULL)
+                if(!peach)
                     break;
 
                 CardUseStruct use;
@@ -447,7 +449,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             if(!Config.BanPackages.contains("events")){
                 DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
-                if(damage.from && damage.from != player && source == player){
+                if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
                     if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
                         int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
                         source->playCardEffect("@nanastars2");
@@ -744,12 +746,24 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
             room->sendJudgeResult(judge);
 
-            if(!Config.BanPackages.contains("events") && judge->card->getSuit() == Card::Spade){
-                ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
-                if(source){
-                    room->setPlayerFlag(source, "FuckGao");
-                    room->askForUseCard(source, "FuckGaolian", "@fuckg");
-                    room->setPlayerFlag(source, "-FuckGao");
+            if(!Config.BanPackages.contains("events")){
+                if(judge->card->getSuit() == Card::Spade){
+                    ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
+                    if(source){
+                        room->setPlayerFlag(source, "FuckGao");
+                        room->askForUseCard(source, "FuckGaolian", "@fuckg");
+                        room->setPlayerFlag(source, "-FuckGao");
+                    }
+                }
+                if(judge->card->inherits("Analeptic") && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile){
+                    ServerPlayer *sour = room->findPlayerWhohasEventCard("jiangjieshi");
+                    if(sour && sour != room->getCurrent()){
+                        const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
+                        if(fight){
+                            sour->playCardEffect("@jiangjieshi2");
+                            sour->obtainCard(judge->card);
+                        }
+                    }
                 }
             }
             room->getThread()->delay();
