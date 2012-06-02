@@ -459,6 +459,13 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
     log.card_str = toString();
     room->sendLog(log);
 
+    if(card_use.card->getSkillName() == "spear")
+        player->playCardEffect("Espear");
+    else if(player->getWeapon() &&
+            //player->getWeapon()->inherits("Halberd") &&
+            player->isLastHandCard(this) && card_use.to.count() > 1)
+        player->playCardEffect("Ehalberd");
+
     QVariant data = QVariant::fromValue(card_use);
     RoomThread *thread = room->getThread();
     thread->trigger(CardUsed, player, data);

@@ -220,9 +220,11 @@ public:
         events << SlashEffect;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         effect.to->addMark("qinggang");
+        if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia")))
+            player->playCardEffect("Eqinggang_sword");
 
         return false;
     }
@@ -257,6 +259,11 @@ public:
         Room *room = player->getRoom();
         const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), QVariant(), NonTrigger);
         if(card){
+            if(qrand() % 2 == 1)
+                player->playCardEffect("Eblade2");
+            else
+                player->playCardEffect("Eblade1");
+
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
                 room->setPlayerFlag(player, "-drank");
@@ -282,7 +289,6 @@ Blade::Blade(Suit suit, int number)
 class SpearSkill: public ViewAsSkill{
 public:
     SpearSkill():ViewAsSkill("spear"){
-
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -384,6 +390,7 @@ public:
 
                 room->sendLog(log);
             }
+            player->playCardEffect("Eaxe");
 
             LogMessage log;
             log.type = "#AxeSkill";
@@ -435,6 +442,7 @@ public:
             Room *room = player->getRoom();
             if(!player->askForSkillInvoke(objectName(), data))
                 return false;
+            player->playCardEffect("Ekylin_bow");
 
             QString horse_type;
             if(horses.length() == 2)
@@ -495,11 +503,13 @@ public:
                     jink->setSkillName(objectName());
                     room->provide(jink);
                     room->setEmotion(player, "good");
-                    //room->broadcastInvoke("playAudio", objectName());
+                    player->playCardEffect("Eeight_diagram1");
 
                     return true;
-                }else
+                }else{
+                    player->playCardEffect("Eeight_diagram2");
                     room->setEmotion(player, "bad");
+                }
             }
         }
         return false;
@@ -992,6 +1002,7 @@ public:
 
         if(damage.card && damage.card->inherits("Slash") && !damage.to->isNude()
                 && !damage.chain && player->askForSkillInvoke("ice_sword", data)){
+            player->playCardEffect("Eice_sword");
             int card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
             room->throwCard(card_id, damage.to);
 
@@ -1029,6 +1040,7 @@ public:
             log.arg = objectName();
             log.arg2 = effect.slash->objectName();
             player->getRoom()->sendLog(log);
+            player->playCardEffect("Erenwang_shield");
 
             return true;
         }else
