@@ -7,75 +7,6 @@
 #include "clientplayer.h"
 #include "engine.h"
 
-class Shunshui: public TriggerSkill{
-public:
-    Shunshui():TriggerSkill("shunshui"){
-        events << CardAsked;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        QString asked = data.toString();
-        if(asked == "jink"){
-            Room *room = player->getRoom();
-            QList<ServerPlayer *> targets;
-            foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(!tmp->getJudgingArea().isEmpty())
-                    targets << tmp;
-            }
-            if(!targets.isEmpty() && room->askForSkillInvoke(player, objectName())){
-                ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
-                int card_id = room->askForCardChosen(player, target, "j", objectName());
-                if(card_id > -1){
-                    room->throwCard(card_id);
-                    Jink *jink = new Jink(Card::NoSuit, 0);
-                    jink->setSkillName(objectName());
-                    room->provide(jink);
-                    room->setEmotion(player, "good");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-};
-
-class Lihun: public TriggerSkill{
-public:
-    Lihun():TriggerSkill("lihun"){
-        events << Dying;
-    }
-
-    static int GetCard(Room *room, ServerPlayer *from, ServerPlayer *to){
-        int first = room->askForCardChosen(from, to, "he", "lihun");
-        room->obtainCard(from, first, room->getCardPlace(first) != Player::Hand);
-        return first;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *shun, QVariant &data) const{
-        DyingStruct dying = data.value<DyingStruct>();
-        DamageStruct *damage = dying.damage;
-        if(!damage)
-            return false;
-        PlayerStar from = damage->from;
-        if(from && !from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from))){
-            Room *room = shun->getRoom();
-            room->playSkillEffect(objectName());
-            DummyCard *dummy = new DummyCard;
-            dummy->addSubcard(GetCard(room, shun, from));
-            if(!from->isNude() && shun->askForSkillInvoke(objectName(), QVariant::fromValue(from)))
-                dummy->addSubcard(GetCard(room, shun, from));
-            ServerPlayer *target = room->askForPlayerChosen(shun, room->getOtherPlayers(from), objectName());
-            room->obtainCard(target, dummy, false);
-            delete dummy;
-        }
-        return false;
-    }
-};
-
 class Fenhui: public TriggerSkill{
 public:
     Fenhui():TriggerSkill("fenhui"){
@@ -388,40 +319,8 @@ public:
     }
 };
 
-class Feiyan: public ProhibitSkill{
-public:
-    Feiyan():ProhibitSkill("feiyan"){
-    }
-
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("SupplyShortage");
-    }
-};
-
-class Shentou: public OneCardViewAsSkill{
-public:
-    Shentou():OneCardViewAsSkill("shentou"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Club;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getCard();
-        Snatch *snatch = new Snatch(first->getSuit(), first->getNumber());
-        snatch->addSubcard(first->getId());
-        snatch->setSkillName(objectName());
-        return snatch;
-    }
-};
-
 XZDDPackage::XZDDPackage()
     :Package("XZDD"){
-
-    General *zhangshun = new General(this, "zhangshun", "kou", 3);
-    zhangshun->addSkill(new Shunshui);
-    zhangshun->addSkill(new Lihun);
 
     General *weidingguo = new General(this, "weidingguo", "jiang", 3);
     weidingguo->addSkill(new Fenhui);
@@ -445,10 +344,6 @@ XZDDPackage::XZDDPackage()
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);
-
-    General *shiqian = new General(this, "shiqian", "kou", 3);
-    shiqian->addSkill(new Feiyan);
-    shiqian->addSkill(new Shentou);
 
     addMetaObject<BinggongCard>();
     addMetaObject<FeiqiangCard>();

@@ -15,15 +15,6 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class ShougeCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE ShougeCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
 class NushaCard: public SkillCard{
     Q_OBJECT
 

@@ -8,114 +8,6 @@
 #include "plough.h"
 #include "maneuvering.h"
 
-class SWPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->inherits("Slash") || card->inherits("Weapon");
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
-YuanpeiCard::YuanpeiCard(){
-    mute = true;
-    once = true;
-}
-
-bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    return to_select->getGeneral()->isMale() &&
-            (!to_select->isKongcheng() || (to_select->isKongcheng() && to_select->getWeapon()));
-}
-
-void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    room->playSkillEffect("yuanpei", 1);
-    const Card *card = room->askForCard(effect.to, ".Yuanp", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
-    if(card){
-        effect.from->obtainCard(card);
-        effect.from->drawCards(1);
-        effect.to->drawCards(1);
-    }
-    else{
-        room->setPlayerFlag(effect.from, "yuanpei");
-        LogMessage lsp;
-        lsp.type = "#Yuanpei";
-        lsp.from = effect.from;
-        lsp.to << effect.to;
-        lsp.arg = "yuanpei";
-        room->sendLog(lsp);
-    }
-}
-
-class Yuanpei: public ViewAsSkill{
-public:
-    Yuanpei():ViewAsSkill("yuanpei"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasFlag("yuanpei"))
-            return selected.isEmpty() && !to_select->isEquipped();
-        else
-            return false;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 1 && Self->hasFlag("yuanpei")){
-            const Card *card = cards.first()->getCard();
-            Card *slash = new Slash(card->getSuit(), card->getNumber());
-            slash->addSubcard(card->getId());
-            slash->setSkillName("yuanpei");
-            return slash;
-        }
-        else if(cards.isEmpty())
-            return new YuanpeiCard;
-        else
-            return NULL;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        if(!player->hasUsed("YuanpeiCard"))
-            return true;
-        else
-            return player->hasFlag("yuanpei") && Slash::IsAvailable(player);
-    }
-};
-
-class Mengshi: public PhaseChangeSkill{
-public:
-    Mengshi():PhaseChangeSkill("mengshi"){
-        frequency = Wake;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getMark("mengshi") == 0
-                && target->getPhase() == Player::Start
-                && target->getHandcardNum() < target->getAttackRange();
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *qyyy) const{
-        Room *room = qyyy->getRoom();
-
-        LogMessage log;
-        log.type = "#WakeUp";
-        log.from = qyyy;
-        log.arg = objectName();
-        room->sendLog(log);
-        room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$mengshi:1500");
-        room->getThread()->delay(1500);
-
-        qyyy->drawCards(3);
-        room->acquireSkill(qyyy, "yinyu");
-        room->setPlayerMark(qyyy, "mengshi", 1);
-        return false;
-    }
-};
-
 GuibingCard::GuibingCard(){
 
 }
@@ -912,12 +804,6 @@ public:
 YBYTPackage::YBYTPackage()
     :Package("YBYT")
 {
-    General *qiongying = new General(this, "qiongying", "jiang", 3, false);
-    qiongying->addSkill(new Yuanpei);
-    patterns[".Yuanp"] = new SWPattern;
-    qiongying->addSkill(new Mengshi);
-    related_skills.insertMulti("mengshi", "yinyu");
-
     General *baoxu = new General(this, "baoxu", "kou");
     baoxu->addSkill(new Sinue);
 
@@ -956,7 +842,6 @@ YBYTPackage::YBYTPackage()
     gaolian->addSkill(new Guibing);
     gaolian->addSkill(new Heiwu);
 
-    addMetaObject<YuanpeiCard>();
     addMetaObject<GuibingCard>();
     addMetaObject<HeiwuCard>();
     addMetaObject<SinueCard>();

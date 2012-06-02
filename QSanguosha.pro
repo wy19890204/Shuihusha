@@ -55,9 +55,9 @@ SOURCES += \
 	src/package/plough.cpp \
 	src/package/maneuvering.cpp \
 	src/package/events.cpp \
+	src/package/rat.cpp \
 	src/package/qjwm.cpp \
 	src/package/xzzd.cpp \
-	src/package/ttxd.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
 	src/package/zcyn.cpp \
@@ -185,9 +185,9 @@ HEADERS += \
 	src/package/plough.h \
 	src/package/maneuvering.h \
 	src/package/events.h \
+	src/package/rat.h \
 	src/package/qjwm.h \
 	src/package/xzzd.h \
-	src/package/ttxd.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \
 	src/package/zcyn.h \
