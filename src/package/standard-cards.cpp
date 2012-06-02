@@ -1002,6 +1002,7 @@ public:
 
         if(damage.card && damage.card->inherits("Slash") && !damage.to->isNude()
                 && !damage.chain && player->askForSkillInvoke("ice_sword", data)){
+            player->playCardEffect("Eice_sword");
             int card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
             room->throwCard(card_id, damage.to);
 
@@ -1039,6 +1040,7 @@ public:
             log.arg = objectName();
             log.arg2 = effect.slash->objectName();
             player->getRoom()->sendLog(log);
+            player->playCardEffect("Erenwang_shield");
 
             return true;
         }else
