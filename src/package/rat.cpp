@@ -82,12 +82,11 @@ public:
                 x++;
         if(x <= 2){
             room->playSkillEffect(objectName());
-            QString slasher = dongping->objectName();
 
             const Card *first_jink = NULL, *second_jink = NULL;
-            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + slasher, QVariant(), JinkUsed);
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), QVariant(), JinkUsed);
             if(first_jink)
-                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + slasher, QVariant(), JinkUsed);
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), QVariant(), JinkUsed);
 
             Card *jink = NULL;
             if(first_jink && second_jink){
@@ -224,10 +223,6 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual int getPriority() const{
-        return 2;
-    }
-
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         ServerPlayer *zhangshun = room->findPlayerBySkillName(objectName());
@@ -235,8 +230,9 @@ public:
             return false;
         CardMoveStar move = data.value<CardMoveStar>();
         if(move->from_place == Player::Judging && move->to_place == Player::DiscardedPile){
-            QString suit = Sanguosha->getCard(move->card_id)->getSuitString();
-            const Card *card = room->askForCard(zhangshun, ".|" + suit, "@shunshui:" + suit, data, CardDiscarded);
+            QString suit_str = Sanguosha->getCard(move->card_id)->getSuitString();
+            QString prompt = QString("@shunshui:::%1").arg(suit_str);
+            const Card *card = room->askForCard(zhangshun, ".|" + suit_str, prompt, data, CardDiscarded);
             if(card){
                 QList<ServerPlayer *> targets;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers())
@@ -316,6 +312,7 @@ public:
 };
 
 BuzhenCard::BuzhenCard(){
+    mute = true;
 }
 
 bool BuzhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -359,29 +356,55 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
+        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::NotActive){
             Room *room = zhuwu->getRoom();
-            if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
+            if(zhuwu->isNude())
+                return false;
+            int n = 5;
+            while(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
+                if(n <= 1)
+                    break;
+                n--;
+            }
+            if(n < 5){
+                room->playSkillEffect(objectName());
                 room->broadcastInvoke("animate", "lightbox:$Buzhen:5000");
                 zhuwu->loseMark("@buvr");
+                zhuwu->throwAllCards();
                 room->getThread()->delay(4500);
-                return true;
             }
         }
         return false;
     }
 };
 
-class Fangzhen: public ProhibitSkill{
+class Fangzhen: public TriggerSkill{
 public:
-    Fangzhen():ProhibitSkill("fangzhen"){
+    Fangzhen():TriggerSkill("fangzhen"){
+        events << Predamaged;
     }
 
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
-        if(card->inherits("Slash") || card->inherits("Duel"))
-            return from->getHp() > to->getHp();
-        else
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *zhuwu, QVariant &data) const{
+        DamageStruct dmag = data.value<DamageStruct>();
+        if(!dmag.card->inherits("TrickCard") || dmag.damage < 1)
             return false;
+        QString suit = dmag.card->getSuitString();
+        Room *room = zhuwu->getRoom();
+        if(room->askForCard(zhuwu, ".|" + suit, "@fangzhen:::" + suit, data, CardDiscarded)){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#Fangzhen";
+            log.from = zhuwu;
+            log.arg = objectName();
+            log.arg2 = QString::number(dmag.damage);
+            room->sendLog(log);
+            return true;
+        }
+        return false;
     }
 };
 
@@ -418,38 +441,24 @@ class Shouge: public TriggerSkill{
 public:
     Shouge():TriggerSkill("shouge"){
         view_as_skill = new ShougeViewAsSkill;
-        events << CardLost << HpLost;
+        events << CardLost;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return target->getPhase() == Player::NotActive;
     }
 
-    static bool doDraw(Room *room, ServerPlayer *vgqq){
-        room->throwCard(vgqq->getPile("vege").last());
-        room->playSkillEffect("shouge", qrand() % 2 + 3);
-        vgqq->drawCards(3);
-        return vgqq->getPile("vege").isEmpty();
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *vgqq, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *vgqq, QVariant &data) const{
         Room *room = vgqq->getRoom();
         if(vgqq->getPile("vege").isEmpty())
             return false;
-        if(event == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place == Player::Hand && move->to != vgqq
-               && vgqq->isAlive() && vgqq->askForSkillInvoke(objectName())){
-                doDraw(room, vgqq);
-            }
-        }
-        else{
-            int lose = data.toInt();
-            for(; lose > 0; lose --){
-                if(vgqq->isAlive() && vgqq->askForSkillInvoke(objectName()))
-                    if(doDraw(room, vgqq))
-                        break;
-            }
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->from_place == Player::Hand && move->to != vgqq
+           && vgqq->isAlive() && vgqq->askForSkillInvoke(objectName())){
+            room->throwCard(vgqq->getPile("vege").last());
+            room->playSkillEffect("shouge", qrand() % 2 + 3);
+            vgqq->drawCards(3);
+            return vgqq->getPile("vege").isEmpty();
         }
         return false;
     }
@@ -462,6 +471,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return !target->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
@@ -600,9 +613,9 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to == damage.from || damage.damage < 1 || !damage.card || !damage.card->inherits("Slash"))
+        if(damage.to == damage.from || damage.damage < 1)
             return false;
-        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
+        if(!damage.to->inMyAttackRange(player)
             && player->askForSkillInvoke(objectName(), data)){
             player->getRoom()->playSkillEffect(objectName());
             damage.to->turnOver();
@@ -953,7 +966,7 @@ public:
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
         if(Self->hasFlag("yuanpei"))
-            return selected.isEmpty() && !to_select->isEquipped();
+            return selected.isEmpty() && !to_select->isEquipped() && to_select->getCard()->isRed();
         else
             return false;
     }
@@ -986,10 +999,14 @@ public:
         frequency = Wake;
     }
 
+    virtual int getPriority() const{
+        return 2;
+    }
+
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
                 && target->getMark("mengshi") == 0
-                && target->getPhase() == Player::Start
+                && target->getPhase() == Player::RoundStart
                 && target->getHandcardNum() < target->getAttackRange();
     }
 
@@ -1027,7 +1044,7 @@ RatPackage::RatPackage()
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);
 
-    General *zhangshun = new General(this, "zhangshun", "kou", 3);
+    General *zhangshun = new General(this, "zhangshun", "min", 3);
     zhangshun->addSkill(new Shunshui);
     zhangshun->addSkill(new Lihun);
 

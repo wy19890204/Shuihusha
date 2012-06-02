@@ -673,8 +673,7 @@ DuijueCard::DuijueCard(){
 bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    if(to_select->hasSkill("fangzhen") && Self->getHp() > to_select->getHp())
-        return false;
+
     return to_select != Self;
 }
 
