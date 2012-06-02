@@ -6,66 +6,6 @@
 #include "carditem.h"
 #include "engine.h"
 
-class Kong1iang: public TriggerSkill{
-public:
-    Kong1iang():TriggerSkill("kong1iang"){
-        events << PhaseChange;
-    }
-
-    static bool CompareBySuit(int card1, int card2){
-        const Card *c1 = Sanguosha->getCard(card1);
-        const Card *c2 = Sanguosha->getCard(card2);
-
-        int a = static_cast<int>(c1->getSuit());
-        int b = static_cast<int>(c2->getSuit());
-
-        return a < b;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *liying, QVariant &data) const{
-        Room *room = liying->getRoom();
-        if(liying->getPhase() != Player::Draw)
-            return false;
-        if(room->askForSkillInvoke(liying, objectName())){
-            room->playSkillEffect(objectName());
-            liying->drawCards(liying->getMaxHP() + liying->getLostHp());
-
-            QList<int> card_ids = liying->handCards();
-            qSort(card_ids.begin(), card_ids.end(), CompareBySuit);
-            int count = 0;
-            while(!card_ids.isEmpty() && count < 2){
-                room->fillAG(card_ids);
-                int card_id = -1;
-                do{
-                    card_id = room->askForAG(liying, card_ids, false, objectName());
-                }while(card_id < 0);
-                room->throwCard(card_id);
-                card_ids.removeOne(card_id);
-
-                // throw the rest cards that matches the same suit
-                const Card *card = Sanguosha->getCard(card_id);
-                Card::Suit suit = card->getSuit();
-                LogMessage ogg;
-                ogg.type = "#Kongrice";
-                ogg.from = liying;
-                ogg.arg = card->getSuitString();
-                room->sendLog(ogg);
-                for(int i = card_ids.length() - 1; i > -1; i --){
-                    const Card *c = Sanguosha->getCard(card_ids.at(i));
-                    if(c->getSuit() == suit){
-                        card_ids.removeAt(i);
-                        room->throwCard(c);
-                    }
-                }
-                count ++;
-                room->broadcastInvoke("clearAG");
-            }
-            return true;
-        }
-        return false;
-    }
-};
-
 class Wubang: public TriggerSkill{
 public:
     Wubang():TriggerSkill("wubang"){
@@ -154,99 +94,6 @@ public:
             }
         }
         return false;
-    }
-};
-
-class Pozhen: public TriggerSkill{
-public:
-    Pozhen():TriggerSkill("pozhen"){
-        events << CardUsed;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->isNDTrick()){
-            room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#Pozhen";
-            log.from = use.from;
-            log.arg = objectName();
-            log.arg2 = use.card->objectName();
-            room->sendLog(log);
-        }
-        return false;
-    }
-};
-
-BuzhenCard::BuzhenCard(){
-}
-
-bool BuzhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.length() >= 2)
-        return false;
-    return true;
-}
-
-bool BuzhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
-void BuzhenCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *first = targets.first();
-    room->swapSeat(first, targets.last());
-}
-
-class BuzhenViewAsSkill: public ZeroCardViewAsSkill{
-public:
-    BuzhenViewAsSkill():ZeroCardViewAsSkill("buzhen"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@buzhen";
-    }
-
-    virtual const Card *viewAs() const{
-        return new BuzhenCard;
-    }
-};
-
-class Buzhen:public PhaseChangeSkill{
-public:
-    Buzhen():PhaseChangeSkill("buzhen"){
-        view_as_skill = new BuzhenViewAsSkill;
-        frequency = Limited;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::Play){
-            Room *room = zhuwu->getRoom();
-            if(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
-                room->broadcastInvoke("animate", "lightbox:$Buzhen:5000");
-                zhuwu->loseMark("@buvr");
-                room->getThread()->delay(4500);
-                return true;
-            }
-        }
-        return false;
-    }
-};
-
-class Fangzhen: public ProhibitSkill{
-public:
-    Fangzhen():ProhibitSkill("fangzhen"){
-    }
-
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
-        if(card->inherits("Slash") || card->inherits("Duel"))
-            return from->getHp() > to->getHp();
-        else
-            return false;
     }
 };
 
@@ -705,19 +552,9 @@ public:
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
 
-    General *liying = new General(this, "liying", "guan");
-    liying->addSkill(new Kong1iang);
-
     General *shijin = new General(this, "shijin", "kou");
     shijin->addSkill(new Wubang);
     shijin->addSkill(new Xiagu);
-
-    General *zhuwu = new General(this, "zhuwu", "kou", 3);
-    zhuwu->addSkill(new Pozhen);
-    zhuwu->addSkill(new Buzhen);
-    zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
-    related_skills.insertMulti("buzhen", "#@buvr-1");
-    zhuwu->addSkill(new Fangzhen);
 
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
@@ -739,7 +576,6 @@ QJWMPackage::QJWMPackage()
     luozhenren->addSkill(new Butian);
     luozhenren->addSkill(new Huaxian);
 
-    addMetaObject<BuzhenCard>();
     addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();
     addMetaObject<ButianCard>();

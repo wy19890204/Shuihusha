@@ -304,103 +304,6 @@ public:
     }
 };
 
-ShougeCard::ShougeCard(){
-    will_throw = false;
-    target_fixed = true;
-    mute = true;
-}
-
-void ShougeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->playSkillEffect("shouge", qrand() % 2 + 1);
-    source->addToPile("vege", this->getSubcards().first());
-}
-
-class ShougeViewAsSkill: public OneCardViewAsSkill{
-public:
-    ShougeViewAsSkill():OneCardViewAsSkill("shouge"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("Peach") ||
-                to_select->getCard()->inherits("Analeptic");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ShougeCard *card = new ShougeCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Shouge: public TriggerSkill{
-public:
-    Shouge():TriggerSkill("shouge"){
-        view_as_skill = new ShougeViewAsSkill;
-        events << CardLost << HpLost;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getPhase() == Player::NotActive;
-    }
-
-    static bool doDraw(Room *room, ServerPlayer *vgqq){
-        room->throwCard(vgqq->getPile("vege").last());
-        room->playSkillEffect("shouge", qrand() % 2 + 3);
-        vgqq->drawCards(3);
-        return vgqq->getPile("vege").isEmpty();
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *vgqq, QVariant &data) const{
-        Room *room = vgqq->getRoom();
-        if(vgqq->getPile("vege").isEmpty())
-            return false;
-        if(event == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place == Player::Hand && move->to != vgqq
-               && vgqq->isAlive() && vgqq->askForSkillInvoke(objectName())){
-                doDraw(room, vgqq);
-            }
-        }
-        else{
-            int lose = data.toInt();
-            for(; lose > 0; lose --){
-                if(vgqq->isAlive() && vgqq->askForSkillInvoke(objectName()))
-                    if(doDraw(room, vgqq))
-                        break;
-            }
-        }
-        return false;
-    }
-};
-
-class Qiongtu: public PhaseChangeSkill{
-public:
-    Qiongtu():PhaseChangeSkill("qiongtu"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        Room *room = player->getRoom();
-        PlayerStar target = player;
-        QList<ServerPlayer *> zhangqings = room->findPlayersBySkillName(objectName());
-        if(zhangqings.isEmpty() || target->getPhase() != Player::Finish)
-            return false;
-        foreach(ServerPlayer *zhangqing, zhangqings){
-            if(target->getHandcardNum() <= 1 && !target->isNude()
-                && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
-                room->playSkillEffect(objectName());
-                int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
-                room->obtainCard(zhangqing, card_id, false);
-            }
-        }
-        return false;
-    }
-};
-
 QiaogongCard::QiaogongCard(){
     once = true;
 }
@@ -495,84 +398,6 @@ public:
 
             damage.damage ++;
             data = QVariant::fromValue(damage);
-        }
-        return false;
-    }
-};
-
-class Menghan: public OneCardViewAsSkill{
-public:
-    Menghan():OneCardViewAsSkill("menghan"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getPhase() == Player::Play;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->getSuit() == Card::Spade;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        Ecstasy *ecstasy = new Ecstasy(card->getSuit(), card->getNumber());
-        ecstasy->setSkillName(objectName());
-        ecstasy->addSubcard(card->getId());
-
-        return ecstasy;
-    }
-};
-
-class ShudanClear: public TriggerSkill{
-public:
-    ShudanClear():TriggerSkill("#shudan-clear"){
-        events << PhaseChange;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
-        if(player->getPhase() == Player::NotActive)
-            player->getRoom()->setTag("Shudan", QVariant());
-        return false;
-    }
-};
-
-class Shudan: public TriggerSkill{
-public:
-    Shudan():TriggerSkill("shudan"){
-        events << Damaged << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-
-        if(player->getPhase() != Player::NotActive)
-            return false;
-        if(event == Damaged){
-            room->setTag("Shudan", player->objectName());
-            room->playSkillEffect(objectName());
-
-            LogMessage log;
-            log.type = "#ShudanDamaged";
-            log.from = player;
-            room->sendLog(log);
-
-        }else if(event == CardEffected){
-            if(room->getTag("Shudan").toString() != player->objectName())
-                return false;
-            CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(effect.card->inherits("Slash") || effect.card->getTypeId() == Card::Trick){
-                LogMessage log;
-                log.type = "#ShudanAvoid";
-                log.arg = objectName();
-                log.from = player;
-                room->sendLog(log);
-                return true;
-            }
         }
         return false;
     }
@@ -747,10 +572,6 @@ BWQZPackage::BWQZPackage()
     General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
     shantinggui->addSkill(new Xiaofang);
 
-    General *qingzhang = new General(this, "qingzhang", "kou", 3);
-    qingzhang->addSkill(new Shouge);
-    qingzhang->addSkill(new Qiongtu);
-
     General *kongliang = new General(this, "kongliang", "kou", 3);
     kongliang->addSkill(new Nusha);
     kongliang->addSkill(new Wanku);
@@ -758,12 +579,6 @@ BWQZPackage::BWQZPackage()
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-
-    General *baisheng = new General(this, "baisheng", "min", 3);
-    baisheng->addSkill(new Menghan);
-    baisheng->addSkill(new Shudan);
-    baisheng->addSkill(new ShudanClear);
-    related_skills.insertMulti("shudan", "#shudan-clear");
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
@@ -781,7 +596,6 @@ BWQZPackage::BWQZPackage()
     wangdingliu->addSkill(new Jibu);
 
     addMetaObject<YuanyinCard>();
-    addMetaObject<ShougeCard>();
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
     addMetaObject<ZhengfaCard>();

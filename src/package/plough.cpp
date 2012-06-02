@@ -26,7 +26,7 @@ QString Ecstasy::getSubtype() const{
 
 bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     int slash_targets = 1;
-    if(Self->hasSkill("menghan")){
+    if(Self->hasSkill("xiayao")){
         slash_targets = 2;
     }
     if(targets.length() >= slash_targets)

@@ -18,8 +18,8 @@ config = {
 --	"Joy",
 
 	"Standard",
+	"Rat",
 --[[	"QJWM",
-	"TTXD",
 	"XZDD",
 	"BWQZ",
 	"QLFD",

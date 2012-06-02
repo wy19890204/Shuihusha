@@ -7,36 +7,6 @@
 #include "engine.h"
 #include "maneuvering.h"
 
-#include "plough.h"
-class Fuji:public PhaseChangeSkill{
-public:
-    Fuji():PhaseChangeSkill("fuji"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        PlayerStar p = player;
-        if(p->getPhase() != Player::Judge || p->getJudgingArea().isEmpty())
-            return false;
-        Room *room = p->getRoom();
-        ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
-        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p), CardDiscarded)){
-            Assassinate *ass = new Assassinate(Card::NoSuit, 0);
-            ass->setSkillName(objectName());
-            ass->setCancelable(false);
-            CardUseStruct use;
-            use.card = ass;
-            use.from = ruan2;
-            use.to << p;
-            room->useCard(use);
-        }
-        return false;
-    }
-};
-
 SixiangCard::SixiangCard(){
 }
 
@@ -169,30 +139,6 @@ public:
             }
         }
         tianqi->tag.remove("TianyanTarget");
-        return false;
-    }
-};
-
-class Dujian: public TriggerSkill{
-public:
-    Dujian():TriggerSkill("dujian"){
-        events << DamageProceed;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to == damage.from || damage.damage < 1 || !damage.card || !damage.card->inherits("Slash"))
-            return false;
-        if(!damage.to->isNude() && !damage.to->inMyAttackRange(player)
-            && player->askForSkillInvoke(objectName(), data)){
-            player->getRoom()->playSkillEffect(objectName());
-            damage.to->turnOver();
-            return true;
-        }
         return false;
     }
 };
@@ -447,17 +393,11 @@ public:
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
-    General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
-    ruanxiaoer->addSkill(new Fuji);
-
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
-
-    General *shiwengong = new General(this, "shiwengong", "jiang");
-    shiwengong->addSkill(new Dujian);
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
