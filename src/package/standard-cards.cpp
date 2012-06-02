@@ -220,9 +220,11 @@ public:
         events << SlashEffect;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         effect.to->addMark("qinggang");
+        if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia")))
+            player->playCardEffect("Eqinggang_sword");
 
         return false;
     }
@@ -257,6 +259,12 @@ public:
         Room *room = player->getRoom();
         const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), QVariant(), NonTrigger);
         if(card){
+            if(player->hasFlag("blade_used"))
+                player->playCardEffect("Eblade2");
+            else{
+                player->playCardEffect("Eblade1");
+                player->setFlags("blade_used");
+            }
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
                 room->setPlayerFlag(player, "-drank");
@@ -494,11 +502,13 @@ public:
                     jink->setSkillName(objectName());
                     room->provide(jink);
                     room->setEmotion(player, "good");
-                    //room->broadcastInvoke("playAudio", objectName());
+                    player->playCardEffect("Eeight_diagram1");
 
                     return true;
-                }else
+                }else{
+                    player->playCardEffect("Eeight_diagram2");
                     room->setEmotion(player, "bad");
+                }
             }
         }
         return false;

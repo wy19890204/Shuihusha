@@ -2,14 +2,24 @@
 
 return {
 -- female
-	["$crossbow1_female"] = "结束吧！",
-	["$crossbow2_female"] = "还不死？",
-	["$double_sword_female"] = "谁说女子不如男？",
-	["$spear_female"] = "喝！",
+	["$crossbow1_f"] = "结束吧！",
+	["$crossbow2_f"] = "还不死？",
+	["$double_sword_f"] = "谁说女子不如男？",
+	["$qinggang_sword_f"] = "一剑就搞定你！",
+	["$blade1_f"] = "再杀！",
+	["$blade2_f"] = "再给一刀！",
+	["$spear_f"] = "喝！",
+	["$eight_diagram1_f"] = "看吾神行之术！",
+	["$eight_diagram2_f"] = "咦？",
 
 -- male
-	["$crossbow1_male"] = "结束吧！",
-	["$crossbow2_male"] = "还不死？",
-	["$double_sword_male"] = "战场之上不留情面！",
-	["$spear_male"] = "喝！",
+	["$crossbow1"] = "结束吧！",
+	["$crossbow2"] = "还不死？",
+	["$double_sword"] = "战场之上不留情面！",
+	["$qinggang_sword"] = "一剑就搞定你！",
+	["$blade1"] = "再杀！",
+	["$blade2"] = "再给一刀！",
+	["$spear"] = "喝！",
+	["$eight_diagram1"] = "看吾神行之术！",
+	["$eight_diagram2"] = "咦？",
 }
