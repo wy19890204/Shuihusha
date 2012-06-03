@@ -419,6 +419,18 @@ bool Player::hasEquip() const{
     return weapon || armor || defensive_horse || offensive_horse;
 }
 
+bool Player::hasEquip(QString name) const{
+    QList<const Card *> equips = getEquips();
+    bool ok = false;
+    foreach(const Card *equip, equips){
+        if(equip->objectName() == name){
+            ok = true;
+            break;
+        }
+    }
+    return ok;
+}
+
 const Weapon *Player::getWeapon() const{
     return weapon;
 }
@@ -587,7 +599,7 @@ bool Player::containsTrick(const QString &trick_name) const{
             return true;
     }
 
-    if(getOffensiveHorse() && getOffensiveHorse()->objectName() == "haiqiu")
+    if(hasEquip("haiqiu"))
         return trick_name != "tsunami";
     return false;
 }

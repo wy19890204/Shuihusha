@@ -141,6 +141,7 @@ public:
     void removeEquip(const EquipCard *equip);
     bool hasEquip(const Card *card) const;
     bool hasEquip() const;
+    bool hasEquip(QString name) const;
 
     QList<const Card *> getJudgingArea() const;
     void addDelayedTrick(const Card *trick);
