@@ -76,10 +76,7 @@ public:
     virtual bool trigger(TriggerEvent , ServerPlayer *dongping, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         Room *room = dongping->getRoom();
-        int x = 0;
-        foreach(ServerPlayer *tmp, room->getAlivePlayers())
-            if(dongping->inMyAttackRange(tmp))
-                x++;
+        int x = dongping->getPlayersInMyAttackRange().count();
         if(x <= 2){
             room->playSkillEffect(objectName());
 

@@ -237,6 +237,7 @@ sgs.lujunyi_keep_value =
 	BasicCard = 6,
 }
 -- baoguo
+sgs.ai_skill_invoke["baoguo"] = true
 sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
 	local damage = data:toDamage()
