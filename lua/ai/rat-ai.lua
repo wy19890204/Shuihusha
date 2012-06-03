@@ -48,7 +48,7 @@ sgs.ai_skill_invoke["lihun"] = function(self, data)
 	local from = data:toPlayer()
 	return self:isEnemy(from)
 end
-sgs.ai_skill_playerchosen["lihun"] =  = function(self, targets)
+sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 	local friends = sgs.QList2Table(targets)
 	self:sort(friends, "hp")
 	for _, friend in ipairs(friends) do
