@@ -27,7 +27,7 @@ public:
         if(liying->getPhase() != Player::Draw)
             return false;
         if(room->askForSkillInvoke(liying, objectName())){
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
             liying->drawCards(liying->getMaxHP() + liying->getLostHp());
 
             QList<int> card_ids = liying->handCards();
@@ -60,6 +60,7 @@ public:
                 count ++;
                 room->broadcastInvoke("clearAG");
             }
+            room->playSkillEffect(objectName(), 3);
             return true;
         }
         return false;
@@ -78,7 +79,7 @@ public:
         Room *room = dongping->getRoom();
         int x = dongping->getPlayersInMyAttackRange().count();
         if(x <= 2){
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), qrand() % 2 + 3);
 
             const Card *first_jink = NULL, *second_jink = NULL;
             first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), QVariant(), JinkUsed);
@@ -365,7 +366,7 @@ public:
             }
             if(n < 5){
                 room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$Buzhen:5000");
+                room->broadcastInvoke("animate", "lightbox:$buzhen:4000");
                 zhuwu->loseMark("@buvr");
                 zhuwu->throwAllCards();
                 room->getThread()->delay(4500);
