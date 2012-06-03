@@ -41,14 +41,36 @@ end
 
 -- zhangshun
 -- shunshui
-sgs.ai_skill_invoke["shunshui"] = true
+sgs.ai_skill_cardask["@shunshui"] = function(self, data)
+	local move = data:toCardMove()
+	local suit = sgs.Sanguosha:getCard(move.card_id):getSuitString()
+	local cards = self.player:getCards("he")
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit then
+		    return card:getEffectiveId()
+		end
+	end
+	return "."
+end
+sgs.ai_skill_playerchosen["shunshui"] = function(self, targets)
+	local targetlist = sgs.QList2Table(targets)
+	self:sort(targetlist)
+	for _, target in ipairs(targetlist) do
+		if self:isEnemy(target) then
+			return target
+		end
+	end
+	return targetlist[1]
+end
 
 -- lihun
 sgs.ai_skill_invoke["lihun"] = function(self, data)
 	local from = data:toPlayer()
 	return self:isEnemy(from)
 end
-sgs.ai_skill_playerchosen["lihun"] =  = function(self, targets)
+sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 	local friends = sgs.QList2Table(targets)
 	self:sort(friends, "hp")
 	for _, friend in ipairs(friends) do
@@ -60,16 +82,16 @@ sgs.ai_skill_playerchosen["lihun"] =  = function(self, targets)
 end
 
 -- zhuwu
-
--- fangzhen
+--[[ fangzhen
 function sgs.ai_trick_prohibit.fangzhen(card, self, to)
 	return card:inherits("Duel") and self.player:getHp() > to:getHp()
-end
+end]]
 
 -- caiyuanzizhangqing
-
 -- shouge
-sgs.ai_skill_invoke["shouge"] = true
+sgs.ai_skill_invoke["shouge"] = function(self, data)
+	return not self.player:containsTrick("indulgence")
+end
 shouge_skill={}
 shouge_skill.name = "shouge"
 table.insert(sgs.ai_skills, shouge_skill)
@@ -96,16 +118,15 @@ sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 end
 
 -- baisheng
-
 -- xiayao
 local xiayao_skill={}
 xiayao_skill.name = "xiayao"
 table.insert(sgs.ai_skills, xiayao_skill)
 xiayao_skill.getTurnUseCard = function(self, inclusive)
-    local cards = self.player:getCards("he")
+    local cards = self.player:getCards("h")
     cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards,true)
-	for _,card in ipairs(cards)  do
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
 		if card:getSuit() == sgs.Card_Spade then
 		    local suit = card:getSuitString()
 			local number = card:getNumberString()
@@ -127,7 +148,6 @@ sgs.ai_view_as["xiayao"] = function(card, player, card_place)
 end
 
 -- shiqian
-
 -- feiyan
 function sgs.ai_trick_prohibit.feiyan(card)
 	return card:inherits("SupplyShortage") or card:inherits("Snatch")
@@ -162,20 +182,26 @@ function sgs.ai_cardneed.shentou(to, card, self)
 end
 
 -- shiwengong
-
 -- dujian
 sgs.ai_skill_invoke["dujian"] = function(self, data)
-	local rand = math.random(1, 2)
-	return rand == 2
+	local damage = data:toDamage()
+	if damage.damage ~= 1 then return false end
+	if self:isFriend(damage.to) then
+		if not damage.to:faceUp() then return true end
+		if damage.to:getHandcardNum() > 5 and damage.to:getHp() < 2 then
+			return true
+		end
+	else
+		return damage.to:faceUp()
+	end
 end
 
 -- qiaodaoqing
-
 -- huanshu
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
-	if target then return "@HuanshuCard=.".."->"..target:objectName() end
+	if target then return "@HuanshuCard=." .. "->" .. target:objectName() end
 	return "."
 end
 function sgs.ai_slash_prohibit.huanshu(self, to)
@@ -183,7 +209,6 @@ function sgs.ai_slash_prohibit.huanshu(self, to)
 end
 
 -- qiongying
-
 -- yuanpei
 local yuanpei_skill={}
 yuanpei_skill.name = "yuanpei"
@@ -191,16 +216,19 @@ table.insert(sgs.ai_skills, yuanpei_skill)
 yuanpei_skill.getTurnUseCard = function(self)
     if self.player:hasUsed("YuanpeiCard") then
 		if not self.player:hasFlag("yuanpei") or self.player:isKongcheng() then return end
-		local cards = self.player:getCards("h")
-		cards=sgs.QList2Table(cards)
+		local cards = sgs.QList2Table(self.player:getCards("h"))
 		self:sortByUseValue(cards, true)
-		local suit = cards[1]:getSuitString()
-		local number = cards[1]:getNumberString()
-		local card_id = cards[1]:getEffectiveId()
-		local card_str = ("slash:yuanpei[%s:%s]=%d"):format(suit, number, card_id)
-		local slash = sgs.Card_Parse(card_str)
-		assert(slash)
-		return slash
+		for _, card in ipairs(cards) do
+			if card:isRed() then
+				local suit = card:getSuitString()
+				local number = card:getNumberString()
+				local card_id = card:getEffectiveId()
+				local card_str = ("slash:yuanpei[%s:%s]=%d"):format(suit, number, card_id)
+				local slash = sgs.Card_Parse(card_str)
+				assert(slash)
+				return slash
+			end
+		end
 	end
 	return sgs.Card_Parse("@YuanpeiCard=.")
 end

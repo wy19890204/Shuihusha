@@ -23,4 +23,11 @@ return {
 	["$vine2"] = "不好，贼军势大……",
 	["$silver_lion1"] = "扛得住！",
 	["$silver_lion2"] = "不能就这样结束了！",
+
+	["$double_whip1"] = "连环之马，方可御敌。",
+	["$double_whip2"] = "破其阵，必乱其军。",
+	["$meteor_sword"] = "此刀，无所不破。",
+	["$sun_bow"] = "一箭双雕！",
+	["$gold_armor1"] = "宝甲护身！",
+	["$gold_armor2"] = "你这破刀太钝了！",
 }

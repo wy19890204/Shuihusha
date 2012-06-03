@@ -217,7 +217,7 @@ void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
         takeEffect(effect.to, judge_struct.isGood());
     }
     else if(movable){
-        if(objectName() != "tsunami" || !effect.to->getOffensiveHorse() || effect.to->getOffensiveHorse()->objectName() != "haiqiu")
+        if(objectName() != "tsunami" || !effect.to->hasEquip("haiqiu"))
             onNullified(effect.to);
     }
 }

@@ -26,19 +26,6 @@ sgs.ai_skill_askforag["tianyan"] = function(self, card_ids)
 	return -1
 end
 
--- dujian
-sgs.ai_skill_invoke["dujian"] = function(self, data)
-	local rand = math.random(1, 2)
-	return rand == 2
-end
-
--- fuji
-sgs.ai_skill_cardask["@fuji"] = function(self, data)
-	local who = data:toPlayer()
-	if self:isFriend(who) or self.player:isKongcheng() then return "." end
-	return self.player:getRandomHandCard():getEffectiveId() or "."
-end
-
 -- paohong
 local paohong_skill={}
 paohong_skill.name = "paohong"
@@ -70,15 +57,7 @@ sgs.ai_filterskill_filter["paohong"] = function(card, card_place)
 end
 
 -- hengchong
-sgs.ai_skill_playerchosen["hengchong"] = function(self, targets)
-	local targetlist = sgs.QList2Table(targets)
-	for _, target in ipairs(targetlist) do
-		if self:isEnemy(target) then
-			return target
-		end
-	end
-	return targetlist[1]
-end
+sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- tuzai&longjiao
 sgs.ai_skill_invoke["tuzai"] = true

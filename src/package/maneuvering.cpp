@@ -254,7 +254,8 @@ SilverLion::SilverLion(Suit suit, int number):Armor(suit, number){
 
 void SilverLion::onUninstall(ServerPlayer *player) const{
     if(player->isAlive() && player->getMark("qinggang") == 0){
-        player->playCardEffect("Esilver_lion2");
+        if(player->isWounded())
+            player->playCardEffect("Esilver_lion2");
         RecoverStruct recover;
         recover.card = this;
         player->getRoom()->recover(player, recover);
