@@ -935,8 +935,7 @@ YuanpeiCard::YuanpeiCard(){
 bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    return to_select->getGeneral()->isMale() &&
-            (!to_select->isKongcheng() || (to_select->isKongcheng() && to_select->getWeapon()));
+    return to_select->getGeneral()->isMale();
 }
 
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
@@ -972,17 +971,20 @@ public:
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 1 && Self->hasFlag("yuanpei")){
-            const Card *card = cards.first()->getCard();
-            Card *slash = new Slash(card->getSuit(), card->getNumber());
-            slash->addSubcard(card->getId());
-            slash->setSkillName("yuanpei");
-            return slash;
+        if(Self->hasFlag("yuanpei")){
+            if(cards.length() == 1){
+                const Card *card = cards.first()->getCard();
+                Card *slash = new Slash(card->getSuit(), card->getNumber());
+                slash->addSubcard(card->getId());
+                slash->setSkillName("yuanpei");
+                return slash;
+            }
         }
-        else if(cards.isEmpty())
-            return new YuanpeiCard;
-        else
-            return NULL;
+        else{
+            if(cards.isEmpty())
+                return new YuanpeiCard;
+        }
+        return NULL;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{

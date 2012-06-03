@@ -230,8 +230,9 @@ yuanpei_skill.getTurnUseCard = function(self)
 				return slash
 			end
 		end
+	else
+		return sgs.Card_Parse("@YuanpeiCard=.")
 	end
-	return sgs.Card_Parse("@YuanpeiCard=.")
 end
 sgs.ai_skill_use_func["YuanpeiCard"] = function(card,use,self)
 	self:sort(self.friends, "defense")

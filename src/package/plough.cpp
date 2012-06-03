@@ -205,6 +205,7 @@ public:
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
                 room->broadcastProperty(effecto, "chained");
+                room->setEmotion(effecto, "chain");
             }
         }
         return false;

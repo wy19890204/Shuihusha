@@ -18,10 +18,10 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     QList<const General *> generals;
 
     const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-    //const Package *windpack = Sanguosha->findChild<const Package *>("wind");
+    const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
 
     generals << stdpack->findChildren<const General *>()
-             //<< windpack->findChildren<const General *>()
+             << ratpack->findChildren<const General *>()
 			 ;
 
     // remove hidden generals
@@ -32,6 +32,8 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
         if(itor.value()->isHidden())
             itor.remove();
     }
+
+    //generals.removeOne(Sanguosha->getGeneral("zhuwu"));
 
     if(Config.value("3v3/UsingNewMode", false).toBool()){
           QStringList list_remove, list_add;
