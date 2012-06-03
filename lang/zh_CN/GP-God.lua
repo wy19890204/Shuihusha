@@ -1,8 +1,6 @@
 -- translation for GodPackage
 
 return {
-	["god"] = "神",
-
 	["#shenwusong"] = "清忠祖师",
 	["shenwusong"] = "神武松",
 	["designer:shenwusong"] = "烨子&裁之刃•散",

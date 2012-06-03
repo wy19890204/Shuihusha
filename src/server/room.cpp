@@ -471,7 +471,7 @@ void Room::slashEffect(const SlashEffectStruct &effect){
             playSkillEffect("yinyu", index);
         }
         else if(effect.from->getMark("@ylyuh") > 0){
-            if(effect.from->distanceTo(effect.to) > 2){
+            if(effect.from->distanceTo(effect.to) > getAlivePlayers().count() / 4){
                 int index = effect.from->getMark("mengshi") > 0 ? 11: 5;
                 playSkillEffect("yinyu", index);
             }

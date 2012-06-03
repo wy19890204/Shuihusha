@@ -192,6 +192,7 @@ sgs.ai_skill_invoke["dujian"] = function(self, data)
 			return true
 		end
 	else
+		if #self.enemies < 2 then return false end
 		return damage.to:faceUp()
 	end
 end

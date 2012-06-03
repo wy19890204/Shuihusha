@@ -367,10 +367,10 @@ public:
             }
             if(n < 5){
                 room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$buzhen:5000");
+                room->broadcastInvoke("animate", "lightbox:$buzhen:5500");
                 zhuwu->loseMark("@buvr");
                 zhuwu->throwAllCards();
-                room->getThread()->delay(4500);
+                room->getThread()->delay(5000);
             }
         }
         return false;

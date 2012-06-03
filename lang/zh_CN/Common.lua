@@ -63,6 +63,7 @@ return {
 	["jiang"] = "将",
 	["min"] = "民",
 	["kou"] = "寇",
+	["god"] = "神",
 
 	["#Murder"] = "%to【%arg】 挂了，凶手是 %from",
 	["#Suicide"] = "%to【%arg】 自杀身亡",

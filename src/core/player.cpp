@@ -420,9 +420,8 @@ bool Player::hasEquip() const{
 }
 
 bool Player::hasEquip(QString name) const{
-    QList<const Card *> equips = getEquips();
     bool ok = false;
-    foreach(const Card *equip, equips){
+    foreach(const Card *equip, getEquips()){
         if(equip->objectName() == name){
             ok = true;
             break;
