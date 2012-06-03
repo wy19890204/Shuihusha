@@ -41,7 +41,29 @@ end
 
 -- zhangshun
 -- shunshui
-sgs.ai_skill_invoke["shunshui"] = true
+sgs.ai_skill_cardask["@shunshui"] = function(self, data)
+	local move = data:toCardMove()
+	local suit = sgs.Sanguosha:getCard(move.card_id):getSuitString()
+	local cards = self.player:getCards("he")
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit then
+		    return card:getEffectiveId()
+		end
+	end
+	return "."
+end
+sgs.ai_skill_playerchosen["shunshui"] = function(self, targets)
+	local targetlist = sgs.QList2Table(targets)
+	self:sort(targetlist)
+	for _, target in ipairs(targetlist) do
+		if self:isEnemy(target) then
+			return target
+		end
+	end
+	return targetlist[1]
+end
 
 -- lihun
 sgs.ai_skill_invoke["lihun"] = function(self, data)
@@ -60,11 +82,10 @@ sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 end
 
 -- zhuwu
-
--- fangzhen
+--[[ fangzhen
 function sgs.ai_trick_prohibit.fangzhen(card, self, to)
 	return card:inherits("Duel") and self.player:getHp() > to:getHp()
-end
+end]]
 
 -- caiyuanzizhangqing
 -- shouge
@@ -163,8 +184,16 @@ end
 -- shiwengong
 -- dujian
 sgs.ai_skill_invoke["dujian"] = function(self, data)
-	local rand = math.random(1, 3)
-	return rand ~= 2
+	local damage = data:toDamage()
+	if damage.damage ~= 1 then return false end
+	if self:isFriend(damage.to) then
+		if not damage.to:faceUp() then return true end
+		if damage.to:getHandcardNum() > 5 and damage.to:getHp() < 2 then
+			return true
+		end
+	else
+		return damage.to:faceUp()
+	end
 end
 
 -- qiaodaoqing
@@ -172,7 +201,7 @@ end
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
-	if target then return "@HuanshuCard=.".."->"..target:objectName() end
+	if target then return "@HuanshuCard=." .. "->" .. target:objectName() end
 	return "."
 end
 function sgs.ai_slash_prohibit.huanshu(self, to)
@@ -187,8 +216,7 @@ table.insert(sgs.ai_skills, yuanpei_skill)
 yuanpei_skill.getTurnUseCard = function(self)
     if self.player:hasUsed("YuanpeiCard") then
 		if not self.player:hasFlag("yuanpei") or self.player:isKongcheng() then return end
-		local cards = self.player:getCards("h")
-		cards=sgs.QList2Table(cards)
+		local cards = sgs.QList2Table(self.player:getCards("h"))
 		self:sortByUseValue(cards, true)
 		for _, card in ipairs(cards) do
 			if card:isRed() then

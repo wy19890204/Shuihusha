@@ -1082,7 +1082,7 @@ RatPackage::RatPackage()
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 */
-    General *qiaodaoqing = new General(this, "qiaodaoqing", "kou", 3);
+    General *qiaodaoqing = new General(this, "qiaodaoqing", "jiang", 3);
     qiaodaoqing->addSkill(new Huanshu);
     qiaodaoqing->addSkill(new Mozhang);
 
