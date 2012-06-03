@@ -1,7 +1,6 @@
 -- AI for rat package
 
 -- liying
-
 -- kongliang
 sgs.ai_skill_invoke["kong1iang"] = function(self, data)
 	local showcardnum = self.player:getMaxHP() + self.player:getLostHp() + self.player:getHandcardNum()
@@ -25,14 +24,14 @@ sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
 end
 
 -- dongping
+-- shuangzhan
+sgs.ai_skill_cardask["@shuangzhan-jink-1"] = sgs.ai_skill_cardask["@assas1"]
 
 -- zhangqing
-
 -- yinyu
 sgs.ai_skill_invoke["yinyu"] = true
 
 -- ruanxiaoer
-
 -- fuji
 sgs.ai_skill_cardask["@fuji"] = function(self, data)
 	local who = data:toPlayer()
@@ -41,14 +40,24 @@ sgs.ai_skill_cardask["@fuji"] = function(self, data)
 end
 
 -- zhangshun
-
--- shalu&shunshui&lihun
+-- shunshui
 sgs.ai_skill_invoke["shunshui"] = true
+
+-- lihun
 sgs.ai_skill_invoke["lihun"] = function(self, data)
 	local from = data:toPlayer()
 	return self:isEnemy(from)
 end
-sgs.ai_skill_playerchosen["lihun"] = sgs.ai_skill_playerchosen["taolue"]
+sgs.ai_skill_playerchosen["lihun"] =  = function(self, targets)
+	local friends = sgs.QList2Table(targets)
+	self:sort(friends, "hp")
+	for _, friend in ipairs(friends) do
+		if self:isFriend(friend) and friend ~= self.player then
+		    return friend
+		end
+	end
+	return friends[1]
+end
 
 -- zhuwu
 

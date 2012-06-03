@@ -312,6 +312,8 @@ public:
 	void addToPile(const char *pile_name, const Card *card, bool open = true);
 	void addToPile(const char *pile_name, int card_id, bool open = true);
 	void gainAnExtraTurn(ServerPlayer *clearflag = NULL);
+	QList<ServerPlayer *> getPlayersInMyAttackRange(bool include_self = false) const;
+
 };
 
 %extend ServerPlayer{

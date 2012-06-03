@@ -90,17 +90,24 @@ function SmartAI:useCardSlash(card, use)
 	local no_distance = self.slash_distance_limit
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if self.player:hasFlag("Longest") then no_distance = true end
-	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
-		self.slash_targets = 2
-	end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and not card:inherits("NatureSlash") then
-		self.slash_targets = 2
+		self.slash_targets = self.slash_targets + 1
+	end
+	if self.player:hasSkill("shuangzhan") then
+		local list = self.player:getPlayersInMyAttackRange()
+		list = sgs.QList2Table(list)
+		if #list > 2 then
+			self.slash_targets = self.slash_targets + 1
+		end
+	end
+	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
+		self.slash_targets = self.slash_targets + 1
 	end
 	if (self.player:getHandcardNum() == 1
 	and self.player:getHandcards():first():inherits("Slash")
 	and self.player:getWeapon()
 	and self.player:getWeapon():inherits("Halberd")) then
-		self.slash_targets = 3
+		self.slash_targets = self.slash_targets + 2
 	end
 
 	self.predictedRange = self.player:getAttackRange()
