@@ -1072,15 +1072,10 @@ bool Client::save(const QString &filename) const{
 }
 
 void Client::setLines(const QString &filename){
-    QRegExp rx(".+/(\\w+)/(\\w+\\d?).ogg");
+    QRegExp rx(".+/(\\w+\\d?).ogg");
     if(rx.exactMatch(filename)){
-        QString skill_name = rx.capturedTexts().at(2);
+        QString skill_name = rx.capturedTexts().at(1);
         skill_line = Sanguosha->translate("$" + skill_name);
-        if(rx.capturedTexts().at(1) != "skill"){
-            QString sex = rx.capturedTexts().at(1);
-            if(sex == "female")
-                skill_line = Sanguosha->translate("$" + skill_name + "_f");
-        }
 
         QChar last_char = skill_name[skill_name.length()-1];
         if(last_char.isDigit())

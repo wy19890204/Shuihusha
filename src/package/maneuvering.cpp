@@ -115,7 +115,7 @@ public:
         if(effect.nature == DamageStruct::Normal){
             if(player->getRoom()->askForSkillInvoke(player, objectName(), data)){
                 effect.nature = DamageStruct::Fire;
-
+                player->playCardEffect("Efan");
                 data = QVariant::fromValue(effect);
             }
         }
@@ -135,12 +135,13 @@ public:
         events << Predamage;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") &&
             damage.to->isKongcheng())
         {
             Room *room = damage.to->getRoom();
+            player->playCardEffect("Eguding_blade");
 
             LogMessage log;
             log.type = "#GudingBladeEffect";
@@ -173,6 +174,7 @@ public:
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature == DamageStruct::Normal){
+                player->playCardEffect("Evine1");
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -185,6 +187,7 @@ public:
         }else if(event == CardEffected){
             CardEffectStruct effect = data.value<CardEffectStruct>();
             if(effect.card->inherits("AOE")){
+                player->playCardEffect("Evine1");
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -197,6 +200,7 @@ public:
         }else if(event == Predamaged){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.nature == DamageStruct::Fire){
+                player->playCardEffect("Evine2");
                 LogMessage log;
                 log.type = "#VineDamage";
                 log.from = player;
@@ -224,9 +228,10 @@ public:
         events << Predamaged;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
+            player->playCardEffect("Esilver_lion1");
             LogMessage log;
             log.type = "#SilverLion";
             log.from = player;
@@ -249,6 +254,7 @@ SilverLion::SilverLion(Suit suit, int number):Armor(suit, number){
 
 void SilverLion::onUninstall(ServerPlayer *player) const{
     if(player->isAlive() && player->getMark("qinggang") == 0){
+        player->playCardEffect("Esilver_lion2");
         RecoverStruct recover;
         recover.card = this;
         player->getRoom()->recover(player, recover);

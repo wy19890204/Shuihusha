@@ -1,26 +1,10 @@
 -- translation for Equip Effects
 
 return {
--- female
-	["$crossbow1_f"] = "结束吧！",
-	["$crossbow2_f"] = "还不死？",
-	["$double_sword_f"] = "谁说女子不如男？",
-	["$qinggang_sword_f"] = "一剑就搞定你！",
-	["$blade1_f"] = "再杀！",
-	["$blade2_f"] = "再给一刀！",
-	["$spear_f"] = "喝！",
-	["$axe_f"] = "挡我者死！",
-	["$halberd_f"] = "横扫千军！",
-	["$kylin_bow_f"] = "看枪！",
-	["$eight_diagram1_f"] = "看吾神行之术！",
-	["$eight_diagram2_f"] = "咦？",
-	["$renwang_shield_f"] = "刀枪不入！",
-	["$ice_sword_f"] = "以计退敌！",
-
--- male
 	["$crossbow1"] = "结束吧！",
 	["$crossbow2"] = "还不死？",
-	["$double_sword"] = "战场之上不留情面！",
+	["$double_sword1"] = "战场之上不留情面！",
+	["$double_sword2"] = "谁说女子不如男？",
 	["$qinggang_sword"] = "一剑就搞定你！",
 	["$blade1"] = "再杀！",
 	["$blade2"] = "再给一刀！",
@@ -32,4 +16,11 @@ return {
 	["$eight_diagram2"] = "咦？",
 	["$renwang_shield"] = "刀枪不入！",
 	["$ice_sword"] = "以计退敌！",
+
+	["$fan"] = "势若燎原！",
+	["$guding_blade"] = "趁你病，要你命！",
+	["$vine1"] = "岂敢冒犯天启？",
+	["$vine2"] = "不好，贼军势大……",
+	["$silver_lion1"] = "扛得住！",
+	["$silver_lion2"] = "不能就这样结束了！",
 }

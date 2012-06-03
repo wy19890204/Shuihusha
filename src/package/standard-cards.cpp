@@ -186,7 +186,10 @@ public:
             if(effect.from->askForSkillInvoke(objectName())){
                 bool draw_card = false;
 
-                effect.from->playCardEffect("Edouble_sword");
+                if(player->getGeneral()->isMale())
+                    player->playCardEffect("Edouble_sword1");
+                else
+                    player->playCardEffect("Edouble_sword2");
                 if(effect.to->isKongcheng())
                     draw_card = true;
                 else{
