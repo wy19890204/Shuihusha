@@ -57,15 +57,7 @@ sgs.ai_filterskill_filter["paohong"] = function(card, card_place)
 end
 
 -- hengchong
-sgs.ai_skill_playerchosen["hengchong"] = function(self, targets)
-	local targetlist = sgs.QList2Table(targets)
-	for _, target in ipairs(targetlist) do
-		if self:isEnemy(target) then
-			return target
-		end
-	end
-	return targetlist[1]
-end
+sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- tuzai&longjiao
 sgs.ai_skill_invoke["tuzai"] = true

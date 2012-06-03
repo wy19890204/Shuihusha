@@ -2325,7 +2325,7 @@ function SmartAI:getTurnUse()
 	self.weaponUsed = false
 
 	if self.player:isLord() then self.retain_thresh = 6 end
-	if self.player:hasFlag("Longest") then
+	if self.player:hasSkill("yinyu") and self.player:getMark("@ylyuh") > 0 then
 		self.slash_distance_limit = true
 	end
 
@@ -2575,7 +2575,10 @@ end
 
 function SmartAI:canPaoxiao(player)
 	player = player or self.player
-	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") or player:hasFlag("SlashbySlash") then
+	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") then
+		return true
+	end
+	if player:hasSkill("yinyu") and player:getMark("@ylyus") > 0 then
 		return true
 	end
 	if player:hasSkill("shalu") and player:getMark("shalu") > 0 then

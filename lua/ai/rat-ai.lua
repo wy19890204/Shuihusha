@@ -41,7 +41,29 @@ end
 
 -- zhangshun
 -- shunshui
-sgs.ai_skill_invoke["shunshui"] = true
+sgs.ai_skill_cardask["@shunshui"] = function(self, data)
+	local move = data:toCardMove()
+	local suit = sgs.Sanguosha:getCard(move.card_id):getSuitString()
+	local cards = self.player:getCards("he")
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit then
+		    return card:getEffectiveId()
+		end
+	end
+	return "."
+end
+sgs.ai_skill_playerchosen["shunshui"] = function(self, targets)
+	local targetlist = sgs.QList2Table(targets)
+	self:sort(targetlist)
+	for _, target in ipairs(targetlist) do
+		if self:isEnemy(target) then
+			return target
+		end
+	end
+	return targetlist[1]
+end
 
 -- lihun
 sgs.ai_skill_invoke["lihun"] = function(self, data)
