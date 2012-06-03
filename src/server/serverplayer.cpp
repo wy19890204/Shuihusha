@@ -850,6 +850,17 @@ void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
     room->setCurrent(current);
 }
 
+QList<ServerPlayer *> ServerPlayer::getPlayersInMyAttackRange(bool include_self) const{
+    QList<ServerPlayer *> players;
+    foreach(ServerPlayer *tmp, room->getAlivePlayers())
+        if(inMyAttackRange(tmp)){
+            if(tmp == this && !include_self)
+                continue;
+            players << tmp;
+        }
+    return players;
+}
+
 void ServerPlayer::copyFrom(ServerPlayer* sp)
 {
     ServerPlayer *b = this;

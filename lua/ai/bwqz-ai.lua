@@ -116,41 +116,6 @@ sgs.ai_skill_cardchosen["yuanyin"] = function(self, who)
 	end
 end
 
--- qiongtu
-sgs.ai_skill_invoke["qiongtu"] = function(self, data)
-	local target = data:toPlayer()
-	return self:isEnemy(target)
-end
-
--- menghan
-local menghan_skill={}
-menghan_skill.name = "menghan"
-table.insert(sgs.ai_skills, menghan_skill)
-menghan_skill.getTurnUseCard = function(self, inclusive)
-    local cards = self.player:getCards("he")
-    cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards,true)
-	for _,card in ipairs(cards)  do
-		if card:getSuit() == sgs.Card_Spade then
-		    local suit = card:getSuitString()
-			local number = card:getNumberString()
-			local card_id = card:getEffectiveId()
-			local card_str = ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
-			local ecstasy = sgs.Card_Parse(card_str)
-			assert(ecstasy)
-			return ecstasy
-		end
-	end
-end
-sgs.ai_view_as["menghan"] = function(card, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	if card:getSuit() == sgs.Card_Spade then
-		return ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
-	end
-end
-
 -- nusha
 nusha_skill={}
 nusha_skill.name = "nusha"
@@ -246,27 +211,6 @@ sgs.ai_skill_use_func["QiaogongCard"] = function(card, use, self)
 			return
 		end
 	end
-end
-
--- shouge
-sgs.ai_skill_invoke["shouge"] = true
-shouge_skill={}
-shouge_skill.name = "shouge"
-table.insert(sgs.ai_skills, shouge_skill)
-shouge_skill.getTurnUseCard = function(self)
-	if not self.player:isWounded() then
-		local cards = self.player:getCards("h")
-		cards = sgs.QList2Table(cards)
-		for _, acard in ipairs(cards) do
-			if acard:inherits("Peach") or acard:inherits("Analeptic") then
-				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
-			end
-		end
-	end
-	return
-end
-sgs.ai_skill_use_func["ShougeCard"] = function(card, use, self)
-	use.card = card
 end
 
 -- kongying

@@ -18,28 +18,6 @@ function sgs.ai_cardneed.xiagu(to, card, self)
 	return card:inherits("EquipCard")
 end
 
--- kongliang
-sgs.ai_skill_invoke["kong1iang"] = function(self, data)
-	local showcardnum = self.player:getMaxHP() + self.player:getLostHp() + self.player:getHandcardNum()
-	return showcardnum > 8
-end
-sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)
-	local final = sgs.Sanguosha:getCard(card_ids[1])
-	local suitnum = 100
-	for _, card_id in ipairs(card_ids) do
-		local card = sgs.Sanguosha:getCard(card_id)
-		local suit = card:getSuitString()
-		if final and final:getSuitString() ~= suit then
-			local num = self:getSuitNum(suit, false)
-			if num < suitnum then
-				suitnum = num
-				final = card
-			end
-		end
-	end
-	return final:getEffectiveId()
-end
-
 -- zhanchi
 sgs.ai_skill_invoke["zhanchi"] = function(self, data)
 	if self.player:hasWeapon("crossbow") then
@@ -47,11 +25,6 @@ sgs.ai_skill_invoke["zhanchi"] = function(self, data)
 	else
 		return false
 	end
-end
-
--- fangzhen
-function sgs.ai_trick_prohibit.fangzhen(card, self, to)
-	return card:inherits("Duel") and self.player:getHp() > to:getHp()
 end
 
 -- taolue
@@ -83,16 +56,7 @@ sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
 		end
 	end
 end
-sgs.ai_skill_playerchosen["taolue"] = function(self, targets)
-	local friends = sgs.QList2Table(targets)
-	self:sort(friends, "hp")
-	for _, friend in ipairs(friends) do
-		if self:isFriend(friend) and friend ~= self.player then
-		    return friend
-		end
-	end
-	return friends[1]
-end
+sgs.ai_skill_playerchosen["taolue"] = sgs.ai_skill_playerchosen["lihun"]
 
 -- butian
 sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
