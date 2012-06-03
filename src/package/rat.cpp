@@ -105,20 +105,35 @@ public:
         events << PhaseChange << SlashProceed;
     }
 
+    static void ClearMarks(Room *room, ServerPlayer *qing){
+        room->setPlayerMark(qing, "@ylyuh", 0);
+        room->setPlayerMark(qing, "@ylyuc", 0);
+        room->setPlayerMark(qing, "@ylyus", 0);
+        room->setPlayerMark(qing, "@ylyud", 0);
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
+            tmp->removeMark("qinggang");
+    }
+
     virtual bool trigger(TriggerEvent event, ServerPlayer *qing, QVariant &data) const{
         Room *room = qing->getRoom();
         if(event == SlashProceed){
             if(qing->getMark("@ylyud")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
-                int index = effect.from->getMark("mengshi") > 0 ? 8: 3;
-                room->playSkillEffect("yinyu", index);
+                if(effect.slash->getSkillName() != "yuanpei"){
+                    int index = effect.from->getMark("mengshi") > 0 ? 13: 7;
+                    room->playSkillEffect("yinyu", index);
+                }
                 room->slashResult(effect, NULL);
                 return true;
             }
             return false;
         }
         if(qing->getPhase() == Player::RoundStart){
+            ClearMarks(room, qing);
             if(qing->askForSkillInvoke(objectName())){
+                int index = qing->getMark("mengshi") > 0 ? 8: qrand() % 2 + 1;
+                room->playSkillEffect(objectName(), index);
+
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
                 judge.good = true;
@@ -128,34 +143,26 @@ public:
 
                 LogMessage log;
                 log.from = qing;
-                int index = 0;
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
-                        index = qing->getMark("mengshi") > 0 ? 10: 5;
-                        room->playSkillEffect(objectName(), index);
                         room->setPlayerMark(qing, "@ylyuh", 1);
                         //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
-                        //room->playSkillEffect(objectName(), 3);
                         room->setPlayerMark(qing, "@ylyud", 1);
                         //room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
-                        index = qing->getMark("mengshi") > 0 ? 6: 1;
-                        room->playSkillEffect(objectName(), index);
                         room->setPlayerMark(qing, "@ylyus", 1);
                         //room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
                     }
                 case Card::Club:{
-                        index = qing->getMark("mengshi") > 0 ? 9: 4;
-                        room->playSkillEffect(objectName(), index);
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                             tmp->addMark("qinggang");
                         room->setPlayerMark(qing, "@ylyuc", 1);
@@ -168,14 +175,8 @@ public:
                 room->sendLog(log);
             }
         }
-        else if(qing->getPhase() == Player::NotActive){
-            room->setPlayerMark(qing, "@ylyuh", 0);
-            room->setPlayerMark(qing, "@ylyuc", 0);
-            room->setPlayerMark(qing, "@ylyus", 0);
-            room->setPlayerMark(qing, "@ylyud", 0);
-            foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
-                tmp->removeMark("qinggang");
-        }
+        else if(qing->getPhase() == Player::NotActive)
+            ClearMarks(room, qing);
         return false;
     }
 };
@@ -366,7 +367,7 @@ public:
             }
             if(n < 5){
                 room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$buzhen:4000");
+                room->broadcastInvoke("animate", "lightbox:$buzhen:5000");
                 zhuwu->loseMark("@buvr");
                 zhuwu->throwAllCards();
                 room->getThread()->delay(4500);
@@ -919,6 +920,7 @@ public:
                 room->sendLog(log);
 
                 room->broadcastProperty(p, "chained");
+                room->setEmotion(p, "chain");
             }
         }
         return false;
@@ -939,7 +941,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->playSkillEffect("yuanpei", 1);
+    room->playSkillEffect("yuanpei", qrand() % 2 + 1);
     const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
@@ -988,6 +990,10 @@ public:
             return true;
         else
             return player->hasFlag("yuanpei") && Slash::IsAvailable(player);
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 3;
     }
 };
 
@@ -1083,7 +1089,7 @@ RatPackage::RatPackage()
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 */
-    General *qiaodaoqing = new General(this, "qiaodaoqing", "kou", 3);
+    General *qiaodaoqing = new General(this, "qiaodaoqing", "jiang", 3);
     qiaodaoqing->addSkill(new Huanshu);
     qiaodaoqing->addSkill(new Mozhang);
 

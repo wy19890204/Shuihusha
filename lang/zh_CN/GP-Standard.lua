@@ -41,7 +41,7 @@ return {
 
 	["#wuyong"] = "智多星", -- kou 3hp (cgdk)
 	["wuyong"] = "吴用",
-	["cv:wuyong"] = "鸢飞【龍門】",
+	["cv:wuyong"] = "鸢飞【天子会工作室】",
 	["huace"] = "画策",
 	[":huace"] = "出牌阶段，你可以将你的任一锦囊牌当任一非延时类锦囊使用。每阶段限一次。",
 	["stt"] = "单目标锦囊",
@@ -236,7 +236,7 @@ return {
 
 	["#ruanxiaoqi"] = "活阎罗", -- min 4hp (cgdk)
 	["ruanxiaoqi"] = "阮小七",
-	["cv:ruanxiaoqi"] = "小V【心水蓝音】",
+	["cv:ruanxiaoqi"] = "小V【天子会工作室】",
 	["jueming"] = "绝命",
 	[":jueming"] = "<b>锁定技</b>，若你的当前体力值为1，则你不能成为【杀】、【决斗】和【行刺】的目标。",
 	["jiuhan"] = "酒酣",
@@ -372,6 +372,7 @@ return {
 
 	["#fangla"] = "永乐圣公", -- jiang 4hp (bwqz)
 	["fangla"] = "方腊",
+	["cv:fangla"] = "谈笑",
 	["yongle"] = "永乐",
 	[":yongle"] = "出牌阶段，你可以分别获得至多X名其他角色的一张手牌（X为场上现存势力数），然后你分别交给这些角色一张手牌。每阶段限一次。",
 	["zhiyuan"] = "支援",

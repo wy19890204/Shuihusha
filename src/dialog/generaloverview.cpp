@@ -129,7 +129,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
     }else{
         QRegExp rx(".+/(\\w+\\d?).ogg");
         for(int i = 0; i < sources.length(); i++){
-            if(skill->objectName() == "yinyu" && i > 4) // wake skills
+            if(skill->objectName() == "yinyu" && i > 6) // wake skills
                 break;
             if((skill->objectName() == "butian" || skill->objectName() == "qimen") && i > 1)
                 break;
@@ -213,7 +213,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     const Skill *wake_skill;
     if(general_name == "qiongying"){
         wake_skill = Sanguosha->getSkill("yinyu");
-        for(int i = 6; i <= 10; i ++)
+        for(int i = 8; i <= 13; i ++)
             addLines(wake_skill, i);
     }
     if(general_name == "fanrui"){

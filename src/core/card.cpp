@@ -459,7 +459,7 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
     log.card_str = toString();
     room->sendLog(log);
 
-    if(player->hasSkill("shuangzhan") && card_use.to.count() == 2)
+    if(card_use.card->inherits("Slash") && player->hasSkill("shuangzhan") && card_use.to.count() == 2)
         room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
     if(card_use.card->getSkillName() == "spear")
         player->playCardEffect("Espear");
