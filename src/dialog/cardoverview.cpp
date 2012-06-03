@@ -114,7 +114,12 @@ void CardOverview::on_malePlayButton_clicked()
     if(row >= 0){
         int card_id = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toInt();
         const Card *card = Sanguosha->getCard(card_id);
-        Sanguosha->playCardEffect(card->objectName(), true);
+        if(card->inherits("Weapon") || card->inherits("Armor")){
+            QString src = "E" + card->objectName();
+            Sanguosha->playCardEffect(src, true);
+        }
+        else
+            Sanguosha->playCardEffect(card->objectName(), true);
     }
 }
 
@@ -124,6 +129,11 @@ void CardOverview::on_femalePlayButton_clicked()
     if(row >= 0){
         int card_id = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toInt();
         const Card *card = Sanguosha->getCard(card_id);
-        Sanguosha->playCardEffect(card->objectName(), false);
+        if(card->inherits("Weapon") || card->inherits("Armor")){
+            QString src = "E" + card->objectName();
+            Sanguosha->playCardEffect(src, false);
+        }
+        else
+            Sanguosha->playCardEffect(card->objectName(), false);
     }
 }

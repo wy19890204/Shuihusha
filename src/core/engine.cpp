@@ -679,6 +679,11 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
     else if(card_name.startsWith("E")){
         QString gender = is_male ? "male" : "female";
         path = QString("audio/equip/%1/%2.ogg").arg(gender).arg(card_name.mid(1));
+        if(!QFile::exists(path)){
+            path = QString("audio/equip/%1/%2.ogg").arg(gender).arg(card_name.mid(1) + "1");
+            if(!QFile::exists(path))
+                path = QString("audio/equip/%1/%2.ogg").arg(gender).arg(card_name.mid(1) + "2");
+        }
         if(ClientInstance)
             ClientInstance->setLines(path);
     }
