@@ -181,7 +181,7 @@ return {
 	["$huatian3"] = "破晓之前，忘了此错。",
 	["$huatian4"] = "无心插柳，岂是花田之错？",
 
-	["#qiaodaoqing"] = "幻魔君", -- kou 3hp (ttxd)
+	["#qiaodaoqing"] = "幻魔君", -- jiang 3hp (ttxd)
 	["qiaodaoqing"] = "乔道清",
 	["cv:qiaodaoqing"] = "烨子【剪刀剧团】",
 	["coder:qiaodaoqing"] = "roxiel",
