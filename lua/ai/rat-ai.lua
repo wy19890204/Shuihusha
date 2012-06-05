@@ -82,10 +82,24 @@ sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 end
 
 -- zhuwu
---[[ fangzhen
-function sgs.ai_trick_prohibit.fangzhen(card, self, to)
-	return card:inherits("Duel") and self.player:getHp() > to:getHp()
-end]]
+-- fangzhen
+sgs.ai_skill_cardask["@fangzhen"] = function(self, data)
+	local damage = data:toDamage()
+	if self:hasSkills(sgs.masochism_skill) then return end
+	if self:isFriend(damage.from) then
+		if self:hasSkills("yixian|qiangqu") then return	end
+	end
+	local suit = damage.card:getSuitString()
+	local cards = self.player:getCards("he")
+    cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit then
+		    return card:getEffectiveId()
+		end
+	end
+	return "."
+end
 
 -- caiyuanzizhangqing
 -- shouge

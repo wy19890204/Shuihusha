@@ -239,7 +239,6 @@ public:
                         targets << tmp;
                 if(!targets.isEmpty()){
                     ServerPlayer *target = room->askForPlayerChosen(zhangshun, targets, objectName());
-                    room->playSkillEffect(objectName());
                     Slash *slash = new Slash(Card::NoSuit, 0);
                     slash->setSkillName(objectName());
                     CardUseStruct use;
@@ -369,7 +368,8 @@ public:
                 room->playSkillEffect(objectName());
                 room->broadcastInvoke("animate", "lightbox:$buzhen:5500");
                 zhuwu->loseMark("@buvr");
-                zhuwu->throwAllCards();
+                zhuwu->throwAllEquips();
+                zhuwu->throwAllHandCards();
                 room->getThread()->delay(5000);
             }
         }
@@ -389,7 +389,7 @@ public:
 
     virtual bool trigger(TriggerEvent , ServerPlayer *zhuwu, QVariant &data) const{
         DamageStruct dmag = data.value<DamageStruct>();
-        if(!dmag.card->inherits("TrickCard") || dmag.damage < 1)
+        if(!dmag.card || dmag.card->getSuit() == Card::NoSuit || dmag.damage < 1)
             return false;
         QString suit = dmag.card->getSuitString();
         Room *room = zhuwu->getRoom();
@@ -548,7 +548,7 @@ public:
             return false;
         if(event == Damaged){
             room->setTag("Shudan", player->objectName());
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), 1);
 
             LogMessage log;
             log.type = "#ShudanDamaged";
@@ -559,7 +559,8 @@ public:
             if(room->getTag("Shudan").toString() != player->objectName())
                 return false;
             CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(effect.card->inherits("Slash") || effect.card->getTypeId() == Card::Trick){
+            if(effect.card->inherits("Slash") || effect.card->isNDTrick()){
+                room->playSkillEffect(objectName(), 2);
                 LogMessage log;
                 log.type = "#ShudanAvoid";
                 log.arg = objectName();

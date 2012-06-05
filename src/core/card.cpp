@@ -464,10 +464,10 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
             room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
         if(card_use.card->getSkillName() == "spear")
             player->playCardEffect("Espear");
-        else if(player->hasEquip("halberd") &&
+        else if(player->hasWeapon("halberd") &&
                 player->isLastHandCard(this) && card_use.to.count() > 1)
             player->playCardEffect("Ehalberd");
-        else if(player->hasEquip("sun_bow") && !card_use.card->inherits("NatureSlash") && card_use.to.count() > 1)
+        else if(player->hasWeapon("sun_bow") && card_use.card->objectName() == "slash" && card_use.to.count() > 1)
             player->playCardEffect("Esun_bow");
     }
 

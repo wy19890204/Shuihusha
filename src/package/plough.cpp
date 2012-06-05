@@ -198,7 +198,7 @@ public:
         Room *room = player->getRoom();
         if(use.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
             foreach(ServerPlayer *effecto, use.to){
-                if(!player->isChained())
+                if(!effecto->isChained())
                     player->playCardEffect("Edouble_whip1");
                 else
                     player->playCardEffect("Edouble_whip2");

@@ -455,7 +455,7 @@ void Room::gameOver(const QString &winner){
 void Room::slashEffect(const SlashEffectStruct &effect){
     effect.from->addMark("SlashCount");
 
-    if(effect.from->hasEquip("crossbow")){
+    if(effect.from->hasWeapon("crossbow")){
         int slash = effect.from->getMark("SlashCount");
         if(slash % 2 == 0)
             effect.from->playCardEffect("Ecrossbow1");
