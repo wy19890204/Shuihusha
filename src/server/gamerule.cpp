@@ -245,7 +245,28 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                 CardUseStruct card_use = data.value<CardUseStruct>();
                 const Card *card = card_use.card;
 
-                card_use.from->playCardEffect(card);
+                bool mute = card_use.mute;
+                if(card->inherits("Slash")){
+                    if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
+                        room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
+                        mute = true;
+                    }
+                    if(card->getSkillName() == "spear"){
+                        player->playCardEffect("Espear");
+                        mute = true;
+                    }
+                    else if(player->hasWeapon("halberd") &&
+                            player->isLastHandCard(card) && card_use.to.count() > 1){
+                        player->playCardEffect("Ehalberd");
+                        mute = true;
+                    }
+                    else if(player->hasWeapon("sun_bow") && card->objectName() == "slash" && card_use.to.count() > 1){
+                        player->playCardEffect("Esun_bow");
+                        mute = true;
+                    }
+                }
+
+                card_use.from->playCardEffect(card, mute);
                 card->use(room, card_use.from, card_use.to);
             }
 

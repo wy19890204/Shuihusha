@@ -30,7 +30,7 @@ public:
     void unicast(const QString &message) const;
     void drawCard(const Card *card);
     Room *getRoom() const;
-    void playCardEffect(const Card *card) const;
+    void playCardEffect(const Card *card, bool mute = false) const;
     void playCardEffect(const QString &card_name) const;
     int getRandomHandCardId() const;
     const Card *getRandomHandCard() const;

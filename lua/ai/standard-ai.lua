@@ -862,8 +862,7 @@ sgs.andaoquan_keep_value =
 sgs.ai_skill_cardask["@jishi"] = function(self, data)
 	local who = data:toPlayer()
 	if self:isEnemy(who) or self.player:isKongcheng() then return "." end
-	local cards = self.player:getHandcards()
-	cards=sgs.QList2Table(cards)
+	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:inherits("TrickCard") or card:inherits("BasicCard") then

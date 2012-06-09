@@ -64,6 +64,7 @@ struct CardUseStruct{
     const Card *card;
     ServerPlayer *from;
     QList<ServerPlayer *> to;
+    bool mute;
 };
 
 struct CardMoveStruct{

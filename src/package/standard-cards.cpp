@@ -275,6 +275,7 @@ public:
             use.card = card;
             use.from = player;
             use.to << effect.to;
+            use.mute = true;
             room->useCard(use, false);
         }
 

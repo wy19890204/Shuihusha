@@ -36,8 +36,8 @@ void ServerPlayer::playCardEffect(const QString &card_name) const{
     room->broadcastInvoke("playCardEffect", QString("%1:%2").arg(card_name).arg(gender));
 }
 
-void ServerPlayer::playCardEffect(const Card *card) const{
-    if(card->isMute())
+void ServerPlayer::playCardEffect(const Card *card, bool mute) const{
+    if(card->isMute() || mute)
         return;
 
     if(!card->isVirtualCard())

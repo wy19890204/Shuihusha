@@ -2025,7 +2025,7 @@ public:
 class Cuju: public TriggerSkill{
 public:
     Cuju():TriggerSkill("cuju"){
-        events << Predamaged;
+        events << DamagedProceed;
         view_as_skill = new CujuViewAsSkill;
     }
 
