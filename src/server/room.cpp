@@ -1032,7 +1032,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             log.type = QString("#%1").arg(card->metaObject()->className());
             sendLog(log);
 
-            player->playCardEffect(card);
+            bool mute = false;
+            if(card->getSkillName() == "eight_diagram")
+                mute = true;
+
+            player->playCardEffect(card, mute);
 
             if(trigger_event == JinkUsed)
                 thread->trigger(CardResponsed, player, card_star);
