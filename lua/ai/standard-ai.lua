@@ -685,7 +685,11 @@ mitan_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if (acard:inherits("EventsCard") or acard:inherits("TrickCard")) and self:getUseValue(acard) < 4 then
+		if (acard:inherits("Wiretap") or
+			acard:inherits("Lightning") or
+			acard:inherits("Tsunami") or
+			acard:inherits("Treasury") or
+			acard:inherits("Provistore")) then
 			card = acard
 			break
 		end

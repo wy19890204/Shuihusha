@@ -2398,7 +2398,7 @@ function SmartAI:activate(use)
 	self:assignKeep(self.player:getHp(),true)
 	self.toUse  = self:getTurnUse()
 	self:sortByDynamicUsePriority(self.toUse)
-
+--[[
 	if self.player:hasSkill("jibao") then
 		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())
 		if final > 2 and self.player:getMark("jibao") == final then
@@ -2406,7 +2406,7 @@ function SmartAI:activate(use)
 			return
 		end
 	end
-
+]]
 	for _, card in ipairs(self.toUse) do
 		if not self.player:isJilei(card) and not self.player:isLocked(card) then
 			local type = card:getTypeId()
