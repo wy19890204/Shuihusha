@@ -34,66 +34,62 @@ sgs.ai_use_value =
 {
 
 --skill cards
-	-- qjwm
+	-- basic
+	GanlinCard = 8.5,
+	JuyiCard = 3.5,
+	HuaceCard = 4,
+--	YixingCard = 8.5,
+--	DuijueCard = 7,
+--	HaoshenCard = 4,
+	SijiuCard = 5,
+	MaidaoCard = 6.5,
+	MAIdaoCard = 3,
+--	FengmangCard = 8,
 	DaleiCard = 7.2,
+	WujiCard = 9,
+	YanshouCard = 9.9,
+--	CujuCard = 8.8,
+	JiashuCard = 7.5,
+	YongleCard = 3.4,
+	YinjianCard = 4.3,
+	MeihuoCard = 3.5,
+	SuocaiCard = 3.7,
+
+	-- rat
 --	BuzhenCard = 3.3,
+	ShougeCard = 4.4,
+--	HuanshuCard = 8.8,
+	YuanpeiCard = 7.7,
+
+	-- qjwm
 	TaolueCard = 7.5,
 --	XiaozaiCard = 7.7,
 --	ButianCard = 2.0,
 
 	-- ttxd
-	GanlinCard = 8.5,
-	JuyiCard = 3.5,
---	HaoshenCard = 4,
---	HuanshuCard = 8.8,
---	CujuCard = 8.8,
---	YixingCard = 8.5,
-	WujiCard = 9,
-	YanshouCard = 9.9,
 
 	-- xzdd
---	DuijueCard = 7,
-	MaidaoCard = 6.5,
-	Maida0Card = 3,
 --	BinggongCard = 2.1,
 	FeiqiangCard = 9.2,
 
 	-- bwqz
 	YuanyinCard = 4.3,
-	ShougeCard = 4.4,
 	NushaCard = 6.1,
 	QiaogongCard = 2.3,
 	ZhengfaCard = 5.5,
 	JiaomieCard = 7,
-	YongleCard = 3.4,
 
 	-- qlfd
-	YushuiCard = 3.5,
 --	FanwuCard = 2,
 	QianxianCard = 6.4,
 	ZiyiCard = -2,
 	ShouwangCard = 3,
 --	ZishiCard = 8,
-	SuocaiCard = 3.7,
 	EyanCard = 4,
 	EyanSlashCard = 9,
 	ZhangshiCard = 8.5,
 	YinlangCard = 8.6,
 
-	XinzhanCard = 4.4,
-	TianyiCard = 8.5,
-	XianzhenCard = 9.2,
-	XianzhenSlashCard = 9.2,
-	JijiangCard=8.5,
-	DimengCard=3.5,
-	JujianCard=6.7,
-	QiangxiCard=2.5,
-	LijianCard=8.5,
-	MinceCard=5.9,
-
-	ShenfenCard = 8,
-	GreatYeyanCard = 8,
-	MediumYeyanCard = 5.6,
 --normal cards
 	ExNihilo=10,
 
@@ -112,7 +108,6 @@ sgs.ai_use_value =
 	--retain_value=5
 
 	FireAttack=4.8,
-
 
 	FireSlash = 4.4,
 	ThunderSlash = 4.5,
@@ -147,47 +142,56 @@ sgs.ai_use_priority = {
 --priority of using an active card
 
 --skill cards
-	-- qjwm
-	DaleiCard = 6.6,
+	-- basic
+	GanlinCard = 4.8,
+	JuyiCard = 2.2,
+	HuaceCard = 5,
+--	YixingCard = 8.5,
+--	DuijueCard = 7,
+--	HaoshenCard = 4,
+	SijiuCard = 3.5,
+	MaidaoCard = 4.5,
+	MAIdaoCard = 2,
+	DaleiCard = 4.3,
+	WujiCard = 3.3,
+	YanshouCard = 5,
+--	CujuCard = 8.8,
+	JiashuCard = 4,
+	YongleCard = 2.3,
+	YinjianCard = 3.7,
+	MeihuoCard = 2.5,
+	SuocaiCard = 4.4,
+
+	-- rat
 --	BuzhenCard = 2.5,
+	ShougeCard = 3.8,
+--	HuanshuCard = 8.8,
+	YuanpeiCard = 4.5,
+
+	-- qjwm
 	TaolueCard = 5,
 --	XiaozaiCard = 3,
 --	ButianCard = 2.0,
 
 	-- ttxd
-	GanlinCard = 5.8,
-	JuyiCard = 4.2,
---	HaoshenCard = 4,
---	HuanshuCard = 8.8,
---	CujuCard = 8.8,
---	YixingCard = 8.5,
-	WujiCard = 3.3,
-	YanshouCard = 5,
 
 	-- xzdd
---	DuijueCard = 7,
-	MaidaoCard = 5.7,
-	Maida0Card = 2,
 --	BinggongCard = 2.1,
 	FeiqiangCard = 5.4,
 
 	-- bwqz
 	YuanyinCard = 8.3,
-	ShougeCard = 6.4,
 	NushaCard = 7.1,
 	QiaogongCard = 3.3,
 	ZhengfaCard = 5.5,
 	JiaomieCard = 6.6,
-	YongleCard = 2.3,
 
 	-- qlfd
-	YushuiCard = 2.5,
 --	FanwuCard = 2,
 	QianxianCard = 3.6,
 	ZiyiCard = 1,
 	ShouwangCard = 5,
 --	ZishiCard = 8,
-	SuocaiCard = 5.1,
 	EyanCard = 2.8,
 	EyanSlashCard = 9,
 	ZhangshiCard = 2.4,

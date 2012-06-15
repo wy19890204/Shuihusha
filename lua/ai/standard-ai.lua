@@ -12,7 +12,7 @@ sgs.songjiang_keep_value =
 -- ganlin
 sgs.ai_card_intention.GanlinCard = -70
 sgs.ai_use_value.GanlinCard = 8.5
-sgs.ai_use_priority.GanlinCard = 5.8
+sgs.ai_use_priority.GanlinCard = 4.8
 sgs.dynamic_value.benefit.GanlinCard = true
 
 sgs.ai_skill_invoke["ganlin"] = function(self, data)

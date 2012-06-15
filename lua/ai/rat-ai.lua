@@ -132,6 +132,11 @@ sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 end
 
 -- baisheng
+sgs.baisheng_suit_value =
+{
+	spade = 4
+}
+
 -- xiayao
 local xiayao_skill={}
 xiayao_skill.name = "xiayao"
@@ -162,6 +167,11 @@ sgs.ai_view_as["xiayao"] = function(card, player, card_place)
 end
 
 -- shiqian
+sgs.shiqian_suit_value =
+{
+	club = 4
+}
+
 -- feiyan
 function sgs.ai_trick_prohibit.feiyan(card)
 	return card:inherits("SupplyShortage") or card:inherits("Snatch")
@@ -224,6 +234,12 @@ function sgs.ai_slash_prohibit.huanshu(self, to)
 end
 
 -- qiongying
+sgs.qiongying_suit_value =
+{
+	heart = 3.5,
+	diamond = 2.5
+}
+
 -- yuanpei
 local yuanpei_skill={}
 yuanpei_skill.name = "yuanpei"
