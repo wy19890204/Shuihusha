@@ -223,6 +223,8 @@ end
 
 -- qiaodaoqing
 -- huanshu
+sgs.ai_card_intention.HuanshuCard = 100
+
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
@@ -241,6 +243,8 @@ sgs.qiongying_suit_value =
 }
 
 -- yuanpei
+sgs.ai_card_intention.YuanpeiCard = -40
+
 local yuanpei_skill={}
 yuanpei_skill.name = "yuanpei"
 table.insert(sgs.ai_skills, yuanpei_skill)

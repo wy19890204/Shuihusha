@@ -205,6 +205,14 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 end
 
 -- juyi
+sgs.ai_card_intention.JuyiCard = function(card, from, to)
+	if to[1]:getHandcardNum() >= from:getHandcardNum() then
+		sgs.updateIntentions(from, to, 40)
+	else
+		sgs.updateIntentions(from, to, -50)
+	end
+end
+
 juyi_skill={}
 juyi_skill.name = "jui"
 table.insert(sgs.ai_skills, juyi_skill)
@@ -403,6 +411,8 @@ end
 
 -- linchong
 -- duijue
+sgs.ai_card_intention.DuijueCard = 80
+
 sgs.ai_skill_use["@@duijue"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local n1 = self:getCardsNum("Slash")
@@ -448,6 +458,8 @@ function sgs.ai_slash_prohibit.danshu(self, to)
 end
 
 -- haoshen
+sgs.ai_card_intention.HaoshenCard = -70
+
 sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 	if prompt == "@haoshen-draw" and not self.player:isKongcheng() then
 		self:sort(self.friends, "handcard")
@@ -487,7 +499,10 @@ sgs.zhutong_keep_value =
 {
 	Peach = 6,
 }
+
 -- sijiu
+sgs.ai_card_intention.SijiuCard = -100
+
 sijiu_skill={}
 sijiu_skill.name = "sijiu"
 table.insert(sgs.ai_skills, sijiu_skill)
@@ -617,6 +632,8 @@ sgs.ai_skill_use_func["MaidaoCard"] = function(card, use, self)
 end
 
 -- fengmang
+sgs.ai_card_intention.FengmangCard = 80
+
 sgs.ai_skill_use["@@fengmang"] = function(self, prompt)
 	self:sort(self.enemies)
 	local target = self.enemies[1]
@@ -769,6 +786,8 @@ end
 
 -- yanqing
 -- dalei
+sgs.ai_card_intention.DaleiCard = 70
+
 local dalei_skill={}
 dalei_skill.name = "dalei"
 table.insert(sgs.ai_skills, dalei_skill)
@@ -880,6 +899,8 @@ end
 sgs.ai_skill_invoke["fengyue"] = true
 
 -- yanshou
+sgs.ai_card_intention.YanshouCard = -100
+
 yanshou_skill={}
 yanshou_skill.name = "yanshou"
 table.insert(sgs.ai_skills, yanshou_skill)
@@ -977,6 +998,8 @@ end
 
 -- gaoqiu
 -- cuju
+sgs.ai_card_intention.CujuCard = 75
+
 sgs.ai_skill_invoke["cuju"] = function(self, data)
 	local damage = data:toDamage()
 	return damage.damage > 0
@@ -1004,6 +1027,8 @@ end
 
 -- caijing
 -- jiashu
+sgs.ai_card_intention.JiashuCard = 70
+
 jiashu_skill={}
 jiashu_skill.name = "jiashu"
 table.insert(sgs.ai_skills, jiashu_skill)
@@ -1047,6 +1072,8 @@ end
 
 -- fangla
 -- yongle
+sgs.ai_card_intention.YongleCard = 60
+
 local yongle_skill={}
 yongle_skill.name = "yongle"
 table.insert(sgs.ai_skills, yongle_skill)
@@ -1176,6 +1203,8 @@ end
 sgs.ai_skill_invoke["qinxin"] = true
 
 -- yinjian
+sgs.ai_card_intention.YinjianCard = -75
+
 local yinjian_skill={}
 yinjian_skill.name = "yinjian"
 table.insert(sgs.ai_skills, yinjian_skill)
@@ -1217,6 +1246,8 @@ end
 
 -- yanxijiao
 -- suocai
+sgs.ai_card_intention.SuocaiCard = 65
+
 local suocai_skill={}
 suocai_skill.name = "suocai"
 table.insert(sgs.ai_skills, suocai_skill)
