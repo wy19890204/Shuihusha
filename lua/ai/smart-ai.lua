@@ -2337,8 +2337,14 @@ function SmartAI:getTurnUse()
 		slashAvail = 100
 	end
 
+	if self.player:hasSkill("shuangzhan") then
+		local list = self.player:getPlayersInMyAttackRange()
+		if list:length() > 2 then
+			self.slash_targets = self.slash_targets + 1
+		end
+	end
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
-		self.slash_targets = 2
+		self.slash_targets = self.slash_targets + 1
 		slashAvail = 100
 	end
 

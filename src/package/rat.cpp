@@ -995,6 +995,10 @@ public:
             return player->hasFlag("yuanpei") && Slash::IsAvailable(player);
     }
 
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return Self->hasFlag("yuanpei") && pattern == "slash";
+    }
+
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
         return qrand() % 2 + 3;
     }

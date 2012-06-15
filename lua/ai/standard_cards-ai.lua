@@ -89,10 +89,11 @@ function SmartAI:useCardSlash(card, use)
 	if not self:slashIsAvailable() then return end
 	local no_distance = self.slash_distance_limit
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
-	if self.player:hasSkill("yinyu") and self.player:getMark("@ylyuh") > 0 then no_distance = true end
+--	if self.player:hasSkill("yinyu") and self.player:getMark("@ylyuh") > 0 then no_distance = true end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
 		self.slash_targets = self.slash_targets + 1
 	end
+--[[
 	if self.player:hasSkill("shuangzhan") then
 		local list = self.player:getPlayersInMyAttackRange()
 		list = sgs.QList2Table(list)
@@ -103,10 +104,10 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = self.slash_targets + 1
 	end
+]]
 	if (self.player:getHandcardNum() == 1
-	and self.player:getHandcards():first():inherits("Slash")
-	and self.player:getWeapon()
-	and self.player:getWeapon():inherits("Halberd")) then
+		and self.player:getHandcards():first():inherits("Slash")
+		and self.player:hasWeapon("halberd")) then
 		self.slash_targets = self.slash_targets + 2
 	end
 
@@ -149,6 +150,8 @@ function SmartAI:useCardSlash(card, use)
 		end
 	end
 	
+	self.mi_targets = 1
+	if self.player:hasSkill("xiayao") then self.mi_targets = self.mi_targets + 1 end
 	for _, target in ipairs(targets) do
 		local canliuli = false
 		if (self.player:canSlash(target, not no_distance) or
@@ -160,7 +163,7 @@ function SmartAI:useCardSlash(card, use)
 			local mi = self:searchForEcstasy(use,target,card)
 			if mi and self:getCardsNum("Jink", target) > 0 and self:getCardId("Slash") then
 				use.card = mi
-				if use.to then use.to:append(target) end
+				if use.to and use.to:length() < self.mi_targets then use.to:append(target) end
 				return
 			end
 			if not use.to or use.to:isEmpty() then

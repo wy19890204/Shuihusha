@@ -251,7 +251,7 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
                         room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
                         mute = true;
                     }
-                    if(player->hasWeapon("crossbow") && player->getMark("SlashCount") > 0)
+                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
                         mute = true;
                     if(card->getSkillName() == "spear"){
                         player->playCardEffect("Espear");
