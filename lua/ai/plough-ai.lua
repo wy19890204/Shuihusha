@@ -57,28 +57,33 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 end
 
+sgs.ai_card_intention.Ecstasy = 80
 sgs.dynamic_value.control_card.Ecstasy = true
 sgs.dynamic_value.benefit.Counterplot = true
 
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
-	use.card = drivolt
+	local target
 	self:sort(self.enemies, "hp")
 	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
-		if use.to then use.to:append(self.enemies[1]) end
-		return
+		target = self.enemies[1]
 	end
-	for _, friend in ipairs(self.friends_noself) do
-		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
-			if use.to then use.to:append(friend) end
-			return
+	if not target then
+		for _, friend in ipairs(self.friends_noself) do
+			if not friend:isWounded() and not self:isWeak(friend) and
+				friend:getKingdom() ~= self.player:getKingdom() then
+				target = friend
+				break
+			end
 		end
 	end
-	for _, enemy in ipairs(self.enemies) do
-		if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
-			if use.to then use.to:append(enemy) end
-			return
+	if not target then
+		for _, enemy in ipairs(self.enemies) do
+			if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
+				target = enemy
+				break
+			end
 		end
 	end
 	local players = {}
@@ -88,11 +93,24 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	if #players < 1 then
 		use.card = nil
 		return "."
+	else
+		use.card = drivolt
 	end
-	local r = math.random(1, #players)
-	if use.to then use.to:append(players[r]) end
+
+	if not target then
+		local r = math.random(1, #players)
+		target = players[r]
+	end
+	if use.to then use.to:append(target) end
 end
 
+sgs.ai_card_intention.Drivolt = function(card, from, tos)
+	for _, to in ipairs(tos) do
+		local value = 80
+		if not to:isWounded() then value = -50 end
+		sgs.updateIntention(from, to, value)
+	end
+end
 sgs.dynamic_value.damage_card.Drivolt = true
 sgs.dynamic_value.control_card.Drivolt = true
 
@@ -164,6 +182,7 @@ sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
 	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end	
 end
 
+sgs.ai_card_intention.Assassinate = 90
 sgs.dynamic_value.damage_card.Assassinate = true
 
 -- sheng chen gang
@@ -232,6 +251,7 @@ function SmartAI:useCardProvistore(provistore, use)
 	end
 end
 
+sgs.ai_card_intention.Provistore = -80
 sgs.dynamic_value.control_usecard.Provistore = true
 sgs.dynamic_value.benefit.Provistore = true
 
