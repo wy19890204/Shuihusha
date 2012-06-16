@@ -312,7 +312,7 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     use_card->addSubcard(card);
     room->throwCard(this);
 
-    //player->addHistory("HuaceCard", 1);
+    player->addHistory("HuaceCard", 1);
     Self->addHistory("HuaceCard", 1);
     return use_card;
 }

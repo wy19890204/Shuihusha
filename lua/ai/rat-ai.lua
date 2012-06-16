@@ -186,7 +186,7 @@ shentou_skill.getTurnUseCard = function(self)
 	cards=sgs.QList2Table(cards)
 	local card
 	self:sortByUseValue(cards,true)
-	for _,acard in ipairs(cards)  do
+	for _, acard in ipairs(cards)  do
 		if acard:getSuit() == sgs.Card_Club then
 			card = acard
 			break
@@ -223,9 +223,19 @@ end
 
 -- qiaodaoqing
 -- huanshu
+sgs.ai_card_intention.HuanshuCard = 100
+
 sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
-	self:sort(self.enemies, "hp")
+	self:sort(self.enemies)
 	local target = self.enemies[1]
+	if self.player:isChained() and self:isWeak() then
+		for _, enemy in ipairs(self.enemies) do
+			if not enemy:isChained() then
+				target = enemy
+				break
+			end
+		end
+	end
 	if target then return "@HuanshuCard=." .. "->" .. target:objectName() end
 	return "."
 end
@@ -241,6 +251,8 @@ sgs.qiongying_suit_value =
 }
 
 -- yuanpei
+sgs.ai_card_intention.YuanpeiCard = -40
+
 local yuanpei_skill={}
 yuanpei_skill.name = "yuanpei"
 table.insert(sgs.ai_skills, yuanpei_skill)
