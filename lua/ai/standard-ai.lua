@@ -206,7 +206,7 @@ end
 
 -- juyi
 sgs.ai_card_intention.JuyiCard = function(card, from, to)
-	if to[1]:getHandcardNum() >= from:getHandcardNum() then
+	if to:getHandcardNum() >= from:getHandcardNum() then
 		sgs.updateIntentions(from, to, 40)
 	else
 		sgs.updateIntentions(from, to, -50)

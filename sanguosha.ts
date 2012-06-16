@@ -1418,7 +1418,7 @@
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2680"/>
-        <source>HP recover</source>
+        <source>Recover HP</source>
         <translation>体力回复</translation>
     </message>
     <message>
