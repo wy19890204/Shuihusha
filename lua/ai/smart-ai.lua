@@ -71,7 +71,7 @@ function setInitialTables()
 	sgs.discard_pile =			global_room:getDiscardPile()
 	sgs.draw_pile = 			global_room:getDrawPile()
 	sgs.lose_equip_skill = 		"cuihuo|jiebei"
-	sgs.need_kongcheng = 		"kongmen|zhiyuan"
+	sgs.need_kongcheng = 		"zhiyuan"
 	sgs.masochism_skill = 		"baoguo|fuqin|xiaozai|huatian|heidian|cuju|huanshu"
 	sgs.wizard_skill = 			"zhaixing|butian|shenpan|yixing|yueli|houlue"
 	sgs.wizard_harm_skill = 	"zhaixing|butian|shenpan|yixing"
@@ -305,8 +305,8 @@ function SmartAI:getUsePriority(card)
 		if v then return v else return sgs.ai_use_priority[class_name] end
 	end
 	if self.player:hasSkill("jishi") then
-		if card:inherits("Dismantlement") then v = 3.8
-		elseif card:inherits("Collateral") then v = 3.9
+		if card:inherits("BasicCard") then v = 3.8
+		elseif card:inherits("TrickCard") then v = 3.9
 		end
 		if v then return v else return sgs.ai_use_priority[class_name] end
 	end
@@ -393,12 +393,12 @@ function SmartAI:getDynamicUsePriority(card)
 				end
 			elseif use_card:inherits("Peach") then
 				dynamic_value = 7.85
-			elseif use_card:inherits("JishiCard") and self:getCardsNum("Snatch") > 0 and good_null >= bad_null then
+			elseif use_card:inherits("JishiCard") and good_null >= bad_null then
 				dynamic_value = 6.55
-			elseif use_card:inherits("GanlinCard") and self.player:usedTimes("RendeCard") < 2 then
+			elseif use_card:inherits("GanlinCard") and self.player:usedTimes("GanlinCard") < 2 then
 				if not self.player:isWounded() then dynamic_value = 6.57
-				elseif self:isWeak() then dynamic_value = 15
-				else dynamic_value = 12
+				elseif self:isWeak() then dynamic_value = 3
+				else dynamic_value = 6
 				end
 			elseif use_card:inherits("HaoshenCard") then
 				if not self.player:isWounded() then dynamic_value = 0
@@ -465,7 +465,7 @@ function SmartAI:cardNeed(card)
 	if card:inherits("Peach") then
 		self:sort(self.friends,"hp")
 		if self.friends[1]:getHp() < 2 then return 10 end
-		if (self.player:getHp() < 3 or self.player:getLostHp() > 1) or self:hasSkills("shouge|baoguo") then return 14 end
+		if (self.player:getHp() < 3 or self.player:getLostHp() > 1) or self:hasSkills("baoguo") then return 14 end
 		return self:getUseValue(card)
 	end
 	if self:isWeak() and card:inherits("Jink") and self:getCardsNum("Jink") < 1 then return 12 end
@@ -1987,25 +1987,19 @@ function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
-	if pattern == "jink" and target then
-		if self:isFriend(target) then
-			if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
-			if target:hasSkill("huatian") then return "." end
-		else
-			if not target:hasFlag("drank") then
-				if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
-				else
-					return self:getCardId("Jink") or "."
-				end
-				if not self:hasSkills(sgs.need_kongcheng, player) then
-				if self:isEquip("Axe", target) then
-					if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
-					if target:getHandcardNum() - target:getHp() > 2 then return "." end
-				elseif self:isEquip("Blade", target) then
-					if self:getCardsNum("Jink") <= self:getCardsNum("Slash", target) then return "." end
-				end
-			end
-
+	if target and self:isFriend(target) then
+		if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
+		if target:hasSkill("huatian") then return "." end
+	end
+	if pattern == "jink" and target and self:isEnemy(target) and not target:hasFlag("drank") then
+		if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
+		else return self:getCardId("Jink") or "." end
+		if not self:hasSkills(sgs.need_kongcheng, player) then
+		if self:isEquip("Axe", target) then
+			if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
+			if target:getHandcardNum() - target:getHp() > 2 then return "." end
+		elseif self:isEquip("Blade", target) then
+			if self:getCardsNum("Jink") <= self:getCardsNum("Slash", target) then return "." end
 		end
 	end
 end
@@ -2224,9 +2218,9 @@ function SmartAI:askForYiji(card_ids)
 	local card, friend = self:getCardNeedPlayer(cards)
 	if card and friend then return friend, card:getId() end
 	if #self.friends > 1 and self:getOverflow() > 0 then
-		self:sort(self.friends_noself, "handcard")
-		for _, afriend in ipairs(self.friends_noself) do
-			if not self:needKongcheng(afriend) then
+		self:sort(self.friends, "handcard")
+		for _, afriend in ipairs(self.friends) do
+			if not (self:needKongcheng(afriend)) then
 				for _, acard_id in ipairs(card_ids) do
 					if not sgs.Sanguosha:getCard(acard_id):inherits("Shit") then return afriend, acard_id end
 				end
@@ -2246,13 +2240,15 @@ function SmartAI:askForPindian(requestor, reason)
 		if self:getUseValue(card) < 6 then mincard = card break end
 	end
 	for _, card in ipairs(sgs.reverse(cards)) do
-		if self.player:hasSkill("changsheng") and card:getSuit() == sgs.Card_Spade then
+		if self.player:hasSkill("changsheng") and card:getSuit() == sgs.Card_Spade and self:getUseValue(card) < 6 then
 			maxcard = card
 			break
 		end
 	end
-	for _, card in ipairs(sgs.reverse(cards)) do
-		if self:getUseValue(card) < 6 then maxcard = card break	end
+	if not maxcard then
+		for _, card in ipairs(sgs.reverse(cards)) do
+			if self:getUseValue(card) < 6 then maxcard = card break	end
+		end
 	end
 	self:sortByUseValue(cards, true)
 	minusecard = cards[1]
@@ -2263,11 +2259,7 @@ function SmartAI:askForPindian(requestor, reason)
 		local ret = callback(minusecard, self, requestor, maxcard, mincard)
 		if ret then return ret end
 	end
-	if self:isFriend(requestor) then return mincard end
-	if ("dalei|suocai|taolue"):match(reason) then
-		if requestor:getHandcardNum() > 2 then return maxcard else return minusecard end
-	end
-	return maxcard
+	if self:isFriend(requestor) then return mincard else return maxcard end
 end
 
 sgs.ai_skill_playerchosen.damage = function(self, targets)
@@ -2554,7 +2546,7 @@ function SmartAI:getRetrialCardId(cards, judge)
 	end
 
 	if next(can_use) then
-		self:sortByKeepValue(can_use, true)
+		self:sortByKeepValue(can_use)
 		return can_use[1]:getEffectiveId()
 	else
 		return -1
@@ -2675,6 +2667,11 @@ function SmartAI:getMaxCard(player)
 	local max_card, max_point = nil, 0
 	for _, card in sgs.qlist(cards) do
 		local point = card:getNumber()
+		if player:hasSkill("changsheng") and card:getSuit() == sgs.Card_Spade then
+			max_point = 13
+			max_card = card
+			break
+		end
 		if point > max_point then
 			max_point = point
 			max_card = card

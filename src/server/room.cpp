@@ -204,7 +204,7 @@ void Room::enterDying(ServerPlayer *player, DamageStruct *reason){
     dying.savers = savers;
 
     QVariant dying_data = QVariant::fromValue(dying);
-    thread->trigger(Dying, player, dying_data);
+    thread->trigger(Dying, this, player, dying_data);
 }
 
 void Room::revivePlayer(ServerPlayer *player){
@@ -254,7 +254,7 @@ void Room::updateStateItem(){
 
 void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
     QVariant data = QVariant::fromValue(reason);
-    if(thread->trigger(PreDeath, victim, data))
+    if(thread->trigger(PreDeath, this, victim, data))
         return;
     ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.ContestMode && killer){
@@ -295,14 +295,14 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     broadcastProperty(victim, "alive");
 
-    thread->trigger(GameOverJudge, victim, data);
+    thread->trigger(GameOverJudge, this, victim, data);
 
 
     broadcastProperty(victim, "role");
     thread->delay(300);
     broadcastInvoke("killPlayer", victim->objectName());
 
-    thread->trigger(Death, victim, data);
+    thread->trigger(Death, this, victim, data);
     victim->loseAllSkills();
 
     if(Config.EnableAI){
@@ -337,15 +337,15 @@ void Room::judge(JudgeStruct &judge_struct){
 
     QVariant data = QVariant::fromValue(judge_star);
 
-    thread->trigger(StartJudge, judge_star->who, data);
+    thread->trigger(StartJudge, this, judge_star->who, data);
 
     QList<ServerPlayer *> players = getAllPlayers();
     foreach(ServerPlayer *player, players){
-        if(thread->trigger(AskForRetrial, player, data))
+        if(thread->trigger(AskForRetrial, this, player, data))
             break;
     }
 
-    thread->trigger(FinishJudge, judge_star->who, data);
+    thread->trigger(FinishJudge, this, judge_star->who, data);
 }
 
 void Room::sendJudgeResult(const JudgeStar judge){
@@ -494,9 +494,9 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     setEmotion(effect.to, "victim");
 
     setTag("LastSlashEffect", data);
-    bool broken = thread->trigger(SlashEffect, effect.from, data);
+    bool broken = thread->trigger(SlashEffect, this, effect.from, data);
     if(!broken)
-        thread->trigger(SlashEffected, effect.to, data);
+        thread->trigger(SlashEffected, this, effect.to, data);
 }
 
 void Room::slashResult(const SlashEffectStruct &effect, const Card *jink){
@@ -506,10 +506,10 @@ void Room::slashResult(const SlashEffectStruct &effect, const Card *jink){
     QVariant data = QVariant::fromValue(result_effect);
 
     if(jink == NULL)
-        thread->trigger(SlashHit, effect.from, data);
+        thread->trigger(SlashHit, this, effect.from, data);
     else{
         setEmotion(effect.to, "jink");
-        thread->trigger(SlashMissed, effect.from, data);
+        thread->trigger(SlashMissed, this, effect.from, data);
     }
 }
 
@@ -769,7 +769,7 @@ bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, co
     }
 
     QVariant decisionData = QVariant::fromValue("skillInvoke:"+skill_name+":"+(invoked ? "yes" : "no"));
-    thread->trigger(ChoiceMade, player, decisionData);
+    thread->trigger(ChoiceMade, this, player, decisionData);
     return invoked;
 }
 
@@ -791,7 +791,7 @@ QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, cons
         else answer = toQString(clientReply);
     }
     QVariant decisionData = QVariant::fromValue("skillChoice:"+skill_name+":"+answer);
-    thread->trigger(ChoiceMade, player, decisionData);
+    thread->trigger(ChoiceMade, this, player, decisionData);
     return answer;
 }
 
@@ -916,7 +916,7 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     const Card *last_trick = trick;
 
     QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
-    thread->trigger(ChoiceMade, repliedPlayer, decisionData);
+    thread->trigger(ChoiceMade, this, repliedPlayer, decisionData);
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
     if(repliedPlayer->hasSkill("pozhen")){
         if(card->objectName() == "counterplot")
@@ -962,7 +962,7 @@ int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QStrin
         card_id = who->getRandomHandCardId();
 
     QVariant decisionData = QVariant::fromValue("cardChosen:"+reason+":"+QString::number(card_id));
-    thread->trigger(ChoiceMade, player, decisionData);
+    thread->trigger(ChoiceMade, this, player, decisionData);
 
 
     return card_id;
@@ -973,9 +973,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     const Card *card = NULL;
 
     QVariant asked = pattern;
-    if(thread->trigger(CardAsk, player, asked))
+    if(thread->trigger(CardAsk, this, player, asked))
         return NULL;
-    thread->trigger(CardAsked, player, asked);
+    thread->trigger(CardAsked, this, player, asked);
     if(has_provided){
         card = provided;
         provided = NULL;
@@ -998,7 +998,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     if(card == NULL)
     {
         QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+"nil"+"_");
-        thread->trigger(ChoiceMade, player, decisionData);
+        thread->trigger(ChoiceMade, this, player, decisionData);
         return NULL;
     }
 
@@ -1020,7 +1020,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             player->playCardEffect("Espear");
 
         QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+card->toString()+"_");
-        thread->trigger(ChoiceMade, player, decisionData);
+        thread->trigger(ChoiceMade, this, player, decisionData);
 
         CardStar card_ptr = card;
         QVariant card_star = QVariant::fromValue(card_ptr);
@@ -1039,10 +1039,10 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             player->playCardEffect(card, mute);
 
             if(trigger_event == JinkUsed)
-                thread->trigger(CardResponsed, player, card_star);
+                thread->trigger(CardResponsed, this, player, card_star);
         }
 
-        thread->trigger(trigger_event, player, card_star);
+        thread->trigger(trigger_event, this, player, card_star);
 
     }else if(continuable)
         return askForCard(player, pattern, prompt);
@@ -1052,7 +1052,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
     QVariant asked = pattern;
-    if(thread->trigger(CardUseAsk, player, asked))
+    if(thread->trigger(CardUseAsk, this, player, asked))
         return NULL;
 
     CardUseStruct card_use;
@@ -1079,12 +1079,12 @@ bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QSt
 
     if (isCardUsed && card_use.isValid()){
         QVariant decisionData = QVariant::fromValue(card_use);
-        thread->trigger(ChoiceMade, player, decisionData);
+        thread->trigger(ChoiceMade, this, player, decisionData);
         useCard(card_use);
         return true;        
     }else{
         QVariant decisionData = QVariant::fromValue("askForUseCard:"+pattern+":"+prompt+":nil");
-        thread->trigger(ChoiceMade, player, decisionData);
+        thread->trigger(ChoiceMade, this, player, decisionData);
     }
 
     return false;
@@ -1113,7 +1113,7 @@ int Room::askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusa
     }   
 
     QVariant decisionData = QVariant::fromValue("AGChosen:"+reason+":"+QString::number(card_id));
-    thread->trigger(ChoiceMade, player, decisionData);
+    thread->trigger(ChoiceMade, this, player, decisionData);
 
     return card_id;
 }
@@ -1142,7 +1142,7 @@ const Card *Room::askForCardShow(ServerPlayer *player, ServerPlayer *requestor, 
     }
 
     QVariant decisionData = QVariant::fromValue("cardShow:" + reason + ":_" + card->toString() + "_");
-    thread->trigger(ChoiceMade, player, decisionData);
+    thread->trigger(ChoiceMade, this, player, decisionData);
     return card;
 }
 
@@ -1203,7 +1203,7 @@ const Card *Room::askForSinglePeach(ServerPlayer *player, ServerPlayer *dying){
     if(card){
         QVariant decisionData = QVariant::fromValue("peach:"+
             QString("%1:%2:%3").arg(dying->objectName()).arg(1 - dying->getHp()).arg(card->toString()));
-        thread->trigger(ChoiceMade, player, decisionData);
+        thread->trigger(ChoiceMade, this, player, decisionData);
         return card;
     }else if(continuable)
         return askForSinglePeach(player, dying);
@@ -1221,7 +1221,7 @@ void Room::setPlayerProperty(ServerPlayer *player, const char *property_name, co
     broadcastProperty(player, property_name);
 
     if(strcmp(property_name, "hp") == 0){
-        thread->trigger(HpChanged, player);
+        thread->trigger(HpChanged, this, player);
     }
 }
 
@@ -2526,7 +2526,7 @@ void Room::useCard(const CardUseStruct &card_use, bool add_history){
 
 void Room::loseHp(ServerPlayer *victim, int lose){
     QVariant data = lose;
-    thread->trigger(HpLost, victim, data);
+    thread->trigger(HpLost, this, victim, data);
 }
 
 void Room::loseMaxHp(ServerPlayer *victim, int lose){
@@ -2566,12 +2566,12 @@ void Room::recover(ServerPlayer *player, const RecoverStruct &recover, bool set_
         return;
 
     QVariant data = QVariant::fromValue(recover);
-    thread->trigger(HpRecover, player, data);
+    thread->trigger(HpRecover, this, player, data);
 
     if(set_emotion){
         setEmotion(player, "recover");
     }
-    thread->trigger(HpRecovered, player, data);
+    thread->trigger(HpRecovered, this, player, data);
 }
 
 bool Room::cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to){
@@ -2591,7 +2591,7 @@ bool Room::cardEffect(const CardEffectStruct &effect){
     QVariant data = QVariant::fromValue(effect);
     bool broken = false;
     if(effect.from)
-        broken = thread->trigger(CardEffect, effect.from, data);
+        broken = thread->trigger(CardEffect, this, effect.from, data);
 
     if(broken)
         return false;
@@ -2607,7 +2607,7 @@ bool Room::cardEffect(const CardEffectStruct &effect){
         sendLog(log);
         return false;
     }
-    return !thread->trigger(CardEffected, effect.to, data);
+    return !thread->trigger(CardEffected, this, effect.to, data);
 }
 
 void Room::damage(const DamageStruct &damage_data){
@@ -2621,42 +2621,42 @@ void Room::damage(const DamageStruct &damage_data){
 
     if(!damage_data.chain && damage_data.from){
         // predamage
-        if(thread->trigger(Predamage, damage_data.from, data))
+        if(thread->trigger(Predamage, this, damage_data.from, data))
             return;
     }
 	
     // DamagedProceed
-    bool prevent = thread->trigger(DamagedProceed, damage_data.to, data);
+    bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
     if(prevent)
         return;
 
     // DamageProceed
     if(damage_data.from){
-        if(thread->trigger(DamageProceed, damage_data.from, data))
+        if(thread->trigger(DamageProceed, this, damage_data.from, data))
             return;
     }
 
     // predamaged
-    bool broken = thread->trigger(Predamaged, damage_data.to, data);
+    bool broken = thread->trigger(Predamaged, this, damage_data.to, data);
     if(broken)
         return;
 
     // damage done, should not cause damage process broken
-    thread->trigger(DamageDone, damage_data.to, data);
+    thread->trigger(DamageDone, this, damage_data.to, data);
 
     // damage
     if(damage_data.from){
-        bool broken = thread->trigger(Damage, damage_data.from, data);
+        bool broken = thread->trigger(Damage, this, damage_data.from, data);
         if(broken)
             return;
     }
 
     // damaged
-    broken = thread->trigger(Damaged, damage_data.to, data);
+    broken = thread->trigger(Damaged, this, damage_data.to, data);
     if(broken)
         return;
 
-    thread->trigger(DamageComplete, damage_data.to, data);
+    thread->trigger(DamageComplete, this, damage_data.to, data);
 }
 
 void Room::sendDamageLog(const DamageStruct &data){
@@ -2882,7 +2882,7 @@ void Room::drawCards(ServerPlayer *player, int n, const QString &reason){
         player->getRoom()->setCardFlag(card, reason);
 
         QVariant data = QVariant::fromValue(card_id);
-        if(thread->trigger(CardDrawing, player, data))
+        if(thread->trigger(CardDrawing, this, player, data))
             continue;
 
         player->drawCard(card);
@@ -2923,7 +2923,7 @@ void Room::drawCards(ServerPlayer *player, int n, const QString &reason){
         broadcastInvoke("drawNCards", draw_str, player);
 
     QVariant data = QVariant::fromValue(n);
-    thread->trigger(CardDrawnDone, player, data);
+    thread->trigger(CardDrawnDone, this, player, data);
 }
 
 void Room::throwCard(const Card *card, ServerPlayer *who){
@@ -2955,7 +2955,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who){
     if(who){
         CardStar card_ptr = card;
         QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, who, data);
+        thread->trigger(CardDiscarded, this, who, data);
     }
 }
 
@@ -3031,7 +3031,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
 
             if(to){
                 data = QVariant::fromValue(move);
-                thread->trigger(CardMoving, move.to, data);
+                thread->trigger(CardMoving, this, move.to, data);
             }
             doMove(move, scope);
 
@@ -3045,7 +3045,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
 
         if(to){
             data = QVariant::fromValue(move);
-            thread->trigger(CardMoving, move.to, data);
+            thread->trigger(CardMoving, this, move.to, data);
         }
         doMove(move, scope);
 
@@ -3054,9 +3054,9 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     }
 
     if(from)
-        thread->trigger(CardLostDone, from);
+        thread->trigger(CardLostDone, this, from);
     if(to)
-        thread->trigger(CardGotDone, to);
+        thread->trigger(CardGotDone, this, to);
 
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
         ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
@@ -3146,12 +3146,12 @@ void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope)
     if(move.from){
         CardMoveStar move_star = &move;
         QVariant data = QVariant::fromValue(move_star);
-        thread->trigger(CardLost, move.from, data);
+        thread->trigger(CardLost, this, move.from, data);
     }
     if(move.to && move.to!=move.from){
         CardMoveStar move_star = &move;
         QVariant data = QVariant::fromValue(move_star);
-        thread->trigger(CardGot, move.to, data);
+        thread->trigger(CardGot, this, move.to, data);
     }
     Sanguosha->getCard(move.card_id)->onMove(move);
 }
@@ -3283,7 +3283,7 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
     }
 
     QVariant data = QVariant::fromValue(card_use);
-    thread->trigger(ChoiceMade, player, data);
+    thread->trigger(ChoiceMade, this, player, data);
 }
 
 Card::Suit Room::askForSuit(ServerPlayer *player, const QString& reason){
@@ -3363,7 +3363,7 @@ bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discar
 
     QVariant data;
     data = QString("%1:%2").arg("cardDiscard").arg(dummy_card->toString());
-    thread->trigger(ChoiceMade, player, data);
+    thread->trigger(ChoiceMade, this, player, data);
 
     dummy_card->deleteLater();
 
@@ -3570,7 +3570,7 @@ ServerPlayer *Room::askForPlayerChosen(ServerPlayer *player, const QList<ServerP
     }
     if(choice){
         QVariant data=QString("%1:%2:%3").arg("playerChosen").arg(skillName).arg(choice->objectName());
-        thread->trigger(ChoiceMade, player, data);
+        thread->trigger(ChoiceMade, this, player, data);
     }
     return choice;
 }
@@ -3768,8 +3768,8 @@ void Room::takeAG(ServerPlayer *player, int card_id){
         move.card_id = card_id;
         CardMoveStar move_star = &move;
         QVariant data = QVariant::fromValue(move_star);
-        thread->trigger(CardGot, player, data);
-        thread->trigger(CardGotDone, player);
+        thread->trigger(CardGot, this, player, data);
+        thread->trigger(CardGotDone, this, player);
     }else{
         discard_pile->prepend(card_id);
         setCardMapping(card_id, NULL, Player::DiscardedPile);

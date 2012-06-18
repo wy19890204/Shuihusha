@@ -39,7 +39,7 @@ function SmartAI:slashProhibit(card,enemy)
 		end
 	end
 
-	return not self:slashIsEffective(card, enemy)
+	return self.room:isProhibited(self.player, enemy, card) or not self:slashIsEffective(card, enemy) 
 end
 
 function SmartAI:slashIsEffective(slash, to)
@@ -304,28 +304,34 @@ sgs.ai_keep_value.Slash = 2
 sgs.ai_use_priority.Slash = 2.4
 
 function SmartAI:useCardPeach(card, use)
+	local mustusepeach = false
 	if not self.player:isWounded() then return end
-	if not (self:getOverflow() > 1 and #self.friends_noself > 0) then
-		local peaches = 0
-		local cards = self.player:getHandcards()
-		cards = sgs.QList2Table(cards)
-		for _,card in ipairs(cards) do
-			if card:inherits("Peach") then peaches = peaches+1 end
+	local peaches = 0
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
+	for _,card in ipairs(cards) do
+		if card:inherits("Peach") then peaches = peaches+1 end
+	end
+	for _, friend in ipairs(self.enemies) do
+		if (self:hasSkills(sgs.drawpeach_skill,enemy) and self.player:getHandcardNum() < 3) then
+			mustusepeach = true
 		end
-
-		for _, friend in ipairs(self.friends_noself) do
+	end
+	for _, friend in ipairs(self.friends_noself) do
+		if not mustusepeach then
+			if friend:isLord() and friend:getHp() == 1 and peaches < 2 then return end
 			if (self.player:getHp()-friend:getHp() > peaches) and (friend:getHp() < 3) then return end
 		end
-		
-		if self.player:hasSkill("meihuo") and self:getOverflow() > 0 then
-			self:sort(self.friends, "hp")
-			for _, friend in ipairs(self.friends) do
-				if friend:isWounded() and friend:getGeneral():isMale() then return end
-			end
-		end
-
-		use.card = card
 	end
+
+	if self.player:hasSkill("meihuo") and self:getOverflow() > 0 then
+		self:sort(self.friends, "hp")
+		for _, friend in ipairs(self.friends) do
+			if friend:isWounded() and friend:getGeneral():isMale() then return end
+		end
+	end
+
+	use.card = card
 end
 
 sgs.ai_card_intention.Peach = -120
@@ -719,7 +725,7 @@ function SmartAI:useCardDuel(duel, use)
 	end
 	local n2 
 	for _, enemy in ipairs(enemies) do
-		n2 = enemy:getHandcardNum()
+		n2 = self:getCardsNum("Slash",enemy)
 		if self:objectiveLevel(enemy) > 3 then
 			if enemy:hasSkill("wushuang") then n2 = n2*2 end
 			target = enemy
@@ -728,7 +734,9 @@ function SmartAI:useCardDuel(duel, use)
 	end
 	
 	local useduel
-	if target and self:objectiveLevel(target) > 3 and self:hasTrickEffective(duel, target) then
+	if target and self:objectiveLevel(target) > 3 and self:hasTrickEffective(duel, target) 
+		and not self.room:isProhibited(self.player, target, duel)
+			and not self:cantbeHurt(target) then
 		if n1 >= n2 then
 			useduel = true
 		elseif n2 > n1*2 + 1 then
@@ -1138,7 +1146,7 @@ function SmartAI:useCardIndulgence(card, use)
 end
 
 sgs.ai_use_value.Indulgence = 8
-
+sgs.ai_use_priority.Indulgence = 8.9
 sgs.ai_card_intention.Indulgence = 120
 
 sgs.dynamic_value.control_usecard.Indulgence = true
