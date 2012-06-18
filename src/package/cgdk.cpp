@@ -12,8 +12,7 @@ public:
         events << SlashMissed << Damage;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *bao, QVariant &data) const{
-        Room *room = bao->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *bao, QVariant &data) const{
         PlayerStar target;
         if(event == SlashMissed){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
@@ -134,11 +133,10 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *mowang, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *mowang, QVariant &data) const{
         if(mowang->isKongcheng()){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand){
-                Room *room = mowang->getRoom();
                 LogMessage log;
                 log.type = "#TriggerSkill";
                 log.from = mowang;
@@ -339,8 +337,7 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *writer = room->findPlayerBySkillName(objectName());
         if(!writer)
             return false;
@@ -425,8 +422,7 @@ public:
         return !target->isNude();
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         JudgeStar judge = data.value<JudgeStar>();
         if(judge->card->getSuit() != Card::Diamond || player->isNude())
             return false;
@@ -517,14 +513,13 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
         if(effect.from && !effect.from->getWeapon() &&
             (effect.card->inherits("Assassinate") || effect.card->inherits("Slash"))){
             LogMessage log;
             log.type = "#ComskillNullify";
             log.from = effect.from;
-            Room *room = player->getRoom();
             log.to << effect.to;
             log.arg = effect.card->objectName();
             log.arg2 = objectName();
@@ -626,11 +621,10 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive() &&
             damage.to->isKongcheng() && player->askForSkillInvoke(objectName(), data)){
-            Room *room = damage.to->getRoom();
             room->playSkillEffect(objectName());
             room->loseMaxHp(damage.to);
         }

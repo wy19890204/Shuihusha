@@ -99,7 +99,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
         if(effect.card->inherits("ArcheryAttack")){
             LogMessage log;
@@ -107,7 +107,7 @@ public:
             log.from = player;
             log.arg = objectName();
             log.arg2 = "archery_attack";
-            player->getRoom()->sendLog(log);
+            room->sendLog(log);
 
             return true;
         }else
@@ -155,8 +155,7 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         ServerPlayer *pianzi = room->findPlayerBySkillName(objectName());
         if(!pianzi || !pianzi->askForSkillInvoke(objectName()))
             return false;
@@ -253,8 +252,7 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         PindianStar pindian = data.value<PindianStar>();
         if(pindian->reason != "huazhu" || !pindian->from->hasSkill(objectName()))
             return false;
@@ -277,8 +275,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent v, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent v, Room* room, ServerPlayer *player, QVariant &data) const{
         if(v == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand && player->isAlive()){

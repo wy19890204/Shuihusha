@@ -138,11 +138,10 @@ public:
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QString asked = data.toString();
         if(asked != "slash" && asked != "jink")
             return false;
-        Room *room = player->getRoom();
         QList<ServerPlayer *> playerAs, playerBs;
         foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
             if(asked == "slash" && tmp->getWeapon())
@@ -203,9 +202,8 @@ public:
         return 2;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        Room *room = player->getRoom();
         ServerPlayer *water = room->findPlayerBySkillName(objectName());
         if(!water || water->isKongcheng())
             return false;
@@ -378,12 +376,11 @@ public:
         events << DamageProceed;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *turtle, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *turtle, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         const Card *reason = damage.card;
         if(reason == NULL)
             return false;
-        Room *room = turtle->getRoom();
         if((reason->inherits("Slash") || reason->inherits("Duel"))
             && turtle->getWeapon() && turtle->getArmor()
             && turtle->askForSkillInvoke(objectName(), data)){
@@ -414,8 +411,7 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->getGeneralName() != "tongguanf")
             player->tag["AoxiangStore"] = player->getGeneralName();
         if(player->isWounded())
@@ -436,10 +432,10 @@ public:
         events << GameStart;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         if(player->getGeneral2Name() == "tongguan"){
-            player->getRoom()->setPlayerProperty(player, "general2", player->getGeneralName());
-            player->getRoom()->setPlayerProperty(player, "general", "tongguan");
+            room->setPlayerProperty(player, "general2", player->getGeneralName());
+            room->setPlayerProperty(player, "general", "tongguan");
         }
         return false;
     }
@@ -517,13 +513,12 @@ public:
         events << CardResponsed;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardStar card_star = data.value<CardStar>();
         if(!card_star->inherits("Jink"))
             return false;
 
         if(player->askForSkillInvoke(objectName())){
-            Room *room = player->getRoom();
             room->playSkillEffect(objectName());
             ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
             if(!room->askForCard(target, "jink", "@kongying:" + player->objectName())){

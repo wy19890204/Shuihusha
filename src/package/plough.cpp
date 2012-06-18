@@ -193,9 +193,8 @@ public:
         events << CardUsed;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
-        Room *room = player->getRoom();
         if(use.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
             foreach(ServerPlayer *effecto, use.to){
                 if(!effecto->isChained())
@@ -229,9 +228,8 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        Room *room = player->getRoom();
         if(damage.card->inherits("Slash") && damage.to->isAlive()){
             player->playCardEffect("Emeteor_sword");
             room->loseHp(damage.to, damage.damage);
@@ -260,8 +258,7 @@ public:
         events << Damaged << SlashEffected;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature != DamageStruct::Normal){

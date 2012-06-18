@@ -5,7 +5,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "ai.h"
-
+/*
 class Jielue: public TriggerSkill{
 public:
     Jielue():TriggerSkill("jielue"){
@@ -952,3 +952,4 @@ GubenPackage::GubenPackage()
 }
 
 ADD_PACKAGE(Guben);
+*/

@@ -12,8 +12,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *xuning, QVariant &data) const{
-        Room *room = xuning->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *xuning, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(xuning != damage.to && damage.to->isChained() && damage.nature == DamageStruct::Normal){
             LogMessage log;
@@ -58,8 +57,7 @@ public:
         }
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *xuning = room->findPlayerBySkillName(objectName());
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
@@ -187,8 +185,7 @@ public:
         view_as_skill = new ZhushaDiscard;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *wusong, QVariant &data) const{
-        Room *room = wusong->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *wusong, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Slash") && Self->hasFlag("zhusha_effect")){
             room->playSkillEffect(objectName());
@@ -341,8 +338,7 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *lese = room->findPlayerBySkillName(objectName());
         if(!lese)
             return false;
@@ -471,12 +467,12 @@ public:
         view_as_skill = new MeiyuViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *moyujian, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *moyujian, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.card || !damage.card->inherits("Slash") || damage.damage < 1)
             return false;
         if(damage.card->getSkillName() == "meiyu" && damage.to->isAlive()){
-            moyujian->getRoom()->loseMaxHp(damage.to, damage.damage);
+            room->loseMaxHp(damage.to, damage.damage);
             return true;
         }
         return false;
@@ -566,9 +562,8 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        Room *room = player->getRoom();
         if(damage.damage > 0){
             LogMessage log;
             log.type = "#Dunwu";

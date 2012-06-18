@@ -3,7 +3,7 @@
 
 #include "package.h"
 #include "card.h"
-
+/*
 class GubenPackage: public Package{
     Q_OBJECT
 
@@ -64,5 +64,5 @@ public:
     Q_INVOKABLE FanjianPassCard();
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
-
+*/
 #endif // GUBENPACKAGE_H
