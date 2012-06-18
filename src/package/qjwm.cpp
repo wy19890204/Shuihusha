@@ -297,6 +297,16 @@ public:
     }
 };
 
+class TengfeiRange: public ClientSkill{
+public:
+    TengfeiRange():ClientSkill("#tengfei-range"){
+    }
+
+    virtual int getAtkrg(const Player *from) const{
+        return from->getHp();
+    }
+};
+
 class Longluo:public TriggerSkill{
 public:
     Longluo():TriggerSkill("longluo"){
@@ -559,7 +569,8 @@ QJWMPackage::QJWMPackage()
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
     related_skills.insertMulti("zhanchi", "#@vfui-1");
     oupeng->addRelateSkill("tengfei");
-    skills << new Tengfei;
+    skills << new Tengfei << new TengfeiRange;
+    related_skills.insertMulti("tengfei", "#tengfei-range");
 
     General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);

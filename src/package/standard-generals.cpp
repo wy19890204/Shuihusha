@@ -777,7 +777,10 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *huarong) const{
         Room *room = huarong->getRoom();
-        if(huarong->getPhase() == Player::RoundStart && !huarong->isKongcheng()){
+        if(huarong->getPhase() == Player::RoundStart){
+            room->setPlayerMark(huarong, "kaixian", 0);
+            if(huarong->isKongcheng())
+                return false;
             bool caninvoke = false;
             foreach(const Card *cd, huarong->getHandcards()){
                 if(cd->getNumber() <= 5){
@@ -802,6 +805,16 @@ public:
             room->setPlayerMark(huarong, "kaixian", 0);
 
         return false;
+    }
+};
+
+class KaixianRange: public ClientSkill{
+public:
+    KaixianRange():ClientSkill("#kaixian-range"){
+    }
+
+    virtual int getAtkrg(const Player *from) const{
+        return from->getMark("kaixian");
     }
 };
 
@@ -2641,6 +2654,8 @@ StandardPackage::StandardPackage()
     General *huarong = new General(this, "huarong", "guan");
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
+    huarong->addSkill(new KaixianRange);
+    related_skills.insertMulti("kaixian", "#kaixian-range");
     patterns.insert(".kaixian!", new KaixianPattern);
 
     General *chaijin = new General(this, "chaijin", "guan", 3);

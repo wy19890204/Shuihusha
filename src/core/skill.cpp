@@ -311,6 +311,10 @@ int ClientSkill::getCorrect(const Player *, const Player *) const{
     return 0;
 }
 
+int ClientSkill::getAtkrg(const Player *) const{
+    return 0;
+}
+
 bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
     return false;
 }

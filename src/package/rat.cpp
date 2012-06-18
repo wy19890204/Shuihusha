@@ -178,6 +178,19 @@ public:
     }
 };
 
+class YinyuRange: public ClientSkill{
+public:
+    YinyuRange():ClientSkill("#yinyu-range"){
+    }
+
+    virtual int getAtkrg(const Player *from) const{
+        if(from->getMark("@ylyuh") > 0)
+            return 1234;
+        else
+            return 0;
+    }
+};
+
 #include "plough.h"
 class Fuji:public PhaseChangeSkill{
 public:
@@ -1036,6 +1049,8 @@ RatPackage::RatPackage()
 
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
+    zhangqing->addSkill(new YinyuRange);
+    related_skills.insertMulti("yinyu", "#yinyu-range");
 
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);

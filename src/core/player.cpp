@@ -144,21 +144,10 @@ void Player::clearFlags(){
 }
 
 int Player::getAttackRange() const{
-    if(hasSkill("tengfei"))
-        return hp;
+    int atkrg = weapon ? weapon->getRange() : 1;
+    int extra = Sanguosha->correctClient("attackrange", this);
 
-    if(getMark("kaixian") > 0)
-        return getMark("kaixian");
-
-    if(hasSkill("yinyu") && getMark("@ylyuh") > 0)
-        return 1234;
-
-    if(weapon)
-        return weapon->getRange();
-    else if(hasSkill("zhengfeng"))
-        return hp;
-    else
-        return 1;
+    return qMax(atkrg, extra);
 }
 
 bool Player::inMyAttackRange(const Player *other) const{
