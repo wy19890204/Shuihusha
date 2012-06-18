@@ -682,7 +682,7 @@ void DuijueCard::onEffect(const CardEffectStruct &effect) const{
 
     room->judge(judge);
     if(judge.isBad()){
-        Duel *duel = new Duel(judge.card->getSuit(), judge.card->getNumber());
+        Duel *duel = new Duel(Card::NoSuit, 0);
         duel->setSkillName("duijue");
         duel->setCancelable(false);
 
@@ -2189,14 +2189,15 @@ bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 
 void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
     foreach(ServerPlayer *tmp, targets){
-        const Card *card = tmp->getRandomHandCard();
-        fangla->obtainCard(card, false);
+        //const Card *card = tmp->getRandomHandCard();
+        int card_id = room->askForCardChosen(fangla, tmp, "h", "yongle");
+        room->obtainCard(fangla, card_id, false);
     }
     foreach(ServerPlayer *tmp, targets){
         if(tmp->isDead())
             continue;
         const Card *card = room->askForCardShow(fangla, tmp, "yongle");
-        tmp->obtainCard(card, false);
+        tmp->obtainCard(card);
     }
 }
 
