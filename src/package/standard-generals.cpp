@@ -1440,9 +1440,9 @@ public:
     }
 };
 
-class Jueming: public ProhibitSkill{
+class Jueming: public ClientSkill{
 public:
-    Jueming():ProhibitSkill("jueming"){
+    Jueming():ClientSkill("jueming"){
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{

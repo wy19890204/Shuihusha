@@ -185,15 +185,6 @@ public:
     virtual void onGameStart(ServerPlayer *player) const = 0;
 };
 
-class ProhibitSkill: public Skill{
-    Q_OBJECT
-
-public:
-    ProhibitSkill(const QString &name);
-
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
-};
-
 class ClientSkill: public Skill{
     Q_OBJECT
 
@@ -202,6 +193,7 @@ public:
 
     virtual int getExtra(const Player *target) const;
     virtual int getCorrect(const Player *from, const Player *to) const;
+    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 
 class WeaponSkill: public TriggerSkill{

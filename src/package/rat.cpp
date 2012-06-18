@@ -563,9 +563,9 @@ public:
     }
 };
 
-class Feiyan: public ProhibitSkill{
+class Feiyan: public ClientSkill{
 public:
-    Feiyan():ProhibitSkill("feiyan"){
+    Feiyan():ClientSkill("feiyan"){
     }
 
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{

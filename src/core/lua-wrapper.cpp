@@ -19,7 +19,7 @@ int LuaTriggerSkill::getPriority() const{
 }
 
 LuaProhibitSkill::LuaProhibitSkill(const char *name)
-    :ProhibitSkill(name), is_prohibited(0)
+    :ClientSkill(name), is_prohibited(0)
 {
 
 }

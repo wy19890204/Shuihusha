@@ -1218,7 +1218,7 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
                         ces.card->inherits("Slash"))
                 playerShowed(player);
 
-            const ProhibitSkill* prohibit = room->isProhibited(ces.from,ces.to,ces.card);
+            const ClientSkill* prohibit = room->isProhibited(ces.from,ces.to,ces.card);
             if(prohibit)
             {
                 LogMessage log;

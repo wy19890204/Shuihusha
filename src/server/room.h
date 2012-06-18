@@ -2,7 +2,7 @@
 #define ROOM_H
 
 class TriggerSkill;
-class ProhibitSkill;
+class ClientSkill;
 class Scenario;
 class RoomThread3v3;
 class RoomThread1v1;
@@ -210,7 +210,7 @@ public:
     void copyFrom(Room* rRoom);
     Room* duplicate();
 
-    const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+    const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 
     void setTag(const QString &key, const QVariant &value);
     QVariant getTag(const QString &key) const;

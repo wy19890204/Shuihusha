@@ -85,7 +85,7 @@ public:
     void playSkillEffect(const QString &skill_name, int index) const;
     void playCardEffect(const QString &card_name, bool is_male) const;
 
-    const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+    const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
     int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
 
 private:
@@ -98,7 +98,6 @@ private:
     QMultiMap<QString, QString> related_skills;
 
     // special skills
-    QList<const ProhibitSkill *> prohibit_skills;
     QList<const ClientSkill *> client_skills;
 
     QHash<QString, const Scenario *> scenarios;

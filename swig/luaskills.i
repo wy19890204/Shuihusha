@@ -21,21 +21,15 @@ public:
 	virtual void onGameStart(ServerPlayer *player) const = 0;
 };
 
-class ProhibitSkill: public Skill{
-public:
-	ProhibitSkill(const QString &name);
-
-	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
-};
-
 class ClientSkill: public Skill{
 public:
 	ClientSkill(const QString &name);
-
-	virtual int getCorrect(const Player *from, const Player *to) const = 0;
+	virtual int getExtra(const Player *target) const;
+	virtual int getCorrect(const Player *from, const Player *to) const;
+	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 
-class LuaProhibitSkill: public ProhibitSkill{
+class LuaProhibitSkill: public ClientSkill{
 public:
 	LuaProhibitSkill(const char *name);
 
@@ -97,7 +91,7 @@ public:
 	LuaFunction view_as;
 };
 
-class LuaDistanceSkill: public DistanceSkill{
+class LuaDistanceSkill: public ClientSkill{
 public:
 	LuaDistanceSkill(const char *name);
 	virtual int getCorrect(const Player *from, const Player *to) const;

@@ -700,7 +700,7 @@ public:
 	void playEffect(const char *filename) const;
 	void playSkillEffect(const char *skill_name, int index) const;
 
-	const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
 };
 
@@ -873,7 +873,7 @@ public:
 	void copyFrom(Room* rRoom);
 	Room* duplicate();
 
-	const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
 
 	void setTag(const char *key, const QVariant &value);
 	QVariant getTag(const char *key) const;

@@ -22,7 +22,7 @@ public:
     int priority;
 };
 
-class LuaProhibitSkill: public ProhibitSkill{
+class LuaProhibitSkill: public ClientSkill{
     Q_OBJECT
 
 public:

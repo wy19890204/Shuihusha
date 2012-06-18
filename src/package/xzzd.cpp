@@ -253,19 +253,13 @@ public:
     }
 };
 
-class Linse: public ProhibitSkill{
+class Linse: public ClientSkill{
 public:
-    Linse():ProhibitSkill("linse"){
+    Linse():ClientSkill("linse"){
     }
 
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
         return card->inherits("Snatch") || card->inherits("Dismantlement");
-    }
-};
-
-class LinseMaxCard: public ClientSkill{
-public:
-    LinseMaxCard():ClientSkill("#linse-maxcard"){
     }
 
     virtual int getExtra(const Player *target) const{
@@ -351,8 +345,6 @@ XZDDPackage::XZDDPackage()
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");
-    lizhong->addSkill(new LinseMaxCard);
-    related_skills.insertMulti("linse", "#linse-maxcard");
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);

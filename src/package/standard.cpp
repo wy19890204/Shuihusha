@@ -141,7 +141,7 @@ void AOE::onUse(Room *room, const CardUseStruct &card_use) const{
     ServerPlayer *source = card_use.from;
     QList<ServerPlayer *> targets, other_players = room->getOtherPlayers(source);
     foreach(ServerPlayer *player, other_players){
-        const ProhibitSkill *skill = room->isProhibited(source, player, this);
+        const ClientSkill *skill = room->isProhibited(source, player, this);
         if(skill){
             LogMessage log;
             log.type = "#SkillAvoid";

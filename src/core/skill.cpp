@@ -298,11 +298,6 @@ bool GameStartSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVa
     return false;
 }
 
-ProhibitSkill::ProhibitSkill(const QString &name)
-    :Skill(name, Skill::Compulsory)
-{
-}
-
 ClientSkill::ClientSkill(const QString &name)
     :Skill(name, Skill::Compulsory)
 {
@@ -314,6 +309,10 @@ int ClientSkill::getExtra(const Player *) const{
 
 int ClientSkill::getCorrect(const Player *, const Player *) const{
     return 0;
+}
+
+bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
+    return false;
 }
 
 WeaponSkill::WeaponSkill(const QString &name)
