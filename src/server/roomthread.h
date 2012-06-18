@@ -23,7 +23,7 @@ struct LogMessage{
 
 class EventTriplet{
 public:
-    EventTriplet(TriggerEvent event, ServerPlayer *target, QVariant *data)
+    EventTriplet(TriggerEvent event, Room* room, ServerPlayer *target, QVariant *data)
         :event(event), room(room), target(target), data(data){}
     QString toString() const;
 

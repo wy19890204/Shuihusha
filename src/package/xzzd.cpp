@@ -263,6 +263,19 @@ public:
     }
 };
 
+class LinseMaxCard: public MaxCardsSkill{
+public:
+    LinseMaxCard():MaxCardsSkill("#linse-maxcard"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return target->getMaxHp();
+        else
+            return 0;
+    }
+};
+
 class LinseEffect: public PhaseChangeSkill{
 public:
     LinseEffect():PhaseChangeSkill("#linse-effect"){
@@ -338,6 +351,8 @@ XZDDPackage::XZDDPackage()
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");
+    lizhong->addSkill(new LinseMaxCard);
+    related_skills.insertMulti("linse", "#linse-maxcard");
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);

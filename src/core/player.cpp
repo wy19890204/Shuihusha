@@ -508,30 +508,15 @@ void Player::setFaceUp(bool face_up){
 }
 
 int Player::getMaxCards() const{
-    int extra = 0, total = 0;
+    int rule = 0, total = 0, extra = 0;
     if(Config.MaxHpScheme == 2 && general2){
         total = general->getMaxHp() + general2->getMaxHp();
         if(total % 2 != 0)
-            extra = 1;
+            rule = 1;
     }
+    extra += Sanguosha->correctMaxCards(this);
 
-    if(hasSkill("linse"))
-        return max_hp;
-
-    int shaxue = 0;
-    if(hasLordSkill("shaxue")){
-        QList<const Player *> players = getSiblings();
-        foreach(const Player *player, players){
-            if(player->isDead() && player->getKingdom() == "kou")
-                shaxue += 2;
-        }
-    }
-
-    int shensuan = hasSkill("shensuan") ? 2 : 0;
-
-    total = qMax(hp,0) + extra + shaxue + shensuan;
-
-    return total;
+    return (qMax(hp,0) + rule + extra);
 }
 
 QString Player::getKingdom() const{

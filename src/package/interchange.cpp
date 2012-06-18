@@ -174,6 +174,19 @@ public:
     }
 };
 
+class ShensuanMC: public MaxCardsSkill{
+public:
+    ShensuanMC():MaxCardsSkill("#shensuan-mc"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return 2;
+        else
+            return 0;
+    }
+};
+
 class Gunzhu:public TriggerSkill{
 public:
     Gunzhu():TriggerSkill("gunzhu"){
@@ -662,6 +675,8 @@ InterChangePackage::InterChangePackage()
 
     General *shenjiangjing = new General(this, "shenjiangjing", "god", 3);
     shenjiangjing->addSkill(new Shensuan);
+    shenjiangjing->addSkill(new ShensuanMC);
+    related_skills.insertMulti("shensuan", "#shensuan-mc");
     shenjiangjing->addSkill(new Gunzhu);
 
     General *duwei = new General(this, "duwei", "jiang");

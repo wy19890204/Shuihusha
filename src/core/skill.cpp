@@ -306,7 +306,11 @@ ProhibitSkill::ProhibitSkill(const QString &name)
 DistanceSkill::DistanceSkill(const QString &name)
     :Skill(name, Skill::Compulsory)
 {
+}
 
+MaxCardsSkill::MaxCardsSkill(const QString &name)
+    :Skill(name, Skill::Compulsory)
+{
 }
 
 WeaponSkill::WeaponSkill(const QString &name)
@@ -315,6 +319,7 @@ WeaponSkill::WeaponSkill(const QString &name)
 }
 
 bool WeaponSkill::triggerable(const ServerPlayer *target) const{
+    if (!target) return false;
     return target->hasWeapon(objectName());
 }
 
@@ -325,6 +330,7 @@ ArmorSkill::ArmorSkill(const QString &name)
 }
 
 bool ArmorSkill::triggerable(const ServerPlayer *target) const{
+    if (!target) return false;
     return target->hasArmorEffect(objectName()) && target->getArmor()->getSkill() == this;
 }
 

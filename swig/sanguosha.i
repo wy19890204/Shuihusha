@@ -451,8 +451,8 @@ struct PhaseChangeStruct{
 typedef PindianStruct *PindianStar;
 
 enum TriggerEvent{
-	NonTrigger,
-	
+    NonTrigger,
+
     GameStart,
     TurnStart,
     PhaseChange,

@@ -194,6 +194,25 @@ public:
     }
 };
 
+
+class ShaxueMaxCard: public MaxCardsSkill{
+public:
+    ShaxueMaxCard():MaxCardsSkill("#shaxue-maxcard"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        int shaxue = 0;
+        if(target->hasLordSkill("shaxue")){
+            QList<const Player *> players = target->getSiblings();
+            foreach(const Player *player, players){
+                if(player->isDead() && player->getKingdom() == "kou")
+                    shaxue += 2;
+            }
+        }
+        return shaxue;
+    }
+};
+
 class Shuntian: public TriggerSkill{
 public:
     Shuntian():TriggerSkill("shuntian"){
@@ -425,6 +444,8 @@ SPPackage::SPPackage()
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
     chaogai->addSkill(new Shaxue);
+    chaogai->addSkill(new ShaxueMaxCard);
+    related_skills.insertMulti("shaxue", "#shaxue-maxcard");
 
     General *jiangsong = new General(this, "jiangsong", "guan");
     jiangsong->addSkill(new Yuzhong);
