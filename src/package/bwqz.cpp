@@ -47,9 +47,9 @@ public:
     }
 };
 
-class Mengchong: public DistanceSkill{
+class Mengchong: public ClientSkill{
 public:
-    Mengchong():DistanceSkill("mengchong"){
+    Mengchong():ClientSkill("mengchong"){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
@@ -532,9 +532,9 @@ public:
     }
 };
 
-class Jibu: public DistanceSkill{
+class Jibu: public ClientSkill{
 public:
-    Jibu():DistanceSkill("jibu"){
+    Jibu():ClientSkill("jibu"){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{

@@ -624,9 +624,9 @@ public:
     }
 };
 
-class Huqi: public DistanceSkill{
+class Huqi: public ClientSkill{
 public:
-    Huqi():DistanceSkill("huqi"){
+    Huqi():ClientSkill("huqi"){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{

@@ -38,7 +38,7 @@ LuaFilterSkill::LuaFilterSkill(const char *name)
 }
 
 LuaDistanceSkill::LuaDistanceSkill(const char *name)
-    :DistanceSkill(name), correct_func(0)
+    :ClientSkill(name), correct_func(0)
 {
 
 }

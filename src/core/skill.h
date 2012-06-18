@@ -194,22 +194,14 @@ public:
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
 };
 
-class DistanceSkill: public Skill{
+class ClientSkill: public Skill{
     Q_OBJECT
 
 public:
-    DistanceSkill(const QString &name);
+    ClientSkill(const QString &name);
 
-    virtual int getCorrect(const Player *from, const Player *to) const = 0;
-};
-
-class MaxCardsSkill: public Skill{
-    Q_OBJECT
-
-public:
-    MaxCardsSkill(const QString &name);
-
-    virtual int getExtra(const Player *target) const = 0;
+    virtual int getExtra(const Player *target) const;
+    virtual int getCorrect(const Player *from, const Player *to) const;
 };
 
 class WeaponSkill: public TriggerSkill{

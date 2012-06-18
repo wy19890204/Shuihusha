@@ -211,7 +211,7 @@ int Player::distanceTo(const Player *other) const{
                 distance --;
         }
     }
-    distance += Sanguosha->correctDistance(this, other);
+    distance += Sanguosha->correctClient("distance", this, other);
 
     // keep the distance >=1
     if(distance < 1)
@@ -514,7 +514,7 @@ int Player::getMaxCards() const{
         if(total % 2 != 0)
             rule = 1;
     }
-    extra += Sanguosha->correctMaxCards(this);
+    extra += Sanguosha->correctClient("maxcard", this);
 
     return (qMax(hp,0) + rule + extra);
 }

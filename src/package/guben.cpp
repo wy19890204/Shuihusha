@@ -656,9 +656,9 @@ public:
     }
 };
 
-class MashuPass: public DistanceSkill{
+class MashuPass: public ClientSkill{
 public:
-    MashuPass():DistanceSkill("mashu_p"){
+    MashuPass():ClientSkill("mashu_p"){
 
     }
 

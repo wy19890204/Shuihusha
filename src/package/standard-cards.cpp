@@ -1052,9 +1052,9 @@ RenwangShield::RenwangShield(Suit suit, int number)
     skill = new RenwangShieldSkill;
 }
 
-class HorseSkill: public DistanceSkill{
+class HorseSkill: public ClientSkill{
 public:
-    HorseSkill():DistanceSkill("horse"){
+    HorseSkill():ClientSkill("horse"){
 
     }
 

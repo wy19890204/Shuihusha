@@ -33,9 +33,9 @@ public:
     }
 };
 
-class Lizheng: public DistanceSkill{
+class Lizheng: public ClientSkill{
 public:
-    Lizheng():DistanceSkill("lizheng"){
+    Lizheng():ClientSkill("lizheng"){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
@@ -194,10 +194,9 @@ public:
     }
 };
 
-
-class ShaxueMaxCard: public MaxCardsSkill{
+class ShaxueMaxCard: public ClientSkill{
 public:
-    ShaxueMaxCard():MaxCardsSkill("#shaxue-maxcard"){
+    ShaxueMaxCard():ClientSkill("#shaxue-maxcard"){
     }
 
     virtual int getExtra(const Player *target) const{

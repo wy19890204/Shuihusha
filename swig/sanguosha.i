@@ -683,7 +683,7 @@ public:
 	const Skill *getSkill(const char *skill_name) const;
 	const TriggerSkill *getTriggerSkill(const char *skill_name) const;
 	const ViewAsSkill *getViewAsSkill(const char *skill_name) const;
-	QList<const DistanceSkill *> getDistanceSkills() const;
+	QList<const ClientSkill *> getClientSkills() const;
 	void addSkills(const QList<const Skill *> &skills);
 
 	int getCardCount() const;
@@ -701,7 +701,7 @@ public:
 	void playSkillEffect(const char *skill_name, int index) const;
 
 	const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
-	int correctDistance(const Player *from, const Player *to) const;
+	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
 };
 
 extern Engine *Sanguosha;

@@ -26,8 +26,8 @@ struct DistanceViewDialogUI{
         min = new QLineEdit;
         in_attack = new QLineEdit;
 
-        QList<const DistanceSkill *> skills = Sanguosha->getDistanceSkills();
-        foreach(const DistanceSkill *skill, skills){
+        QList<const ClientSkill *> skills = Sanguosha->getClientSkills();
+        foreach(const ClientSkill *skill, skills){
             QLineEdit *distance_edit = new QLineEdit;
             distance_edit->setObjectName(skill->objectName());
             distance_edit->setReadOnly(true);
@@ -132,7 +132,7 @@ void DistanceViewDialog::showDistance()
 
     foreach(QLineEdit *edit, ui->distance_edits){
         const Skill *skill = Sanguosha->getSkill(edit->objectName());
-        const DistanceSkill *distance_skill = qobject_cast<const DistanceSkill *>(skill);
+        const ClientSkill *distance_skill = qobject_cast<const ClientSkill *>(skill);
         int correct = distance_skill->getCorrect(from, to);
 
         if(correct > 0)

@@ -303,14 +303,17 @@ ProhibitSkill::ProhibitSkill(const QString &name)
 {
 }
 
-DistanceSkill::DistanceSkill(const QString &name)
+ClientSkill::ClientSkill(const QString &name)
     :Skill(name, Skill::Compulsory)
 {
 }
 
-MaxCardsSkill::MaxCardsSkill(const QString &name)
-    :Skill(name, Skill::Compulsory)
-{
+int ClientSkill::getExtra(const Player *) const{
+    return 0;
+}
+
+int ClientSkill::getCorrect(const Player *, const Player *) const{
+    return 0;
 }
 
 WeaponSkill::WeaponSkill(const QString &name)

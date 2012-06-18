@@ -7,9 +7,9 @@
 
 #include <QTime>
 
-class SceneDistanceEffect : public DistanceSkill {
+class SceneDistanceEffect : public ClientSkill {
 public:
-    SceneDistanceEffect(const QString &name) : DistanceSkill(name) { }
+    SceneDistanceEffect(const QString &name) : ClientSkill(name) { }
 
     virtual int getCorrect(const Player *from, const Player *to) const {
         const ServerPlayer *svFrom = qobject_cast<const ServerPlayer *>(from);

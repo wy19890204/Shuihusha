@@ -28,9 +28,9 @@ public:
 	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
 };
 
-class DistanceSkill: public Skill{
+class ClientSkill: public Skill{
 public:
-	DistanceSkill(const QString &name);
+	ClientSkill(const QString &name);
 
 	virtual int getCorrect(const Player *from, const Player *to) const = 0;
 };

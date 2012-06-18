@@ -3,14 +3,14 @@
 
 #include "package.h"
 #include "card.h"
-/*
+
 class GubenPackage: public Package{
     Q_OBJECT
 
 public:
     GubenPackage();
 };
-
+/*
 class TuxiPassCard: public SkillCard{
     Q_OBJECT
 

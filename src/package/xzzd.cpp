@@ -263,9 +263,9 @@ public:
     }
 };
 
-class LinseMaxCard: public MaxCardsSkill{
+class LinseMaxCard: public ClientSkill{
 public:
-    LinseMaxCard():MaxCardsSkill("#linse-maxcard"){
+    LinseMaxCard():ClientSkill("#linse-maxcard"){
     }
 
     virtual int getExtra(const Player *target) const{
