@@ -14,7 +14,7 @@ public:
         events << Predamage << Predamaged;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         LogMessage log;
         log.from = player;
         log.arg2 = objectName();
@@ -22,7 +22,6 @@ public:
         if(event == Predamage){
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.nature != DamageStruct::Fire){
-                Room *room = player->getRoom();
                 damage.nature = DamageStruct::Fire;
 
                 log.type = "#FenhuiFire";
@@ -77,11 +76,10 @@ public:
         events << CardUsed;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *weidingguo, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *weidingguo, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         CardStar card = use.card;
         if(card->inherits("FireAttack")){
-            Room *room = weidingguo->getRoom();
             if(room->askForSkillInvoke(weidingguo, objectName())){
                 if(card->getSkillName() != "shenhuo")
                     room->playSkillEffect(objectName());
@@ -164,8 +162,7 @@ public:
         return TriggerSkill::triggerable(target);
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         JudgeStar judge = data.value<JudgeStar>();
 
         if(player->askForSkillInvoke(objectName(), data)){

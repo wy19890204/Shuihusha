@@ -16,8 +16,7 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *jinge = room->findPlayerBySkillName(objectName());
         if(player->isKongcheng() && jinge && !jinge->isKongcheng() && jinge->isWounded()){
             CardMoveStar move = data.value<CardMoveStar>();

@@ -57,7 +57,7 @@ protected:
     virtual void run();
 
 private:
-    //Room *room;
+    Room *room;
     jmp_buf env;
     QString order;
 

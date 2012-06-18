@@ -599,7 +599,7 @@ public:
         return target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent, Room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
 

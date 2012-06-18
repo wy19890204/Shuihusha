@@ -12,7 +12,7 @@ public:
         events << PhaseChange << TurnedOver;
     }
 
-    virtual bool trigger(TriggerEvent e, ServerPlayer *emperor, QVariant &data) const{
+    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
         if(e == PhaseChange){
             if(emperor->getPhase() == Player::Discard &&
                emperor->askForSkillInvoke(objectName(), data)){
@@ -23,7 +23,7 @@ public:
         else{
             if(!emperor->hasFlag("NongQ")){
                 int index = emperor->faceUp() ? 2: 1;
-                emperor->getRoom()->playSkillEffect(objectName(), index);
+                room->playSkillEffect(objectName(), index);
             }
             int x = emperor->getLostHp();
             x = qMax(qMin(x,2),1);
@@ -123,8 +123,7 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *tianwang = room->findPlayerBySkillName(objectName());
         if(!tianwang)
             return false;
@@ -152,8 +151,7 @@ public:
         return target->hasSkill("dushi");
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStar damage = data.value<DamageStar>();
         if(damage && damage->to == player && damage->from && damage->from != player){
             if(!player->askForSkillInvoke(objectName(), QVariant::fromValue(damage)))
@@ -203,8 +201,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        Room *rom = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* rom, ServerPlayer *player, QVariant &data) const{
         QString kim;
         if(!player->isLord())
             kim = rom->getLord()->getKingdom();
@@ -261,8 +258,7 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         int num = room->getKingdoms();
         DamageStar damage = data.value<DamageStar>();
         if(damage && damage->from != damage->to && damage->from->hasSkill(objectName())){
@@ -297,8 +293,7 @@ public:
         events << Damage;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.to->isLord())
             return false;
@@ -337,8 +332,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent t, ServerPlayer *conan, QVariant &data) const{
-        Room *room = conan->getRoom();
+    virtual bool trigger(TriggerEvent t, Room* room, ServerPlayer *conan, QVariant &data) const{
         if(t == PhaseChange){
             if(conan->getPhase() == Player::NotActive)
                 room->setPlayerCardLock(conan, "Slash");
@@ -389,14 +383,13 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.from || !damage.from->hasSkill(objectName()))
             return false;
         if(damage.from->distanceTo(damage.to) != 1)
             return false;
         ServerPlayer *wanglun = damage.from;
-        Room *room = wanglun->getRoom();
         QList<ServerPlayer *> ones;
         foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to))
             if(wanglun->distanceTo(tmp) == 1)

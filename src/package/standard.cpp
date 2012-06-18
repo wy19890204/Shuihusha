@@ -67,9 +67,9 @@ void EquipCard::onUse(Room *room, const CardUseStruct &card_use) const{
 
         QVariant data = QVariant::fromValue(card_use);
         RoomThread *thread = room->getThread();
-        thread->trigger(CardUsed, player, data);
+        thread->trigger(CardUsed, room, player, data);
 
-        thread->trigger(CardFinished, player, data);
+        thread->trigger(CardFinished, room, player, data);
     }else
         Card::onUse(room, card_use);
 }
@@ -466,18 +466,18 @@ public:
         events << Dying << PreDeath;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == PreDeath){
             return player->getHp() > 0;
         }
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
-            player->getRoom()->playSkillEffect(objectName());
+            room->playSkillEffect(objectName());
             RecoverStruct rev;
             rev.who = player;
             rev.recover = player->getMaxHP();
-            player->getRoom()->recover(player, rev);
-            player->getRoom()->setPlayerProperty(player, "hp", player->getMaxHP());
+            room->recover(player, rev);
+            room->setPlayerProperty(player, "hp", player->getMaxHP());
         }
         return false;
     }

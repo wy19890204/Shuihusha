@@ -176,8 +176,7 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         ServerPlayer *zou = room->findPlayerBySkillName(objectName());
         if(!zou)
             return false;
@@ -213,8 +212,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *caifu, QVariant &data) const{
-        Room *room = caifu->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *caifu, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.to->isAlive() && damage.to->getHp() <= 1){
@@ -240,11 +238,10 @@ public:
         events << SlashMissed;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->getWeapon())
             return false;
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        Room *room = player->getRoom();
         QString suit_str = effect.slash->getSuitString();
         QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
         QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
@@ -283,12 +280,11 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") &&
            damage.to && !damage.to->isKongcheng()
             && player->askForSkillInvoke(objectName(), data)){
-            Room *room = player->getRoom();
             room->playSkillEffect(objectName());
             int dust = damage.to->getRandomHandCardId();
             room->showCard(damage.to, dust);
