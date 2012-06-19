@@ -653,8 +653,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
         //hide
-        scenario_button->setVisible(false);
-        scenario_combobox->setVisible(false);
         mini_scenes->setVisible(false);
         mini_scene_combobox->setVisible(false);
         mini_scene_button->setVisible(false);

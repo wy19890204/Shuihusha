@@ -253,14 +253,12 @@ public:
         events << GameStart << TurnStart << PhaseChange
                << Death << GameOverJudge << Damaged << HpLost;
 
-        boss_banlist << "yuanshao" << "shuangxiong" << "zhaoyun" << "guanyu" << "shencaocao";
+        boss_banlist << "yanxijiao" << "qiongying" << "caijing" << "zhuwu";
 
-        boss_skillbanned << "luanji" << "shuangxiong" << "longdan" << "wusheng" << "guixin";
+        boss_skillbanned << "huakui" << "yuanpei" << "duoquan" << "fangzhen";
 
-        dummy_skills << "chujia" << "xuwei" << "tuoqiao" << "shenli" << "midao"
-                     << "kuangfeng" << "dawu" << "kuangbao" << "shenfen" << "wuqian"
-                     << "wumou" << "wuhun" << "tongxin" << "xinsheng" << "zaoxian"
-                     << "renjie" << "baiyin";
+        dummy_skills << "duoquan" << "maidao" << "fengmang" << "shouge" << "buzhen"
+                     << "qimen";
     }
 
     void getRandomSkill(ServerPlayer *player, bool need_trans = false) const{

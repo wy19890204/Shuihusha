@@ -74,8 +74,8 @@ bool JudgeStructPattern::match(const Player *player, const Card *card) const{
     if(isRegex){
         QString class_name = card->metaObject()->className();
         Card::Suit suit = card->getSuit();
-        if(player->hasSkill("hongyan") && suit == Card::Spade)
-            suit = Card::Heart;
+        /*if(player->hasSkill("hongyan") && suit == Card::Spade)
+            suit = Card::Heart;*/
 
         QString number = card->getNumberString();
         QString card_str = QString("%1:%2:%3").arg(class_name).arg(Card::Suit2String(suit)).arg(number);

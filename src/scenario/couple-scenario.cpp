@@ -19,7 +19,7 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
-                }else if(player->getGeneralName() == "songjiang"){
+                }else if(player->getGeneralName() == "songjiang2"){
                     if(player->askForSkillInvoke("reselect"))
                         room->transfigure(player, "jiangsong", true);
                 }else if(player->getGeneralName() == "yangxiong2"){
@@ -112,24 +112,24 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "zhoutong";
-    renegades << "fangla" << "tongguan";
+    lord = "caijing";
+    renegades << "fangla" << "wangqing";
     rule = new CoupleScenarioRule(this);
 
     //map["ximenqing"] = "panjinlian";
     map["songjiang"] = "yanxijiao";
-    map["lujunyi"] = "jiashi";
+    //map["lujunyi"] = "jiashi";
     map["zhangqing"] = "qiongying";
-    map["linchong"] = "linniangzi";
+    //map["linchong"] = "linniangzi";
     //map["wangying"] = "husanniang";
     map["qingzhang"] = "sunerniang";
     //map["sunxin"] = "gudasao";
-    map["wangqing"] = "duansanniang";
-    //map["yanqing"] = "lishishi";
-    map["yangxiong"] = "panqiaoyun";
-    map["shijin"] = "liruilan";
-    map["andaoquan"] = "liqiaonu";
-    map["wusong"] = "yulan";
+    //map["wangqing"] = "duansanniang";
+    map["yanqing"] = "lishishi";
+    //map["yangxiong"] = "panqiaoyun";
+    //map["shijin"] = "liruilan";
+    //map["andaoquan"] = "liqiaonu";
+    //map["wusong"] = "yulan";
     //map["chaijin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
 
@@ -228,7 +228,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "zhoutong")
+        if(generals.at(i) == "caijing")
             roles << "lord";
         else
             roles << "renegade";

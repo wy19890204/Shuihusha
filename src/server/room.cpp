@@ -1150,7 +1150,7 @@ const Card *Room::askForSinglePeach(ServerPlayer *player, ServerPlayer *dying){
 
     //@todo: put this into AI!!!!!!!!!!!!!!!!!
     if(player->isKongcheng()){
-        // jijiu special case
+        /* jijiu special case
         if(player->hasSkill("jijiu") && player->getPhase() == Player::NotActive){
             bool has_red = false;
             foreach(const Card *equip, player->getEquips()){
@@ -1176,7 +1176,7 @@ const Card *Room::askForSinglePeach(ServerPlayer *player, ServerPlayer *dying){
 
             if(!has_heart)
                 return NULL;
-        }else
+        }else*/
             return NULL;
     }
 
