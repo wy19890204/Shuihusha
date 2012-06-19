@@ -682,7 +682,7 @@ void DuijueCard::onEffect(const CardEffectStruct &effect) const{
 
     room->judge(judge);
     if(judge.isBad()){
-        Duel *duel = new Duel(judge.card->getSuit(), judge.card->getNumber());
+        Duel *duel = new Duel(Card::NoSuit, 0);
         duel->setSkillName("duijue");
         duel->setCancelable(false);
 
@@ -777,7 +777,10 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *huarong) const{
         Room *room = huarong->getRoom();
-        if(huarong->getPhase() == Player::RoundStart && !huarong->isKongcheng()){
+        if(huarong->getPhase() == Player::RoundStart){
+            room->setPlayerMark(huarong, "kaixian", 0);
+            if(huarong->isKongcheng())
+                return false;
             bool caninvoke = false;
             foreach(const Card *cd, huarong->getHandcards()){
                 if(cd->getNumber() <= 5){
@@ -796,12 +799,25 @@ public:
                 room->sendLog(log);
 
                 room->playSkillEffect(objectName());
+                room->acquireSkill(huarong, "#kaixian_range");
             }
         }
-        else if(huarong->getPhase() == Player::NotActive)
+        else if(huarong->getPhase() == Player::NotActive){
             room->setPlayerMark(huarong, "kaixian", 0);
+            room->detachSkillFromPlayer(huarong, "#kaixian_range");
+        }
 
         return false;
+    }
+};
+
+class KaixianRange: public ClientSkill{
+public:
+    KaixianRange():ClientSkill("#kaixian_range"){
+    }
+
+    virtual int getAtkrg(const Player *hbry) const{
+        return - hbry->getMark("kaixian"); // negative number means fixed
     }
 };
 
@@ -1552,7 +1568,7 @@ void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *
     }else{
         room->playSkillEffect("dalei", 4);
         DamageStruct damage;
-        damage.from = targets.first();
+        damage.from = target;
         damage.to = xiaoyi;
         room->damage(damage);
     }
@@ -2189,14 +2205,15 @@ bool YongleCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 
 void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer *> &targets) const{
     foreach(ServerPlayer *tmp, targets){
-        const Card *card = tmp->getRandomHandCard();
-        fangla->obtainCard(card, false);
+        //const Card *card = tmp->getRandomHandCard();
+        int card_id = room->askForCardChosen(fangla, tmp, "h", "yongle");
+        room->obtainCard(fangla, card_id, false);
     }
     foreach(ServerPlayer *tmp, targets){
         if(tmp->isDead())
             continue;
         const Card *card = room->askForCardShow(fangla, tmp, "yongle");
-        tmp->obtainCard(card, false);
+        tmp->obtainCard(card);
     }
 }
 
@@ -2641,6 +2658,7 @@ StandardPackage::StandardPackage()
     General *huarong = new General(this, "huarong", "guan");
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
+    skills << new KaixianRange;
     patterns.insert(".kaixian!", new KaixianPattern);
 
     General *chaijin = new General(this, "chaijin", "guan", 3);

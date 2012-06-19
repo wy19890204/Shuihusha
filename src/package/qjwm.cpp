@@ -268,9 +268,19 @@ public:
     }
 };
 
-class Tengfei:public PhaseChangeSkill{
+class Tengfei: public ClientSkill{
 public:
-    Tengfei():PhaseChangeSkill("tengfei"){
+    Tengfei():ClientSkill("tengfei"){
+    }
+
+    virtual int getAtkrg(const Player *op) const{
+        return op->getHp();
+    }
+};
+
+class TengfeiMain:public PhaseChangeSkill{
+public:
+    TengfeiMain():PhaseChangeSkill("#tengfei_main"){
         frequency = Compulsory;
     }
 
@@ -559,7 +569,8 @@ QJWMPackage::QJWMPackage()
     oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
     related_skills.insertMulti("zhanchi", "#@vfui-1");
     oupeng->addRelateSkill("tengfei");
-    skills << new Tengfei;
+    skills << new Tengfei << new TengfeiMain;
+    related_skills.insertMulti("tengfei", "#tengfei_main");
 
     General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);
