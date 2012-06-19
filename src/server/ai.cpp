@@ -250,7 +250,7 @@ const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *,
             if(card->inherits("Nullification"))
                 return card;
         }
-
+        /*
         if(self->hasSkill("kanpo")){
             foreach(const Card *card, cards){
                 if(card->isBlack()){
@@ -261,7 +261,7 @@ const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *,
                     return ncard;
                 }
             }
-        }
+        }*/
     }
 
     return NULL;
@@ -351,13 +351,15 @@ const Card *TrustAI::askForSinglePeach(ServerPlayer *dying) {
                 }
             }
 
+            /*
             if(self->hasSkill("jiushi") && self->faceUp()){
                 Analeptic *analeptic = new Analeptic(Card::NoSuit, 0);
                 analeptic->setSkillName("jiushi");
                 return analeptic;
-            }
+            }*/
         }
 
+        /*
         if(self->hasSkill("jijiu") && self->getPhase() == Player::NotActive){
             cards = self->getCards("he");
             foreach(const Card *card, cards){
@@ -368,7 +370,7 @@ const Card *TrustAI::askForSinglePeach(ServerPlayer *dying) {
                     return peach;
                 }
             }
-        }
+        }*/
     }
 
     return NULL;

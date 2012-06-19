@@ -37,8 +37,8 @@ config = {
 	},
 
 	scene_names = {
---[[	"Couple",
-	"Zombie",
+	"Couple",
+--[[	"Zombie",
 	"Legend",
 	"Impasse",]]
 	"Custom",
