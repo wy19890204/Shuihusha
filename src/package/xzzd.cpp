@@ -272,7 +272,7 @@ public:
 
 class LinseEffect: public PhaseChangeSkill{
 public:
-    LinseEffect():PhaseChangeSkill("#linse-effect"){
+    LinseEffect():PhaseChangeSkill("#linse_effect"){
     }
 
     virtual bool onPhaseChange(ServerPlayer *lz) const{
@@ -344,7 +344,7 @@ XZDDPackage::XZDDPackage()
     lizhong->addSkill("#losthp");
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
-    related_skills.insertMulti("linse", "#linse-effect");
+    related_skills.insertMulti("linse", "#linse_effect");
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);

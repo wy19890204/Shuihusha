@@ -799,10 +799,13 @@ public:
                 room->sendLog(log);
 
                 room->playSkillEffect(objectName());
+                room->acquireSkill(huarong, "#kaixian_range");
             }
         }
-        else if(huarong->getPhase() == Player::NotActive)
+        else if(huarong->getPhase() == Player::NotActive){
             room->setPlayerMark(huarong, "kaixian", 0);
+            room->detachSkillFromPlayer(huarong, "#kaixian_range");
+        }
 
         return false;
     }
@@ -810,7 +813,7 @@ public:
 
 class KaixianRange: public ClientSkill{
 public:
-    KaixianRange():ClientSkill("#kaixian-range"){
+    KaixianRange():ClientSkill("#kaixian_range"){
     }
 
     virtual int getAtkrg(const Player *from) const{
@@ -2654,8 +2657,7 @@ StandardPackage::StandardPackage()
     General *huarong = new General(this, "huarong", "guan");
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
-    huarong->addSkill(new KaixianRange);
-    related_skills.insertMulti("kaixian", "#kaixian-range");
+    skills << new KaixianRange;
     patterns.insert(".kaixian!", new KaixianPattern);
 
     General *chaijin = new General(this, "chaijin", "guan", 3);

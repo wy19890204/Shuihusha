@@ -110,6 +110,7 @@ public:
         room->setPlayerMark(qing, "@ylyud", 0);
         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
             tmp->removeMark("qinggang");
+        room->detachSkillFromPlayer(qing, "#yinyu_range");
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
@@ -143,6 +144,7 @@ public:
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
                         room->setPlayerMark(qing, "@ylyuh", 1);
+                        room->acquireSkill(qing, "#yinyu_range");
                         //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
@@ -180,7 +182,7 @@ public:
 
 class YinyuRange: public ClientSkill{
 public:
-    YinyuRange():ClientSkill("#yinyu-range"){
+    YinyuRange():ClientSkill("#yinyu_range"){
     }
 
     virtual int getAtkrg(const Player *from) const{
@@ -524,7 +526,7 @@ public:
 
 class ShudanClear: public TriggerSkill{
 public:
-    ShudanClear():TriggerSkill("#shudan-clear"){
+    ShudanClear():TriggerSkill("#shudan_clear"){
         events << PhaseChange;
     }
 
@@ -1049,8 +1051,7 @@ RatPackage::RatPackage()
 
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
-    zhangqing->addSkill(new YinyuRange);
-    related_skills.insertMulti("yinyu", "#yinyu-range");
+    skills << new YinyuRange;
 
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);
@@ -1074,7 +1075,7 @@ RatPackage::RatPackage()
     baisheng->addSkill(new Xiayao);
     baisheng->addSkill(new Shudan);
     baisheng->addSkill(new ShudanClear);
-    related_skills.insertMulti("shudan", "#shudan-clear");
+    related_skills.insertMulti("shudan", "#shudan_clear");
 
     General *shiqian = new General(this, "shiqian", "kou", 3);
     shiqian->addSkill(new Feiyan);
