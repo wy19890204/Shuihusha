@@ -147,7 +147,7 @@ int Player::getAttackRange() const{
     int atkrg = weapon ? weapon->getRange() : 1;
     int extra = Sanguosha->correctClient("attackrange", this);
 
-    return qMax(atkrg, extra);
+    return extra >= 0 ? qMax(atkrg, extra): qAbs(extra);
 }
 
 bool Player::inMyAttackRange(const Player *other) const{

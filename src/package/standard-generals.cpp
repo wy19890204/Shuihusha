@@ -816,8 +816,8 @@ public:
     KaixianRange():ClientSkill("#kaixian_range"){
     }
 
-    virtual int getAtkrg(const Player *from) const{
-        return from->getMark("kaixian");
+    virtual int getAtkrg(const Player *hbry) const{
+        return - hbry->getMark("kaixian"); // negative number means fixed
     }
 };
 
