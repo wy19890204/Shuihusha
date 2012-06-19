@@ -515,7 +515,7 @@ public:
         QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
 
         QStringList attachskills;
-        attachskills << "spear" << "axe" << "jui" << "mAIdao";
+        attachskills << "spear" << "axe" << "jui" << "buyaknife";
         foreach(QString skill_name, Qimen_data.skills){
             if(skill_name == "spear" && (!player->getWeapon() || player->getWeapon()->objectName() != "spear"))
                 continue;
@@ -1127,7 +1127,7 @@ public:
         Room *room = yangvi->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){
-            room->attachSkillToPlayer(player, "mAIdao");
+            room->attachSkillToPlayer(player, "buyaknife");
         }
     }
 };
@@ -1221,18 +1221,18 @@ public:
     }
 };
 
-MAIdaoCard::MAIdaoCard(){
+BuyaKnifeCard::BuyaKnifeCard(){
     will_throw = false;
     mute = true;
 }
 
-bool MAIdaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool BuyaKnifeCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty() || to_select == Self)
         return false;
     return to_select->hasSkill("maidao") && !to_select->getPile("knife").isEmpty();
 }
 
-void MAIdaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void BuyaKnifeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
     room->playSkillEffect("maidao", qrand() % 2 + 3);
     target->obtainCard(this, false);
@@ -1245,15 +1245,15 @@ void MAIdaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
         card_id = knife.first();
     else{
         room->fillAG(knife, source);
-        card_id = room->askForAG(source, knife, false, "mAIdao");
+        card_id = room->askForAG(source, knife, false, "buyaknife");
         source->invoke("clearAG");
     }
     source->obtainCard(Sanguosha->getCard(card_id));
 }
 
-class MAIdao: public ViewAsSkill{
+class BuyaKnife: public ViewAsSkill{
 public:
-    MAIdao():ViewAsSkill("mAIdao"){
+    BuyaKnife():ViewAsSkill("buyaknife"){
 
     }
 
@@ -1267,7 +1267,7 @@ public:
         if(cards.length() != 2)
             return NULL;
 
-        MAIdaoCard *card = new MAIdaoCard();
+        BuyaKnifeCard *card = new BuyaKnifeCard();
         card->addSubcards(cards);
         return card;
     }
@@ -2677,7 +2677,7 @@ StandardPackage::StandardPackage()
 
     General *yangzhi = new General(this, "yangzhi", "guan");
     yangzhi->addSkill(new Maidao);
-    skills << new MAIdao;
+    skills << new BuyaKnife;
     yangzhi->addSkill(new Fengmang);
 
     General *xuning = new General(this, "xuning", "jiang");
@@ -2762,7 +2762,7 @@ StandardPackage::StandardPackage()
     addMetaObject<HaoshenCard>();
     addMetaObject<SijiuCard>();
     addMetaObject<MaidaoCard>();
-    addMetaObject<MAIdaoCard>();
+    addMetaObject<BuyaKnifeCard>();
     addMetaObject<FengmangCard>();
     addMetaObject<DaleiCard>();
     addMetaObject<WujiCard>();
