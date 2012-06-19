@@ -494,7 +494,7 @@ public:
                 && zhangqing->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
                 room->playSkillEffect(objectName());
                 int card_id = room->askForCardChosen(zhangqing, target, "he", objectName());
-                room->obtainCard(zhangqing, card_id, false);
+                room->obtainCard(zhangqing, card_id, room->getCardPlace(card_id) != Player::Hand);
             }
         }
         return false;
