@@ -1,3 +1,6 @@
+-- the ai for events-package
+sgs.dynamic_value.control_card.Events = true
+
 function SmartAI:useEventsCard(card, use)
 	if card:inherits("Tifanshi") then
 		for _, enemy in ipairs(self.enemies) do
@@ -34,7 +37,13 @@ function SmartAI:useEventsCard(card, use)
 	return
 end
 
+-- jiutianxuannv
+sgs.ai_card_intention.NinedayGirl = 55
+sgs.dynamic_value.benefit.NinedayGirl = true
+
 -- daojia
+sgs.ai_card_intention.Daojia = 50
+
 sgs.ai_skill_use["Daojia"] = function(self, prompt)
 	local evc = self:getCard("Daojia")
 	for _, enemy in ipairs(self.enemies) do
@@ -46,6 +55,9 @@ sgs.ai_skill_use["Daojia"] = function(self, prompt)
 end
 
 -- jiefachang
+sgs.ai_card_intention.Jiefachang = -70
+sgs.dynamic_value.benefit.Jiefachang = true
+
 sgs.ai_skill_use["Jiefachang"] = function(self, prompt)
 	local evc = self:getCard("Jiefachang")
 	for _, friend in ipairs(self.friends) do
@@ -57,6 +69,8 @@ sgs.ai_skill_use["Jiefachang"] = function(self, prompt)
 end
 
 -- tifanshi
+sgs.ai_card_intention.Tifanshi = 40
+
 sgs.ai_skill_use["Tifanshi"] = function(self, prompt)
 	local evc = self:getCard("Tifanshi")
 	local num = 0
@@ -71,7 +85,10 @@ sgs.ai_skill_use["Tifanshi"] = function(self, prompt)
 	return
 end
 
--- fuckgaolian
+-- pogaolian
+sgs.ai_card_intention.FuckGaolian = 60
+sgs.dynamic_value.damage_card.FuckGaolian = true
+
 sgs.ai_skill_use["FuckGaolian"] = function(self, prompt)
 	local evc = self:getCard("FuckGaolian")
 	self:sort(self.enemies, "hp")
@@ -92,7 +109,10 @@ sgs.ai_skill_cardask["@fuckl"] = function(self, data)
 	return "."
 end
 
--- nanastars
+-- zhiqushengchengang
+sgs.ai_card_intention.NanaStars = 80
+sgs.dynamic_value.benefit.NanaStars = true
+
 sgs.ai_skill_use["NanaStars"] = function(self, prompt)
 	local evc = self:getCard("NanaStars")
 	for _, target in sgs.qlist(self.room:getAllPlayers()) do
@@ -110,3 +130,6 @@ sgs.ai_skill_cardask["@7stars"] = function(self, data)
 	end
 	return "."
 end
+
+-- zuidajiangmenshen
+sgs.dynamic_value.damage_card.Jiangjieshi = true
