@@ -3327,7 +3327,7 @@ QString Room::askForKingdom(ServerPlayer *player){
         if (kingdom == "guan" || kingdom == "jiang" || kingdom == "min" || kingdom == "kou")
             return kingdom;
     }    
-    return "guan";    
+    return "god";
 }
 
 bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discard_num, bool optional, bool include_equip){
