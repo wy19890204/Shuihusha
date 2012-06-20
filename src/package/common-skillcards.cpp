@@ -39,26 +39,6 @@ void QingnangCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->getRoom()->recover(effect.to, recover);
 }
 
-UbunaCard::UbunaCard(){
-    target_fixed = true;
-}
-
-void UbunaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    int num = source->getMaxHP();
-    QString numstring = room->askForChoice(source, "ubuna", "3+4+5+back+next");
-    if(numstring == "3")
-        num = 3;
-    else if(numstring == "4")
-        num = 4;
-    else if(numstring == "5")
-        num = 5;
-    else if(numstring == "back")
-        num --;
-    else
-        num ++;
-    room->setPlayerProperty(source, "maxhp", qAbs(num));
-}
-
 UbuncCard::UbuncCard(){
 }
 

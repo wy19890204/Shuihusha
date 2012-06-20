@@ -382,13 +382,16 @@ private:
 
 // test main
 #include "carditem.h"
-class Ubuna:public ZeroCardViewAsSkill{
+class Ubuna: public ClientSkill{
 public:
-    Ubuna():ZeroCardViewAsSkill("ubuna"){
+    Ubuna():ClientSkill("ubuna"){
     }
 
-    virtual const Card *viewAs() const{
-        return new UbunaCard;
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return 1358;
+        else
+            return 0;
     }
 };
 
@@ -586,7 +589,6 @@ TestPackage::TestPackage()
 */
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
-    addMetaObject<UbunaCard>();
     ubuntenkei->addSkill(new Ubunc);
     addMetaObject<UbuncCard>();
     ubuntenkei->addSkill(new Ubund);
