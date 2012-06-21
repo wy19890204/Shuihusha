@@ -637,6 +637,7 @@ sgs.ai_card_intention.FengmangCard = 80
 sgs.ai_skill_use["@@fengmang"] = function(self, prompt)
 	self:sort(self.enemies)
 	local target = self.enemies[1]
+	if not target then return end
 	local cards = self.player:getHandcards()
 	local card
 	for _, c in sgs.qlist(cards) do

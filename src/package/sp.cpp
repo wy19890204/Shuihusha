@@ -6,6 +6,50 @@
 #include "engine.h"
 #include "ai.h"
 
+class Baoquan: public TriggerSkill{
+public:
+    Baoquan():TriggerSkill("baoquan"){
+        events << PhaseChange << DamageComplete;
+    }
+
+    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *lusashi, QVariant &data) const{
+        if(e == PhaseChange){
+            if(lusashi->getPhase() == Player::RoundStart)
+                room->setPlayerMark(lusashi, "@fist", 0);
+            else if(lusashi->getPhase() == Player::NotActive){
+                int fist = lusashi->getMark("@fist");
+                if(fist < 1)
+                    return false;
+                switch(fist){
+                    case 1:
+                        lusashi->drawCards(1);
+                        break;
+                    case 2:
+                        ServerPlayer *target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
+                        QString choice = !target->isWounded() ? "draw" :
+                                         room->askForChoice(lusashi, objectName(), "draw+recover");
+                        if(choice == "draw")
+                            target->drawCards(2);
+                        else{
+                            RecoverStruct rev;
+                            rev.who = lusashi;
+                            room->recover(target, rev);
+                        }
+                        break;
+                    default:
+                        room->askForUseCard(lusashi, "@@baoquan", "@baoquan");
+                }
+            }
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            lusashi->gainMark("@fist", damage.damage);
+        }
+        return false;
+    }
+};
+
+/*
 class Shemi: public TriggerSkill{
 public:
     Shemi():TriggerSkill("shemi"){
@@ -430,10 +474,13 @@ public:
         return false;
     }
 };
-
+*/
 SPPackage::SPPackage()
     :Package("sp")
 {
+    General *luda = new General(this, "luda", "guan");
+    luda->addSkill(new Baoquan);
+/*
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);
     zhaoji->addSkill(new Lizheng);
@@ -458,6 +505,8 @@ SPPackage::SPPackage()
 
     addMetaObject<YuzhongCard>();
     addMetaObject<JiebaoCard>();
+*/
+    addMetaObject<BaoquanCard>();
 }
 
 ADD_PACKAGE(SP);

@@ -139,7 +139,7 @@ return {
 	["custom"] = "自定义模式",
 
 -- hulao
-	["Hulaopass"] = "虎牢关模式",
+	["Hulaopass"] = "独松关模式",
 	["shenlvbu1"] = "凌天翼",
 	["shenlvbu2"] = "烨子风暴",
 	["#shenlvbu1"] = "",

@@ -596,6 +596,8 @@ void ServerPlayer::skip(){
 
 void ServerPlayer::gainMark(const QString &mark, int n){
     int value = getMark(mark) + n;
+    if(n < 1)
+        return;
 
     LogMessage log;
     log.type = "#GetMark";
