@@ -74,7 +74,7 @@ sgs.ai_card_intention.Tifanshi = 40
 sgs.ai_skill_use["Tifanshi"] = function(self, prompt)
 	local evc = self:getCard("Tifanshi")
 	local num = 0
-	for _, player in sgs.qlist(room:getAlivePlayers()) do
+	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
 		if player:getRole() == "rebel" then
 			num = num + 1
 		end

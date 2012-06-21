@@ -206,7 +206,7 @@ end
 
 -- juyi
 sgs.ai_card_intention.JuyiCard = function(card, from, to)
-	if to:getHandcardNum() >= from:getHandcardNum() then
+	if to[1]:getHandcardNum() >= from:getHandcardNum() then
 		sgs.updateIntentions(from, to, 40)
 	else
 		sgs.updateIntentions(from, to, -50)
@@ -249,7 +249,7 @@ sgs.ai_skill_invoke["baoguo"] = true
 sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 	if self.player:hasSkill("fushang") and self.player:getHp() > 3 then return "." end
 	local damage = data:toDamage()
-	if self:isFriend(damage.to) and not self.player:isKongcheng() then
+	if self:isFriend(damage.to) and damage.to:getHp() <= 2 and not self.player:isKongcheng() then
 		local pile = self:getCardsNum("Peach") + self:getCardsNum("Analeptic")
 		local dmgnum = damage.damage
 		if self.player:getHp() + pile - dmgnum > 0 then
@@ -785,7 +785,13 @@ end
 
 -- yanqing
 -- dalei
-sgs.ai_card_intention.DaleiCard = 70
+sgs.ai_card_intention.DaleiCard = function(card, from, to)
+	if to[1]:getHandcardNum() > 3 and to[1]:getLostHp() == 0 then
+		sgs.updateIntentions(from, to, -30)
+	else
+		sgs.updateIntentions(from, to, 70)
+	end
+end
 
 local dalei_skill={}
 dalei_skill.name = "dalei"
@@ -809,25 +815,25 @@ sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
 		if target and max_card then
 			use.card = sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
 			if use.to then use.to:append(target) end
-		end
-	else
-		for _, friend in ipairs(self.friends_noself) do
-			if friend:getHandcardNum() > 3 and not friend:isWounded()
-				and friend:getGeneral():isMale() then
-				target = friend
-				break
+		else
+			for _, friend in ipairs(self.friends_noself) do
+				if friend:getHandcardNum() > 3 and not friend:isWounded()
+					and friend:getGeneral():isMale() then
+					target = friend
+					break
+				end
 			end
-		end
-		local min_num = 14, min_card
-		for _, hcard in sgs.qlist(self.player:getHandcards()) do
-			if hcard:getNumber() < min_num then
-				min_num = hcard:getNumber()
-				min_card = hcard
+			local min_num = 14, min_card
+			for _, hcard in sgs.qlist(self.player:getHandcards()) do
+				if hcard:getNumber() < min_num then
+					min_num = hcard:getNumber()
+					min_card = hcard
+				end
 			end
-		end
-		if target and min_card then
-			use.card = sgs.Card_Parse("@DaleiCard=" .. min_card:getEffectiveId())
-			if use.to then use.to:append(target) end
+			if target and min_card then
+				use.card = sgs.Card_Parse("@DaleiCard=" .. min_card:getEffectiveId())
+				if use.to then use.to:append(target) end
+			end
 		end
 	end
 end
