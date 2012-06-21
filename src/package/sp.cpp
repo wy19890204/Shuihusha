@@ -6,10 +6,50 @@
 #include "engine.h"
 #include "ai.h"
 
+BaoquanCard::BaoquanCard(){
+}
+
+void BaoquanCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    int fist = getSubcards().count();
+    DamageStruct damage;
+    damage.damage = fist;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    room->damage(damage);
+}
+
+class BaoquanViewAsSkill: public ViewAsSkill{
+public:
+    BaoquanViewAsSkill():ViewAsSkill("baoquan"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+        return to_select->getCard()->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        BaoquanCard *card = new BaoquanCard;
+        card->addSubcards(cards);
+        return card;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@baoquan";
+    }
+};
+
 class Baoquan: public TriggerSkill{
 public:
     Baoquan():TriggerSkill("baoquan"){
-        events << PhaseChange << DamageComplete;
+        events << PhaseChange << Damage;
+        view_as_skill = new BaoquanViewAsSkill;
     }
 
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *lusashi, QVariant &data) const{
@@ -20,12 +60,16 @@ public:
                 int fist = lusashi->getMark("@fist");
                 if(fist < 1)
                     return false;
+                if(fist == 1 || fist == 2)
+                    if(!lusashi->askForSkillInvoke(objectName()))
+                        return false;
                 switch(fist){
-                    case 1:
+                    case 1:{
                         lusashi->drawCards(1);
                         break;
-                    case 2:
-                        ServerPlayer *target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
+                    }
+                    case 2:{
+                        PlayerStar target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
                         QString choice = !target->isWounded() ? "draw" :
                                          room->askForChoice(lusashi, objectName(), "draw+recover");
                         if(choice == "draw")
@@ -36,6 +80,7 @@ public:
                             room->recover(target, rev);
                         }
                         break;
+                    }
                     default:
                         room->askForUseCard(lusashi, "@@baoquan", "@baoquan");
                 }
