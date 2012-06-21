@@ -651,33 +651,32 @@ sgs.ai_skill_use["@@fengmang"] = function(self, prompt)
 	return "."
 end
 
--- mAIdao
-mAIdao_skill = {}
-mAIdao_skill.name = "mAIdao"
-table.insert(sgs.ai_skills, mAIdao_skill)
-mAIdao_skill.getTurnUseCard = function(self)
-	local yangzhi = self.room:findPlayerBySkillName("maidao")
-	if yangzhi and not yangzhi:getPile("knife"):isEmpty() and self:isEnemy(yangzhi) then
-		local cards = self.player:getCards("h")
-		cards = sgs.QList2Table(cards)
-		if #cards < 4 then return end
-		self:sortByUseValue(cards, true)
-		local card_ids = {}
-		for i = 1, 2 do
-			if self:getUseValue(cards[i]) > 4 then return end
-			table.insert(card_ids, cards[i]:getEffectiveId())
-		end
-		self.yangzhi = yangzhi
-		if #card_ids == 2 then
-			return "@MAIdaoCard=" .. table.concat(card_ids, "+")
-		end
-	end
-	return
+-- buyaknife
+buyaknife_skill = {}
+buyaknife_skill.name = "buyaknife"
+table.insert(sgs.ai_skills, buyaknife_skill)
+buyaknife_skill.getTurnUseCard = function(self)
+	if self.player:getHandcardNum() < 4 then return end
+	return sgs.Card_Parse("@BuyaKnifeCard=.")
 end
-sgs.ai_skill_use_func["MAIdaoCard"] = function(card, use, self)
-	use.card = card
-	if use.to then
-		use.to:append(self.yangzhi)
+sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
+	for _, yangzhi in sgs.qlist(self.room:findPlayersBySkillName("maidao")) do
+		if not yangzhi:getPile("knife"):isEmpty() and self:isEnemy(yangzhi) then
+			local cards = self.player:getCards("h")
+			cards = sgs.QList2Table(cards)
+			self:sortByUseValue(cards, true)
+			local card_ids = {}
+			for _, car in ipairs(cards) do
+				if self:getKeepValue(car) < 4.1 then
+					table.insert(card_ids, car:getEffectiveId())
+				end
+				if #card_ids == 2 then
+					use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
+					if use.to then use.to:append(yangzhi) end
+					return 
+				end
+			end
+		end
 	end
 end
 
