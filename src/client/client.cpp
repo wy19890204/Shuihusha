@@ -1315,7 +1315,7 @@ void Client::askForKingdom(const Json::Value&){
     QVBoxLayout *layout = new QVBoxLayout;
 
     QStringList kingdoms = Sanguosha->getKingdoms();
-    kingdoms.removeOne("god"); // god kingdom does not really exist
+    //kingdoms.removeOne("god"); // god kingdom does not really exist
 
     foreach(QString kingdom, kingdoms){
         QCommandLinkButton *button = new QCommandLinkButton;

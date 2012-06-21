@@ -111,4 +111,26 @@ tianyin:addSkill(noqing)
 sgs.LoadTranslationTable{
 	["personal"] = "Pesonal",
 
+	["#tianyin"] = "天道之化身",
+	["tianyin"] = "天音",
+	["designer:tianyin"] = "鎏铄天音",
+	["cv:tianyin"] = "",
+	["illustrator:tianyin"] = "帕秋丽同人",
+	["skydao"] = "天道",
+	[":skydao"] = "锁定技，你的回合外，你每受到一次伤害，增加1点体力上限",
+	["#SkydaoMAXHP"] = "%from 的锁定技【%arg2】被触发，增加了一点体力上限，目前体力上限是 %arg",
+	["noqing"] = "无情",
+	[":noqing"] = "锁定技，你受到伤害时，若你的体力是全场最少或同时为最少，则所有人必须减少1点体力或1点体力上限",
+	["noqing:hp"] = "体力",
+	["noqing:max_hp"] = "体力上限",
+	["#NoqingLoseHp"] = "受到 %from 【%arg】锁定技的影响，%to 流失了一点体力",
+	["#NoqingLoseMaxHp"] = "受到 %from 【%arg】锁定技的影响，%to 流失了一点体力上限",
+
+	["#tianqi"] = "百撕不得骑姐",
+	["tianqi"] = "天启",
+	["designer:tianqi"] = "宇文天启",
+	["cv:tianqi"] = "",
+	["illustrator:tianqi"] = "火影忍者",
+	["eatdeath"] = "拾尸",
+	[":eatdeath"] = "当有角色死亡时，你可以失去一个因“拾尸”获得的技能(如果有的话)，然后失去一点体力上限并获得该角色当前的所有武将技",
 }
