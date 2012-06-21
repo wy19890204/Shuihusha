@@ -1579,8 +1579,9 @@
         <translation>4 人局</translation>
     </message>
     <message>
+        <location filename="src/core/engine.cpp" line="65"/>
         <source>4 players (Hulao Pass)</source>
-        <translation type="obsolete">4 人局 [虎牢关1v3]</translation>
+        <translation>4 人局 [独松关1v3]</translation>
     </message>
     <message>
         <location filename="src/core/engine.cpp" line="66"/>
@@ -1648,7 +1649,7 @@
         <translation>重复技能: %1</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="402"/>
+        <location filename="src/core/engine.cpp" line="400"/>
         <source>%1 [Scenario mode]</source>
         <translation>%1 【剧情模式】</translation>
     </message>
@@ -3286,17 +3287,17 @@ P = 你自己, R = 你所在的房间</translation>
 <context>
     <name>Select3v3GeneralDialog</name>
     <message>
-        <location filename="src/server/server.cpp" line="744"/>
+        <location filename="src/server/server.cpp" line="742"/>
         <source>Select generals in extend 3v3 mode</source>
         <translation>选择在扩展 3v3 模式中启用的武将</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="753"/>
+        <location filename="src/server/server.cpp" line="751"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="811"/>
+        <location filename="src/server/server.cpp" line="809"/>
         <source>Check/Uncheck all</source>
         <translation>全部勾选或取消勾选</translation>
     </message>
@@ -3304,17 +3305,17 @@ P = 你自己, R = 你所在的房间</translation>
 <context>
     <name>Server</name>
     <message>
-        <location filename="src/server/server.cpp" line="1016"/>
+        <location filename="src/server/server.cpp" line="1014"/>
         <source>Forbid the connection of address %1</source>
         <translation>禁止了地址 %1 的连接</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="1025"/>
+        <location filename="src/server/server.cpp" line="1023"/>
         <source>%1 connected</source>
         <translation>%1 已连接</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="1041"/>
+        <location filename="src/server/server.cpp" line="1039"/>
         <source>Invalid signup string: %1</source>
         <translation>无效的登录字符串: %1</translation>
     </message>
@@ -3567,13 +3568,13 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>小型场景</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="721"/>
-        <location filename="src/server/server.cpp" line="736"/>
+        <location filename="src/server/server.cpp" line="719"/>
+        <location filename="src/server/server.cpp" line="734"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="736"/>
+        <location filename="src/server/server.cpp" line="734"/>
         <source>Please fill address when you want to annouce your server&apos;s IP</source>
         <translation>若您想在广域网上公布服务器，请填入地址</translation>
     </message>
@@ -3619,12 +3620,12 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>启用 AI</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="695"/>
+        <location filename="src/server/server.cpp" line="693"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="src/server/server.cpp" line="696"/>
+        <location filename="src/server/server.cpp" line="694"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>

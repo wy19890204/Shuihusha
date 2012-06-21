@@ -976,6 +976,8 @@ bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player
                         room->throwCard(trick);
 
                 }else{
+                    room->setPlayerProperty(player, "maxhp", 9);
+                    room->setPlayerProperty(player, "hp", 8);
                     player->drawCards(8, false);
                 }
             }else

@@ -2226,8 +2226,6 @@ void Room::run(){
     }else if(mode == "04_1v3"){
         ServerPlayer *lord = m_players.first();
         setPlayerProperty(lord, "general", "dongping");
-        setPlayerProperty(lord, "maxhp", 9);
-        setPlayerProperty(lord, "hp", 8);
 
         const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
         const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
