@@ -2225,13 +2225,15 @@ void Room::run(){
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
     }else if(mode == "04_1v3"){
         ServerPlayer *lord = m_players.first();
-        setPlayerProperty(lord, "general", "shenlvbu1");
+        setPlayerProperty(lord, "general", "dongping");
+        setPlayerProperty(lord, "maxhp", 9);
+        setPlayerProperty(lord, "hp", 8);
 
         const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        //const Package *windpack = Sanguosha->findChild<const Package *>("wind");
+        const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
 
         QList<const General *> generals = stdpack->findChildren<const General *>();
-        //generals << windpack->findChildren<const General *>();
+        generals << ratpack->findChildren<const General *>();
 
         QStringList names;
         foreach(const General *general, generals){
