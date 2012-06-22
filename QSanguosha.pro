@@ -331,3 +331,5 @@ TRANSLATIONS += sanguosha.ts
 OTHER_FILES += \
 	sanguosha.qss \
 	acknowledgement/main.qml \
+	acknowledgement/list.png \
+	acknowledgement/back.png
