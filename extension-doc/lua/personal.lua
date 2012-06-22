@@ -16,23 +16,18 @@ eatdeath=sgs.CreateTriggerSkill{
 	on_trigger = function(self,event,player,data)
         local room = player:getRoom()
 		local tenkei = room:findPlayerBySkillName(self:objectName())
-		if not tenkei or event ~= sgs.Death then return false end
+		if not tenkei then return false end
 
-		local eatdeath_skills = tenkei:getTag("EatDeath"):toStringList()
+		local skillslist = tenkei:getTag("EatDeath"):toString()
+		local eatdeath_skills = skillslist:split("+")
+		if eatdeath_skills[1] == "" then table.remove(eatdeath_skills, 1) end
+
 		if room:askForSkillInvoke(tenkei, self:objectName(), data) then
-			local eatdeaths = {}
-
-			if eatdeath_skills ~= nil then
-				eatdeath_skills = sgs.QList2Table(eatdeath_skills)
-				for _, tmp in ipairs(eatdeath_skills) do
-					table.insert(eatdeaths, tmp:toString())
-				end
-			end
-			if not eatdeaths.isEmpty() then
-				local choice = room:askForChoice(tenkei, self:objectName(), eatdeaths.join("+"))
+			if #eatdeath_skills > 0 and sgs.Sanguosha:getSkill(eatdeath_skills[1]) then
+				local choice = room:askForChoice(tenkei, self:objectName(), table.concat(eatdeath_skills, "+"))
 				room:detachSkillFromPlayer(tenkei, choice)
 				for i = #eatdeath_skills, 1, -1 do
-					if eatdeath_skills[i]:objectName() == choice then
+					if eatdeath_skills[i] == choice then
 						table.remove(eatdeath_skills, i)
 					end
 				end
@@ -40,15 +35,13 @@ eatdeath=sgs.CreateTriggerSkill{
 			room:loseMaxHp(tenkei)
 			local skills = player:getVisibleSkillList()
 			for _, skill in sgs.qlist(skills) do
-			--	if skill:isLordSkill() and not player:isLord() then
-			--	elseif skill:parent() then
-				local sk = skill:objectName()
-				room:acquireSkill(tenkei, sk)
-				table.insert(eatdeath_skills, sk)
+			--	if skill:parent() then
+					local sk = skill:objectName()
+					room:acquireSkill(tenkei, sk)
+					table.insert(eatdeath_skills, sk)
+			--	end
 			end
-			local datatmp = sgs.QVariant(0)
-			datatmp:setValue(eatdeath_skills)
-			tenkei:setTag("EatDeath", datatmp)
+			tenkei:setTag("EatDeath", sgs.QVariant(table.concat(eatdeath_skills, "+")))
 		end
         return false
 	end
