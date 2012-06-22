@@ -946,12 +946,12 @@ end
 sgs.ai_skill_choice["hongjin"] = function(self, choices)
 	local who = self.player:getTag("HongjinTarget"):toPlayer()
 	if self:isFriend(who) then
-		return "draw"
+		return "draw1card"
 	else
 		if who:getHandcardNum() == 1 or (who:isKongcheng() and not who:isNude()) then
 			return "throw"
 		else
-			return "draw"
+			return "draw1card"
 		end
 	end
 end

@@ -70,9 +70,9 @@ public:
                     }
                     case 2:{
                         PlayerStar target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
-                        QString choice = !target->isWounded() ? "draw" :
-                                         room->askForChoice(lusashi, objectName(), "draw+recover");
-                        if(choice == "draw")
+                        QString choice = !target->isWounded() ? "draw2card" :
+                                         room->askForChoice(lusashi, objectName(), "draw2card+recover1hp");
+                        if(choice == "draw2card")
                             target->drawCards(2);
                         else{
                             RecoverStruct rev;
@@ -84,9 +84,12 @@ public:
                     default:
                         room->askForUseCard(lusashi, "@@baoquan", "@baoquan");
                 }
+                room->setPlayerMark(lusashi, "@fist", 0);
             }
         }
         else{
+            if(lusashi->getPhase() == Player::NotActive)
+                return false;
             DamageStruct damage = data.value<DamageStruct>();
             lusashi->gainMark("@fist", damage.damage);
         }

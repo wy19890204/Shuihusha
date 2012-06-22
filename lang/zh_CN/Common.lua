@@ -127,6 +127,12 @@ return {
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
 	["$CheatCard"] = "%from 使用了作弊，获得了 %card",
 
+	-- askForChoice相关
+	["draw1card"] = "摸1张牌",
+	["draw2card"] = "摸2张牌",
+	["recover1hp"] = "回复1点体力",
+	["cancel"] = "不发动",
+
 	["3v3:cw"] = "顺时针",
 	["3v3:ccw"] = "逆时针",
 	["cw"] = "顺时针",
