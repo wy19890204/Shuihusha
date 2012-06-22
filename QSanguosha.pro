@@ -329,5 +329,5 @@ CONFIG(chatvoice){
 TRANSLATIONS += sanguosha.ts
 
 OTHER_FILES += \
-	sanguosha.qss
-
+	sanguosha.qss \
+	acknowledgement/main.qml \
