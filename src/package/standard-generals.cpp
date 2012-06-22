@@ -1813,7 +1813,7 @@ public:
 
         if(damage.to->getGeneral()->isMale()){
             hu3niang->tag["HongjinTarget"] = QVariant::fromValue((PlayerStar)damage.to);
-            QString voly = damage.to->isDead() || damage.to->isNude() ? "draw+cancel" : "draw+throw+cancel";
+            QString voly = damage.to->isDead() || damage.to->isNude() ? "draw1card+cancel" : "draw1card+throw+cancel";
             QString ball = room->askForChoice(hu3niang, objectName(), voly);
             if(ball == "cancel")
                 return false;

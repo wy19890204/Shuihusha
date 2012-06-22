@@ -1,14 +1,14 @@
-#ifndef FCDCPACKAGE_H
-#define FCDCPACKAGE_H
+#ifndef OXPACKAGE_H
+#define OXPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class FCDCPackage : public Package{
+class OXPackage : public Package{
     Q_OBJECT
 
 public:
-    FCDCPackage();
+    OXPackage();
 };
 
 class XunlieCard: public SkillCard{
@@ -38,4 +38,4 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-#endif // FCDCPACKAGE_H
+#endif // OXPACKAGE_H

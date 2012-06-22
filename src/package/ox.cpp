@@ -1,4 +1,4 @@
-#include "fcdc.h"
+#include "ox.h"
 #include "general.h"
 #include "skill.h"
 #include "standard.h"
@@ -299,8 +299,8 @@ public:
     }
 };
 
-FCDCPackage::FCDCPackage()
-    :Package("FCDC")
+OxPackage::OxPackage()
+    :Package("ox")
 {
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
@@ -321,4 +321,4 @@ FCDCPackage::FCDCPackage()
     addMetaObject<HuazhuCard>();
 }
 
-ADD_PACKAGE(FCDC);
+ADD_PACKAGE(Ox);
