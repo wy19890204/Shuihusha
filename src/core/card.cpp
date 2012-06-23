@@ -38,6 +38,18 @@ QString Card::Suit2String(Suit suit){
     }
 }
 
+Card::Suit Card::String2Suit(QString string){
+    if(string == "spade")
+        return Spade;
+    else if(string == "heart")
+        return Heart;
+    else if(string == "club")
+        return Club;
+    else if(string == "diamond")
+        return Diamond;
+    else
+        return NoSuit;
+}
 
 QStringList Card::IdsToStrings(const QList<int> &ids){
     QStringList strings;

@@ -14,6 +14,7 @@ config = {
 	"Maneuvering",
 	"ExCard",
 	"Events",
+--	"CustomCard",
 --	"Kuso",
 --	"Joy",
 

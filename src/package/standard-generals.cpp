@@ -2387,19 +2387,17 @@ public:
         if(!use.card->inherits("Analeptic") || !use.from->isWounded())
             return false;
         if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
-            xing->loseMark("@vi");
-            room->playSkillEffect(objectName());
-            room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
             LogMessage log;
+            log.type = "#UseSkill";
             log.from = xing;
             log.to << use.from;
             log.arg = objectName();
-            room->loseMaxHp(use.from, use.from->getLostHp());
-            if(use.from->isAlive())
-                log.type = "#ZhenshaA";
-            else
-                log.type = "#ZhenshaD";
             room->sendLog(log);
+
+            room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
+            room->playSkillEffect(objectName());
+            room->loseMaxHp(use.from, use.from->getLostHp());
+            xing->loseMark("@vi");
             if(use.from->isDead())
                 return true;
         }

@@ -567,6 +567,46 @@ public:
     }
 };
 
+#include <QFile>
+#include <QTextStream>
+CustomCardPackage::CustomCardPackage()
+    :Package("custom_cards")
+{
+    QList<Card *> cards;
+    QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
+    QFile file("etc/custom-cards.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        while(!stream.atEnd()){
+            QString line = stream.readLine();
+            if(!rx.exactMatch(line))
+                continue;
+
+            QStringList texts = rx.capturedTexts();
+            QString name = texts.at(1);
+            Card::Suit suit = Card::String2Suit(texts.at(2));
+            int number = texts.at(3).toInt();
+
+            Card *custom;
+            if(name == "slash")
+                custom = new Slash(suit, number);
+            else if(name == "jink")
+                custom = new Jink(suit, number);
+            else if(name == "peach")
+                custom = new Peach(suit, number);
+            //Card *custom = Sanguosha->cloneCard(name, Card::String2Suit(suit), number);
+            cards << custom;
+        }
+
+        file.close();
+    }
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
+}
+
 TestPackage::TestPackage()
     :Package("test")
 {/*
@@ -622,4 +662,5 @@ TestPackage::TestPackage()
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 }
 
+ADD_PACKAGE(CustomCard)
 ADD_PACKAGE(Test)

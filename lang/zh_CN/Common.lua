@@ -143,6 +143,7 @@ return {
 	["endlessmode"] = "无尽模式",
 	["@endless"] = "铜板",
 	["custom"] = "自定义模式",
+	["custom_cards"] = "自定义卡牌包",
 
 -- hulao
 	["Hulaopass"] = "独松关模式",
