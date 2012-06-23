@@ -7,11 +7,14 @@
 #include "ai.h"
 
 BaoquanCard::BaoquanCard(){
+    mute = true;
 }
 
 void BaoquanCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+    room->playSkillEffect(objectName(), qrand() % 2 + 5);
     int fist = getSubcards().count();
+
     DamageStruct damage;
     damage.damage = fist;
     damage.from = effect.from;
@@ -65,10 +68,12 @@ public:
                         return false;
                 switch(fist){
                     case 1:{
+                        room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         lusashi->drawCards(1);
                         break;
                     }
                     case 2:{
+                        room->playSkillEffect(objectName(), qrand() % 2 + 3);
                         PlayerStar target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
                         QString choice = !target->isWounded() ? "draw2card" :
                                          room->askForChoice(lusashi, objectName(), "draw2card+recover1hp");
