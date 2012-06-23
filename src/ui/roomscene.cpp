@@ -3633,6 +3633,8 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["indicate"] = &RoomScene::doIndicate;
 
         map["hpChange"] = &RoomScene::animateHpChange;
+
+        map["zongzi"] = &RoomScene::doMovingAnimation;
     }
 
     AnimationFunc func = map.value(name, NULL);

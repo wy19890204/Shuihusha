@@ -38,6 +38,7 @@ public:
     virtual QString getEffectPath(bool is_male) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
+
 class Monkey: public OffensiveHorse{
     Q_OBJECT
 
