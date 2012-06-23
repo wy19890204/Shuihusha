@@ -57,6 +57,7 @@ SOURCES += \
 	src/package/events.cpp \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
+	src/package/ox.cpp \
 	src/package/qjwm.cpp \
 	src/package/xzzd.cpp \
 	src/package/bwqz.cpp \
@@ -187,6 +188,7 @@ HEADERS += \
 	src/package/events.h \
 	src/package/gift.h \
 	src/package/rat.h \
+	src/package/ox.h \
 	src/package/qjwm.h \
 	src/package/xzzd.h \
 	src/package/bwqz.h \
@@ -329,5 +331,7 @@ CONFIG(chatvoice){
 TRANSLATIONS += sanguosha.ts
 
 OTHER_FILES += \
-	sanguosha.qss
-
+	sanguosha.qss \
+	acknowledgement/main.qml \
+	acknowledgement/list.png \
+	acknowledgement/back.png

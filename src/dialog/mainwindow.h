@@ -74,6 +74,19 @@ private:
     QList<RoomItem*> room_items;
 };
 
+class AcknowledgementScene : public QGraphicsScene
+{
+    Q_OBJECT
+public:
+    explicit AcknowledgementScene(QObject *parent = 0);
+signals:
+    void go_back();
+private:
+    QDeclarativeView *view;
+    QDeclarativeContext *ctxt;
+    QList<QObject*> tokens,equipped,loaded;
+};
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
