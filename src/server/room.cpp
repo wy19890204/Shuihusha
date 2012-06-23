@@ -1507,9 +1507,9 @@ void Room::setFixedDistance(Player *from, const Player *to, int distance){
 void Room::reverseFor3v3(const Card *card, ServerPlayer *player, QList<ServerPlayer *> &list){
     bool isClockwise = false;
     if(player->isOnline()){
-        bool success = doRequest(player, S_COMMAND_CHOOSE_DIRECTION, Json::Value::null);
+        bool success = doRequest(player, S_COMMAND_CHOOSE_DIRECTION, Json::Value::null, true);
         Json::Value clientReply = player->getClientReply();       
-        if (!success || !clientReply.isString())
+        if (success && clientReply.isString())
         {
             isClockwise = (clientReply.asString() == "cw");
         }        
@@ -1543,8 +1543,9 @@ void Room::reverseFor3v3(const Card *card, ServerPlayer *player, QList<ServerPla
             new_list << list.takeLast();
 
         if(card->inherits("GlobalEffect")){
-            new_list.removeLast();
-            new_list.prepend(player);
+            ServerPlayer *last = new_list.takeLast();
+            //new_list.removeLast();
+            new_list.prepend(last);
         }
 
         list = new_list;

@@ -1059,6 +1059,7 @@ RatPackage::RatPackage()
     General *zhangshun = new General(this, "zhangshun", "min", 3);
     zhangshun->addSkill(new Shunshui);
     zhangshun->addSkill(new Lihun);
+    zhangshun->addSkill(new Skill("nizhuan"));
 
     General *zhuwu = new General(this, "zhuwu", "kou", 3);
     zhuwu->addSkill(new Pozhen);
