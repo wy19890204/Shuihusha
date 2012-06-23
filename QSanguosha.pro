@@ -55,6 +55,7 @@ SOURCES += \
 	src/package/plough.cpp \
 	src/package/maneuvering.cpp \
 	src/package/events.cpp \
+	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/qjwm.cpp \
 	src/package/xzzd.cpp \
@@ -63,7 +64,6 @@ SOURCES += \
 	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
-	src/package/fcdc.cpp \
 	src/package/sp.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
@@ -185,6 +185,7 @@ HEADERS += \
 	src/package/plough.h \
 	src/package/maneuvering.h \
 	src/package/events.h \
+	src/package/gift.h \
 	src/package/rat.h \
 	src/package/qjwm.h \
 	src/package/xzzd.h \
@@ -193,7 +194,6 @@ HEADERS += \
 	src/package/zcyn.h \
 	src/package/cgdk.h \
 	src/package/ybyt.h \
-	src/package/fcdc.h \
 	src/package/sp.h \
 	src/package/god.h \
 	src/package/joy.h \

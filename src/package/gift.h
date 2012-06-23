@@ -1,14 +1,14 @@
-#ifndef FCDCPACKAGE_H
-#define FCDCPACKAGE_H
+#ifndef GIFTPACKAGE_H
+#define GIFTPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class FCDCPackage : public Package{
+class GiftPackage : public Package{
     Q_OBJECT
 
 public:
-    FCDCPackage();
+    GiftPackage();
 };
 
 class XunlieCard: public SkillCard{
@@ -38,4 +38,4 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-#endif // FCDCPACKAGE_H
+#endif // GIFTPACKAGE_H
