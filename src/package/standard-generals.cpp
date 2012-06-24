@@ -2213,7 +2213,7 @@ void YongleCard::use(Room *room, ServerPlayer *fangla, const QList<ServerPlayer 
         if(tmp->isDead())
             continue;
         const Card *card = room->askForCardShow(fangla, tmp, "yongle");
-        tmp->obtainCard(card);
+        tmp->obtainCard(card, false);
     }
 }
 

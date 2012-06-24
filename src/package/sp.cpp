@@ -59,7 +59,7 @@ public:
         if(e == PhaseChange){
             if(lusashi->getPhase() == Player::RoundStart)
                 room->setPlayerMark(lusashi, "@fist", 0);
-            else if(lusashi->getPhase() == Player::NotActive){
+            else if(lusashi->getPhase() == Player::Finish){
                 int fist = lusashi->getMark("@fist");
                 if(fist < 1)
                     return false;

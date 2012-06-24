@@ -50,6 +50,7 @@ public:
             log.arg = objectName();
             room->sendLog(log);
 
+            room->playSkillEffect(objectName());
             room->loseMaxHp(player);
         }
         return false;
