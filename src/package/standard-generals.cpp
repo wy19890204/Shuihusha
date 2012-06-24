@@ -1603,15 +1603,13 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(!player->hasFlag("dalei_success"))
-            return false;
         if(event == PhaseChange){
-            if(player->getPhase() == Player::NotActive){
-                room->setPlayerFlag(player, "-dalei_success");
+            if(player->getPhase() == Player::NotActive)
                 room->setPlayerProperty(player, "dalei_target", QVariant());
-            }
             return false;
         }
+        if(!player->hasFlag("dalei_success"))
+            return false;
         DamageStruct damage = data.value<DamageStruct>();
         PlayerStar target = player->property("dalei_target").value<PlayerStar>();
         if(damage.to == target){
@@ -1623,7 +1621,7 @@ public:
                     if(tmp->isWounded())
                         targets << tmp;
                 if(!targets.isEmpty() && player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev);
+                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev, true);
             }
         }
         return false;
@@ -1661,10 +1659,10 @@ public:
                 return;
             int i = 0;
             for(; i < lstn; i++){
-                int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
-                room->throwCard(card_id);
                 if(damage.from->isNude())
                     break;
+                int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
+                room->throwCard(card_id);
             }
             log.to << damage.from;
             log.arg2 = QString::number(i);

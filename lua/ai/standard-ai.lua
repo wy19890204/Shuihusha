@@ -862,15 +862,22 @@ sgs.ai_skill_choice["fuqin"] = function(self, choice)
 	if self:isFriend(source) then
 		return "qing"
 	else
-		local rand = math.random(1, 2)
-		if rand == 1 then
-			return "yan"
+		local lstn = self.player:getLostHp()
+		local canm = source:getCardCount(true)
+		if canm >= lstn or self:isWeak() then
+			if self:isWeak() then
+				self.fuqintarget = 4
+				return "qing"
+			else
+				return "yan"
+			end
 		else
 			return "qing"
 		end
 	end
 end
 sgs.ai_skill_playerchosen["fuqin"] = function(self, targets)
+	if self.fuqintarget == 4 then return self.player end
 	self:sort(self.friends, "handcard")
 	if self.friends[1]:getHandcardNum() > 2 then
 		self:sort(self.friends, "hp")

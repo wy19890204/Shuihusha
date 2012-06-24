@@ -483,7 +483,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         room->sendLog(log);
                         while(!damage.from->isNude()){
                             int card_id = room->askForCardChosen(source, damage.from, "he", "nanastars");
-                            room->obtainCard(source, card_id, false);
+                            room->obtainCard(source, card_id, room->getCardPlace(card_id) != Player::Hand);
                             x --;
                             if(x == 0)
                                 break;
