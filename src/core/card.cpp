@@ -6,6 +6,7 @@
 #include "carditem.h"
 #include "lua-wrapper.h"
 #include <QFile>
+#include <QResource>
 
 const Card::Suit Card::AllSuits[4] = {
     Card::Spade,
@@ -22,6 +23,8 @@ Card::Card(Suit suit, int number, bool target_fixed)
 
     if(number < 1 || number > 13)
         number = 0;
+
+    QResource::registerResource("image/card.rcc");
 }
 
 QString Card::getSuitString() const{
@@ -181,8 +184,8 @@ bool Card::CompareByType(const Card *a, const Card *b){
 }
 
 QString Card::getPixmapPath() const{
-    QString path = QString("image/card/%1.jpg").arg(objectName());
-    return QFile::exists(path) ? path : "image/card/unknown.jpg";
+    QString path = QString(":card/%1.jpg").arg(objectName());
+    return QFile::exists(path) ? path : ":card/unknown.jpg";
 }
 
 QString Card::getIconPath() const{
