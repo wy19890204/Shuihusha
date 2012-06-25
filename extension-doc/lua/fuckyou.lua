@@ -295,7 +295,7 @@ numa=sgs.CreateTriggerSkill{
 		elseif word == "ccsh" then
 			room:sendLog(gitlog)
 			--nimeiriwo:hp full
-			room:setPlayerProperty(player, "hp", player:getMaxHP())
+			room:setPlayerProperty(player, "hp", sgs.QVariant(player:getMaxHP()))
 		elseif word == "dsdc" then
 			room:sendLog(gitlog);
 			--nimeiriwo:show one player's handcard to other one
@@ -407,7 +407,7 @@ numa=sgs.CreateTriggerSkill{
 			if not players.isEmpty() then
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				local choice = room:askForChoice(target, self:objectName(), "benghuai+wumou")
-				room:setPlayerProperty(target, "maxhp", target:getMaxHP() + 1)
+				room:setPlayerProperty(target, "maxhp", sgs.QVariant(target:getMaxHP() + 1))
 				room:acquireSkill(target, choice)
 				player:addMark("ssscc");
 			end
@@ -424,9 +424,9 @@ numa=sgs.CreateTriggerSkill{
 				for _, skill in sgs.qlist(player:getVisibleSkillList()) do
 					room:detachSkillFromPlayer(player, skill:objectName())
 				end
-				room:setPlayerProperty(player, "general", "sujiang")
-				room:setPlayerProperty(player, "general2", "sujiangf")
-				room:setPlayerProperty(player, "maxhp", player:getMaxHP() + 2)
+				room:setPlayerProperty(player, "general", sgs.QVariant("sujiang"))
+				room:setPlayerProperty(player, "general2", sgs.QVariant("sujiangf"))
+				room:setPlayerProperty(player, "maxhp", sgs.QVariant(player:getMaxHP() + 2))
 		elseif string.len(word) == 5 and player:getMark("fivewd") == 0 then
 			gitlog.type = "#Numa_5wd"
 			gitlog.from = player

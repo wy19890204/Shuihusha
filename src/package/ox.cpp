@@ -48,6 +48,91 @@ public:
     }
 };
 
+class Zhongjia: public MaxCardsSkill{
+public:
+        Zhongjia():MaxCardsSkill("zhongjia"){
+        }
+        virtual int getExtra(const Player *target) const{
+                if(!target->hasSkill(objectName())){
+                        return 0;
+                }else{
+                        int extra = 0;
+                        QList<Player *> players;
+                        if(target->parent()){
+                                foreach(const Player *player, target->parent()->findChildren<const Player *>()){
+                                        if(player->isAlive() && player->isChained()){
+                                                players << player;
+                                        }
+                                }
+                        }
+                        extra = players.length();
+                        return extra;
+                }
+                return 0;
+        }
+};
+
+SheruCard::SheruCard(){
+        target_fixed = true;
+        once = true;
+        will_throw = true;
+}
+
+bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+
+    return to_select->isWounded() && to_select != Self;
+}
+
+void SheruCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    room->throwCard(this);
+    QString choice = room->askForChoice(effect.from, objectName(), "she+ru");
+    if(choice == "she"){
+                effect.to->drawCards(effect.to->getLostHp());
+                room->loseHp(effect.to);
+        }else{
+                if(effect.to->getCardCount(true)<effect.to->getLostHp()){
+                        effect.to->throwAllEquips()
+                        effect.to->throwAllHandCards()
+                }else{
+                        int card_id = -1
+                        for i=1,effect.to->getLostHp(),1 do //waiting rewrite
+                                card_id = room->askForCardChosen(effect.from, effect.to, "he", objectName());
+                                room->throwCard(Sanguosha->getCard(card_id))
+                        }
+                }
+        RecoverStruct recover;
+        recover.card = NULL;
+        recover.who = effect.from;
+        room->recover(effect.to, recover);
+        }
+    room->broadcastSkillInvoke("sheru");
+}
+
+class Sheru: public OneCardViewAsSkill{
+public:
+    Sheru():OneCardViewAsSkill("sheru"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("SheruCard");
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->isBlack() && to_select->getFilteredCard()->inherits("BasicCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        SheruCard *sheru_card = new SheruCard;
+        sheru_card->addSubcard(card_item->getId());
+
+        return sheru_card;
+    }
+};
+
 XunlieCard::XunlieCard(){
 }
 
