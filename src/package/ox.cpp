@@ -6,6 +6,48 @@
 #include "carditem.h"
 #include "engine.h"
 
+LianmaCard::LianmaCard(){
+    target_fixed = true;
+    once = true;
+}
+
+void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
+    QList<ServerPlayer *> players = room->getOtherPlayers(huyanzhuo);
+
+    //room->broadcastSkillInvoke(objectName());
+    QString choice = room->askForChoice(huyanzhuo, objectName(), "lian+ma");
+    if(choice == "lian"){
+        foreach(ServerPlayer *player, players){
+            if(!player->getEquip(3)&&!player->getEquip(4)){
+                if(!player->isChained())
+                    room->setPlayerProperty(player,"chained",true);
+            }
+        }
+    }else{
+        foreach(ServerPlayer *player, players){
+            if(player->getEquip(3)||player->getEquip(4)){
+                if(player->isChained())
+                    room->setPlayerProperty(player,"chained",false);
+            }
+        }
+    }
+};
+
+class Lianma: public ZeroCardViewAsSkill{
+public:
+    Lianma():ZeroCardViewAsSkill("lianma"){
+        default_choice = "lian";
+    }
+
+    virtual const Card *viewAs() const{
+        return new LianmaCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("LianmaCard");
+    }
+};
+
 XunlieCard::XunlieCard(){
 }
 
