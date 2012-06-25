@@ -126,33 +126,33 @@ numa=sgs.CreateTriggerSkill{
 			room:sendLog(gitlog)
 			--nimei:throw single player 2 cards
 			local players = sgs.SPlayerList()
-        	for _, tmp in sgs.qlist(room:getAlivePlayers()) do
+			for _, tmp in sgs.qlist(room:getAlivePlayers()) do
 				if tmp:getHandcardNum() < 2 then
 					if tmp:hasSkill("lianying") then
-                        players:append(tmp)
+						players:append(tmp)
 					elseif tmp:hasSkill("shangshi") and tmp:isWounded() then
-                        players:append(tmp)
+						players:append(tmp)
 					end
 				else
-                    players:append(tmp)
+				players:append(tmp)
 				end
 			end
 			if not players:isEmpty() then
 				room:askForDiscard(room:askForPlayerChosen(player, players, self:objectName()), self:objectName(), 2);
-            end
+			end
 		elseif word == "cc" then
 			room:sendLog(gitlog)
 			--meimei:clear single player's all judge_area
 			local players = sgs.SPlayerList()
-            for _, tmp in sgs.qlist(room:getAlivePlayers()) do
+			for _, tmp in sgs.qlist(room:getAlivePlayers()) do
 				if not tmp:getJudgingArea():isEmpty() then players:append(tmp) end
 			end
-			if not players.isEmpty() then
+			if not players:isEmpty() then
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				for _, c in sgs.qlist(target:getJudgingArea()) do
 					room:throwCard(c:getId())
 				end
-            end
+			end
 		elseif word == "sd" then
 			room:sendLog(gitlog)
 			--rini:let single player tribute a card and recover 1 hp
@@ -160,8 +160,8 @@ numa=sgs.CreateTriggerSkill{
 			for _, tmp in sgs.qlist(room:getOtherPlayers(player)) do
 				if tmp:isWounded() and not tmp:isKongcheng() then players:append(tmp) end
 			end
-			if not players.isEmpty() then
-                local target = room:askForPlayerChosen(player, players, self:objectName())
+			if not players:isEmpty() then
+				local target = room:askForPlayerChosen(player, players, self:objectName())
 				local card = room:askForCardShow(target, player, self:objectName())
 				player:obtainCard(card)
 				local rini = sgs.RecoverStruct()
@@ -178,7 +178,7 @@ numa=sgs.CreateTriggerSkill{
 			judge.reason = self:objectName()
 			judge.who = player
 			room:judge(judge)
-			if judge.isGood() then room:acquireSkill(player, "fanchun") end
+			if judge:isGood() then room:acquireSkill(player, "fanchun") end
 		elseif word == "hsc" or word == "hsd" then
 			room:sendLog(gitlog)
 			--worimei&worini:recover hp with a girl or a boy
@@ -189,7 +189,7 @@ numa=sgs.CreateTriggerSkill{
 					players:append(tmp)
 				end
 			end
-			if not players.isEmpty() then
+			if not players:isEmpty() then
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				local worimei = sgs.RecoverStruct()
 				worimei.card = nil
@@ -295,6 +295,10 @@ numa=sgs.CreateTriggerSkill{
 		elseif word == "ccsh" then
 			room:sendLog(gitlog)
 			--nimeiriwo:hp full
+			local mei2riwo = sgs.RecoverStruct()
+			mei2riwo.who = player
+			mei2riwo.recover = player:getLostHp()
+			room:recover(player, mei2riwo)
 			room:setPlayerProperty(player, "hp", sgs.QVariant(player:getMaxHP()))
 		elseif word == "dsdc" then
 			room:sendLog(gitlog);
@@ -381,7 +385,7 @@ numa=sgs.CreateTriggerSkill{
 					end
 				end
 			end
-			if not players.isEmpty() then
+			if not players:isEmpty() then
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				for _, lightning in sgs.qlist(target:getJudgingArea()) do
 					if lightning:objectName() == "lightning" then
@@ -404,11 +408,13 @@ numa=sgs.CreateTriggerSkill{
 			for _, tmp in sgs.qlist(room:getOtherPlayers(player)) do
 				if tmp:getMaxHP() > player:getMaxHP() then players:append(tmp) end
 			end
-			if not players.isEmpty() then
+			if not players:isEmpty() then
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				local choice = room:askForChoice(target, self:objectName(), "benghuai+wumou")
 				room:setPlayerProperty(target, "maxhp", sgs.QVariant(target:getMaxHP() + 1))
-				room:acquireSkill(target, choice)
+				if sgs.Sanguosha:getSkill("benghuai") then
+					room:acquireSkill(target, choice)
+				end
 				player:addMark("ssscc");
 			end
 		elseif string.len(word) == 4 then
@@ -439,8 +445,10 @@ numa=sgs.CreateTriggerSkill{
 			}
 			else{]]
 				room:loseMaxHp(player);
-				if player:isAlive() and sgs.Sanguosha:getSkill("longhun") then
-					room:acquireSkill(player, "longhun")
+				if player:isAlive() then
+					if sgs.Sanguosha:getSkill("longhun") then
+						room:acquireSkill(player, "longhun")
+					end
 					player:addMark("fivewd")
 				end
 		elseif string.len(word) > 5 and player:getMark("othwd") == 0 then
@@ -450,8 +458,12 @@ numa=sgs.CreateTriggerSkill{
 			--worinimeimei:Wake-Skill, learn wuyan and buqu
 			room:loseMaxHp(player, 2)
 			if player:isAlive() then
-				room:acquireSkill(player, "wuyan")
-				room:acquireSkill(player, "buqu")
+				if sgs.Sanguosha:getSkill("wuyan") then
+					room:acquireSkill(player, "wuyan")
+				end
+				if sgs.Sanguosha:getSkill("buqu") then
+					room:acquireSkill(player, "buqu")
+				end
 				player:addMark("othwd")
 			end
 		else
@@ -473,58 +485,29 @@ fanchun=sgs.CreateTriggerSkill
 	events={sgs.Damaged},
 
 	on_trigger=function(self,event,player,data)
-        local room = player:getRoom()
-        local card = data:toDamage().card
+		local room = player:getRoom()
+		local card = data:toDamage().card
 		local data = sgs.QVariant(0)
 		data:setValue(card)
-        if room:askForSkillInvoke(player, self:objectName(), data) then
-            if not card:getSubcards():isEmpty() then
+		if room:askForSkillInvoke(player, self:objectName(), data) then
+			if not card:getSubcards():isEmpty() then
 				for _, cd in sgs.qlist(card:getSubcards()) do
-                    player:addToPile("word", cd)
+					player:addToPile("word", cd)
 				end
-            else
-                player:addToPile("word", card:getEffectiveId())
-			end
-        end
-	end
-}
-
-noqing=sgs.CreateTriggerSkill{
-	name="noqing",
-	frequency = sgs.Skill_Compulsory,
-	events={sgs.Damaged},
-	priority = -1,
-
-	on_trigger=function(self,event,player,data)
-		local room = player:getRoom()
-		for _, tmp in sgs.qlist(room:getOtherPlayers(player)) do
-			if tmp:getHp() < player:getHp() then
-				return false
-			end
-		end
-		for _, tmp in sgs.qlist(room:getAllPlayers()) do
-			local choice = room:askForChoice(tmp, self:objectName(), "hp+max_hp")
-			local log = sgs.LogMessage()
-			log.from = player
-			log.arg = self:objectName()
-			log.to:append(tmp)
-			if(choice == "hp") then
-				log.type = "#NoqingLoseHp"
-				room:sendLog(log)
-				room:loseHp(tmp)
 			else
-				log.type = "#NoqingLoseMaxHp"
-				room:sendLog(log)
-				room:loseMaxHp(tmp)
+				player:addToPile("word", card:getEffectiveId())
 			end
 		end
-		return false
 	end
 }
 
 miheng:addSkill(yulu)
 miheng:addSkill(numa)
 miheng:addSkill(jieao)
+
+local skills = sgs.SkillList()
+if not sgs.Sanguosha:getSkill("fanchun") then skills:append(fanchun) end
+sgs.Sanguosha:addSkills(skills)
 
 sgs.LoadTranslationTable{
 	["fuckyou"] = "实干家",
