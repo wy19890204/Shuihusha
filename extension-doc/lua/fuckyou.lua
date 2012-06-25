@@ -408,7 +408,9 @@ numa=sgs.CreateTriggerSkill{
 				local target = room:askForPlayerChosen(player, players, self:objectName())
 				local choice = room:askForChoice(target, self:objectName(), "benghuai+wumou")
 				room:setPlayerProperty(target, "maxhp", sgs.QVariant(target:getMaxHP() + 1))
-				room:acquireSkill(target, choice)
+				if sgs.Sanguosha:getSkill("benghuai") then
+					room:acquireSkill(target, choice)
+				end
 				player:addMark("ssscc");
 			end
 		elseif string.len(word) == 4 then
@@ -439,8 +441,10 @@ numa=sgs.CreateTriggerSkill{
 			}
 			else{]]
 				room:loseMaxHp(player);
-				if player:isAlive() and sgs.Sanguosha:getSkill("longhun") then
-					room:acquireSkill(player, "longhun")
+				if player:isAlive() then
+					if sgs.Sanguosha:getSkill("longhun") then
+						room:acquireSkill(player, "longhun")
+					end
 					player:addMark("fivewd")
 				end
 		elseif string.len(word) > 5 and player:getMark("othwd") == 0 then
@@ -450,8 +454,12 @@ numa=sgs.CreateTriggerSkill{
 			--worinimeimei:Wake-Skill, learn wuyan and buqu
 			room:loseMaxHp(player, 2)
 			if player:isAlive() then
-				room:acquireSkill(player, "wuyan")
-				room:acquireSkill(player, "buqu")
+				if sgs.Sanguosha:getSkill("wuyan") then
+					room:acquireSkill(player, "wuyan")
+				end
+				if sgs.Sanguosha:getSkill("buqu") then
+					room:acquireSkill(player, "buqu")
+				end
 				player:addMark("othwd")
 			end
 		else
@@ -525,6 +533,10 @@ noqing=sgs.CreateTriggerSkill{
 miheng:addSkill(yulu)
 miheng:addSkill(numa)
 miheng:addSkill(jieao)
+
+local skills = sgs.SkillList()
+if not sgs.Sanguosha:getSkill("fanchun") then skills:append(fanchun) end
+sgs.Sanguosha:addSkills(skills)
 
 sgs.LoadTranslationTable{
 	["fuckyou"] = "实干家",

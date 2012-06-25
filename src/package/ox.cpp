@@ -48,34 +48,34 @@ public:
     }
 };
 
-class Zhongjia: public MaxCardsSkill{
+class Zhongjia: public ClientSkill{
 public:
-        Zhongjia():MaxCardsSkill("zhongjia"){
-        }
-        virtual int getExtra(const Player *target) const{
-                if(!target->hasSkill(objectName())){
-                        return 0;
-                }else{
-                        int extra = 0;
-                        QList<Player *> players;
-                        if(target->parent()){
-                                foreach(const Player *player, target->parent()->findChildren<const Player *>()){
-                                        if(player->isAlive() && player->isChained()){
-                                                players << player;
-                                        }
-                                }
-                        }
-                        extra = players.length();
-                        return extra;
+    Zhongjia():ClientSkill("zhongjia"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(!target->hasSkill(objectName()))
+            return 0;
+        else{
+            int extra = 0;
+            QList<Player *> players;
+            if(target->parent()){
+                foreach(const Player *player, target->parent()->findChildren<const Player *>()){
+                    if(player->isAlive() && player->isChained()){
+                        players << player;
+                    }
                 }
-                return 0;
+            }
+            extra = players.length();
+            return extra;
         }
+    }
 };
 
 SheruCard::SheruCard(){
-        target_fixed = true;
-        once = true;
-        will_throw = true;
+    target_fixed = true;
+    once = true;
+    will_throw = true;
 }
 
 bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -90,24 +90,24 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
     room->throwCard(this);
     QString choice = room->askForChoice(effect.from, objectName(), "she+ru");
     if(choice == "she"){
-                effect.to->drawCards(effect.to->getLostHp());
-                room->loseHp(effect.to);
+        effect.to->drawCards(effect.to->getLostHp());
+        room->loseHp(effect.to);
+    }else{
+        if(effect.to->getCardCount(true) < effect.to->getLostHp()){
+            effect.to->throwAllEquips();
+            effect.to->throwAllHandCards();
         }else{
-                if(effect.to->getCardCount(true)<effect.to->getLostHp()){
-                        effect.to->throwAllEquips()
-                        effect.to->throwAllHandCards()
-                }else{
-                        int card_id = -1
-                        for i=1,effect.to->getLostHp(),1 do //waiting rewrite
-                                card_id = room->askForCardChosen(effect.from, effect.to, "he", objectName());
-                                room->throwCard(Sanguosha->getCard(card_id))
-                        }
-                }
+            int card_id = -1;
+            for(int i=1; i < effect.to->getLostHp(); i++){
+                card_id = room->askForCardChosen(effect.from, effect.to, "he", objectName());
+                room->throwCard(Sanguosha->getCard(card_id));
+            }
+        }
         RecoverStruct recover;
         recover.card = NULL;
         recover.who = effect.from;
         room->recover(effect.to, recover);
-        }
+    }
     room->broadcastSkillInvoke("sheru");
 }
 
@@ -219,29 +219,6 @@ public:
     }
 };
 
-class Shenjian: public TriggerSkill{
-public:
-    Shenjian():TriggerSkill("shenjian"){
-        events << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.card->inherits("ArcheryAttack")){
-            LogMessage log;
-            log.type = "#SkillNullify";
-            log.from = player;
-            log.arg = objectName();
-            log.arg2 = "archery_attack";
-            room->sendLog(log);
-
-            return true;
-        }else
-            return false;
-    }
-};
-
 LianzhuCard::LianzhuCard(){
     once = true;
     target_fixed = true;
@@ -272,6 +249,7 @@ public:
     }
 };
 
+/*
 class Tiansuan: public TriggerSkill{
 public:
     Tiansuan():TriggerSkill("tiansuan"){
@@ -300,18 +278,6 @@ public:
                           arg(pindian->to_card->objectName()));
         choices << from_card
                 << to_card;
-/*
-        LogMessage log;
-        log.type = "$Tiansuan_from";
-        log.from = pindian->from;
-        log.to << pindian->to;
-        log.card_str = pindian->from_card->getEffectIdString();
-        room->sendLog(log);
-        log.type = "$Tiansuan_to";
-        log.from = pianzi;
-        log.card_str = pindian->to_card->getEffectIdString();
-        room->sendLog(log);
-*/
         QString choice = room->askForChoice(pianzi, objectName(), choices.join("+"));
         if(choice == from_card){
             int omiga = room->drawCard();
@@ -425,27 +391,35 @@ public:
         return false;
     }
 };
+*/
 
 OxPackage::OxPackage()
     :Package("ox")
 {
+    General *huyanzhuo = new General(this, "huyanzhuo", "guan");
+    huyanzhuo->addSkill(new Lianma);
+    huyanzhuo->addSkill(new Zhongjia);
+
+    General *dongchaoxueba = new General(this, "dongchaoxueba", "jiang");
+    dongchaoxueba->addSkill(new Sheru);
+
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
 
     General *pangwanchun = new General(this, "pangwanchun", "jiang");
-    pangwanchun->addSkill(new Shenjian);
     pangwanchun->addSkill(new Lianzhu);
-
+/*
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
 
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
-
+*/
+    addMetaObject<LianmaCard>();
+    addMetaObject<SheruCard>();
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
-    addMetaObject<HuazhuCard>();
 }
 
 ADD_PACKAGE(Ox);

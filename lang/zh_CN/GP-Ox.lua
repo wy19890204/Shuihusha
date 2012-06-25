@@ -1,9 +1,31 @@
--- FengchiDianche Shuihusha part 9.
+-- translation for OxPackage
 
 return {
-	["FCDC"] = "风驰电掣",
+	["ox"] = "臭妞",
 
-	["#xiezhen"] = "两头蛇",
+	["#huyanzhuo"] = "双鞭", -- guan 4hp (fcdc)
+	["huyanzhuo"] = "呼延灼",
+	["coder:huyanzhuo"] = "Slob",
+	["lianma"] = "链马",
+	[":lianma"] = "出牌阶段，你可以选择一项：横置所有装备区里有坐骑牌的角色的武将牌，或重置所有装备区里没有坐骑牌的角色的武将牌。每阶段限一次。",
+	["zhongjia"] = "重甲",
+	[":zhongjia"] = "<b>锁定技</b>，你的手牌上限+X（X为处于连环状态的现存角色数）。",
+
+	["#dongchaoxueba"] = "黑狱吏", -- jiang 4hp (fcdc)
+	["dongchaoxueba"] = "董超薛霸",
+	["coder:dongchaoxueba"] = "Slob",
+	["sheru"] = "折辱",
+	[":sheru"] = "出牌阶段，你可以弃置一张♠或♣基本牌指定一名已受伤的其他角色并选择一项：1.令其摸X张牌并失去1点体力；2.弃掉其X张牌并令其回复1点体力（X为该角色已损失的体力值）。每回合限一次。",
+
+	["#pangwanchun"] = "小养由基", -- jiang 4hp (fcdc)
+	["pangwanchun"] = "庞万春",
+	["lianzhu"] = "连珠",
+	[":lianzhu"] = "出牌阶段，若你的武将牌正面向上，则你可以将你的武将牌翻面，视为你使用一张【万箭齐发】（目标角色需连续打出两张【闪】，否则受到你对其造成的1点火焰伤害）。 ",
+	["#Lianzhu"] = "%from 的锁定技【%arg】被触发，%to 需要打出两张【闪】",
+	["@lianzhu2jink"] = "%src 拥有技能【连珠】，你须再出一张【闪】",
+	["~pangwanchun"] = "中埋伏了……",
+
+	["#xiezhen"] = "两头蛇", -- min 4hp (fcdc)
 	["xiezhen"] = "解珍",
 	["cv:xiezhen"] = "烨子【剪刀剧团】",
 	["xunlie"] = "巡猎",
@@ -14,16 +36,6 @@ return {
 	["$xunlie1"] = "金蛇弓响，虎狼难逃。",
 	["$xunlie2"] = "吾这便去取讨大虫！",
 	["~xiezhen"] = "顾不了那么多了！",
-
-	["#pangwanchun"] = "小养由基",
-	["pangwanchun"] = "庞万春",
-	["shenjian"] = "神箭",
-	[":shenjian"] = "<b>锁定技</b>，【万箭齐发】对你无效；当你使用【万箭齐发】时，目标角色须连续打出两张【闪】才能抵消。",
-	["#Shenjian"] = "%from 的锁定技【%arg】被触发，%to 需要打出两张【闪】",
-	["@shenjian2jink"] = "%src 拥有技能【神箭】，你须再出一张【闪】",
-	["lianzhu"] = "连珠",
-	[":lianzhu"] = "出牌阶段。你可将你的武将牌翻面，视为你使用了一张【万箭齐发】。每回合限一次。",
-	["~pangwanchun"] = "中埋伏了……",
 
 	["#jiangjing"] = "神算子",
 	["jiangjing"] = "蒋敬",
