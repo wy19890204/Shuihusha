@@ -625,24 +625,20 @@ ArcheryAttack::ArcheryAttack(Card::Suit suit, int number)
 void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     const Card *jink = NULL;
-    if(effect.from->hasSkill("shenjian")){
+    if(effect.from->hasSkill("lianzhu")){
         const Card *first_jink = NULL, *second_jink = NULL;
         LogMessage log;
-        log.type = "#Shenjian";
+        log.type = "#Lianzhu";
         log.from = effect.from;
-        log.arg = "shenjian";
+        log.arg = "lianzhu";
         log.to << effect.to;
         room->sendLog(log);
         first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
         if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@shenjian2jink:" + effect.from->objectName());
+            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName());
 
-        if(first_jink && second_jink){
-            //jink = new DummyCard;
-            //jink->addSubcard(first_jink);
-            //jink->addSubcard(second_jink);
+        if(first_jink && second_jink)
             jink = first_jink;
-        }
     }
     else
         jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());

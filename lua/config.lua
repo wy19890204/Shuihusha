@@ -21,6 +21,7 @@ config = {
 
 	"Standard",
 	"Rat",
+	"Ox",
 --[[	"QJWM",
 	"XZDD",
 	"BWQZ",
@@ -28,7 +29,6 @@ config = {
 	"ZCYN",
 	"CGDK",
 	"YBYT",
-	"FCDC",
 	"God",
 	"Stanley",
 	"InterChange",]]
