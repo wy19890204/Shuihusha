@@ -408,10 +408,11 @@ bool Player::hasEquip() const{
     return weapon || armor || defensive_horse || offensive_horse;
 }
 
-bool Player::hasEquip(QString name) const{
+bool Player::hasEquip(const QString &name, bool inherit) const{
     bool ok = false;
     foreach(const Card *equip, getEquips()){
-        if(equip->objectName() == name){
+        if((!inherit && equip->objectName() == name) ||
+           (inherit && equip->inherits(name.toLocal8Bit().data()))){
             ok = true;
             break;
         }

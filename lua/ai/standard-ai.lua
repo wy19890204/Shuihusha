@@ -479,8 +479,8 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 		end
 	elseif prompt == "@haoshen-play" and self.player:getHandcardNum() > 6 then
 		self:sort(self.friends_noself, "handcard")
+		if #self.friends_noself == 0 then return "." end
 		local target = self.friends_noself[1]
-		if not target then return "." end
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)

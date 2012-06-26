@@ -653,7 +653,9 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         else
             damage.from = NULL;
         damage.to = effect.to;
-        damage.nature = DamageStruct::Normal;
+        damage.nature = effect.from->hasSkill("lianzhu") ?
+                        DamageStruct::Fire:
+                        DamageStruct::Normal;
 
         room->damage(damage);
     }

@@ -12,22 +12,25 @@ LianmaCard::LianmaCard(){
 }
 
 void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
-    QList<ServerPlayer *> players = room->getOtherPlayers(huyanzhuo);
+    QList<ServerPlayer *> players = room->getAlivePlayers();
 
     //room->broadcastSkillInvoke(objectName());
-    QString choice = room->askForChoice(huyanzhuo, objectName(), "lian+ma");
+    QString choice = room->askForChoice(huyanzhuo, "lianma", "lian+ma");
     if(choice == "lian"){
         foreach(ServerPlayer *player, players){
-            if(!player->getEquip(3)&&!player->getEquip(4)){
-                if(!player->isChained())
-                    room->setPlayerProperty(player,"chained",true);
+            if(player->hasEquip("Horse", true)){
+                if(!player->isChained()){
+                    player->setChained(true);
+                    room->broadcastProperty(player, "chained");
+                    room->setEmotion(player, "chain");
+                }
             }
         }
     }else{
         foreach(ServerPlayer *player, players){
-            if(player->getEquip(3)||player->getEquip(4)){
+            if(!player->hasEquip("Horse", true)){
                 if(player->isChained())
-                    room->setPlayerProperty(player,"chained",false);
+                    room->setPlayerProperty(player, "chained", false);
             }
         }
     }
@@ -57,25 +60,18 @@ public:
         if(!target->hasSkill(objectName()))
             return 0;
         else{
-            int extra = 0;
-            QList<Player *> players;
-            if(target->parent()){
-                foreach(const Player *player, target->parent()->findChildren<const Player *>()){
-                    if(player->isAlive() && player->isChained()){
-                        players << player;
-                    }
-                }
+            int extra = target->isChained() ? 1 : 0;
+            foreach(const Player *player, target->getSiblings()){
+                if(player->isAlive() && player->isChained())
+                    extra ++;
             }
-            extra = players.length();
             return extra;
         }
     }
 };
 
 SheruCard::SheruCard(){
-    target_fixed = true;
     once = true;
-    will_throw = true;
 }
 
 bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -87,26 +83,28 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void SheruCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->throwCard(this);
-    QString choice = room->askForChoice(effect.from, objectName(), "she+ru");
+    //room->throwCard(this);
+    QString choice = room->askForChoice(effect.from, "sheru", "she+ru");
+    int x = effect.to->getLostHp();
     if(choice == "she"){
-        effect.to->drawCards(effect.to->getLostHp());
+        effect.to->drawCards(x);
         room->loseHp(effect.to);
     }else{
-        if(effect.to->getCardCount(true) < effect.to->getLostHp()){
+        if(effect.to->getCardCount(true) <= x){
             effect.to->throwAllEquips();
             effect.to->throwAllHandCards();
         }else{
             int card_id = -1;
-            for(int i=1; i < effect.to->getLostHp(); i++){
-                card_id = room->askForCardChosen(effect.from, effect.to, "he", objectName());
-                room->throwCard(Sanguosha->getCard(card_id));
+            for(int i=1; i<=x; i++){
+                card_id = room->askForCardChosen(effect.from, effect.to, "he", "sheru");
+                room->throwCard(card_id);
+                if(effect.to->isNude())
+                    break;
             }
         }
         RecoverStruct recover;
-        recover.card = NULL;
         recover.who = effect.from;
-        room->recover(effect.to, recover);
+        room->recover(effect.to, recover, true);
     }
     //room->broadcastSkillInvoke("sheru");
 }
@@ -122,12 +120,13 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack() && to_select->getFilteredCard()->inherits("BasicCard");
+        const Card *card = to_select->getFilteredCard();
+        return card->isBlack() && card->inherits("BasicCard");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
         SheruCard *sheru_card = new SheruCard;
-        sheru_card->addSubcard(card_item->getId());
+        sheru_card->addSubcard(card_item->getFilteredCard());
 
         return sheru_card;
     }
@@ -403,11 +402,11 @@ OxPackage::OxPackage()
     General *dongchaoxueba = new General(this, "dongchaoxueba", "jiang");
     dongchaoxueba->addSkill(new Sheru);
 
-    General *xiezhen = new General(this, "xiezhen", "min");
-    xiezhen->addSkill(new Xunlie);
-
     General *pangwanchun = new General(this, "pangwanchun", "jiang");
     pangwanchun->addSkill(new Lianzhu);
+
+    General *xiezhen = new General(this, "xiezhen", "min");
+    xiezhen->addSkill(new Xunlie);
 /*
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Tiansuan);
