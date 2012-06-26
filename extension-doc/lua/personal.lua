@@ -35,14 +35,14 @@ eatdeath=sgs.CreateTriggerSkill{
 			room:loseMaxHp(tenkei)
 			local skills = player:getVisibleSkillList()
 			for _, skill in sgs.qlist(skills) do
-			--	if skill:parent() then
+				if skill:getLocation() == sgs.Skill_Right then
 					if skill:getFrequency() ~= sgs.Skill_Limited and
 						skill:getFrequency() ~= sgs.Skill_Wake then
 						local sk = skill:objectName()
 						room:acquireSkill(tenkei, sk)
 						table.insert(eatdeath_skills, sk)
 					end
-			--	end
+				end
 			end
 			tenkei:setTag("EatDeath", sgs.QVariant(table.concat(eatdeath_skills, "+")))
 		end

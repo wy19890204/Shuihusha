@@ -91,8 +91,8 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
         room->loseHp(effect.to);
     }else{
         if(effect.to->getCardCount(true) <= x){
-            effect.to->throwAllEquips();
             effect.to->throwAllHandCards();
+            effect.to->throwAllEquips();
         }else{
             int card_id = -1;
             for(int i=1; i<=x; i++){

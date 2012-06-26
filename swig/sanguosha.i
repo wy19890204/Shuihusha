@@ -717,6 +717,11 @@ public:
 		Wake
 	};
 
+	enum Location{
+		Left,
+		Right
+	};
+
 	explicit Skill(const char *name, Frequency frequent = NotFrequent);
 	bool isLordSkill() const;
 	QString getDescription() const;
@@ -726,6 +731,8 @@ public:
 	virtual QString getDefaultChoice(ServerPlayer *player) const;
 	virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
 	virtual QDialog *getDialog() const;
+
+	virtual Location getLocation() const;
 
 	void initMediaSource();
 	void playEffect(int index = -1) const;
