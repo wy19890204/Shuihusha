@@ -161,7 +161,7 @@ public:
                 }
             }
             else if(duck != player && !duck->isNude() && damage.damage > 0
-                && room->askForCard(duck, "BasicCard", "@baoguo:" + player->objectName() + "::" + QString::number(damage.damage), data, CardDiscarded)){
+                && room->askForCard(duck, "BasicCard", "@baoguo:" + player->objectName() + "::" + QString::number(damage.damage), true, data, CardDiscarded)){
                 LogMessage log;
                 log.type = "#Baoguo";
                 log.from = duck;
@@ -448,7 +448,7 @@ public:
         prompt_list << "@yixing" << judge->who->objectName()
                         << "" << judge->reason << judge->card->getEffectIdString();
         QString prompt = prompt_list.join(":");
-        if(room->askForUseCard(player, "@@yixing", prompt)){
+        if(room->askForUseCard(player, "@@yixing", prompt, true)){
             int card_id = player->tag["YixingCard"].toInt();
             ServerPlayer *target = player->tag["YixingTarget"].value<PlayerStar>();
             const Card *card = Sanguosha->getCard(card_id);
@@ -570,7 +570,7 @@ public:
                     QString suit_str = judge.card->getSuitString();
                     QString pattern = QString(".|%1").arg(suit_str);
                     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-                    if(room->askForCard(dragon, pattern, prompt, QVariant(), CardDiscarded)){
+                    if(room->askForCard(dragon, pattern, prompt, true, QVariant(), CardDiscarded)){
                         if(dragon->getMark("wudao") == 0)
                             room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         else
@@ -726,7 +726,7 @@ public:
             return false;
         if(event == Damaged && damage.from == player)
             return false;
-        room->askForUseCard(player, "@@duijue", "@duijue");
+        room->askForUseCard(player, "@@duijue", "@duijue", true);
         return false;
     }
 };
@@ -789,7 +789,7 @@ public:
                 }
             }
             if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
-                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", QVariant(), NonTrigger);
+                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", true, QVariant(), NonTrigger);
                 room->showCard(huarong, card->getId());
                 room->setPlayerMark(huarong, "kaixian", card->getNumber());
                 LogMessage log;
@@ -925,10 +925,10 @@ public:
         Room *room = chaijin->getRoom();
 
         switch(chaijin->getPhase()){
-        case Player::Draw: return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-draw");
+        case Player::Draw: return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-draw", true);
         case Player::Play:
             if(!chaijin->isKongcheng())
-                return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-play");
+                return room->askForUseCard(chaijin, "@@haoshen", "@haoshen-play", true);
         default: return false;
         }
 
@@ -1059,7 +1059,7 @@ public:
                 break;
             if(wusong->canSlash(damage.from, false)
                     && !wusong->isKongcheng() && damage.from != wusong){
-                const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), data, CardDiscarded);
+                const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), true, data, CardDiscarded);
                 if(!card)
                     continue;
                 Slash *slash = new Slash(Card::NoSuit, 0);
@@ -1215,7 +1215,7 @@ public:
         if(yang->getPhase() != Player::Start)
             return false;
         while(!yang->getPile("knife").isEmpty() || getEventsCount(yang) > 0)
-            if(!room->askForUseCard(yang, "@@fengmang", "@fengmang"))
+            if(!room->askForUseCard(yang, "@@fengmang", "@fengmang", true))
                 break;
         return false;
     }
@@ -1396,7 +1396,7 @@ public:
         else if(player->getPhase() == Player::NotActive){
             if(player->getMark("jibao") == player->getHandcardNum() &&
                !player->isKongcheng() &&
-               room->askForCard(player, ".", "@jibao", QVariant(), CardDiscarded)){
+               room->askForCard(player, ".", "@jibao", true, QVariant(), CardDiscarded)){
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#Jibao";
@@ -1525,7 +1525,7 @@ public:
         foreach(ServerPlayer *bear, bears){
             if(bear == poolguy || !bear->inMyAttackRange(poolguy))
                 continue;
-            if(room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), data, CardDiscarded)){
+            if(room->askForCard(bear, ".S", "@xingxing:" + poolguy->objectName(), true, data, CardDiscarded)){
                 room->playSkillEffect(objectName());
                 DamageStruct damage;
                 damage.from = bear;
@@ -1700,7 +1700,7 @@ public:
                 break;
             if(lingtianyi->isKongcheng())
                 continue;
-            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), QVariant::fromValue((PlayerStar)player), CardDiscarded);
+            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), true, QVariant::fromValue((PlayerStar)player), CardDiscarded);
             if(card){
                 RecoverStruct lty;
                 lty.card = card;
@@ -1890,7 +1890,7 @@ public:
                    !damage.from->isKongcheng()){
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     room->sendLog(log);
-                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data, CardDiscarded))
+                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), false, data, CardDiscarded))
                         room->throwCard(damage.from->getRandomHandCard());
                 }
             }
@@ -1904,7 +1904,7 @@ public:
                         room->sendLog(log);
 
                         const Card *card = player->getEquips().isEmpty() ? NULL :
-                                           room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data, NonTrigger);
+                                           room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), false, data, NonTrigger);
                         if(card)
                             sun->obtainCard(card);
                         else
@@ -2038,7 +2038,7 @@ public:
             if(judge.isGood()){
                 DamageStruct damage = data.value<DamageStruct>();
                 gaoqiu->tag["CujuDamage"] = QVariant::fromValue(damage);
-                if(room->askForUseCard(gaoqiu, "@@cuju", "@cuju-card"))
+                if(room->askForUseCard(gaoqiu, "@@cuju", "@cuju-card", true))
                     return true;
                 gaoqiu->tag.remove("CujuDamage");
             }
@@ -2096,7 +2096,7 @@ void JiashuCard::onEffect(const CardEffectStruct &effect) const{
     room->sendLog(log);
     QString pattern = QString(".|%1|.|hand$").arg(suit_str);
     QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
-    const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
+    const Card *card = room->askForCard(effect.to, pattern, prompt, false, QVariant(), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.to->drawCards(1);
@@ -2252,7 +2252,7 @@ public:
                 if(!lieges.isEmpty())
                     room->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
+                    const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), false, data, NonTrigger);
                     if(card){
                         LogMessage lo;
                         lo.type = "#InvokeSkill";
@@ -2307,7 +2307,7 @@ public:
         if(!wangqing || !wangqing->hasLordSkill(objectName()))
             return;
         if(wangqing->isWounded() && player->getKingdom() == "min"
-           && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
+           && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), false, QVariant::fromValue(damage), CardDiscarded)){
             RecoverStruct rev;
             rev.who = player;
             room->playSkillEffect(objectName());
@@ -2384,7 +2384,7 @@ public:
         CardUseStruct use = data.value<CardUseStruct>();
         if(!use.card->inherits("Analeptic") || !use.from->isWounded())
             return false;
-        if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), data, CardDiscarded)){
+        if(room->askForCard(xing, ".S", "@zhensha:" + use.from->objectName(), true, data, CardDiscarded)){
             LogMessage log;
             log.type = "#UseSkill";
             log.from = xing;

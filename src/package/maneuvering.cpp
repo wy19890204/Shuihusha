@@ -291,7 +291,7 @@ void FireAttack::onEffect(const CardEffectStruct &effect) const{
     QString suit_str = card->getSuitString();
     QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
     QString prompt = QString("@fire-attack:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-    if(room->askForCard(effect.from, pattern, prompt, QVariant(), CardDiscarded)){
+    if(room->askForCard(effect.from, pattern, prompt, false, QVariant(), CardDiscarded)){
         DamageStruct damage;
         damage.card = this;
         damage.from = effect.from;

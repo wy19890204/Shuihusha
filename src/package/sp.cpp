@@ -87,7 +87,7 @@ public:
                         break;
                     }
                     default:
-                        room->askForUseCard(lusashi, "@@baoquan", "@baoquan");
+                        room->askForUseCard(lusashi, "@@baoquan", "@baoquan", true);
                 }
                 room->setPlayerMark(lusashi, "@fist", 0);
             }

@@ -737,6 +737,8 @@ bool Room::getResult(ServerPlayer* player, time_t timeOut){
 
 bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data){
     bool invoked = false;
+    if(player->property("scarecrow").toBool())
+        return false;
     AI *ai = player->getAI();
     if(ai){
         invoked = ai->askForSkillInvoke(skill_name, data);
@@ -969,7 +971,10 @@ int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QStrin
 }
 
 const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
-                             const QVariant &data, TriggerEvent trigger_event){
+                             bool is_skill, const QVariant &data, TriggerEvent trigger_event){
+    if(is_skill && player->property("scarecrow").toBool())
+        return NULL;
+
     const Card *card = NULL;
 
     QVariant asked = pattern;
@@ -1050,7 +1055,10 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     return card;
 }
 
-bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt){
+bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
+    if(is_skill && player->property("scarecrow").toBool())
+        return NULL;
+
     QVariant asked = pattern;
     if(thread->trigger(CardUseAsk, this, player, asked))
         return NULL;
@@ -3062,7 +3070,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
         ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
         if(sour && sour != getCurrent()){
-            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
+            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
             if(fight){
                 sour->playCardEffect("@jiangjieshi2");
                 sour->obtainCard(card);

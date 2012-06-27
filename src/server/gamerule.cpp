@@ -471,7 +471,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
                 if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
-                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
+                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), false, data, CardDiscarded)){
                         int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
                         source->playCardEffect("@nanastars2");
 
@@ -579,7 +579,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
             QString slasher = effect.from->objectName();
-            const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, data, JinkUsed);
+            const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, false, data, JinkUsed);
             room->slashResult(effect, jink);
 
             break;
@@ -733,7 +733,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
                 if(source && source == player){
                     room->setPlayerFlag(player, "FuckLian");
-                    const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", data);
+                    const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", false, data);
                     if(fuck){
                         player->playCardEffect("@fuckgaolian2");
                         JudgeStar judge = data.value<JudgeStar>();
@@ -779,7 +779,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(judge->card->inherits("Analeptic") && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile){
                     ServerPlayer *sour = room->findPlayerWhohasEventCard("jiangjieshi");
                     if(sour && sour != room->getCurrent()){
-                        const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
+                        const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
                         if(fight){
                             sour->playCardEffect("@jiangjieshi2");
                             sour->obtainCard(judge->card);

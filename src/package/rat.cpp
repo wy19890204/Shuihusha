@@ -80,9 +80,9 @@ public:
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
 
             const Card *first_jink = NULL, *second_jink = NULL;
-            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), QVariant(), JinkUsed);
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), false, QVariant(), JinkUsed);
             if(first_jink)
-                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), QVariant(), JinkUsed);
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), false, QVariant(), JinkUsed);
 
             Card *jink = NULL;
             if(first_jink && second_jink){
@@ -209,7 +209,7 @@ public:
             return false;
         Room *room = p->getRoom();
         ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
-        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), QVariant::fromValue(p), CardDiscarded)){
+        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), true, QVariant::fromValue(p), CardDiscarded)){
             Assassinate *ass = new Assassinate(Card::NoSuit, 0);
             ass->setSkillName(objectName());
             ass->setCancelable(false);
@@ -242,7 +242,7 @@ public:
         if(move->from_place == Player::Judging && move->to_place == Player::DiscardedPile){
             QString suit_str = Sanguosha->getCard(move->card_id)->getSuitString();
             QString prompt = QString("@shunshui:::%1").arg(suit_str);
-            const Card *card = room->askForCard(zhangshun, ".|" + suit_str, prompt, data, CardDiscarded);
+            const Card *card = room->askForCard(zhangshun, ".|" + suit_str, prompt, true, data, CardDiscarded);
             if(card){
                 QList<ServerPlayer *> targets;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers())
@@ -368,7 +368,7 @@ public:
             if(zhuwu->isNude())
                 return false;
             int n = 5;
-            while(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen")){
+            while(room->askForUseCard(zhuwu, "@@buzhen", "@buzhen", true)){
                 if(n <= 1)
                     break;
                 n--;
@@ -401,7 +401,7 @@ public:
         if(!dmag.card || dmag.card->getSuit() == Card::NoSuit || dmag.damage < 1)
             return false;
         QString suit = dmag.card->getSuitString();
-        if(room->askForCard(zhuwu, ".|" + suit, "@fangzhen:::" + suit, data, CardDiscarded)){
+        if(room->askForCard(zhuwu, ".|" + suit, "@fangzhen:::" + suit, true, data, CardDiscarded)){
             room->playSkillEffect(objectName());
             LogMessage log;
             log.type = "#Fangzhen";
@@ -892,7 +892,7 @@ public:
         Room *room = qiaodaoq->getRoom();
         int x = damage.damage, i;
         for(i=0; i<x; i++){
-            if(!room->askForUseCard(qiaodaoq, "@@huanshu", "@huanshu"))
+            if(!room->askForUseCard(qiaodaoq, "@@huanshu", "@huanshu", true))
                 break;
         }
     }
@@ -942,7 +942,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->playSkillEffect("yuanpei", qrand() % 2 + 1);
-    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
+    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), false, QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.from->drawCards(1);

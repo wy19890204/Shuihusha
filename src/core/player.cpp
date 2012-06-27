@@ -308,6 +308,8 @@ bool Player::isLord() const{
 }
 
 bool Player::hasSkill(const QString &skill_name) const{
+    if(property("scarecrow").toBool())
+        return false;
     return hasInnateSkill(skill_name)
             || acquired_skills.contains(skill_name);
 }
@@ -323,6 +325,8 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 }
 
 bool Player::hasLordSkill(const QString &skill_name) const{
+    if(property("scarecrow").toBool())
+        return false;
     if(!isLord())
         return false;
 
