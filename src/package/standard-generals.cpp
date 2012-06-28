@@ -475,46 +475,98 @@ QimenStruct::QimenStruct()
 {
 }
 
+QimenCard::QimenCard(){
+}
+
+void QimenCard::willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun) const{
+    QStringList skills;
+    //bool has_qimen = target == gongsun;
+    foreach(const SkillClass *skill, target->getVisibleSkillList()){
+        if(skill->getLocation() != Skill::Right)
+            continue;
+        QString skill_name = skill->objectName();
+        skills << skill_name;
+        room->detachSkillFromPlayer(target, skill_name, false);
+    }
+
+    QimenStruct Qimen_data;
+    /*
+    Qimen_data.kingdom = target->getKingdom();
+    Qimen_data.generalA = target->getGeneralName();
+    Qimen_data.maxhp = target->getMaxHP();
+    QString to_transfigure = target->getGeneral()->isMale() ? "sujiang" : "sujiangf";
+    if(!has_qimen)
+        room->transfigure(target, to_transfigure, false, false);
+    else{
+        room->setPlayerProperty(target, "general", to_transfigure);
+        room->acquireSkill(target, "qimen");
+    }
+    room->setPlayerProperty(target, "maxhp", Qimen_data.maxhp);
+    if(target->getGeneral2()){
+        Qimen_data.generalB = target->getGeneral2Name();
+        room->setPlayerProperty(target, "general2", to_transfigure);
+    }
+    room->setPlayerProperty(target, "kingdom", Qimen_data.kingdom);
+*/
+    Qimen_data.skills = skills;
+    target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
+
+    room->setPlayerProperty(target, "scarecrow", true);
+    target->gainMark("@shut");
+}
+
+void QimenCard::onEffect(const CardEffectStruct &effect) const{
+    ServerPlayer *dragon = effect.from;
+    ServerPlayer *superman = effect.to;
+    Room *room = dragon->getRoom();
+
+    JudgeStruct judge;
+    judge.pattern = QRegExp("(.*):(.*):(.*)");
+    judge.reason = "qimen";
+    judge.who = superman;
+
+    room->judge(judge);
+    QString suit_str = judge.card->getSuitString();
+    QString pattern = QString(".|%1").arg(suit_str);
+    QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
+    if(room->askForCard(dragon, pattern, prompt, true, QVariant(), CardDiscarded)){
+        if(dragon->getMark("wudao") == 0)
+            room->playSkillEffect("qimen", qrand() % 2 + 1);
+        else
+            room->playSkillEffect("qimen", qrand() % 2 + 3);
+        LogMessage log;
+        log.type = "#Qimen";
+        log.from = dragon;
+        log.to << superman;
+        log.arg = "qimen";
+        room->sendLog(log);
+
+        willCry(room, superman, dragon);
+    }
+}
+
+class QimenViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    QimenViewAsSkill():ZeroCardViewAsSkill("qimen"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new QimenCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@qimen";
+    }
+};
+
 class Qimen: public PhaseChangeSkill{
 public:
     Qimen():PhaseChangeSkill("qimen"){
-    }
-
-    static void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun){
-        QStringList skills;
-        //bool has_qimen = target == gongsun;
-        foreach(const SkillClass *skill, target->getVisibleSkillList()){
-            if(skill->getLocation() != Skill::Right)
-                continue;
-            QString skill_name = skill->objectName();
-            skills << skill_name;
-            room->detachSkillFromPlayer(target, skill_name, false);
-        }
-
-        QimenStruct Qimen_data;
-        /*
-        Qimen_data.kingdom = target->getKingdom();
-        Qimen_data.generalA = target->getGeneralName();
-        Qimen_data.maxhp = target->getMaxHP();
-        QString to_transfigure = target->getGeneral()->isMale() ? "sujiang" : "sujiangf";
-        if(!has_qimen)
-            room->transfigure(target, to_transfigure, false, false);
-        else{
-            room->setPlayerProperty(target, "general", to_transfigure);
-            room->acquireSkill(target, "qimen");
-        }
-        room->setPlayerProperty(target, "maxhp", Qimen_data.maxhp);
-        if(target->getGeneral2()){
-            Qimen_data.generalB = target->getGeneral2Name();
-            room->setPlayerProperty(target, "general2", to_transfigure);
-        }
-        room->setPlayerProperty(target, "kingdom", Qimen_data.kingdom);
-*/
-        Qimen_data.skills = skills;
-        target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
-
-        room->setPlayerProperty(target, "scarecrow", true);
-        target->gainMark("@shut");
+        view_as_skill = new QimenViewAsSkill;
     }
 
     static void stopCry(Room *room, ServerPlayer *player){
@@ -536,12 +588,11 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
-        PlayerStar target = player;
-        Room *room = target->getRoom();
+        Room *room = player->getRoom();
         QList<ServerPlayer *> dragons = room->findPlayersBySkillName(objectName());
         if(dragons.isEmpty())
             return false;
-        if(target->getPhase() == Player::NotActive){
+        if(player->getPhase() == Player::NotActive){
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(tmp->getMark("@shut") > 0){
                     stopCry(room, tmp);
@@ -557,35 +608,10 @@ public:
             }
             return false;
         }
-        else if(target->getPhase() == Player::RoundStart){
+        else if(player->getPhase() == Player::RoundStart){
             foreach(ServerPlayer *dragon, dragons){
-                if(!dragon->isNude() && room->askForSkillInvoke(dragon, objectName(), QVariant::fromValue(target))){
-                    ServerPlayer *superman = room->askForPlayerChosen(dragon, room->getOtherPlayers(dragon), objectName());
-                    JudgeStruct judge;
-                    judge.pattern = QRegExp("(.*):(.*):(.*)");
-                    judge.reason = objectName();
-                    judge.who = superman;
-
-                    room->judge(judge);
-                    QString suit_str = judge.card->getSuitString();
-                    QString pattern = QString(".|%1").arg(suit_str);
-                    QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-                    if(room->askForCard(dragon, pattern, prompt, true, QVariant(), CardDiscarded)){
-                        if(dragon->getMark("wudao") == 0)
-                            room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                        else
-                            room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                        LogMessage log;
-                        log.type = "#Qimen";
-                        log.from = dragon;
-                        log.to << superman;
-                        log.arg = objectName();
-                        room->sendLog(log);
-
-                        willCry(room, superman, dragon);
-                        break;
-                    }
-                }
+                if(!dragon->isNude())
+                    room->askForUseCard(dragon, "@@qimen", "@qimeninvoke:" + player->objectName(), true);
             }
         }
         return false;
@@ -804,7 +830,7 @@ public:
         }
         else if(huarong->getPhase() == Player::NotActive){
             room->setPlayerMark(huarong, "kaixian", 0);
-            room->detachSkillFromPlayer(huarong, "#kaixian_range");
+            room->detachSkillFromPlayer(huarong, "#kaixian_range", false);
         }
 
         return false;
@@ -2755,6 +2781,7 @@ StandardPackage::StandardPackage()
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
     addMetaObject<YixingCard>();
+    addMetaObject<QimenCard>();
     addMetaObject<DuijueCard>();
     addMetaObject<HaoshenCard>();
     addMetaObject<SijiuCard>();

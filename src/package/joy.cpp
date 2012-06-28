@@ -702,7 +702,7 @@ public:
                 else{
                     QList<const Skill *> skills = miheng->getVisibleSkillList();
                     foreach(const Skill *skill, skills)
-                        room->detachSkillFromPlayer(miheng, skill->objectName());
+                        room->detachSkillFromPlayer(miheng, skill->objectName(), false);
                     room->setPlayerProperty(miheng, "general", "sujiang");
                     room->setPlayerProperty(miheng, "general2", "sujiangf");
                     room->setPlayerProperty(miheng, "maxhp", miheng->getMaxHP() + 2);
