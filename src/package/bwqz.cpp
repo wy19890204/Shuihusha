@@ -466,7 +466,7 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
         if(success){
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
             room->setPlayerFlag(tonguan, "zhengfa-success");
-            room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect");
+            room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
             tonguan->turnOver();

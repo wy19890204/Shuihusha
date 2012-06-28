@@ -75,7 +75,7 @@ public:
                     }
                 }
                 if(caninvoke){
-                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", data, CardDiscarded);
+                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", true, data, CardDiscarded);
                     if(card){
                         LogMessage log;
                         log.type = "$Xiagu";
@@ -411,7 +411,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.from)
             room->setPlayerFlag(damage.from, "Xiaozai");
-        if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai")){
+        if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai", true)){
             ServerPlayer *cup = player->tag["Xiaozai"].value<PlayerStar>();
             if(cup){
                 damage.to = cup;
@@ -480,7 +480,7 @@ public:
         QString prompt = prompt_list.join(":");
 
         player->tag["Judge"] = data;
-        const Card *card = room->askForCard(player, "@butian", prompt, data, CardDiscarded);
+        const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
 
         if(card){
             int index = qrand() % 2 + 1;

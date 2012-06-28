@@ -482,13 +482,17 @@ public:
 
     static void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun){
         QStringList skills;
-        bool has_qimen = target == gongsun;
+        //bool has_qimen = target == gongsun;
         foreach(const SkillClass *skill, target->getVisibleSkillList()){
+            if(skill->getLocation() != Skill::Right)
+                continue;
             QString skill_name = skill->objectName();
             skills << skill_name;
             room->detachSkillFromPlayer(target, skill_name);
         }
+
         QimenStruct Qimen_data;
+        /*
         Qimen_data.kingdom = target->getKingdom();
         Qimen_data.generalA = target->getGeneralName();
         Qimen_data.maxhp = target->getMaxHP();
@@ -505,8 +509,11 @@ public:
             room->setPlayerProperty(target, "general2", to_transfigure);
         }
         room->setPlayerProperty(target, "kingdom", Qimen_data.kingdom);
+*/
         Qimen_data.skills = skills;
         target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
+
+        room->setPlayerProperty(target, "scarecrow", true);
         target->setMark("Qimen_target", 1);
     }
 
@@ -515,24 +522,22 @@ public:
         QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
 
         QStringList attachskills;
-        attachskills << "spear" << "axe" << "jui" << "buyaknife";
         foreach(QString skill_name, Qimen_data.skills){
-            if(skill_name == "spear" && (!player->getWeapon() || player->getWeapon()->objectName() != "spear"))
-                continue;
-            if(skill_name == "axe" && (!player->getWeapon() || player->getWeapon()->objectName() != "axe"))
-                continue;
             if(attachskills.contains(skill_name))
                 room->attachSkillToPlayer(player, skill_name);
             else
                 room->acquireSkill(player, skill_name);
         }
+        /*
         room->setPlayerProperty(player, "general", Qimen_data.generalA);
         if(player->getGeneral2()){
             room->setPlayerProperty(player, "general2", Qimen_data.generalB);
         }
         room->setPlayerProperty(player, "kingdom", Qimen_data.kingdom);
-
+*/
         player->tag.remove("QimenStore");
+
+        room->setPlayerProperty(player, "scarecrow", false);
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{

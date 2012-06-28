@@ -246,7 +246,7 @@ public:
         if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp()){
             int num = pei->getHandcardNum() - pei->getHp();
             room->setPlayerMark(pei, "Bingo", num);
-            room->askForUseCard(pei, "@@binggong", "@binggong");
+            room->askForUseCard(pei, "@@binggong", "@binggong", true);
         }
         room->setPlayerMark(pei, "Bingo", 0);
         return false;
@@ -293,7 +293,7 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), QVariant::fromValue(effect), CardDiscarded)){
+    if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), false, QVariant::fromValue(effect), CardDiscarded)){
         QString choice = effect.to->getCards("e").isEmpty() ? "gong"
             : room->askForChoice(effect.from, "feiqiang", "gong+wang");
         if(choice == "gong")

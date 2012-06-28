@@ -208,7 +208,7 @@ public:
             QList<const Card *> cards = xiezhen->getCards("he");
             foreach(const Card *cd, cards){
                 if(cd->inherits("EquipCard")){
-                    if(room->askForUseCard(xiezhen, "@@xunlie", "@xunlie"))
+                    if(room->askForUseCard(xiezhen, "@@xunlie", "@xunlie", true))
                         return true;
                     break;
                 }

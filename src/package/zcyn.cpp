@@ -66,7 +66,7 @@ public:
         Room *room = jingmuan->getRoom();
         if(jingmuan->getPhase() == Player::Start && !jingmuan->isKongcheng()){
             room->setPlayerMark(jingmuan, "Sixh", room->getKingdoms());
-            if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang"))
+            if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang", true))
                 jingmuan->setFlags("elephant");
         }
         else if(jingmuan->getPhase() == Player::Discard && jingmuan->hasFlag("elephant")){
@@ -245,7 +245,7 @@ public:
         QString suit_str = effect.slash->getSuitString();
         QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
         QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-        CardStar card = room->askForCard(player, pattern, prompt, data, CardDiscarded);
+        CardStar card = room->askForCard(player, pattern, prompt, true, data, CardDiscarded);
         if(card){
             room->playSkillEffect(objectName());
             room->slashResult(effect, NULL);
@@ -379,7 +379,7 @@ public:
             room->setPlayerMark(tiger, "CihuNum", akaziki->getHp());
             tiger->tag["CihuOgami"] = QVariant::fromValue(ogami);
             QString prompt = QString("@cihu:%1::%2").arg(ogami->getGeneralName()).arg(akaziki->getGeneralName());
-            room->askForUseCard(tiger, "@@cihu", prompt);
+            room->askForUseCard(tiger, "@@cihu", prompt, true);
             tiger->tag.remove("CihuOgami");
             room->setPlayerMark(tiger, "CihuNum", 0);
         }

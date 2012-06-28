@@ -170,7 +170,7 @@ public:
         room->setPlayerMark(jiangjing, objectName(), point);
 
         QString prompt = QString("@shensuan:::%1").arg(point);
-        room->askForUseCard(jiangjing, "@@shensuan", prompt);
+        room->askForUseCard(jiangjing, "@@shensuan", prompt, true);
     }
 };
 
@@ -243,7 +243,7 @@ public:
                 break;
             }
         }
-        const Card *card = caninvoke ? room->askForCard(duwei, "Weapon,Armor", "@touxi:" + player->objectName(), data, NonTrigger): NULL;
+        const Card *card = caninvoke ? room->askForCard(duwei, "Weapon,Armor", "@touxi:" + player->objectName(), true, data, NonTrigger): NULL;
         if(card){
             Assassinate *ass = new Assassinate(card->getSuit(), card->getNumber());
             ass->setSkillName(objectName());
@@ -537,7 +537,7 @@ public:
 
     virtual void onDamaged(ServerPlayer *an, const DamageStruct &damage) const{
         Room *room = an->getRoom();
-        room->askForUseCard(an, "@@xianhai", "@xianhai");
+        room->askForUseCard(an, "@@xianhai", "@xianhai", true);
     }
 };
 
@@ -554,7 +554,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *shibao, QVariant &data) const{
         QString asked = data.toString();
         if(asked == "jink" && shibao->askForSkillInvoke(objectName())){
-            if(room->askForUseCard(shibao, "slash", "@askforslash")){
+            if(room->askForUseCard(shibao, "slash", "@askforslash", true)){
                 Jink *jink = new Jink(Card::NoSuit, 0);
                 jink->setSkillName(objectName());
                 room->provide(jink);

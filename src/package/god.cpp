@@ -49,7 +49,7 @@ public:
                 tos << tmp;
         }
         QString prompt = QString("@jiebei:%1::%2").arg(from->objectName()).arg(armor->objectName());
-        if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, data, CardDiscarded)){
+        if(!tos.isEmpty() && room->askForCard(xuning, ".", prompt, true, data, CardDiscarded)){
             room->playSkillEffect("jiebei", 1);
             xuning->obtainCard(armor);
             ServerPlayer *to = room->askForPlayerChosen(xuning, tos, "jiebei");
@@ -304,7 +304,7 @@ public:
             return false;
         foreach(ServerPlayer *waste, waster){
             if(!waste->isNude())
-                card = room->askForCard(waste, "..", "@xianji", QVariant::fromValue(target), CardDiscarded);
+                card = room->askForCard(waste, "..", "@xianji", true, QVariant::fromValue(target), CardDiscarded);
             if(!card)
                continue;
             QString choice = card->getType();
@@ -421,7 +421,7 @@ public:
         if(vq->getPhase() != Player::Discard)
             return false;
         Room *room = vq->getRoom();
-        if(vq->getHandcardNum() > vq->getHp() && room->askForUseCard(vq, "@@feihuang", "@feihuang"))
+        if(vq->getHandcardNum() > vq->getHp() && room->askForUseCard(vq, "@@feihuang", "@feihuang", true))
             return true;
         return false;
     }

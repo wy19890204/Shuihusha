@@ -191,7 +191,7 @@ public:
         if(!killer || !killer->hasSkill(objectName()) || killer == player)
             return false;
         if(killer->getPhase() == Player::Play && !killer->isKongcheng())
-            room->askForUseCard(killer, "@@sinue", "@sinue");
+            room->askForUseCard(killer, "@@sinue", "@sinue", true);
         return false;
     }
 };
@@ -726,7 +726,7 @@ public:
             return false;
 
         if(!zhufu->isNude() && zhufu->isWounded()){
-            const Card *card = room->askForCard(zhufu, ".|heart", "@guitai:" + effect.to->objectName(), data, CardDiscarded);
+            const Card *card = room->askForCard(zhufu, ".|heart", "@guitai:" + effect.to->objectName(), true, data, CardDiscarded);
             if(card){
                 room->playSkillEffect(objectName());
                 LogMessage log;

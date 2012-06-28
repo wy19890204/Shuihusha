@@ -83,7 +83,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
-    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
+    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), false, QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
 
@@ -917,7 +917,7 @@ public:
                         i ++;
                 if(i == 2){
                     QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
-                    if(room->askForUseCard(bird, "@@zhuangche", prompt))
+                    if(room->askForUseCard(bird, "@@zhuangche", prompt, true))
                         break;
                 }
             }
@@ -983,7 +983,7 @@ public:
         else if(player->getPhase() == Player::Draw){
             Room *room = player->getRoom();
             player->drawCards(1);
-            while(room->askForUseCard(player, "@@zouma", "@zouma"));
+            while(room->askForUseCard(player, "@@zouma", "@zouma", true));
 
             if(!player->getPile("fu4").isEmpty() && player->getHandcardNum() == 2){
                 if(player->getHandcards().first()->getNumber() == player->getHandcards().last()->getNumber())

@@ -62,7 +62,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(!player->isNude() && damage.to != damage.from){
             player->tag["FanwuStruct"] = data;
-            if(room->askForUseCard(player, "@@fanwu", "@fanwu")){
+            if(room->askForUseCard(player, "@@fanwu", "@fanwu", true)){
                 DamageStruct damage2 = player->tag["FanwuStruct"].value<DamageStruct>();
                 if(damage2.from){
                     damage.from = damage2.from;
@@ -183,7 +183,7 @@ bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const P
 
 void QianxianCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
+    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), false, QVariant::fromValue(effect), NonTrigger);
     if(club){
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
@@ -384,7 +384,7 @@ public:
             if(duan3niang->isNude())
                 continue;
             duan3niang->tag["ZishiSource"] = QVariant::fromValue((PlayerStar)player);
-            if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName())){
+            if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName(), true)){
                 int delta = duan3niang->tag.value("ZiShi", 0).toInt();
                 if(delta > 0){
                     QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
@@ -421,7 +421,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
     const Card *slash = NULL;
     if(effect.from->canSlash(target)){
         QVariant source = QVariant::fromValue((PlayerStar)effect.from);
-        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source, NonTrigger);
+        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), false, source, NonTrigger);
     }
     if(slash){
         CardUseStruct use;
@@ -449,7 +449,7 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(!card_use.from->canSlash(target, false))
         return;
 
-    const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", QVariant(), NonTrigger);
+    const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", true, QVariant(), NonTrigger);
     if(slash){
         CardUseStruct use;
         use.card = slash;
@@ -515,7 +515,7 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
     foreach(ServerPlayer *man, men){
         if(man == white)
             continue;
-        slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
+        slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), false, tohelp);
         if(slash){
             CardUseStruct card_use;
             card_use.card = slash;
@@ -561,7 +561,7 @@ public:
         foreach(ServerPlayer *man, men){
             if(man == white)
                 continue;
-            const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
+            const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), false, tohelp);
             if(slash){
                 room->provide(slash);
                 return true;
@@ -594,7 +594,7 @@ public:
             const Card *equ = Sanguosha->getCard(move->card_id);
             QVariant chu = QVariant::fromValue((PlayerStar)player);
             if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), chu, CardDiscarded)){
+               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), true, chu, CardDiscarded)){
                 room->playSkillEffect(objectName());
                 LogMessage log;
                 log.type = "#InvokeSkill";
@@ -707,7 +707,7 @@ public:
             return false;
         RecoverStruct rec = data.value<RecoverStruct>();
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), data, CardDiscarded))
+            if(!room->askForCard(anu, "..", "@chiyuan:" + player->objectName(), true, data, CardDiscarded))
                 break;
             LogMessage age;
             age.type = "#Chiyuan";
@@ -776,7 +776,7 @@ public:
         if(!rec.who || rec.who == cuilian)
             return false;
         for(int i = rec.recover; i > 0; i--){
-            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName(), data, CardDiscarded))
+            if(!room->askForCard(cuilian, "..", "@baoen:" + rec.who->objectName(), true, data, CardDiscarded))
                 break;
             room->playSkillEffect(objectName());
             LogMessage s;
