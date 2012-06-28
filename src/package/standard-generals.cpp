@@ -488,7 +488,7 @@ public:
                 continue;
             QString skill_name = skill->objectName();
             skills << skill_name;
-            room->detachSkillFromPlayer(target, skill_name);
+            room->detachSkillFromPlayer(target, skill_name, false);
         }
 
         QimenStruct Qimen_data;
@@ -514,20 +514,15 @@ public:
         target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
 
         room->setPlayerProperty(target, "scarecrow", true);
-        target->setMark("Qimen_target", 1);
+        target->gainMark("@shut");
     }
 
     static void stopCry(Room *room, ServerPlayer *player){
-        player->setMark("Qimen_target", 0);
+        player->loseMark("@shut");
         QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
 
-        QStringList attachskills;
-        foreach(QString skill_name, Qimen_data.skills){
-            if(attachskills.contains(skill_name))
-                room->attachSkillToPlayer(player, skill_name);
-            else
-                room->acquireSkill(player, skill_name);
-        }
+        foreach(QString skill_name, Qimen_data.skills)
+            room->acquireSkill(player, skill_name, false);
         /*
         room->setPlayerProperty(player, "general", Qimen_data.generalA);
         if(player->getGeneral2()){
@@ -548,7 +543,7 @@ public:
             return false;
         if(target->getPhase() == Player::NotActive){
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(tmp->getMark("Qimen_target") > 0){
+                if(tmp->getMark("@shut") > 0){
                     stopCry(room, tmp);
 
                     LogMessage log;
@@ -613,7 +608,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
-            if(tmp->getMark("Qimen_target") > 0){
+            if(tmp->getMark("@shut") > 0){
                 Qimen::stopCry(room, tmp);
 
                 LogMessage log;
