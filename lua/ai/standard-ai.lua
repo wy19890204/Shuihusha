@@ -379,20 +379,18 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 end
 
 -- qimen
-sgs.ai_skill_invoke["qimen"] = function(self, data)
+sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 	local player = self.room:getCurrent()
-	if player == self.player then return false end
---	local player = data:toPlayer()
---	self.qimentarget = player
-	if self:isFriend(player) then return false end
+	if player == self.player or self:isFriend(player) then return "." end
 	local rm = math.random(1, 3)
-	return rm ~= 2
+	if rm ~= 2 then
+		return "@QimenCard=.->" .. player:objectName()
+	else
+		return "."
+	end
 end
-sgs.ai_skill_playerchosen["qimen"] = function(self, targets)
-	local target = self.room:getCurrent()
-	return target
---	return self.qimentarget
-end
+--sgs.ai_skill_cardask["@qimen"] = function(self, data)
+--end
 
 -- guansheng
 -- tongwu

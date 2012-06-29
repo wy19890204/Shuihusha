@@ -110,7 +110,7 @@ public:
         room->setPlayerMark(qing, "@ylyud", 0);
         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
             tmp->removeMark("qinggang");
-        room->detachSkillFromPlayer(qing, "#yinyu_range");
+        room->detachSkillFromPlayer(qing, "#yinyu_range", false);
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{

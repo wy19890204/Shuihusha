@@ -88,6 +88,15 @@ struct QimenStruct{
 };
 
 Q_DECLARE_METATYPE(QimenStruct);
+class QimenCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE QimenCard();
+
+    virtual void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
 
 class DuijueCard: public SkillCard{
     Q_OBJECT

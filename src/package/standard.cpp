@@ -294,7 +294,7 @@ void Weapon::onUninstall(ServerPlayer *player) const{
     Room *room = player->getRoom();
 
     if(attach_skill)
-        room->detachSkillFromPlayer(player, objectName());
+        room->detachSkillFromPlayer(player, objectName(), false);
 }
 
 QString Armor::getSubtype() const{
