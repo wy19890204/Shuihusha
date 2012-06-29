@@ -263,6 +263,8 @@ public:
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature != DamageStruct::Normal){
                 player->playCardEffect("Egold_armor1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -281,6 +283,7 @@ public:
                 log.arg = objectName();
                 if(damage.from->getWeapon()){
                     player->playCardEffect("Egold_armor2");
+                    room->setEmotion(player, "armor");
                     room->sendLog(log);
                     room->throwCard(damage.from->getWeapon());
                 }

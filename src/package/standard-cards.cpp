@@ -1029,13 +1029,15 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->isBlack()){
+            player->playCardEffect("Erenwang_shield");
+            room->setEmotion(player, "armor");
+
             LogMessage log;
             log.type = "#ArmorNullify";
             log.from = player;
             log.arg = objectName();
             log.arg2 = effect.slash->objectName();
             room->sendLog(log);
-            player->playCardEffect("Erenwang_shield");
 
             return true;
         }else

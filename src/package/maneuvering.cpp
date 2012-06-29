@@ -174,6 +174,8 @@ public:
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature == DamageStruct::Normal){
                 player->playCardEffect("Evine1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -187,6 +189,8 @@ public:
             CardEffectStruct effect = data.value<CardEffectStruct>();
             if(effect.card->inherits("AOE")){
                 player->playCardEffect("Evine1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -231,6 +235,8 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
             player->playCardEffect("Esilver_lion1");
+            room->setEmotion(player, "armor");
+
             LogMessage log;
             log.type = "#SilverLion";
             log.from = player;
