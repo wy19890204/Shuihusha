@@ -2154,13 +2154,13 @@ void Room::chooseGenerals(){
     QList<ServerPlayer *> to_assign = m_players;
     if(!Config.EnableHegemony)to_assign.removeOne(getLord());
     assignGeneralsForPlayers(to_assign);
-    foreach(ServerPlayer *player, to_assign){        
+    foreach(ServerPlayer *player, to_assign){
         _setupChooseGeneralRequestArgs(player);
-    }    
+    }
     doBroadcastRequest(to_assign, S_COMMAND_CHOOSE_GENERAL);
     foreach (ServerPlayer *player, to_assign)
-    {        
-        if (player->getGeneral() != NULL) continue;        
+    {
+        if (player->getGeneral() != NULL) continue;
         Json::Value generalName = player->getClientReply();
         if (!player->m_isClientResponseReady || !generalName.isString()
             || !_setPlayerGeneral(player, toQString(generalName), true))
@@ -2172,11 +2172,11 @@ void Room::chooseGenerals(){
         assignGeneralsForPlayers(to_assign);
         foreach(ServerPlayer *player, to_assign){
             _setupChooseGeneralRequestArgs(player);
-        }        
+        }
         doBroadcastRequest(to_assign, S_COMMAND_CHOOSE_GENERAL);
         foreach(ServerPlayer *player, to_assign){
             if (player->getGeneral2() != NULL) continue;
-            Json::Value generalName = player->getClientReply();        
+            Json::Value generalName = player->getClientReply();
             if (!player->m_isClientResponseReady || !generalName.isString()
                 || !_setPlayerGeneral(player, toQString(generalName), false))
                 _setPlayerGeneral(player, _chooseDefaultGeneral(player), false);
@@ -2197,6 +2197,7 @@ void Room::chooseGenerals(){
 }
 
 void Room::run(){
+    setGerenalGender("anjiang", "M");
     // initialize random seed for later use
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
@@ -4050,4 +4051,23 @@ Room* Room::duplicate()
     room->fillRobotsCommand(NULL, 0);
     room->copyFrom(this);
     return room;
+}
+
+void Room::setGerenalGender(const QString &name, const QString &gender)
+{
+    General *general = (General *)Sanguosha->getGeneral(name);
+
+    if(general == NULL)
+        return;
+
+    if (gender == "M")
+        general->setGender(General::Male);
+    else if (gender == "F")
+        general->setGender(General::Female);
+    else
+        general->setGender(General::Neuter);
+
+    QString pattern = name + ":" + gender;
+
+    broadcastInvoke("setGerenalGender", pattern);
 }

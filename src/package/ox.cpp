@@ -130,6 +130,11 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->isWounded())
+            room->setGerenalGender("tongguan", "F");
+        else
+            room->setGerenalGender("tongguan", "M");
+        /*
         if(player->getGeneralName() != "tongguanf")
             player->tag["AoxiangStore"] = player->getGeneralName();
         if(player->isWounded())
@@ -140,6 +145,7 @@ public:
             QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
             room->setPlayerProperty(player, "general", gen_name);
         }
+        */
         return false;
     }
 };

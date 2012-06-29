@@ -2880,13 +2880,13 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         table->setColumnWidth(0, 65);
         table->setColumnWidth(1, 65);
-        table->setColumnWidth(2, 65);
+        table->setColumnWidth(2, 60);
         table->setColumnWidth(3, 65);
         table->setColumnWidth(4, 40);
         table->setColumnWidth(5, 40);
         table->setColumnWidth(6, 40);
         table->setColumnWidth(7, 40);
-        table->setColumnWidth(8, 40);
+        table->setColumnWidth(8, 35);
     }
 }
 
