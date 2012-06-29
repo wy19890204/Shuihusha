@@ -72,6 +72,7 @@ void Settings::init(){
     BanPackages = value("BanPackages").toStringList();
 
     ContestMode = value("ContestMode", false).toBool();
+    Statistic = value("Statistic", false).toBool();
     FreeChoose = value("FreeChoose", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();

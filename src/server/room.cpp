@@ -287,9 +287,10 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
             log.type = "#Suicide";
         else
             log.type = "#Murder";
-    }else{
-        log.type = "#Contingency";
+        setPlayerStatistics(killer, "kill", 1);
     }
+    else
+        log.type = "#Contingency";
 
     sendLog(log);
 

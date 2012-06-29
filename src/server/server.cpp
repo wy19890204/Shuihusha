@@ -151,6 +151,9 @@ QWidget *ServerDialog::createAdvancedTab(){
     contest_mode_checkbox->setChecked(Config.ContestMode);
     contest_mode_checkbox->setToolTip(tr("Requires password to login, hide screen name and disable kicking"));
 
+    advanced_statistic_checkbox = new QCheckBox(tr("Advanced statistics"));
+    advanced_statistic_checkbox->setChecked(Config.Statistic);
+
     free_choose_checkbox = new QCheckBox(tr("Choose generals and cards freely"));
     free_choose_checkbox->setToolTip(tr("This option enables the cheat menu"));
     free_choose_checkbox->setChecked(Config.FreeChoose);
@@ -230,7 +233,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
-    layout->addWidget(contest_mode_checkbox);
+    layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addWidget(free_choose_checkbox);
     layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
@@ -876,6 +879,7 @@ bool ServerDialog::config(){
     Config.OperationTimeout = timeout_spinbox->value();
     Config.OperationNoLimit = nolimit_checkbox->isChecked();
     Config.ContestMode = contest_mode_checkbox->isChecked();
+    Config.Statistic = advanced_statistic_checkbox->isChecked();
     Config.FreeChoose = free_choose_checkbox->isChecked();
     Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
@@ -912,6 +916,7 @@ bool ServerDialog::config(){
     Config.setValue("OperationTimeout", Config.OperationTimeout);
     Config.setValue("OperationNoLimit", Config.OperationNoLimit);
     Config.setValue("ContestMode", Config.ContestMode);
+    Config.setValue("Statistic", Config.Statistic);
     Config.setValue("FreeChoose", Config.FreeChoose);
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
