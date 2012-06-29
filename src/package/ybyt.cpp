@@ -8,118 +8,6 @@
 #include "plough.h"
 #include "maneuvering.h"
 
-GuibingCard::GuibingCard(){
-
-}
-
-bool GuibingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && Self->canSlash(to_select);
-}
-
-void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *to = targets.first();
-
-    JudgeStruct judge;
-    judge.pattern = QRegExp("(.*):(club|spade):(.*)");
-    judge.good = true;
-    judge.reason = objectName();
-    judge.who = gaolian;
-
-    room->judge(judge);
-
-    if(judge.isGood()){
-        Slash *slash = new Slash(Card::NoSuit, 0);
-        slash->setSkillName("guibing");
-
-        CardUseStruct use;
-        use.from = gaolian;
-        use.to << to;
-        use.card = slash;
-        room->useCard(use);
-    }else
-        room->setPlayerFlag(gaolian, "Guibing");
-}
-
-class GuibingViewAsSkill:public ZeroCardViewAsSkill{
-public:
-    GuibingViewAsSkill():ZeroCardViewAsSkill("guibing"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasFlag("Guibing") && Slash::IsAvailable(player);
-    }
-
-    virtual const Card *viewAs() const{
-        return new GuibingCard;
-    }
-};
-
-class Guibing: public TriggerSkill{
-public:
-    Guibing():TriggerSkill("guibing"){
-        events << CardAsked;
-        view_as_skill = new GuibingViewAsSkill;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *gaolian, QVariant &data) const{
-        QString pattern = data.toString();
-        if(pattern != "slash")
-            return false;
-
-        if(gaolian->askForSkillInvoke(objectName())){
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(club|spade):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = gaolian;
-
-            room->playSkillEffect(objectName());
-            room->judge(judge);
-
-            if(judge.isGood()){
-                Slash *slash = new Slash(Card::NoSuit, 0);
-                slash->setSkillName(objectName());
-                room->provide(slash);
-                return true;
-            }
-        }
-        return false;
-    }
-};
-
-HeiwuCard::HeiwuCard(){
-    target_fixed = true;
-}
-
-void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    int num = getSubcards().length();
-    room->moveCardTo(this, NULL, Player::DrawPile, true);
-    QList<int> fog = room->getNCards(num, false);
-    room->askForGuanxing(source, fog, false);
-};
-
-class Heiwu:public ViewAsSkill{
-public:
-    Heiwu():ViewAsSkill("heiwu"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-        HeiwuCard *heiwu_card = new HeiwuCard;
-        heiwu_card->addSubcards(cards);
-        return heiwu_card;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->isKongcheng();
-    }
-};
-
 SinueCard::SinueCard(){
 }
 
@@ -827,12 +715,6 @@ YBYTPackage::YBYTPackage()
     zhufu->addSkill(new Hunjiu);
     zhufu->addSkill(new Guitai);
 
-    General *gaolian = new General(this, "gaolian", "guan", 3);
-    gaolian->addSkill(new Guibing);
-    gaolian->addSkill(new Heiwu);
-
-    addMetaObject<GuibingCard>();
-    addMetaObject<HeiwuCard>();
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();

@@ -400,113 +400,6 @@ public:
     }
 };
 
-class Aoxiang: public TriggerSkill{
-public:
-    Aoxiang():TriggerSkill("aoxiang"){
-        events << HpChanged;
-        frequency = Compulsory;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(player->getGeneralName() != "tongguanf")
-            player->tag["AoxiangStore"] = player->getGeneralName();
-        if(player->isWounded())
-            //p:getGeneral():setGender(sgs.General_Female)
-            //player->getGeneral()->setGender(General::Female);
-            room->setPlayerProperty(player, "general", "tongguanf");
-        else{
-            QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
-            room->setPlayerProperty(player, "general", gen_name);
-        }
-        return false;
-    }
-};
-
-class AoxiangChange: public TriggerSkill{
-public:
-    AoxiangChange():TriggerSkill("#aox_cg"){
-        events << GameStart;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
-        if(player->getGeneral2Name() == "tongguan"){
-            room->setPlayerProperty(player, "general2", player->getGeneralName());
-            room->setPlayerProperty(player, "general", "tongguan");
-        }
-        return false;
-    }
-};
-
-ZhengfaCard::ZhengfaCard(){
-    once = true;
-    will_throw = false;
-    mute = true;
-}
-
-bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!Self->hasUsed("ZhengfaCard"))
-        return targets.isEmpty() && to_select->getGender() != Self->getGender()
-            && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
-    else
-        return targets.length() < Self->getHp() && Self->canSlash(to_select);
-}
-
-void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
-    if(tonguan->hasFlag("zhengfa-success")){
-        foreach(ServerPlayer *tarmp, targets)
-            room->cardEffect(this, tonguan, tarmp);
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
-    }
-    else{
-        bool success = tonguan->pindian(targets.first(), "zhengfa", this);
-        if(success){
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
-            room->setPlayerFlag(tonguan, "zhengfa-success");
-            room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
-        }else{
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
-            tonguan->turnOver();
-        }
-    }
-}
-
-void ZhengfaCard::onEffect(const CardEffectStruct &effect) const{
-    DamageStruct damage;
-    damage.from = effect.from;
-    damage.to = effect.to;
-    damage.card = this;
-    effect.from->getRoom()->damage(damage);
-}
-
-class Zhengfa: public ViewAsSkill{
-public:
-    Zhengfa():ViewAsSkill("zhengfa"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("ZhengfaCard") && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return !Self->hasUsed("ZhengfaCard")? !to_select->isEquipped(): false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@zhengfa";
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        Card *zhengfcard = new ZhengfaCard;
-        if(!cards.isEmpty())
-            zhengfcard->addSubcard(cards.first()->getCard());
-        return zhengfcard;
-    }
-};
-
 class Kongying: public TriggerSkill{
 public:
     Kongying():TriggerSkill("kongying"){
@@ -575,17 +468,6 @@ BWQZPackage::BWQZPackage()
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
 
-    General *tongguan = new General(this, "tongguan", "guan");
-    tongguan->addSkill(new Aoxiang);
-    tongguan->addSkill(new AoxiangChange);
-    related_skills.insertMulti("aoxiang", "#aox_cg");
-    tongguan->addSkill(new Zhengfa);
-
-    tongguan = new General(this, "tongguanf", "yan", 4, false, true);
-    tongguan->addSkill("aoxiang");
-    tongguan->addSkill("zhengfa");
-    tongguan->addSkill("zhengfa");
-
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);
     wangdingliu->addSkill(new Jibu);
@@ -593,7 +475,6 @@ BWQZPackage::BWQZPackage()
     addMetaObject<YuanyinCard>();
     addMetaObject<NushaCard>();
     addMetaObject<QiaogongCard>();
-    addMetaObject<ZhengfaCard>();
 }
 
 ADD_PACKAGE(BWQZ);

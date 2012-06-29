@@ -110,25 +110,10 @@ local tt = {
 	["$guitai2"] = "且慢！这可是毒药！",
 	["~zhufu"] = "难道笑也有错？",
 
-	["#gaolian"] = "高唐魔君",
-	["gaolian"] = "高廉",	
-	["cv:gaolian"] = "烨子【剪刀剧团】",
-	["guibing"] = "鬼兵",
-	[":guibing"] = "每当你需要使用或打出一张【杀】时，你可以进行一次判定：若结果为黑色，则视为你使用或打出了一张【杀】。否则（若回合内使用）你不能发动“鬼兵”直到回合结束。\
-★若判定结果为红色，则你仍可以从手牌中使用或打出一张【杀】。\
-★回合内装备【飞燕弩】发动“鬼兵”后若判定为红色，则不能再发动“鬼兵”，但你仍可以通过其他方式使用【杀】。",
-	["heiwu"] = "黑雾",
-	[":heiwu"] = "出牌阶段，你可以将任意数量的手牌以任意顺序置于牌堆顶或牌堆底。",
-	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
-	["$guibing1"] = "嘿嘿～",
-	["$guibing2"] = "看吾号令阴兵鬼将！",
-	["$heiwu1"] = "毒雾弥漫，寸草不生！",
-	["$heiwu2"] = "疾！",
-	["~gaolian"] = "是谁破了阵法？！",	
 }
 
-local gongzi = {"xuning", "baoxu", "xiangchong", "jindajian",
-		"yangchun", "zouyuan", "gaolian"}
+local gongzi = {"baoxu", "xiangchong", "jindajian",
+		"yangchun", "zouyuan"}
 
 for _, player in ipairs(gongzi) do
 	tt["coder:" .. player] = tt["coder:YBYT"]

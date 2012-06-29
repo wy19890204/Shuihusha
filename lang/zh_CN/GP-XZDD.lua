@@ -23,15 +23,6 @@ return {
 	["$shenhuo3"] = "看我焚诀秘法！",
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
 
-	["#huangxin"] = "镇三山",
-	["huangxin"] = "黄信",
-	["designer:huangxin"] = "烨子&裁之刃·散",
-	["cv:huangxin"] = "流岚【裔美声社】",
-	["tongxia"] = "统辖",
-	[":tongxia"] = "摸牌阶段，你可以放弃摸牌，改为亮出牌堆顶的三张牌，将其中的装备牌分别置于任意角色的装备区里(能替换原装备)，并将其余的牌以任意分配方式交给任意角色。",
-	["$tongxia1"] = "穷兵黩武，动费万计。",
-	["$tongxia2"] = "三地军需，由我调拨！",
-
 	["#yanshun"] = "锦毛虎",
 	["yanshun"] = "燕顺",
 	["cv:yanshun"] = "猎狐【声声melody】",
@@ -77,7 +68,6 @@ return {
 
 -- last words
 	["~weidingguo"] = "玩火自焚啊！",
-	["~huangxin"] = "三山崛起，力不从心啊！",
 	["~yanshun"] = "虎落平阳被犬欺啊！",
 	["~peixuan"] = "尽是～暗箱操作！",
 	["~lizhong"] = "只可惜了俺祖传的膏药啊！",

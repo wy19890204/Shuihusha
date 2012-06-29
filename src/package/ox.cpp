@@ -6,6 +6,225 @@
 #include "carditem.h"
 #include "engine.h"
 
+GuibingCard::GuibingCard(){
+
+}
+
+bool GuibingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && Self->canSlash(to_select);
+}
+
+void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *to = targets.first();
+
+    JudgeStruct judge;
+    judge.pattern = QRegExp("(.*):(club|spade):(.*)");
+    judge.good = true;
+    judge.reason = objectName();
+    judge.who = gaolian;
+
+    room->judge(judge);
+
+    if(judge.isGood()){
+        Slash *slash = new Slash(Card::NoSuit, 0);
+        slash->setSkillName("guibing");
+
+        CardUseStruct use;
+        use.from = gaolian;
+        use.to << to;
+        use.card = slash;
+        room->useCard(use);
+    }else
+        room->setPlayerFlag(gaolian, "Guibing");
+}
+
+class GuibingViewAsSkill:public ZeroCardViewAsSkill{
+public:
+    GuibingViewAsSkill():ZeroCardViewAsSkill("guibing"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasFlag("Guibing") && Slash::IsAvailable(player);
+    }
+
+    virtual const Card *viewAs() const{
+        return new GuibingCard;
+    }
+};
+
+class Guibing: public TriggerSkill{
+public:
+    Guibing():TriggerSkill("guibing"){
+        events << CardAsked;
+        view_as_skill = new GuibingViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *gaolian, QVariant &data) const{
+        QString pattern = data.toString();
+        if(pattern != "slash")
+            return false;
+
+        if(gaolian->askForSkillInvoke(objectName())){
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(club|spade):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = gaolian;
+
+            room->playSkillEffect(objectName());
+            room->judge(judge);
+
+            if(judge.isGood()){
+                Slash *slash = new Slash(Card::NoSuit, 0);
+                slash->setSkillName(objectName());
+                room->provide(slash);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+HeiwuCard::HeiwuCard(){
+    target_fixed = true;
+}
+
+void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    int num = getSubcards().length();
+    room->moveCardTo(this, NULL, Player::DrawPile, true);
+    QList<int> fog = room->getNCards(num, false);
+    room->askForGuanxing(source, fog, false);
+};
+
+class Heiwu:public ViewAsSkill{
+public:
+    Heiwu():ViewAsSkill("heiwu"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        HeiwuCard *heiwu_card = new HeiwuCard;
+        heiwu_card->addSubcards(cards);
+        return heiwu_card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->isKongcheng();
+    }
+};
+
+class Aoxiang: public TriggerSkill{
+public:
+    Aoxiang():TriggerSkill("aoxiang"){
+        events << HpChanged;
+        frequency = Compulsory;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->getGeneralName() != "tongguanf")
+            player->tag["AoxiangStore"] = player->getGeneralName();
+        if(player->isWounded())
+            //p:getGeneral():setGender(sgs.General_Female)
+            //player->getGeneral()->setGender(General::Female);
+            room->setPlayerProperty(player, "general", "tongguanf");
+        else{
+            QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
+            room->setPlayerProperty(player, "general", gen_name);
+        }
+        return false;
+    }
+};
+
+class AoxiangChange: public TriggerSkill{
+public:
+    AoxiangChange():TriggerSkill("#aox_cg"){
+        events << GameStart;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
+        if(player->getGeneral2Name() == "tongguan"){
+            room->setPlayerProperty(player, "general2", player->getGeneralName());
+            room->setPlayerProperty(player, "general", "tongguan");
+        }
+        return false;
+    }
+};
+
+ZhengfaCard::ZhengfaCard(){
+    once = true;
+    will_throw = false;
+    mute = true;
+}
+
+bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!Self->hasUsed("ZhengfaCard"))
+        return targets.isEmpty() && to_select->getGender() != Self->getGender()
+            && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
+    else
+        return targets.length() < Self->getHp() && Self->canSlash(to_select);
+}
+
+void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
+    if(tonguan->hasFlag("zhengfa-success")){
+        foreach(ServerPlayer *tarmp, targets)
+            room->cardEffect(this, tonguan, tarmp);
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
+    }
+    else{
+        bool success = tonguan->pindian(targets.first(), "zhengfa", this);
+        if(success){
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
+            room->setPlayerFlag(tonguan, "zhengfa-success");
+            room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
+        }else{
+            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
+            tonguan->turnOver();
+        }
+    }
+}
+
+void ZhengfaCard::onEffect(const CardEffectStruct &effect) const{
+    DamageStruct damage;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    damage.card = this;
+    effect.from->getRoom()->damage(damage);
+}
+
+class Zhengfa: public ViewAsSkill{
+public:
+    Zhengfa():ViewAsSkill("zhengfa"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("ZhengfaCard") && !player->isKongcheng();
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return !Self->hasUsed("ZhengfaCard")? !to_select->isEquipped(): false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@zhengfa";
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        Card *zhengfcard = new ZhengfaCard;
+        if(!cards.isEmpty())
+            zhengfcard->addSubcard(cards.first()->getCard());
+        return zhengfcard;
+    }
+};
+
 LianmaCard::LianmaCard(){
     target_fixed = true;
     once = true;
@@ -248,6 +467,49 @@ public:
     }
 };
 
+class Tongxia: public PhaseChangeSkill{
+public:
+    Tongxia():PhaseChangeSkill("tongxia"){
+
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *hx) const{
+        Room *room = hx->getRoom();
+        if(hx->getPhase() == Player::Draw && hx->askForSkillInvoke(objectName())){
+            QList<int> card_ids = room->getNCards(3);
+            room->fillAG(card_ids);
+            room->playSkillEffect(objectName());
+
+            while(!card_ids.isEmpty()){
+                int card_id = room->askForAG(hx, card_ids, false, "tongxia");
+                CardStar card = Sanguosha->getCard(card_id);
+                hx->tag["TongxiaCard"] = QVariant::fromValue(card);
+                ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
+                if(!target)
+                    target = hx;
+                //room->takeAG(target, card_id);
+                if(card->inherits("EquipCard")){
+                    const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+                    QList<ServerPlayer *> targets;
+                    targets << target;
+                    equipped->use(room, hx, targets);
+                }
+                else
+                    target->obtainCard(card);
+
+                card_ids.removeOne(card_id);
+                room->broadcastInvoke("clearAG");
+                room->fillAG(card_ids);
+            }
+            room->broadcastInvoke("clearAG");
+
+            return true;
+        }
+        hx->tag.remove("TongxiaCard");
+        return false;
+    }
+};
+
 /*
 class Tiansuan: public TriggerSkill{
 public:
@@ -395,6 +657,21 @@ public:
 OxPackage::OxPackage()
     :Package("ox")
 {
+    General *gaolian = new General(this, "gaolian", "guan", 3);
+    gaolian->addSkill(new Guibing);
+    gaolian->addSkill(new Heiwu);
+
+    General *tongguan = new General(this, "tongguan", "guan");
+    tongguan->addSkill(new Aoxiang);
+    tongguan->addSkill(new AoxiangChange);
+    related_skills.insertMulti("aoxiang", "#aox_cg");
+    tongguan->addSkill(new Zhengfa);
+
+    tongguan = new General(this, "tongguanf", "yan", 4, false, true);
+    tongguan->addSkill("aoxiang");
+    tongguan->addSkill("zhengfa");
+    tongguan->addSkill("zhengfa");
+
     General *huyanzhuo = new General(this, "huyanzhuo", "guan");
     huyanzhuo->addSkill(new Lianma);
     huyanzhuo->addSkill(new Zhongjia);
@@ -404,6 +681,9 @@ OxPackage::OxPackage()
 
     General *pangwanchun = new General(this, "pangwanchun", "jiang");
     pangwanchun->addSkill(new Lianzhu);
+
+    General *huangxin = new General(this, "huangxin", "jiang");
+    huangxin->addSkill(new Tongxia);
 
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
@@ -415,6 +695,9 @@ OxPackage::OxPackage()
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
 */
+    addMetaObject<GuibingCard>();
+    addMetaObject<HeiwuCard>();
+    addMetaObject<ZhengfaCard>();
     addMetaObject<LianmaCard>();
     addMetaObject<SheruCard>();
     addMetaObject<XunlieCard>();
