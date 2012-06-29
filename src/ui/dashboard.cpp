@@ -112,7 +112,8 @@ void Dashboard::createRight(){
 
     back_icon = new Pixmap("image/system/big-back.png");
     back_icon->setParentItem(right);
-    back_icon->setPos(59, 105);
+    //back_icon->setPos(59, 105);
+    back_icon->setPos(22, 64);
     back_icon->setZValue(1.0);
     back_icon->hide();
 

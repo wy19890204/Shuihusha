@@ -34,7 +34,8 @@ Photo::Photo()
 
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
-    back_icon->setPos(105, 67);
+    //back_icon->setPos(105, 67);
+    back_icon->setPos(3, 13);
     back_icon->hide();
     back_icon->setZValue(1.0);
 

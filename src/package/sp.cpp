@@ -63,9 +63,12 @@ public:
                 int fist = lusashi->getMark("@fist");
                 if(fist < 1)
                     return false;
-                if(fist == 1 || fist == 2)
-                    if(!lusashi->askForSkillInvoke(objectName()))
+                if(fist == 1 || fist == 2){
+                    if(!lusashi->askForSkillInvoke(objectName())){
+                        room->setPlayerMark(lusashi, "@fist", 0);
                         return false;
+                    }
+                }
                 switch(fist){
                     case 1:{
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
