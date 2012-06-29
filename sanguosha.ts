@@ -3102,22 +3102,27 @@
     <message>
         <location filename="src/ui/roomscene.cpp" line="2807"/>
         <source>Kill</source>
-        <translation>人头</translation>
+        <translation>杀人</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="2807"/>
+        <location filename="src/ui/roomscene.cpp" line="2808"/>
         <source>Damage</source>
         <translation>伤害</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="2807"/>
+        <location filename="src/ui/roomscene.cpp" line="2808"/>
         <source>Save</source>
         <translation>救人</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="2807"/>
+        <location filename="src/ui/roomscene.cpp" line="2808"/>
         <source>Recover</source>
         <translation>回复</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2808"/>
+        <source>Cheat</source>
+        <translation>作弊</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2964"/>

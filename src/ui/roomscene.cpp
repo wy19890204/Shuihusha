@@ -2790,7 +2790,7 @@ void RoomScene::doScript(){
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){
-    int n = Config.Statistic ? 8 : 4;
+    int n = Config.Statistic ? 9 : 4;
     table->setColumnCount(n);
     table->setRowCount(players.length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -2804,14 +2804,14 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
             labels << tr("Role");
 
         if(Config.Statistic)
-            labels << /*tr("Designation") <<*/ tr("Kill") << tr("Damage") << tr("Save") << tr("Recover");
+            labels << /*tr("Designation") <<*/ tr("Kill")
+                << tr("Damage") << tr("Save") << tr("Recover") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
 
     table->setSelectionBehavior(QTableWidget::SelectRows);
 
-    int i;
-    for(i=0; i<players.length(); i++){
+    for(int i = 0; i < players.length(); i++){
         const ClientPlayer *player = players.at(i);
 
         QTableWidgetItem *item = new QTableWidgetItem;
@@ -2848,8 +2848,8 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
             continue;
 
         StatisticsStruct *statistics = player->getStatistics();
-        item = new QTableWidgetItem;
         /*
+		item = new QTableWidgetItem;
         QString designations;
         foreach(QString designation, statistics->designation){
             designations.append(Sanguosha->translate(designation) + ", ");
@@ -2874,14 +2874,19 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         item->setText(QString::number(statistics->recover));
         table->setItem(i, 7, item);
 
-        table->setColumnWidth(0, 70);
-        table->setColumnWidth(1, 70);
-        table->setColumnWidth(2, 70);
-        table->setColumnWidth(3, 70);
+        item = new QTableWidgetItem;
+        item->setText(QString::number(statistics->cheat));
+        table->setItem(i, 8, item);
+
+        table->setColumnWidth(0, 65);
+        table->setColumnWidth(1, 65);
+        table->setColumnWidth(2, 65);
+        table->setColumnWidth(3, 65);
         table->setColumnWidth(4, 40);
         table->setColumnWidth(5, 40);
         table->setColumnWidth(6, 40);
         table->setColumnWidth(7, 40);
+        table->setColumnWidth(8, 40);
     }
 }
 

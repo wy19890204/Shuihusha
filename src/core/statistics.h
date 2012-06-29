@@ -11,6 +11,7 @@ struct StatisticsStruct{
     int damage;
     int save;
     int recover;
+    int cheat;
     QStringList designation;
 };
 
