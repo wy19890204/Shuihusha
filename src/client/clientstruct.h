@@ -13,6 +13,7 @@ struct ServerInfoStruct{
     QString GameMode;
     int OperationTimeout;
     QStringList Extensions;
+    //bool Statistic;
     bool FreeChoose;
     bool Enable2ndGeneral;
     bool EnableScene;
