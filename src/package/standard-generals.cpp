@@ -470,17 +470,12 @@ public:
     }
 };
 
-QimenStruct::QimenStruct()
-    :kingdom("guan"), generalA("gongsunsheng"), generalB("zhuwu"), maxhp(5), skills(NULL)
-{
-}
-
 QimenCard::QimenCard(){
+    mute = true;
 }
 
-void QimenCard::willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun) const{
+void QimenCard::willCry(Room *room, ServerPlayer *target) const{
     QStringList skills;
-    //bool has_qimen = target == gongsun;
     foreach(const SkillClass *skill, target->getVisibleSkillList()){
         if(skill->getLocation() != Skill::Right)
             continue;
@@ -489,27 +484,8 @@ void QimenCard::willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun)
         room->detachSkillFromPlayer(target, skill_name, false);
     }
 
-    QimenStruct Qimen_data;
-    /*
-    Qimen_data.kingdom = target->getKingdom();
-    Qimen_data.generalA = target->getGeneralName();
-    Qimen_data.maxhp = target->getMaxHP();
-    QString to_transfigure = target->getGeneral()->isMale() ? "sujiang" : "sujiangf";
-    if(!has_qimen)
-        room->transfigure(target, to_transfigure, false, false);
-    else{
-        room->setPlayerProperty(target, "general", to_transfigure);
-        room->acquireSkill(target, "qimen");
-    }
-    room->setPlayerProperty(target, "maxhp", Qimen_data.maxhp);
-    if(target->getGeneral2()){
-        Qimen_data.generalB = target->getGeneral2Name();
-        room->setPlayerProperty(target, "general2", to_transfigure);
-    }
-    room->setPlayerProperty(target, "kingdom", Qimen_data.kingdom);
-*/
-    Qimen_data.skills = skills;
-    target->tag["QimenStore"] = QVariant::fromValue(Qimen_data);
+    QVariant data = QVariant::fromValue(skills.join("+"));
+    target->tag["QimenStore"] = data;
 
     room->setPlayerProperty(target, "scarecrow", true);
     target->gainMark("@shut");
@@ -541,7 +517,7 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
         log.arg = "qimen";
         room->sendLog(log);
 
-        willCry(room, superman, dragon);
+        willCry(room, superman);
     }
 }
 
@@ -571,19 +547,13 @@ public:
 
     static void stopCry(Room *room, ServerPlayer *player){
         player->loseMark("@shut");
-        QimenStruct Qimen_data = player->tag.value("QimenStore").value<QimenStruct>();
+        QString data = player->tag.value("QimenStore").toString();
 
-        foreach(QString skill_name, Qimen_data.skills)
-            room->acquireSkill(player, skill_name, false);
-        /*
-        room->setPlayerProperty(player, "general", Qimen_data.generalA);
-        if(player->getGeneral2()){
-            room->setPlayerProperty(player, "general2", Qimen_data.generalB);
-        }
-        room->setPlayerProperty(player, "kingdom", Qimen_data.kingdom);
-*/
+        QStringList Qimen_data = data.split("+");
+        foreach(QString skill_name, Qimen_data)
+            room->acquireSkill(player, skill_name);
+
         player->tag.remove("QimenStore");
-
         room->setPlayerProperty(player, "scarecrow", false);
     }
 
@@ -2172,7 +2142,7 @@ public:
                 return false;
             QStringList skills;
             foreach(const Skill *skill, player->getVisibleSkillList()){
-                if(skill->parent() && skill->getLocation() == Skill::Right &&
+                if(skill->getLocation() == Skill::Right &&
                    skill->getFrequency() != Skill::Limited &&
                    skill->getFrequency() != Skill::Wake &&
                    !skill->isLordSkill()){

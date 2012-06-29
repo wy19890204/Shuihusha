@@ -78,23 +78,13 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
-struct QimenStruct{
-    QimenStruct();
-    QString kingdom;
-    QString generalA;
-    QString generalB;
-    int maxhp;
-    QStringList skills;
-};
-
-Q_DECLARE_METATYPE(QimenStruct);
 class QimenCard: public SkillCard{
     Q_OBJECT
 
 public:
     Q_INVOKABLE QimenCard();
 
-    virtual void willCry(Room *room, ServerPlayer *target, ServerPlayer *gongsun) const;
+    virtual void willCry(Room *room, ServerPlayer *target) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
