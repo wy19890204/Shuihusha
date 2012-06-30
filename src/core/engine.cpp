@@ -650,10 +650,10 @@ void Engine::playAudio(const QString &name) const{
 
 void Engine::playEffect(const QString &filename) const{
 #ifdef AUDIO_SUPPORT
-
+/*
     if(!Config.EnableEffects)
         return;
-
+*/
     if(filename.isNull())
         return;
 
@@ -664,17 +664,21 @@ void Engine::playEffect(const QString &filename) const{
 
 void Engine::playSkillEffect(const QString &skill_name, int index) const{
     const Skill *skill = skills.value(skill_name, NULL);
-    if(skill)
+    if(skill && Config.EnableSkillEffects)
         skill->playEffect(index);
 }
 
 void Engine::playCardEffect(const QString &card_name, bool is_male) const{
     QString path;
     if(card_name.startsWith("@")){
+        if(!Config.EnableCardEffects)
+            return;
         QString gender = is_male ? "male" : "female";
         path = QString("audio/card/%1/%2.ogg").arg(gender).arg(card_name);
     }
     else if(card_name.startsWith("E")){
+        if(!Config.EnableEquipEffects)
+            return;
         QString gender = is_male ? "male" : "female";
         path = QString("audio/equip/%1/%2.ogg").arg(gender).arg(card_name.mid(1));
         if(!QFile::exists(path)){
@@ -687,7 +691,7 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
     }
     else{
         const Card *card = findChild<const Card *>(card_name);
-        if(card)
+        if(card && Config.EnableCardEffects)
             path = card->getEffectPath(is_male);
     }
 

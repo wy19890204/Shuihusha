@@ -1777,7 +1777,8 @@ bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGen
     //@todo: synchronize this
     player->m_cheatArgs = arg;
     player->releaseLock(ServerPlayer::SEMA_COMMAND_INTERACTIVE);
-    broadcastInvoke("playAudio", "cheat");
+    if(Config.EnableCheatRing)
+        broadcastInvoke("playAudio", "cheat");
     setPlayerStatistics(player, "cheat", 1);
     return true;
 }

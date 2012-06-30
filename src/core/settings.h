@@ -67,8 +67,11 @@ public:
     bool SPOpen;
     int OperationTimeout;
     bool OperationNoLimit;
-    bool EnableEffects;
+    bool EnableCardEffects;
+    bool EnableEquipEffects;
+    bool EnableSkillEffects;
     bool EnableLastWord;
+    bool EnableCheatRing;
     bool EnableBgMusic;
     float BGMVolume;
     float EffectVolume;
