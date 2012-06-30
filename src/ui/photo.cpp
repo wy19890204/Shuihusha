@@ -37,7 +37,7 @@ Photo::Photo()
     //back_icon->setPos(105, 67);
     back_icon->setPos(3, 13);
     back_icon->hide();
-    back_icon->setZValue(1.0);
+    back_icon->setZValue(0.2);
 
     chain_icon = new Pixmap("image/system/chain.png");
     chain_icon->setParentItem(this);
@@ -79,6 +79,7 @@ Photo::Photo()
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
     avatar_area->setPen(Qt::NoPen);
+    avatar_area->setZValue(0.3);
 
     small_avatar_area = new QGraphicsRectItem(0, 0, 42, 36, this);
     small_avatar_area->setPos(86, 30);
@@ -93,6 +94,7 @@ Photo::Photo()
 
     kingdom_item = new QGraphicsPixmapItem(this);
     kingdom_item->setPos(-12, -6);
+    kingdom_item->setZValue(1.1);
 
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
     ready_item->setPos(86, 132);
@@ -271,7 +273,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
         connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
-		connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
+        connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
@@ -463,6 +465,7 @@ void Photo::installDelayedTrick(CardItem *trick){
     item->setToolTip(tooltip);
 
     item->setPos(-10, 16 + judging_area.count() * 19);
+    item->setZValue(1.1);
     judging_area << trick;
     judging_pixmaps << item;
 }

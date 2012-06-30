@@ -114,7 +114,7 @@ void Dashboard::createRight(){
     back_icon->setParentItem(right);
     //back_icon->setPos(59, 105);
     back_icon->setPos(22, 64);
-    back_icon->setZValue(1.0);
+    back_icon->setZValue(0.2);
     back_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
@@ -124,7 +124,7 @@ void Dashboard::createRight(){
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
     handcard_num->setPos(6,8);
 
-     QFont serifFont("Times", 10, QFont::Bold);
+    QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
     handcard_num->setBrush(Qt::white);
 
@@ -135,6 +135,20 @@ void Dashboard::createRight(){
     mark_item->setDefaultTextColor(Qt::white);
 
     action_item = NULL;
+}
+
+void Dashboard::setEcstState(){
+    QGraphicsRectItem *avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    avatar_area->setPos(22, 64);
+    avatar_area->setZValue(0.3);
+
+    if(Self->hasFlag("ecst")){
+        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    }
+    //else if(Self->getMark("poison") > 0)
+    //    setPoisonState();
+    else
+        avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Dashboard::setActionState(){
@@ -200,6 +214,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
+    connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
 
