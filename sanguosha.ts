@@ -792,19 +792,34 @@
         <translation>背景音乐音量</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="120"/>
-        <source>Enable effects</source>
-        <translation>启用武将技能及卡牌声效</translation>
-    </message>
-    <message>
         <location filename="src/dialog/configdialog.ui" line="45"/>
         <source>Audio</source>
         <translation>音频</translation>
     </message>
     <message>
+        <location filename="src/dialog/configdialog.ui" line="120"/>
+        <source>Enable card effects</source>
+        <translation>启用卡牌声效</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="125"/>
+        <source>Enable skill effects</source>
+        <translation>启用武将技能声效</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="128"/>
+        <source>Enable equip effects</source>
+        <translation>启用装备声效</translation>
+    </message>
+    <message>
         <location filename="src/dialog/configdialog.ui" line="130"/>
         <source>Enable last word</source>
         <translation>启用阵亡音效</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="133"/>
+        <source>Enable cheat ring</source>
+        <translation>启用作弊音效</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="137"/>
