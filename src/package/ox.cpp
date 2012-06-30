@@ -131,9 +131,11 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->isWounded())
-            room->setGerenalGender("tongguan", "F");
+            room->setPlayerProperty(player, "gender", General::Female);
+            //room->setGerenalGender("tongguan", "F");
         else
-            room->setGerenalGender("tongguan", "M");
+            room->setPlayerProperty(player, "gender", General::Male);
+            //room->setGerenalGender("tongguan", "M");
         /*
         if(player->getGeneralName() != "tongguanf")
             player->tag["AoxiangStore"] = player->getGeneralName();

@@ -744,6 +744,8 @@ void ServerPlayer::marshal(ServerPlayer *player) const{
 
     if(getKingdom() != getGeneral()->getKingdom())
         player->sendProperty("kingdom", this);
+    //if(getGender() != getGeneral()->getGender())
+    //    player->sendProperty("gender", this);
 
     if(isAlive()){
         player->sendProperty("seat", this);

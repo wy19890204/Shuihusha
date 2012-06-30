@@ -96,6 +96,13 @@ General::Gender Player::getGender() const{
         return General::Neuter;
 }
 
+void Player::setGender(General::Gender gender){
+    if(this->gender != gender)
+        this->gender = gender;
+
+    //emit gender_changed();
+}
+
 int Player::getSeat() const{
     return seat;
 }
@@ -881,6 +888,7 @@ void Player::copyFrom(Player* p)
     b->hp               = a->hp;
     b->max_hp           = a->max_hp;
     b->kingdom          = a->kingdom;
+    b->gender           = a->gender;
     b->role             = a->role;
     b->seat             = a->seat;
     b->alive            = a->alive;
