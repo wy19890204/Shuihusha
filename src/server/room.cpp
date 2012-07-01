@@ -1041,7 +1041,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             sendLog(log);
 
             bool mute = false;
-            if(card->getSkillName() == "eight_diagram")
+            if(card->getSkillName() == "eight_diagram" && Config.EnableEquipEffects)
                 mute = true;
 
             player->playCardEffect(card, mute);
