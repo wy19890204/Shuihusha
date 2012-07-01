@@ -79,7 +79,6 @@ Photo::Photo()
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
     avatar_area->setPen(Qt::NoPen);
-    avatar_area->setZValue(0.3);
 
     small_avatar_area = new QGraphicsRectItem(0, 0, 42, 36, this);
     small_avatar_area->setPos(86, 30);
@@ -94,7 +93,7 @@ Photo::Photo()
 
     kingdom_item = new QGraphicsPixmapItem(this);
     kingdom_item->setPos(-12, -6);
-    kingdom_item->setZValue(1.1);
+    kingdom_item->setZValue(0.5);
 
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
     ready_item->setPos(86, 132);

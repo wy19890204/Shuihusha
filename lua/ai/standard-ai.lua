@@ -991,6 +991,22 @@ sgs.ai_skill_cardask["@heidian2"] = function(self)
 	return ecards[1]:getEffectiveId() or "."
 end
 
+function SmartAI:getSun2niang(player)
+	player = player or self.player
+	local room = player:getRoom()
+	local flag = 0
+	for _, erniang in sgs.qlist(room:findPlayersBySkillName("heidian")) do
+		if erniang ~= player then
+			if self:isFriend(player, erniang) and player:hasEquip() then
+				flag = flag - 1
+			else
+				flag = flag + 1
+			end
+		end
+	end
+	return flag > 0
+end
+
 -- renrou
 sgs.ai_skill_invoke["renrou"] = function(self, data)
 	local shiti = data:toPlayer()

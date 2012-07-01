@@ -1984,6 +1984,8 @@ function SmartAI:askForCardChosen(who, flags, reason)
 end
 
 function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
+	local sunerniang = self:getSun2niang()
+	if sunerniang and self.player:getHandcardNum() == 1 then return "." end
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
@@ -2305,6 +2307,9 @@ end
 function SmartAI:getTurnUse()
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
+
+	local sunerniang = self:getSun2niang()
+	if sunerniang and #cards == 1 then return end
 
 	local turnUse = {}
 	local slashAvail = 1
