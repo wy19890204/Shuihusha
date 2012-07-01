@@ -799,17 +799,17 @@
     <message>
         <location filename="src/dialog/configdialog.ui" line="120"/>
         <source>Enable card effects</source>
-        <translation>启用卡牌声效</translation>
+        <translation>启用卡牌音效</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="125"/>
         <source>Enable skill effects</source>
-        <translation>启用武将技能声效</translation>
+        <translation>启用武将技能音效</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="128"/>
         <source>Enable equip effects</source>
-        <translation>启用装备声效</translation>
+        <translation>启用装备音效</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="130"/>

@@ -4,7 +4,7 @@
 
 config = {
 	version = "20120621",
-	version_name = "终结版F1.7",
+	version_name = "终结版F1.9 党の版",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {

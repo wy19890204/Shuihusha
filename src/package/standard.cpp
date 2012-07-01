@@ -569,6 +569,7 @@ public:
 
 #include <QFile>
 #include <QTextStream>
+#include "plough.h"
 CustomCardPackage::CustomCardPackage()
     :Package("custom_cards")
 {
@@ -594,6 +595,14 @@ CustomCardPackage::CustomCardPackage()
                 custom = new Jink(suit, number);
             else if(name == "peach")
                 custom = new Peach(suit, number);
+            else if(name == "thunder_slash")
+                custom = new ThunderSlash(suit, number);
+            else if(name == "fire_slash")
+                custom = new FireSlash(suit, number);
+            else if(name == "analeptic")
+                custom = new Analeptic(suit, number);
+            else if(name == "ecstasy")
+                custom = new Ecstasy(suit, number);
             //Card *custom = Sanguosha->cloneCard(name, Card::String2Suit(suit), number);
             cards << custom;
         }
