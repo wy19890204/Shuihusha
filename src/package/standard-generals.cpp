@@ -135,6 +135,16 @@ public:
             room->attachSkillToPlayer(tmp, "jui");
         }
     }
+
+    virtual void onIdied(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(room->findPlayerBySkillName("juyi"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *tmp, players){
+            room->detachSkillFromPlayer(tmp, "jui", false);
+        }
+    }
 };
 
 class Baoguo:public TriggerSkill{
@@ -1124,6 +1134,16 @@ public:
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){
             room->attachSkillToPlayer(player, "buyaknife");
+        }
+    }
+
+    virtual void onIdied(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        if(room->findPlayerBySkillName("maidao"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->detachSkillFromPlayer(player, "buyaknife", false);
         }
     }
 };

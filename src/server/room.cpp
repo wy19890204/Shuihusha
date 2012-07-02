@@ -225,6 +225,8 @@ void Room::revivePlayer(ServerPlayer *player){
 
     broadcastInvoke("revivePlayer", player->objectName());
     updateStateItem();
+
+    thread->addPlayerSkills(player, true);
 }
 
 static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){

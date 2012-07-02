@@ -292,7 +292,7 @@ return {
 	["@jishi"] = "%src 受伤了，你可以发动【济世】，弃置一张基本牌或锦囊牌为 %src 回复1点体力。",
 	["yanshou"] = "延寿",
 	[":yanshou"] = "<font color=purple><b>限定技</b></font>，出牌阶段，你可以弃置两张♥牌，令任一角色增加1点体力上限。",
-	["@life"] = "命",
+	["@life"] = "舍利子",
 	["#Yanshou"] = "%from 为 %to 增加了 %arg 点体力上限",
 	["$xuming"] = "伏望天慈，延你之寿。",
 	["fengyue"] = "风月",
