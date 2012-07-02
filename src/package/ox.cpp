@@ -693,45 +693,41 @@ XunlieCard::XunlieCard(){
 }
 
 bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int i = 0;
-    foreach(const Player *player, Self->getSiblings()){
-        if(player->getHandcardNum() >= i){
-            i = player->getHandcardNum();
-        }
-    }
-    return targets.isEmpty() && !to_select->isKongcheng() && to_select->getHandcardNum() == i && to_select != Self;
+    int x = getSubcards().isEmpty() ? qMax(Self->getEquips().count(), 2) : 1;
+    if(targets.length() >= x)
+        return false;
+    return !to_select->isKongcheng() && to_select != Self;
 }
 
 void XunlieCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    int i = 0;
-    const Card *card = effect.to->getRandomHandCard();
-    effect.from->obtainCard(card, false);
-    i ++;
-    if(!effect.to->isKongcheng() && room->askForChoice(effect.from, "xuelie", "get+cancel") == "get"){
-        card = effect.to->getRandomHandCard();
-        effect.from->obtainCard(card, false);
-        i ++;
+    if(!effect.to->isKongcheng()){
+        int card_id = room->askForCardChosen(effect.from, effect.to, "h", "xunlie");
+        room->obtainCard(effect.from, card_id, false);
+        if(!getSubcards().isEmpty() && !effect.to->isKongcheng())
+            room->obtainCard(effect.from, effect.to->getRandomHandCardId(), false);
+        room->setEmotion(effect.to, "bad");
+        room->setEmotion(effect.from, "good");
     }
-    if(i == 1)
-        effect.from->drawCards(1);
-    room->setEmotion(effect.to, "bad");
-    room->setEmotion(effect.from, "good");
 }
 
-class XunlieViewAsSkill: public OneCardViewAsSkill{
+class XunlieViewAsSkill: public ViewAsSkill{
 public:
-    XunlieViewAsSkill():OneCardViewAsSkill("xunlie"){
+    XunlieViewAsSkill(): ViewAsSkill("xunlie"){
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return new XunlieCard;
         XunlieCard *card = new XunlieCard;
-        card->addSubcard(card_item->getCard()->getId());
+        card->addSubcards(cards);
         return card;
     }
 
-    virtual bool viewFilter(const CardItem *to_selec) const{
-        return to_selec->getCard()->inherits("EquipCard");
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_selec) const{
+        if(to_selec->getCard()->isRed())
+            return true;
+        return false;
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
@@ -750,28 +746,12 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *xiezhen) const{
-        if(xiezhen->getPhase() == Player::Draw){
-            Room *room = xiezhen->getRoom();
-            bool can_invoke = false;
-            QList<ServerPlayer *> other_players = room->getOtherPlayers(xiezhen);
-            foreach(ServerPlayer *player, other_players){
-                if(!player->isKongcheng()){
-                    can_invoke = true;
-                    break;
-                }
-            }
-            if(!can_invoke)
-                return false;
-            QList<const Card *> cards = xiezhen->getCards("he");
-            foreach(const Card *cd, cards){
-                if(cd->inherits("EquipCard")){
-                    if(room->askForUseCard(xiezhen, "@@xunlie", "@xunlie", true))
-                        return true;
-                    break;
-                }
-            }
-        }
-        return false;
+        Room *room = xiezhen->getRoom();
+        if(xiezhen->getPhase() == Player::Draw &&
+           room->askForUseCard(xiezhen, "@@xunlie", "@xunlie", true))
+            return true;
+        else
+            return false;
     }
 };
 
