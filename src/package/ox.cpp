@@ -817,29 +817,49 @@ bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *
 }
 
 void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
-    effect.from->loseAllMarks("@ziyi");
+    effect.from->loseAllMarks("@rope");
     RecoverStruct r;
-    Room *o = effect.from->getRoom();
-    o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
     r.who = effect.from;
     r.recover = 2;
-    o->recover(effect.to, r);
-    o->getThread()->delay(3000);
-    o->killPlayer(effect.from);
+    effect.from->getRoom()->recover(effect.to, r, true);
+    effect.from->setFlags("Hanging");
 }
 
-class Ziyi: public ZeroCardViewAsSkill{
+class ZiyiViewAsSkill: public ZeroCardViewAsSkill{
 public:
-    Ziyi():ZeroCardViewAsSkill("ziyi"){
-        frequency = Limited;
+    ZiyiViewAsSkill():ZeroCardViewAsSkill("ziyi"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@ziyi") > 0 && player->isWounded();
+        return player->getMark("@rope") > 0 && player->isWounded();
     }
 
     virtual const Card *viewAs() const{
         return new ZiyiCard;
+    }
+};
+
+class Ziyi:public PhaseChangeSkill{
+public:
+    Ziyi():PhaseChangeSkill("ziyi"){
+        frequency = Limited;
+        view_as_skill = new ZiyiViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *lnz) const{
+        if(lnz->hasFlag("Hanging") && lnz->getPhase() == Player::Finish){
+            Room *o = lnz->getRoom();
+            o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
+            o->getThread()->delay(3000);
+            DamageStruct damage;
+            damage.from = lnz;
+            o->killPlayer(lnz, &damage);
+        }
+        return false;
     }
 };
 
@@ -1078,8 +1098,8 @@ OxPackage::OxPackage()
     General *linniangzi = new General(this, "linniangzi", "min", 3, false);
     linniangzi->addSkill(new Shouwang);
     linniangzi->addSkill(new Ziyi);
-    linniangzi->addSkill(new MarkAssignSkill("@ziyi", 1));
-    related_skills.insertMulti("ziyi", "#@ziyi-1");
+    linniangzi->addSkill(new MarkAssignSkill("@rope", 1));
+    related_skills.insertMulti("ziyi", "#@rope-1");
     linniangzi->addSkill(new Zhongzhen);
 /*
     General *jiangjing = new General(this, "jiangjing", "jiang");
