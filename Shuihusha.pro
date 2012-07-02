@@ -329,10 +329,10 @@ CONFIG(chatvoice){
 	}
 }
 
-TRANSLATIONS += sanguosha.ts
+TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-	sanguosha.qss \
+        shuihusha.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png
