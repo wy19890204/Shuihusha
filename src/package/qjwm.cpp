@@ -6,95 +6,6 @@
 #include "carditem.h"
 #include "engine.h"
 
-class Wubang: public TriggerSkill{
-public:
-    Wubang():TriggerSkill("wubang"){
-        events << CardLost << FinishJudge;
-        frequency = Frequent;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
-        if(!jiuwenlong || player == jiuwenlong)
-            return false;
-        if(event == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->to_place == Player::DiscardedPile){
-                const Card *weapon = Sanguosha->getCard(move->card_id);
-                if(weapon->inherits("Weapon") &&
-                   jiuwenlong->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    jiuwenlong->obtainCard(weapon);
-                }
-            }
-        }else if(event == FinishJudge){
-            JudgeStar judge = data.value<JudgeStar>();
-            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
-               judge->card->inherits("Weapon") &&
-               jiuwenlong->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-                jiuwenlong->obtainCard(judge->card);
-            }
-        }
-        return false;
-    }
-};
-
-class Xiagu: public TriggerSkill{
-public:
-    Xiagu():TriggerSkill("xiagu"){
-        events << Predamage;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        QList<ServerPlayer *> jiuwennong = room->findPlayersBySkillName(objectName());
-        if(jiuwennong.isEmpty())
-            return false;
-
-        DamageStruct damage = data.value<DamageStruct>();
-        foreach(ServerPlayer *jiuwenlong, jiuwennong){
-            if(!jiuwenlong->isNude() && damage.nature == DamageStruct::Normal &&
-               damage.to->isAlive() && damage.damage > 0){
-                bool caninvoke = false;
-                foreach(const Card *cd, jiuwenlong->getCards("he")){
-                    if(cd->getTypeId() == Card::Equip){
-                        caninvoke = true;
-                        break;
-                    }
-                }
-                if(caninvoke){
-                    const Card *card = room->askForCard(jiuwenlong, "EquipCard", "@xiagu", true, data, CardDiscarded);
-                    if(card){
-                        LogMessage log;
-                        log.type = "$Xiagu";
-                        log.from = jiuwenlong;
-                        log.to << damage.to;
-                        log.card_str = card->getEffectIdString();
-                        room->sendLog(log);
-                        room->playSkillEffect(objectName());
-
-                        damage.damage --;
-                    }
-                    data = QVariant::fromValue(damage);
-                }
-            }
-        }
-        return false;
-    }
-};
-
 TaolueCard::TaolueCard(){
     once = true;
     mute = true;
@@ -427,137 +338,8 @@ public:
     }
 };
 
-ButianCard::ButianCard(){
-    target_fixed = true;
-    mute = true;
-}
-
-void ButianCard::use(Room *, ServerPlayer *, const QList<ServerPlayer *> &) const{
-}
-
-class ButianViewAsSkill:public OneCardViewAsSkill{
-public:
-    ButianViewAsSkill():OneCardViewAsSkill("butian"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return true;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@butian";
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new ButianCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
-    }
-};
-
-class Butian: public TriggerSkill{
-public:
-    Butian():TriggerSkill("butian"){
-        view_as_skill = new ButianViewAsSkill;
-        events << AskForRetrial;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->isNude();
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        JudgeStar judge = data.value<JudgeStar>();
-
-        QStringList prompt_list;
-        prompt_list << "@butian-card" << judge->who->objectName()
-                << "" << judge->reason << judge->card->getEffectIdString();
-        QString prompt = prompt_list.join(":");
-
-        player->tag["Judge"] = data;
-        const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
-
-        if(card){
-            int index = qrand() % 2 + 1;
-            if(player->getMark("wudao") == 0)
-                room->playSkillEffect(objectName(), index);
-            else
-                room->playSkillEffect(objectName(), index + 2);
-            room->throwCard(judge->card);
-
-            QList<int> card_ids = room->getNCards(3);
-            room->fillAG(card_ids, player);
-            int card_id = room->askForAG(player, card_ids, false, objectName());
-            if(card_id == -1)
-                return false;
-            int locat = card_ids.indexOf(card_id);
-            card_ids.replace(locat, judge->card->getId());
-            player->invoke("clearAG");
-
-            card_ids.swap(0, 2);
-            foreach(int tmp, card_ids){
-                room->throwCard(tmp);
-                room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile);
-            }
-            room->getThread()->delay();
-
-            judge->card = Sanguosha->getCard(card_id);
-            room->moveCardTo(judge->card, NULL, Player::Special);
-
-            LogMessage log;
-            log.type = "$ChangedJudge";
-            log.from = player;
-            log.to << judge->who;
-            log.card_str = QString::number(card_id);
-            room->sendLog(log);
-
-            room->sendJudgeResult(judge);
-        }
-        return false;
-    }
-};
-
-class Huaxian: public TriggerSkill{
-public:
-    Huaxian():TriggerSkill("huaxian"){
-        events << Dying;
-        frequency = Frequent;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *ren, QVariant &data) const{
-        DyingStruct dying = data.value<DyingStruct>();
-        if(dying.who == ren && ren->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(heart):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = ren;
-
-            room->judge(judge);
-            if(judge.isGood()){
-                RecoverStruct rev;
-                rev.card = judge.card;
-                rev.who = ren;
-                room->recover(ren, rev);
-            }
-        }
-        return false;
-    }
-};
-
 QJWMPackage::QJWMPackage()
     :Package("QJWM"){
-
-    General *shijin = new General(this, "shijin", "kou");
-    shijin->addSkill(new Wubang);
-    shijin->addSkill(new Xiagu);
 
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
@@ -576,13 +358,8 @@ QJWMPackage::QJWMPackage()
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
-    General *luozhenren = new General(this, "luozhenren", "kou", 3);
-    luozhenren->addSkill(new Butian);
-    luozhenren->addSkill(new Huaxian);
-
     addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();
-    addMetaObject<ButianCard>();
 }
 
 ADD_PACKAGE(QJWM)
