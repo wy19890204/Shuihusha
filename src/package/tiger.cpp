@@ -1,4 +1,4 @@
-#include "qjwm.h"
+#include "tiger.h"
 #include "skill.h"
 #include "standard.h"
 #include "maneuvering.h"
@@ -338,8 +338,8 @@ public:
     }
 };
 
-QJWMPackage::QJWMPackage()
-    :Package("QJWM"){
+TigerPackage::TigerPackage()
+    :Package("tiger"){
 
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
@@ -362,4 +362,4 @@ QJWMPackage::QJWMPackage()
     addMetaObject<XiaozaiCard>();
 }
 
-ADD_PACKAGE(QJWM)
+ADD_PACKAGE(Tiger)

@@ -59,7 +59,7 @@ SOURCES += \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
-	src/package/qjwm.cpp \
+	src/package/tiger.cpp \
 	src/package/xzzd.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
@@ -190,7 +190,7 @@ HEADERS += \
 	src/package/gift.h \
 	src/package/rat.h \
 	src/package/ox.h \
-	src/package/qjwm.h \
+	src/package/tiger.h \
 	src/package/xzzd.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \

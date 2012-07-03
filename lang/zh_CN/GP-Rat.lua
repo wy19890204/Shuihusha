@@ -1,4 +1,5 @@
 -- translation for RatPackage
+-- First of the twelve
 
 return {
 	["rat"] = "子鼠",

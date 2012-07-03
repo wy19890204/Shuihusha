@@ -1,4 +1,4 @@
--- QianJunWanMa Shuihusha part 1. code by: UbunTenkei
+-- translation for TigerPackage
 
 return {
 	["QJWM"] = "千军万马",

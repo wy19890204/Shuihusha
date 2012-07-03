@@ -1,7 +1,8 @@
 -- translation for OxPackage
+-- Second of the twelve
 
 return {
-	["ox"] = "臭妞",
+	["ox"] = "丑牛",
 
 	["#gaolian"] = "高唐魔君", -- guan 3hp (ybyt)
 	["gaolian"] = "高廉",
