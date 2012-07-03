@@ -1,23 +1,4 @@
 
---xiagu
-sgs.ai_skill_cardask["@xiagu"] = function(self, data)
-	local damage = data:toDamage()
-	if self:isFriend(damage.to) then
-		if damage.to:hasSkill("fushang") and
-			damage.to:getMaxHP() > 3 and damage.damage < 2 then return "." end
-		local allcards = self.player:getCards("he")
-		for _, card in sgs.qlist(allcards) do
-			if card:inherits("EquipCard") then
-				return card:getEffectiveId()
-			end
-		end
-	end
-	return "."
-end
-function sgs.ai_cardneed.xiagu(to, card, self)
-	return card:inherits("EquipCard")
-end
-
 -- zhanchi
 sgs.ai_skill_invoke["zhanchi"] = function(self, data)
 	if self.player:hasWeapon("crossbow") then
@@ -57,34 +38,6 @@ sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
 	end
 end
 sgs.ai_skill_playerchosen["taolue"] = sgs.ai_skill_playerchosen["lihun"]
-
--- butian
-sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
-	judge = judge or self.player:getTag("Judge"):toJudge()
-
-	if self:needRetrial(judge) then
-		local cards = sgs.QList2Table(self.player:getHandcards())
-		self:sortByUseValue(cards, true)
-		return "@ButianCard=" .. cards[1]:getEffectiveId()
-	end
-	return "."
-end
-sgs.ai_skill_askforag["butian"] = function(self, card_ids)
-	local judge = self.player:getTag("Judge"):toJudge()
-	local cards = {}
-	local card_id
-	if self:needRetrial(judge) then
-		for _, card_id in ipairs(card_ids) do
-			local card = sgs.Sanguosha:getCard(card_id)
-			table.insert(cards, card)
-		end
-		card_id = self:getRetrialCardId(cards, judge)
-		if card_id ~= -1 then
-			return card_id
-		end
-	end
-	return card_ids[1]
-end
 
 -- longluo
 sgs.ai_skill_playerchosen["longluo"] = function(self, targets)

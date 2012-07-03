@@ -1,3 +1,32 @@
+-- baoquan
+sgs.ai_skill_invoke["baoquan"] = true
+sgs.ai_skill_playerchosen["baoquan"] = function(self, targets)
+	if self:isWeak() or self.player:getHandcardNum() < self.player:getMaxCards() then
+		return self.player
+	else
+		self:sort(self.friends, "handcard")
+		return self.friends[1]
+	end
+end
+sgs.ai_skill_use["@@baoquan"] = function(self, prompt)
+	local cards = sgs.QList2Table(self.player:getCards("he"))
+	self:sortByUseValue(cards, true)
+	local card_ids = {}
+	for _, card in ipairs(cards) do
+		if card:inherits("EquipCard") then
+			table.insert(card_ids, card:getEffectiveId())
+		end
+	end
+	if #card_ids < 1 then return "." end
+	self:sort(self.enemies)
+	local target = self.enemies[1]
+	if target then
+		return "@BaoquanCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
+	else
+		return "."
+	end
+end
+
 -- shemi
 sgs.ai_skill_invoke["shemi"] = function(self, data)
 	return self.player:getHandcardNum() >= self.player:getHp()

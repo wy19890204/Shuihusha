@@ -206,12 +206,6 @@ sgs.ai_skill_invoke["qiaodou"] = function(self, data)
 	return sb:faceUp() and self:isEnemy(sb)
 end
 
--- moucai
-sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
-
--- duoming
-sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
-
 -- wugou
 local wugou_skill={}
 wugou_skill.name = "wugou"
