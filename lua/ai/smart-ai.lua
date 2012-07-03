@@ -616,6 +616,7 @@ function SmartAI:sortByUsePriority(cards)
 end
 
 function SmartAI:sortByDynamicUsePriority(cards)
+	if #cards == 0 then return end
 	local compare_func = function(a,b)
 		local value1 = self:getDynamicUsePriority(a)
 		local value2 = self:getDynamicUsePriority(b)

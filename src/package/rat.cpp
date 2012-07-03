@@ -209,7 +209,10 @@ public:
             return false;
         Room *room = p->getRoom();
         ServerPlayer *ruan2 = room->findPlayerBySkillName(objectName());
-        if(ruan2 && room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), true, QVariant::fromValue(p), CardDiscarded)){
+        const Card *card = Sanguosha->cloneCard("assassinate", Card::NoSuit, 0);
+        if(!ruan2 || ruan2->isProhibited(p, card))
+            return false;
+        if(room->askForCard(ruan2, ".", "@fuji:" + p->objectName(), true, QVariant::fromValue(p), CardDiscarded)){
             Assassinate *ass = new Assassinate(Card::NoSuit, 0);
             ass->setSkillName(objectName());
             ass->setCancelable(false);
@@ -232,6 +235,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return !target->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{

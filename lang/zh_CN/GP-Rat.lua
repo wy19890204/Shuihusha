@@ -113,6 +113,7 @@ return {
 
 	["#baisheng"] = "白日鼠", -- kou 3hp (bwqz)
 	["baisheng"] = "白胜",
+	["designer:baisheng"] = "Kaycent",
 	["cv:baisheng"] = "卜音悠扬【天子会工作室】",
 	["coder:baisheng"] = "太阳神上",
 	["xiayao"] = "下药",

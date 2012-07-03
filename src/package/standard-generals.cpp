@@ -675,7 +675,8 @@ bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player
     if(!targets.isEmpty())
         return false;
 
-    return to_select != Self;
+    const Card *duel = Sanguosha->cloneCard("duel", Card::NoSuit, 0);
+    return !Self->isProhibited(to_select, duel) && to_select != Self;
 }
 
 void DuijueCard::onEffect(const CardEffectStruct &effect) const{
