@@ -40,6 +40,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
+    ui->enableLua->setChecked(Config.EnableLua);
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
 
@@ -156,6 +157,9 @@ void ConfigDialog::saveConfig()
 
     Config.SPOpen = ui->spOpen->isChecked();
     Config.setValue("SPOpen", Config.SPOpen);
+
+    Config.EnableLua = ui->enableLua->isChecked();
+    Config.setValue("EnableLua", Config.EnableLua);
 
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());
     Config.setValue("Contest/Sender", ui->senderLineEdit->text());

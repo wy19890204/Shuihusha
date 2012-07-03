@@ -110,13 +110,11 @@ sgs.ai_chat.zhangshi=
 "美人儿莫怕，我来啦~"
 }
 
---huanggai
-sgs.ai_chat.kurou=
+--pangwanchun
+sgs.ai_chat.lianzhu=
 {
-"有桃么!有桃么？",
-"教练，我想要摸桃",
-"桃桃桃我的桃呢",
-"求桃求连弩各种求"
+"放箭！",
+"看我射不死你们！",
 }
 
 --indulgence

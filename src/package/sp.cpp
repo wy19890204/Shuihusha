@@ -55,6 +55,13 @@ public:
         view_as_skill = new BaoquanViewAsSkill;
     }
 
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 1)
+            return "recover1hp";
+        else
+            return "draw2card";
+    }
+
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *lusashi, QVariant &data) const{
         if(e == PhaseChange){
             if(lusashi->getPhase() == Player::RoundStart)

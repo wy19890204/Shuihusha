@@ -1,7 +1,8 @@
 -- translation for OxPackage
+-- Second of the twelve
 
 return {
-	["ox"] = "臭妞",
+	["ox"] = "丑牛",
 
 	["#gaolian"] = "高唐魔君", -- guan 3hp (ybyt)
 	["gaolian"] = "高廉",
@@ -151,18 +152,5 @@ return {
 	["$zhongzhen1"] = "怎可这般无礼？",
 	["$zhongzhen2"] = "你若再上前一步，我便跳下去。",
 	["~linniangzi"] = "官人，就此～别过！",
-
-	["#jiangjing"] = "神算子",
-	["jiangjing"] = "蒋敬",
-	["tiansuan"] = "天算",
-	[":tiansuan"] = "每当两名角色进行拼点时（在双方的拼点牌亮出前），你可以观看一次双方拼点的牌，并可以将其中一张与牌堆顶第一张牌进行交换。",
-	["@tiansuan"] = "%src 的拼点牌是 %dest %arg 的 %arg2",
-	["huazhu"] = "划珠",
-	[":huazhu"] = "出牌阶段，你可以和一名角色拼点，若你赢，你须令任一角色将手牌调整至X张，X为你拼点牌点数的一半（向上取整），每回合限一次。",
-
-	["#maling"] = "神驹子",
-	["maling"] = "马灵",
-	["fengxing"] = "风行",
-	[":fengxing"] = "<b>锁定技</b>，你始终跳过你的判定阶段、摸牌阶段和弃牌阶段；你每失去一张手牌，若你的手牌数小于你的体力上限，则你须摸一张牌。",
 
 }

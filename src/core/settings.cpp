@@ -125,6 +125,7 @@ void Settings::init(){
     EnableBgMusic = value("EnableBgMusic", true).toBool();
     BGMVolume = value("BGMVolume", 1.0f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
+    EnableLua = value("EnableLua", false).toBool();
 
     BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
 

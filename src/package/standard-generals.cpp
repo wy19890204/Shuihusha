@@ -1355,6 +1355,7 @@ public:
                 log.arg = objectName();
                 log.arg2 = effect.slash->objectName();
                 room->sendLog(log);
+                room->setEmotion(player, "armor");
 
                 return true;
             }
@@ -1368,6 +1369,7 @@ public:
                 if(damage.from->getWeapon()){
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
+                    room->setEmotion(player, "armor");
                     room->throwCard(damage.from->getWeapon());
                 }
             }

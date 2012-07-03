@@ -1,4 +1,5 @@
 -- translation for RatPackage
+-- First of the twelve
 
 return {
 	["rat"] = "子鼠",
@@ -150,47 +151,6 @@ return {
 	["$dujian2"] = "活捉晁盖！",
 	["~shiwengong"] = "动，动不了了！呃～",
 
-	["#yuehe"] = "铁叫子",
-	["yuehe"] = "乐和",
-	["cv:yuehe"] = "烨子【剪刀剧团】",
-	["coder:yuehe"] = "roxiel",
-	["yueli"] = "乐理",
-	[":yueli"] = "若你的判定牌为基本牌，在其生效后可以获得之。",
-	["yueli:yes"] = "拿屎",
-	["yueli:no"] = "不拿屎",
-	["taohui"] = "韬晦",
-	[":taohui"] = "回合结束阶段，你可以进行一次判定：若结果不为基本牌，你可以令任一角色摸一张牌，并可以再次使用“韬晦”，如此反复，直到判定结果为基本牌为止。",
-	["$yueli1"] = "呵呵～",
-	["$yueli2"] = "且慢，音律有误。",
-	["$taohui1"] = "白云起，郁披香；离复合，曲未央。",
-	["$taohui2"] = "此曲只应天上有，人间能得几回闻。",
-
-	["#muhong"] = "没遮拦",
-	["muhong"] = "穆弘",
-	["cv:muhong"] = "流岚【裔美声社】",
-	["coder:muhong"] = "roxiel",
-	["wuzu"] = "无阻",
-	[":wuzu"] = "<b>锁定技</b>，你始终无视其他角色的防具。",
-	["$IgnoreArmor"] = "%to 装备着 %card，但 %from 貌似没有看见",
-	["$wuzu1"] = "谁敢拦我？",
-	["$wuzu2"] = "游击部，冲！",
-
-	["#zhoutong"] = "小霸王",
-	["zhoutong"] = "周通",
-	["cv:zhoutong"] = "烨子【剪刀剧团】",
-	["coder:zhoutong"] = "roxiel",
-	["qiangqu"] = "强娶",
-	[":qiangqu"] = "当你使用【杀】对已受伤的女性角色造成伤害时，你可以防止此伤害，改为获得该角色的一张牌，然后你和她各回复1点体力。",
-	["#Qiangqu"] = "%from 硬是把 %to 拉入了洞房",
-	["huatian"] = "花田",
-	[":huatian"] = "你每受到1点伤害，可以令任一已受伤的其他角色回复1点体力；你每回复1点体力，可以对任一其他角色造成1点伤害。",
-	["$qiangqu1"] = "小娘子，春宵一刻值千金啊！",
-	["$qiangqu2"] = "今夜，本大王定要做新郎！",
-	["$huatian1"] = "无妨，只当为汝披嫁纱！",
-	["$huatian2"] = "只要娘子开心，怎样都好！",
-	["$huatian3"] = "破晓之前，忘了此错。",
-	["$huatian4"] = "无心插柳，岂是花田之错？",
-
 	["#qiaodaoqing"] = "幻魔君", -- jiang 3hp (ttxd)
 	["qiaodaoqing"] = "乔道清",
 	["cv:qiaodaoqing"] = "烨子风暴【天子会工作室】",
@@ -234,9 +194,4 @@ return {
 	["$yinyu13"] = "哼！不识好歹！", -- 方块使用杀播放
 	["~qiongying"] = "节儿，保重。",
 
-
--- last words
-	["~yuehe"] = "叫子也难吹奏了。",
-	["~muhong"] = "弟，兄先去矣！",
-	["~zhoutong"] = "虽有霸王相，奈无霸王功啊！",
 }
