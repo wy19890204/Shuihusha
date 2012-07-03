@@ -902,150 +902,6 @@ public:
     }
 };
 
-/*
-class Tiansuan: public TriggerSkill{
-public:
-    Tiansuan():TriggerSkill("tiansuan"){
-        events << Pindian;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        ServerPlayer *pianzi = room->findPlayerBySkillName(objectName());
-        if(!pianzi || !pianzi->askForSkillInvoke(objectName()))
-            return false;
-        PindianStar pindian = data.value<PindianStar>();
-        QStringList choices;
-        QString from_card = Sanguosha->translate(QString("@tiansuan:%1:%2:%3:%4").
-                            arg(pindian->from->getGeneralName()).
-                            arg(pindian->from_card->getSuitString()).
-                            arg(pindian->from_card->getNumberString()).
-                            arg(pindian->from_card->objectName()));
-        QString to_card = Sanguosha->translate(QString("@tiansuan:%1:%2:%3:%4").
-                          arg(pindian->to->getGeneralName()).
-                          arg(pindian->to_card->getSuitString()).
-                          arg(pindian->to_card->getNumberString()).
-                          arg(pindian->to_card->objectName()));
-        choices << from_card
-                << to_card;
-        QString choice = room->askForChoice(pianzi, objectName(), choices.join("+"));
-        if(choice == from_card){
-            int omiga = room->drawCard();
-            //room->moveCardTo(Sanguosha->getCard(omiga), pindian->from, Player::Hand, false);
-            room->moveCardTo(pindian->from_card, NULL, Player::DrawPile, true);
-            pindian->from_card = Sanguosha->getCard(omiga);
-        }
-        else{
-            int omiga = room->drawCard();
-            //room->moveCardTo(Sanguosha->getCard(omiga), pindian->to, Player::Hand, false);
-            room->moveCardTo(pindian->to_card, NULL, Player::DrawPile, true);
-            pindian->to_card = Sanguosha->getCard(omiga);
-        }
-        data = QVariant::fromValue(pindian);
-        return false;
-    }
-};
-
-HuazhuCard::HuazhuCard(){
-    once = true;
-    will_throw = false;
-}
-
-bool HuazhuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
-}
-
-void HuazhuCard::use(Room *, ServerPlayer *iszjj, const QList<ServerPlayer *> &targets) const{
-    iszjj->pindian(targets.first(), "huazhu", this);
-}
-
-class HuazhuViewAsSkill: public OneCardViewAsSkill{
-public:
-    HuazhuViewAsSkill():OneCardViewAsSkill("huazhu"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("HuazhuCard") && !player->isKongcheng();
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        Card *card = new HuazhuCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Huazhu: public TriggerSkill{
-public:
-    Huazhu():TriggerSkill("huazhu"){
-        events << Pindian;
-        view_as_skill = new HuazhuViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        PindianStar pindian = data.value<PindianStar>();
-        if(pindian->reason != "huazhu" || !pindian->from->hasSkill(objectName()))
-            return false;
-        if(pindian->isSuccess()){
-            int x = (pindian->from_card->getNumber() + 1) / 2;
-            ServerPlayer *target = room->askForPlayerChosen(pindian->from, room->getAllPlayers(), objectName());
-            if(target->getHandcardNum() > x)
-                room->askForDiscard(target, objectName(), target->getHandcardNum() - x);
-            else if(target->getHandcardNum() < x)
-                target->drawCards(x - target->getHandcardNum());
-        }
-        return false;
-    }
-};
-
-class Fengxing: public TriggerSkill{
-public:
-    Fengxing():TriggerSkill("fengxing"){
-        events << PhaseChange << CardLost;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent v, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(v == CardLost){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place == Player::Hand && player->isAlive()){
-                if(player->getHandcardNum() < player->getMaxHP()){
-                    LogMessage log;
-                    log.type = "#TriggerSkill";
-                    log.from = player;
-                    log.arg = objectName();
-                    room->sendLog(log);
-                    player->drawCards(1);
-                }
-            }
-        }
-        else{
-            if(player->getPhase() == Player::Judge ||
-               player->getPhase() == Player::Draw ||
-               player->getPhase() == Player::Discard)
-                return true;
-        }
-        return false;
-    }
-};
-*/
-
 OxPackage::OxPackage()
     :Package("ox")
 {
@@ -1101,14 +957,7 @@ OxPackage::OxPackage()
     linniangzi->addSkill(new MarkAssignSkill("@rope", 1));
     related_skills.insertMulti("ziyi", "#@rope-1");
     linniangzi->addSkill(new Zhongzhen);
-/*
-    General *jiangjing = new General(this, "jiangjing", "jiang");
-    jiangjing->addSkill(new Tiansuan);
-    jiangjing->addSkill(new Huazhu);
 
-    General *maling = new General(this, "maling", "jiang", 3);
-    maling->addSkill(new Fengxing);
-*/
     addMetaObject<GuibingCard>();
     addMetaObject<HeiwuCard>();
     addMetaObject<ZhengfaCard>();
@@ -1121,4 +970,4 @@ OxPackage::OxPackage()
     addMetaObject<ShouwangCard>();
 }
 
-ADD_PACKAGE(Ox);
+ADD_PACKAGE(Ox)
