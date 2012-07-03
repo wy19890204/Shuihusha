@@ -470,9 +470,9 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == PreDeath){
+        if(event == PreDeath)
             return player->getHp() > 0;
-        }
+
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
