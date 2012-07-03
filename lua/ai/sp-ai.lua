@@ -1,3 +1,6 @@
+-- AI for sp package
+
+-- luda
 -- baoquan
 sgs.ai_skill_invoke["baoquan"] = true
 sgs.ai_skill_playerchosen["baoquan"] = function(self, targets)

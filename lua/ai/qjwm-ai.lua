@@ -80,3 +80,43 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 	end
 end
 
+-- yueli
+function sgs.ai_slash_prohibit.yueli(self, to)
+	if self:isEquip("EightDiagram", to) then return true end
+end
+
+-- taohui
+sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
+	self:sort(self.friends, "handcard")
+	return self.friends[1]
+end
+
+-- qiangqu
+sgs.ai_skill_invoke["qiangqu"] = function(self, data)
+	local damage = data:toDamage()
+	return self:isFriend(damage.to)
+end
+
+-- huatian
+sgs.ai_skill_invoke["huatian"] = function(self, data)
+	if not self.friends_noself[1] then return false end
+	self:sort(self.friends_noself, "hp")
+	if self.player:getMark("HBTJ") == 1 then
+		return self.friends_noself[1]:isWounded()
+	end
+	return true
+end
+sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
+	local mark = self.player:getMark("HBTJ")
+	if mark == 1 then
+		self:sort(self.friends_noself, "hp")
+		for _, friend in ipairs(self.friends_noself) do
+			if friend:isWounded() then
+				return friend
+			end
+		end
+	elseif mark == 2 then
+		self:sort(self.enemies, "hp")
+		return self.enemies[1]
+	end
+end
