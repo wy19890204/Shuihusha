@@ -57,7 +57,12 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 end
 
-sgs.ai_card_intention.Ecstasy = 80
+sgs.ai_card_intention.Ecstasy = function(card, from, tos)
+	for _, to in ipairs(tos) do
+		speakTrigger(card,from,to)
+	end
+	sgs.updateIntentions(from, tos, 80)
+end
 sgs.dynamic_value.control_card.Ecstasy = true
 sgs.dynamic_value.benefit.Counterplot = true
 
@@ -101,7 +106,10 @@ function SmartAI:useCardDrivolt(drivolt, use)
 		local r = math.random(1, #players)
 		target = players[r]
 	end
-	if use.to then use.to:append(target) end
+	if use.to then
+		self:speak("drivolt")
+		use.to:append(target)
+	end
 end
 
 sgs.ai_card_intention.Drivolt = function(card, from, tos)
@@ -178,6 +186,7 @@ function SmartAI:useCardAssassinate(ass, use)
 end
 
 sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
+	self:speak("assassinate", self.player:getGeneral():isFemale(), to)
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
 	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end	
 end

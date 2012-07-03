@@ -616,7 +616,7 @@ function SmartAI:sortByUsePriority(cards)
 end
 
 function SmartAI:sortByDynamicUsePriority(cards)
-	if #cards == 0 then return end
+	if cards == nil or #cards == 0 then return end
 	local compare_func = function(a,b)
 		local value1 = self:getDynamicUsePriority(a)
 		local value2 = self:getDynamicUsePriority(b)
@@ -2396,6 +2396,7 @@ function SmartAI:activate(use)
 	self:assignKeep(self.player:getHp(),true)
 	self.toUse  = self:getTurnUse()
 	self:sortByDynamicUsePriority(self.toUse)
+	if self.toUse == nil then return end
 --[[
 	if self.player:hasSkill("jibao") then
 		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())

@@ -29,7 +29,12 @@ sgs.ai_skill_cardask["@shuangzhan-jink-1"] = sgs.ai_skill_cardask["@assas1"]
 
 -- zhangqing
 -- yinyu
-sgs.ai_skill_invoke["yinyu"] = true
+sgs.ai_skill_invoke["yinyu"] = function(self, data)
+	if self.player:getMark("mengshi") == 0 then
+		self:speak("yinyu")
+	end
+	return true
+end
 
 -- ruanxiaoer
 -- fuji
@@ -128,6 +133,9 @@ end
 -- qiongtu
 sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 	local target = data:toPlayer()
+	if self.player:hasSkill("qiongtu") then
+		speak(target, "qiongtu")
+	end
 	return self:isEnemy(target)
 end
 
@@ -236,7 +244,10 @@ sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 			end
 		end
 	end
-	if target then return "@HuanshuCard=." .. "->" .. target:objectName() end
+	if target then
+		self:speak("huanshu")
+		return "@HuanshuCard=." .. "->" .. target:objectName()
+	end
 	return "."
 end
 function sgs.ai_slash_prohibit.huanshu(self, to)
