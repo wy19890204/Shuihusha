@@ -151,7 +151,7 @@ public:
 	void removeEquip(const EquipCard *equip);
 	bool hasEquip(const Card *card) const;
 	bool hasEquip() const;
-	bool hasEquip(QString name) const;
+	bool hasEquip(const char *name, bool inherit = false) const;
 
 	QList<const Card *> getJudgingArea() const;
 	void addDelayedTrick(const Card *trick);
@@ -443,9 +443,9 @@ struct PindianStruct{
 };
 
 struct PhaseChangeStruct{
-    PhaseChangeStruct();
-    Player::Phase from;
-    Player::Phase to;
+	PhaseChangeStruct();
+	Player::Phase from;
+	Player::Phase to;
 };
 
 typedef PindianStruct *PindianStar;
@@ -489,13 +489,13 @@ enum TriggerEvent{
     SlashHit,
     SlashMissed,
 	
-	JinkUsed,
+    JinkUsed,
 
     CardAsked,
     CardUsed,
     CardResponsed,
     CardDiscarded,
-	CardMoving,
+    CardMoving,
     CardLost,
     CardLostDone,
     CardGot,
@@ -594,8 +594,8 @@ public:
 	bool canJilei() const;
 	bool isOwnerDiscarded() const;
 	
-    void setFlags(const char *flag) const;
-    bool hasFlag(const char *flag) const;
+	void setFlags(const char *flag) const;
+	bool hasFlag(const char *flag) const;
 	void clearFlags() const;
 
 	virtual void onUse(Room *room, const CardUseStruct &card_use) const;
@@ -717,6 +717,11 @@ public:
 		Wake
 	};
 
+	enum Location{
+		Left,
+		Right
+	};
+
 	explicit Skill(const char *name, Frequency frequent = NotFrequent);
 	bool isLordSkill() const;
 	QString getDescription() const;
@@ -726,6 +731,8 @@ public:
 	virtual QString getDefaultChoice(ServerPlayer *player) const;
 	virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
 	virtual QDialog *getDialog() const;
+
+	virtual Location getLocation() const;
 
 	void initMediaSource();
 	void playEffect(int index = -1) const;
@@ -803,18 +810,18 @@ public:
 	void slashEffect(const SlashEffectStruct &effect);
 	void slashResult(const SlashEffectStruct &effect, const Card *jink);
 	void attachSkillToPlayer(ServerPlayer *player, const char *skill_name);
-	void detachSkillFromPlayer(ServerPlayer *player, const char *skill_name);
+	void detachSkillFromPlayer(ServerPlayer *player, const char *skill_name, bool showlog = true);
 	bool obtainable(const Card *card, ServerPlayer *player);
 	void setPlayerFlag(ServerPlayer *player, const char *flag);
 	void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
 	void setPlayerMark(ServerPlayer *player, const char *mark, int value);
-    void setPlayerCardLock(ServerPlayer *player, const char *name);
-    void clearPlayerCardLock(ServerPlayer *player);
-    void setPlayerStatistics(ServerPlayer *player, const char *property_name, const QVariant &value);
-    void setCardFlag(const Card *card, const char *flag, ServerPlayer *who = NULL);
-    void setCardFlag(int card_id, const char *flag, ServerPlayer *who = NULL);
-    void clearCardFlag(const Card *card, ServerPlayer *who = NULL);
-    void clearCardFlag(int card_id, ServerPlayer *who = NULL);
+	void setPlayerCardLock(ServerPlayer *player, const char *name);
+	void clearPlayerCardLock(ServerPlayer *player);
+	void setPlayerStatistics(ServerPlayer *player, const char *property_name, const QVariant &value);
+	void setCardFlag(const Card *card, const char *flag, ServerPlayer *who = NULL);
+	void setCardFlag(int card_id, const char *flag, ServerPlayer *who = NULL);
+	void clearCardFlag(const Card *card, ServerPlayer *who = NULL);
+	void clearCardFlag(int card_id, ServerPlayer *who = NULL);
 	void useCard(const CardUseStruct &card_use, bool add_history = true);
 	void damage(const DamageStruct &data);
 	void sendDamageLog(const DamageStruct &data);
@@ -905,8 +912,8 @@ public:
 	bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
 	bool isCanceled(const CardEffectStruct &effect);
 	int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const char *flags, const char *reason);
-	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, const QVariant &data = QVariant());
-	bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt);
+	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false, const QVariant &data = QVariant());
+	bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false);
 	int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const char *reason);
 	const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const char *reason);
 	bool askForYiji(ServerPlayer *guojia, QList<int> &cards);

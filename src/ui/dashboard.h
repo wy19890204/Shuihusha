@@ -127,6 +127,7 @@ private slots:
     void onCardItemHover();
     void onCardItemLeaveHover();
     void onMarkChanged();
+    void setEcstState();
     void setActionState();
 
 signals:

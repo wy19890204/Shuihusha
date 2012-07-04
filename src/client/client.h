@@ -130,7 +130,7 @@ public:
     void updateStateItem(const QString &state_str);
     void setStatistics(const QString &property_str);
     void setCardFlag(const QString &pattern_str);
-
+    void setGerenalGender(const QString &pattern_str);
     void moveCard(const QString &move_str);
     void moveNCards(const QString &move_str);
 

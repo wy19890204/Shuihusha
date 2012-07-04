@@ -55,6 +55,13 @@ public:
         view_as_skill = new BaoquanViewAsSkill;
     }
 
+    virtual QString getDefaultChoice(ServerPlayer *player) const{
+        if(player->getLostHp() > 1)
+            return "recover1hp";
+        else
+            return "draw2card";
+    }
+
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *lusashi, QVariant &data) const{
         if(e == PhaseChange){
             if(lusashi->getPhase() == Player::RoundStart)
@@ -63,9 +70,12 @@ public:
                 int fist = lusashi->getMark("@fist");
                 if(fist < 1)
                     return false;
-                if(fist == 1 || fist == 2)
-                    if(!lusashi->askForSkillInvoke(objectName()))
+                if(fist == 1 || fist == 2){
+                    if(!lusashi->askForSkillInvoke(objectName())){
+                        room->setPlayerMark(lusashi, "@fist", 0);
                         return false;
+                    }
+                }
                 switch(fist){
                     case 1:{
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
@@ -87,7 +97,7 @@ public:
                         break;
                     }
                     default:
-                        room->askForUseCard(lusashi, "@@baoquan", "@baoquan");
+                        room->askForUseCard(lusashi, "@@baoquan", "@baoquan", true);
                 }
                 room->setPlayerMark(lusashi, "@fist", 0);
             }

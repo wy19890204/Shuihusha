@@ -193,7 +193,7 @@ public:
                     draw_card = true;
                 else{
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
-                    const Card *card = room->askForCard(effect.to, ".", prompt, QVariant(), CardDiscarded);
+                    const Card *card = room->askForCard(effect.to, ".", prompt, false, QVariant(), CardDiscarded);
                     if(card){
                         room->throwCard(card);
                     }else
@@ -258,7 +258,7 @@ public:
         if(player->hasFlag("triggered"))
             return false;
 
-        const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), QVariant(), NonTrigger);
+        const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), false, QVariant(), NonTrigger);
         if(card){
             if(qrand() % 2 == 1)
                 player->playCardEffect("Eblade2");
@@ -380,7 +380,7 @@ public:
 
         if(player->hasFlag("triggered"))
             return false;
-        CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName(), data, CardDiscarded);
+        CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName(), false, data, CardDiscarded);
         if(card){
             QList<int> card_ids = card->getSubcards();
             foreach(int card_id, card_ids){
@@ -625,24 +625,20 @@ ArcheryAttack::ArcheryAttack(Card::Suit suit, int number)
 void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     const Card *jink = NULL;
-    if(effect.from->hasSkill("shenjian")){
+    if(effect.from->hasSkill("lianzhu")){
         const Card *first_jink = NULL, *second_jink = NULL;
         LogMessage log;
-        log.type = "#Shenjian";
+        log.type = "#Lianzhu";
         log.from = effect.from;
-        log.arg = "shenjian";
+        log.arg = "lianzhu";
         log.to << effect.to;
         room->sendLog(log);
         first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
         if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@shenjian2jink:" + effect.from->objectName());
+            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName());
 
-        if(first_jink && second_jink){
-            //jink = new DummyCard;
-            //jink->addSubcard(first_jink);
-            //jink->addSubcard(second_jink);
+        if(first_jink && second_jink)
             jink = first_jink;
-        }
     }
     else
         jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
@@ -657,7 +653,9 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         else
             damage.from = NULL;
         damage.to = effect.to;
-        damage.nature = DamageStruct::Normal;
+        damage.nature = effect.from->hasSkill("lianzhu") ?
+                        DamageStruct::Fire:
+                        DamageStruct::Normal;
 
         room->damage(damage);
     }
@@ -729,7 +727,7 @@ void Collateral::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     if(on_effect){
         QString prompt = QString("collateral-slash:%1:%2")
                          .arg(source->objectName()).arg(victims.first()->objectName());
-        const Card *slash = room->askForCard(killer, "slash", prompt, QVariant(), NonTrigger);
+        const Card *slash = room->askForCard(killer, "slash", prompt, false, QVariant(), NonTrigger);
         if (victims.first()->isDead()){
             if (source->isDead()){
                 if(killer->isAlive() && killer->getWeapon()){
@@ -1031,13 +1029,15 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->isBlack()){
+            player->playCardEffect("Erenwang_shield");
+            room->setEmotion(player, "armor");
+
             LogMessage log;
             log.type = "#ArmorNullify";
             log.from = player;
             log.arg = objectName();
             log.arg2 = effect.slash->objectName();
             room->sendLog(log);
-            player->playCardEffect("Erenwang_shield");
 
             return true;
         }else

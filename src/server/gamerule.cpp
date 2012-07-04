@@ -244,7 +244,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 const Card *card = card_use.card;
 
                 bool mute = card_use.mute;
-                if(card->inherits("Slash")){
+                if(card->inherits("Slash") && Config.EnableEquipEffects){
                     if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
                         room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
                         mute = true;
@@ -429,9 +429,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             if(player->getHp() <= 0 && player->isAlive()){
                 DyingStruct dying = data.value<DyingStruct>();
                 room->killPlayer(player, dying.damage);
-
-                if(dying.damage && dying.damage->from)
-                    room->setPlayerStatistics(dying.damage->from, "kill", 1);
             }
 
             break;
@@ -471,7 +468,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
                 if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
-                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
+                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), false, data, CardDiscarded)){
                         int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
                         source->playCardEffect("@nanastars2");
 
@@ -579,7 +576,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
             QString slasher = effect.from->objectName();
-            const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, data, JinkUsed);
+            const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, false, data, JinkUsed);
             room->slashResult(effect, jink);
 
             break;
@@ -733,7 +730,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
                 if(source && source == player){
                     room->setPlayerFlag(player, "FuckLian");
-                    const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", data);
+                    const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", false, data);
                     if(fuck){
                         player->playCardEffect("@fuckgaolian2");
                         JudgeStar judge = data.value<JudgeStar>();
@@ -779,7 +776,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(judge->card->inherits("Analeptic") && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile){
                     ServerPlayer *sour = room->findPlayerWhohasEventCard("jiangjieshi");
                     if(sour && sour != room->getCurrent()){
-                        const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
+                        const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
                         if(fight){
                             sour->playCardEffect("@jiangjieshi2");
                             sour->obtainCard(judge->card);
@@ -1051,7 +1048,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player
 
                         room->revivePlayer(player);
                     }else if(player->isWounded()){
-                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover+draw") == "draw")){
+                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover1hp+draw1card") == "draw1card")){
                             LogMessage log;
                             log.type = "#ReformingDraw";
                             log.from = player;

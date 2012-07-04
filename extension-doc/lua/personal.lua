@@ -35,11 +35,14 @@ eatdeath=sgs.CreateTriggerSkill{
 			room:loseMaxHp(tenkei)
 			local skills = player:getVisibleSkillList()
 			for _, skill in sgs.qlist(skills) do
-			--	if skill:parent() then
-					local sk = skill:objectName()
-					room:acquireSkill(tenkei, sk)
-					table.insert(eatdeath_skills, sk)
-			--	end
+				if skill:getLocation() == sgs.Skill_Right then
+					if skill:getFrequency() ~= sgs.Skill_Limited and
+						skill:getFrequency() ~= sgs.Skill_Wake then
+						local sk = skill:objectName()
+						room:acquireSkill(tenkei, sk)
+						table.insert(eatdeath_skills, sk)
+					end
+				end
 			end
 			tenkei:setTag("EatDeath", sgs.QVariant(table.concat(eatdeath_skills, "+")))
 		end
@@ -128,5 +131,5 @@ sgs.LoadTranslationTable{
 	["cv:tianqi"] = "",
 	["illustrator:tianqi"] = "火影忍者",
 	["eatdeath"] = "拾尸",
-	[":eatdeath"] = "当有角色死亡时，你可以失去一个因“拾尸”获得的技能(如果有的话)，然后失去一点体力上限并获得该角色当前的所有武将技",
+	[":eatdeath"] = "当有角色死亡时，你可以失去一个因“拾尸”获得的技能(如果有的话)，然后失去一点体力上限并获得该角色当前的所有武将技(限定技、觉醒技除外)",
 }

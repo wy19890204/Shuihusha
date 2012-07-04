@@ -114,38 +114,6 @@ sgs.ai_filterskill_filter["zhuying"] = function(card, card_place)
 	if card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
--- shouwang
-shouwang_skill={}
-shouwang_skill.name = "shouwang"
-table.insert(sgs.ai_skills, shouwang_skill)
-shouwang_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("ShouwangCard") then return end
-	local slash = self:getCard("Slash")
-	if not slash then return end
-	return sgs.Card_Parse("@ShouwangCard=" .. slash:getEffectiveId())
-end
-sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
-	self:sort(self.friends,"threat")
-	for _, friend in ipairs(self.friends) do
-		if friend:getGeneral():isMale() then
-			use.card = card
-			if use.to then use.to:append(friend) end
-			return
-		end
-	end
-end
-
--- zhongzhen
-sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
-	local damage = data:toDamage()
-	local max_card = self:getMaxCard()
-	if max_card and max_card:getNumber() > 11 and self:isEnemy(damage.from) then
-		return true
-	else
-		return false
-	end
-end
-
 -- zishi
 sgs.ai_skill_use["@@zishi"] = function(self, prompt)
 	if self.player:isKongcheng() then return "." end

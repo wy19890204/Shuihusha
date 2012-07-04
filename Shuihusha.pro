@@ -5,6 +5,7 @@ TARGET = Shuihusha
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
+#CONFIG += crypto
 
 # If you want to enable joystick support, please uncomment the following line:
 # CONFIG += joystick
@@ -58,7 +59,7 @@ SOURCES += \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
-	src/package/qjwm.cpp \
+	src/package/tiger.cpp \
 	src/package/xzzd.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
@@ -189,7 +190,7 @@ HEADERS += \
 	src/package/gift.h \
 	src/package/rat.h \
 	src/package/ox.h \
-	src/package/qjwm.h \
+	src/package/tiger.h \
 	src/package/xzzd.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \
@@ -328,10 +329,10 @@ CONFIG(chatvoice){
 	}
 }
 
-TRANSLATIONS += sanguosha.ts
+TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-	sanguosha.qss \
+        shuihusha.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png

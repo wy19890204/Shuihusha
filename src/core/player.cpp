@@ -308,6 +308,8 @@ bool Player::isLord() const{
 }
 
 bool Player::hasSkill(const QString &skill_name) const{
+    if(property("scarecrow").toBool())
+        return false;
     return hasInnateSkill(skill_name)
             || acquired_skills.contains(skill_name);
 }
@@ -323,6 +325,8 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 }
 
 bool Player::hasLordSkill(const QString &skill_name) const{
+    if(property("scarecrow").toBool())
+        return false;
     if(!isLord())
         return false;
 
@@ -408,10 +412,11 @@ bool Player::hasEquip() const{
     return weapon || armor || defensive_horse || offensive_horse;
 }
 
-bool Player::hasEquip(QString name) const{
+bool Player::hasEquip(const QString &name, bool inherit) const{
     bool ok = false;
     foreach(const Card *equip, getEquips()){
-        if(equip->objectName() == name){
+        if((!inherit && equip->objectName() == name) ||
+           (inherit && equip->inherits(name.toLocal8Bit().data()))){
             ok = true;
             break;
         }
@@ -612,10 +617,8 @@ int Player::getMark(const QString &mark) const{
 }
 
 bool Player::canSlash(const Player *other, bool distance_limit) const{
-    if(other->hasSkill("kongcheng") && other->isKongcheng())
-        return false;
-
-    if(other->hasSkill("jueming") && other->getHp() == 1)
+    const Card *slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
+    if(isProhibited(other, slash))
         return false;
 
     if(other == this)

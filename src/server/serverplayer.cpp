@@ -123,6 +123,8 @@ void ServerPlayer::clearPrivatePiles(){
 }
 
 void ServerPlayer::bury(){
+    if(!faceUp())
+        turnOver();
     clearFlags();
     clearHistory();
     throwAllCards();

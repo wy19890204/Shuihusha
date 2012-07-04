@@ -174,6 +174,8 @@ public:
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature == DamageStruct::Normal){
                 player->playCardEffect("Evine1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -187,6 +189,8 @@ public:
             CardEffectStruct effect = data.value<CardEffectStruct>();
             if(effect.card->inherits("AOE")){
                 player->playCardEffect("Evine1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -231,6 +235,8 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
             player->playCardEffect("Esilver_lion1");
+            room->setEmotion(player, "armor");
+
             LogMessage log;
             log.type = "#SilverLion";
             log.from = player;
@@ -291,7 +297,7 @@ void FireAttack::onEffect(const CardEffectStruct &effect) const{
     QString suit_str = card->getSuitString();
     QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
     QString prompt = QString("@fire-attack:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-    if(room->askForCard(effect.from, pattern, prompt, QVariant(), CardDiscarded)){
+    if(room->askForCard(effect.from, pattern, prompt, false, QVariant(), CardDiscarded)){
         DamageStruct damage;
         damage.card = this;
         damage.from = effect.from;

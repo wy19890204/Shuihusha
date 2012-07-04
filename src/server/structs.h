@@ -135,7 +135,7 @@ struct PhaseChangeStruct{
 };
 
 enum TriggerEvent{
-    NonTrigger,
+    NonTrigger, //those two events actually trigger nothing
 
     GameStart,
     TurnStart,
@@ -145,6 +145,7 @@ enum TriggerEvent{
     HpRecovered,
     HpLost,
     HpChanged,
+    MaxHpChanged,
 
     StartJudge,
     AskForRetrial,

@@ -90,49 +90,6 @@ public:
     }
 };
 
-class Tongxia: public PhaseChangeSkill{
-public:
-    Tongxia():PhaseChangeSkill("tongxia"){
-
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *hx) const{
-        Room *room = hx->getRoom();
-        if(hx->getPhase() == Player::Draw && hx->askForSkillInvoke(objectName())){
-            QList<int> card_ids = room->getNCards(3);
-            room->fillAG(card_ids);
-            room->playSkillEffect(objectName());
-
-            while(!card_ids.isEmpty()){
-                int card_id = room->askForAG(hx, card_ids, false, "tongxia");
-                CardStar card = Sanguosha->getCard(card_id);
-                hx->tag["TongxiaCard"] = QVariant::fromValue(card);
-                ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
-                if(!target)
-                    target = hx;
-                //room->takeAG(target, card_id);
-                if(card->inherits("EquipCard")){
-                    const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
-                    QList<ServerPlayer *> targets;
-                    targets << target;
-                    equipped->use(room, hx, targets);
-                }
-                else
-                    target->obtainCard(card);
-
-                card_ids.removeOne(card_id);
-                room->broadcastInvoke("clearAG");
-                room->fillAG(card_ids);
-            }
-            room->broadcastInvoke("clearAG");
-
-            return true;
-        }
-        hx->tag.remove("TongxiaCard");
-        return false;
-    }
-};
-
 class Huxiao: public OneCardViewAsSkill{
 public:
     Huxiao():OneCardViewAsSkill("huxiao"){
@@ -246,7 +203,7 @@ public:
         if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp()){
             int num = pei->getHandcardNum() - pei->getHp();
             room->setPlayerMark(pei, "Bingo", num);
-            room->askForUseCard(pei, "@@binggong", "@binggong");
+            room->askForUseCard(pei, "@@binggong", "@binggong", true);
         }
         room->setPlayerMark(pei, "Bingo", 0);
         return false;
@@ -293,7 +250,7 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), QVariant::fromValue(effect), CardDiscarded)){
+    if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), false, QVariant::fromValue(effect), CardDiscarded)){
         QString choice = effect.to->getCards("e").isEmpty() ? "gong"
             : room->askForChoice(effect.from, "feiqiang", "gong+wang");
         if(choice == "gong")
@@ -329,9 +286,6 @@ XZDDPackage::XZDDPackage()
     General *weidingguo = new General(this, "weidingguo", "jiang", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
-
-    General *huangxin = new General(this, "huangxin", "jiang");
-    huangxin->addSkill(new Tongxia);
 
     General *yanshun = new General(this, "yanshun", "jiang");
     yanshun->addSkill(new Huxiao);

@@ -1,7 +1,7 @@
 #include "statistics.h"
 
 StatisticsStruct::StatisticsStruct()
-    :kill(0), damage(0), save(0), recover(0)
+    :kill(0), damage(0), save(0), recover(0), cheat(0)
 {
 }
 
@@ -16,6 +16,8 @@ bool StatisticsStruct::setStatistics(const QString &name, const QVariant &value)
         save += value.toInt();
     else if(name == "recover")
         recover += value.toInt();
+    else if(name == "cheat")
+        cheat += value.toInt();
     else
         return false;
 

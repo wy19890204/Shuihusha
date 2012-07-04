@@ -433,7 +433,7 @@ public:
         QString prompt = prompt_list.join(":");
 
         player->tag["Judge"] = data;
-        const Card *card = room->askForCard(player, "@zhaixing", prompt, data);
+        const Card *card = room->askForCard(player, "@zhaixing", prompt, true, data);
 
         if(card){
             player->obtainCard(judge->card);
@@ -611,51 +611,6 @@ public:
     }
 };
 
-class Duoming: public TriggerSkill{
-public:
-    Duoming(): TriggerSkill("duoming"){
-        events << Damage;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive() &&
-            damage.to->isKongcheng() && player->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            room->loseMaxHp(damage.to);
-        }
-        return false;
-    }
-};
-
-class Moucai: public MasochismSkill{
-public:
-    Moucai():MasochismSkill("moucai"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
-        if(lily.isEmpty())
-            return;
-        foreach(ServerPlayer *lili, lily){
-            if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
-                room->playSkillEffect(objectName());
-                const Card *wolegequ = player->getRandomHandCard();
-                lili->obtainCard(wolegequ, false);
-            }
-        }
-    }
-};
-
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
@@ -687,10 +642,6 @@ CGDKPackage::CGDKPackage()
     General *zhengtianshou = new General(this, "zhengtianshou", "kou", 3);
     zhengtianshou->addSkill(new Wugou);
     zhengtianshou->addSkill(new Qiaojiang);
-
-    General *lili = new General(this, "lili", "kou", 3);
-    lili->addSkill(new Duoming);
-    lili->addSkill(new Moucai);
 
     addMetaObject<BingjiCard>();
     addMetaObject<LingdiCard>();

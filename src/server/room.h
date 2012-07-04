@@ -54,7 +54,7 @@ public:
     void slashEffect(const SlashEffectStruct &effect);
     void slashResult(const SlashEffectStruct &effect, const Card *jink);
     void attachSkillToPlayer(ServerPlayer *player, const QString &skill_name);
-    void detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name);
+    void detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name, bool showlog = true);
     bool obtainable(const Card *card, ServerPlayer *player);
     void setPlayerFlag(ServerPlayer *player, const QString &flag);
     void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
@@ -242,8 +242,8 @@ public:
     bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
     bool isCanceled(const CardEffectStruct &effect);
     int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason);
-    const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
-    bool askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt);
+    const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill = false, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
+    bool askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill = false);
     int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const QString &reason);
     const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const QString &reason);
     bool askForYiji(ServerPlayer *guojia, QList<int> &cards);
@@ -268,6 +268,8 @@ public:
     void broadcastInvoke(const char *method, const QString &arg = ".", ServerPlayer *except = NULL);
     void startTest(const QString &to_test);
     void networkDelayTestCommand(ServerPlayer *player, const QString &);
+
+    void setGerenalGender(const QString &name, const QString &gender);
 
 protected:
     virtual void run();

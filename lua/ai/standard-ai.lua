@@ -205,11 +205,11 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 end
 
 -- juyi
-sgs.ai_card_intention.JuyiCard = function(card, from, to)
-	if to[1]:getHandcardNum() >= from:getHandcardNum() then
-		sgs.updateIntentions(from, to, 40)
+sgs.ai_card_intention.JuyiCard = function(card, from, tos)
+	if tos[1]:getHandcardNum() >= from:getHandcardNum() then
+		sgs.updateIntentions(from, tos, 40)
 	else
-		sgs.updateIntentions(from, to, -50)
+		sgs.updateIntentions(from, tos, -50)
 	end
 end
 
@@ -379,20 +379,23 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 end
 
 -- qimen
-sgs.ai_skill_invoke["qimen"] = function(self, data)
+sgs.ai_card_intention.QimenCard = function(card, from, tos)
+	speakTrigger(card,from,tos[1])
+	sgs.updateIntentions(from, tos, 90)
+end
+
+sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 	local player = self.room:getCurrent()
-	if player == self.player then return false end
---	local player = data:toPlayer()
---	self.qimentarget = player
-	if self:isFriend(player) then return false end
+	if player == self.player or self:isFriend(player) then return "." end
 	local rm = math.random(1, 3)
-	return rm ~= 2
+	if rm ~= 2 then
+		return "@QimenCard=.->" .. player:objectName()
+	else
+		return "."
+	end
 end
-sgs.ai_skill_playerchosen["qimen"] = function(self, targets)
-	local target = self.room:getCurrent()
-	return target
---	return self.qimentarget
-end
+--sgs.ai_skill_cardask["@qimen"] = function(self, data)
+--end
 
 -- guansheng
 -- tongwu
@@ -479,8 +482,8 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 		end
 	elseif prompt == "@haoshen-play" and self.player:getHandcardNum() > 6 then
 		self:sort(self.friends_noself, "handcard")
+		if #self.friends_noself == 0 then return "." end
 		local target = self.friends_noself[1]
-		if not target then return "." end
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
@@ -786,11 +789,12 @@ end
 
 -- yanqing
 -- dalei
-sgs.ai_card_intention.DaleiCard = function(card, from, to)
-	if to[1]:getHandcardNum() > 3 and to[1]:getLostHp() == 0 then
-		sgs.updateIntentions(from, to, -30)
+sgs.ai_card_intention.DaleiCard = function(card, from, tos)
+	speakTrigger(card,from,tos[1])
+	if tos[1]:getHandcardNum() > 3 and tos[1]:getLostHp() == 0 then
+		sgs.updateIntentions(from, tos, -30)
 	else
-		sgs.updateIntentions(from, to, 70)
+		sgs.updateIntentions(from, tos, 70)
 	end
 end
 
@@ -902,6 +906,7 @@ sgs.ai_skill_cardask["@jishi"] = function(self, data)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:inherits("TrickCard") or card:inherits("BasicCard") then
+			self:speak("jishi")
 		    return card:getEffectiveId()
 		end
 	end
@@ -988,9 +993,26 @@ end
 -- sun2niang
 -- heidian
 sgs.ai_skill_cardask["@heidian2"] = function(self)
+	self:speak("heidian")
 	local ecards = sgs.QList2Table(self.player:getCards("e"))
 	self:sortByUseValue(ecards, true)
 	return ecards[1]:getEffectiveId() or "."
+end
+
+function SmartAI:getSun2niang(player)
+	player = player or self.player
+	local room = player:getRoom()
+	local flag = 0
+	for _, erniang in sgs.qlist(room:findPlayersBySkillName("heidian")) do
+		if erniang ~= player then
+			if self:isFriend(player, erniang) and player:hasEquip() then
+				flag = flag - 1
+			else
+				flag = flag + 1
+			end
+		end
+	end
+	return flag > 0
 end
 
 -- renrou
@@ -1011,7 +1033,10 @@ end
 
 -- gaoqiu
 -- cuju
-sgs.ai_card_intention.CujuCard = 75
+sgs.ai_card_intention.CujuCard = function(card, from, tos)
+	speakTrigger(card,from,tos[1])
+	sgs.updateIntentions(from, tos, 75)
+end
 
 sgs.ai_skill_invoke["cuju"] = function(self, data)
 	local damage = data:toDamage()

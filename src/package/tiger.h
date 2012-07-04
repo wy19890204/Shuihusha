@@ -1,14 +1,14 @@
-#ifndef QJWMPACKAGE_H
-#define QJWMPACKAGE_H
+#ifndef TIGERPACKAGE_H
+#define TIGERPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class QJWMPackage: public Package{
+class TigerPackage: public Package{
     Q_OBJECT
 
 public:
-    QJWMPackage();
+    TigerPackage();
 };
 
 class TaolueCard: public SkillCard{
@@ -31,13 +31,14 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class ButianCard: public SkillCard{
+class HuazhuCard: public SkillCard{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE ButianCard();
+    Q_INVOKABLE HuazhuCard();
 
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-#endif // QJWMPACKAGE_H
+#endif // TIGERPACKAGE_H

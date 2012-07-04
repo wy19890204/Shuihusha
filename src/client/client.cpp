@@ -65,12 +65,12 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["acquireSkill"] = &Client::acquireSkill;
     callbacks["attachSkill"] = &Client::attachSkill;
     callbacks["detachSkill"] = &Client::detachSkill;
-    m_callbacks[S_COMMAND_MOVE_FOCUS] = &Client::moveFocus; 
+    m_callbacks[S_COMMAND_MOVE_FOCUS] = &Client::moveFocus;
     //callbacks["moveFocus"] = &Client::moveFocus;
     callbacks["setEmotion"] = &Client::setEmotion;
     m_callbacks[S_COMMAND_INVOKE_SKILL] = &Client::skillInvoked;
     m_callbacks[S_COMMAND_SHOW_ALL_CARDS] = &Client::askForGongxin;
-    m_callbacks[S_COMMAND_SKILL_GONGXIN] = &Client::askForGongxin; 
+    m_callbacks[S_COMMAND_SKILL_GONGXIN] = &Client::askForGongxin;
     //callbacks["skillInvoked"] = &Client::skillInvoked;
     callbacks["addHistory"] = &Client::addHistory;
     callbacks["animate"] = &Client::animate;
@@ -96,8 +96,9 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["setPileNumber"] = &Client::setPileNumber;
     callbacks["setStatistics"] = &Client::setStatistics;
     callbacks["setCardFlag"] = &Client::setCardFlag;
+    callbacks["setGerenalGender"] = &Client::setGerenalGender;
 
-    // interactive methods    
+    // interactive methods
     m_interactions[S_COMMAND_CHOOSE_GENERAL] = &Client::askForGeneral;
     //callbacks["askForGeneral"] = &Client::askForGeneral;
     m_interactions[S_COMMAND_CHOOSE_PLAYER] = &Client::askForPlayerChosen;
@@ -1112,15 +1113,17 @@ void Client::setPileNumber(const QString &pile_str){
 }
 
 void Client::setStatistics(const QString &property_str){
-    QRegExp rx("(\\w+):(\\w+)");
+    QRegExp rx("(\\w+).(\\w+):(\\w+)");
     if(!rx.exactMatch(property_str))
         return;
 
     QStringList texts = rx.capturedTexts();
-    QString property_name = texts.at(1);
-    QString value_str = texts.at(2);
+    QString who = texts.at(1);
+    QString property_name = texts.at(2);
+    QString value_str = texts.at(3);
 
-    StatisticsStruct *statistics = Self->getStatistics();
+    ClientPlayer *player = getPlayer(who);
+    StatisticsStruct *statistics = player->getStatistics();
     bool ok;
     value_str.toInt(&ok);
     if(ok)
@@ -1128,7 +1131,7 @@ void Client::setStatistics(const QString &property_str){
     else
         statistics->setStatistics(property_name, value_str);
 
-    Self->setStatistics(statistics);
+    player->setStatistics(statistics);
 }
 
 void Client::setCardFlag(const QString &pattern_str){
@@ -1141,6 +1144,25 @@ void Client::setCardFlag(const QString &pattern_str){
     QString card_str = texts.at(2);
 
     Sanguosha->getCard(card_str.toInt())->setFlags(object);
+}
+
+void Client::setGerenalGender(const QString &pattern_str){
+    QRegExp rx("(\\w+):(.+)");
+    if(!rx.exactMatch(pattern_str))
+        return;
+
+    QStringList texts = rx.capturedTexts();
+    QString general_name = texts.at(1);
+    QString gender = texts.at(2);
+
+    General *general = (General *)Sanguosha->getGeneral(general_name);
+
+    if (gender == "M")
+        general->setGender(General::Male);
+    else if (gender == "F")
+        general->setGender(General::Female);
+    else
+        general->setGender(General::Neuter);
 }
 
 void Client::updatePileNum(){
