@@ -1,6 +1,6 @@
 #include "standard.h"
 #include "skill.h"
-#include "peasa.h"
+#include "chem-cards.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
@@ -392,8 +392,8 @@ public:
     }
 };
 
-PeasaPackage::PeasaPackage()
-    :Package("peasa")
+ChemCardsPackage::ChemCardsPackage()
+    :Package("chem_cards")
 {
     General *guanzhang = new General(this, "guanzhang", "jiang");
     guanzhang->addSkill(new Piaoyong);
@@ -434,4 +434,4 @@ PeasaPackage::PeasaPackage()
     addMetaObject<MingwangCard>();
 }
 
-ADD_PACKAGE(Peasa);
+ADD_PACKAGE(ChemCards);

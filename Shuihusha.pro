@@ -71,8 +71,8 @@ SOURCES += \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
-	src/package/peasa.cpp \
 	src/package/stanley.cpp \
+	src/package/chem-cards.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/miniscenarios.cpp \
@@ -203,8 +203,8 @@ HEADERS += \
 	src/package/joy.h \
 	src/package/interchange.h \
 	src/package/guben.h \
-	src/package/peasa.h \
 	src/package/stanley.h \
+	src/package/chem-cards.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/miniscenarios.h \

@@ -1,14 +1,14 @@
-#ifndef PEASAPACKAGE_H
-#define PEASAPACKAGE_H
+#ifndef CHEMCARDSPACKAGE_H
+#define CHEMCARDSPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class PeasaPackage: public Package{
+class ChemCardsPackage: public Package{
     Q_OBJECT
 
 public:
-    PeasaPackage();
+    ChemCardsPackage();
 };
 
 class GuiouCard: public SkillCard{
@@ -38,4 +38,4 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-#endif // PEASAPACKAGE_H
+#endif // CHEMCARDSPACKAGE_H
