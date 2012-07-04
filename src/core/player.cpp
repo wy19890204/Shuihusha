@@ -96,13 +96,6 @@ General::Gender Player::getGender() const{
         return General::Neuter;
 }
 
-void Player::setGender(General::Gender gender){
-    if(this->gender != gender)
-        this->gender = gender;
-
-    //emit gender_changed();
-}
-
 int Player::getSeat() const{
     return seat;
 }
@@ -624,10 +617,8 @@ int Player::getMark(const QString &mark) const{
 }
 
 bool Player::canSlash(const Player *other, bool distance_limit) const{
-    if(other->hasSkill("kongcheng") && other->isKongcheng())
-        return false;
-
-    if(other->hasSkill("jueming") && other->getHp() == 1)
+    const Card *slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
+    if(isProhibited(other, slash))
         return false;
 
     if(other == this)
@@ -888,7 +879,6 @@ void Player::copyFrom(Player* p)
     b->hp               = a->hp;
     b->max_hp           = a->max_hp;
     b->kingdom          = a->kingdom;
-    b->gender           = a->gender;
     b->role             = a->role;
     b->seat             = a->seat;
     b->alive            = a->alive;

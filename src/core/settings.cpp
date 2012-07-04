@@ -117,11 +117,15 @@ void Settings::init(){
     SPOpen = value("SPOpen", false).toBool();
     OperationTimeout = value("OperationTimeout", 15).toInt();
     OperationNoLimit = value("OperationNoLimit", false).toBool();
-    EnableEffects = value("EnableEffects", true).toBool();
+    EnableCardEffects = value("EnableCardEffects", true).toBool();
+    EnableEquipEffects = value("EnableEquipEffects", true).toBool();
+    EnableSkillEffects = value("EnableSkillEffects", true).toBool();
     EnableLastWord = value("EnableLastWord", true).toBool();
+    EnableCheatRing = value("EnableCheatRing", true).toBool();
     EnableBgMusic = value("EnableBgMusic", true).toBool();
     BGMVolume = value("BGMVolume", 1.0f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
+    EnableLua = value("EnableLua", false).toBool();
 
     BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
 

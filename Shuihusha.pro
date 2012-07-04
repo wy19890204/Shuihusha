@@ -59,7 +59,7 @@ SOURCES += \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
-	src/package/qjwm.cpp \
+	src/package/tiger.cpp \
 	src/package/xzzd.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
@@ -71,6 +71,7 @@ SOURCES += \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
+	src/package/peasa.cpp \
 	src/package/stanley.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -190,7 +191,7 @@ HEADERS += \
 	src/package/gift.h \
 	src/package/rat.h \
 	src/package/ox.h \
-	src/package/qjwm.h \
+	src/package/tiger.h \
 	src/package/xzzd.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \
@@ -202,6 +203,7 @@ HEADERS += \
 	src/package/joy.h \
 	src/package/interchange.h \
 	src/package/guben.h \
+	src/package/peasa.h \
 	src/package/stanley.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
@@ -329,10 +331,10 @@ CONFIG(chatvoice){
 	}
 }
 
-TRANSLATIONS += sanguosha.ts
+TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-	sanguosha.qss \
+        shuihusha.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png

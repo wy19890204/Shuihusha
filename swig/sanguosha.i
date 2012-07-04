@@ -443,9 +443,9 @@ struct PindianStruct{
 };
 
 struct PhaseChangeStruct{
-    PhaseChangeStruct();
-    Player::Phase from;
-    Player::Phase to;
+	PhaseChangeStruct();
+	Player::Phase from;
+	Player::Phase to;
 };
 
 typedef PindianStruct *PindianStar;
@@ -489,13 +489,13 @@ enum TriggerEvent{
     SlashHit,
     SlashMissed,
 	
-	JinkUsed,
+    JinkUsed,
 
     CardAsked,
     CardUsed,
     CardResponsed,
     CardDiscarded,
-	CardMoving,
+    CardMoving,
     CardLost,
     CardLostDone,
     CardGot,
@@ -594,8 +594,8 @@ public:
 	bool canJilei() const;
 	bool isOwnerDiscarded() const;
 	
-    void setFlags(const char *flag) const;
-    bool hasFlag(const char *flag) const;
+	void setFlags(const char *flag) const;
+	bool hasFlag(const char *flag) const;
 	void clearFlags() const;
 
 	virtual void onUse(Room *room, const CardUseStruct &card_use) const;
@@ -815,13 +815,13 @@ public:
 	void setPlayerFlag(ServerPlayer *player, const char *flag);
 	void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
 	void setPlayerMark(ServerPlayer *player, const char *mark, int value);
-    void setPlayerCardLock(ServerPlayer *player, const char *name);
-    void clearPlayerCardLock(ServerPlayer *player);
-    void setPlayerStatistics(ServerPlayer *player, const char *property_name, const QVariant &value);
-    void setCardFlag(const Card *card, const char *flag, ServerPlayer *who = NULL);
-    void setCardFlag(int card_id, const char *flag, ServerPlayer *who = NULL);
-    void clearCardFlag(const Card *card, ServerPlayer *who = NULL);
-    void clearCardFlag(int card_id, ServerPlayer *who = NULL);
+	void setPlayerCardLock(ServerPlayer *player, const char *name);
+	void clearPlayerCardLock(ServerPlayer *player);
+	void setPlayerStatistics(ServerPlayer *player, const char *property_name, const QVariant &value);
+	void setCardFlag(const Card *card, const char *flag, ServerPlayer *who = NULL);
+	void setCardFlag(int card_id, const char *flag, ServerPlayer *who = NULL);
+	void clearCardFlag(const Card *card, ServerPlayer *who = NULL);
+	void clearCardFlag(int card_id, ServerPlayer *who = NULL);
 	void useCard(const CardUseStruct &card_use, bool add_history = true);
 	void damage(const DamageStruct &data);
 	void sendDamageLog(const DamageStruct &data);

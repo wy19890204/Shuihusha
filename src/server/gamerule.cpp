@@ -244,7 +244,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 const Card *card = card_use.card;
 
                 bool mute = card_use.mute;
-                if(card->inherits("Slash")){
+                if(card->inherits("Slash") && Config.EnableEquipEffects){
                     if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
                         room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
                         mute = true;
@@ -1048,7 +1048,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player
 
                         room->revivePlayer(player);
                     }else if(player->isWounded()){
-                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover+draw") == "draw")){
+                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover1hp+draw1card") == "draw1card")){
                             LogMessage log;
                             log.type = "#ReformingDraw";
                             log.from = player;

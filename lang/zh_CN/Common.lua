@@ -145,22 +145,6 @@ return {
 	["custom"] = "自定义模式",
 	["custom_cards"] = "自定义卡牌包",
 
--- hulao
-	["Hulaopass"] = "独松关模式",
-	["shenlvbu1"] = "凌天翼",
-	["shenlvbu2"] = "烨子风暴",
-	["#shenlvbu1"] = "",
-	["#shenlvbu2"] = "",
-
-	["#Reforming"] = "%from 进入重整状态",
-	["#ReformingRecover"] = "%from 在重整状态中回复了1点体力",
-	["#ReformingDraw"] = "%from 在重整状态中摸了1张牌",
-	["#ReformingRevive"] = "%from 从重整状态中复活!",
-	["draw_1v3"] = "重整摸牌",
-	["weapon_recast"] = "武器重铸",
-	["Hulaopass:recover"] = "恢复1点体力",
-	["Hulaopass:draw"] = "摸1张牌",
-
 -- test
 	["test"] = "测试",
 	["sujiang"] = "稻草男",

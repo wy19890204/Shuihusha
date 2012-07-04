@@ -225,6 +225,8 @@ void Room::revivePlayer(ServerPlayer *player){
 
     broadcastInvoke("revivePlayer", player->objectName());
     updateStateItem();
+
+    thread->addPlayerSkills(player, true);
 }
 
 static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){
@@ -1041,7 +1043,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             sendLog(log);
 
             bool mute = false;
-            if(card->getSkillName() == "eight_diagram")
+            if(card->getSkillName() == "eight_diagram" && Config.EnableEquipEffects)
                 mute = true;
 
             player->playCardEffect(card, mute);
@@ -1208,7 +1210,7 @@ const Card *Room::askForSinglePeach(ServerPlayer *player, ServerPlayer *dying){
 
         card = Card::Parse(toQString(clientReply));
 
-        if (card != NULL) 
+        if (card != NULL)
             card = card->validateInResposing(player, &continuable);
     }
     if(card){
@@ -1233,6 +1235,10 @@ void Room::setPlayerProperty(ServerPlayer *player, const char *property_name, co
 
     if(strcmp(property_name, "hp") == 0){
         thread->trigger(HpChanged, this, player);
+    }
+
+    if(strcmp(property_name, "maxhp") == 0){
+        thread->trigger(MaxHpChanged, this, player);
     }
 }
 
@@ -1777,7 +1783,8 @@ bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGen
     //@todo: synchronize this
     player->m_cheatArgs = arg;
     player->releaseLock(ServerPlayer::SEMA_COMMAND_INTERACTIVE);
-    broadcastInvoke("playAudio", "cheat");
+    if(Config.EnableCheatRing)
+        broadcastInvoke("playAudio", "cheat");
     setPlayerStatistics(player, "cheat", 1);
     return true;
 }
@@ -2545,13 +2552,20 @@ void Room::loseHp(ServerPlayer *victim, int lose){
 
 void Room::loseMaxHp(ServerPlayer *victim, int lose){
     int hp = victim->getHp();
-    victim->setMaxHP(qMax(victim->getMaxHP() - lose, 0));
+    int maxhp = qMax(victim->getMaxHp() - lose, 0);
+    victim->setMaxHp(maxhp);
 
-    broadcastProperty(victim, "maxhp");
-    broadcastProperty(victim, "hp");
+    bool hp_changed = hp - victim->getHp() != 0;
+
+    //broadcastInvoke("playAudio", "maxhplost");
+
+    setPlayerProperty(victim, "maxhp", maxhp);
+
+    if(hp_changed)
+        setPlayerProperty(victim, "hp", victim->getHp());
 
     LogMessage log;
-    log.type = hp - victim->getHp() == 0 ? "#LoseMaxHp" : "#LostMaxHpPlus";
+    log.type = !hp_changed ? "#LoseMaxHp" : "#LostMaxHpPlus";
     log.from = victim;
     log.arg = QString::number(lose);
     log.arg2 = QString::number(hp - victim->getHp());

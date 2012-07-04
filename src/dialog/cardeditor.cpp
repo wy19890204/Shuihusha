@@ -18,6 +18,7 @@
 #include <QInputDialog>
 #include <QBitmap>
 #include <QClipboard>
+#include <QResource>
 
 BlackEdgeTextItem::BlackEdgeTextItem()
     :skip(0), color(Qt::white), outline(3)
@@ -139,7 +140,7 @@ public:
     }
 
     void setKingdom(const QString &kingdom){
-        QPixmap title_pixmap(QString("diy/%1-skill.png").arg(kingdom));
+        QPixmap title_pixmap(QString(":diy/%1-skill.png").arg(kingdom));
         setPixmap(title_pixmap);
 
         if(kingdom == "god")
@@ -246,9 +247,9 @@ SkillBox::SkillBox()
 
 void SkillBox::setKingdom(const QString &kingdom){
     this->kingdom = kingdom;
-    up.load(QString("diy/%1-skill-up.png").arg(kingdom));
-    down.load(QString("diy/%1-skill-down.png").arg(kingdom));
-    middle.load(QString("diy/%1-skill-middle.png").arg(kingdom));
+    up.load(QString(":diy/%1-skill-up.png").arg(kingdom));
+    down.load(QString(":diy/%1-skill-down.png").arg(kingdom));
+    middle.load(QString(":diy/%1-skill-middle.png").arg(kingdom));
 
     foreach(SkillTitle *skill_title, skill_titles)
         skill_title->setKingdom(kingdom);
@@ -534,7 +535,7 @@ CardScene::CardScene()
 void CardScene::setFrame(const QString &kingdom, bool is_lord){
     QString path;
     if(is_lord){
-        path = QString("diy/%1-lord.png").arg(kingdom);
+        path = QString(":diy/%1-lord.png").arg(kingdom);
 
         static QMap<QString, QColor> color_map;
         if(color_map.isEmpty()){
@@ -546,14 +547,14 @@ void CardScene::setFrame(const QString &kingdom, bool is_lord){
         }
         title->setColor(color_map.value(kingdom));
     }else{
-        path = QString("diy/%1.png").arg(kingdom);
+        path = QString(":diy/%1.png").arg(kingdom);
         title->setColor(QColor(252, 219, 85));
     }
 
     frame->setPixmap(QPixmap(path));
 
     foreach(QGraphicsPixmapItem *item, magatamas){
-        item->setPixmap(QPixmap(QString("diy/%1-magatama.png")
+        item->setPixmap(QPixmap(QString(":diy/%1-magatama.png")
                                 .arg(is_lord ? "god" : kingdom)));
     }
 
@@ -862,7 +863,7 @@ void CardEditor::saveAvatar(const QRectF &rect){
         QPixmap pixmap = QPixmap::grabWidget(card_scene->views().first());
         pixmap = pixmap.copy(rect.toRect());
 
-        QBitmap mask("diy/mask.png");
+        QBitmap mask(":diy/mask.png");
         pixmap.setMask(mask);
 
         painter.drawPixmap(0, 0, pixmap);
@@ -1016,6 +1017,7 @@ QWidget *CardEditor::createSkillBox(){
 }
 
 void CardEditor::closeEvent(QCloseEvent *event){
+    QResource::unregisterResource("image/diy.rcc");
     QMainWindow::closeEvent(event);
 
     card_scene->saveConfig();
@@ -1044,7 +1046,7 @@ QWidget *CardEditor::createLeft(){
     layout->addLayout(createGeneralLayout());
     layout->addWidget(createSkillBox());
     layout->addStretch();
-    layout->addWidget(new QLabel(tr("Thanks to BeiwanLufen <img width='50' height='50' src='diy/lufen.jpg' />")));
+    layout->addWidget(new QLabel(tr("Thanks to BeiwanLufen <img width='50' height='50' src=':diy/lufen.jpg' />")));
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
@@ -1117,6 +1119,7 @@ void CardEditor::editSkill(){
 
 void MainWindow::on_actionCard_editor_triggered()
 {
+    QResource::registerResource("image/diy.rcc");
     static CardEditor *editor;
     if(editor == NULL)
         editor = new CardEditor(this);

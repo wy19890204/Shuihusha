@@ -20,8 +20,11 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
 
     ui->bgMusicPathLineEdit->setText(Config.value("BackgroundMusic").toString());
 
-    ui->enableEffectCheckBox->setChecked(Config.EnableEffects);
+    ui->enableCardEffectCheckBox->setChecked(Config.EnableCardEffects);
+    ui->enableEquipEffectCheckBox->setChecked(Config.EnableEquipEffects);
+    ui->enableSkillEffectCheckBox->setChecked(Config.EnableSkillEffects);
     ui->enableLastWordCheckBox->setChecked(Config.EnableLastWord);
+    ui->enableCheatRingCheckBox->setChecked(Config.EnableCheatRing);
     ui->enableBgMusicCheckBox->setChecked(Config.EnableBgMusic);
     ui->fitInViewCheckBox->setChecked(Config.FitInView);
     ui->circularViewCheckBox->setChecked(Config.value("CircularView", false).toBool());
@@ -37,6 +40,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
+    ui->enableLua->setChecked(Config.EnableLua);
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
 
@@ -111,13 +115,25 @@ void ConfigDialog::saveConfig()
     Config.EffectVolume = volume;
     Config.setValue("EffectVolume", volume);
 
-    bool enabled = ui->enableEffectCheckBox->isChecked();
-    Config.EnableEffects = enabled;
-    Config.setValue("EnableEffects", enabled);
+    bool enabled = ui->enableCardEffectCheckBox->isChecked();
+    Config.EnableCardEffects = enabled;
+    Config.setValue("EnableCardEffects", enabled);
+
+    enabled = ui->enableEquipEffectCheckBox->isChecked();
+    Config.EnableEquipEffects = enabled;
+    Config.setValue("EnableEquipEffects", enabled);
+
+    enabled = ui->enableSkillEffectCheckBox->isChecked();
+    Config.EnableSkillEffects = enabled;
+    Config.setValue("EnableSkillEffects", enabled);
 
     enabled = ui->enableLastWordCheckBox->isChecked();
     Config.EnableLastWord = enabled;
     Config.setValue("EnabledLastWord", enabled);
+
+    enabled = ui->enableCheatRingCheckBox->isChecked();
+    Config.EnableCheatRing = enabled;
+    Config.setValue("EnabledCheatRing", enabled);
 
     enabled = ui->enableBgMusicCheckBox->isChecked();
     Config.EnableBgMusic = enabled;
@@ -141,6 +157,9 @@ void ConfigDialog::saveConfig()
 
     Config.SPOpen = ui->spOpen->isChecked();
     Config.setValue("SPOpen", Config.SPOpen);
+
+    Config.EnableLua = ui->enableLua->isChecked();
+    Config.setValue("EnableLua", Config.EnableLua);
 
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());
     Config.setValue("Contest/Sender", ui->senderLineEdit->text());

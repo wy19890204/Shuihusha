@@ -135,6 +135,16 @@ public:
             room->attachSkillToPlayer(tmp, "jui");
         }
     }
+
+    virtual void onIdied(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        if(room->findPlayerBySkillName("juyi"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *tmp, players){
+            room->detachSkillFromPlayer(tmp, "jui", false);
+        }
+    }
 };
 
 class Baoguo:public TriggerSkill{
@@ -665,7 +675,8 @@ bool DuijueCard::targetFilter(const QList<const Player *> &targets, const Player
     if(!targets.isEmpty())
         return false;
 
-    return to_select != Self;
+    const Card *duel = Sanguosha->cloneCard("duel", Card::NoSuit, 0);
+    return !Self->isProhibited(to_select, duel) && to_select != Self;
 }
 
 void DuijueCard::onEffect(const CardEffectStruct &effect) const{
@@ -1126,6 +1137,16 @@ public:
             room->attachSkillToPlayer(player, "buyaknife");
         }
     }
+
+    virtual void onIdied(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        if(room->findPlayerBySkillName("maidao"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->detachSkillFromPlayer(player, "buyaknife", false);
+        }
+    }
 };
 
 FengmangCard::FengmangCard(){
@@ -1334,6 +1355,7 @@ public:
                 log.arg = objectName();
                 log.arg2 = effect.slash->objectName();
                 room->sendLog(log);
+                room->setEmotion(player, "armor");
 
                 return true;
             }
@@ -1347,6 +1369,7 @@ public:
                 if(damage.from->getWeapon()){
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
+                    room->setEmotion(player, "armor");
                     room->throwCard(damage.from->getWeapon());
                 }
             }

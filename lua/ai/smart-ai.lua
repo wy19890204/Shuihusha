@@ -616,6 +616,7 @@ function SmartAI:sortByUsePriority(cards)
 end
 
 function SmartAI:sortByDynamicUsePriority(cards)
+	if cards == nil or #cards == 0 then return end
 	local compare_func = function(a,b)
 		local value1 = self:getDynamicUsePriority(a)
 		local value2 = self:getDynamicUsePriority(b)
@@ -1984,6 +1985,8 @@ function SmartAI:askForCardChosen(who, flags, reason)
 end
 
 function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
+	local sunerniang = self:getSun2niang()
+	if sunerniang and self.player:getHandcardNum() == 1 then return "." end
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
@@ -2306,6 +2309,9 @@ function SmartAI:getTurnUse()
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
 
+	local sunerniang = self:getSun2niang()
+	if sunerniang and #cards == 1 then return end
+
 	local turnUse = {}
 	local slashAvail = 1
 	self.predictedRange = self.player:getAttackRange()
@@ -2390,6 +2396,7 @@ function SmartAI:activate(use)
 	self:assignKeep(self.player:getHp(),true)
 	self.toUse  = self:getTurnUse()
 	self:sortByDynamicUsePriority(self.toUse)
+	if self.toUse == nil then return end
 --[[
 	if self.player:hasSkill("jibao") then
 		local final = math.min(self.player:getHandcardNum(), self.player:getMaxCards())

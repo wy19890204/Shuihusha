@@ -2805,7 +2805,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         if(Config.Statistic)
             labels << /*tr("Designation") <<*/ tr("Kill")
-                << tr("Damage") << tr("Save") << tr("Recover") << tr("Cheat");
+                << tr("Save") << tr("Damage") << tr("Recover") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
 
@@ -2863,11 +2863,11 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         table->setItem(i, 4, item);
 
         item = new QTableWidgetItem;
-        item->setText(QString::number(statistics->damage));
+        item->setText(QString::number(statistics->save));
         table->setItem(i, 5, item);
 
         item = new QTableWidgetItem;
-        item->setText(QString::number(statistics->save));
+        item->setText(QString::number(statistics->damage));
         table->setItem(i, 6, item);
 
         item = new QTableWidgetItem;
