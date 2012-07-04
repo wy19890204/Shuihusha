@@ -1,4 +1,4 @@
--- Peasa Package. code by: UbunTenkei
+-- ChemCards Package.
 
 return {
 	["peasa"] = "嘻哈雷霆包",
