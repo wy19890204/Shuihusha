@@ -631,6 +631,8 @@ sgs.ai_skill_cardask.aoe = function(self, data, pattern, target, target2, name)
 end
 
 sgs.ai_skill_cardask["savage-assault-slash"] = function(self, data, pattern, target, target2)
+	local effect = data:toCardEffect()
+	speakTrigger(effect.card,effect.from,effect.to)
 	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, target2, "savage_assault")
 end
 

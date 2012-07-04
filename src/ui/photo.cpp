@@ -100,7 +100,7 @@ Photo::Photo()
     ready_item->hide();
 
     mark_item = new QGraphicsTextItem(this);
-    mark_item->setPos(2, 99);
+    mark_item->setPos(2, 79);
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
