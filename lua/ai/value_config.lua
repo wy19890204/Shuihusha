@@ -177,71 +177,8 @@ sgs.duansanniang_suit_value =
 	club = 6,
 }
 
-sgs.panjinlian_suit_value = 
-{
-	spade = 5,
-}
-
 sgs.wangpo_suit_value = 
 {
 	club = 5,
-}
-
-sgs.shiqian_suit_value = 
-{
-	club = 6
-}
-
-sgs.zhangjiao_suit_value = 
-{
-	spade = 3.9,
-	club = 2.7
-}
-
-sgs.huatuo_suit_value = 
-{
-	heart = 6,
-	diamond = 6
-}
-
-sgs.zhenji_suit_value = 
-{
-	spade = 4.1,
-	club = 4.2
-}
-
-sgs.fazheng_suit_value = 
-{
-	heart = 3.9
-}
-
-sgs.simayi_suit_value = 
-{
-	heart = 3.9,
-	club = 3.9,
-	spade = 3.5
-}
-
-sgs.daqiao_suit_value = 
-{
-	diamond = 3.9
-}
-
-sgs.xuhuang_suit_value = 
-{
-	spade = 3.9,
-	club = 3.9
-}
-
-sgs.qixi_suit_value = 
-{
-	spade = 3.9,
-	club = 3.9
-}
-
-sgs.wolong_suit_value = 
-{
-	spade = 3.9,
-	club = 3.9
 }
 

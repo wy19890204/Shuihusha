@@ -13,6 +13,10 @@ bool ExpPattern::match(const Player *player, const Card *card) const
     return false;
 }
 
+bool ExpPattern::willThrow() const{
+    return this->exp.right(1) != "$";
+}
+
 // '|' means 'and', '#' means 'or'.
 // the expression splited by '#' has 3 parts,
 // 1st part means the card name, and ',' means more than one options.
@@ -21,6 +25,9 @@ bool ExpPattern::match(const Player *player, const Card *card) const
 // the number uses '~' to make a scale for valid expressions
 bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) const
 {
+    //QString eXp = exp;
+    if(exp.right(1) == "$")
+        exp.chop(1);
     QStringList factors = exp.split('|');
 
     bool checkpoint = false;
@@ -63,8 +70,8 @@ bool ExpPattern::matchOne(const Player *player, const Card *card, QString exp) c
     checkpoint = false;
     QString place = factors.at(3);
     if(place == ".")checkpoint = true;
-    else if(place == "equipped" && card->isEquipped())checkpoint = true;
-    else if(place == "hand" && !card->isEquipped())checkpoint = true;
+    else if(place == "equipped" && player->hasEquip(card))checkpoint = true;
+    else if(place == "hand" && !player->hasEquip(card))checkpoint = true;
     if(!checkpoint)return false;
     if(factors.size()<5)return true;
 

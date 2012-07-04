@@ -1,3 +1,35 @@
+-- AI for sp package
+
+-- luda
+-- baoquan
+sgs.ai_skill_invoke["baoquan"] = true
+sgs.ai_skill_playerchosen["baoquan"] = function(self, targets)
+	if self:isWeak() or self.player:getHandcardNum() < self.player:getMaxCards() then
+		return self.player
+	else
+		self:sort(self.friends, "handcard")
+		return self.friends[1]
+	end
+end
+sgs.ai_skill_use["@@baoquan"] = function(self, prompt)
+	local cards = sgs.QList2Table(self.player:getCards("he"))
+	self:sortByUseValue(cards, true)
+	local card_ids = {}
+	for _, card in ipairs(cards) do
+		if card:inherits("EquipCard") then
+			table.insert(card_ids, card:getEffectiveId())
+		end
+	end
+	if #card_ids < 1 then return "." end
+	self:sort(self.enemies)
+	local target = self.enemies[1]
+	if target then
+		return "@BaoquanCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
+	else
+		return "."
+	end
+end
+
 -- shemi
 sgs.ai_skill_invoke["shemi"] = function(self, data)
 	return self.player:getHandcardNum() >= self.player:getHp()
@@ -24,7 +56,7 @@ sgs.ai_skill_choice["yuzhong"] = function(self, choice)
 		else
 			return "cancel"
 		end
-	else
+	elseif choice == "all+me+cancel" then
 		local king = self.room:getKingdoms()
 		if #self.friends >= king then
 			return "all"
@@ -38,10 +70,14 @@ sgs.ai_skill_use["@@yuzhong"] = function(self, prompt)
 	local friends = {}
 	self:sort(self.friends, "handcard")
 	for _, friend in ipairs(self.friends) do
-		table.insert(friends, friend)
+		table.insert(friends, friend:objectName())
 		if #friends >= king then break end
 	end
-	return "@YuzhongCard=.->" .. table.concat(friends, "+")
+	if #friends > 0 then
+		return "@YuzhongCard=.->" .. table.concat(friends, "+")
+	else
+		return "."
+	end
 end
 
 -- jiebao
@@ -106,16 +142,5 @@ end
 sgs.ai_skill_playerchosen["xiaduo"] = function(self, targets)
 	local target = self.xiaduotarget
 	return target
-end
-
--- youxia
-sgs.ai_skill_invoke["youxia"] = function(self, data)
-	local move = data:toCardMove()
-	if self:isEnemy(move.from) and self.player:isWounded() then
-		return true
-	elseif self:isFriend(move.from) and self.player:getHandcardNum() > 2 then
-		return true
-	end
-	return false
 end
 

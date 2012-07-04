@@ -3,7 +3,7 @@
 return {
 	["interchange"] = "中转站",
 
-	["#_qinming"] = "霹雳火",
+	["#qinming"] = "霹雳火",
 	["qinming"] = "秦明",
 	["designer:qinming"] = "曉ャ絕對",
 	["xianxi"] = "险袭",
@@ -11,7 +11,7 @@ return {
 	["#Xianxi"] = "%from 出师不利，【%arg】的负面效果被触发",
 	["~qinming"] = "可怜霹雳火，灭地竟无声……",
 
-	["#_caiqing"] = "一枝花",
+	["#caiqing"] = "一枝花",
 	["caiqing"] = "蔡庆",
 	["designer:caiqing"] = "宇文天启",
 	["lianzang"] = "殓葬",
@@ -19,7 +19,7 @@ return {
 	["caiqing"] = "蔡庆",
 	["~caiqing"] = "最后一刀是……留给我的吗……",
 
-	["#_shenjiangjing"] = "珠玉满堂",
+	["#shenjiangjing"] = "珠玉满堂",
 	["shenjiangjing"] = "神蒋敬",
 	["designer:shenjiangjing"] = "太阳神上、宇文天启",
 	["coder:shenjiangjing"] = "太阳神上",
@@ -30,7 +30,7 @@ return {
 	[":gunzhu"] = "当你使用一张非延时类锦囊牌时，可做一次判定，若点数和该牌相差小于3，摸两张牌",
 	["~shenjiangjing"] = "珠沉玉落，其香犹存。",
 
-	["#_duwei"] = "飞刀手",
+	["#duwei"] = "飞刀手",
 	["duwei"] = "杜微",
 	["designer:duwei"] = "宇文天启",
 	["touxi"] = "偷袭",
@@ -38,7 +38,7 @@ return {
 	["@touxi"] = "%src 打出了【闪】，你可以趁机用一张武器或防具牌【偷袭】之",
 	["~duwei"] = "我一定会回来的！",
 
-	["#_puwenying"] = "司天太监",
+	["#puwenying"] = "司天太监",
 	["puwenying"] = "浦文英",
 	["designer:puwenying"] = "宇文天启",
 	["cv:puwenying"] = "宇文天启",
@@ -50,7 +50,7 @@ return {
 	["$guanxing"] = "罡星侵入吴地，就里为祸不小",
 	["~puwenying"] = "文英既识真天命，何事捐生在伪朝？",
 
-	["#_tongmeng"] = "翻江蜃",
+	["#tongmeng"] = "翻江蜃",
 	["tongmeng"] = "童猛",
 	["designer:tongmeng"] = "hypercross",
 	["shuilao"] = "水牢",
@@ -59,28 +59,21 @@ return {
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你；其他角色计算与你的距离时，至少为2",
 	["~tongmeng"] = "大江东去浪淘尽。",
 
-	["#_hongxin"] = "殿前太尉",
+	["#hongxin"] = "殿前太尉",
 	["hongxin"] = "洪信",
 	["designer:hongxin"] = "宇文天启",
 	["fangsheng"] = "放生",
 	[":fangsheng"] = "回合开始阶段开始前，若你的手牌数大于体力值，可以摸两张牌终止本回合，令任一角色进行一个额外的回合",
 	["~hongxin"] = "天下本无事，游山游出事……",
 
-	["#_zhangmengfang"] = "兵马都监",
+	["#zhangmengfang"] = "兵马都监",
 	["zhangmengfang"] = "张蒙方",
 	["designer:zhangmengfang"] = "宇文天启",
 	["tancai"] = "贪财",
-	[":tancai"] = "弃牌阶段弃牌前，你可以摸三张牌。",
+	[":tancai"] = "弃牌阶段弃牌前，你可以摸X+1张牌，X为你已损失的体力值。",
 	["~zhangmengfang"] = "谁敢杀我？",
 
-	["#_pangwanchun"] = "小养由基",
-	["pangwanchun"] = "庞万春",
-	["designer:pangwanchun"] = "宇文天启",
-	["luanji"] = "乱击",
-	[":luanji"] = "出牌阶段，你可将一张红色手牌和一张锦囊牌当【万箭齐发】使用，且造成的伤害均为火焰伤害。",
-	["~pangwanchun"] = "中埋伏了……",
-
-	["#_litianrun"] = "镇国大将",
+	["#litianrun"] = "镇国大将",
 	["litianrun"] = "厉天闰",
 	["designer:litianrun"] = "猪猪天使",
 	["jingtian"] = "惊天",
@@ -88,14 +81,14 @@ return {
 	["#Jingtian"] = "%from 将 %to 的体力值由 %arg 改成了 %arg2",
 	["~litianrun"] = "我这是怎么了……",
 
-	["#_duxue"] = "神出鬼没",
+	["#duxue"] = "神出鬼没",
 	["duxue"] = "杜壆",
 	["designer:duxue"] = "喀什葛尔胡杨",
 	["wodao"] = "武悼",
 	[":wodao"] = "锁定技，你的事件牌和黑桃锦囊牌均视为【决斗】，你所有的红桃非事件牌均视为【杀】",
 	["~duxue"] = "两个打一个，你们欺负人……",
 
-	["#_fuan"] = "乾鸟头",
+	["#fuan"] = "乾鸟头",
 	["fuan"] = "富安",
 	["designer:fuan"] = "天启姐",
 	["tongmou"] = "同谋",
@@ -107,21 +100,14 @@ return {
 	["@xianhai"] = "你可以将一张黑桃手牌当【逼上梁山】对任意一名角色使用",
 	["~fuan"] = "林教头饶命，这都是陆谦的主意……啊~~",
 
-	["#_zhangwang"] = "截江鬼",
-	["zhangwang"] = "张旺",
-	["designer:zhangwang"] = "俊逸不凡",
-	["jielue"] = "劫掠",
-	[":jielue"] = "出牌阶段，你使用的【杀】指定目标后，可先附带拼点的效果，若你赢，你获得目标角色的拼点牌",
-	["~zhangwang"] = "放开我，我要上梁山！",
-
-	["#_shibao"] = "南离大将军",
+	["#shibao"] = "南离大将",
 	["shibao"] = "石宝",
 	["designer:shibao"] = "天启姐",
 	["shenyong"] = "神勇",
-	[":shenyong"] = "当你成为【杀】的目标时，可以对任意一名角色使用一张【杀】，（在其结算前）视为你使用了【闪】",
+	[":shenyong"] = "当你需要打出一张【闪】时，可对攻击范围内的一名角色使用一张【杀】，（在其结算后）视为你使用了【闪】",
 	["~shibao"] = "操！",
 
-	["#_yulan"] = "养娘",
+	["#yulan"] = "养娘",
 	["yulan"] = "玉兰",
 	["designer:yulan"] = "天启姐",
 	["qingdong"] = "情动",
@@ -131,7 +117,7 @@ return {
 	["@shang"] = "殇",
 	["~yulan"] = "武都头……",
 
-	["#_murongyanda"] = "狗贼",
+	["#murongyanda"] = "狗贼",
 	["murongyanda"] = "慕容彦达", --3/4
 	["designer:murongyanda"] = "天启姐",
 	["xumou"] = "蓄谋",
@@ -140,7 +126,7 @@ return {
 	[":yuli"] = "回合内，任意角色每造成一点伤害，你可以摸一张牌",
 	["~murongyanda"] = "呼延将军，你一个败军之将……啊~",
 
-	["#_shixiu"] = "拼命三郎",
+	["#shixiu"] = "拼命三郎",
 	["shixiu"] = "石秀",
 	["designer:shixiu"] = "天启姐",
 	["boming"] = "搏命",

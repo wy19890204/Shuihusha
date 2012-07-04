@@ -1,33 +1,3 @@
--- yuanpei
-local yuanpei_skill={}
-yuanpei_skill.name = "yuanpei"
-table.insert(sgs.ai_skills, yuanpei_skill)
-yuanpei_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YuanpeiCard") then
-		if not self.player:hasFlag("yuanpei") or self.player:isKongcheng() then return end
-		local cards = self.player:getCards("h")
-		cards=sgs.QList2Table(cards)
-		self:sortByUseValue(cards, true)
-		local suit = cards[1]:getSuitString()
-		local number = cards[1]:getNumberString()
-		local card_id = cards[1]:getEffectiveId()
-		local card_str = ("slash:yuanpei[%s:%s]=%d"):format(suit, number, card_id)
-		local slash = sgs.Card_Parse(card_str)
-		assert(slash)
-		return slash
-	end
-	return sgs.Card_Parse("@YuanpeiCard=.")
-end
-sgs.ai_skill_use_func["YuanpeiCard"] = function(card,use,self)
-	self:sort(self.friends, "defense")
-	for _, enemy in ipairs(self.friends) do
-		if enemy:getGeneral():isMale() then
-            use.card = card
-		    if use.to then use.to:append(enemy) end
-            return
-		end
-	end
-end
 
 -- hunjiu-jiu
 hunjiu_skill={}
@@ -115,14 +85,6 @@ sgs.ai_skill_cardask["@guitai"] = function(self, data)
 	end
 end
 
--- goulian
-sgs.ai_skill_invoke["goulian"] = sgs.ai_skill_invoke["liba"]
-
--- jinjia
-function sgs.ai_armor_value.jinjia(card)
-	if not card then return 4 end
-end
-
 -- sinue
 sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	local cards = self.player:getHandcards()
@@ -130,7 +92,7 @@ sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	self:sortByUseValue(cards, true)
 	for _, enemy in ipairs(self.enemies) do
 		if self.player:distanceTo(enemy) == 1 then
-			return "@SinueCard=" .. cards[1]:getEffectiveId()
+			return "@SinueCard=" .. cards[1]:getEffectiveId() .. "->."
 		end
 	end
 	return "."
@@ -142,8 +104,8 @@ shexin_skill.name = "shexin"
 table.insert(sgs.ai_skills, shexin_skill)
 shexin_skill.getTurnUseCard = function(self)
     if not self.player:hasUsed("ShexinCard") and not self.player:isNude() then
-		self:sort(self.enemies, "handcard")
-		if self.enemies[#self.enemies]:getHandcardNum() <= 3 then return end
+		self:sort(self.enemies, "handcard2")
+		if self.enemies[1]:getHandcardNum() <= 3 then return end
 		local cards = self.player:getCards("he")
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
@@ -155,9 +117,9 @@ shexin_skill.getTurnUseCard = function(self)
 	end
 end
 sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
-	self:sort(self.enemies, "handcard")
+	self:sort(self.enemies, "handcard2")
 	if use.to then
-		use.to:append(self.enemies[#self.enemies])
+		use.to:append(self.enemies[1])
 	end
     use.card=card
 end
@@ -187,20 +149,4 @@ sheyan_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
     use.card=card
-end
-
--- guibing
-local guibing_skill = {}
-guibing_skill.name = "guibing"
-table.insert(sgs.ai_skills, guibing_skill)
-guibing_skill.getTurnUseCard = function(self)
-	if self.player:hasFlag("Guibing") or not self:slashIsAvailable() then return end
-	local card_str = "@GuibingCard=."
-	local slash = sgs.Card_Parse(card_str)
-	assert(slash)
-	return slash
-end
-sgs.ai_skill_use_func["GuibingCard"] = sgs.ai_skill_use_func["ZhangshiCard"]
-function sgs.ai_cardneed.guibing(to, card, self)
-	return card:isBlack()
 end

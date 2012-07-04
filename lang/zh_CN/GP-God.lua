@@ -1,12 +1,10 @@
 -- translation for GodPackage
 
 return {
-	["god"] = "神",
-
-	["#_shenwusong"] = "清忠祖师",
+	["#shenwusong"] = "清忠祖师",
 	["shenwusong"] = "神武松",
 	["designer:shenwusong"] = "烨子&裁之刃•散",
-	["cv:shenwusong"] = "佚名",
+	["cv:shenwusong"] = "猎狐【声声melody】",
 	["coder:shenwusong"] = "皇叔",
 	["shenchou"] = "深仇",
 	[":shenchou"] = "<b>锁定技</b>，你每受到一次伤害，须将对你造成伤害的牌置于你的武将牌上，称为“仇”。",
@@ -28,7 +26,7 @@ return {
 --	["$duanbi"] = "自断一臂，力擒此贼！",
 	["~shenwusong"] = "缘尽六合寺。",
 
-	["#_shenwuyong"] = "足智多谋",
+	["#shenwuyong"] = "足智多谋",
 	["shenwuyong"] = "神吴用",
 	["designer:shenwuyong"] = "烨子&凌天翼",
 	["cv:shenwuyong"] = "烨子【剪刀剧团】",
@@ -46,9 +44,9 @@ return {
 	["#Xianji"] = "%from 发动了【%arg2】，%to 的 %arg 受到影响",
 	["#XianjiClear"] = "%from 的先机效果消失",
 
-	["#_shenzhangqing"] = "射石饮羽",
+	["#shenzhangqing"] = "射石饮羽",
 	["shenzhangqing"] = "神张清",
-	["cv:shenzhangqing"] = "佚名",
+	["cv:shenzhangqing"] = "倔强的小红军【剪刀剧团】",
 	["feihuang"] = "飞蝗",
 	[":feihuang"] = "你可以跳过你的弃牌阶段，将超出你当前体力值的手牌置于你的武将牌上，称为“石”。",
 	["@feihuang"] = "你可以发动【飞蝗】，将多余的手牌变成“石”。",
@@ -56,12 +54,12 @@ return {
 	["meiyu"] = "没羽",
 	[":meiyu"] = "出牌阶段，你可以将一张“石”移入弃牌堆，视为你对任一其他角色使用了一张【杀】，该【杀】造成的伤害为扣减体力上限（该【杀】不计入每回合的使用限制）。",
 	["$feihuang1"] = "此牌弃之，岂不可惜？",
-	["$feihuang2"] = "可充鞍后石子备用。",
+	["$feihuang2"] = "可充鞍后，石子备用。",
 	["$meiyu1"] = "弯弓饮羽，射石无双！",
 	["$meiyu2"] = "发石如脱兔，其速越寒星！",
 	["~shenzhangqing"] = "人过留名，雁过留声。",
 
-	["#_shenluzhishen"] = "义烈照暨禅师",
+	["#shenluzhishen"] = "义烈照暨禅师",
 	["shenluzhishen"] = "神鲁智深",
 	["designer:shenluzhishen"] = "烨子&凌天翼",
 	["cv:shenluzhishen"] = "佚名",
@@ -78,9 +76,9 @@ return {
 	["$huafo2"] = "将酒来！",
 	["~shenluzhishen"] = "逢夏而擒，遇腊而执。听潮而圆，见信而寂。",
 
-	["#_shenxuning"] = "虎翼上将",
+	["#shenxuning"] = "虎翼上将",
 	["shenxuning"] = "神徐宁",
-	["cv:shenxuning"] = "佚名",
+	["cv:shenxuning"] = "猎狐【声声melody】",
 	["coder:shenxuning"] = "皇叔",
 	["jiebei"] = "戒备",
 	[":jiebei"] = "任意角色防具牌进入弃牌堆时，你可以弃置一张手牌获得之，并将其置于任意角色的装备区里（不得替换原装备）；每当你失去一张装备区里的防具牌时，可以摸两张牌。",

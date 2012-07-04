@@ -20,17 +20,25 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setTitle(tr("Effects"));
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
+    ui->skillTextEdit->setProperty("description", true);
 }
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
+    QList<const General *> copy_generals = generals;
+    QMutableListIterator<const General *> itor = copy_generals;
+    while(itor.hasNext()){
+        if(itor.next()->isTotallyHidden())
+            itor.remove();
+    }
+
     ui->tableWidget->clearContents();
-    ui->tableWidget->setRowCount(generals.length());
+    ui->tableWidget->setRowCount(copy_generals.length());
     ui->tableWidget->setIconSize(QSize(20,20));
     QIcon lord_icon("image/system/roles/lord.png");
 
     int i;
-    for(i=0; i<generals.length(); i++){
-        const General *general = generals[i];
+    for(i=0; i<copy_generals.length(); i++){
+        const General *general = copy_generals[i];
 
         QString name, kingdom, gender, max_hp, package;
 
@@ -41,17 +49,14 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             : QString::number(general->getMaxHp() - 1) + "/" + QString::number(general->getMaxHp());
         package = Sanguosha->translate(general->getPackage());
 
-        QString nickname = Sanguosha->translate("#_" + general->objectName());
+        QString nickname = Sanguosha->translate("#" + general->objectName());
         QTableWidgetItem *nickname_item;
-        if(!nickname.startsWith("#_"))
+        if(!nickname.startsWith("#"))
             nickname_item = new QTableWidgetItem(nickname);
         else
             nickname_item = new QTableWidgetItem(Sanguosha->translate("UnknowNick"));
         nickname_item->setData(Qt::UserRole, general->objectName());
         nickname_item->setTextAlignment(Qt::AlignCenter);
-
-        if(general->isHidden())
-            nickname_item->setBackgroundColor(Qt::gray);
 
         QTableWidgetItem *name_item = new QTableWidgetItem(name);
         name_item->setTextAlignment(Qt::AlignCenter);
@@ -60,11 +65,16 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
             name_item->setTextAlignment(Qt::AlignCenter);
         }
 
-        if(general->isHidden())
+        if(general->isHidden()){
+            nickname_item->setBackgroundColor(Qt::gray);
+            nickname_item->setTextColor(Qt::white);
+            //nickname_item->setToolTip("hidden");
             name_item->setBackgroundColor(Qt::gray);
-
+            name_item->setTextColor(Qt::white);
+        }
         QTableWidgetItem *kingdom_item = new QTableWidgetItem(kingdom);
         kingdom_item->setTextAlignment(Qt::AlignCenter);
+        kingdom_item->setBackgroundColor(Sanguosha->getKingdomColor(general->getKingdom()));
 
         QTableWidgetItem *gender_item = new QTableWidgetItem(gender);
         gender_item->setTextAlignment(Qt::AlignCenter);
@@ -119,7 +129,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
     }else{
         QRegExp rx(".+/(\\w+\\d?).ogg");
         for(int i = 0; i < sources.length(); i++){
-            if(skill->objectName() == "yinyu" && i > 4) // wake skills
+            if(skill->objectName() == "yinyu" && i > 6) // wake skills
                 break;
             if((skill->objectName() == "butian" || skill->objectName() == "qimen") && i > 1)
                 break;
@@ -184,6 +194,13 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
     QList<const Skill *> skills = general->getVisibleSkillList();
+
+    foreach(QString skill_name, general->getRelatedSkillNames()){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill)
+            skills << skill;
+    }
+
     ui->skillTextEdit->clear();
 
     resetButtons();
@@ -196,7 +213,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     const Skill *wake_skill;
     if(general_name == "qiongying"){
         wake_skill = Sanguosha->getSkill("yinyu");
-        for(int i = 6; i <= 10; i ++)
+        for(int i = 8; i <= 13; i ++)
             addLines(wake_skill, i);
     }
     if(general_name == "fanrui"){
@@ -268,13 +285,9 @@ void GeneralOverview::playEffect()
 #include "client.h"
 void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
 {
-    if(!ServerInfo.FreeChoose)
-        return;
-    if(Self){
+    if(ServerInfo.FreeChoose && Self){
         int row = ui->tableWidget->currentRow();
-        if(row >= 0){
-            QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-            ClientInstance->changeGeneral(general_name);
-        }
+        QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
+        ClientInstance->requestCheatChangeGeneral(general_name);
     }
 }

@@ -38,6 +38,7 @@ public:
     virtual QString getEffectPath(bool is_male) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
+
 class Monkey: public OffensiveHorse{
     Q_OBJECT
 
@@ -104,6 +105,16 @@ class ZhuangcheCard: public SkillCard{
 public:
     Q_INVOKABLE ZhuangcheCard();
 
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class ChuiniuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ChuiniuCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 

@@ -10,11 +10,12 @@
 StartScene::StartScene()
 {
     // game logo
-    logo = new Pixmap("image/system/logo.png");
+    logo = new Pixmap("image/logo/logo.png");
     logo->shift();
     logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
 
+    /*
     //the website URL
     QFont website_font(Config.SmallFont);
     website_font.setStyle(QFont::StyleItalic);
@@ -22,6 +23,7 @@ StartScene::StartScene()
     website_text->setBrush(Qt::white);
     website_text->setPos(Config.Rect.width()/2 - website_text->boundingRect().width(),
                        Config.Rect.height()/2 - website_text->boundingRect().height());
+    */
 
     server_log = NULL;
 }
@@ -120,10 +122,9 @@ void StartScene::printServerInfo(){
     server_log->append(tr("Game mode is %1").arg(Sanguosha->getModeName(Config.GameMode)));
     server_log->append(tr("Player count is %1").arg(Sanguosha->getPlayerCount(Config.GameMode)));
 
-    if(Config.OperationNoLimit)
-        server_log->append(tr("There is no time limit"));
-    else
-        server_log->append(tr("Operation timeout is %1 seconds").arg(Config.OperationTimeout));    
+    server_log->append( Config.OperationNoLimit ?
+                        tr("There is no time limit") :
+                        tr("Operation timeout is %1 seconds").arg(Config.OperationTimeout));
 
     if(Config.ContestMode)
         server_log->append(tr("The contest mode is enabled"));
@@ -142,35 +143,35 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    if(Config.EnableScene)
-        server_log->append(tr("Scene Mode is enabled"));
-    else
-        server_log->append(tr("Scene Mode is disabled"));
+    server_log->append( Config.EnableScene ?
+                        tr("Scene Mode is enabled") :
+                        tr("Scene Mode is disabled"));
 
-    if(Config.EnableSame)
-        server_log->append(tr("Same Mode is enabled"));
-    else
-        server_log->append(tr("Same Mode is disabled"));
+    server_log->append( Config.EnableSame ?
+                        tr("Same Mode is enabled") :
+                        tr("Same Mode is disabled"));
 
-    if(Config.EnableEndless)
-        server_log->append(tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()));
-    else
-        server_log->append(tr("Endless Mode is disabled"));
-
+    server_log->append( Config.EnableEndless ?
+                        tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
+                        tr("Endless Mode is disabled"));
+/*
+    server_log->append( Config.EnableAnzhan ?
+                        tr("Anzhan Mode is enabled") :
+                        tr("Anzhan Mode is disabled"));
+*/
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));
-/*
+
     server_log->append( Config.EnableHegemony ?
                         tr("Hegemony Mode is enabled") :
                         tr("Hegemony Mode is disabled"));
-*/
+
     if(Config.EnableAI){
         server_log->append(tr("This server is AI enabled, AI delay is %1 milliseconds").arg(Config.AIDelay));
-        if(Config.value("AIChat", true).toBool())
-            server_log->append(tr("This server is AI chat enabled"));
-        else
-            server_log->append(tr("This server is AI chat disabled"));
+        server_log->append( Config.value("AIChat", true).toBool() ?
+                            tr("This server is AI chat enabled") :
+                            tr("This server is AI chat disabled"));
     }
     else
         server_log->append(tr("This server is AI disabled"));

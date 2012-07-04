@@ -116,41 +116,6 @@ sgs.ai_skill_cardchosen["yuanyin"] = function(self, who)
 	end
 end
 
--- qiongtu
-sgs.ai_skill_invoke["qiongtu"] = function(self, data)
-	local target = data:toPlayer()
-	return self:isEnemy(target)
-end
-
--- menghan
-local menghan_skill={}
-menghan_skill.name = "menghan"
-table.insert(sgs.ai_skills, menghan_skill)
-menghan_skill.getTurnUseCard = function(self, inclusive)
-    local cards = self.player:getCards("he")
-    cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards,true)
-	for _,card in ipairs(cards)  do
-		if card:getSuit() == sgs.Card_Spade then
-		    local suit = card:getSuitString()
-			local number = card:getNumberString()
-			local card_id = card:getEffectiveId()
-			local card_str = ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
-			local ecstasy = sgs.Card_Parse(card_str)
-			assert(ecstasy)
-			return ecstasy
-		end
-	end
-end
-sgs.ai_view_as["menghan"] = function(card, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	if card:getSuit() == sgs.Card_Spade then
-		return ("ecstasy:menghan[%s:%s]=%d"):format(suit, number, card_id)
-	end
-end
-
 -- nusha
 nusha_skill={}
 nusha_skill.name = "nusha"
@@ -248,27 +213,6 @@ sgs.ai_skill_use_func["QiaogongCard"] = function(card, use, self)
 	end
 end
 
--- shouge
-sgs.ai_skill_invoke["shouge"] = true
-shouge_skill={}
-shouge_skill.name = "shouge"
-table.insert(sgs.ai_skills, shouge_skill)
-shouge_skill.getTurnUseCard = function(self)
-	if not self.player:isWounded() then
-		local cards = self.player:getCards("h")
-		cards = sgs.QList2Table(cards)
-		for _, acard in ipairs(cards) do
-			if acard:inherits("Peach") or acard:inherits("Analeptic") then
-				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
-			end
-		end
-	end
-	return
-end
-sgs.ai_skill_use_func["ShougeCard"] = function(card, use, self)
-	use.card = card
-end
-
 -- kongying
 sgs.ai_skill_invoke["kongying"] = true
 sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
@@ -277,89 +221,4 @@ sgs.ai_skill_playerchosen["kongying"] = function(self, targets)
 end
 function sgs.ai_cardneed.kongying(to, card, self)
 	return card:inherits("Jink")
-end
-
--- zhengfa
-local zhengfa_skill={}
-zhengfa_skill.name = "zhengfa"
-table.insert(sgs.ai_skills, zhengfa_skill)
-zhengfa_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("ZhengfaCard") or self.player:isKongcheng() then return end
-	local enemies = {}
-	for _, enemy in ipairs(self.enemies) do
-		if self.player:inMyAttackRange(enemy) then
-			table.insert(enemies, enemy)
-		end
-	end
-	if #enemies < 2 then return end
-	if self.player:getHp() >= #enemies and self.player:getHp() >= 2 then
-		local max_card = self:getMaxCard()
-		return sgs.Card_Parse("@ZhengfaCard=" .. max_card:getEffectiveId())
-	end
-end
-sgs.ai_skill_use_func["ZhengfaCard"]=function(card,use,self)
-	self:sort(self.friends_noself, "handcard")
-	for i = #self.friends_noself, 1, -1 do
-		if not self.friends_noself[i]:isKongcheng() and self.player:getGender() ~= self.friends_noself[i]:getGender() then
-		    if use.to then use.to:append(self.friends_noself[i]) end
-            use.card=card
-            break
-		end
-	end
-end
-sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
-	local enemies = {}
-	local i = 0
-	for _, enemy in ipairs(self.enemies) do
-		if self.player:inMyAttackRange(enemy) then
-			table.insert(enemies, enemy:objectName())
-			i = i + 1
-		end
-		if i >= self.player:getHp() then break end
-	end
-	if self.player:getHp() >= #enemies then
-		return "@ZhengfaCard=.->" .. table.concat(enemies, "+")
-	else
-		return "."
-	end
-end
-
--- yongle
-local yongle_skill={}
-yongle_skill.name = "yongle"
-table.insert(sgs.ai_skills, yongle_skill)
-yongle_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YongleCard") then return end
-	return sgs.Card_Parse("@YongleCard=.")
-end
-sgs.ai_skill_use_func["YongleCard"]=function(card,use,self)
-	local king = self.room:getKingdoms()
-	local enemies = {}
-	for _, enemy in ipairs(self.enemies) do
-		if not enemy:isKongcheng() then
-			table.insert(enemies, enemy)
-			if #enemies >= king then break end
-		end
-	end
-	use.card = card
-	if use.to then
-		for _, enemy in ipairs(enemies) do
-			use.to:append(enemy)
-		end
-	end
-end
-sgs.ai_cardshow["yongle"] = function(self, requestor)
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	return cards[1]
-end
-
--- zhiyuan
-sgs.ai_skill_cardask["@zhiyuan"] = function(self)
-	local lord = self.room:getLord()
-	if self:isFriend(lord) and not self.player:isKongcheng() then
-		return self.player:getRandomHandCard():getEffectiveId() or "."
-	end
-	return "."
 end

@@ -1,11 +1,11 @@
 #include "plough.h"
+#include "maneuvering.h"
 #include "skill.h"
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
 #include "god.h"
 #include "standard.h"
-#include "tocheck.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {
@@ -25,17 +25,22 @@ QString Ecstasy::getSubtype() const{
 }
 
 bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int slash_targets = 1;
-    if(Self->hasSkill("menghan")){
-        slash_targets = 2;
-    }
-    if(targets.length() >= slash_targets)
+    int cst_targets = 1;
+    if(Self->hasSkill("xiayao"))
+        cst_targets ++;
+
+    if(targets.length() >= cst_targets)
         return false;
     return to_select != Self && Self->inMyAttackRange(to_select);
 }
 
 void Ecstasy::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+
+    QString animation_str = QString("ecstasy:%1:%2")
+                            .arg(effect.from->objectName()).arg(effect.to->objectName());
+    room->broadcastInvoke("animate", animation_str);
+
     room->setPlayerFlag(effect.to, "ecst");
 }
 
@@ -58,7 +63,7 @@ void Drivolt::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     room->loseHp(effect.to);
     if(effect.to->isAlive()){
-        room->askForDiscard(effect.to, "Drivolt", qMin(2, effect.to->getCardCount(true)), false, true);
+        room->askForDiscard(effect.to, "drivolt", qMin(2, effect.to->getCardCount(true)), false, true);
         effect.to->drawCards(3);
     }
 }
@@ -70,11 +75,18 @@ Wiretap::Wiretap(Suit suit, int number)
 
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+    room->setTag("Wiretap", QVariant::fromValue(effect));
     QList<int> all = effect.to->handCards();
-    room->showAllCards(effect.to, effect.from);
+    //room->showAllCards(effect.to, effect.from);
     room->fillAG(all, effect.from);
-    room->askForAG(effect.from, all, true, "wiretap");
+    int mitan = room->askForAG(effect.from, all, true, "wiretap");
+    if(effect.from->hasSkill("mitan") && mitan > -1){
+        if(getSkillName() != "mitan")
+            room->playSkillEffect("mitan", 2);
+        room->showCard(effect.to, mitan);
+    }
     effect.from->invoke("clearAG");
+    room->removeTag("Wiretap");
 }
 
 Assassinate::Assassinate(Suit suit, int number)
@@ -181,14 +193,18 @@ public:
         events << CardUsed;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct effect = data.value<CardUseStruct>();
-        Room *room = player->getRoom();
-        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
-            foreach(ServerPlayer *effecto, effect.to){
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
+            foreach(ServerPlayer *effecto, use.to){
+                if(!effecto->isChained())
+                    player->playCardEffect("Edouble_whip1");
+                else
+                    player->playCardEffect("Edouble_whip2");
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
                 room->broadcastProperty(effecto, "chained");
+                room->setEmotion(effecto, "chain");
             }
         }
         return false;
@@ -212,10 +228,10 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        Room *room = player->getRoom();
         if(damage.card->inherits("Slash") && damage.to->isAlive()){
+            player->playCardEffect("Emeteor_sword");
             room->loseHp(damage.to, damage.damage);
             return true;
         }
@@ -242,11 +258,13 @@ public:
         events << Damaged << SlashEffected;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature != DamageStruct::Normal){
+                player->playCardEffect("Egold_armor1");
+                room->setEmotion(player, "armor");
+
                 LogMessage log;
                 log.from = player;
                 log.type = "#ArmorNullify";
@@ -264,6 +282,8 @@ public:
                 log.from = player;
                 log.arg = objectName();
                 if(damage.from->getWeapon()){
+                    player->playCardEffect("Egold_armor2");
+                    room->setEmotion(player, "armor");
                     room->sendLog(log);
                     room->throwCard(damage.from->getWeapon());
                 }
@@ -287,70 +307,97 @@ PloughPackage::PloughPackage()
     cards
     // spade
             << new Assassinate(Card::Spade, 1)
-            << new SilverLion(Card::Spade, 2)
+            << new Tsunami(Card::Spade, 2)
             << new MeteorSword(Card::Spade, 3)
-            << new ThunderSlash(Card::Spade, 5)
-            << new ThunderSlash(Card::Spade, 6)
-            << new Counterplot(Card::Spade, 7)
-            << new IronChain(Card::Spade, 8)
-            << new Ecstasy(Card::Spade, 9)
-            << new GoldArmor(Card::Spade, 10)
-            << new Wiretap(Card::Spade, 11)
-            << new IronChain(Card::Spade, 12)
-            << new Counterplot(Card::Spade, 13)
+            << new Ecstasy(Card::Spade, 4)
+            << new Ecstasy(Card::Spade, 5)
+            << new Ecstasy(Card::Spade, 6)
+            << new Slash(Card::Spade, 7)
+            << new Slash(Card::Spade, 8)
+            << new ThunderSlash(Card::Spade, 9)
+            << new ThunderSlash(Card::Spade, 10)
+            << new ThunderSlash(Card::Spade, 11)
+            << new Wiretap(Card::Spade, 12)
+            << new Drivolt(Card::Spade, 13)
 
     // diamond
             << new Dismantlement(Card::Diamond, 1)
             << new Peach(Card::Diamond, 2)
-            << new Peach(Card::Diamond, 3)
-            << new FireSlash(Card::Diamond, 4)
-            << new Jink(Card::Diamond, 5)
-            << new Tsunami(Card::Diamond, 6)
-            << new Wiretap(Card::Diamond, 7)
+            << new FireSlash(Card::Diamond, 3)
+            << new Slash(Card::Diamond, 4)
+            << new Slash(Card::Diamond, 5)
+            << new Jink(Card::Diamond, 6)
+            << new Jink(Card::Diamond, 7)
             << new Treasury(Card::Diamond, 8)
             << new Analeptic(Card::Diamond, 9)
-            << new Jink(Card::Diamond, 10)
+            << new Slash(Card::Diamond, 10)
             << new SunBow(Card::Diamond, 11)
             << new Assassinate(Card::Diamond, 12)
             << new Counterplot(Card::Diamond, 13)
 
     // club
-            << new Tsunami(Card::Club, 1)
+            << new Provistore(Card::Club, 1)
             << new Ecstasy(Card::Club, 2)
             << new Ecstasy(Card::Club, 3)
-            << new Analeptic(Card::Club, 4)
-            << new Ecstasy(Card::Club, 5)
-            << new Provistore(Card::Club, 6)
+            << new Slash(Card::Club, 4)
+            << new Slash(Card::Club, 5)
+            << new ThunderSlash(Card::Club, 6)
             << new DoubleWhip(Card::Club, 7)
-            << new IronChain(Card::Club, 8)
-            << new ThunderSlash(Card::Club, 9)
+            << new Analeptic(Card::Club, 9)
             << new GoldArmor(Card::Club, 10)
-            << new IronChain(Card::Club, 11)
-            << new Drivolt(Card::Club, 12)
-            << new ArcheryAttack(Card::Club, 13)
+            << new Wiretap(Card::Club, 11)
+            << new IronChain(Card::Club, 12)
+            << new IronChain(Card::Club, 13)
 
     // heart
-            << new Provistore(Card::Heart, 1)
-            << new Jink(Card::Heart, 2)
-            << new Analeptic(Card::Heart, 3)
-            << new FireSlash(Card::Heart, 4)
-            << new Peach(Card::Heart, 5)
+            << new Drivolt(Card::Heart, 1)
+            << new FireSlash(Card::Heart, 2)
+            << new Slash(Card::Heart, 3)
+            << new Provistore(Card::Heart, 4)
+            << new Jink(Card::Heart, 5)
             << new Jink(Card::Heart, 6)
-            << new Wiretap(Card::Heart, 7)
-            << new Ecstasy(Card::Heart, 8)
-            << new Ecstasy(Card::Heart, 9)
+            << new Jink(Card::Heart, 7)
+            << new Jink(Card::Heart, 8)
+            << new Analeptic(Card::Heart, 9)
             << new Peach(Card::Heart, 10)
-            << new Counterplot(Card::Heart, 11)
-            << new Drivolt(Card::Heart, 13);
+            << new Peach(Card::Heart, 11)
+            << new Counterplot(Card::Heart, 13);
 
     DefensiveHorse *jade = new DefensiveHorse(Card::Heart, 12);
     jade->setObjectName("jade");
-    OffensiveHorse *brown = new OffensiveHorse(Card::Spade, 4);
+    OffensiveHorse *brown = new OffensiveHorse(Card::Club, 8);
     brown->setObjectName("brown");
 
     cards << jade << brown;
     foreach(Card *card, cards)
         card->setParent(this);
+}
+
+// ex
+Inspiration::Inspiration(Suit suit, int number)
+    :GlobalEffect(suit, number)
+{
+    setObjectName("inspiration");
+}
+
+bool Inspiration::isCancelable(const CardEffectStruct &effect) const{
+    return effect.to->isWounded();
+}
+
+void Inspiration::onEffect(const CardEffectStruct &effect) const{
+    int x = qMin(3, effect.to->getLostHp());
+    if(x > 0)
+        effect.to->drawCards(x);
+}
+
+Haiqiu::Haiqiu(Card::Suit suit, int number)
+    :OffensiveHorse(suit, number)
+{
+    setObjectName("haiqiu");
+}
+
+QString Haiqiu::getEffectPath(bool ) const{
+    return "audio/card/common/haiqiu.ogg";
 }
 
 ADD_PACKAGE(Plough)

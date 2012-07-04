@@ -110,7 +110,8 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
     else
         piles[name].removeOne(card_id);
 
-    emit pile_changed(name);
+    if(!name.startsWith("#"))
+        emit pile_changed(name);
 }
 
 QString ClientPlayer::getDeathPixmapPath() const{
@@ -120,6 +121,8 @@ QString ClientPlayer::getDeathPixmapPath() const{
             basename = "marshal";
         else
             basename = "guard";
+    }else if(ServerInfo.EnableHegemony){
+        basename.clear();
     }else
         basename = getRole();
 

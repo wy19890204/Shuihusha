@@ -9,6 +9,7 @@
 #include "scenario-overview.h"
 #include "window.h"
 #include "halldialog.h"
+#include "pixmapanimation.h"
 
 #include <cmath>
 #include <QGraphicsView>
@@ -31,6 +32,7 @@ class FitView : public QGraphicsView
 public:
     FitView(QGraphicsScene *scene) : QGraphicsView(scene) {
         setSceneRect(Config.Rect);
+        setRenderHints(QPainter::TextAntialiasing | QPainter::Antialiasing);
     }
 
 protected:
@@ -39,10 +41,16 @@ protected:
         if(Config.FitInView)
             fitInView(sceneRect(), Qt::KeepAspectRatio);
 
+        if(matrix().m11()>1)setMatrix(QMatrix());
+
         if(scene()->inherits("RoomScene")){
             RoomScene *room_scene = qobject_cast<RoomScene *>(scene());
-            room_scene->adjustItems();
+            room_scene->adjustItems(matrix());
         }
+
+        MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
+        if(main_window)
+            main_window->setBackgroundBrush();
     }
 };
 
@@ -104,6 +112,7 @@ void MainWindow::restoreFromConfig(){
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
+    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard").toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -165,6 +174,8 @@ void MainWindow::on_actionStart_Server_triggered()
     StartScene *start_scene = qobject_cast<StartScene *>(scene);
     if(start_scene){
         start_scene->switchToServer(server);
+        if(Config.value("EnableMinimizeDialog", false).toBool())
+            this->on_actionMinimize_to_system_tray_triggered();
     }
 }
 
@@ -220,7 +231,7 @@ void MainWindow::on_actionReplay_triggered()
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Select a reply file"),
                                                     location,
-                                                    tr("Image replay file (*.png);;Pure text replay file (*.txt)"));
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
     if(filename.isEmpty())
         return;
@@ -251,6 +262,7 @@ void MainWindow::enterRoom(){
 
     ui->actionStart_Game->setEnabled(false);
     ui->actionStart_Server->setEnabled(false);
+	ui->actionAI_Melee->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -267,7 +279,10 @@ void MainWindow::enterRoom(){
     connect(ui->actionKick, SIGNAL(triggered()), room_scene, SLOT(kick()));
     connect(ui->actionSurrender, SIGNAL(triggered()), room_scene, SLOT(surrender()));
     connect(ui->actionSaveRecord, SIGNAL(triggered()), room_scene, SLOT(saveReplayRecord()));
-    connect(ui->actionExpand_dashboard, SIGNAL(triggered()), room_scene, SLOT(adjustDashboard()));
+    connect(ui->actionExpand_dashboard, SIGNAL(toggled(bool)), room_scene, SLOT(adjustDashboard(bool)));
+
+    ui->actionExpand_dashboard->toggle();
+    ui->actionExpand_dashboard->toggle();
 
     if(ServerInfo.FreeChoose){
         ui->menuCheat->setEnabled(true);
@@ -276,11 +291,23 @@ void MainWindow::enterRoom(){
         connect(ui->actionDeath_note, SIGNAL(triggered()), room_scene, SLOT(makeKilling()));
         connect(ui->actionDamage_maker, SIGNAL(triggered()), room_scene, SLOT(makeDamage()));
         connect(ui->actionRevive_wand, SIGNAL(triggered()), room_scene, SLOT(makeReviving()));
+        connect(ui->actionSend_lowlevel_command, SIGNAL(triggered()), this, SLOT(sendLowLevelCommand()));
+        connect(ui->actionExecute_script_at_server_side, SIGNAL(triggered()), room_scene, SLOT(doScript()));
+    }
+    else{
+        ui->menuCheat->setEnabled(false);
+        ui->actionGet_card->disconnect();
+        ui->actionDeath_note->disconnect();
+        ui->actionDamage_maker->disconnect();
+        ui->actionRevive_wand->disconnect();
+        ui->actionSend_lowlevel_command->disconnect();
+        ui->actionExecute_script_at_server_side->disconnect();
     }
 
     connect(room_scene, SIGNAL(restart()), this, SLOT(startConnection()));
     connect(room_scene, SIGNAL(return_to_start()), this, SLOT(gotoStartScene()));
 
+    room_scene->adjustItems();
     gotoScene(room_scene);
 }
 
@@ -305,6 +332,13 @@ void MainWindow::gotoStartScene(){
     setCentralWidget(view);
     restoreFromConfig();
 
+    ui->menuCheat->setEnabled(false);
+    ui->actionGet_card->disconnect();
+    ui->actionDeath_note->disconnect();
+    ui->actionDamage_maker->disconnect();
+    ui->actionRevive_wand->disconnect();
+    ui->actionSend_lowlevel_command->disconnect();
+    ui->actionExecute_script_at_server_side->disconnect();
     gotoScene(start_scene);
 
     addAction(ui->actionShow_Hide_Menu);
@@ -328,7 +362,7 @@ void MainWindow::on_actionGeneral_Overview_triggered()
 
 void MainWindow::on_actionCard_Overview_triggered()
 {
-    CardOverview *overview = new CardOverview(this);
+    CardOverview *overview = CardOverview::GetInstance(this);
     overview->loadFromAll();
     overview->show();
 }
@@ -354,9 +388,13 @@ void MainWindow::on_actionAbout_triggered()
     QString signature = tr("\"A Short Song\" by Cao Cao");
     content.append(QString("<p align='right'><i>%1</i></p>").arg(signature));
 
+    QString email = "moligaloo@gmail.com";
     content.append(tr("This is the open source clone of the popular <b>Sanguosha</b> game,"
                       "totally written in C++ Qt GUI framework <br />"
-                      "My Email: moligaloo@gmail.com <br/>"));
+                      "My Email: <a href='mailto:%1' style = \"color:#0072c1; \">%1</a> <br/>"
+                      "My QQ: 365840793 <br/>"
+                      "My Weibo: http://weibo.com/moligaloo <br/>"
+                      ).arg(email));
 
     QString config;
 
@@ -391,16 +429,20 @@ void MainWindow::on_actionAbout_triggered()
     window->appear();
 }
 
-void MainWindow::changeBackground(){
+void MainWindow::setBackgroundBrush(){
     if(scene){
         QPixmap pixmap(Config.BackgroundBrush);
         QBrush brush(pixmap);
 
         if(pixmap.width() > 100 && pixmap.height() > 100){
-            qreal dx = -width()/2.0;
-            qreal dy = -height()/2.0;
-            qreal sx = width() / qreal(pixmap.width());
-            qreal sy = height() / qreal(pixmap.height());
+            qreal _width = width()/view->matrix().m11();
+            qreal _height= height()/view->matrix().m22();
+
+            qreal dx = -_width/2.0;
+            qreal dy = -_height/2.0;
+            qreal sx = _width / qreal(pixmap.width());
+            qreal sy = _height / qreal(pixmap.height());
+
 
             QTransform transform;
             transform.translate(dx, dy);
@@ -410,6 +452,10 @@ void MainWindow::changeBackground(){
 
         scene->setBackgroundBrush(brush);
     }
+}
+
+void MainWindow::changeBackground(){
+    setBackgroundBrush();
 
     if(scene->inherits("RoomScene")){
         RoomScene *room_scene = qobject_cast<RoomScene *>(scene);
@@ -495,7 +541,7 @@ void MainWindow::on_actionRole_assign_table_triggered()
 
     content = QString("<table border='1'>%1</table").arg(content);
 
-    Window *window = new Window(tr("Role assign table"), QSize(232, 342));
+    Window *window = new Window(tr("Role assign table"), QSize(280, 380));
     scene->addItem(window);
 
     window->addContent(content);
@@ -555,46 +601,9 @@ void MainWindow::on_actionBroadcast_triggered()
 
 void MainWindow::on_actionAcknowledgement_triggered()
 {
-    QStringList contents;
-    contents.append(tr("QSanguosha staff:"));
-
-    contents.append(tr("AI Maintainance: William915, donle"));
-    contents.append(tr("Game Design: Moligaloo, Ubun Tenkei"));
-    contents.append(tr("Miscellaneous: Hypercross"));
-    contents.append(tr("Founder: Moligaloo"));
-
-    QString content;
-    content.append(QString("<p align='left'>"));
-    foreach(QString string, contents){
-        content.append(QString("<font size='4'>%1</font><br />").arg(string));
-    }
-    content.append(QString("</p>"));
-
-    contents.clear();
-    contents.append(tr("Shuihusha staff:"));
-
-    contents.append(tr("Design/Plan/Art: Nicholas"));
-    contents.append(tr("Coder: Ubun Tenkei, Roxiel"));
-    contents.append(tr("Voice: Tianzihui Club"));
-    contents.append(tr("Chores: LTY"));
-    contents.append(tr("QQ Group: 88873329"));
-    contents.append(tr("Url: shuihusha.5d6d.com"));
-
-    content.append(QString("<br /><br />"));
-    content.append(QString("<p align='left'>"));
-    foreach(QString string, contents){
-        content.append(QString("<font size='4'>%1</font><br />").arg(string));
-    }
-    content.append(QString("</p>"));
-
-    Window *window = new Window(tr("Thanks for play"), QSize(365, 411));
-    scene->addItem(window);
-
-    window->addContent(content);
-    window->addCloseButton(tr("OK"));
-    window->shift();
-
-    window->appear();
+    AcknowledgementScene* ack = new AcknowledgementScene;
+    connect(ack,SIGNAL(go_back()),this,SLOT(gotoStartScene()));
+    gotoScene(ack);
 }
 
 void MainWindow::on_actionPC_Console_Start_triggered()
@@ -686,6 +695,7 @@ QGroupBox *MeleeDialog::createGeneralBox(){
 
     loop_checkbox = new QCheckBox(tr("LOOP"));
     loop_checkbox->setObjectName("loop_checkbox");
+    loop_checkbox->setChecked(true);
 
     form_layout->addRow(tr("Num of rooms"), spinbox);
     form_layout->addRow(loop_checkbox, start_button);
@@ -733,7 +743,7 @@ public:
         setFlag(ItemIsMovable);
     }
 
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *){
         foreach(QGraphicsItem *item, childItems()){
             item->setVisible(! item->isVisible());
         }
@@ -752,8 +762,9 @@ void MeleeDialog::startTest(){
     if(server){
         server->gamesOver();
     }else{
-        server = new Server(this);
+        server = new Server(this->parentWidget());
         server->listen();
+        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
     }
     Config.AIDelay = 0;
     room_count = spinbox->value();
@@ -761,7 +772,6 @@ void MeleeDialog::startTest(){
         Room *room = server->createNewRoom();
         connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
         connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
 
         room->startTest(avatar_button->property("to_test").toString());
     }
@@ -820,7 +830,6 @@ void MeleeDialog::onGameOver(const QString &winner){
         Room *room = server->createNewRoom();
         connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
         connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-        connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
 
         room->startTest(avatar_button->property("to_test").toString());
     }
@@ -879,6 +888,21 @@ void MeleeDialog::setGeneral(const QString &general_name){
     }
 }
 
+AcknowledgementScene::AcknowledgementScene(QObject *parent) :
+    QGraphicsScene(parent)
+{
+    view = new QDeclarativeView;
+    view->setSource(QUrl::fromLocalFile("acknowledgement/main.qml"));
+    addWidget(view);
+    view->move( - width()/2, - height()/2);
+    view->setStyleSheet(QString("background: transparent"));
+
+    QObject *item = view->rootObject();
+
+    connect(item,SIGNAL(go_back()),this,SIGNAL(go_back()));
+}
+
+
 void MainWindow::on_actionAI_Melee_triggered()
 {
     MeleeDialog *dialog = new MeleeDialog(this);
@@ -921,7 +945,7 @@ void MainWindow::on_actionReplay_file_convert_triggered()
     }
 }
 
-void MainWindow::on_actionSend_lowlevel_command_triggered()
+void MainWindow::sendLowLevelCommand()
 {
     QString command = QInputDialog::getText(this, tr("Send low level command"), tr("Please input the raw low level command"));
     if(!command.isEmpty())
@@ -949,12 +973,18 @@ void MeleeDialog::updateResultBox(QString role, int win){
     server_log->append(tr("End of game %1").arg(totalCount));
 }
 
+void MainWindow::on_actionView_ban_list_triggered()
+{
+    BanlistDialog *dialog = new BanlistDialog(this, true);
+    dialog->exec();
+}
+
 #include "audio.h"
 
 void MainWindow::on_actionAbout_fmod_triggered()
 {
     QString content = tr("FMOD is a proprietary audio library made by Firelight Technologies");
-    content.append("<p align='center'> <img src='image/system/fmod.png' /> </p> <br/>");
+    content.append("<p align='center'> <img src='image/logo/fmod.png' /> </p> <br/>");
 
     QString address = "http://www.fmod.org";
     content.append(tr("Official site: <a href='%1' style = \"color:#0072c1; \">%1</a> <br/>").arg(address));
@@ -978,7 +1008,7 @@ void MainWindow::on_actionAbout_fmod_triggered()
 void MainWindow::on_actionAbout_Lua_triggered()
 {
     QString content = tr("Lua is a powerful, fast, lightweight, embeddable scripting language.");
-    content.append("<p align='center'> <img src='image/system/lua.png' /> </p> <br/>");
+    content.append("<p align='center'> <img src='image/logo/lua.png' /> </p> <br/>");
 
     QString address = "http://www.lua.org";
     content.append(tr("Official site: <a href='%1' style = \"color:#0072c1; \">%1</a> <br/>").arg(address));

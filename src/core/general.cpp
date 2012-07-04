@@ -5,9 +5,10 @@
 #include "client.h"
 
 #include <QSize>
+#include <QFile>
 
-General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden)
-    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden)
+General::General(Package *package, const QString &name, const QString &kingdom, int max_hp, bool male, bool hidden, bool never_shown)
+    :QObject(package), kingdom(kingdom), max_hp(max_hp), gender(male ? Male : Female), hidden(hidden), never_shown(never_shown)
 {
     static QChar lord_symbol('$');
     if(name.contains(lord_symbol)){
@@ -57,6 +58,10 @@ bool General::isHidden() const{
     return hidden;
 }
 
+bool General::isTotallyHidden() const{
+    return never_shown;
+}
+
 QString General::getPixmapPath(const QString &category) const{
     QString suffix = "png";
     if(category == "card")
@@ -67,7 +72,6 @@ QString General::getPixmapPath(const QString &category) const{
 
 void General::addSkill(Skill *skill){
     skill->setParent(this);
-    skill->initMediaSource();
     skill_set << skill->objectName();
 }
 
@@ -123,6 +127,14 @@ QSet<const TriggerSkill *> General::getTriggerSkills() const{
     return skills;
 }
 
+void General::addRelateSkill(const QString &skill_name){
+    related_skills << skill_name;
+}
+
+QStringList General::getRelatedSkillNames() const{
+    return related_skills;
+}
+
 QString General::getPackage() const{
     QObject *p = parent();
     if(p)
@@ -146,6 +158,18 @@ QString General::getSkillDescription() const{
 
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.ogg").arg(objectName());
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)){
+        QStringList origin_generals = objectName().split("_");
+        if(origin_generals.length()>1)
+            filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
+    }
+    if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
+        QString origin_general = objectName();
+        origin_general.chop(1);
+        if(Sanguosha->getGeneral(origin_general))
+            filename = QString("audio/death/%1.ogg").arg(origin_general);
+    }
     Sanguosha->playEffect(filename);
 }
 

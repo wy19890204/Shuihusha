@@ -54,28 +54,26 @@ QString Skill::getDefaultChoice(ServerPlayer *) const{
     return default_choice;
 }
 
-int Skill::getEffectIndex(ServerPlayer *, const Card *) const{
+int Skill::getEffectIndex(const ServerPlayer *, const Card *) const{
     return -1;
 }
 
 void Skill::initMediaSource(){
     sources.clear();
 
-    if(parent()){
-        int i;
-        for(i=1; ;i++){
-            QString effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
-            if(QFile::exists(effect_file))
-                sources << effect_file;
-            else
-                break;
-        }
+    int i;
+    for(i=1; ;i++){
+        QString effect_file = QString("audio/skill/%1%2.ogg").arg(objectName()).arg(i);
+        if(QFile::exists(effect_file))
+            sources << effect_file;
+        else
+            break;
+    }
 
-        if(sources.isEmpty()){
-            QString effect_file = QString("audio/skill/%1.ogg").arg(objectName());
-            if(QFile::exists(effect_file))
-                sources << effect_file;
-        }
+    if(sources.isEmpty()){
+        QString effect_file = QString("audio/skill/%1.ogg").arg(objectName());
+        if(QFile::exists(effect_file))
+            sources << effect_file;
     }
 }
 
@@ -101,10 +99,6 @@ void Skill::playEffect(int index) const{
         if(ClientInstance)
             ClientInstance->setLines(filename);
     }
-}
-
-bool Skill::useCardSoundEffect() const{
-    return false;
 }
 
 void Skill::setFlag(ServerPlayer *player) const{
@@ -227,7 +221,7 @@ int ScenarioRule::getPriority() const{
     return 3;
 }
 
-bool ScenarioRule::triggerable(const ServerPlayer *target) const{
+bool ScenarioRule::triggerable(const ServerPlayer *) const{
     return true;
 }
 
@@ -241,7 +235,7 @@ int MasochismSkill::getPriority() const{
     return -1;
 }
 
-bool MasochismSkill::trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+bool MasochismSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
     DamageStruct damage = data.value<DamageStruct>();
 
     if(player->isAlive())
@@ -256,7 +250,7 @@ PhaseChangeSkill::PhaseChangeSkill(const QString &name)
     events << PhaseChange;
 }
 
-bool PhaseChangeSkill::trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
+bool PhaseChangeSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
     bool skipped = onPhaseChange(player);
     if(skipped)
         player->skip(player->getPhase());
@@ -270,7 +264,7 @@ DrawCardsSkill::DrawCardsSkill(const QString &name)
     events << DrawNCards;
 }
 
-bool DrawCardsSkill::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+bool DrawCardsSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
     int n = data.toInt();
     data = getDrawNum(player, n);
     return false;
@@ -282,7 +276,7 @@ SlashBuffSkill::SlashBuffSkill(const QString &name)
     events << SlashProceed;
 }
 
-bool SlashBuffSkill::trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+bool SlashBuffSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
     if(data.canConvert<SlashEffectStruct>()){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
@@ -296,23 +290,45 @@ bool SlashBuffSkill::trigger(TriggerEvent, ServerPlayer *player, QVariant &data)
 GameStartSkill::GameStartSkill(const QString &name)
     :TriggerSkill(name)
 {
-    events << GameStart;
+    events << GameStart << Death;
 }
 
-bool GameStartSkill::trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
-    onGameStart(player);
+bool GameStartSkill::triggerable(const ServerPlayer *target) const{
+    return target->hasSkill(objectName());
+}
+
+bool GameStartSkill::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &) const{
+    if (event == GameStart)
+        onGameStart(player);
+    else
+        onIdied(player);
+
     return false;
 }
 
-ProhibitSkill::ProhibitSkill(const QString &name)
+void GameStartSkill::onIdied(ServerPlayer *) const{
+    return;
+}
+
+ClientSkill::ClientSkill(const QString &name)
     :Skill(name, Skill::Compulsory)
 {
 }
 
-DistanceSkill::DistanceSkill(const QString &name)
-    :Skill(name, Skill::Compulsory)
-{
+int ClientSkill::getExtra(const Player *) const{
+    return 0;
+}
 
+int ClientSkill::getCorrect(const Player *, const Player *) const{
+    return 0;
+}
+
+int ClientSkill::getAtkrg(const Player *) const{
+    return 0;
+}
+
+bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
+    return false;
 }
 
 WeaponSkill::WeaponSkill(const QString &name)
@@ -321,6 +337,7 @@ WeaponSkill::WeaponSkill(const QString &name)
 }
 
 bool WeaponSkill::triggerable(const ServerPlayer *target) const{
+    if (!target) return false;
     return target->hasWeapon(objectName());
 }
 
@@ -331,6 +348,7 @@ ArmorSkill::ArmorSkill(const QString &name)
 }
 
 bool ArmorSkill::triggerable(const ServerPlayer *target) const{
+    if (!target) return false;
     return target->hasArmorEffect(objectName()) && target->getArmor()->getSkill() == this;
 }
 

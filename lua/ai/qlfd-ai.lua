@@ -1,56 +1,3 @@
--- yushui
-yushui_skill={}
-yushui_skill.name = "yushui"
-table.insert(sgs.ai_skills, yushui_skill)
-yushui_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("YushuiCard") or not self.player:isWounded() then return end
-	local cards = self.player:getCards("he")
-    cards = sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
-	for _, card in ipairs(cards)  do
-		if card:getSuit() == sgs.Card_Heart then
-		    return sgs.Card_Parse("@YushuiCard=" .. card:getEffectiveId())
-		end
-	end
-	return
-end
-sgs.ai_skill_use_func["YushuiCard"] = function(card, use, self)
-	for _, friend in ipairs(self.friends) do
-		if friend:isWounded() and friend:getGeneral():isMale() then
-			use.card = card
-			if use.to then use.to:append(friend) end
-			return
-		end
-	end
-end
-
--- zhensha
-sgs.ai_skill_cardask["@zhensha"] = function(self, data)
-	local carduse = data:toCardUse()
-	if self:isFriend(carduse.from) then return "." end
-	local cards = self.player:getHandcards()
-	cards = sgs.QList2Table(cards)
-	for _, fcard in ipairs(cards) do
-		if fcard:getSuit() == sgs.Card_Spade then
-			if carduse.from:isLord() or carduse.from:getHp() > 1 then
-				return fcard:getEffectiveId()
-			end
-		end
-	end
-	return "."
-end
-
-function SmartAI:isNoZhenshaMark()
-	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
-		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
-	end
-	return true
-end
-
--- shengui
-function sgs.ai_trick_prohibit.shengui(card, self, to)
-	return not to:faceUp() and self.player:getGeneral():isMale()
-end
 
 -- meicha
 meicha_skill={}
@@ -111,6 +58,11 @@ end
 -- panxin
 sgs.ai_skill_invoke["panxin"] = sgs.ai_skill_invoke["dujian"]
 
+-- foyuan
+function sgs.ai_slash_prohibit.foyuan(self)
+	if self.player:getGeneral():isMale() and not self.player:hasEquip() then return true end
+end
+
 -- banzhuang
 local banzhuang_skill={}
 banzhuang_skill.name = "banzhuang"
@@ -160,38 +112,6 @@ sgs.ai_filterskill_filter["zhuying"] = function(card, card_place)
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
 	if card:inherits("Analeptic") then return ("peach:zhuying[%s:%s]=%d"):format(suit, number, card_id) end
-end
-
--- shouwang
-shouwang_skill={}
-shouwang_skill.name = "shouwang"
-table.insert(sgs.ai_skills, shouwang_skill)
-shouwang_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("ShouwangCard") then return end
-	local slash = self:getCard("Slash")
-	if not slash then return end
-	return sgs.Card_Parse("@ShouwangCard=" .. slash:getEffectiveId())
-end
-sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
-	self:sort(self.friends,"threat")
-	for _, friend in ipairs(self.friends) do
-		if friend:getGeneral():isMale() then
-			use.card = card
-			if use.to then use.to:append(friend) end
-			return
-		end
-	end
-end
-
--- zhongzhen
-sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
-	local damage = data:toDamage()
-	local max_card = self:getMaxCard()
-	if max_card and max_card:getNumber() > 11 and self:isEnemy(damage.from) then
-		return true
-	else
-		return false
-	end
 end
 
 -- zishi
@@ -257,29 +177,6 @@ sgs.ai_skill_cardask["@zhangshi"] = function(self, data)
 	local who = data:toPlayer()
 	if not self:isFriend(who) then return "." end
 	return self:getCardId("Slash") or "."
-end
-
--- suocai
-local suocai_skill={}
-suocai_skill.name = "suocai"
-table.insert(sgs.ai_skills, suocai_skill)
-suocai_skill.getTurnUseCard = function(self)
-    if not self.player:hasUsed("SuocaiCard") and not self.player:isKongcheng() then
-		local max_card = self:getMaxCard()
-		if max_card and self.player:getHandcardNum() > 2 then
-			return sgs.Card_Parse("@SuocaiCard=" .. max_card:getEffectiveId())
-		end
-	end
-end
-sgs.ai_skill_use_func["SuocaiCard"]=function(card,use,self)
-	self:sort(self.enemies, "handcard")
-	for _, enemy in ipairs(self.enemies) do
-		if not enemy:isKongcheng() and enemy:getGeneral():isMale() then
-            use.card = card
-		    if use.to then use.to:append(enemy) end
-            return
-		end
-	end
 end
 
 -- eyan
@@ -352,9 +249,6 @@ sgs.ai_filterskill_filter["huoshui"] = function(card, card_place)
 	local card_id = card:getEffectiveId()
 	if card:inherits("Weapon") or card:inherits("Slash") then return ("drivolt:huoshui[%s:%s]=%d"):format(suit, number, card_id) end
 end
-
--- huakui
-sgs.ai_skill_invoke["huakui"] = true
 
 -- zhiyu
 sgs.ai_skill_invoke["zhiyu"] = function(self, data)
@@ -489,7 +383,8 @@ end
 -- baoen
 sgs.ai_skill_cardask["@baoen"] = function(self, data)
 	local rev = data:toRecover()
-	local card = self:getUnuseCard()
-	if self:isEnemy(rev.who) or not card then return "." end
-	return card:getEffectiveId() or "."
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, true)
+	if self:isEnemy(rev.who) or not cards[1] then return "." end
+	return cards[1]:getEffectiveId() or "."
 end

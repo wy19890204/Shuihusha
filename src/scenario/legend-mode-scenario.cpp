@@ -23,8 +23,7 @@ public:
 
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         for(int i=player->getMaxHP();i>0;i--)
             room->throwCard(room->drawCard());
         room->acquireSkill(player, "chuanqi");
@@ -295,18 +294,19 @@ public:
 
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *hero, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room*, ServerPlayer *hero, QVariant &) const{
         if(hero->getPhase() == Player::Start){
-                        hero->gainMark("@chuanqi",hero->getHandcardNum());
-                        return false;
+            hero->gainMark("@chuanqi", hero->getHandcardNum());
+            return false;
         }
         return false;
     }
+
     virtual QDialog *getDialog() const{
-            new ChuanqiCard;
-            new ArcChuanqiCard;
-            return ChuanqiDialog::GetInstance();
-        }
+        new ChuanqiCard;
+        new ArcChuanqiCard;
+        return ChuanqiDialog::GetInstance();
+    }
 };
 
 LegendScenario::LegendScenario()

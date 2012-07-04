@@ -8,14 +8,8 @@ sgs.ai_view_as["zhiqu"] = function(card, player, card_place)
 	end
 end
 
--- jiuhan&linmo
-sgs.ai_skill_invoke["jiuhan"] = true
+-- linmo
 sgs.ai_skill_invoke["linmo"] = true
-
--- jueming
-function sgs.ai_trick_prohibit.jueming(card, self, to)
-	return to ~= self.room:getCurrent() and to:getHp() == 1 and (card:inherits("Duel") or card:inherits("Assassinate"))
-end
 
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)
@@ -94,11 +88,11 @@ bingji_skill.name = "bingji"
 table.insert(sgs.ai_skills, bingji_skill)
 bingji_skill.getTurnUseCard = function(self)
 	if not self:slashIsAvailable() or not self.player:isWounded() then return end
-	local first_found, second_found = false, false
+	local first_found = false
+	local second_found = false
 	local first_card, second_card
 	if self.player:getHandcardNum() >= 2 then
 		local cards = self.player:getHandcards()
-		local same_suit=false
 		cards = sgs.QList2Table(cards)
 		for _, fcard in ipairs(cards) do
 			if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo") or fcard:inherits("AOE")) then
@@ -206,12 +200,11 @@ sgs.ai_skill_use_func["LingdiCard"]=function(card,use,self)
 	end
 end
 
--- qiaodou&moucai
-sgs.ai_skill_invoke["qiaodou"] = sgs.ai_skill_invoke["qiongtu"]
-sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
-
--- duoming
-sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
+-- qiaodou
+sgs.ai_skill_invoke["qiaodou"] = function(self, data)
+	local sb = data:toPlayer()
+	return sb:faceUp() and self:isEnemy(sb)
+end
 
 -- wugou
 local wugou_skill={}
@@ -250,30 +243,6 @@ wugou_skill.getTurnUseCard = function(self)
 		assert(assassinate)
 		return assassinate
 	end
-end
-
--- heidian
-sgs.ai_skill_cardask["@heidian2"] = function(self)
-	local ecards = self.player:getCards("e")
-	ecards=sgs.QList2Table(cards)
-	self:sortByUseValue(ecards, true)
-	return ecards[1]:getEffectiveId() or "."
-end
-
--- renrou
-sgs.ai_skill_invoke["renrou"] = function(self, data)
-	local shiti = data:toPlayer()
-	local cards = shiti:getHandcards()
-	local shit_num = 0
-	for _, card in sgs.qlist(cards) do
-		if card:inherits("Shit") then
-			shit_num = shit_num + 1
-			if card:getSuit() == sgs.Card_Spade then
-				shit_num = shit_num + 1
-			end
-		end
-	end
-	return shit_num <= 1
 end
 
 -- yunchou

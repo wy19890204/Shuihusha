@@ -1,6 +1,7 @@
 #include "couple-scenario.h"
 #include "skill.h"
 #include "engine.h"
+#include "room.h"
 
 class CoupleScenarioRule: public ScenarioRule{
 public:
@@ -10,8 +11,7 @@ public:
         events << GameStart << GameOverJudge << Death;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         const CoupleScenario *scenario = qobject_cast<const CoupleScenario *>(parent());
 
         switch(event){
@@ -19,7 +19,7 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
-                }else if(player->getGeneralName() == "songjiang"){
+                }else if(player->getGeneralName() == "songjiang2"){
                     if(player->askForSkillInvoke("reselect"))
                         room->transfigure(player, "jiangsong", true);
                 }else if(player->getGeneralName() == "yangxiong2"){
@@ -112,30 +112,33 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "zhoutong";
-    renegades << "fangla" << "tongguan";
+    lord = "caijing";
+    renegades << "fangla" << "wangqing";
     rule = new CoupleScenarioRule(this);
 
     //map["ximenqing"] = "panjinlian";
     map["songjiang"] = "yanxijiao";
-    map["lujunyi"] = "jiashi";
+    //map["lujunyi"] = "jiashi";
     map["zhangqing"] = "qiongying";
     map["linchong"] = "linniangzi";
     //map["wangying"] = "husanniang";
     map["qingzhang"] = "sunerniang";
     //map["sunxin"] = "gudasao";
-    map["wangqing"] = "duansanniang";
-    //map["yanqing"] = "lishishi";
-    map["yangxiong"] = "panqiaoyun";
-    map["shijin"] = "liruilan";
-    map["andaoquan"] = "liqiaonu";
-    map["wusong"] = "yulan";
+    //map["wangqing"] = "duansanniang";
+    map["yanqing"] = "lishishi";
+    //map["yangxiong"] = "panqiaoyun";
+    //map["shijin"] = "liruilan";
+    //map["andaoquan"] = "liqiaonu";
+    //map["wusong"] = "yulan";
     //map["chaijin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
 
     full_map = map;
-    full_map["ximenqing"] = "wuda";
+    full_map["wuda"] = "panjinlian";
+    full_map["gaoyanei"] = "linniangzi";
     full_map["jiangsong"] = "yanxijiao";
+    full_map["peiruhai"] = "panqiaoyun";
+    full_map["ligu"] = "jiashi";
     full_map["zhangsan"] = "lisi";
 }
 
@@ -228,7 +231,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "zhoutong")
+        if(generals.at(i) == "caijing")
             roles << "lord";
         else
             roles << "renegade";

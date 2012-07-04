@@ -1,0 +1,1 @@
+F:\QT\qt\bin\rcc.exe -binary %1 -o %1.rcc

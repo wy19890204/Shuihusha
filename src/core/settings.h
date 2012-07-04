@@ -29,6 +29,7 @@ public:
     QString GameMode;
     QStringList BanPackages;
     bool ContestMode;
+    bool Statistic;
     bool FreeChoose;
     bool ForbidSIMC;
     bool DisableChat;
@@ -37,7 +38,9 @@ public:
     bool EnableScene;	//changjing
     bool EnableSame;
     bool EnableEndless;
+    bool EnableAnzhan;
     bool EnableBasara;
+    bool EnableHegemony;
     int MaxHpScheme;
     bool AnnounceIP;
     QString Address;
@@ -56,19 +59,30 @@ public:
 
     bool FitInView;
     bool EnableHotKey;
+    bool EnableMinimizeDialog;
     bool NeverNullifyMyTrick;
     bool EnableAutoTarget;
     int NullificationCountDown;
+    bool ShowAllName;
     bool SPOpen;
     int OperationTimeout;
     bool OperationNoLimit;
-    bool EnableEffects;
+    bool EnableCardEffects;
+    bool EnableEquipEffects;
+    bool EnableSkillEffects;
     bool EnableLastWord;
+    bool EnableCheatRing;
     bool EnableBgMusic;
     float BGMVolume;
     float EffectVolume;
+    bool EnableLua;
 
     QString BackgroundBrush;
+
+    // consts
+    static const int S_CHOOSE_GENERAL_TIMEOUT;
+    static const int S_GUANXING_TIMEOUT;
+    static const int S_SURRNDER_REQUEST_MIN_INTERVAL;
 };
 
 extern Settings Config;

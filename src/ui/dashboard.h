@@ -5,6 +5,7 @@
 #include "carditem.h"
 #include "player.h"
 #include "skill.h"
+#include "sprite.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -17,7 +18,7 @@ class Dashboard : public Pixmap
     Q_OBJECT
 
 public:
-    Dashboard();
+    Dashboard(QGraphicsItem *button_widget);
     virtual QRectF boundingRect() const;
     void setWidth(int width);
     QGraphicsProxyWidget *addWidget(QWidget *widget, int x, bool from_left);
@@ -55,11 +56,17 @@ public:
     void killPlayer();
     void revivePlayer();
 
+    int getRightPosition();
+    int getMidPosition();
+    int getButtonWidgetWidth() const;
+    int getTextureWidth() const;
+
 public slots:
     void updateAvatar();
     void updateSmallAvatar();
     void updateReadyItem(bool visible);
     void refresh();
+    void doFilter();
     void sortCards(int sort_type);
     void reverseSelection();
 
@@ -70,7 +77,7 @@ protected:
 private:
     QPixmap left_pixmap, right_pixmap;
     QGraphicsRectItem *left, *middle, *right;
-    int min_width;
+    QGraphicsItem *button_widget;
 
     QList<CardItem*> card_items;
     CardItem *selected;
@@ -82,7 +89,7 @@ private:
     int sort_type;
     QGraphicsSimpleTextItem *handcard_num;
     QList<CardItem *> judging_area;
-    QList<QPixmap> delayed_tricks;
+    QList<QGraphicsItem *> delayed_tricks;
     QGraphicsPixmapItem *death_item;
     Pixmap *chain_icon, *back_icon;
 
@@ -92,6 +99,9 @@ private:
 
     QGraphicsRectItem *trusting_item;
     QGraphicsSimpleTextItem *trusting_text;
+
+    //for animated effects
+    EffectAnimation *animations;
 
     // for parts creation
     void createLeft();
@@ -114,7 +124,10 @@ private:
 private slots:
     void onCardItemClicked();
     void onCardItemThrown();
+    void onCardItemHover();
+    void onCardItemLeaveHover();
     void onMarkChanged();
+    void setEcstState();
     void setActionState();
 
 signals:

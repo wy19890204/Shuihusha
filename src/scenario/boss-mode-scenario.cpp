@@ -1,6 +1,6 @@
 #include "boss-mode-scenario.h"
 #include "engine.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 #include "clientplayer.h"
 #include "client.h"
 #include "carditem.h"
@@ -88,11 +88,13 @@ public:
                 if(target->getHandcardNum()<=target->getHp())
                     invoke_skill = true;
             }
-            if(!invoke_skill)   return false;
+            if(!invoke_skill)
+                return false;
 
             LogMessage log;
-            log.type = "#JishI";
+            log.type = "#TriggerSkill";
             log.from = target;
+            log.arg = objectName();
             room->sendLog(log);
 
             foreach(ServerPlayer *player, others){
@@ -128,8 +130,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         room->playSkillEffect(objectName());
         QList<ServerPlayer *> players = room->getAlivePlayers();
         bool has_frantic = player->getMark("@frantic")>0;
@@ -150,6 +151,7 @@ public:
                     log.from = effect.from;
                     log.to << player;
                     log.arg = effect.card->objectName();
+                    log.arg2 = objectName();
 
                     room->sendLog(log);
 
@@ -165,8 +167,9 @@ public:
                 data = QVariant::fromValue(damage);
 
                 LogMessage log;
-                log.type = "#DajiSpec";
+                log.type = "#TriggerSkill";
                 log.from = player;
+                log.arg = objectName();
                 room->sendLog(log);
                 return false;
             }
@@ -182,22 +185,15 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == CardLost){
             if(player->getWeapon() == NULL){
                 if(!player->hasSkill("paoxiao"))
                     room->acquireSkill(player, "paoxiao");
             }
             else{
-                if(player->hasSkill("paoxiao")){
+                if(player->hasSkill("paoxiao"))
                     room->detachSkillFromPlayer(player, "paoxiao");
-
-                    LogMessage log;
-                    log.type = "#PaoxiaoLose";
-                    log.from = player;
-                    room->sendLog(log);
-                }
             }
 
             QList<ServerPlayer *> players = room->getAllPlayers();
@@ -220,10 +216,10 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        if(player->getPhase() != Player::Play) return false;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() != Player::Play)
+            return false;
 
-        Room *room = player->getRoom();
         if(player->getHp() != player->getMaxHP() && event == Damage){
             RecoverStruct recover;
             recover.who = player;
@@ -239,9 +235,9 @@ public:
     }
 };
 
-class Duduan: public ProhibitSkill{
+class Duduan: public ClientSkill{
 public:
-    Duduan():ProhibitSkill("duduan"){
+    Duduan():ClientSkill("duduan"){
     }
 
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{
@@ -257,14 +253,12 @@ public:
         events << GameStart << TurnStart << PhaseChange
                << Death << GameOverJudge << Damaged << HpLost;
 
-        boss_banlist << "yuanshao" << "shuangxiong" << "zhaoyun" << "guanyu" << "shencaocao";
+        boss_banlist << "yanxijiao" << "qiongying" << "caijing" << "zhuwu";
 
-        boss_skillbanned << "luanji" << "shuangxiong" << "longdan" << "wusheng" << "guixin";
+        boss_skillbanned << "huakui" << "yuanpei" << "duoquan" << "fangzhen";
 
-        dummy_skills << "chujia" << "xuwei" << "tuoqiao" << "shenli" << "midao"
-                     << "kuangfeng" << "dawu" << "kuangbao" << "shenfen" << "wuqian"
-                     << "wumou" << "wuhun" << "tongxin" << "xinsheng" << "zaoxian"
-                     << "renjie" << "baiyin";
+        dummy_skills << "duoquan" << "maidao" << "fengmang" << "shouge" << "buzhen"
+                     << "qimen";
     }
 
     void getRandomSkill(ServerPlayer *player, bool need_trans = false) const{
@@ -357,9 +351,7 @@ public:
         }
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(event){
         case GameStart:{
                 if(player->isLord()){

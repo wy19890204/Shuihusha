@@ -3,6 +3,7 @@
 
 #include "general.h"
 #include "card.h"
+#include "statistics.h"
 
 #include <QObject>
 #include <QTcpSocket>
@@ -49,7 +50,7 @@ class Player : public QObject
     Q_ENUMS(Role)
 
 public:
-    enum Phase {Start, Judge, Draw, Play, Discard, Finish, NotActive};
+    enum Phase {RoundStart, Start, Judge, Draw, Play, Discard, Finish, NotActive};
     enum Place {Hand, Equip, Judging, Special, DiscardedPile, DrawPile};
     enum Role {Lord, Loyalist, Rebel, Renegade};
 
@@ -61,7 +62,9 @@ public:
     // property setters/getters
     int getHp() const;
     void setHp(int hp);
+    int getMaxHp() const;
     int getMaxHP() const;
+    void setMaxHp(int max_hp);
     void setMaxHP(int max_hp);
     int getLostHp() const;
     bool isWounded() const;
@@ -138,6 +141,7 @@ public:
     void removeEquip(const EquipCard *equip);
     bool hasEquip(const Card *card) const;
     bool hasEquip() const;
+    bool hasEquip(const QString &name, bool inherit = false) const;
 
     QList<const Card *> getJudgingArea() const;
     void addDelayedTrick(const Card *trick);
@@ -189,6 +193,7 @@ public:
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
     QStringList getVisSkist(const QString &exclude) const;
+    int getKingdoms() const;
     QSet<QString> getAcquiredSkills() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
@@ -198,6 +203,12 @@ public:
     void jilei(const QString &type);
     bool isJilei(const Card *card) const;
 
+    void setCardLocked(const QString &name);
+    bool isLocked(const Card *card) const;
+    bool hasCardLock(const QString &card_str) const;
+
+    StatisticsStruct *getStatistics() const;
+    void setStatistics(StatisticsStruct *statistics);
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;
@@ -234,6 +245,9 @@ private:
     QHash<const Player *, int> fixed_distance;
 
     QSet<QString> jilei_set;
+    QSet<QString> lock_card;
+
+    StatisticsStruct *player_statistics;
 
 signals:
     void general_changed();

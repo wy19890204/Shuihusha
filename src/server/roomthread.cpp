@@ -3,9 +3,13 @@
 #include "engine.h"
 #include "gamerule.h"
 #include "ai.h"
+#include "jsonutils.h"
 #include "settings.h"
 
 #include <QTime>
+#include <json/json.h>
+
+using namespace QSanProtocol::Utils;
 
 LogMessage::LogMessage()
     :from(NULL)
@@ -15,7 +19,7 @@ LogMessage::LogMessage()
 QString LogMessage::toString() const{
     QStringList tos;
     foreach(ServerPlayer *player, to)
-        tos << player->objectName();
+        if (player != NULL) tos << player->objectName();
 
     return QString("%1:%2->%3:%4:%5:%6")
             .arg(type)
@@ -70,8 +74,8 @@ bool JudgeStructPattern::match(const Player *player, const Card *card) const{
     if(isRegex){
         QString class_name = card->metaObject()->className();
         Card::Suit suit = card->getSuit();
-        if(player->hasSkill("hongyan") && suit == Card::Spade)
-            suit = Card::Heart;
+        /*if(player->hasSkill("hongyan") && suit == Card::Spade)
+            suit = Card::Heart;*/
 
         QString number = card->getNumberString();
         QString card_str = QString("%1:%2:%3").arg(class_name).arg(Card::Suit2String(suit)).arg(number);
@@ -98,7 +102,7 @@ JudgeStructPattern &JudgeStructPattern::operator =(const QString &str){
 }
 
 JudgeStruct::JudgeStruct()
-    :who(NULL), card(NULL), good(true)
+    :who(NULL), card(NULL), good(true), time_consuming(false)
 {
 
 }
@@ -117,8 +121,12 @@ bool JudgeStruct::isBad() const{
     return ! isGood();
 }
 
+PhaseChangeStruct::PhaseChangeStruct()
+    :from(Player::NotActive), to(Player::NotActive)
+{}
+
 CardUseStruct::CardUseStruct()
-    :card(NULL), from(NULL)
+    :card(NULL), from(NULL), mute(false)
 {
 }
 
@@ -126,10 +134,36 @@ bool CardUseStruct::isValid() const{
     return card != NULL;
 }
 
+bool CardUseStruct::tryParse(const Json::Value &usage, Room *room){
+    if (usage.size() < 2 || !usage[0].isString() || !usage[1].isArray())
+        return false;
+
+    card = Card::Parse(toQString(usage[0]));
+
+    const Json::Value &targets = usage[1];
+
+    for (unsigned int i = 0; i < targets.size(); i++)
+    {
+        if (!targets[i].isString()) return false;
+        this->to << room->findChild<ServerPlayer *>(toQString(targets[i]));
+    }
+    return true;
+}
+
 void CardUseStruct::parse(const QString &str, Room *room){
-    QStringList words = str.split("->");
+    QStringList words = str.split("->", QString::KeepEmptyParts);
+    
+    Q_ASSERT(words.length() == 1 || words.length() == 2);
+
     QString card_str = words.at(0);
-    QString target_str = words.at(1);
+    QString target_str = ".";
+    
+    //@todo: it's observed that when split on "a->."
+    // only returns one QString, which is "a". Suspect
+    // it's a bug with QT regular expression. Figure out
+    // the cause of the issue.
+    if (words.length() == 2 && !words.at(1).isEmpty()) 
+        target_str = words.at(1);    
 
     card = Card::Parse(card_str);
 
@@ -147,8 +181,10 @@ QString EventTriplet::toString() const{
             .arg(data->toString()).arg(data->typeName());
 }
 
+//@todo: setParent here is illegitimate in QT and is equivalent to calling
+// setParent(NULL). Find another way to do it if we really need a parent.
 RoomThread::RoomThread(Room *room)
-    :QThread(room), room(room)
+    :room(room)
 {
 }
 
@@ -159,12 +195,12 @@ void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
         addTriggerSkill(skill);
 
         if(invoke_game_start && skill->getTriggerEvents().contains(GameStart))
-            skill->trigger(GameStart, player, void_data);
+            skill->trigger(GameStart, room, player, void_data);
     }
 }
 
 void RoomThread::constructTriggerTable(const GameRule *rule){
-    foreach(ServerPlayer *player, room->players){
+    foreach(ServerPlayer *player, room->getPlayers()){
         addPlayerSkills(player, false);
     }
 
@@ -175,7 +211,7 @@ static const int GameOver = 1;
 
 void RoomThread::run3v3(){
     QList<ServerPlayer *> warm, cool;
-    foreach(ServerPlayer *player, room->players){
+    foreach(ServerPlayer *player, room->m_players){
         switch(player->getRoleEnum()){
         case Player::Lord: warm.prepend(player); break;
         case Player::Loyalist: warm.append(player); break;
@@ -226,11 +262,11 @@ void RoomThread::run3v3(){
 
 void RoomThread::action3v3(ServerPlayer *player){
     room->setCurrent(player);
-    trigger(TurnStart, room->getCurrent());
+    trigger(TurnStart, room, room->getCurrent());
     room->setPlayerFlag(player, "actioned");
 
     bool all_actioned = true;
-    foreach(ServerPlayer *player, room->alive_players){
+    foreach(ServerPlayer *player, room->m_alivePlayers){
         if(!player->hasFlag("actioned")){
             all_actioned = false;
             break;
@@ -238,7 +274,7 @@ void RoomThread::action3v3(ServerPlayer *player){
     }
 
     if(all_actioned){
-        foreach(ServerPlayer *player, room->alive_players){
+        foreach(ServerPlayer *player, room->m_alivePlayers){
             room->setPlayerFlag(player, "-actioned");
         }
     }
@@ -247,22 +283,21 @@ void RoomThread::action3v3(ServerPlayer *player){
 void RoomThread::run(){
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
-    if(setjmp(env) == GameOver){
-        quit();
+    if(setjmp(env) == GameOver){        
         return;
     }
 
     // start game, draw initial 4 cards
-    foreach(ServerPlayer *player, room->players){
-        trigger(GameStart, player);
+    foreach(ServerPlayer *player, room->getPlayers()){
+        trigger(GameStart, room, player);
     }
 
     if(room->mode == "06_3v3"){
         run3v3();
     }else if(room->getMode() == "04_1v3"){
         ServerPlayer *shenlvbu = room->getLord();
-        if(shenlvbu->getGeneralName() == "shenlvbu1"){
-            QList<ServerPlayer *> league = room->players;
+        if(shenlvbu->getGeneralName() == "dongping"){
+            QList<ServerPlayer *> league = room->getPlayers();
             league.removeOne(shenlvbu);
 
             forever{
@@ -273,19 +308,19 @@ void RoomThread::run(){
 
                 foreach(ServerPlayer *player, league){
                     room->setCurrent(player);
-                    trigger(TurnStart, room->getCurrent());
+                    trigger(TurnStart, room, room->getCurrent());
 
                     if(!player->hasFlag("actioned"))
                         room->setPlayerFlag(player, "actioned");
 
-                    if(shenlvbu->getGeneralName() == "shenlvbu2")
+                    if(shenlvbu->getGeneralName() == "zhangqing")
                         goto second_phase;
 
                     if(player->isAlive()){
                         room->setCurrent(shenlvbu);
-                        trigger(TurnStart, room->getCurrent());
+                        trigger(TurnStart, room, room->getCurrent());
 
-                        if(shenlvbu->getGeneralName() == "shenlvbu2")
+                        if(shenlvbu->getGeneralName() == "zhangqing")
                             goto second_phase;
                     }
                 }
@@ -294,14 +329,18 @@ void RoomThread::run(){
         }else{
             second_phase:
 
-            foreach(ServerPlayer *player, room->players){
+            foreach(ServerPlayer *player, room->getPlayers()){
                 if(player != shenlvbu){
                     if(player->hasFlag("actioned"))
                         room->setPlayerFlag(player, "-actioned");
 
                     if(player->getPhase() != Player::NotActive){
+                        PhaseChangeStruct phase;
+                        phase.from = player->getPhase();
                         room->setPlayerProperty(player, "phase", "not_active");
-                        trigger(PhaseChange, player);
+                        phase.to = player->getPhase();
+                        QVariant data = QVariant::fromValue(phase);
+                        trigger(PhaseChange, room, player, data);
                     }
                 }
             }
@@ -309,7 +348,7 @@ void RoomThread::run(){
             room->setCurrent(shenlvbu);
 
             forever{
-                trigger(TurnStart, room->getCurrent());
+                trigger(TurnStart, room, room->getCurrent());
                 room->setCurrent(room->getCurrent()->getNext());
             }
         }
@@ -317,10 +356,11 @@ void RoomThread::run(){
 
     }else{
         if(room->getMode() == "02_1v1")
-            room->setCurrent(room->players.at(1));
+            room->setCurrent(room->getPlayers().at(1));
 
-        forever{
-            trigger(TurnStart, room->getCurrent());
+        forever {
+            trigger(TurnStart, room, room->getCurrent());
+            if (room->isFinished()) break;
             room->setCurrent(room->getCurrent()->getNextAlive());
         }
     }
@@ -330,27 +370,29 @@ static bool CompareByPriority(const TriggerSkill *a, const TriggerSkill *b){
     return a->getPriority() > b->getPriority();
 }
 
-bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target, QVariant &data){
+bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data){
     Q_ASSERT(QThread::currentThread() == this);
 
     // push it to event stack
-    EventTriplet triplet(event, target, &data);
+    EventTriplet triplet(event, room, target, &data);
     event_stack.push_back(triplet);
 
     bool broken = false;
     foreach(const TriggerSkill *skill, skill_table[event]){
         if(skill->triggerable(target)){
-            broken = skill->trigger(event, target, data);
+            broken = skill->trigger(event, room, target, data);
             if(broken)
                 break;
         }
     }
 
     if(target){
-        foreach(AI *ai, room->ais)
+        foreach(AI *ai, room->ais){
             ai->filterEvent(event, target, data);
+        }
     }
 
+    delay(1);
     // pop event stack
     event_stack.pop_back();
 
@@ -361,9 +403,9 @@ const QList<EventTriplet> *RoomThread::getEventStack() const{
     return &event_stack;
 }
 
-bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target){
+bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
     QVariant data;
-    return trigger(event, target, data);
+    return trigger(event, room, target, data);
 }
 
 void RoomThread::addTriggerSkill(const TriggerSkill *skill){
@@ -389,7 +431,7 @@ void RoomThread::addTriggerSkill(const TriggerSkill *skill){
 }
 
 void RoomThread::delay(unsigned long secs){
-    if(room->property("to_test").toString().isEmpty()&&Config.value("AIDelay",1000).toInt()>0)
+    if(room->property("to_test").toString().isEmpty()&& Config.AIDelay>0)
         msleep(secs);
 }
 

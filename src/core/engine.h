@@ -6,6 +6,8 @@
 #include "skill.h"
 #include "package.h"
 #include "exppattern.h"
+#include "protocol.h"
+#include "util.h"
 
 #include <QHash>
 #include <QStringList>
@@ -13,7 +15,6 @@
 
 class AI;
 class Scenario;
-class QLibrary;
 
 struct lua_State;
 
@@ -27,8 +28,6 @@ public:
 
     void addTranslationEntry(const char *key, const char *value);
     QString translate(const QString &to_translate) const;
-
-    lua_State *createLuaState(bool load_ai, QString &error_msg);
     lua_State *getLuaState() const;
 
     void addPackage(Package *package);
@@ -65,9 +64,10 @@ public:
     const General *getGeneral(const QString &name) const;
     int getGeneralCount(bool include_banned = false) const;
     const Skill *getSkill(const QString &skill_name) const;
+    QStringList getSkillNames() const;
     const TriggerSkill *getTriggerSkill(const QString &skill_name) const;
     const ViewAsSkill *getViewAsSkill(const QString &skill_name) const;
-    QList<const DistanceSkill *> getDistanceSkills() const;
+    QList<const ClientSkill *> getClientSkills() const;
     void addSkills(const QList<const Skill *> &skills);
 
     int getCardCount() const;
@@ -85,8 +85,8 @@ public:
     void playSkillEffect(const QString &skill_name, int index) const;
     void playCardEffect(const QString &card_name, bool is_male) const;
 
-    const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
-    int correctDistance(const Player *from, const Player *to) const;
+    const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+    int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
 
 private:
     QHash<QString, QString> translations;
@@ -98,8 +98,7 @@ private:
     QMultiMap<QString, QString> related_skills;
 
     // special skills
-    QList<const ProhibitSkill *> prohibit_skills;
-    QList<const DistanceSkill *> distance_skills;
+    QList<const ClientSkill *> client_skills;
 
     QHash<QString, const Scenario *> scenarios;
 
@@ -108,19 +107,8 @@ private:
     QSet<QString> ban_package;
 
     lua_State *lua;
-
-    QLibrary *lib;
 };
 
 extern Engine *Sanguosha;
-
-template<typename T>
-void qShuffle(QList<T> &list){
-    int i, n = list.length();
-    for(i=0; i<n; i++){
-        int r = qrand() % (n - i) + i;
-        list.swap(i, r);
-    }
-}
 
 #endif // ENGINE_H

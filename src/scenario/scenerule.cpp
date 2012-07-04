@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 #include "clientplayer.h"
 #include "client.h"
 #include "carditem.h"
@@ -7,9 +7,9 @@
 
 #include <QTime>
 
-class SceneDistanceEffect : public DistanceSkill {
+class SceneDistanceEffect : public ClientSkill {
 public:
-    SceneDistanceEffect(const QString &name) : DistanceSkill(name) { }
+    SceneDistanceEffect(const QString &name) : ClientSkill(name) { }
 
     virtual int getCorrect(const Player *from, const Player *to) const {
         const ServerPlayer *svFrom = qobject_cast<const ServerPlayer *>(from);
@@ -48,11 +48,8 @@ public:
 
     virtual int getPriority() const { return 3; }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const {
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const {
         Q_UNUSED(data);
-
-        Room *room = player->getRoom();
-
         if(room->getTag("SceneID").toInt() != 26)
             return false;
 
@@ -123,9 +120,7 @@ SceneRule::SceneRule(QObject *parent) : GameRule(parent) {
     }
 }
 
-bool SceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const {
-    Room *room = player->getRoom();
-
+bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const {
     switch(event) {
     case GameStart:
         if(player->isLord()) {
@@ -396,9 +391,6 @@ bool SceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data
             }
         }
 
-        switch(room->getTag("SceneID").toInt()) {
-        }
-
         break;
 
     case PhaseChange:
@@ -475,12 +467,12 @@ bool SceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data
                 const Card *card;
                 foreach(ServerPlayer *p, room->getOtherPlayers(player)) {
                     while(!p->isKongcheng() &&
-                          (card = room->askForCard(p, "fire_slash", "scene_14_prompt_fs")) != NULL)
+                          (card = room->askForCard(p, "fire_slash", "scene_14_prompt_fs", false, QVariant(), CardDiscarded)) != NULL)
                         damage.damage++;
                 }
                 foreach(ServerPlayer *p, room->getOtherPlayers(player)) {
                     while(!p->isKongcheng() &&
-                          (card = room->askForCard(p, "fire_attack", "scene_14_prompt_fa")) != NULL)
+                          (card = room->askForCard(p, "fire_attack", "scene_14_prompt_fa", false, QVariant(), CardDiscarded)) != NULL)
                         damage.damage++;
                 }
             }
@@ -589,5 +581,5 @@ bool SceneRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data
         break;
     }
 
-    return GameRule::trigger(event, player, data);
+    return GameRule::trigger(event, room, player, data);
 }

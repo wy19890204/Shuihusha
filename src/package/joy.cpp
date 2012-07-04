@@ -66,13 +66,6 @@ bool Shit::HasShit(const Card *card){
         return card->objectName() == "shit";
 }
 
-class PiPattern: public CardPattern{
-public:
-    virtual bool match(const Player *, const Card *card) const{
-        return card->inherits("Jink") || card->inherits("Assassinate");
-    }
-};
-
 Stink::Stink(Suit suit, int number):BasicCard(suit, number){
     setObjectName("stink");
     target_fixed = true;
@@ -90,7 +83,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
-    const Card *pipi = room->askForCard(nextfriend, ".haochou", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
+    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), false, QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
 
@@ -133,7 +126,6 @@ KusoPackage::KusoPackage()
     foreach(Card *card, cards)
         card->setParent(this);
 
-    patterns[".haochou"] = new PiPattern;
     type = CardPack;
 }
 
@@ -147,10 +139,9 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Peach")){
-            Room *room = player->getRoom();
             QList<ServerPlayer *> players = room->getOtherPlayers(player);
 
             foreach(ServerPlayer *p, players){
@@ -158,7 +149,7 @@ public:
                    p->askForSkillInvoke("grab_peach", data))
                 {
                     room->throwCard(p->getOffensiveHorse());
-                    room->playCardEffect(objectName(), p->getGeneral()->isMale());
+                    p->playCardEffect(objectName());
                     p->obtainCard(use.card);
 
                     return true;
@@ -197,7 +188,7 @@ public:
         events << Predamaged;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.nature == DamageStruct::Fire){
             LogMessage log;
@@ -205,7 +196,7 @@ public:
             log.from = player;
             log.arg = QString::number(damage.damage);
             log.arg2 = QString::number(damage.damage + 1);
-            player->getRoom()->sendLog(log);
+            room->sendLog(log);
 
             damage.damage ++;
             data = QVariant::fromValue(damage);
@@ -286,7 +277,7 @@ JoyPackage::JoyPackage()
 }
 
 //joy generals : miheng
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "settings.h"
 #include "carditem.h"
 class Jieao: public PhaseChangeSkill{
@@ -711,7 +702,7 @@ public:
                 else{
                     QList<const Skill *> skills = miheng->getVisibleSkillList();
                     foreach(const Skill *skill, skills)
-                        room->detachSkillFromPlayer(miheng, skill->objectName());
+                        room->detachSkillFromPlayer(miheng, skill->objectName(), false);
                     room->setPlayerProperty(miheng, "general", "sujiang");
                     room->setPlayerProperty(miheng, "general2", "sujiangf");
                     room->setPlayerProperty(miheng, "maxhp", miheng->getMaxHP() + 2);
@@ -795,7 +786,7 @@ public:
 class Lingyu: public TriggerSkill{
 public:
     Lingyu():TriggerSkill("lingyu"){
-        events << CardUsed;
+        events << GameStart << CardLostDone << CardDrawnDone << CardGotDone;
     }
 
     static int getMaqueCardNum(ServerPlayer *me){
@@ -806,35 +797,16 @@ public:
         return hand + fu;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(player->getPhase() == Player::NotActive)
-            return false;
-        if(use.card->inherits("Peach"))
-            return false;
-        if(use.card->isVirtualCard())
-            return false;
-        return true;
-    }
-};
-
-class Eding: public TriggerSkill{
-public:
-    Eding():TriggerSkill("eding"){
-        events << GameStart << CardLostDone << CardGotDone;
-    }
-
     virtual int getPriority() const{
         return -2;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &) const{
         if(event == GameStart){
             int num = player->getHandcardNum();
             player->drawCards(13 - num);
         }
         else{
-            Room *room = player->getRoom();
             int num = Lingyu::getMaqueCardNum(player);
             if(num > 13){
                 if(!player->getPile("fu4").isEmpty() && player->getHandcardNum() == 2){
@@ -925,27 +897,29 @@ public:
         return -2;
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-        ServerPlayer *bird = room->findPlayerBySkillName(objectName());
-        if(!bird || player->getPhase() == Player::Discard)
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() == Player::Discard)
             return false;
+        QList<ServerPlayer *> birds = room->findPlayersBySkillName(objectName());
         CardMoveStar move = data.value<CardMoveStar>();
-        if(move->from && move->to_place == Player::DiscardedPile){
-            const Card *card = Sanguosha->getCard(move->card_id);
-            if(!bird->getPile("fu4").isEmpty() && bird->getHandcardNum() == 1
-               && card->getNumber() == bird->getHandcards().first()->getNumber()){
-                room->gameOver(bird->getRole());
-            }
-            room->setPlayerProperty(bird, "peng", move->card_id);
-            int number = card->getNumber();
-            int i = 0;
-            foreach(const Card *tmp, bird->getHandcards())
-                if(tmp->getNumber() == number)
-                    i ++;
-            if(i == 2){
-                QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
-                room->askForUseCard(bird, "@@zhuangche", prompt);
+        foreach(ServerPlayer *bird, birds){
+            if(move->from && move->to_place == Player::DiscardedPile){
+                const Card *card = Sanguosha->getCard(move->card_id);
+                if(!bird->getPile("fu4").isEmpty() && bird->getHandcardNum() == 1
+                   && card->getNumber() == bird->getHandcards().first()->getNumber()){
+                    room->gameOver(bird->getRole());
+                }
+                room->setPlayerProperty(bird, "peng", move->card_id);
+                int number = card->getNumber();
+                int i = 0;
+                foreach(const Card *tmp, bird->getHandcards())
+                    if(tmp->getNumber() == number)
+                        i ++;
+                if(i == 2){
+                    QString prompt = QString("@zhuangche:%1:%2:%3").arg(move->from->objectName()).arg(card->getNumberString()).arg(card->objectName());
+                    if(room->askForUseCard(bird, "@@zhuangche", prompt, true))
+                        break;
+                }
             }
         }
         return false;
@@ -962,10 +936,17 @@ public:
             return false;
         if(to_select->isEquipped())
             return false;
-        if(!selected.isEmpty()){
+        if(selected.length() == 1){
             int num1 = selected.last()->getCard()->getNumber();
             int num2 = to_select->getCard()->getNumber();
             return (num2 == num1 + 1) || (num1 == num2);
+        }
+        if(selected.length() == 2){
+            int num1 = selected.first()->getCard()->getNumber();
+            int num2 = selected.last()->getCard()->getNumber();
+            int num3 = to_select->getCard()->getNumber();
+            return (num2 == num1 + 1 && num3 == num2 + 1) ||
+                    (num1 == num2 && num2 == num3);
         }
         return true;
     }
@@ -1002,23 +983,141 @@ public:
         else if(player->getPhase() == Player::Draw){
             Room *room = player->getRoom();
             player->drawCards(1);
-            while(room->askForUseCard(player, "@@zouma", "@zouma"));
+            while(room->askForUseCard(player, "@@zouma", "@zouma", true));
 
             if(!player->getPile("fu4").isEmpty() && player->getHandcardNum() == 2){
                 if(player->getHandcards().first()->getNumber() == player->getHandcards().last()->getNumber())
                     room->gameOver(player->getRole());
             }
             if(Lingyu::getMaqueCardNum(player) > 13)
-                room->askForDiscard(player, "eding", Lingyu::getMaqueCardNum(player) - 13);
+                room->askForDiscard(player, "lingyu", Lingyu::getMaqueCardNum(player) - 13);
             return true;
         }
         return false;
     }
 };
 
+ChuiniuCard::ChuiniuCard(){
+    once = true;
+}
+
+bool ChuiniuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getHandcardNum() < Self->getHandcardNum();
+}
+
+void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    LogMessage log;
+    ServerPlayer *target = targets.first();
+    foreach(int hd, source->handCards())
+        source->addToPile("niu", hd, false);
+    foreach(int hd, target->handCards())
+        target->addToPile("niu", hd, false);
+
+    while(source->getHandcardNum() < 3){
+        source->drawCards(1, false, false);
+        if(source->getHandcards().last()->getNumber() > 6)
+            room->throwCard(source->getHandcards().last());
+    }
+    while(target->getHandcardNum() < 3){
+        target->drawCards(1, false, false);
+        if(target->getHandcards().last()->getNumber() > 6)
+            room->throwCard(target->getHandcards().last());
+    }
+
+    ServerPlayer *first = source;
+    ServerPlayer *second = target;
+    static QMap<ServerPlayer*, int> cmap;
+    static QMap<ServerPlayer*, int> nmap;
+    forever{
+        QString qs = room->askForChoice(first, "chuiniu_count", "2+3+4+5+6+pass");
+        if(qs == "pass")
+            break;
+        else
+            cmap[first] = qs.toInt();
+
+        qs = room->askForChoice(first, "chuiniu_num", "2+3+4+5+6");
+        nmap[first] = qs.toInt();
+
+        if(cmap[first] < cmap[second])
+            continue;
+        if(cmap[first] == cmap[second] && nmap[first] <= nmap[second])
+            continue;
+
+        log.type = "#Chuiniuing";
+        log.from = first;
+        log.arg = QString::number(cmap.value(first));
+        log.arg2 = QString::number(nmap.value(first));
+        room->sendLog(log);
+
+        qSwap(first, second);
+    }
+
+    QList<const Card *> allhands = source->getHandcards();
+    allhands.append(target->getHandcards());
+    int count = 0;
+    foreach(const Card *card, allhands){
+        if(card->getNumber() == nmap.value(second) || card->getNumber() == 1)
+            count ++;
+    }
+    log.type = "#ChuiniuEnd";
+    log.from = second;
+    log.arg = QString::number(count);
+    log.arg2 = QString::number(nmap.value(second));
+    room->sendLog(log);
+
+    bool win = (second == source && count >= cmap.value(second)) ||
+               (second != source && count < cmap.value(second));
+
+    room->getThread()->delay();
+    QList<int> uvnn = source->getPile("niu");
+    uvnn.append(target->getPile("niu"));
+    log.type = "#ChuiniuWin";
+    if(win){
+        log.from = source;
+        room->setEmotion(source, "good");
+        room->sendLog(log);
+        foreach(int x, uvnn)
+            room->throwCard(x);
+        DummyCard *cards = target->wholeHandCards();
+        room->obtainCard(source, cards, false);
+        room->setEmotion(target, "bad");
+    }
+    else{
+        log.from = target;
+        room->setEmotion(target, "good");
+        room->sendLog(log);
+        target->throwAllHandCards();
+        foreach(int x, uvnn)
+            room->obtainCard(target, x, false);
+        room->setEmotion(source, "bad");
+        room->setPlayerFlag(source, "drank");
+    }
+}
+
+class Chuiniu: public ZeroCardViewAsSkill{
+public:
+    Chuiniu():ZeroCardViewAsSkill("chuiniu"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("ChuiniuCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new ChuiniuCard;
+    }
+};
+
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
+/*
+    General *tiger = new General(this, "tiger", "god", 3, true, true);
+    tiger->addSkill(new Skill("pu"));
+    tiger->addSkill(new Skill("xian"));
+    tiger->addSkill(new Skill("jian"));
+*/
     General *miheng = new General(this, "miheng", "god", 3);
     miheng->addSkill(new Yulu);
     miheng->addSkill(new Numa);
@@ -1028,14 +1127,17 @@ JoyGeneralPackage::JoyGeneralPackage()
     General *maque = new General(this, "maque", "god", 12);
     maque->addSkill(new Timer);
     maque->addSkill(new Lingyu);
-    maque->addSkill(new Eding);
     maque->addSkill(new Zhuangche);
     maque->addSkill(new Zouma);
     maque->addSkill(new Skill("jizha"));
 
+    General *chuiniu = new General(this, "chuiniu", "god", 5);
+    chuiniu->addSkill(new Chuiniu);
+
     addMetaObject<YuluCard>();
     addMetaObject<ViewMyWordsCard>();
     addMetaObject<ZhuangcheCard>();
+    addMetaObject<ChuiniuCard>();
 
     type = GeneralPack;
 }

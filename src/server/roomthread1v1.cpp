@@ -6,17 +6,18 @@
 
 #include <QDateTime>
 
+//@todo: setParent here is illegitimate in QT and is equivalent to calling
+// setParent(NULL). Find another way to do it if we really need a parent.
 RoomThread1v1::RoomThread1v1(Room *room)
-    :QThread(room), room(room)
-{
-
-}
+    :room(room)
+{}
 
 void RoomThread1v1::run(){
+
     // initialize the random seed for this thread
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
-    QSet<QString> banset = Config.value("1v1/Banlist").toStringList().toSet();
+    QSet<QString> banset = Config.value("Banlist/1v1").toStringList().toSet();
     general_names = Sanguosha->getRandomGenerals(10, banset);
 
     QStringList known_list = general_names.mid(0, 6);
@@ -31,7 +32,7 @@ void RoomThread1v1::run(){
 
     room->broadcastInvoke("fillGenerals", known_list.join("+") + unknown_str);
 
-    ServerPlayer *first = room->players.at(0), *next = room->players.at(1);
+    ServerPlayer *first = room->getPlayers().at(0), *next = room->getPlayers().at(1);
     askForTakeGeneral(first);
 
     while(general_names.length() > 1){

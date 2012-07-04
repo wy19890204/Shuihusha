@@ -3,7 +3,7 @@
 #include "carditem.h"
 #include "standard.h"
 #include "clientplayer.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 #include "engine.h"
 
 DiscardSkill::DiscardSkill()
@@ -84,7 +84,7 @@ bool FreeDiscardSkill::isEnabledAtPlay(const Player *) const{
     return true;
 }
 
-bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
     return true;
 }
 
@@ -141,7 +141,7 @@ void YijiViewAsSkill::setCards(const QString &card_str){
     ids = Card::StringsToIds(cards);
 }
 
-bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
     return ids.contains(to_select->getCard()->getId());
 }
 
@@ -167,7 +167,7 @@ public:
         set = names.toSet();
     }
 
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
         return targets.isEmpty() && set.contains(to_select->objectName());
     }
 

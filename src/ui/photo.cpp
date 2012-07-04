@@ -18,12 +18,15 @@
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QMenu>
+#include <QGraphicsDropShadowEffect>
+
+#include "pixmapanimation.h"
 
 Photo::Photo()
     :Pixmap("image/system/photo-back.png"),
     player(NULL),
     handcard("image/system/handcard.png"),
-    chain("image/system/chain.png"), action_item(NULL), save_me_item(NULL), permanent(false),
+    action_item(NULL), save_me_item(NULL), permanent(false),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     order_item(NULL), hide_avatar(false)
 {
@@ -31,31 +34,44 @@ Photo::Photo()
 
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
-    back_icon->setPos(105, 67);
+    //back_icon->setPos(105, 67);
+    back_icon->setPos(3, 13);
     back_icon->hide();
-    back_icon->setZValue(1.0);
+    back_icon->setZValue(0.2);
+
+    chain_icon = new Pixmap("image/system/chain.png");
+    chain_icon->setParentItem(this);
+    chain_icon->setPos(boundingRect().width() - 22, 5);
+    chain_icon->hide();
 
     progress_bar = new QProgressBar;
-    progress_bar->setOrientation(Qt::Vertical);
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
     progress_bar->setValue(0);
     progress_bar->hide();
-    progress_bar->setMaximumWidth(10);
-    progress_bar->setMaximumHeight(pixmap.height());
+    progress_bar->setMaximumHeight(15);
+    progress_bar->setMaximumWidth(pixmap.width());
+    progress_bar->setTextVisible(false);
     timer_id = 0;
 
     frame_item = new QGraphicsPixmapItem(this);
     frame_item->setPos(-6, -6);
+    frame_item->setZValue(-1.0);
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(this);
     widget->setWidget(progress_bar);
-    widget->setPos(pixmap.width() - 15, 0);
+    widget->setPos( -6 , - 25);
 
     skill_name_item = new QGraphicsSimpleTextItem(this);
     skill_name_item->setBrush(Qt::white);
     skill_name_item->setFont(Config.SmallFont);
     skill_name_item->moveBy(10, 30);
+
+    QGraphicsDropShadowEffect * drp = new QGraphicsDropShadowEffect;
+    drp->setBlurRadius(10);
+    drp->setColor(Qt::yellow);
+    drp->setOffset(0);
+    skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
     emotion_item->moveBy(10, 0);
@@ -77,6 +93,7 @@ Photo::Photo()
 
     kingdom_item = new QGraphicsPixmapItem(this);
     kingdom_item->setPos(-12, -6);
+    kingdom_item->setZValue(0.5);
 
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
     ready_item->setPos(86, 132);
@@ -87,6 +104,7 @@ Photo::Photo()
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
+    pile_button = NULL;
 }
 
 void Photo::setOrder(int order){
@@ -103,6 +121,7 @@ void Photo::setOrder(int order){
 void Photo::revivePlayer(){
     updateAvatar();
     updateSmallAvatar();
+    this->setOpacity(1.0);
 
     role_combobox->show();
 }
@@ -111,27 +130,22 @@ void Photo::createRoleCombobox(){
     role_combobox = new RoleCombobox(this);
 
     QString role = player->getRole();
-    if(!role.isEmpty())
-        role_combobox->fix(role);
+    if(!ServerInfo.EnableHegemony && !role.isEmpty())
+            role_combobox->fix(role);
 
     connect(player, SIGNAL(role_changed(QString)), role_combobox, SLOT(fix(QString)));
 }
 
 void Photo::updateRoleComboboxPos()
 {
-    int i, n = pile_buttons.length();
-    for(i=0; i<n; i++){
-        QGraphicsProxyWidget *button_widget = pile_buttons.at(i);
-        button_widget->setPos(pos());
-        button_widget->moveBy(5, 15 + i * 10);
-    }
+    //if(pile_button)pile_button->setPos(46, 48);
 }
 
 void Photo::showProcessBar(){
     progress_bar->setValue(0);
     progress_bar->show();
 
-    if(ServerInfo.OperationTimeout != 0);
+    if(ServerInfo.OperationTimeout != 0)
         timer_id = startTimer(500);
 }
 
@@ -162,6 +176,8 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
 
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));
+
+    PixmapAnimation::GetPixmapAnimation(this,emotion);
 }
 
 void Photo::tremble(){
@@ -256,7 +272,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
         connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
-		connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
+        connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
@@ -448,6 +464,7 @@ void Photo::installDelayedTrick(CardItem *trick){
     item->setToolTip(tooltip);
 
     item->setPos(-10, 16 + judging_area.count() * 19);
+    item->setZValue(1.1);
     judging_area << trick;
     judging_pixmaps << item;
 }
@@ -534,56 +551,73 @@ static bool CompareByNumber(const Card *card1, const Card *card2){
 void Photo::updatePile(const QString &pile_name){
     QPushButton *button = NULL;
     QGraphicsProxyWidget *button_widget = NULL;
-    foreach(QGraphicsProxyWidget *pile_button, pile_buttons){
-        QWidget *widget = pile_button->widget();
-        if(widget->objectName() == pile_name){
-            button_widget = pile_button;
-            button = qobject_cast<QPushButton *>(widget);
-            break;
-        }
-    }
 
-    if(button == NULL){
+    if(pile_button == NULL){
         button = new QPushButton;
         button->setObjectName(pile_name);
+        button->setProperty("private_pile","true");
 
-        button_widget = new QGraphicsProxyWidget;
+        button_widget = new QGraphicsProxyWidget(this);
         button_widget->setWidget(button);
-        button_widget->setPos(pos());
-        button_widget->moveBy(5, 15 + pile_buttons.length() * 10);
-        button_widget->resize(80, 20);
-        scene()->addItem(button_widget);
-
-        pile_buttons << button_widget;
+        //button_widget->setPos(pos());
+        button_widget->moveBy(46, 68);
+        button_widget->resize(80, 16);
+        //scene()->addItem(button_widget);
 
         QMenu *menu = new QMenu(button);
         button->setMenu(menu);
+
+        pile_button = button_widget;
+    }else
+    {
+        button_widget = pile_button;
+        button = qobject_cast<QPushButton *>(pile_button->widget());
     }
 
     ClientPlayer *who = qobject_cast<ClientPlayer *>(sender());
     if(who == NULL)
         return;
 
-    const QList<int> &pile = who->getPile(pile_name);
-    if(pile.isEmpty())
-        button_widget->hide();
-    else{
-        button_widget->show();
-        button->setText(QString("%1 (%2)").arg(Sanguosha->translate(pile_name)).arg(pile.length()));
+    QStringList names = who->getPileNames();
+    button->menu()->clear();
+
+    button_widget->hide();
+    int active = 0;
+    foreach(QString pile_name,names)
+    {
+        const QList<int> &pile = who->getPile(pile_name);
+        if(!pile.isEmpty()){
+            button_widget->show();
+            active++;
+            button->setText(QString("%1 (%2)").arg(Sanguosha->translate(pile_name)).arg(pile.length()));
+        }
+
+        QMenu *menu = button->menu();
+        menu->setProperty("private_pile","true");
+        //menu->clear();
+
+        QList<const Card *> cards;
+        foreach(int card_id, pile){
+            const Card *card = Sanguosha->getCard(card_id);
+            cards << card;
+        }
+
+        qSort(cards.begin(), cards.end(), CompareByNumber);
+        foreach(const Card *card, cards){
+            menu->addAction(card->getSuitIcon(),
+                            QString("%1 (%2)").arg(card->getFullName())
+                            .arg(Sanguosha->translate(pile_name)));
+        }
+        menu->addSeparator();
     }
+    if(active>1)button->setText(QString(tr("Multiple")));
 
-    QMenu *menu = button->menu();
-    menu->clear();
-
-    QList<const Card *> cards;
-    foreach(int card_id, pile){
-        const Card *card = Sanguosha->getCard(card_id);
-        cards << card;
-    }
-
-    qSort(cards.begin(), cards.end(), CompareByNumber);
-    foreach(const Card *card, cards){
-        menu->addAction(card->getSuitIcon(), card->getFullName());
+    if(who->getMaxHP()>5)
+    {
+        button_widget->setPos(pos());
+        button_widget->moveBy(100, 68);
+        button_widget->resize(16,16);
+        button->setText(QString());
     }
 }
 
@@ -644,7 +678,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         static QList<QPixmap> phase_pixmaps;
         if(phase_pixmaps.isEmpty()){
             QStringList names;
-            names << "start" << "judge" << "draw"
+            names << "round_start" << "start" << "judge" << "draw"
                     << "play" << "discard" << "finish";
 
             foreach(QString name, names)
@@ -661,10 +695,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     drawEquip(painter, defensive_horse, 2);
     drawEquip(painter, offensive_horse, 3);
 
-    // draw iron chain
-    if(player->isChained())
-        painter->drawPixmap(28, 16, chain);
-
+    chain_icon->setVisible(player->isChained());
     back_icon->setVisible(! player->faceUp());
 }
 
@@ -676,9 +707,9 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
-    painter->setPen(Qt::white);
+    painter->setPen(Qt::black);
     QFont bold_font;
-    //bold_font.setBold(true);
+    bold_font.setBold(true);
     painter->setFont(bold_font);
     painter->drawText(20, 115 + 15 + order * 17, card->getNumberString());
     painter->drawText(35, 115 + 15 + order * 17, card->label());
@@ -701,7 +732,8 @@ void Photo::killPlayer(){
         MakeGray(small_avatar);
 
     kingdom_frame = QPixmap();
-    role_combobox->hide();
+    if(!ServerInfo.EnableHegemony)
+        role_combobox->hide();
 
     if(save_me_item)
         save_me_item->hide();

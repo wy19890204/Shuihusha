@@ -6,7 +6,7 @@ public:
 	void setViewAsSkill(ViewAsSkill *view_as_skill);
 	
 	virtual bool triggerable(const ServerPlayer *target) const;
-	virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 
 	LuaFunction on_trigger;
 	LuaFunction can_trigger;
@@ -17,25 +17,20 @@ class GameStartSkill: public TriggerSkill{
 public:
 	GameStartSkill(const QString &name);
 
-	virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 	virtual void onGameStart(ServerPlayer *player) const = 0;
 };
 
-class ProhibitSkill: public Skill{
+class ClientSkill: public Skill{
 public:
-	ProhibitSkill(const QString &name);
-
-	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
+	ClientSkill(const QString &name);
+	virtual int getExtra(const Player *target) const;
+	virtual int getCorrect(const Player *from, const Player *to) const;
+	virtual int getAtkrg(const Player *target) const;
+	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 
-class DistanceSkill: public Skill{
-public:
-	DistanceSkill(const QString &name);
-
-	virtual int getCorrect(const Player *from, const Player *to) const = 0;
-};
-
-class LuaProhibitSkill: public ProhibitSkill{
+class LuaProhibitSkill: public ClientSkill{
 public:
 	LuaProhibitSkill(const char *name);
 
@@ -67,6 +62,7 @@ public:
 
 	LuaFunction enabled_at_play;
 	LuaFunction enabled_at_response;
+	LuaFunction enabled_at_nullification;
 };
 
 class OneCardViewAsSkill: public ViewAsSkill{
@@ -96,7 +92,7 @@ public:
 	LuaFunction view_as;
 };
 
-class LuaDistanceSkill: public DistanceSkill{
+class LuaDistanceSkill: public ClientSkill{
 public:
 	LuaDistanceSkill(const char *name);
 	virtual int getCorrect(const Player *from, const Player *to) const;
@@ -148,11 +144,10 @@ bool LuaTriggerSkill::triggerable(const ServerPlayer *target) const{
 	}
 }
 
-bool LuaTriggerSkill::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+bool LuaTriggerSkill::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
 	if(on_trigger == 0)
 		return false;
 		
-	Room *room = player->getRoom();
 	lua_State *L = room->getLuaState();
 	
 	int e = static_cast<int>(event);
@@ -414,6 +409,29 @@ bool LuaViewAsSkill::isEnabledAtResponse(const Player *player, const QString &pa
 	}
 }
 
+bool LuaViewAsSkill::isEnabledAtNullification(const Player *player) const{
+	if(enabled_at_nullification == 0)
+		return false;
+
+	lua_State *L = Sanguosha->getLuaState();
+
+	// the callback
+	lua_rawgeti(L, LUA_REGISTRYINDEX, enabled_at_nullification);
+
+	pushSelf(L);
+
+	SWIG_NewPointerObj(L, player, SWIGTYPE_p_Player, 0);
+
+	int error = lua_pcall(L, 2, 1, 0);
+	if(error){
+		Error(L);
+		return false;
+	}else{
+		bool result = lua_toboolean(L, -1);
+		lua_pop(L, 1);
+		return result;
+	}
+}
 // ---------------------
 
 void LuaSkillCard::pushSelf(lua_State *L) const{
@@ -473,7 +491,7 @@ bool LuaSkillCard::targetsFeasible(const QList<const Player *> &targets, const P
 
 	SWIG_NewPointerObj(L, self, SWIGTYPE_p_Player, 0);
 
-	int error = lua_pcall(L, 2, 1, 0);
+	int error = lua_pcall(L, 3, 1, 0);
 	if(error){
 		Error(L);
 		return false;

@@ -57,28 +57,38 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 end
 
+sgs.ai_card_intention.Ecstasy = function(card, from, tos)
+	for _, to in ipairs(tos) do
+		speakTrigger(card,from,to)
+	end
+	sgs.updateIntentions(from, tos, 80)
+end
 sgs.dynamic_value.control_card.Ecstasy = true
 sgs.dynamic_value.benefit.Counterplot = true
 
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 --	if self.player:hasSkill("wuyan") then return end
-	use.card = drivolt
+	local target
 	self:sort(self.enemies, "hp")
-	if self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
-		if use.to then use.to:append(self.enemies[1]) end
-		return
+	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
+		target = self.enemies[1]
 	end
-	for _, friend in ipairs(self.friends_noself) do
-		if not friend:isWounded() and friend:getKingdom() ~= self.player:getKingdom() then
-			if use.to then use.to:append(friend) end
-			return
+	if not target then
+		for _, friend in ipairs(self.friends_noself) do
+			if not friend:isWounded() and not self:isWeak(friend) and
+				friend:getKingdom() ~= self.player:getKingdom() then
+				target = friend
+				break
+			end
 		end
 	end
-	for _, enemy in ipairs(self.enemies) do
-		if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
-			if use.to then use.to:append(enemy) end
-			return
+	if not target then
+		for _, enemy in ipairs(self.enemies) do
+			if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
+				target = enemy
+				break
+			end
 		end
 	end
 	local players = {}
@@ -88,34 +98,57 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	if #players < 1 then
 		use.card = nil
 		return "."
+	else
+		use.card = drivolt
 	end
-	local r = math.random(1, #players)
-	if use.to then use.to:append(players[r]) end
+
+	if not target then
+		local r = math.random(1, #players)
+		target = players[r]
+	end
+	if use.to then
+		self:speak("drivolt")
+		use.to:append(target)
+	end
 end
 
+sgs.ai_card_intention.Drivolt = function(card, from, tos)
+	for _, to in ipairs(tos) do
+		local value = 80
+		if not to:isWounded() then value = -50 end
+		sgs.updateIntention(from, to, value)
+	end
+end
 sgs.dynamic_value.damage_card.Drivolt = true
 sgs.dynamic_value.control_card.Drivolt = true
 
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
---	if self.player:hasSkill("wuyan") then return end
 	local targets = {}
 	if #self.friends_noself > 0 then
-		self:sort(self.friends_noself, "handcard")
-		table.insert(targets, self.friends_noself[#self.friends_noself])
+		self:sort(self.friends_noself, "handcard2")
+		if self.friends_noself[1]:getHandcardNum() > 0 then
+			table.insert(targets, self.friends_noself[1])
+		end
 	end
 	if #self.enemies > 0 then
-		self:sort(self.enemies, "handcard")
-		table.insert(targets, self.enemies[#self.enemies])
+		self:sort(self.enemies, "handcard2")
+		if self.enemies[1]:getHandcardNum() > 0 then
+			table.insert(targets, self.enemies[1])
+		end
 	end
+	if #targets == 0 then
+		for _, t in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+			if not t:isKongcheng() then
+				table.insert(targets, t)
+			end
+		end
+	end
+	if #targets == 0 then return "." end
 	use.card = wiretap
 	if use.to then
-		local r = math.random(1, 2)
-		if targets[r] ~= self.player then
-			use.to:append(targets[r])
-		else
-			return "."
-		end
+		local r = math.random(1, #targets)
+		use.to:append(targets[r])
 	end
 end
 
@@ -153,10 +186,12 @@ function SmartAI:useCardAssassinate(ass, use)
 end
 
 sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
+	self:speak("assassinate", self.player:getGeneral():isFemale(), to)
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
 	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end	
 end
 
+sgs.ai_card_intention.Assassinate = 90
 sgs.dynamic_value.damage_card.Assassinate = true
 
 -- sheng chen gang
@@ -225,6 +260,24 @@ function SmartAI:useCardProvistore(provistore, use)
 	end
 end
 
+sgs.ai_card_intention.Provistore = -80
 sgs.dynamic_value.control_usecard.Provistore = true
 sgs.dynamic_value.benefit.Provistore = true
 
+-- feng xiong hua ji
+function SmartAI:useCardInspiration(inspiration, use)
+	self:sort(self.friends, "hp")
+	local f = 0
+	for _, friend in ipairs(self.friends) do
+		f = f + friend:getLostHp()
+	end
+	self:sort(self.enemies, "hp")
+	local e = 0
+	for _, enemy in ipairs(self.enemies) do
+		e = e + enemy:getLostHp()
+	end
+	if e > f then return "." end
+	use.card = inspiration
+end
+
+sgs.dynamic_value.benefit.Inspiration = true

@@ -114,4 +114,23 @@ public:
     PloughPackage();
 };
 
+class Inspiration: public GlobalEffect{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Inspiration(Card::Suit suit, int number);
+
+    virtual bool isCancelable(const CardEffectStruct &effect) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class Haiqiu: public OffensiveHorse{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Haiqiu(Card::Suit suit, int number);
+
+    virtual QString getEffectPath(bool is_male) const;
+};
+
 #endif // PLOUGHPACKAGE_H

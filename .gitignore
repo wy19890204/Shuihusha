@@ -4,7 +4,7 @@ ui_*
 Makefile*
 object_script*
 *.pro.user
-sanguosha.qm
+*sha.qm
 config.ini
 swig/sanguosha_wrap.cxx
 records/*
@@ -13,6 +13,9 @@ doc/*.html
 swig/*.bat
 .DS_Store
 liblua5.1.dylib
-font/font.ttf
-QSanguosha.pro.user*
+font/font.7z
+*sha.pro.user*
 etc/customScenes/custom_scenario.txt
+*.dylib
+image/*.rcc
+*sha.exe

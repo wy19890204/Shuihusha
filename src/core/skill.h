@@ -38,8 +38,7 @@ public:
     bool isVisible() const;
 
     virtual QString getDefaultChoice(ServerPlayer *player) const;
-    virtual int getEffectIndex(ServerPlayer *player, const Card *card) const;
-    virtual bool useCardSoundEffect() const;
+    virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
     virtual QDialog *getDialog() const;
 
     virtual Location getLocation() const;
@@ -116,7 +115,7 @@ public:
 
     virtual int getPriority() const;
     virtual bool triggerable(const ServerPlayer *target) const;
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const = 0;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const = 0;
 
 protected:
     const ViewAsSkill *view_as_skill;
@@ -142,7 +141,7 @@ public:
     MasochismSkill(const QString &name);
 
     virtual int getPriority() const;
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual void onDamaged(ServerPlayer *target, const DamageStruct &damage) const = 0;
 };
 
@@ -152,7 +151,7 @@ class PhaseChangeSkill: public TriggerSkill{
 public:
     PhaseChangeSkill(const QString &name);
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual bool onPhaseChange(ServerPlayer *target) const =0;
 };
 
@@ -162,7 +161,7 @@ class DrawCardsSkill: public TriggerSkill{
 public:
     DrawCardsSkill(const QString &name);
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual int getDrawNum(ServerPlayer *player, int n) const = 0;
 };
 
@@ -172,7 +171,7 @@ class SlashBuffSkill: public TriggerSkill{
 public:
     SlashBuffSkill(const QString &name);
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual bool buff(const SlashEffectStruct &effect) const = 0;
 };
 
@@ -182,26 +181,22 @@ class GameStartSkill: public TriggerSkill{
 public:
     GameStartSkill(const QString &name);
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool triggerable(const ServerPlayer *target) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual void onGameStart(ServerPlayer *player) const = 0;
+    virtual void onIdied(ServerPlayer *player) const;
 };
 
-class ProhibitSkill: public Skill{
+class ClientSkill: public Skill{
     Q_OBJECT
 
 public:
-    ProhibitSkill(const QString &name);
+    ClientSkill(const QString &name);
 
-    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const = 0;
-};
-
-class DistanceSkill: public Skill{
-    Q_OBJECT
-
-public:
-    DistanceSkill(const QString &name);
-
-    virtual int getCorrect(const Player *from, const Player *to) const = 0;
+    virtual int getExtra(const Player *target) const;
+    virtual int getCorrect(const Player *from, const Player *to) const;
+    virtual int getAtkrg(const Player *target) const;
+    virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 
 class WeaponSkill: public TriggerSkill{

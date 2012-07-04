@@ -9,7 +9,7 @@
 #include <QRadioButton>
 #include <QBoxLayout>
 
-static const int ShrinkWidth = 295;
+static const int ShrinkWidth = 285;
 static const int ExpandWidth = 826;
 
 ConnectionDialog::ConnectionDialog(QWidget *parent) :

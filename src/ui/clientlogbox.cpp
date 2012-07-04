@@ -41,8 +41,15 @@ void ClientLogBox::appendLog(
     QString log;
 
     if(type.startsWith("$")){
-        const Card *card = Sanguosha->getCard(card_str.toInt());
-        QString log_name = card->getLogName();
+        QString log_name;
+        foreach(QString one_card, card_str.split("+")){
+            const Card *card = Sanguosha->getCard(one_card.toInt());
+            if(log_name.isEmpty())
+                log_name = card->getLogName();
+            else
+                log_name += ", " + card->getLogName();
+        }
+        log_name = bold(log_name, Qt::yellow);
 
         log = Sanguosha->translate(type);
         log.replace("%from", from);
@@ -65,15 +72,17 @@ void ClientLogBox::appendLog(
         if(card == NULL)
             return;
         QString card_name = card->getLogName();
+        card_name = bold(card_name, Qt::yellow);
 
         if(card->isVirtualCard()){
             QString skill_name = Sanguosha->translate(card->getSkillName());
+            skill_name = bold(skill_name, Qt::yellow);
 
             QList<int> card_ids = card->getSubcards();
             QStringList subcard_list;
             foreach(int card_id, card_ids){
                 const Card *subcard = Sanguosha->getCard(card_id);
-                subcard_list << subcard->getLogName();
+                subcard_list << bold(subcard->getLogName(), Qt::yellow);
             }
 
             QString subcard_str = subcard_list.join(",");
@@ -81,8 +90,11 @@ void ClientLogBox::appendLog(
                 const SkillCard *skill_card = qobject_cast<const SkillCard *>(card);
                 if(subcard_list.isEmpty() || !skill_card->willThrow())
                     log = tr("%from use skill [%1]").arg(skill_name);
-                else
+                else{
+                    if(card->inherits("DummyCard"))
+                        skill_name = bold(Sanguosha->translate("free-discard"), Qt::yellow);
                     log = tr("%from use skill [%1], and the cost is %2").arg(skill_name).arg(subcard_str);
+                }
             }else{
                 if(subcard_list.isEmpty())
                     log = tr("%from use skill [%1], played [%2]").arg(skill_name).arg(card_name);
@@ -153,5 +165,10 @@ void ClientLogBox::appendLog(const QString &log_str){
 void ClientLogBox::appendSeparator(){
     const Player *player = qobject_cast<const Player *>(sender());
     if(player->getPhase() == Player::NotActive)
-        append("------------------------");
+        append("<font color='white'>------------------------</font>");
+}
+
+void ClientLogBox::append(const QString &text)
+{
+    QTextEdit::append(QString("<p style=\"margin:3px p2x; line-height:120%;\">%1</p>").arg(text));
 }

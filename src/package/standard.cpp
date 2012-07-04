@@ -2,12 +2,12 @@
 #include "serverplayer.h"
 #include "room.h"
 #include "skill.h"
-#include "tocheck.h"
+#include "maneuvering.h"
 #include "clientplayer.h"
 #include "engine.h"
 #include "client.h"
-#include "standard-skillcards.h"
-#include "carditem.h"
+#include "exppattern.h"
+#include "common-skillcards.h"
 
 QString BasicCard::getType() const{
     return "basic";
@@ -67,9 +67,9 @@ void EquipCard::onUse(Room *room, const CardUseStruct &card_use) const{
 
         QVariant data = QVariant::fromValue(card_use);
         RoomThread *thread = room->getThread();
-        thread->trigger(CardUsed, player, data);
+        thread->trigger(CardUsed, room, player, data);
 
-        thread->trigger(CardFinished, player, data);
+        thread->trigger(CardFinished, room, player, data);
     }else
         Card::onUse(room, card_use);
 }
@@ -86,7 +86,7 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }
 
     if(equipped)
-        room->throwCard(equipped);
+        room->throwCard(equipped, source);
 
     LogMessage log;
     log.from = target;
@@ -141,7 +141,7 @@ void AOE::onUse(Room *room, const CardUseStruct &card_use) const{
     ServerPlayer *source = card_use.from;
     QList<ServerPlayer *> targets, other_players = room->getOtherPlayers(source);
     foreach(ServerPlayer *player, other_players){
-        const ProhibitSkill *skill = room->isProhibited(source, player, this);
+        const ClientSkill *skill = room->isProhibited(source, player, this);
         if(skill){
             LogMessage log;
             log.type = "#SkillAvoid";
@@ -167,6 +167,10 @@ QString SingleTargetTrick::getSubtype() const{
 bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(to_select == Self)
         return false;
+    if(objectName() == "assassinate" || objectName() == "duel"){
+        if(to_select->hasSkill("jueming") && to_select->getHp() == 1)
+            return false;
+    }
 
     return targets.isEmpty();
 }
@@ -213,7 +217,8 @@ void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
         takeEffect(effect.to, judge_struct.isGood());
     }
     else if(movable){
-        onNullified(effect.to);
+        if(objectName() != "tsunami" || !effect.to->hasEquip("haiqiu"))
+            onNullified(effect.to);
     }
 }
 
@@ -243,7 +248,7 @@ const DelayedTrick *DelayedTrick::CastFrom(const Card *card){
     int number = card->getNumber();
     if(card->inherits("DelayedTrick"))
         return qobject_cast<const DelayedTrick *>(card);
-    else if(card->isNDTrick()){
+    else if(card->getSuit() == Card::Diamond){
         trick = new Indulgence(suit, number);
         trick->addSubcard(card->getId());
     }
@@ -289,7 +294,7 @@ void Weapon::onUninstall(ServerPlayer *player) const{
     Room *room = player->getRoom();
 
     if(attach_skill)
-        room->detachSkillFromPlayer(player, objectName());
+        room->detachSkillFromPlayer(player, objectName(), false);
 }
 
 QString Armor::getSubtype() const{
@@ -363,128 +368,30 @@ EquipCard::Location Horse::location() const{
         return OffensiveHorseLocation;
 }
 
-class HandcardPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card);
-    }
-};
-
-class AllCardPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return true;
-    }
-};
-
-class SuitPattern: public CardPattern{
-public:
-    SuitPattern(Card::Suit suit)
-        :suit(suit)
-    {
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->getSuit() == suit;
-    }
-
-private:
-    Card::Suit suit;
-};
-
-class AllSuitPattern: public CardPattern{
-public:
-    AllSuitPattern(Card::Suit suit)
-        :suit(suit)
-    {
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return card->getSuit() == suit;
-    }
-
-private:
-    Card::Suit suit;
-};
-
-class SlashPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->inherits("Slash");
-    }
-};
-
 class NamePattern: public CardPattern{
 public:
     NamePattern(const QString &name)
-        :name(name)
-    {
-
+        :name(name){
     }
-
     virtual bool match(const Player *player, const Card *card) const{
         return ! player->hasEquip(card) && card->objectName() == name;
     }
-
 private:
     QString name;
 };
 
-class PAPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) &&
-                (card->inherits("Peach") || card->inherits("Analeptic"));
-    }
-};
-
-class NCPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->inherits("Nullification");
-    }
-};
-
-class BasicPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) && card->getTypeId() == Card::Basic;
-    }
-};
-
-class ColorPattern: public CardPattern{
-public:
-    ColorPattern(const QString &color)
-        :color(color){
-    }
-
-    virtual bool match(const Player *player, const Card *card) const{
-        return ! player->hasEquip(card) &&
-                ((card->isBlack() && color == "black") ||
-                (card->isRed() && color == "red"));
-    }
-private:
-    QString color;
-};
-
 // test main
-class Ubuna:public ZeroCardViewAsSkill{
+#include "carditem.h"
+class Ubuna: public ClientSkill{
 public:
-    Ubuna():ZeroCardViewAsSkill("ubuna"){
+    Ubuna():ClientSkill("ubuna"){
     }
 
-    virtual const Card *viewAs() const{
-        return new UbunaCard;
-    }
-};
-
-class Ubunb:public ZeroCardViewAsSkill{
-public:
-    Ubunb():ZeroCardViewAsSkill("ubunb"){
-    }
-
-    virtual const Card *viewAs() const{
-        return Sanguosha->cloneSkillCard("BuzhenCard");
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return 1358;
+        else
+            return 0;
     }
 };
 
@@ -559,18 +466,21 @@ public:
 class Ubunf: public TriggerSkill{
 public:
     Ubunf():TriggerSkill("ubunf"){
-        events << Dying;
+        events << Dying << PreDeath;
     }
 
-    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == PreDeath)
+            return player->getHp() > 0;
+
         DyingStruct dying = data.value<DyingStruct>();
         if(dying.who == player && player->askForSkillInvoke(objectName())){
-            player->getRoom()->playSkillEffect(objectName());
+            room->playSkillEffect(objectName());
             RecoverStruct rev;
             rev.who = player;
             rev.recover = player->getMaxHP();
-            player->getRoom()->recover(player, rev);
-            player->getRoom()->setPlayerProperty(player, "hp", player->getMaxHP());
+            room->recover(player, rev);
+            room->setPlayerProperty(player, "hp", player->getMaxHP());
         }
         return false;
     }
@@ -611,28 +521,123 @@ public:
     }
 };
 
+class Fandui:public ZeroCardViewAsSkill{
+public:
+    Fandui():ZeroCardViewAsSkill("fandui"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new FanduiCard;
+    }
+};
+
+class Zhichi: public OneCardViewAsSkill{
+public:
+    Zhichi():OneCardViewAsSkill("zhichi"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ZhichiCard *card = new ZhichiCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class NothrowHandcardsPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card) ;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class NothrowPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return true;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+#include <QFile>
+#include <QTextStream>
+#include "plough.h"
+CustomCardPackage::CustomCardPackage()
+    :Package("custom_cards")
+{
+    QList<Card *> cards;
+    QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
+    QFile file("etc/custom-cards.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        while(!stream.atEnd()){
+            QString line = stream.readLine();
+            if(!rx.exactMatch(line))
+                continue;
+
+            QStringList texts = rx.capturedTexts();
+            QString name = texts.at(1);
+            Card::Suit suit = Card::String2Suit(texts.at(2));
+            int number = texts.at(3).toInt();
+
+            Card *custom;
+            if(name == "slash")
+                custom = new Slash(suit, number);
+            else if(name == "jink")
+                custom = new Jink(suit, number);
+            else if(name == "peach")
+                custom = new Peach(suit, number);
+            else if(name == "thunder_slash")
+                custom = new ThunderSlash(suit, number);
+            else if(name == "fire_slash")
+                custom = new FireSlash(suit, number);
+            else if(name == "analeptic")
+                custom = new Analeptic(suit, number);
+            else if(name == "ecstasy")
+                custom = new Ecstasy(suit, number);
+            //Card *custom = Sanguosha->cloneCard(name, Card::String2Suit(suit), number);
+            cards << custom;
+        }
+
+        file.close();
+    }
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
+}
+
 TestPackage::TestPackage()
     :Package("test")
-{
-    General *jiuweigui = new General(this, "jiuweigui", "god", 3, true, true);
-    jiuweigui->addSkill("qiaog");
-    jiuweigui->addSkill("manli");
-
-    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true);
+{/*
+    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true, true);
     shenlvbu1->addSkill("huanshu");
     shenlvbu1->addSkill("wubang");
     shenlvbu1->addSkill("wuzu");
     shenlvbu1->addSkill("fushang");
 
-    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true);
+    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true, true);
     shenlvbu2->addSkill("cuju");
     shenlvbu2->addSkill("qibing");
     shenlvbu2->addSkill("yuanyin");
 
+    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
+    zhuanjia->addSkill(new Zhichi);
+    addMetaObject<ZhichiCard>();
+    zhuanjia->addSkill(new Fandui);
+    addMetaObject<FanduiCard>();
+*/
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
-    addMetaObject<UbunaCard>();
-    ubuntenkei->addSkill(new Ubunb);
     ubuntenkei->addSkill(new Ubunc);
     addMetaObject<UbuncCard>();
     ubuntenkei->addSkill(new Ubund);
@@ -645,39 +650,26 @@ TestPackage::TestPackage()
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
-    new General(this, "anjiang", "god", 4, true, true);
+    new General(this, "anjiang", "god", 4, true, true, true);
 
-    addMetaObject<CheatCard>();
-    addMetaObject<ChangeCard>();
-    patterns["."] = new HandcardPattern;
-    patterns[".S"] = new SuitPattern(Card::Spade);
-    patterns[".C"] = new SuitPattern(Card::Club);
-    patterns[".H"] = new SuitPattern(Card::Heart);
-    patterns[".D"] = new SuitPattern(Card::Diamond);
+    patterns["."] = new ExpPattern(".|.|.|hand");
+    patterns[".S"] = new ExpPattern(".|spade|.|hand");
+    patterns[".C"] = new ExpPattern(".|club|.|hand");
+    patterns[".H"] = new ExpPattern(".|heart|.|hand");
+    patterns[".D"] = new ExpPattern(".|diamond|.|hand");
 
-    patterns[".black"] = new ColorPattern("black");
-    patterns[".red"] = new ColorPattern("red");
+    //patterns[".red"] = new ExpPattern(".|.|.|hand|red");
 
-    patterns[".."] = new AllCardPattern;
-    patterns["..S"] = new AllSuitPattern(Card::Spade);
-    patterns["..C"] = new AllSuitPattern(Card::Club);
-    patterns["..H"] = new AllSuitPattern(Card::Heart);
-    patterns["..D"] = new AllSuitPattern(Card::Diamond);
+    patterns[".."] = new ExpPattern(".");
+    //patterns["..D"] = new ExpPattern(".|diamond");
 
-    patterns["slash"] = new SlashPattern;
-    patterns["jink"] = new NamePattern("jink");
-    patterns["peach"] = new NamePattern("peach");
+    patterns["slash"] = new ExpPattern("Slash");
+    patterns["jink"] = new ExpPattern("Jink");
+    patterns["peach"] = new ExpPattern("Peach");
     patterns["nullification"] = new NamePattern("nullification");
-    patterns["nulliplot"] = new NCPattern;
-    patterns["peach+analeptic"] = new PAPattern;
-    patterns[".basic"] = new BasicPattern;
-
-    //eventcard
-    patterns["jiefachang"] = new NamePattern("jiefachang");
-    patterns["daojia"] = new NamePattern("daojia");
-    patterns["tifanshi"] = new NamePattern("tifanshi");
-    patterns["ninedaygirl"] = new NamePattern("ninedaygirl");
-    patterns["fuckgaolian"] = new NamePattern("fuckgaolian");
+    patterns["nulliplot"] = new ExpPattern("Nullification");
+    patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 }
 
+ADD_PACKAGE(CustomCard)
 ADD_PACKAGE(Test)

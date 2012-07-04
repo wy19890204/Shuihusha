@@ -74,11 +74,25 @@ private:
     QList<RoomItem*> room_items;
 };
 
+class AcknowledgementScene : public QGraphicsScene
+{
+    Q_OBJECT
+public:
+    explicit AcknowledgementScene(QObject *parent = 0);
+signals:
+    void go_back();
+private:
+    QDeclarativeView *view;
+    QDeclarativeContext *ctxt;
+    QList<QObject*> tokens,equipped,loaded;
+};
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setBackgroundBrush();
 
 protected:
     virtual void closeEvent(QCloseEvent *);
@@ -93,13 +107,15 @@ private:
 
     void restoreFromConfig();
 
+public slots:
+    void startConnection();
+
 private slots:
     void on_actionAbout_Lua_triggered();
     void on_actionAbout_fmod_triggered();
-    void on_actionSend_lowlevel_command_triggered();
     void on_actionReplay_file_convert_triggered();
     void on_actionAI_Melee_triggered();
-    //void on_actionPackaging_triggered();
+    void on_actionPackaging_triggered();
     void on_actionScript_editor_triggered();
     void on_actionPC_Console_Start_triggered();
     void on_actionCard_editor_triggered();
@@ -118,14 +134,15 @@ private slots:
     void on_actionStart_Server_triggered();
     void on_actionExit_triggered();
 
-    void startConnection();
     void checkVersion(const QString &server_version, const QString &server_mod);
     void networkError(const QString &error_msg);
     void enterRoom();
     void gotoScene(QGraphicsScene *scene);
     void gotoStartScene();
+    void sendLowLevelCommand();
     void startGameInAnotherInstance();
     void changeBackground();
+    void on_actionView_ban_list_triggered();
 };
 
 #endif // MAINWINDOW_H

@@ -16,15 +16,26 @@ Settings Config;
 static const qreal ViewWidth = 1280 * 0.8;
 static const qreal ViewHeight = 800 * 0.8;
 
+//consts
+const int Settings::S_CHOOSE_GENERAL_TIMEOUT = 15;
+const int Settings::S_GUANXING_TIMEOUT = 20;
+const int Settings::S_SURRNDER_REQUEST_MIN_INTERVAL = 60;
+
 Settings::Settings()
-    :QSettings("config.ini", QSettings::IniFormat),
-    Rect(-ViewWidth/2, -ViewHeight/2, ViewWidth, ViewHeight)
+
+#ifdef Q_OS_WIN32
+    :QSettings("config.ini", QSettings::IniFormat)
+#else
+    :QSettings("QSanguosha.com", "QSanguosha")
+#endif
+
+     ,Rect(-ViewWidth/2, -ViewHeight/2, ViewWidth, ViewHeight)
 {
 }
 
 void Settings::init(){
     if(!qApp->arguments().contains("-server")){
-        QString font_path = value("DefaultFontPath", "font/girl.ttf").toString();
+        QString font_path = value("DefaultFontPath", "font/font.ttf").toString();
         int font_id = QFontDatabase::addApplicationFont(font_path);
         if(font_id!=-1){
             QString font_family = QFontDatabase::applicationFontFamilies(font_id).first();
@@ -48,19 +59,20 @@ void Settings::init(){
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
     GameMode = value("GameMode", "02p").toString();
 
-
+/*
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "CGDK" << "YBYT";
+        banlist << "CGDK" << "YBYT" << "FCDC";
         banlist << "test" << "god" << "sp" << "interchange"
+                << "guben" << "stanley" << "pass"
                 << "joy" << "kuso" << "joyer";
 
         setValue("BanPackages", banlist);
-    }
-
+    }*/
     BanPackages = value("BanPackages").toStringList();
 
     ContestMode = value("ContestMode", false).toBool();
+    Statistic = value("Statistic", false).toBool();
     FreeChoose = value("FreeChoose", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();
@@ -69,7 +81,9 @@ void Settings::init(){
     EnableScene = value("EnableScene", false).toBool();	//changjing
     EnableSame = value("EnableSame", false).toBool();
     EnableEndless = value("EnableEndless", false).toBool();
-    EnableBasara= value("EnableBasara",false).toBool();
+    EnableAnzhan = value("EnableAnzhan", false).toBool();
+    EnableBasara = value("EnableBasara", false).toBool();
+    EnableHegemony = value("EnableHegemony", false).toBool();
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
@@ -88,7 +102,7 @@ void Settings::init(){
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
-    UserAvatar = value("UserAvatar", "zhaoji").toString();
+    UserAvatar = value("UserAvatar", "anjiang").toString();
     HistoryIPs = value("HistoryIPs").toStringList();
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
@@ -96,22 +110,85 @@ void Settings::init(){
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
+    EnableMinimizeDialog = value("EnableMinimizeDialog", false).toBool();
     EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
+    ShowAllName = value("ShowAllName", true).toBool();
     SPOpen = value("SPOpen", false).toBool();
     OperationTimeout = value("OperationTimeout", 15).toInt();
     OperationNoLimit = value("OperationNoLimit", false).toBool();
-    EnableEffects = value("EnableEffects", true).toBool();
+    EnableCardEffects = value("EnableCardEffects", true).toBool();
+    EnableEquipEffects = value("EnableEquipEffects", true).toBool();
+    EnableSkillEffects = value("EnableSkillEffects", true).toBool();
     EnableLastWord = value("EnableLastWord", true).toBool();
+    EnableCheatRing = value("EnableCheatRing", true).toBool();
     EnableBgMusic = value("EnableBgMusic", true).toBool();
     BGMVolume = value("BGMVolume", 1.0f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
+    EnableLua = value("EnableLua", false).toBool();
 
     BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
 
-    if(!contains("1v1/Banlist")){
-        QStringList banlist;
-        banlist << "andaoquan" << "shenwuyong" << "wangdingliu" << "zhaoji";
-        setValue("1v1/Banlist", banlist);
+    QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
+
+    roles_ban << "ubuntenkei";
+
+    kof_ban << "andaoquan"/* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
+
+    //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
+
+    hegemony_ban.append(basara_ban);
+    //hegemony_ban << "jiangsong";
+    foreach(QString general, Sanguosha->getLimitedGeneralNames()){
+        if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
+            hegemony_ban << general;
     }
+/*
+    pairs_ban << "shenwuyong"
+              << "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
+              << "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
+              << "oupeng+wangqing" << "gaoqiu+luozhenren" << "jiashi+shenzhangqing"
+              << "husanniang+zhaoji" << "dingdesun+wangqing";
+*/
+    QStringList banlist = value("Banlist/Roles").toStringList();
+    foreach(QString ban_general, roles_ban){
+        if(!banlist.contains(ban_general))
+            banlist << ban_general;
+    }
+    setValue("Banlist/Roles", banlist);
+
+    banlist = value("Banlist/1v1").toStringList();
+    foreach(QString ban_general, kof_ban){
+        if(!banlist.contains(ban_general))
+            banlist << ban_general;
+    }
+    setValue("Banlist/1v1", banlist);
+
+    banlist = value("Banlist/Basara").toStringList();
+    foreach(QString ban_general, basara_ban){
+        if(!banlist.contains(ban_general))
+                banlist << ban_general;
+    }
+    setValue("Banlist/Basara", banlist);
+
+    banlist = value("Banlist/Hegemony").toStringList();
+    foreach(QString ban_general, hegemony_ban){
+        if(!banlist.contains(ban_general))
+                banlist << ban_general;
+    }
+    setValue("Banlist/Hegemony", banlist);
+
+    banlist = value("Banlist/Pairs").toStringList();
+    foreach(QString ban_general, pairs_ban){
+        if(!banlist.contains(ban_general))
+                banlist << ban_general;
+    }
+    setValue("Banlist/Pairs", banlist);
+
+    QStringList forbid_packages;
+    forbid_packages << "test";
+    setValue("ForbidPackages", forbid_packages.join("+"));
+
+//ui
+    setValue("UI/ExpandDashboard", value("UI/ExpandDashboard", true).toBool());
 }

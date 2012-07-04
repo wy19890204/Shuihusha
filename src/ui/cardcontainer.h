@@ -7,6 +7,22 @@ class ClientPlayer;
 #include "pixmap.h"
 #include "carditem.h"
 
+#include <QStack>
+
+class CloseButton: public Pixmap{
+    Q_OBJECT
+
+public:
+    CloseButton();
+
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+signals:
+    void clicked();
+};
+
 class GrabCardItem: public CardItem{
     Q_OBJECT
 
@@ -33,11 +49,15 @@ public:
     void view(const ClientPlayer *player);
 
 public slots:
-    void fillCards(const QList<int> &card_ids);
+    void fillCards(const QList<int> &card_ids = QList<int>());
     void clear();
+    void freezeCards(bool is_disable);
 
 private:
     QList<GrabCardItem *> items;
+    CloseButton* close_button;
+
+    QStack<QList<GrabCardItem *> > items_stack;
 
     void addCardItem(int card_id, const QPointF &pos);
 
@@ -67,26 +87,12 @@ private:
     QList<CardItem *> up_items, down_items;
     bool up_only;
 
-    static const qreal start_x = 30;
-    static const qreal start_y1 = 40;
-    static const qreal start_y2 = 184;
-    static const qreal middle_y = 157;
-    static const qreal skip = 102;
-    static const qreal card_width = 93;
-};
-
-class CloseButton: public Pixmap{
-    Q_OBJECT
-
-public:
-    CloseButton();
-
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-
-signals:
-    void clicked();
+    static const int start_x = 30;
+    static const int start_y1 = 40;
+    static const int start_y2 = 184;
+    static const int middle_y = 157;
+    static const int skip = 102;
+    static const int card_width = 93;
 };
 
 #endif // CARDCONTAINER_H

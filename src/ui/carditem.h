@@ -3,6 +3,7 @@
 
 #include "card.h"
 #include "pixmap.h"
+#include "QAbstractAnimation"
 
 #include <QSize>
 
@@ -23,7 +24,7 @@ public:
     const Card *getCard() const;
     void setHomePos(QPointF home_pos);
     QPointF homePos() const;
-    void goBack(bool kieru = false);
+    QAbstractAnimation* goBack(bool kieru = false,bool fadein = true,bool fadeout = true);
     const QPixmap &getSuitPixmap() const;
     const QPixmap &getNumberPixmap() const;
     const QPixmap &getIconPixmap() const;
@@ -32,7 +33,7 @@ public:
     void hideFrame();
     void setAutoBack(bool auto_back);
     void changeGeneral(const QString &general_name);
-    void writeCardDesc(QString card_owner);
+    void writeCardDesc(QString desc);
     void deleteCardDesc();
 
     void select();
@@ -40,26 +41,33 @@ public:
     bool isPending() const;
     bool isEquipped() const;
 
+    void setFrozen(bool is_frozen);
+    bool isFrozen() const;
+
     static const int NormalY = 36;
     static const int PendingY = NormalY - 40;
     static CardItem *FindItem(const QList<CardItem *> &items, int card_id);
 
+public slots:
+    void reduceZ();
+    void promoteZ();
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);    
 
 private:
     const Card *card, *filtered_card;
     QPixmap suit_pixmap, icon_pixmap, number_pixmap, cardsuit_pixmap, *owner_pixmap;
+    QGraphicsSimpleTextItem *owner_text;
     QPointF home_pos;
     QGraphicsPixmapItem *frame, *avatar;
-    bool auto_back;
+    bool auto_back, frozen;
 signals:
     void toggle_discards();
     void clicked();

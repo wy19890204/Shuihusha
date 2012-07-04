@@ -15,14 +15,14 @@ public:
 
     virtual int getPriority() const;
     virtual bool triggerable(const ServerPlayer *target) const;
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 
     LuaFunction on_trigger;
     LuaFunction can_trigger;
     int priority;
 };
 
-class LuaProhibitSkill: public ProhibitSkill{
+class LuaProhibitSkill: public ClientSkill{
     Q_OBJECT
 
 public:
@@ -49,9 +49,11 @@ public:
 
     LuaFunction enabled_at_play;
     LuaFunction enabled_at_response;
+    LuaFunction enabled_at_nullification;
 
     virtual bool isEnabledAtPlay(const Player *player) const;
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const;
+    virtual bool isEnabledAtNullification(const Player *player) const;
 };
 
 class LuaFilterSkill: public FilterSkill{
@@ -67,7 +69,7 @@ public:
     LuaFunction view_as;
 };
 
-class LuaDistanceSkill: public DistanceSkill{
+class LuaDistanceSkill: public ClientSkill{
     Q_OBJECT
 
 public:

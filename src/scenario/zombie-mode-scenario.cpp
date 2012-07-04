@@ -1,7 +1,6 @@
-
 #include "zombie-mode-scenario.h"
 #include "engine.h"
-#include "standard-skillcards.h"
+#include "common-skillcards.h"
 #include "clientplayer.h"
 #include "client.h"
 #include "carditem.h"
@@ -39,9 +38,7 @@ public:
         player->tag.remove("zombie");
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-        Room *room = player->getRoom();
-
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(event){
         case GameStart:{
                 room->acquireSkill(player, "peaching");
@@ -181,7 +178,7 @@ void ZombieScenario::getRoles(char *roles) const{
     strcpy(roles, "ZCCCCCCC");
 }
 
-void ZombieScenario::onTagSet(Room *room, const QString &key) const{
+void ZombieScenario::onTagSet(Room *, const QString &) const{
     // dummy
 }
 
@@ -225,15 +222,15 @@ public:
             return x;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *zombie, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *zombie, QVariant &) const{
         if(event == PhaseChange && zombie->getPhase() == Player::Play){
         int x = getNumDiff(zombie);
         if(x > 0){
-            Room *room = zombie->getRoom();
             LogMessage log;
             log.type = "#ZaibianGood";
             log.from = zombie;
             log.arg = QString::number(x);
+            log.arg2 = objectName();
             room->sendLog(log);
             zombie->drawCards(x);
         }
@@ -251,7 +248,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, ServerPlayer *zombie, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *zombie, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
 
         const Card *reason = damage.card;
@@ -265,9 +262,10 @@ public:
             log.to << damage.to;
             log.arg = QString::number(damage.damage);
             log.arg2 = QString::number(damage.damage + 1);
-            zombie->getRoom()->sendLog(log);
+            room->sendLog(log);
 
-            if(zombie->getHp()>1)zombie->getRoom()->loseHp(zombie);
+            if(zombie->getHp()>1)
+                room->loseHp(zombie);
 
             damage.damage ++;
             data = QVariant::fromValue(damage);
@@ -294,7 +292,7 @@ public:
 
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
+    virtual bool isEnabledAtPlay(const Player *) const{
         return true;
     }
 
@@ -311,8 +309,11 @@ public:
 };
 
 GanranEquip::GanranEquip(Card::Suit suit, int number)
-    :IronChain(suit, number){
+    :IronChain(suit, number)
+{
+
 }
+
 
 class Ganran: public FilterSkill{
 public:
@@ -339,9 +340,9 @@ ZombieScenario::ZombieScenario()
 {
     rule = new ZombieRule(this);
 
-    skills<< new Peaching;
+    skills << new Peaching;
 
-    General *zombie = new General(this, "zombie", "die", 3, true, true);
+    General *zombie = new General(this, "zombie", "die", 3, true, true, true);
     zombie->addSkill(new Xunmeng);
     zombie->addSkill(new Ganran);
     zombie->addSkill(new Zaibian);

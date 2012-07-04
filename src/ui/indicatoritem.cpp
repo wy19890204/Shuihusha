@@ -31,6 +31,7 @@ void IndicatorItem::doAnimation(){
     QPropertyAnimation *pause = new QPropertyAnimation(this,"opacity");
     pause->setEndValue(0);
     pause->setEasingCurve(QEasingCurve::InQuart);
+    pause->setDuration(600);
 
     group->addAnimation(animation);
     group->addAnimation(pause);
@@ -50,6 +51,8 @@ void IndicatorItem::setFinish(const QPointF &finish){
 }
 
 void IndicatorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    painter->setRenderHint(QPainter::Antialiasing);
+
     QPen pen(color);
     pen.setWidthF(width);
 
@@ -73,5 +76,5 @@ QRectF IndicatorItem::boundingRect() const{
     qreal width = qAbs(start.x() - real_finish.x());
     qreal height = qAbs(start.y() - real_finish.y());
 
-    return QRectF(0, 0, width, height);
+    return QRectF(0, 0, width, height).adjusted(-2,-2,2,2);
 }

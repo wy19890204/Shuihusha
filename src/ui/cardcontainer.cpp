@@ -13,7 +13,9 @@ GrabCardItem::GrabCardItem(const Card *card)
 }
 
 void GrabCardItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *){
-    emit grabbed();
+    if(!isFrozen())
+        emit grabbed();
+
     goBack();
 }
 
@@ -22,9 +24,22 @@ CardContainer::CardContainer() :
 {
     setFlag(ItemIsFocusable);
     setFlag(ItemIsMovable);
+    close_button = new CloseButton;
+    close_button->setParentItem(this);
+    close_button->setPos(517, 21);
+    close_button->hide();
 }
 
 void CardContainer::fillCards(const QList<int> &card_ids){
+    if(card_ids.isEmpty()){
+        show();
+        return;
+    }
+    else if(!items.isEmpty()){
+        items_stack.push(items);
+        items.clear();
+    }
+
     static const QPointF pos1(30, 40);
     static const QPointF pos2(30, 184);
     static const int card_width = 93;
@@ -72,8 +87,20 @@ void CardContainer::clear(){
     }
 
     items.clear();
+    if(!items_stack.isEmpty()){
+        items = items_stack.pop();
+        fillCards();
+    }
+    else{
+        close_button->hide();
+        hide();
+    }
+}
 
-    hide();
+void CardContainer::freezeCards(bool is_frozen){
+    foreach(GrabCardItem *item, items){
+        item->setFrozen(is_frozen);
+    }
 }
 
 CardItem *CardContainer::take(const ClientPlayer *taker, int card_id){
@@ -112,6 +139,7 @@ int CardContainer::getFirstEnabled() const{
 }
 
 void CardContainer::startChoose(){
+    close_button->hide();
     foreach(GrabCardItem *item, items){
         connect(item, SIGNAL(grabbed()), this, SLOT(grabItem()));
         connect(item, SIGNAL(double_clicked()), this, SLOT(chooseItem()));
@@ -127,9 +155,7 @@ void CardContainer::startGongxin(){
 }
 
 void CardContainer::addCloseButton(bool dispose){
-    CloseButton *close_button = new CloseButton;
-    close_button->setParentItem(this);
-    close_button->setPos(517, 21);
+    close_button->show();
 
     if(dispose)
         connect(close_button, SIGNAL(clicked()), this, SLOT(deleteLater()));
@@ -293,7 +319,7 @@ void GuanxingBox::reply(){
     foreach(CardItem *card_item, down_items)
         down_cards << card_item->getCard()->getId();
 
-    ClientInstance->replyGuanxing(up_cards, down_cards);
+    ClientInstance->onPlayerReplyGuanxing(up_cards, down_cards);
     clear();
 }
 

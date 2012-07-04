@@ -10,10 +10,11 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
+#include <QPixmapCache>
 
-Dashboard::Dashboard()
+Dashboard::Dashboard(QGraphicsItem *button_widget)
     :left_pixmap("image/system/dashboard-equip.png"), right_pixmap("image/system/dashboard-avatar.png"),
-    selected(NULL), avatar(NULL),
+    button_widget(button_widget), selected(NULL), avatar(NULL),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
 {
@@ -23,14 +24,15 @@ Dashboard::Dashboard()
 
     death_item = NULL;
 
-    int left_width = left_pixmap.width();
-    int middle_width = middle->rect().width();
-    int right_width = right->rect().width();
-    min_width = left_width + middle_width + right_width;
+    if(button_widget)
+        button_widget->setParentItem(this);
 
+    int middle_width = middle->rect().width();
     setMiddleWidth(middle_width);
 
     sort_type = 0;
+
+    animations = new EffectAnimation();
 }
 
 void Dashboard::createLeft(){
@@ -44,6 +46,13 @@ void Dashboard::createLeft(){
         equip_rects[i] = new QGraphicsRectItem(rect, left);
         equip_rects[i]->setPen(Qt::NoPen);
     }
+}
+
+int Dashboard::getButtonWidgetWidth() const{
+    if(button_widget)
+        return button_widget->boundingRect().width();
+    else
+        return 0;
 }
 
 void Dashboard::createMiddle(){
@@ -82,8 +91,13 @@ void Dashboard::createRight(){
     small_avatar->setParentItem(right);
     small_avatar->setOpacity(0.75);
 
-    kingdom = new QGraphicsPixmapItem(right);
-    kingdom->setPos(91, 54);
+    if(button_widget){
+        kingdom = new QGraphicsPixmapItem(button_widget);
+        kingdom->setPos(57, 0);
+    }else{
+        kingdom = new QGraphicsPixmapItem(right);
+        kingdom->setPos(91, 54);
+    }
 
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
     ready_item->setPos(2, 43);
@@ -92,13 +106,15 @@ void Dashboard::createRight(){
     chain_icon = new Pixmap("image/system/chain.png");
     chain_icon->setParentItem(right);
     chain_icon->setPos(small_avatar->pos());
+    chain_icon->moveBy(-25 ,-45);
     chain_icon->hide();
     chain_icon->setZValue(1.0);
 
     back_icon = new Pixmap("image/system/big-back.png");
     back_icon->setParentItem(right);
-    back_icon->setPos(59, 105);
-    back_icon->setZValue(1.0);
+    //back_icon->setPos(59, 105);
+    back_icon->setPos(22, 64);
+    back_icon->setZValue(0.2);
     back_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
@@ -106,16 +122,33 @@ void Dashboard::createRight(){
     handcard_pixmap->setPos(25, 127);
 
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setFont(Config.TinyFont);
+    handcard_num->setPos(6,8);
+
+    QFont serifFont("Times", 10, QFont::Bold);
+    handcard_num->setFont(serifFont);
     handcard_num->setBrush(Qt::white);
 
     handcard_pixmap->hide();
 
     mark_item = new QGraphicsTextItem(right);
-    mark_item->setPos(-128, 0);
+    mark_item->setPos(-128 - getButtonWidgetWidth(), 0);
     mark_item->setDefaultTextColor(Qt::white);
 
     action_item = NULL;
+}
+
+void Dashboard::setEcstState(){
+    QGraphicsRectItem *avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    avatar_area->setPos(22, 64);
+    avatar_area->setZValue(0.3);
+
+    if(Self->hasFlag("ecst")){
+        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    }
+    //else if(Self->getMark("poison") > 0)
+    //    setPoisonState();
+    else
+        avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Dashboard::setActionState(){
@@ -130,15 +163,16 @@ void Dashboard::setActionState(){
 
 void Dashboard::setFilter(const FilterSkill *filter){
     this->filter = filter;
-
-    if(filter == NULL){
-        foreach(CardItem *card_item, card_items)
-            card_item->filter(NULL);
-    }
+    doFilter();
 }
 
 const FilterSkill *Dashboard::getFilter() const{
     return filter;
+}
+
+void Dashboard::doFilter(){
+    foreach(CardItem *card_item, card_items)
+        card_item->filter(filter);
 }
 
 void Dashboard::setTrust(bool trust){
@@ -160,15 +194,18 @@ void Dashboard::addCardItem(CardItem *card_item){
     card_item->setParentItem(this);
     card_item->setRotation(0.0);
     card_item->setFlags(ItemIsFocusable);
+    card_item->setZValue(0.1);
     card_items << card_item;
 
     connect(card_item, SIGNAL(clicked()), this, SLOT(onCardItemClicked()));
     connect(card_item, SIGNAL(thrown()), this, SLOT(onCardItemThrown()));
+    connect(card_item, SIGNAL(enter_hover()), this, SLOT(onCardItemHover()));
+    connect(card_item, SIGNAL(leave_hover()), this, SLOT(onCardItemLeaveHover()));
 
     sortCards(sort_type);
 
     handcard_num->setText(QString::number(Self->getHandcardNum()));
-    handcard_num->parentItem()->show();
+    //handcard_num->parentItem()->show();
 }
 
 void Dashboard::setPlayer(const ClientPlayer *player){
@@ -177,6 +214,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
+    connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
 
@@ -201,7 +239,8 @@ void Dashboard::updateAvatar(){
         avatar->setPixmap(pixmap);
     }
 
-    kingdom->setPixmap(QPixmap(Self->getKingdomIcon()));
+    QString folder = button_widget ? "button" : "icon";
+    kingdom->setPixmap(QPixmap(QString("image/kingdom/%1/%2.png").arg(folder).arg(Self->getKingdom())));
 
     avatar->show();
     kingdom->show();
@@ -298,22 +337,33 @@ void Dashboard::unselectAll(){
 
     foreach(CardItem *card_item, card_items){
         card_item->unselect();
-        card_item->goBack();
+        //card_item->goBack();
     }
 }
 
 void Dashboard::hideAvatar(){
     avatar->hide();
-    kingdom->hide();
+
+    if(button_widget == NULL)
+        kingdom->hide();
 }
 
 void Dashboard::installDelayedTrick(CardItem *card){
     judging_area << card;
     const DelayedTrick *trick = DelayedTrick::CastFrom(card->getCard());
-    delayed_tricks << QPixmap(trick->getIconPath());
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(this);
+    item->setPixmap(QPixmap(trick->getIconPath()));
+    QString tooltip;
+    if(trick->isVirtualCard())
+        tooltip=Sanguosha->getCard((trick->getSubcards()).at(0))->getDescription();
+    else
+        tooltip=trick->getDescription();
+    item->setToolTip(tooltip);
+    item->setPos(3 + delayed_tricks.length() * 27, 5);
+    delayed_tricks << item;
 
     card->setHomePos(mapToScene(QPointF(34, 37)));
-    card->goBack(true);
+    card->goBack(true,false);
 
     update();
 }
@@ -324,13 +374,21 @@ QRectF Dashboard::boundingRect() const{
     return QRectF(0, 0, width, height);
 }
 
+int Dashboard::getTextureWidth() const{
+    return middle->brush().texture().width() + left_pixmap.width() + right_pixmap.width();
+}
+
 void Dashboard::setMiddleWidth(int middle_width){
     int left_width = left_pixmap.width();
     qreal middle_height = middle->rect().height();
 
-    middle->setRect(0, 0, middle_width, middle_height);
+    middle->setRect(0, 0, middle_width + getButtonWidgetWidth(), middle_height);
     middle->setX(left_width);
-    right->setX(left_width + middle_width);
+
+    if(button_widget)
+        button_widget->setX(left_width + middle_width);
+
+    right->setX(left_width + middle_width + getButtonWidgetWidth());
 
     trusting_item->setRect(middle->rect());
     trusting_item->setX(left_width);
@@ -338,22 +396,17 @@ void Dashboard::setMiddleWidth(int middle_width){
 }
 
 void Dashboard::setWidth(int width){
-    if(width == 0){
-        setMiddleWidth(middle->brush().texture().width());
+    qreal left_width = left->boundingRect().width();
+    qreal right_width = right->boundingRect().width();
+    qreal button_width = getButtonWidgetWidth();
+    qreal middle_width = width - left_width - right_width - button_width;
 
-        prepareGeometryChange();
-        adjustCards();
+    setMiddleWidth(middle_width);
 
-    }else if(width > min_width){
-        qreal left_width = left->boundingRect().width();
-        qreal right_width = right->boundingRect().width();
-        qreal middle_width = width - left_width - right_width;
+    prepareGeometryChange();
+    adjustCards();
 
-        setMiddleWidth(middle_width);
-
-        prepareGeometryChange();
-        adjustCards();
-    }
+    setX(- boundingRect().width()/2);
 }
 
 QGraphicsProxyWidget *Dashboard::addWidget(QWidget *widget, int x, bool from_left){
@@ -375,10 +428,11 @@ QPushButton *Dashboard::createButton(const QString &name){
     QIcon icon(icon_pixmap);
     icon.addPixmap(icon_pixmap_disabled, QIcon::Disabled);
 
-    button->setIcon(icon);
-    button->setIconSize(icon_pixmap.size());
+    //button->setIcon(icon);
+    //button->setIconSize(icon_pixmap.size());
     button->setFixedSize(icon_pixmap.size());
     button->setObjectName(name);
+    button->setProperty("game_control",true);
 
     button->setAttribute(Qt::WA_TranslucentBackground);
 
@@ -393,15 +447,15 @@ QPushButton *Dashboard::addButton(const QString &name, int x, bool from_left){
 
 QProgressBar *Dashboard::addProgressBar(){
     QProgressBar *progress_bar = new QProgressBar;
-    progress_bar->setOrientation(Qt::Vertical);
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
-    progress_bar->setFixedSize(12, 124);
+    progress_bar->setFixedSize(300, 15);
+    progress_bar->setTextVisible(false);
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(right);
     widget->setWidget(progress_bar);
-    widget->setParentItem(right);
-    widget->setPos(3, 39);
+    widget->setParentItem(middle);
+    widget->setPos(300, - 25);
 
     progress_bar->hide();
 
@@ -477,13 +531,6 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     drawEquip(painter, defensive_horse, 2);
     drawEquip(painter, offensive_horse, 3);
 
-    // draw player's judging area
-    int i;
-    for(i=0; i<delayed_tricks.count(); i++){
-        QPoint pos(3 + i * 27, 5);
-        painter->drawPixmap(pos, delayed_tricks.at(i));
-    }
-
     drawHp(painter);
 
     chain_icon->setVisible(Self->isChained());
@@ -511,25 +558,49 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     if(!equip)
         return;
 
-    static const int width = 117;
-    static const int height = 25;
-    static const int start_x = 8;
+    static const int width = 145;
     static const int start_y = 40;
 
     int y = start_y + order * 32;
 
+    const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
+    painter->setPen(Qt::black);
+
+    // draw image or name
+    QString path = QString("image/equips/%1.png").arg(card->objectName());
+    QPixmap label;
+    if(!QPixmapCache::find(path, &label)){
+        label.load(path);
+        QPixmapCache::insert(path, label);
+    }
+
+    if(label.isNull())
+    {
+        painter->setPen(Qt::white);
+        QString text = QString("%1").arg(card->label());
+        painter->drawText(10, y + 20, text);
+    }else
+    {
+        QFont font("Algerian",12);
+        font.setBold(true);
+        painter->setFont(font);
+        painter->drawPixmap(8,y + 2,label.width(),label.height(),label);
+    }
+
     // draw the suit of equip
-    QRect suit_rect(10, y + 3, 15, 15);
+    QRect suit_rect(width - 19, y + 10, 13, 13);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
-    // draw the name of equip
-    const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
-    QString text = QString("%1 %2").arg(card->getNumberString()).arg(card->label());
-    painter->drawText(28, y + 20, text);
+
+    // draw the number of equip
+
+    //painter->drawText(width - 4,y + 23,QString("%1").arg(card->getNumberString()));
+    painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
+
 
     painter->setPen(Qt::white);
     if(equip->isMarked()){
-        painter->drawRect(start_x, y , width, height);
+        painter->drawRect(8,y + 2,label.width(),label.height());
     }
 }
 
@@ -570,7 +641,7 @@ void Dashboard::adjustCards(){
 
         // reset Z value
         for(i=0; i<n; i++)
-            all_items.at(i)->setZValue(0.0001 * i);
+            all_items.at(i)->setZValue(2.0 + 0.0001 * i);
     }else{
         adjustCards(card_items, CardItem::NormalY);
 
@@ -583,7 +654,7 @@ void Dashboard::adjustCards(const QList<CardItem *> &list, int y){
     if(list.isEmpty())
         return;
 
-    int max_width = middle->rect().width();
+    int max_width = middle->rect().width() - getButtonWidgetWidth();
     int start_x = left->boundingRect().width();
 
     if(list.length() == 1){
@@ -600,7 +671,7 @@ void Dashboard::adjustCards(const QList<CardItem *> &list, int y){
     int i;
     for(i=0; i<n; i++){
         if(card_items.length() <= Config.MaxCards)
-            list[i]->setZValue(0.0001 * i);
+            list[i]->setZValue(2.0 + 0.0001 * i);
 
         QPointF home_pos(start_x + i * card_skip, y);
         list[i]->setHomePos(home_pos);
@@ -610,7 +681,7 @@ void Dashboard::adjustCards(const QList<CardItem *> &list, int y){
 
 void Dashboard::installEquip(CardItem *equip){
     equip->setHomePos(mapToScene(QPointF(34, 37)));
-    equip->goBack(true);
+    equip->goBack(true,false);
 
     int index = -1;
     const EquipCard *equip_card = qobject_cast<const EquipCard *>(equip->getCard());
@@ -663,7 +734,10 @@ CardItem *Dashboard::takeCardItem(int card_id, Player::Place place){
             card_item->hideFrame();
             int index = judging_area.indexOf(card_item);
             judging_area.removeAt(index);
-            delayed_tricks.removeAt(index);
+            delete delayed_tricks.takeAt(index);
+            for(int i=0; i<delayed_tricks.count(); i++){
+                delayed_tricks.at(i)->setPos(3 + i * 27, 5);
+            }
         }
     }
 
@@ -753,10 +827,7 @@ void Dashboard::disableAllCards(){
 
 void Dashboard::enableCards(){
     foreach(CardItem *card_item, card_items){
-        if(Self->isJilei(card_item->getFilteredCard()))
-            card_item->setEnabled(false);
-        else
-            card_item->setEnabled(card_item->getFilteredCard()->isAvailable(Self));
+        card_item->setEnabled(card_item->getFilteredCard()->isAvailable(Self));
     }
 }
 
@@ -776,6 +847,7 @@ void Dashboard::startPending(const ViewAsSkill *skill){
     }
 
     updatePending();
+    adjustCards();
 }
 
 void Dashboard::stopPending(){
@@ -815,10 +887,11 @@ void Dashboard::onCardItemClicked(){
     }else{
         if(card_item->isPending()){
             unselectAll();
+            emit card_selected(NULL);
         }else{
             unselectAll();
             card_item->select();
-            card_item->goBack();
+            //card_item->goBack();
             selected = card_item;
 
             emit card_selected(selected->getFilteredCard());
@@ -828,7 +901,7 @@ void Dashboard::onCardItemClicked(){
 
 void Dashboard::updatePending(){
     foreach(CardItem *c, card_items){
-        if(!c->isPending()){
+        if(!c->isPending()||pendings.isEmpty()){
             c->setEnabled(view_as_skill->viewFilter(pendings, c));
         }
     }
@@ -856,6 +929,22 @@ void Dashboard::onCardItemThrown(){
     }
 }
 
+void Dashboard::onCardItemHover()
+{
+    QGraphicsItem *card_item = qobject_cast<QGraphicsItem *>(sender());
+    if(!card_item)return;
+
+    animations->emphasize(card_item);
+}
+
+void Dashboard::onCardItemLeaveHover()
+{
+    QGraphicsItem *card_item = qobject_cast<QGraphicsItem *>(sender());
+    if(!card_item)return;
+
+    animations->effectOut(card_item);
+}
+
 void Dashboard::onMarkChanged(){
     CardItem *card_item = qobject_cast<CardItem *>(sender());
 
@@ -878,4 +967,14 @@ const ViewAsSkill *Dashboard::currentSkill() const{
 
 const Card *Dashboard::pendingCard() const{
     return pending_card;
+}
+
+int Dashboard::getRightPosition()
+{
+    return left_pixmap.width() + middle->rect().width();
+}
+
+int Dashboard::getMidPosition()
+{
+    return left_pixmap.width();
 }

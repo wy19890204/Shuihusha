@@ -6,11 +6,11 @@
 #include "roomthread.h"
 #include "skill.h"
 
-class StandardPackage:public Package{
+class CustomCardPackage: public Package{
     Q_OBJECT
 
 public:
-    StandardPackage();
+    CustomCardPackage();
 };
 
 class TestPackage: public Package{
@@ -167,7 +167,6 @@ class Duel:public SingleTargetTrick{
 
 public:
     Q_INVOKABLE Duel(Card::Suit suit, int number);
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
