@@ -79,6 +79,15 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
 
     bool distance_limit = true;
 
+    if(Self->hasSkill("shuangzhan")){
+        int x = 0;
+        foreach(const Player *tmp, Self->getSiblings())
+            if(tmp->isAlive() && Self->inMyAttackRange(tmp))
+                x++;
+        if(x > 2)
+            slash_targets ++;
+    }
+
     if(Self->hasSkill("qinlong") && !Self->hasEquip())
         slash_targets ++;
 
