@@ -6,7 +6,7 @@ Acid::Acid(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Acid::IsAvailable(const Player *player){
-    return player->hasEquip("acid_buret")/* || player->canSlashWithoutCrossbow()*/;
+    return player->hasEquip("acid_buret") || !player->hasUsed("Acid");
 }
 
 bool Acid::isAvailable(const Player *player) const{
@@ -125,7 +125,7 @@ Base::Base(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Base::IsAvailable(const Player *player){
-    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow();
+    return !player->hasUsed("Base");
 }
 
 bool Base::isAvailable(const Player *player) const{
