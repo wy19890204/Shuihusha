@@ -107,6 +107,46 @@ public:
     }
 };
 
+BomingCard::BomingCard(){
+    once = true;
+}
+
+bool BomingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->hasEquip() && Self->inMyAttackRange(to_select) && Self != to_select;
+}
+
+void BomingCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    DummyCard *dummy = new DummyCard;
+    int dmgnum = effect.to->getEquips().length();
+    foreach(const Card *equip, effect.to->getEquips())
+        dummy->addSubcard(equip);
+    DamageStruct damage;
+    damage.from = effect.from;
+    damage.to = effect.to;
+    damage.card = dummy;
+    damage.damage = dmgnum;
+    room->damage(damage);
+    room->loseHp(effect.from, dmgnum);
+}
+
+class Boming: public ZeroCardViewAsSkill{
+public:
+    Boming():ZeroCardViewAsSkill("boming"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("BomingCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new BomingCard;
+    }
+};
+
 XunlieCard::XunlieCard(){
 }
 
@@ -371,6 +411,25 @@ public:
     }
 };
 
+class Shuilao: public OneCardViewAsSkill{
+public:
+    Shuilao():OneCardViewAsSkill("shuilao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->isNDTrick();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *first = card_item->getCard();
+        Indulgence *indulgence = new Indulgence(first->getSuit(), first->getNumber());
+        indulgence->addSubcard(first->getId());
+        indulgence->setSkillName(objectName());
+        return indulgence;
+    }
+};
+
 class Fengxing: public TriggerSkill{
 public:
     Fengxing():TriggerSkill("fengxing"){
@@ -580,6 +639,65 @@ public:
     }
 };
 
+class Qingdong: public TriggerSkill{
+public:
+    Qingdong():TriggerSkill("qingdong"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName()) &&
+                target->getGeneral()->isMale() &&
+                target->getPhase() == Player::NotActive;
+    }
+
+    virtual bool trigger(TriggerEvent, ServerPlayer *conan, QVariant &data) const{
+        Room *room = conan->getRoom();
+        ServerPlayer *yulan = room->findPlayerBySkillName(objectName());
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(conan->isDead() || !yulan)
+            return false;
+        if(move->from_place == Player::Hand && yulan->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(diamond):(.*)");
+            judge.good = false;
+            judge.reason = objectName();
+            judge.who = conan;
+
+            room->judge(judge);
+            if(judge.isGood()){
+                int cd = conan->getMaxHP() - conan->getHandcardNum();
+                conan->drawCards(qMin(4, qMax(0, cd)));
+            }
+        }
+        return false;
+    }
+};
+
+class Qingshang: public TriggerSkill{
+public:
+    Qingshang():TriggerSkill("qingshang"){
+        events << Death;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+        DamageStar damage = data.value<DamageStar>();
+        ServerPlayer *killer = damage ? damage->from : NULL;
+
+        if(killer){
+            if(killer != player)
+                killer->gainMark("@shang");
+        }
+        return false;
+    }
+};
+
 FCDCPackage::FCDCPackage()
     :Package("FCDC")
 {
@@ -589,6 +707,9 @@ FCDCPackage::FCDCPackage()
 
     General *dongping = new General(this, "dongping", "guan");
     dongping->addSkill(new Shuangzhan);
+
+    General *shixiu = new General(this, "shixiu", "kou", 4);
+    shixiu->addSkill(new Boming);
 
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
@@ -600,6 +721,10 @@ FCDCPackage::FCDCPackage()
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
+
+    General *tongmeng = new General(this, "tongmeng", "min", 3);
+    tongmeng->addSkill(new Shuilao);
+    tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
@@ -615,7 +740,12 @@ FCDCPackage::FCDCPackage()
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
 
+    General *yulan = new General(this, "yulan", "guan", 3, false);
+    yulan->addSkill(new Qingdong);
+    yulan->addSkill(new Qingshang);
+
     addMetaObject<LianmaCard>();
+    addMetaObject<BomingCard>();
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
     addMetaObject<HuazhuCard>();
