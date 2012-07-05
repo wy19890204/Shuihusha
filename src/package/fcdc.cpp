@@ -18,7 +18,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
     QString choice = room->askForChoice(huyanzhuo, "lianma", "lian+ma");
     if(choice == "lian"){
         foreach(ServerPlayer *player, players){
-            if(player->hasEquip("Horse", true)){
+            if(player->getOffensiveHorse() || player->getDefensiveHorse()){
                 if(!player->isChained()){
                     player->setChained(true);
                     room->broadcastProperty(player, "chained");
@@ -28,7 +28,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
         }
     }else{
         foreach(ServerPlayer *player, players){
-            if(!player->hasEquip("Horse", true)){
+            if(!player->getOffensiveHorse() && !player->getDefensiveHorse()){
                 if(player->isChained())
                     room->setPlayerProperty(player, "chained", false);
             }
@@ -79,20 +79,21 @@ public:
     virtual bool trigger(TriggerEvent, ServerPlayer *dongping, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         int x = 0;
+        Room *room = dongping->getRoom();
         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
             if(dongping->inMyAttackRange(tmp)){
                 if(tmp == dongping)
                     continue;
-                c ++;
+                x ++;
             }
         }
         if(x <= 2){
             Room *room = dongping->getRoom();
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
             const Card *first_jink = NULL, *second_jink = NULL;
-            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), false, QVariant(), JinkUsed);
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName());
             if(first_jink)
-                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), false, QVariant(), JinkUsed);
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName());
 
             Card *jink = NULL;
             if(first_jink && second_jink){
@@ -504,6 +505,57 @@ public:
     }
 };
 
+JiashuCard::JiashuCard(){
+    will_throw = false;
+    once = true;
+}
+
+bool JiashuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void JiashuCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this, false);
+    Room *room = effect.from->getRoom();
+
+    Card::Suit suit = room->askForSuit(effect.from, "jiashu");
+    LogMessage log;
+    log.type = "#DeclareSuit";
+    log.from = effect.from;
+    QString suit_str = Suit2String(suit);
+    log.arg = suit_str;
+    room->sendLog(log);
+    QString pattern = QString(".|%1|.|hand$").arg(suit_str);
+    QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
+    const Card *card = room->askForCard(effect.to, pattern, prompt);
+    if(card){
+        effect.from->obtainCard(card);
+        effect.to->drawCards(1);
+    }
+    else
+        room->loseHp(effect.to);
+}
+
+class Jiashu: public OneCardViewAsSkill{
+public:
+    Jiashu():OneCardViewAsSkill("jiashu"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("JiashuCard");
+    }
+
+    virtual bool viewFilter(const CardItem *book) const{
+        return !book->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        JiashuCard *card = new JiashuCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 class Duoquan: public TriggerSkill{
 public:
     Duoquan():TriggerSkill("duoquan"){
@@ -515,18 +567,18 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &data) const{
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
-        Room *room = player->getRoom();
+        Room *room = killer->getRoom();
         ServerPlayer *caijing = room->findPlayerBySkillName(objectName());
-        if(caijing && caijing != killer){
+        if(caijing && caijing != killer && caijing->getMark("@quan") > 0){
             QVariant shiti = QVariant::fromValue((PlayerStar)player);
             if(!room->askForSkillInvoke(caijing, objectName(), shiti))
                 return false;
             QStringList skills;
             foreach(const Skill *skill, player->getVisibleSkillList()){
-                if(skill->parent() &&
+                if(skill->getLocation() == Skill::Right &&
                    skill->getFrequency() != Skill::Limited &&
                    skill->getFrequency() != Skill::Wake &&
                    !skill->isLordSkill()){
@@ -538,6 +590,14 @@ public:
                 QString skill = room->askForChoice(caijing, objectName(), skills.join("+"));
                 room->acquireSkill(caijing, skill);
             }
+            room->playSkillEffect(objectName());
+            room->broadcastInvoke("animate", "lightbox:$duoquan");
+            caijing->loseMark("@quan");
+
+            caijing->obtainCard(player->getWeapon());
+            caijing->obtainCard(player->getArmor());
+            caijing->obtainCard(player->getDefensiveHorse());
+            caijing->obtainCard(player->getOffensiveHorse());
             DummyCard *all_cards = player->wholeHandCards();
             if(all_cards){
                 room->obtainCard(caijing, all_cards, false);
@@ -734,7 +794,10 @@ FCDCPackage::FCDCPackage()
     daizong->addSkill(new Jibao);
 
     General *caijing = new General(this, "caijing", "guan");
+    caijing->addSkill(new Jiashu);
     caijing->addSkill(new Duoquan);
+    caijing->addSkill(new MarkAssignSkill("@quan", 1));
+    related_skills.insertMulti("duoquan", "#@quan-1");
 
     General *lishishi = new General(this, "lishishi", "min", 3, false);
     lishishi->addSkill(new Qinxin);
@@ -749,6 +812,7 @@ FCDCPackage::FCDCPackage()
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
     addMetaObject<HuazhuCard>();
+    addMetaObject<JiashuCard>();
     addMetaObject<YinjianCard>();
 }
 

@@ -1,7 +1,7 @@
 -- translation for InterChange Package
 
 return {
-	["interchange"] = "中转站",
+	["interchange"] = "鱼翔浅底",
 
 	["#qinming"] = "霹雳火",
 	["qinming"] = "秦明",
@@ -81,7 +81,7 @@ return {
 
 	["#fuan"] = "乾鸟头",
 	["fuan"] = "富安",
-	["designer:fuan"] = "天启姐",
+	["designer:fuan"] = "天尸娘",
 	["tongmou"] = "同谋",
 	[":tongmou"] = "当你使用【杀】时，可令一名其他角色（【杀】的目标也在该角色的攻击范围内）打出一张【杀】，令你使用的【杀】不可被闪避",
 	["@tongmou"] = "%src 发动了【同谋】，你可打出一张【杀】来响应",
@@ -93,18 +93,25 @@ return {
 
 	["#shibao"] = "南离大将",
 	["shibao"] = "石宝",
-	["designer:shibao"] = "天启姐",
+	["designer:shibao"] = "天尸娘",
 	["shenyong"] = "神勇",
 	[":shenyong"] = "当你需要打出一张【闪】时，可对攻击范围内的一名角色使用一张【杀】，（在其结算后）视为你使用了【闪】",
 	["~shibao"] = "操！",
 
 	["#murongyanda"] = "狗贼",
 	["murongyanda"] = "慕容彦达", --3/4
-	["designer:murongyanda"] = "天启姐",
+	["designer:murongyanda"] = "宇文天启",
 	["xumou"] = "蓄谋",
-	[":xumou"] = "出牌阶段，你可将一张黑色手牌当【借刀杀人】使用，每回合限一次",
+	[":xumou"] = "出牌阶段，你可将一张黑色6~10点数的手牌当【借刀杀人】使用",
 	["yuli"] = "渔利",
 	[":yuli"] = "回合内，任意角色每造成一点伤害，你可以摸一张牌",
 	["~murongyanda"] = "呼延将军，你一个败军之将……啊~",
+
+	["#ximenjinge"] = "光之子",
+	["ximenjinge"] = "西门金哥",
+	["designer:ximenjinge"] = "江山英魂",
+	["youxia"] = "游侠",
+	[":youxia"] = "当一名其他角色失去最后一张手牌时，你可立即交给其一张手牌并回复一点体力。",
+	["~ximenjinge"] = "日暮江山山无数，放眼流光光飞渡！",
 
 }

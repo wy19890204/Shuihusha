@@ -53,11 +53,11 @@ Engine::Engine()
             << "CGDK"
             << "YBYT"
             << "FCDC"
+            << "InterChange"
             << "SP"
             << "God"
             //<< "Guben"
             << "Stanley"
-            << "InterChange"
             << "Test"
 
             << "StandardCard"
