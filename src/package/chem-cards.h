@@ -113,4 +113,46 @@ public:
 
 };
 
+class TestTube:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE TestTube(Card::Suit suit, int number);
+};
+
+class PHMeter:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE PHMeter(Card::Suit suit, int number);
+};
+
+class AcidBuret:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE AcidBuret(Card::Suit suit, int number);
+};
+
+class ConicalFlask:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ConicalFlask(Card::Suit suit, int number);
+};
+
+class Dropper:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Dropper(Card::Suit suit, int number);
+};
+
+class Thermograph:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Thermograph(Card::Suit suit, int number);
+};
+
 #endif // CHEMCARDSPACKAGE_H
