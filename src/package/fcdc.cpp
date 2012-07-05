@@ -6,6 +6,25 @@
 #include "carditem.h"
 #include "engine.h"
 
+class Zhongjia: public MaxCardsSkill{
+public:
+    Zhongjia():MaxCardsSkill("zhongjia"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(!target->hasSkill(objectName()))
+            return 0;
+        else{
+            int extra = target->isChained() ? 1 : 0;
+            foreach(const Player *player, target->getSiblings()){
+                if(player->isAlive() && player->isChained())
+                    extra ++;
+            }
+            return extra;
+        }
+    }
+};
+
 XunlieCard::XunlieCard(){
 }
 
