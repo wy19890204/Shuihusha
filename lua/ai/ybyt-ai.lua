@@ -130,7 +130,7 @@ sgs.ai_skill_use["@@sinue"] = function(self, prompt)
 	self:sortByUseValue(cards, true)
 	for _, enemy in ipairs(self.enemies) do
 		if self.player:distanceTo(enemy) == 1 then
-			return "@SinueCard=" .. cards[1]:getEffectiveId()
+			return "@SinueCard=" .. cards[1]:getEffectiveId() .. "->."
 		end
 	end
 	return "."

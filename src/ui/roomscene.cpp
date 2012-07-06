@@ -3030,38 +3030,37 @@ void RoomScene::onGameStart(){
 
 #ifdef AUDIO_SUPPORT
 
-    if(!Config.EnableBgMusic)
-        return;
+    if(Config.EnableBgMusic){
+        bool play_music = false;
+        if(memory->isAttached() || memory->attach()){
+            memory->lock();
 
-    bool play_music = false;
-    if(memory->isAttached() || memory->attach()){
-        memory->lock();
+            char *username = static_cast<char *>(memory->data());
+            const char *my_username = Config.UserName.toAscii();
+            play_music = qstrcmp(username, my_username) == 0;
 
-        char *username = static_cast<char *>(memory->data());
-        const char *my_username = Config.UserName.toAscii();
-        play_music = qstrcmp(username, my_username) == 0;
+            memory->unlock();
+        }else if(memory->create(255)){
+            memory->lock();
 
-        memory->unlock();
-    }else if(memory->create(255)){
-        memory->lock();
+            void *data = memory->data();
+            const char *username = Config.UserName.toAscii();
+            memcpy(data, username, qstrlen(username));
 
-        void *data = memory->data();
-        const char *username = Config.UserName.toAscii();
-        memcpy(data, username, qstrlen(username));
+            play_music = true;
 
-        play_music = true;
+            memory->unlock();
+        }
 
-        memory->unlock();
+        if(!play_music)
+            return;
+
+        // start playing background music
+        QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
+
+        Audio::playBGM(bgmusic_path);
+        Audio::setBGMVolume(Config.BGMVolume);
     }
-
-    if(!play_music)
-        return;
-
-    // start playing background music
-    QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
-
-    Audio::playBGM(bgmusic_path);
-    Audio::setBGMVolume(Config.BGMVolume);
 
 #endif
 }
