@@ -155,4 +155,11 @@ public:
     Q_INVOKABLE Thermograph(Card::Suit suit, int number);
 };
 
+class Teflon:public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Teflon(Card::Suit suit, int number);
+};
+
 #endif // CHEMCARDSPACKAGE_H

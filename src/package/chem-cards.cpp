@@ -6,6 +6,8 @@ Acid::Acid(Suit suit, int number): BasicCard(suit, number)
 }
 
 bool Acid::IsAvailable(const Player *player){
+    if(player->hasEquip("teflon"))
+        return false;
     return player->hasEquip("acid_buret") || !player->hasUsed("Acid");
 }
 
@@ -34,6 +36,9 @@ void Acid::onEffect(const CardEffectStruct &effect) const{
         room->setCardFlag(this, "drank");
         room->setPlayerFlag(effect.from, "-drank");
     }
+
+    if(effect.to->hasEquip("teflon"))
+        return;
 
     bool mi = false;
     if(effect.from->hasEquip("ph_meter")){
@@ -325,6 +330,10 @@ Acids::Acids(Suit suit, int number)
 
 void Acids::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+
+    if(effect.to->hasEquip("teflon"))
+        return;
+
     const Card *base = room->askForCard(effect.to, "Base", "acids-base:" + effect.from->objectName());
     if(base)
         room->setEmotion(effect.to, "base");
@@ -410,6 +419,12 @@ Thermograph::Thermograph(Suit suit, int number)
     :Weapon(suit, number, 5)
 {
     setObjectName("thermograph");
+}
+
+Teflon::Teflon(Suit suit, int number)
+    :Armor(suit, number)
+{
+    setObjectName("teflon");
 }
 
 ChemCardsPackage::ChemCardsPackage()
