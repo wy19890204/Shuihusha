@@ -76,7 +76,7 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
 
         // special case
         if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
-            if(general->getPackage() == "sp")
+            if(general->getPackage() == "sp" || general->getPackage() == "interchange")
                 button->setEnabled(false);
         }
     }
@@ -191,6 +191,8 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
     QMap<QString, QList<const General*> > map;
     foreach(const General *general, all_generals){
         if(general->getPackage() == "sp" && !Config.SPOpen)
+            continue; //hidden generals
+        if(general->getPackage() == "interchange" && !Config.SPOpen)
             continue; //hidden generals
         if(general->getPackage() == "guben" || general->getPackage() == "pass")
             continue;
