@@ -5,49 +5,23 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
+#include "maneuvering.h"
 
-LianmaCard::LianmaCard(){
-    target_fixed = true;
-    once = true;
-}
-
-void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
-    QList<ServerPlayer *> players = room->getAlivePlayers();
-
-    //room->broadcastSkillInvoke(objectName());
-    QString choice = room->askForChoice(huyanzhuo, "lianma", "lian+ma");
-    if(choice == "lian"){
-        foreach(ServerPlayer *player, players){
-            if(player->getOffensiveHorse() || player->getDefensiveHorse()){
-                if(!player->isChained()){
-                    player->setChained(true);
-                    room->broadcastProperty(player, "chained");
-                    room->setEmotion(player, "chain");
-                }
-            }
-        }
-    }else{
-        foreach(ServerPlayer *player, players){
-            if(!player->getOffensiveHorse() && !player->getDefensiveHorse()){
-                if(player->isChained())
-                    room->setPlayerProperty(player, "chained", false);
-            }
-        }
-    }
-};
-
-class Lianma: public ZeroCardViewAsSkill{
+class Lianma: public OneCardViewAsSkill{
 public:
-    Lianma():ZeroCardViewAsSkill("lianma"){
-        default_choice = "lian";
+    Lianma():OneCardViewAsSkill("lianma"){
     }
 
-    virtual const Card *viewAs() const{
-        return new LianmaCard;
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("Horse");
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("LianmaCard");
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
+        chain->addSubcard(card);
+        chain->setSkillName(objectName());
+        return chain;
     }
 };
 
@@ -715,9 +689,10 @@ public:
         Room *room = conan->getRoom();
         ServerPlayer *yulan = room->findPlayerBySkillName(objectName());
         CardMoveStar move = data.value<CardMoveStar>();
-        if(conan->isDead() || !yulan)
+        if(conan->isDead() || !yulan || yulan->isKongcheng())
             return false;
         if(move->from_place == Player::Hand && yulan->askForSkillInvoke(objectName())){
+            room->askForDiscard(yulan, objectName(), 1);
             room->playSkillEffect(objectName());
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(diamond):(.*)");
@@ -782,9 +757,9 @@ FCDCPackage::FCDCPackage()
     jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
 
-    General *tongmeng = new General(this, "tongmeng", "min", 3);
-    tongmeng->addSkill(new Shuilao);
-    tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
+    General *ruanxiaowu = new General(this, "ruanxiaowu", "min", 3);
+    ruanxiaowu->addSkill(new Shuilao);
+    ruanxiaowu->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
@@ -807,7 +782,6 @@ FCDCPackage::FCDCPackage()
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qingshang);
 
-    addMetaObject<LianmaCard>();
     addMetaObject<BomingCard>();
     addMetaObject<XunlieCard>();
     addMetaObject<LianzhuCard>();
