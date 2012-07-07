@@ -3648,15 +3648,11 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["analeptic"] = &RoomScene::doAppearingAnimation;
         map["fire"] = &RoomScene::doAppearingAnimation;
         map["lightning"] = &RoomScene::doAppearingAnimation;
-        map["typhoon"] = &RoomScene::doAppearingAnimation;
 
         map["lightbox"] = &RoomScene::doLightboxAnimation;
-        map["huashen"] = &RoomScene::doHuashen;
         map["indicate"] = &RoomScene::doIndicate;
 
         map["hpChange"] = &RoomScene::animateHpChange;
-
-        map["zongzi"] = &RoomScene::doMovingAnimation;
     }
 
     AnimationFunc func = map.value(name, NULL);

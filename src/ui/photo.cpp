@@ -102,6 +102,7 @@ Photo::Photo()
     mark_item = new QGraphicsTextItem(this);
     mark_item->setPos(2, 79);
     mark_item->setDefaultTextColor(Qt::white);
+    mark_item->setZValue(-0.2);
 
     role_combobox = NULL;
     pile_button = NULL;

@@ -65,31 +65,26 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
     pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
     if(pma->valid())
     {
-        if(emotion == "slash_red" ||
-                emotion == "slash_black" ||
-                emotion == "thunder_slash" ||
-                emotion == "peach" ||
-                emotion == "analeptic")
+        QStringList emotions;
+        emotions << "slash_red" << "slash_black" << "thunder_slash"
+                << "peach" << "analeptic"
+                //<< "chain" << "recover"
+                //<< "weapon" << "armor"
+                << "no-success";
+        if(emotions.contains(emotion))
         {
             pma->moveBy(pma->boundingRect().width()*0.15,
                         pma->boundingRect().height()*0.15);
             pma->setScale(0.7);
         }
-        else if(emotion == "no-success")
-        {
-            pma->moveBy(pma->boundingRect().width()*0.15,
-                        pma->boundingRect().height()*0.15);
-            pma->setScale(0.7);
-        }
+        else if(emotion == "fire_slash")
+            pma->moveBy(40,0);
 
         pma->moveBy((parent->boundingRect().width() - pma->boundingRect().width())/2,
                 (parent->boundingRect().height() - pma->boundingRect().height())/2);
 
-        {
-            if(emotion == "fire_slash")pma->moveBy(40,0);
-        }
         pma->setParentItem(parent);
-        pma->startTimer(50);
+        pma->startTimer(70);
         connect(pma,SIGNAL(finished()),pma,SLOT(deleteLater()));
         return pma;
     }

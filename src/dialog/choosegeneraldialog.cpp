@@ -83,7 +83,7 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
 
         // special case
         if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
-            if(general->getPackage() == "sp")
+            if(general->getPackage() == "sp" && general->isLord())
                 button->setEnabled(false);
         }
     }

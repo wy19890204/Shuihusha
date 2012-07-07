@@ -130,6 +130,8 @@ void ServerPlayer::clearPrivatePiles(){
 void ServerPlayer::bury(){
     if(!faceUp())
         turnOver();
+    if(isChained())
+        setChained(false);
     clearFlags();
     clearHistory();
     throwAllCards();
