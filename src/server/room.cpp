@@ -461,9 +461,9 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     if(effect.from->hasWeapon("crossbow")){
         int slash = effect.from->getMark("SlashCount");
         if(slash % 2 == 0)
-            effect.from->playCardEffect("Ecrossbow1");
+            effect.from->playCardEffect("Ecrossbow1", "weapon");
         else if(slash % 2 == 1 && slash > 1)
-            effect.from->playCardEffect("Ecrossbow2");
+            effect.from->playCardEffect("Ecrossbow2", "weapon");
     }
 
     if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
@@ -1027,7 +1027,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             throwCard(card);
 
         if(card->getSkillName() == "spear")
-            player->playCardEffect("Espear");
+            player->playCardEffect("Espear", "weapon");
 
         QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+card->toString()+"_");
         thread->trigger(ChoiceMade, this, player, decisionData);

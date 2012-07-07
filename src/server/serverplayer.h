@@ -32,6 +32,7 @@ public:
     Room *getRoom() const;
     void playCardEffect(const Card *card, bool mute = false) const;
     void playCardEffect(const QString &card_name) const;
+    void playCardEffect(const QString &card_name, const QString &equip);
     int getRandomHandCardId() const;
     const Card *getRandomHandCard() const;
     void obtainCard(const Card *card, bool unhide = true);

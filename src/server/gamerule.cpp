@@ -252,16 +252,16 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
                         mute = true;
                     if(card->getSkillName() == "spear"){
-                        player->playCardEffect("Espear");
+                        player->playCardEffect("Espear", "weapon");
                         mute = true;
                     }
                     else if(player->hasWeapon("halberd") &&
                             player->isLastHandCard(card) && card_use.to.count() > 1){
-                        player->playCardEffect("Ehalberd");
+                        player->playCardEffect("Ehalberd", "weapon");
                         mute = true;
                     }
                     else if(player->hasWeapon("sun_bow") && card->objectName() == "slash" && card_use.to.count() > 1){
-                        player->playCardEffect("Esun_bow");
+                        player->playCardEffect("Esun_bow", "weapon");
                         mute = true;
                     }
                 }

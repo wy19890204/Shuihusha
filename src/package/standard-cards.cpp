@@ -186,9 +186,9 @@ public:
                 bool draw_card = false;
 
                 if(player->getGeneral()->isMale())
-                    player->playCardEffect("Edouble_sword1");
+                    player->playCardEffect("Edouble_sword1", "weapon");
                 else
-                    player->playCardEffect("Edouble_sword2");
+                    player->playCardEffect("Edouble_sword2", "weapon");
                 if(effect.to->isKongcheng())
                     draw_card = true;
                 else{
@@ -226,7 +226,7 @@ public:
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         effect.to->addMark("qinggang");
         if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia")))
-            player->playCardEffect("Eqinggang_sword");
+            player->playCardEffect("Eqinggang_sword", "weapon");
 
         return false;
     }
@@ -261,9 +261,9 @@ public:
         const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), false, QVariant(), NonTrigger);
         if(card){
             if(qrand() % 2 == 1)
-                player->playCardEffect("Eblade2");
+                player->playCardEffect("Eblade2", "weapon");
             else
-                player->playCardEffect("Eblade1");
+                player->playCardEffect("Eblade1", "weapon");
 
             // if player is drank, unset his flag
             if(player->hasFlag("drank"))
@@ -391,7 +391,7 @@ public:
 
                 room->sendLog(log);
             }
-            player->playCardEffect("Eaxe");
+            player->playCardEffect("Eaxe", "weapon");
 
             LogMessage log;
             log.type = "#AxeSkill";
@@ -442,7 +442,7 @@ public:
 
             if(!player->askForSkillInvoke(objectName(), data))
                 return false;
-            player->playCardEffect("Ekylin_bow");
+            player->playCardEffect("Ekylin_bow", "weapon");
 
             QString horse_type;
             if(horses.length() == 2)
@@ -997,7 +997,7 @@ public:
 
         if(damage.card && damage.card->inherits("Slash") && !damage.to->isNude()
                 && !damage.chain && player->askForSkillInvoke("ice_sword", data)){
-            player->playCardEffect("Eice_sword");
+            player->playCardEffect("Eice_sword", "weapon");
             int card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
             room->throwCard(card_id, damage.to);
 
@@ -1029,8 +1029,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         if(effect.slash->isBlack()){
-            player->playCardEffect("Erenwang_shield");
-            room->setEmotion(player, "armor");
+            player->playCardEffect("Erenwang_shield", "armor");
 
             LogMessage log;
             log.type = "#ArmorNullify";
