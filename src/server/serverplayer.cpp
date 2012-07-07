@@ -31,7 +31,9 @@ Room *ServerPlayer::getRoom() const{
     return room;
 }
 
-void ServerPlayer::playCardEffect(const QString &card_name) const{
+void ServerPlayer::playCardEffect(const QString &card_name, const QString &equip) const{
+    if(equip != "none")
+        room->setEmotion(this, equip);
     QString gender = getGender() == General::Male ? "M" : "F";
     room->broadcastInvoke("playCardEffect", QString("%1:%2").arg(card_name).arg(gender));
 }
@@ -132,6 +134,7 @@ void ServerPlayer::bury(){
     clearPrivatePiles();
 
     room->clearPlayerCardLock(this);
+    room->setEmotion(this, "death");
 }
 
 void ServerPlayer::throwAllCards(){

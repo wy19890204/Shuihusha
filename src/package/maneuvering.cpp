@@ -115,7 +115,7 @@ public:
         if(effect.nature == DamageStruct::Normal){
             if(room->askForSkillInvoke(player, objectName(), data)){
                 effect.nature = DamageStruct::Fire;
-                player->playCardEffect("Efan");
+                player->playCardEffect("Efan", "weapon");
                 data = QVariant::fromValue(effect);
             }
         }
@@ -140,7 +140,7 @@ public:
         if(damage.card && damage.card->inherits("Slash") &&
             damage.to->isKongcheng())
         {
-            player->playCardEffect("Eguding_blade");
+            player->playCardEffect("Eguding_blade", "weapon");
 
             LogMessage log;
             log.type = "#GudingBladeEffect";
@@ -173,8 +173,7 @@ public:
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature == DamageStruct::Normal){
-                player->playCardEffect("Evine1");
-                room->setEmotion(player, "armor");
+                player->playCardEffect("Evine1", "armor");
 
                 LogMessage log;
                 log.from = player;
@@ -188,8 +187,7 @@ public:
         }else if(event == CardEffected){
             CardEffectStruct effect = data.value<CardEffectStruct>();
             if(effect.card->inherits("AOE")){
-                player->playCardEffect("Evine1");
-                room->setEmotion(player, "armor");
+                player->playCardEffect("Evine1", "armor");
 
                 LogMessage log;
                 log.from = player;
@@ -234,8 +232,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.damage > 1){
-            player->playCardEffect("Esilver_lion1");
-            room->setEmotion(player, "armor");
+            player->playCardEffect("Esilver_lion1", "armor");
 
             LogMessage log;
             log.type = "#SilverLion";

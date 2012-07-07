@@ -198,9 +198,9 @@ public:
         if(use.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
             foreach(ServerPlayer *effecto, use.to){
                 if(!effecto->isChained())
-                    player->playCardEffect("Edouble_whip1");
+                    player->playCardEffect("Edouble_whip1", "weapon");
                 else
-                    player->playCardEffect("Edouble_whip2");
+                    player->playCardEffect("Edouble_whip2", "weapon");
                 bool chained = ! effecto->isChained();
                 effecto->setChained(chained);
                 room->broadcastProperty(effecto, "chained");
@@ -231,7 +231,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card->inherits("Slash") && damage.to->isAlive()){
-            player->playCardEffect("Emeteor_sword");
+            player->playCardEffect("Emeteor_sword", "weapon");
             room->loseHp(damage.to, damage.damage);
             return true;
         }
@@ -262,8 +262,7 @@ public:
         if(event == SlashEffected){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
             if(effect.nature != DamageStruct::Normal){
-                player->playCardEffect("Egold_armor1");
-                room->setEmotion(player, "armor");
+                player->playCardEffect("Egold_armor1", "armor");
 
                 LogMessage log;
                 log.from = player;
@@ -282,8 +281,7 @@ public:
                 log.from = player;
                 log.arg = objectName();
                 if(damage.from->getWeapon()){
-                    player->playCardEffect("Egold_armor2");
-                    room->setEmotion(player, "armor");
+                    player->playCardEffect("Egold_armor2", "armor");
                     room->sendLog(log);
                     room->throwCard(damage.from->getWeapon());
                 }
