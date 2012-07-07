@@ -32,8 +32,6 @@ function speakTrigger(card,from,to,event)
 		speak(to,"tiger")
 	elseif card:inherits("FireAttack") and to:hasSkill("shenhuo") then
 		speak(to,"shenhuo")
-	elseif card:inherits("Zongzi") then
-		speak(from,"gift")
 	end
 end
 
