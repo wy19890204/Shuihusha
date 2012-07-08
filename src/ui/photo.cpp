@@ -664,9 +664,11 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     int n = player->getHandcardNum();
     if(n > 0){
         painter->drawPixmap(2, 68, handcard);
+        painter->setPen(Qt::yellow);
         painter->drawText(8, 86, QString::number(n));
     }
 
+    painter->setPen(Qt::white);
     QString state_str = player->getState();
     if(!state_str.isEmpty() && state_str != "online"){
         painter->drawText(1, 100, Sanguosha->translate(state_str));

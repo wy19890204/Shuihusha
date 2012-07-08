@@ -106,7 +106,7 @@ void Dashboard::createRight(){
     chain_icon = new Pixmap("image/system/chain.png");
     chain_icon->setParentItem(right);
     chain_icon->setPos(small_avatar->pos());
-    chain_icon->moveBy(-25 ,-45);
+    chain_icon->moveBy(-20 ,-45);
     chain_icon->hide();
     chain_icon->setZValue(1.0);
 
@@ -131,7 +131,7 @@ void Dashboard::createRight(){
     handcard_pixmap->hide();
 
     mark_item = new QGraphicsTextItem(right);
-    mark_item->setPos(-128 - getButtonWidgetWidth(), 0);
+    mark_item->setPos(-110 - getButtonWidgetWidth(), 5);
     mark_item->setDefaultTextColor(Qt::white);
 
     action_item = NULL;
@@ -142,9 +142,8 @@ void Dashboard::setEcstState(){
     avatar_area->setPos(22, 64);
     avatar_area->setZValue(0.3);
 
-    if(Self->hasFlag("ecst")){
+    if(Self->hasFlag("ecst"))
         avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    }
     //else if(Self->getMark("poison") > 0)
     //    setPoisonState();
     else

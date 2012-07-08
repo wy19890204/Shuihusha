@@ -64,7 +64,7 @@ struct NormalRoomLayout : public RoomLayout{
     NormalRoomLayout(){
         discard = QPointF(-6, 8);
         drawpile = QPointF(-108, 8);
-        enemy_box = QPointF(-216, -327);
+        enemy_box = QPointF(-246, -307);
         self_box = QPointF(360, -90);
         chat_box_size = QSize(230, 175);
         chat_box_pos = QPointF(-343, -83);
@@ -78,7 +78,7 @@ struct CircularRoomLayout : public RoomLayout{
     CircularRoomLayout(){
         discard = QPointF(-140, 30);
         drawpile = QPointF(-260, 30);
-        enemy_box = QPointF(-361, -343);
+        enemy_box = QPointF(-391, -323);
         self_box = QPointF(201, -90);
         chat_box_size = QSize(268, 165);
         chat_box_pos = QPointF(367, -38);
@@ -3053,7 +3053,10 @@ void RoomScene::createStateItem(){
     text_item->setParentItem(state_item);
     text_item->setPos(2, 30);
     text_item->setDocument(ClientInstance->getLinesDoc());
-    text_item->setTextWidth(220);
+    if(Config.value("CircularView", false).toBool())
+        text_item->setTextWidth(270);
+    else
+        text_item->setTextWidth(220);
     text_item->setDefaultTextColor(Qt::white);
 
     add_robot = NULL;
@@ -3232,7 +3235,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-discard", 190, true);
+        free_discard = dashboard->addButton("free-discard", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
         FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);
         button2skill.insert(free_discard, discard_skill);
