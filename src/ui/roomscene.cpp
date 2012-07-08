@@ -462,12 +462,14 @@ void RoomScene::createControlButtons(){
 }
 
 void RoomScene::createExtraButtons(){
+    /*
     reverse_button = dashboard->createButton("reverse-select");
     reverse_button->setEnabled(true);
 
+    --dashboard->addWidget(sort_combobox, 2, true);
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
-
+    */
     free_discard = NULL;
 }
 
@@ -3036,7 +3038,9 @@ void RoomScene::doGongxin(const QList<int> &card_ids, bool enable_heart){
 }
 
 void RoomScene::createStateItem(){
-    QPixmap state("image/system/state.png");
+    QString state_url = Config.value("CircularView", false).toBool() ?
+                        "image/system/state_c.png" : "image/system/state.png";
+    QPixmap state(state_url);
 
     state_item = addPixmap(state);
     state_item->setPos(room_layout->state_item_pos);
@@ -3253,38 +3257,37 @@ void RoomScene::onGameStart(){
 
 #ifdef AUDIO_SUPPORT
 
-    if(!Config.EnableBgMusic)
-        return;
+    if(Config.EnableBgMusic){
+        bool play_music = false;
+        if(memory->isAttached() || memory->attach()){
+            memory->lock();
 
-    bool play_music = false;
-    if(memory->isAttached() || memory->attach()){
-        memory->lock();
+            char *username = static_cast<char *>(memory->data());
+            const char *my_username = Config.UserName.toAscii();
+            play_music = qstrcmp(username, my_username) == 0;
 
-        char *username = static_cast<char *>(memory->data());
-        const char *my_username = Config.UserName.toAscii();
-        play_music = qstrcmp(username, my_username) == 0;
+            memory->unlock();
+        }else if(memory->create(255)){
+            memory->lock();
 
-        memory->unlock();
-    }else if(memory->create(255)){
-        memory->lock();
+            void *data = memory->data();
+            const char *username = Config.UserName.toAscii();
+            memcpy(data, username, qstrlen(username));
 
-        void *data = memory->data();
-        const char *username = Config.UserName.toAscii();
-        memcpy(data, username, qstrlen(username));
+            play_music = true;
 
-        play_music = true;
+            memory->unlock();
+        }
 
-        memory->unlock();
+        if(!play_music)
+            return;
+
+        // start playing background music
+        QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
+
+        Audio::playBGM(bgmusic_path);
+        Audio::setBGMVolume(Config.BGMVolume);
     }
-
-    if(!play_music)
-        return;
-
-    // start playing background music
-    QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
-
-    Audio::playBGM(bgmusic_path);
-    Audio::setBGMVolume(Config.BGMVolume);
 
 #endif
 
@@ -3645,15 +3648,11 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["analeptic"] = &RoomScene::doAppearingAnimation;
         map["fire"] = &RoomScene::doAppearingAnimation;
         map["lightning"] = &RoomScene::doAppearingAnimation;
-        map["typhoon"] = &RoomScene::doAppearingAnimation;
 
         map["lightbox"] = &RoomScene::doLightboxAnimation;
-        map["huashen"] = &RoomScene::doHuashen;
         map["indicate"] = &RoomScene::doIndicate;
 
         map["hpChange"] = &RoomScene::animateHpChange;
-
-        map["zongzi"] = &RoomScene::doMovingAnimation;
     }
 
     AnimationFunc func = map.value(name, NULL);
@@ -4030,7 +4029,10 @@ void RoomScene::updateStateItem(const QString &roles)
     foreach(QChar c, roles){
         if(map.contains(c)){
             QGraphicsPixmapItem *item = addPixmap(map.value(c));
-            item->setPos(21*role_items.length(), 6);
+            if(Config.value("CircularView", false).toBool())
+                item->setPos(21*role_items.length()+5, 3.2);
+            else
+                item->setPos(21*role_items.length(), 4.5);
             item->setParentItem(state_item);
 
             role_items << item;

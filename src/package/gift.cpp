@@ -25,10 +25,7 @@ void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &
         room->setPlayerProperty(source, "hp", source->getMaxHP());
     room->acquireSkill(source, "lisao");
 
-    QString animation_str = QString("zongzi:%1:%2")
-                            .arg(source->objectName()).arg(source->objectName());
-    room->broadcastInvoke("animate", animation_str);
-    //room->setEmotion(source, "zongzi");
+    room->setEmotion(source, "zongzi");
 }
 
 class Lisao: public TriggerSkill{

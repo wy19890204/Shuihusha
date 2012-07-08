@@ -36,6 +36,11 @@ void ServerPlayer::playCardEffect(const QString &card_name) const{
     room->broadcastInvoke("playCardEffect", QString("%1:%2").arg(card_name).arg(gender));
 }
 
+void ServerPlayer::playCardEffect(const QString &card_name, const QString &equip){
+    room->setEmotion(this, equip);
+    playCardEffect(card_name);
+}
+
 void ServerPlayer::playCardEffect(const Card *card, bool mute) const{
     if(card->isMute() || mute)
         return;
@@ -125,6 +130,8 @@ void ServerPlayer::clearPrivatePiles(){
 void ServerPlayer::bury(){
     if(!faceUp())
         turnOver();
+    if(isChained())
+        setChained(false);
     clearFlags();
     clearHistory();
     throwAllCards();
@@ -132,6 +139,7 @@ void ServerPlayer::bury(){
     clearPrivatePiles();
 
     room->clearPlayerCardLock(this);
+    room->setEmotion(this, "death");
 }
 
 void ServerPlayer::throwAllCards(){

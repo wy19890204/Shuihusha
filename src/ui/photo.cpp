@@ -100,7 +100,7 @@ Photo::Photo()
     ready_item->hide();
 
     mark_item = new QGraphicsTextItem(this);
-    mark_item->setPos(2, 79);
+    mark_item->setPos(5, 79);
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
@@ -477,8 +477,8 @@ void Photo::addCardItem(CardItem *card_item){
 }
 
 void Photo::drawMagatama(QPainter *painter, int index, const QPixmap &pixmap){
-    static const QPoint first_row(42, 69);
-    static const QPoint second_row(26, 86);
+    static const QPoint first_row(42, 67);
+    static const QPoint second_row(26, 84);
     static const int skip =  16;
 
     // index is count from 0
@@ -703,16 +703,16 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     if(!equip)
         return;
 
-    QRect suit_rect(2, 104 + 15 + order * 17, 13, 13);
+    QRect suit_rect(4, 105 + 15 + order * 17, 12.5, 12.5);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
-    painter->setPen(Qt::black);
+    painter->setPen(Qt::white);
     QFont bold_font;
     bold_font.setBold(true);
-    painter->setFont(bold_font);
-    painter->drawText(20, 115 + 15 + order * 17, card->getNumberString());
-    painter->drawText(35, 115 + 15 + order * 17, card->label());
+    //painter->setFont(bold_font);
+    painter->drawText(22, 115 + 15 + order * 17, card->getNumberString());
+    painter->drawText(37, 115 + 15 + order * 17, card->label());
 }
 
 QVariant Photo::itemChange(GraphicsItemChange change, const QVariant &value){
