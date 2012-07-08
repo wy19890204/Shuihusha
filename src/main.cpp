@@ -11,6 +11,7 @@
 #include "banpair.h"
 #include "server.h"
 #include "audio.h"
+#include "crypto.h"
 
 int main(int argc, char *argv[])
 {    
@@ -58,6 +59,8 @@ int main(int argc, char *argv[])
         QTextStream stream(&file);
         qApp->setStyleSheet(stream.readAll());
     }
+
+    Crypto::doCrypto(Crypto::Jiami, "jiami.txt", "jiami2.txt", "sgs");
 
 #ifdef AUDIO_SUPPORT
 

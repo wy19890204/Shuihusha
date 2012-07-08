@@ -154,6 +154,7 @@ HEADERS += \
 	src/client/clientstruct.h \
 	src/core/audio.h \
 	src/core/banpair.h \
+	src/core/crypto.h \
 	src/core/card.h \
 	src/core/engine.h \
 	src/core/general.h \

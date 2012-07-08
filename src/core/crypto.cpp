@@ -1,8 +1,4 @@
-#include <QtCore/QCoreApplication>
-
-#include <crypto++/des.h>
-
-#include <stdio.h>
+#include "crypto.h"
 
 // keyString 是一个密钥，必须保证长度要超过 16
 // block 是要处理的数据，处理后的数据也同时存放在 block 里，必须保证它的长度为 8 的整倍数
@@ -28,12 +24,12 @@ void DES_Process(const char *keyString, byte *block, size_t length, CryptoPP::Ci
 
     delete t;
 }
-
-int main(int argc, char *argv[])
+/*
+int maintest(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    byte block[1024] = "++++++++--------********////////";
+    byte block[1024] = "++++++++--------********12345678";
 
     const char *key = "http://qsanguosha.org/forum";
 
@@ -48,4 +44,30 @@ int main(int argc, char *argv[])
     printf("Decrypt: %s\n", block);
 
     return a.exec();
+}
+*/
+void Crypto::doCrypto(CryType type, const QString &input, const QString &output, const char *key){
+    QFile file(input);
+    if(file.open(QIODevice::ReadOnly)){
+        QByteArray data = file.readAll();
+
+        int oldSize = data.size();
+        int remainder = oldSize % 8;
+
+        char *buffer = data.data();
+        if(remainder != 0){
+            int padding = 8 - remainder;
+            data.resize(data.size() + padding);
+            buffer = data.data();
+            memset(buffer + oldSize, 0, padding);
+        }
+
+        DES_Process(key, (byte *)buffer, data.size(),
+                    type == Crypto::Jiami ? CryptoPP::ENCRYPTION : CryptoPP::DECRYPTION);
+
+        QFile outFile(output == "default" ? input : output);
+        outFile.open(QIODevice::WriteOnly);
+        outFile.write(buffer, data.size());
+        outFile.close();
+    }
 }
