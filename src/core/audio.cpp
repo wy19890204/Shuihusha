@@ -1,22 +1,23 @@
 #include "audio.h"
 #include "fmod.h"
 #include "settings.h"
+#include "crypto.h"
 
 #include <QCache>
 
 class Sound;
 
 static FMOD_SYSTEM *System;
-static QCache<QString, Sound> SoundCache;
+static QCache<char *, Sound> SoundCache;
 static FMOD_SOUND *BGM;
 static FMOD_CHANNEL *BGMChannel;
 
 class Sound{
 public:
-    Sound(const QString &filename)
+    Sound(const char *filename)
         :sound(NULL), channel(NULL)
     {
-        FMOD_System_CreateSound(System, filename.toAscii(), FMOD_DEFAULT, NULL, &sound);
+        FMOD_System_CreateSound(System, filename, FMOD_DEFAULT, NULL, &sound);
     }
 
     ~Sound(){
@@ -67,10 +68,12 @@ void Audio::quit(){
 }
 
 void Audio::play(const QString &filename){
-    Sound *sound = SoundCache[filename];
+    //char *buffer = filename.toLocal8Bit().data();
+    char *buffer = Crypto::doCrypto(Crypto::Jiemi, filename);
+    Sound *sound = SoundCache[buffer];
     if(sound == NULL){
-        sound = new Sound(filename);
-        SoundCache.insert(filename, sound);
+        sound = new Sound(buffer);
+        SoundCache.insert(buffer, sound);
     }else if(sound->isPlaying())
         return;
 

@@ -46,7 +46,7 @@ int maintest(int argc, char *argv[])
     return a.exec();
 }
 */
-void Crypto::doCrypto(CryType type, const QString &input, const QString &output, const char *key){
+char *Crypto::doCrypto(CryType type, const QString &input, const QString &output, const char *key){
     QFile file(input);
     if(file.open(QIODevice::ReadOnly)){
         QByteArray data = file.readAll();
@@ -65,9 +65,14 @@ void Crypto::doCrypto(CryType type, const QString &input, const QString &output,
         DES_Process(key, (byte *)buffer, data.size(),
                     type == Crypto::Jiami ? CryptoPP::ENCRYPTION : CryptoPP::DECRYPTION);
 
-        QFile outFile(output == "default" ? input : output);
-        outFile.open(QIODevice::WriteOnly);
-        outFile.write(buffer, data.size());
-        outFile.close();
+        if(output == "none")
+            return buffer;
+        else{
+            QFile outFile(output == "default" ? input : output);
+            outFile.open(QIODevice::WriteOnly);
+            outFile.write(buffer, data.size());
+            outFile.close();
+            return buffer;
+        }
     }
 }

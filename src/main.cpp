@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         qApp->setStyleSheet(stream.readAll());
     }
 
-    Crypto::doCrypto(Crypto::Jiami, "jiami.txt", "jiami2.txt", "sgs");
+    //Crypto::doCrypto(Crypto::Jiami, "audio/skill/qibing1.ogg", "default");
 
 #ifdef AUDIO_SUPPORT
 
