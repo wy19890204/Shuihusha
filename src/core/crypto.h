@@ -9,7 +9,7 @@ class Crypto{
 public:
     enum CryType {Jiami, Jiemi};
 
-    static void doCrypto(CryType type, const QString &input, const QString &output = "default", const char *key = "shuihusha");
+    static char *doCrypto(CryType type, const QString &input, const QString &output = "none", const char *key = "shuihusha");
 
 //private:
 //    static QString key;
