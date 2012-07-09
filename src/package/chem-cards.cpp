@@ -427,6 +427,59 @@ Teflon::Teflon(Suit suit, int number)
     setObjectName("teflon");
 }
 
+class WasliquidTankSkill: public ArmorSkill{
+public:
+    WasliquidTankSkill():ArmorSkill("wasliquid_tank"){
+        events << Damaged;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.card && room->askForSkillInvoke(player, objectName()))
+            room->obtainCard(player, damage.card);
+        return false;
+    }
+};
+
+WasliquidTank::WasliquidTank(Suit suit, int number)
+    :Armor(suit, number)
+{
+    setObjectName("wasliquid_tank");
+    skill = new WasliquidTankSkill;
+}
+
+class GlassStopperSkill: public ArmorSkill{
+public:
+    GlassStopperSkill():ArmorSkill("glass_stopper"){
+        events << Damaged << Predamage << PhaseChange;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Predamage){
+            return player->hasFlag("tank");
+        }
+        else if(event == Damaged){
+            if(!player->hasFlag("tank")){
+                DamageStruct damage = data.value<DamageStruct>();
+                damage.damage = 1;
+                data = QVariant::fromValue(damage);
+                player->setFlags("tank");
+            }
+        }
+        else if(event == PhaseChange)
+            if(room->getCurrent()->getPhase() == Player::NotActive)
+                player->setFlags("-tank");
+        return false;
+    }
+};
+
+GlassStopper::GlassStopper(Suit suit, int number)
+    :Armor(suit, number)
+{
+    setObjectName("glass_stopper");
+    skill = new GlassStopperSkill;
+}
+
 ChemCardsPackage::ChemCardsPackage()
     :Package("chem_cards")
 {
@@ -449,7 +502,9 @@ ChemCardsPackage::ChemCardsPackage()
             << new AcidBuret(Card::Club, 11)
             << new ConicalFlask(Card::Heart, 11)
             << new Dropper(Card::Heart, 1)
-            << new Thermograph(Card::Heart, 2);
+            << new Thermograph(Card::Heart, 2)
+            << new WasliquidTank(Card::Heart, 3)
+            << new GlassStopper(Card::Heart, 4);
 
     foreach(Card *card, cards)
         card->setParent(this);

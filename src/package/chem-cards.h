@@ -162,4 +162,18 @@ public:
     Q_INVOKABLE Teflon(Card::Suit suit, int number);
 };
 
+class WasliquidTank: public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE WasliquidTank(Card::Suit suit, int number);
+};
+
+class GlassStopper: public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE GlassStopper(Card::Suit suit, int number);
+};
+
 #endif // CHEMCARDSPACKAGE_H
