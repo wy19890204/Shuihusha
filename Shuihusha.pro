@@ -306,7 +306,6 @@ macx{
 	ICON = resource/icon/sgs.icns
 }
 
-
 LIBS += -Llib -lcryptopp
 LIBS += -L.
 
