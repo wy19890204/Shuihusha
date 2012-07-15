@@ -589,29 +589,89 @@ public:
                 rev.recover = ren->getLostHp(false) - ren->getMaxHP() + 1;
                 rev.who = ren;
                 room->recover(ren, rev);
+                if(ren->getHp() != 1)
+                    room->setPlayerProperty(ren, "hp", 1);
             }
         }
         return false;
     }
 };
 
+DuomingCard::DuomingCard(){
+    target_fixed = true;
+}
+
+PlayerStar DuomingCard::findPlayerByFlag(Room *room, const QString &flag) const{
+    const QList<ServerPlayer *> &list = room->getAlivePlayers();
+    foreach(ServerPlayer *player, list){
+        if(player->hasFlag(flag))
+            return player;
+    }
+    return NULL;
+}
+
+void DuomingCard::use(Room *m, ServerPlayer *, const QList<ServerPlayer *> &) const{
+    PlayerStar target = findPlayerByFlag(m, "Duoming");
+    if(target)
+        target->obtainCard(this, false);
+}
+
+class DuomingViewAsSkill: public ViewAsSkill{
+public:
+    DuomingViewAsSkill():ViewAsSkill("duoming"){
+        frequency = Limited;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@duoming";
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 2)
+            return false;
+        return !to_select->isEquipped() && to_select->getCard()->isBlack();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        DuomingCard *card = new DuomingCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
 class Duoming: public TriggerSkill{
 public:
     Duoming(): TriggerSkill("duoming"){
-        events << Damage;
+        view_as_skill = new DuomingViewAsSkill;
+        events << HpRecovered;
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive() &&
-            damage.to->isKongcheng() && player->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            room->loseMaxHp(damage.to);
+        if(player->getPhase() == Player::NotActive)
+            return false;
+        QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
+        if(lily.isEmpty())
+            return false;
+        room->setPlayerFlag(player, "Duoming");
+        foreach(ServerPlayer *lili, lily){
+            if(room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
+                DamageStruct damage;
+                damage.from = lili;
+                damage.to = player;
+                room->damage(damage);
+            }
         }
+        room->setPlayerFlag(player, "-Duoming");
         return false;
     }
 };
@@ -985,6 +1045,7 @@ OxPackage::OxPackage()
     addMetaObject<SheruCard>();
     addMetaObject<LianzhuCard>();
     addMetaObject<ButianCard>();
+    addMetaObject<DuomingCard>();
     addMetaObject<XunlieCard>();
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();

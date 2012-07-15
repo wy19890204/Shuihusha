@@ -3,6 +3,7 @@
 
 #include "package.h"
 #include "card.h"
+#include "structs.h"
 
 class OxPackage : public Package{
     Q_OBJECT
@@ -70,6 +71,15 @@ class ButianCard: public SkillCard{
 public:
     Q_INVOKABLE ButianCard();
 
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class DuomingCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE DuomingCard();
+    virtual PlayerStar findPlayerByFlag(Room *room, const QString &flag) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
