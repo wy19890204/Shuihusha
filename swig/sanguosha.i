@@ -85,7 +85,7 @@ public:
 	int getMaxHp() const;
 	void setMaxHP(int max_hp);
 	void setMaxHp(int max_hp);
-	int getLostHp() const;
+	int getLostHp(bool zeromax = true) const;
 	bool isWounded() const;
 
 	int getMaxCards() const;

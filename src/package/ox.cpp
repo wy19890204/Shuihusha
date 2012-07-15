@@ -119,48 +119,71 @@ public:
     }
 };
 
-class Aoxiang: public TriggerSkill{
+class Aoxiang: public PhaseChangeSkill{
 public:
-    Aoxiang():TriggerSkill("aoxiang"){
-        events << HpChanged;
-        frequency = Compulsory;
+    Aoxiang():PhaseChangeSkill("aoxiang"){
+        frequency = Wake;
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target)
+                && target->getMark("aoxiang") == 0
+                && target->getPhase() == Player::RoundStart
+                && target->getHp() <= 2;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(player->isWounded())
-            room->setGerenalGender("tongguan", "F");
-        else
-            room->setGerenalGender("tongguan", "M");
-        /*
-        if(player->getGeneralName() != "tongguanf")
-            player->tag["AoxiangStore"] = player->getGeneralName();
-        if(player->isWounded())
-            //p:getGeneral():setGender(sgs.General_Female)
-            //player->getGeneral()->setGender(General::Female);
-            room->setPlayerProperty(player, "general", "tongguanf");
-        else{
-            QString gen_name = player->tag.value("AoxiangStore", "tongguan").toString();
-            room->setPlayerProperty(player, "general", gen_name);
-        }
-        */
+    virtual bool onPhaseChange(ServerPlayer *tg) const{
+        Room *room = tg->getRoom();
+
+        LogMessage log;
+        log.type = "#WakeUp";
+        log.from = tg;
+        log.arg = objectName();
+        room->sendLog(log);
+        room->playSkillEffect(objectName());
+        room->broadcastInvoke("animate", "lightbox:$aoxiang:1500");
+        room->getThread()->delay(1500);
+
+        room->loseMaxHp(tg, 1);
+        if(tg->getGeneralName() == "tongguan")
+            room->setPlayerProperty(tg, "general", "tongguanf");
+        else if(tg->getGeneral2Name() == "tongguan")
+            room->setPlayerProperty(tg, "general2", "tongguanf");
+        room->acquireSkill(tg, "wanghuan");
+        room->setPlayerMark(tg, "aoxiang", 1);
         return false;
     }
 };
 
-class AoxiangChange: public TriggerSkill{
+class Wanghuan: public TriggerSkill{
 public:
-    AoxiangChange():TriggerSkill("#aox_cg"){
-        events << GameStart;
+    Wanghuan():TriggerSkill("wanghuan"){
+        events << CardEffected << CardEffect;
+        frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
-        if(player->getGeneral2Name() == "tongguan"){
-            room->setPlayerProperty(player, "general2", player->getGeneralName());
-            room->setPlayerProperty(player, "general", "tongguan");
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+
+        if(!effect.card->inherits("Slash"))
+            return false;
+        LogMessage log;
+        log.type = "#TriggerSkill";
+        log.from = player;
+        log.arg = objectName();
+        if(event == CardEffect){
+            if(effect.to->getGender() == General::Male && !effect.to->isKongcheng()){
+                room->sendLog(log);
+                room->playSkillEffect(objectName(), 1);
+                room->askForDiscard(effect.to, objectName(), 1);
+            }
+        }
+        else{
+            if(effect.from->getGender() == General::Male){
+                room->sendLog(log);
+                room->playSkillEffect(objectName(), 2);
+                player->drawCards(1);
+            }
         }
         return false;
     }
@@ -563,6 +586,7 @@ public:
             if(judge.isGood()){
                 RecoverStruct rev;
                 rev.card = judge.card;
+                rev.recover = ren->getLostHp(false) - ren->getMaxHP() + 1;
                 rev.who = ren;
                 room->recover(ren, rev);
             }
@@ -709,7 +733,7 @@ XunlieCard::XunlieCard(){
 }
 
 bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int x = getSubcards().isEmpty() ? qMax(Self->getEquips().count(), 2) : 1;
+    int x = getSubcards().isEmpty() ? qMax(Self->getEquips().count(), 1) : 1;
     if(targets.length() >= x)
         return false;
     return !to_select->isKongcheng() && to_select != Self;
@@ -907,8 +931,8 @@ OxPackage::OxPackage()
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
-    tongguan->addSkill(new AoxiangChange);
-    related_skills.insertMulti("aoxiang", "#aox_cg");
+    skills << new Wanghuan;
+    tongguan->addRelateSkill("wanghuan");
     tongguan->addSkill(new Zhengfa);
 
     tongguan = new General(this, "tongguanf", "yan", 4, false, true);
