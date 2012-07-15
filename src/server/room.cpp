@@ -2246,7 +2246,7 @@ void Room::run(){
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
     }else if(mode == "04_1v3"){
         ServerPlayer *lord = m_players.first();
-        setPlayerProperty(lord, "general", "dongping");
+        setPlayerProperty(lord, "general", "zhang1dong");
 
         const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
         const Package *ratpack = Sanguosha->findChild<const Package *>("rat");

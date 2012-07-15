@@ -618,18 +618,16 @@ CustomCardPackage::CustomCardPackage()
 
 TestPackage::TestPackage()
     :Package("test")
-{/*
-    General *shenlvbu1 = new General(this, "shenlvbu1", "god", 8, true, true, true);
-    shenlvbu1->addSkill("huanshu");
-    shenlvbu1->addSkill("wubang");
-    shenlvbu1->addSkill("wuzu");
-    shenlvbu1->addSkill("fushang");
+{
+    General *zhang1dong = new General(this, "zhang1dong", "god", 8, true, true);
+    zhang1dong->addSkill("huqi");
+    zhang1dong->addSkill("shuangzhan");
 
-    General *shenlvbu2 = new General(this, "shenlvbu2", "god", 4, true, true, true);
-    shenlvbu2->addSkill("cuju");
-    shenlvbu2->addSkill("qibing");
-    shenlvbu2->addSkill("yuanyin");
-
+    General *zhang2dong = new General(this, "zhang2dong", "god", 4, true, true);
+    zhang2dong->addSkill("huqi");
+    zhang2dong->addSkill("yinyu");
+    zhang2dong->addSkill("zhuangzhan");
+/*
     General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
     zhuanjia->addSkill(new Zhichi);
     addMetaObject<ZhichiCard>();

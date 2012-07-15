@@ -969,18 +969,14 @@ bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             if(player->isLord()){
                 if(setjmp(env) == Transfiguration){
                     player = room->getLord();
-                    room->transfigure(player, "zhangqing", true, true);
-                    room->setPlayerProperty(player, "general2", "dongping");
+                    room->transfigure(player, "zhang2dong", true, true);
 
                     QList<const Card *> tricks = player->getJudgingArea();
                     foreach(const Card *trick, tricks)
                         room->throwCard(trick);
 
-                }else{
-                    room->setPlayerProperty(player, "maxhp", 9);
-                    room->setPlayerProperty(player, "hp", 8);
+                }else
                     player->drawCards(8, false);
-                }
             }else
                 player->drawCards(player->getSeat() + 1, false);
 
@@ -1005,7 +1001,7 @@ bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
 
     case HpChanged:{
-            if(player->getGeneralName() == "dongping" && player->getHp() <= 4){
+            if(player->getGeneralName() == "zhang1dong" && player->getHp() <= 4){
                 longjmp(env, Transfiguration);
             }
 
