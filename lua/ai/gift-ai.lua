@@ -2,8 +2,8 @@
 
 function SmartAI:useCardZongzi(card, use)
 	if self.player:hasSkill("lisao") then return end
-	self:speak("gift")
 	use.card = card
+	--self:speak("gift")
 end
 
 sgs.ai_use_value.Zongzi = 5.5

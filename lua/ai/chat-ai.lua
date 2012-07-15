@@ -59,7 +59,7 @@ sgs.ai_chat.hostile_female=
 sgs.ai_chat.hostile={
 "yoooo少年，不来一发么",
 "果然还是看你不爽",
-"我看你霸气侧漏，特意准备了上好的苏菲~"
+"我看你霸气侧漏，不得不防"
 }
 
 sgs.ai_chat.qiongtu={

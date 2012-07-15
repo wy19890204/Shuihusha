@@ -7,7 +7,6 @@
 #include "engine.h"
 
 GuibingCard::GuibingCard(){
-
 }
 
 bool GuibingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -18,8 +17,8 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
     ServerPlayer *to = targets.first();
 
     JudgeStruct judge;
-    judge.pattern = QRegExp("(.*):(club|spade):(.*)");
-    judge.good = true;
+    judge.pattern = QRegExp("(.*):(heart):(.*)");
+    judge.good = false;
     judge.reason = objectName();
     judge.who = gaolian;
 
@@ -44,7 +43,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasFlag("Guibing") && Slash::IsAvailable(player);
+        return Slash::IsAvailable(player);
     }
 
     virtual const Card *viewAs() const{
@@ -66,8 +65,8 @@ public:
 
         if(gaolian->askForSkillInvoke(objectName())){
             JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(club|spade):(.*)");
-            judge.good = true;
+            judge.pattern = QRegExp("(.*):(heart):(.*)");
+            judge.good = false;
             judge.reason = objectName();
             judge.who = gaolian;
 
@@ -80,6 +79,8 @@ public:
                 room->provide(slash);
                 return true;
             }
+            else
+                room->setPlayerFlag(gaolian, "Guibing");
         }
         return false;
     }
@@ -93,7 +94,7 @@ void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     int num = getSubcards().length();
     room->moveCardTo(this, NULL, Player::DrawPile, true);
     QList<int> fog = room->getNCards(num, false);
-    room->askForGuanxing(source, fog, false);
+    room->askForGuanxing(source, fog, true);
 };
 
 class Heiwu:public ViewAsSkill{
@@ -166,30 +167,37 @@ public:
 };
 
 ZhengfaCard::ZhengfaCard(){
-    once = true;
     will_throw = false;
     mute = true;
 }
 
 bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!Self->hasUsed("ZhengfaCard"))
-        return targets.isEmpty() && to_select->getGender() != Self->getGender()
-            && !to_select->isWounded() && !to_select->isKongcheng() && to_select != Self;
+    if(!Self->hasFlag("Zhengfa") && getSubcards().length() == 1)
+        return targets.isEmpty() && to_select->getKingdom() != Self->getKingdom()
+            && !to_select->isKongcheng() && to_select != Self;
+    else if(Self->hasFlag("Zhengfa") && getSubcards().isEmpty())
+        return targets.length() < Self->getKingdoms();
     else
-        return targets.length() < Self->getHp() && Self->canSlash(to_select);
+        return false;
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
-    if(tonguan->hasFlag("zhengfa-success")){
-        foreach(ServerPlayer *tarmp, targets)
-            room->cardEffect(this, tonguan, tarmp);
+    if(getSubcards().isEmpty()){
+        Slash *slash = new Slash(Card::NoSuit, 0);
+        slash->setSkillName("zhengfa");
+        CardUseStruct uset;
+        uset.card = slash;
+        uset.mute = true;
+        uset.from = tonguan;
+        uset.to = targets;
         room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
+        room->useCard(uset);
     }
     else{
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
-            room->setPlayerFlag(tonguan, "zhengfa-success");
+            room->setPlayerFlag(tonguan, "Zhengfa");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
             room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
@@ -198,36 +206,44 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
     }
 }
 
-void ZhengfaCard::onEffect(const CardEffectStruct &effect) const{
-    DamageStruct damage;
-    damage.from = effect.from;
-    damage.to = effect.to;
-    damage.card = this;
-    effect.from->getRoom()->damage(damage);
-}
-
-class Zhengfa: public ViewAsSkill{
+class ZhengfaViewAsSkill: public ViewAsSkill{
 public:
-    Zhengfa():ViewAsSkill("zhengfa"){
+    ZhengfaViewAsSkill():ViewAsSkill("zhengfa"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->hasUsed("ZhengfaCard") && !player->isKongcheng();
+        return false;
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return !Self->hasUsed("ZhengfaCard")? !to_select->isEquipped(): false;
+        return !Self->hasFlag("Zhengfa")? selected.isEmpty() && !to_select->isEquipped(): false;
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@zhengfa";
+        return pattern.startsWith("@@zhengfa");
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
         Card *zhengfcard = new ZhengfaCard;
-        if(!cards.isEmpty())
+        if(cards.length() == 1)
             zhengfcard->addSubcard(cards.first()->getCard());
+        else if(cards.length() > 1)
+            return NULL;
         return zhengfcard;
+    }
+};
+
+class Zhengfa: public PhaseChangeSkill{
+public:
+    Zhengfa():PhaseChangeSkill("zhengfa"){
+        view_as_skill = new ZhengfaViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *tong) const{
+        Room *room = tong->getRoom();
+        if(tong->getPhase() == Player::Finish && !tong->isKongcheng())
+            room->askForUseCard(tong, "@@zhengfa", "@zhengfa", true);
+        return false;
     }
 };
 

@@ -107,7 +107,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 		target = players[r]
 	end
 	if use.to then
-		self:speak("drivolt")
+		self:speak("drivolt", false, target)
 		use.to:append(target)
 	end
 end

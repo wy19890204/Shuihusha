@@ -21,7 +21,7 @@ void Slash::setNature(DamageStruct::Nature nature){
 }
 
 bool Slash::IsAvailable(const Player *player){
-    if(player->hasFlag("ecst"))
+    if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
         return false;
 
     return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()

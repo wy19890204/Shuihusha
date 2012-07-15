@@ -145,6 +145,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     room->sendLog(log);
                     room->setPlayerFlag(tmp, "-ecst");
                 }
+                if(tmp->hasFlag("Guibing"))
+                    room->setPlayerFlag(tmp, "-Guibing");
             }
 
             player->clearFlags();
@@ -282,6 +284,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
                 return true;
             }
+            if(player->hasFlag("Guibing") && data.toString() == "slash")
+                return true;
             break;
         }
     case CardFinished: {
