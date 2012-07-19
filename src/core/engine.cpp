@@ -62,7 +62,6 @@ Engine::Engine()
     modes["02_1v1"] = tr("2 players (KOF style)");
     modes["03p"] = tr("3 players");
     modes["04p"] = tr("4 players");
-    modes["04_1v3"] = tr("4 players (Hulao Pass)");
     modes["05p"] = tr("5 players");
     modes["06p"] = tr("6 players");
     modes["06pd"] = tr("6 players (2 renegades)");
@@ -422,9 +421,6 @@ void Engine::getRoles(const QString &mode, char *roles) const{
     if(mode == "02_1v1"){
         qstrcpy(roles, "ZN");
         return;
-    }else if(mode == "04_1v3"){
-        qstrcpy(roles, "ZFFF");
-        return;
     }
 
     if(modes.contains(mode)){
@@ -617,7 +613,7 @@ QList<int> Engine::getRandomCards() const{
                             using_new_3v3;
     }
 
-    if(Config.GameMode == "04_1v3")
+    if(Config.GameMode == "dusong")
         exclude_disaters = true;
 
     QList<int> list;

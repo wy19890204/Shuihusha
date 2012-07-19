@@ -74,6 +74,7 @@ SOURCES += \
 	src/package/stanley.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
+	src/scenario/dusong-scenario.cpp \
 	src/scenario/miniscenarios.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
@@ -205,6 +206,7 @@ HEADERS += \
 	src/package/stanley.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
+	src/scenario/dusong-scenario.h \
 	src/scenario/miniscenarios.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \

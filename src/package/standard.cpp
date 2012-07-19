@@ -380,6 +380,75 @@ private:
     QString name;
 };
 
+class NothrowHandcardsPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return !player->hasEquip(card) ;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+class NothrowPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        return true;
+    }
+    virtual bool willThrow() const{
+        return false;
+    }
+};
+
+#include <QFile>
+#include <QTextStream>
+#include "plough.h"
+CustomCardPackage::CustomCardPackage()
+    :Package("custom_cards")
+{
+    QList<Card *> cards;
+    QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
+    QFile file("etc/custom-cards.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        while(!stream.atEnd()){
+            QString line = stream.readLine();
+            if(!rx.exactMatch(line))
+                continue;
+
+            QStringList texts = rx.capturedTexts();
+            QString name = texts.at(1);
+            Card::Suit suit = Card::String2Suit(texts.at(2));
+            int number = texts.at(3).toInt();
+
+            Card *custom;
+            if(name == "slash")
+                custom = new Slash(suit, number);
+            else if(name == "jink")
+                custom = new Jink(suit, number);
+            else if(name == "peach")
+                custom = new Peach(suit, number);
+            else if(name == "thunder_slash")
+                custom = new ThunderSlash(suit, number);
+            else if(name == "fire_slash")
+                custom = new FireSlash(suit, number);
+            else if(name == "analeptic")
+                custom = new Analeptic(suit, number);
+            else if(name == "ecstasy")
+                custom = new Ecstasy(suit, number);
+            //Card *custom = Sanguosha->cloneCard(name, Card::String2Suit(suit), number);
+            cards << custom;
+        }
+
+        file.close();
+    }
+
+    foreach(Card *card, cards)
+        card->setParent(this);
+
+    type = CardPack;
+}
+
 // test main
 #include "carditem.h"
 class Ubuna: public ClientSkill{
@@ -547,86 +616,9 @@ public:
     }
 };
 
-class NothrowHandcardsPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return !player->hasEquip(card) ;
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
-class NothrowPattern: public CardPattern{
-public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return true;
-    }
-    virtual bool willThrow() const{
-        return false;
-    }
-};
-
-#include <QFile>
-#include <QTextStream>
-#include "plough.h"
-CustomCardPackage::CustomCardPackage()
-    :Package("custom_cards")
-{
-    QList<Card *> cards;
-    QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
-    QFile file("etc/custom-cards.txt");
-    if(file.open(QIODevice::ReadOnly)){
-        QTextStream stream(&file);
-        while(!stream.atEnd()){
-            QString line = stream.readLine();
-            if(!rx.exactMatch(line))
-                continue;
-
-            QStringList texts = rx.capturedTexts();
-            QString name = texts.at(1);
-            Card::Suit suit = Card::String2Suit(texts.at(2));
-            int number = texts.at(3).toInt();
-
-            Card *custom;
-            if(name == "slash")
-                custom = new Slash(suit, number);
-            else if(name == "jink")
-                custom = new Jink(suit, number);
-            else if(name == "peach")
-                custom = new Peach(suit, number);
-            else if(name == "thunder_slash")
-                custom = new ThunderSlash(suit, number);
-            else if(name == "fire_slash")
-                custom = new FireSlash(suit, number);
-            else if(name == "analeptic")
-                custom = new Analeptic(suit, number);
-            else if(name == "ecstasy")
-                custom = new Ecstasy(suit, number);
-            //Card *custom = Sanguosha->cloneCard(name, Card::String2Suit(suit), number);
-            cards << custom;
-        }
-
-        file.close();
-    }
-
-    foreach(Card *card, cards)
-        card->setParent(this);
-
-    type = CardPack;
-}
-
 TestPackage::TestPackage()
     :Package("test")
 {
-    General *zhang1dong = new General(this, "zhang1dong", "god", 8, true, true);
-    zhang1dong->addSkill("huqi");
-    zhang1dong->addSkill("shuangzhan");
-
-    General *zhang2dong = new General(this, "zhang2dong", "god", 4, true, true);
-    zhang2dong->addSkill("huqi");
-    zhang2dong->addSkill("yinyu");
-    zhang2dong->addSkill("zhuangzhan");
 /*
     General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
     zhuanjia->addSkill(new Zhichi);
