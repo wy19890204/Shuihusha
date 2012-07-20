@@ -83,6 +83,14 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class DingceCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE DingceCard();
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 class XunlieCard: public SkillCard{
     Q_OBJECT
 

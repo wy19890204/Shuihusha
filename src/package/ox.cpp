@@ -280,24 +280,34 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
 
     //room->broadcastSkillInvoke(objectName());
     QString choice = room->askForChoice(huyanzhuo, "lianma", "lian+ma");
+    LogMessage log;
+    log.from = huyanzhuo;
+    log.arg = "lianma";
     if(choice == "lian"){
+        log.type = "#LianmaOn";
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
                 if(!player->isChained()){
                     player->setChained(true);
                     room->broadcastProperty(player, "chained");
                     room->setEmotion(player, "chain");
+                    log.to << player;
                 }
             }
         }
     }else{
+        log.type = "#LianmaOff";
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
-                if(player->isChained())
+                if(player->isChained()){
                     room->setPlayerProperty(player, "chained", false);
+                    log.to << player;
+                }
             }
         }
     }
+    if(!log.to.isEmpty())
+        room->sendLog(log);
 };
 
 class Lianma: public ZeroCardViewAsSkill{
@@ -789,6 +799,44 @@ public:
     }
 };
 
+DingceCard::DingceCard(){
+    will_throw = false;
+    once = true;
+}
+
+void DingceCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    Room *room = effect.from->getRoom();
+    int card_id = room->askForCardChosen(effect.from, effect.to, "he", "dingce");
+    room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
+    room->showCard(effect.from, card_id);
+    if(Sanguosha->getCard(card_id)->inherits("TrickCard") && effect.from->askForSkillInvoke("dingce")){
+        room->throwCard(card_id);
+        RecoverStruct tec;
+        room->recover(effect.from, tec, true);
+    }
+}
+
+class Dingce: public OneCardViewAsSkill{
+public:
+    Dingce():OneCardViewAsSkill("dingce"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("DingceCard");
+    }
+
+    virtual bool viewFilter(const CardItem *lij) const{
+        return lij->getCard()->inherits("TrickCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        DingceCard *card = new DingceCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
 XunlieCard::XunlieCard(){
 }
 
@@ -1027,6 +1075,7 @@ OxPackage::OxPackage()
 
     General *lijun = new General(this, "lijun", "min");
     lijun->addSkill(new Skill("nizhuan"));
+    lijun->addSkill(new Dingce);
 
     General *xiezhen = new General(this, "xiezhen", "min");
     xiezhen->addSkill(new Xunlie);
@@ -1046,6 +1095,7 @@ OxPackage::OxPackage()
     addMetaObject<LianzhuCard>();
     addMetaObject<ButianCard>();
     addMetaObject<DuomingCard>();
+    addMetaObject<DingceCard>();
     addMetaObject<XunlieCard>();
     addMetaObject<ZiyiCard>();
     addMetaObject<ShouwangCard>();
