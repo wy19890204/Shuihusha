@@ -511,7 +511,7 @@ tuiche=sgs.CreateTriggerSkill
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()
 		local damage = data:toDamage()
-		if damage.card:inherits("Slash") and not damage.to:getGeneral():isMale() and
+		if damage.card and damage.card:inherits("Slash") and not damage.to:getGeneral():isMale() and
 			damage.to:faceUp() then
 			damage.to:turnOver()
 		end
@@ -549,7 +549,7 @@ baoju=sgs.CreateTriggerSkill
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()
 		local damage = data:toDamage()
-		if damage.card:inherits("Slash") and damage.to:getGeneral():isMale() then
+		if damage.card and damage.card:inherits("Slash") and damage.to:getGeneral():isMale() then
 			damage.damage = damage.damage + 1
 			damage.to:gainMark("@chrysa")
 			data:setValue(damage)

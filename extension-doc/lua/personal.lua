@@ -62,9 +62,9 @@ skydao=sgs.CreateTriggerSkill
             local log = sgs.LogMessage()
 			log.type = "#SkydaoMAXHP"
 			log.from = player
-			log.arg = tonumber(player:getMaxHP())
+			log.arg = tonumber(player:getMaxHp())
 			log.arg2 = self:objectName()
-			room:setPlayerProperty(player, "maxhp", sgs.QVariant(player:getMaxHP() + 1))
+			room:setPlayerProperty(player, "maxhp", sgs.QVariant(player:getMaxHp() + 1))
 			room:sendLog(log)
         end
 	end
@@ -75,6 +75,14 @@ noqing=sgs.CreateTriggerSkill{
 	frequency = sgs.Skill_Compulsory,
 	events={sgs.Damaged},
 	priority = -1,
+
+	default_choice = function(player)
+        if player:getMaxHp() >= player:getHp() + 2 then
+            return "maxhp"
+        else
+            return "hp"
+		end
+        end,
 
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()

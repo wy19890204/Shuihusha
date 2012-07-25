@@ -3,6 +3,7 @@
 return {
 
 	["dusong"] = "独松关模式",
+	["Dusong"] = "独松关",
 
 	["#zhang1dong"] = "独松关双英",
 	["zhang1dong"] = "张清董平",

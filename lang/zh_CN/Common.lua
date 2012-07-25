@@ -5,6 +5,7 @@ return {
 	["DefaultCV"] = "佚名",
 	["DefaultCoder"] = "宇文天启",
 	["UnknowNick"] = "无绰号",
+	["DefaultIllustrator"] = "不详",
 
 	["Pairs"] = "双将",
 	["spade"] = "黑桃",
