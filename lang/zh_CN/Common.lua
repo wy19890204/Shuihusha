@@ -148,10 +148,13 @@ return {
 
 -- test
 	["test"] = "测试",
+
 	["sujiang"] = "稻草男",
 	["sujiangf"] = "稻草女",
 	["#sujiang"] = "金童",
 	["#sujiangf"] = "玉女",
+	["$sujiang"] = "T01",
+	["$sujiangf"] = "T02",
 	["designer:sujiang"] = "游卡桌游",
 	["cv:sujiang"] = "",
 	["coder:sujiang"] = "",
@@ -161,6 +164,7 @@ return {
 	["~sujiang"] = "赤条条来去无牵挂！",
 	["~sujiangf"] = "赤条条……流氓啊~!",
 
+	["$ubuntenkei"] = "T03",
 	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
@@ -188,6 +192,7 @@ return {
 	["$qiapai"] = "别碰人家的裙子……",
 	["~ubuntenkei"] = "嗯？不要啊……",
 
+	["$zhuanjia"] = "T04",
 	["#zhuanjia"] = "",
 	["zhuanjia"] = "砖家叫兽",
 	["designer:zhuanjia"] = "宇文天启",

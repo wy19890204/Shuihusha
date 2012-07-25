@@ -3,6 +3,7 @@
 return {
 	["standard"] = "基础包",
 
+	["$songjiang"] = "001",
 	["#songjiang"] = "及时雨", -- kou 4hp (ttxd)
 	["songjiang"] = "宋江",
 	["designer:songjiang"] = "烨子&凌天翼",
@@ -27,6 +28,7 @@ return {
 	["$juyi4"] = "如今，尚不是时候。",
 	["~songjiang"] = "望天王降诏，早招安，心方足。",
 
+	["$lujunyi"] = "002",
 	["#lujunyi"] = "玉麒麟", -- guan 4hp (ttxd)
 	["lujunyi"] = "卢俊义",
 	["cv:lujunyi"] = "猎狐【天子会工作室】",
@@ -39,6 +41,7 @@ return {
 	["$baoguo2"] = "但愿共存忠义于心，共著功勋于国！",
 	["~lujunyi"] = "我，生为大宋人，死为大宋鬼！",
 
+	["$wuyong"] = "003",
 	["#wuyong"] = "智多星", -- kou 3hp (cgdk)
 	["wuyong"] = "吴用",
 	["cv:wuyong"] = "鸢飞【天子会工作室】",
@@ -54,6 +57,7 @@ return {
 	["$yunchou2"] = "有了，有了！",
 	["~wuyong"] = "八百里水泊，化作南柯一梦。",
 
+	["$gongsunsheng"] = "004",
 	["#gongsunsheng"] = "入云龙", -- kou 3hp (ttxd)
 	["gongsunsheng"] = "公孙胜",
 	["cv:gongsunsheng"] = "流岚【裔美声社】",
@@ -74,6 +78,7 @@ return {
 	["$qimen2"] = "小奇改门户，大奇变格局。",
 	["~gongsunsheng"] = "天罡尽已归天界，地煞还应入地中。",
 
+	["$guansheng"] = "005",
 	["#guansheng"] = "大刀", -- jiang 4hp (zcyn)
 	["guansheng"] = "关胜",
 	["cv:guansheng"] = "鹏少",
@@ -85,6 +90,7 @@ return {
 	["$tongwu2"] = "可胜者，攻也！不可胜者，守也！",
 	["~guansheng"] = "武虽通，人难长。",
 
+	["$linchong"] = "006",
 	["#linchong"] = "豹子头", -- jiang 4hp (xzdd)
 	["linchong"] = "林冲",
 	["cv:linchong"] = "猎狐【天子会工作室】",
@@ -95,6 +101,7 @@ return {
 	["$duijue2"] = "一枪在手，试问天下英雄！",
 	["~linchong"] = "神枪绕指柔，家恨何人报！",
 
+	["$huarong"] = "009",
 	["#huarong"] = "小李广", -- guan 4hp (qjwm)
 	["huarong"] = "花荣",
 	["cv:huarong"] = "烨子风暴【天子会工作室】",
@@ -111,6 +118,7 @@ return {
 	["$kaixian2"] = "汝等可敢踏前一步？",
 	["~huarong"] = "一腔义烈元相契，封树高悬两命亡。",
 
+	["$chaijin"] = "010",
 	["#chaijin"] = "小旋风", -- guan 3hp (ttxd)
 	["chaijin"] = "柴进",
 	["designer:chaijin"] = "烨子&小花荣",
@@ -131,6 +139,7 @@ return {
 	["$haoshen4"] = "客气什么，拿去便是。",
 	["~chaijin"] = "难道～这先朝之物，没用了？",
 
+	["$zhutong"] = "012",
 	["#zhutong"] = "美髯公", -- guan 4hp (xzdd)
 	["zhutong"] = "朱仝",
 	["designer:zhutong"] = "烨子&喀什葛尔胡杨",
@@ -146,6 +155,7 @@ return {
 	["$yixian2"] = "此地虽好，也不是安身之处。",
 	["~zhutong"] = "可恨这黑厮～",
 
+	["$luzhishen"] = "013",
 	["#luzhishen"] = "花和尚", -- kou 4hp (qjwm)
 	["luzhishen"] = "鲁智深",
 	["cv:luzhishen"] = "东方胤弘【天子会工作室】",
@@ -160,6 +170,7 @@ return {
 	["$zuohua1"] = "钱塘江上潮信来，今日方知我是我。",
 	["$zuohua2"] = "忽地随潮归去，果然无处跟寻。", -- 天灾死亡
 
+	["$wusong"] = "014",
 	["#wusong"] = "行者", -- kou 4hp (qjwm)
 	["wusong"] = "武松",
 	["fuhu"] = "伏虎",
@@ -171,6 +182,7 @@ return {
 	["$fuhu2"] = "哨棒断了，俺还有一双拳头！",
 	["~wusong"] = "招安，招安，冷了兄弟们的心啊！",
 
+	["$yangzhi"] = "017",
 	["#yangzhi"] = "青面兽", -- guan 4hp (xzzd)
 	["yangzhi"] = "杨志",
 	["cv:yangzhi"] = "猎狐【天子会工作室】",
@@ -191,6 +203,7 @@ return {
 	["$fengmang3"] = "杀人不见血！", 
 	["~yangzhi"] = "无颜面对～列祖列宗！",
 
+	["$xuning"] = "018",
 	["#xuning"] = "金枪手", -- jiang 4hp (ybyt)
 	["xuning"] = "徐宁",
 	["cv:xuning"] = "卡修【天子会工作室】",
@@ -208,6 +221,7 @@ return {
 	["~xuning"] = "刀枪入库，马放南山。",
 --	["~xuning"] = "草！还我宝甲！",
 
+	["$daizong"] = "020",
 	["#daizong"] = "神行太保", -- jiang 3hp (fcdc)
 	["daizong"] = "戴宗",
 	["cv:daizong"] = "莫名【忆昔端华工作室】",
@@ -224,6 +238,7 @@ return {
 	["$jibao2"] = "日行八百，朝发夕至。",
 	["~daizong"] = "消息有误，啊～",
 
+	["$likui"] = "022",
 	["#likui"] = "黑旋风", -- kou 4hp (xzdd)
 	["likui"] = "李逵",
 	["designer:likui"] = "凌天翼",
@@ -236,6 +251,7 @@ return {
 	["$shalu3"] = "虽然没了功劳，也吃俺杀得快活。", --判定红色播放
 	["~likui"] = "生时服侍哥哥，死了也只是哥哥部下一个小鬼。",
 
+	["$ruanxiaoqi"] = "031",
 	["#ruanxiaoqi"] = "活阎罗", -- min 4hp (cgdk)
 	["ruanxiaoqi"] = "阮小七",
 	["cv:ruanxiaoqi"] = "小V【天子会工作室】",
@@ -250,6 +266,7 @@ return {
 	["$jiuhan2"] = "不愧是御酒！",
 	["~ruanxiaoqi"] = "爷爷生在天地间，不求富贵不做官。",
 
+	["$yangxiong"] = "032",
 	["#yangxiong"] = "病关索", -- jiang 4hp (zcyn)
 	["yangxiong"] = "杨雄",
 	["designer:yangxiong"] = "裁之刃•散&宇文天启",
@@ -262,6 +279,7 @@ return {
 	["$xingxing2"] = "斩！",
 	["~yangxiong"] = "背疮疼痛，恨不能战死沙场～",
 
+	["$yanqing"] = "036",
 	["#yanqing"] = "浪子", -- min 3hp (qjwm)
 	["yanqing"] = "燕青",
 	["cv:yanqing"] = "烨子风暴【天子会工作室】",
@@ -284,6 +302,7 @@ return {
 	["$fuqin4"] = "可长可短，见机而作。",
 	["~yanqing"] = "时人苦把功名恋，只怕功名不到头。",
 
+	["$andaoquan"] = "056",
 	["#andaoquan"] = "神医", -- min 3hp (ttxd)
 	["andaoquan"] = "安道全",
 	["cv:andaoquan"] = "澪乱の风【天子会工作室】",
@@ -304,6 +323,7 @@ return {
 	["$fengyue2"] = "活色生香伴佳人。",
 	["~andaoquan"] = "救人易，救己难！",
 
+	["$husanniang"] = "059",
 	["#husanniang"] = "一丈青", -- jiang 3hp (ttxd)
 	["husanniang"] = "扈三娘",
 	["cv:husanniang"] = "蒲小猫【天子会工作室】",
@@ -320,6 +340,7 @@ return {
 	["$wuji2"] = "连环铠甲衬红纱。",
 	["~husanniang"] = "卿本佳人，奈何从贼？",
 
+	["$sunerniang"] = "103",
 	["#sunerniang"] = "母夜叉", -- kou 3hp (cgdk)
 	["sunerniang"] = "孙二娘",
 	["cv:sunerniang"] = "南宫泓【「御」】",
@@ -337,6 +358,7 @@ return {
 	["$renrou2"] = "客官，这可是上好的黄牛肉！", --发牌播放
 	["~sunerniang"] = "就让这仇怨～生根发芽吧。",
 
+	["$gaoqiu"] = "109",
 	["#gaoqiu"] = "殿帅府太尉", -- guan 3hp (ttxd)
 	["gaoqiu"] = "高俅",
 	["cv:gaoqiu"] = "爪子【天子会工作室】",
@@ -356,6 +378,7 @@ return {
 	["$panquan2"] = "共求富贵！",
 	["~gaoqiu"] = "报应啊～报应！",
 
+	["$caijing"] = "110",
 	["#caijing"] = "奸相", -- guan 4hp (fcdc)
 	["caijing"] = "蔡京",
 	["cv:caijing"] = "东方胤弘【天子会工作室】",
@@ -370,6 +393,7 @@ return {
 	["$duoquan"] = "这朝事还不由我说了算！",
 	["~caijing"] = "时至今日，方知百姓之恨！",
 
+	["$fangla"] = "112",
 	["#fangla"] = "永乐圣公", -- jiang 4hp (bwqz)
 	["fangla"] = "方腊",
 	["cv:fangla"] = "谈笑",
@@ -384,6 +408,7 @@ return {
 	["$zhiyuan2"] = "吾大军援兵何在？",
 	["~fangla"] = "打虎武松，不过如此。",
 
+	["$wangqing"] = "114",
 	["#wangqing"] = "楚王", -- min 4hp (qjwm)
 	["wangqing"] = "王庆",
 	["cv:wangqing"] = "猎狐【天子会工作室】",
@@ -400,6 +425,7 @@ return {
 	["$jiachu2"] = "好一片繁华景象！",
 	["~wangqing"] = "来世再不渡清江。",
 
+	["$panjinlian"] = "126",
 	["#panjinlian"] = "墙头杏", -- min 3hp (qlfd)
 	["panjinlian"] = "潘金莲",
 	["designer:panjinlian"] = "烨子&凌天翼",
@@ -419,6 +445,7 @@ return {
 	["$shengui2"] = "奴家有夫家了。",
 	["~panjinlian"] = "大错铸成两命丧，风吹败柳赴黄泉。",
 
+	["$lishishi"] = "128",
 	["#lishishi"] = "绝色", -- min 3hp (fcdc)
 	["lishishi"] = "李师师",
 	["cv:lishishi"] = "空无的念【月玲珑】",
@@ -433,6 +460,7 @@ return {
 	["$yinjian2"] = "今晚，教你见天子一面。",
 	["~lishishi"] = "陛下，妾身去矣！",
 
+	["$yanxijiao"] = "129",
 	["#yanxijiao"] = "花魁女", -- min 3hp (qlfd)
 	["yanxijiao"] = "阎婆惜",
 	["cv:yanxijiao"] = "蒲小猫【天子会工作室】",

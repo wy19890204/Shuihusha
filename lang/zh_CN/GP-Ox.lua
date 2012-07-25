@@ -4,6 +4,7 @@
 return {
 	["ox"] = "丑牛",
 
+	["$gaolian"] = "116",
 	["#gaolian"] = "高唐魔君", -- guan 3hp (ybyt)
 	["gaolian"] = "高廉",
 	["coder:gaolian"] = "战栗贵公子",
@@ -13,9 +14,10 @@ return {
 	[":heiwu"] = "出牌阶段，你可以将任意数量的手牌以任意顺序置于牌堆顶。",
 	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
 
+	["$tongguan"] = "111A",
 	["#tongguan"] = "广阳郡王", -- guan 4hp (bwqz)
 	["tongguan"] = "童贯",
-	["designer:tongguan"] = "烨子&Rotton2012",
+	["designer:tongguan"] = "烨子&大Ｒ",
 	["aoxiang"] = "媪相",
 	[":aoxiang"] = "<font color=green><b>觉醒技</b></font>，回合开始时，若你的当前体力值不大于2，则你须扣减1点体力上限，性别转变为女，并永久获得技能“王宦”（<b>锁定技</b>，当你使用【杀】指定一名男性角色为目标后，该角色须弃置一张手牌；当你成为男性角色使用【杀】的目标后，你摸一张牌）。",
 	["zhengfa"] = "征伐",
@@ -32,9 +34,10 @@ return {
 	["$zhengfa6"] = "前有伏兵，后有追兵，似此如之奈何？",
 	["~tongguanf"] = "各位好汉，切莫动手啊！",
 
+	["$tongguanf"] = "111B",
 	["#tongguanf"] = "广阴郡王",
 	["tongguanf"] = "童公公",
-	["designer:tongguanf"] = "烨子&Rotton2012",
+	["designer:tongguanf"] = "烨子&大Ｒ",
 	["yan"] = "阉",
 
 	["#huyanzhuo"] = "双鞭", -- guan 4hp (fcdc)

@@ -5,11 +5,13 @@ return {
 	["dusong"] = "独松关模式",
 	["Dusong"] = "独松关",
 
+	["$zhang1dong"] = "S02A",
 	["#zhang1dong"] = "独松关双英",
 	["zhang1dong"] = "张清董平",
 	["douzhan"] = "斗战",
 	[":douzhan"] = "你可以将两张花色相同的手牌当【杀】使用或打出；你以此法使用【杀】时可以额外指定一名目标角色。",
 
+	["$zhang2dong"] = "S02B",
 	["#zhang2dong"] = "不挡之勇",
 	["zhang2dong"] = "张清董平",
 	["guzhu"] = "孤注",

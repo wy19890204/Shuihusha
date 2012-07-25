@@ -1599,11 +1599,6 @@
         <translation>4 人局</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="65"/>
-        <source>4 players (Hulao Pass)</source>
-        <translation>4 人局 [独松关1v3]</translation>
-    </message>
-    <message>
         <location filename="src/core/engine.cpp" line="66"/>
         <source>5 players</source>
         <translation>5 人局</translation>
@@ -1745,7 +1740,7 @@
     <message>
         <location filename="src/dialog/generaloverview.ui" line="62"/>
         <source>MaxHP</source>
-        <translation>初始体力</translation>
+        <translation>体力</translation>
     </message>
     <message>
         <location filename="src/dialog/generaloverview.ui" line="67"/>
@@ -1753,9 +1748,14 @@
         <translation>包</translation>
     </message>
     <message>
-        <location filename="src/dialog/generaloverview.ui" line="81"/>
-        <source>Skill</source>
-        <translation>技能</translation>
+        <location filename="src/dialog/generaloverview.ui" line="72"/>
+        <source>ID</source>
+        <translation>编号</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/generaloverview.ui" line="229"/>
+        <source>Illustrator</source>
+        <translation>插画</translation>
     </message>
     <message>
         <location filename="src/dialog/generaloverview.ui" line="152"/>
