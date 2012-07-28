@@ -71,7 +71,7 @@ public:
     }
 };
 
-class Zhengzhuang:public DrawCardsSkill{
+class Zhengzhuang: public DrawCardsSkill{
 public:
     Zhengzhuang():DrawCardsSkill("zhengzhuang"){
         frequency = Frequent;
@@ -102,7 +102,8 @@ public:
             }
             return false;
         }
-        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 && player->askForSkillInvoke(objectName())){
+        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 &&
+           player->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             QList<ServerPlayer *> tarc;
             for(int i = player->getMark("@true"); i > 0; i--){
