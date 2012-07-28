@@ -140,16 +140,17 @@ public:
         log.from = tg;
         log.arg = objectName();
         room->sendLog(log);
+
+        room->loseMaxHp(tg, 1);
         room->playSkillEffect(objectName());
         room->broadcastInvoke("animate", "lightbox:$aoxiang:2500");
         room->getThread()->delay(2500);
+        room->acquireSkill(tg, "wanghuan");
 
-        room->loseMaxHp(tg, 1);
         if(tg->getGeneralName() == "tongguan")
             room->setPlayerProperty(tg, "general", "tongguanf");
         else if(tg->getGeneral2Name() == "tongguan")
             room->setPlayerProperty(tg, "general2", "tongguanf");
-        room->acquireSkill(tg, "wanghuan");
         room->setPlayerMark(tg, "aoxiang", 1);
         return false;
     }
@@ -1079,13 +1080,12 @@ OxPackage::OxPackage()
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
-    skills << new Wanghuan;
-    tongguan->addRelateSkill("wanghuan");
+    //skills << new Wanghuan;
+    //tongguan->addRelateSkill("wanghuan");
     tongguan->addSkill(new Zhengfa);
 
-    tongguan = new General(this, "tongguanf", "yan", 4, false, true);
-    tongguan->addSkill("aoxiang");
-    tongguan->addSkill("zhengfa");
+    tongguan = new General(this, "tongguanf", "yan", 3, false, true);
+    tongguan->addSkill(new Wanghuan);
     tongguan->addSkill("zhengfa");
 
     General *huyanzhuo = new General(this, "huyanzhuo", "guan");
