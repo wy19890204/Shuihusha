@@ -281,7 +281,7 @@ sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
 
 -- shijin
-sgs.shijin_keep_value = 
+sgs.shijin_keep_value =
 {
 	EquipCard = 5
 }
@@ -309,7 +309,7 @@ function sgs.ai_cardneed.xiagu(to, card, self)
 end
 
 -- lijun
-sgs.lijun_keep_value = 
+sgs.lijun_keep_value =
 {
 	TrickCard = 5
 }
@@ -420,9 +420,16 @@ end
 -- zhongzhen
 sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
 	local damage = data:toDamage()
+	if damage.damage < 1 then return false end
+
 	local max_card = self:getMaxCard()
-	if max_card and max_card:getNumber() > 11 and self:isEnemy(damage.from) then
-		return true
+	local max_care = self:getMaxCard(damage.from)
+	if max_card and max_care and max_card:getNumber() > max_care:getNumber() then
+		if self:isWeak() then
+			return true
+		else
+			return self:isEnemy(damage.from)
+		end
 	else
 		return false
 	end

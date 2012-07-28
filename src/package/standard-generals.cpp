@@ -150,7 +150,7 @@ public:
 class Baoguo:public TriggerSkill{
 public:
     Baoguo():TriggerSkill("baoguo"){
-        events << Predamaged << Damaged;
+        events << DamagedProceed << Damaged;
         frequency = Frequent;
     }
 

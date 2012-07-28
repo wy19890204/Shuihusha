@@ -396,7 +396,7 @@ public:
 class Fangzhen: public TriggerSkill{
 public:
     Fangzhen():TriggerSkill("fangzhen"){
-        events << Predamaged;
+        events << DamagedProceed;
     }
 
     virtual int getPriority() const{

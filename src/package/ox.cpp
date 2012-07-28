@@ -278,6 +278,7 @@ public:
 LianmaCard::LianmaCard(){
     target_fixed = true;
     once = true;
+    mute = true;
 }
 
 void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
@@ -775,7 +776,7 @@ public:
 class Xiagu: public TriggerSkill{
 public:
     Xiagu():TriggerSkill("xiagu"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -948,7 +949,7 @@ public:
 class Zhongzhen: public TriggerSkill{
 public:
     Zhongzhen():TriggerSkill("zhongzhen"){
-        events << Predamaged;
+        events << DamagedProceed;
     }
 
     virtual int getPriority() const{
@@ -957,7 +958,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *linko, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.from->getGeneral()->isMale() || damage.damage <= 0)
+        if(!damage.from || damage.from == damage.to)
             return false;
         if(!linko->isKongcheng() && !damage.from->isKongcheng() &&
            linko->askForSkillInvoke(objectName(), data)){
