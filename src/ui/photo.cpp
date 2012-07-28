@@ -79,6 +79,7 @@ Photo::Photo()
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
     avatar_area->setPen(Qt::NoPen);
+    avatar_area->setZValue(0.3);
 
     small_avatar_area = new QGraphicsRectItem(0, 0, 42, 36, this);
     small_avatar_area->setPos(86, 30);
