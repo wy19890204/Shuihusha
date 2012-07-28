@@ -1296,6 +1296,13 @@ void Client::warn(const QString &reason){
     QMessageBox::warning(NULL, tr("Warning"), msg);
 }
 
+void Client::askForGeneral(const Json::Value &arg){
+    QStringList generals;
+    if (!tryParse(arg, generals)) return;
+    emit generals_got(generals);
+    //setStatus(ExecDialog);
+}
+
 void Client::askForSuit(const Json::Value &){
     delete ask_dialog;
 
@@ -1637,12 +1644,6 @@ void Client::askForPlayerChosen(const Json::Value &players){
         players_to_choose.push_back(toQString(players[0][i]));    
 
     setStatus(AskForPlayerChoose);
-}
-
-void Client::askForGeneral(const Json::Value &arg){
-    QStringList generals;
-    if (!tryParse(arg, generals)) return;
-    emit generals_got(generals);
 }
 
 void Client::onPlayerReplyYiji(const Card *card, const Player *to){

@@ -987,11 +987,15 @@ bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *
 }
 
 void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *o = effect.from->getRoom();
     effect.from->loseAllMarks("@rope");
     RecoverStruct r;
     r.who = effect.from;
     r.recover = 2;
-    effect.from->getRoom()->recover(effect.to, r, true);
+    o->broadcastInvoke("animate", "lightbox:$Ziyi:5000");
+    o->getThread()->delay(2500);
+    o->recover(effect.to, r, true);
+    o->getThread()->delay(2500);
     effect.from->setFlags("Hanging");
 }
 
@@ -1022,12 +1026,9 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *lnz) const{
         if(lnz->hasFlag("Hanging") && lnz->getPhase() == Player::Finish){
-            Room *o = lnz->getRoom();
-            o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
-            o->getThread()->delay(3000);
             DamageStruct damage;
             damage.from = lnz;
-            o->killPlayer(lnz, &damage);
+            lnz->getRoom()->killPlayer(lnz, &damage);
         }
         return false;
     }

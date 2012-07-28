@@ -2204,7 +2204,6 @@ void Room::chooseGenerals(){
 }
 
 void Room::run(){
-    setGerenalGender("anjiang", "M");
     // initialize random seed for later use
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
