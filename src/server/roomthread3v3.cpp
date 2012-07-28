@@ -38,7 +38,7 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     if(Config.value("3v3/UsingNewMode", false).toBool()){
           QStringList list_remove, list_add;
           list_remove << "zhuwu" << "wangqing" << "lujunyi" << "andaoquan" << "chaijin"
-                  << "yuehe" << "gongsunsheng" << "qiaodaoqing";
+                  << "yuehe" << "gongsunsheng" << "qiaodaoqing" << "lijun";
           list_add << "dingdesun" << "tongguan" << "fangla" << "liruilan" << "haosiwen"
                   << "zourun" << "yanglin" << "gaolian";
           foreach(QString general_name, list_remove)

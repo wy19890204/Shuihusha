@@ -493,9 +493,14 @@ void Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &ta
         qSort(players.begin(), players.end(), CompareByActionOrder);
 
         ServerPlayer *lijun = room->findPlayerBySkillName("nizhuan");
-        if(room->getMode() == "06_3v3" || lijun){
+        if(lijun && targets.length() > 1 &&
+           (inherits("AOE") || inherits("GlobalEffect")) &&
+           lijun->askForSkillInvoke("nizhuan")){
+            room->reverseFor3v3(this, lijun, players);
+        }
+        if(room->getMode() == "06_3v3"){
             if(inherits("AOE") || inherits("GlobalEffect"))
-                room->reverseFor3v3(this, lijun ? lijun : source, players);
+                room->reverseFor3v3(this, source, players);
         }
 
         foreach(ServerPlayer *target, players){

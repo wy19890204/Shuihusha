@@ -21,7 +21,7 @@ void Slash::setNature(DamageStruct::Nature nature){
 }
 
 bool Slash::IsAvailable(const Player *player){
-    if(player->hasFlag("ecst"))
+    if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
         return false;
 
     return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
@@ -95,6 +95,9 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(Self->hasWeapon("sun_bow") && isRed() && objectName() == "slash"){
         slash_targets ++;
     }
+
+    if(getSkillName() == "douzhan")
+        slash_targets ++;
 
     if(Self->hasSkill("xianxi"))
         slash_targets = 100;

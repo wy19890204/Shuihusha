@@ -145,6 +145,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     room->sendLog(log);
                     room->setPlayerFlag(tmp, "-ecst");
                 }
+                if(tmp->hasFlag("Guibing"))
+                    room->setPlayerFlag(tmp, "-Guibing");
             }
 
             player->clearFlags();
@@ -282,6 +284,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
                 return true;
             }
+            if(player->hasFlag("Guibing") && data.toString() == "slash")
+                return true;
             break;
         }
     case CardFinished: {
@@ -946,139 +950,6 @@ QString GameRule::getWinner(ServerPlayer *victim) const{
     }
 
     return winner;
-}
-
-HulaoPassMode::HulaoPassMode(QObject *parent)
-    :GameRule(parent)
-{
-    setObjectName("hulaopass_mode");
-
-    events << HpChanged;
-    default_choice = "recover";
-}
-
-static int Transfiguration = 1;
-
-bool HulaoPassMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-    switch(event){
-    case GameStart:{
-            if(player->isLord()){
-                if(setjmp(env) == Transfiguration){
-                    player = room->getLord();
-                    room->transfigure(player, "zhangqing", true, true);
-                    room->setPlayerProperty(player, "general2", "dongping");
-
-                    QList<const Card *> tricks = player->getJudgingArea();
-                    foreach(const Card *trick, tricks)
-                        room->throwCard(trick);
-
-                }else{
-                    room->setPlayerProperty(player, "maxhp", 9);
-                    room->setPlayerProperty(player, "hp", 8);
-                    player->drawCards(8, false);
-                }
-            }else
-                player->drawCards(player->getSeat() + 1, false);
-
-            if(player->getGeneralName() == "zhangchunhua"){
-                if(qrand() % 3 == 0)
-                    room->killPlayer(player);
-            }
-
-            return false;
-        }
-
-    case CardUsed:{
-            CardUseStruct use = data.value<CardUseStruct>();
-            if(use.card->inherits("Weapon") && player->askForSkillInvoke("weapon_recast", data)){
-                player->playCardEffect("@recast");
-                room->throwCard(use.card);
-                player->drawCards(1, false);
-                return false;
-            }
-
-            break;
-        }
-
-    case HpChanged:{
-            if(player->getGeneralName() == "dongping" && player->getHp() <= 4){
-                longjmp(env, Transfiguration);
-            }
-
-            return false;
-        }
-
-    case Death:{
-            if(player->isLord()){
-                room->gameOver("rebel");
-            }else{
-                if(room->aliveRoles(player).length() == 1)
-                    room->gameOver("lord");
-
-                LogMessage log;
-                log.type = "#Reforming";
-                log.from = player;
-                room->sendLog(log);
-
-                player->bury();
-                room->setPlayerProperty(player, "hp", 0);
-
-                foreach(ServerPlayer *player, room->getOtherPlayers(room->getLord())){
-                    if(player->askForSkillInvoke("draw_1v3"))
-                        player->drawCards(1, false);
-                }
-            }
-
-            return false;
-        }
-
-    case TurnStart:{
-            if(player->isLord()){
-                if(!player->faceUp())
-                    player->turnOver();
-                else
-                    player->play();
-            }else{
-                if(player->isDead()){
-                    if(player->getHp() + player->getHandcardNum() == 6){
-                        LogMessage log;
-                        log.type = "#ReformingRevive";
-                        log.from = player;
-                        room->sendLog(log);
-
-                        room->revivePlayer(player);
-                    }else if(player->isWounded()){
-                        if(player->getHp() > 0 && (room->askForChoice(player, "Hulaopass", "recover1hp+draw1card") == "draw1card")){
-                            LogMessage log;
-                            log.type = "#ReformingDraw";
-                            log.from = player;
-                            room->sendLog(log);
-                            player->drawCards(1, false);
-                            return false;
-                        }
-
-                        LogMessage log;
-                        log.type = "#ReformingRecover";
-                        log.from = player;
-                        room->sendLog(log);
-
-                        room->setPlayerProperty(player, "hp", player->getHp() + 1);
-                    }else
-                        player->drawCards(1, false);
-                }else if(!player->faceUp())
-                    player->turnOver();
-                else
-                    player->play();
-            }
-
-            return false;
-        }
-
-    default:
-        break;
-    }
-
-    return GameRule::trigger(event, room, player, data);
 }
 
 BasaraMode::BasaraMode(QObject *parent)

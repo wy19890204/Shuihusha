@@ -294,9 +294,9 @@ void RoomThread::run(){
 
     if(room->mode == "06_3v3"){
         run3v3();
-    }else if(room->getMode() == "04_1v3"){
+    }else if(room->getMode() == "dusong"){
         ServerPlayer *shenlvbu = room->getLord();
-        if(shenlvbu->getGeneralName() == "dongping"){
+        if(shenlvbu->getGeneralName() == "zhang1dong"){
             QList<ServerPlayer *> league = room->getPlayers();
             league.removeOne(shenlvbu);
 
@@ -313,14 +313,14 @@ void RoomThread::run(){
                     if(!player->hasFlag("actioned"))
                         room->setPlayerFlag(player, "actioned");
 
-                    if(shenlvbu->getGeneralName() == "zhangqing")
+                    if(shenlvbu->getGeneralName() == "zhang2dong")
                         goto second_phase;
 
                     if(player->isAlive()){
                         room->setCurrent(shenlvbu);
                         trigger(TurnStart, room, room->getCurrent());
 
-                        if(shenlvbu->getGeneralName() == "zhangqing")
+                        if(shenlvbu->getGeneralName() == "zhang2dong")
                             goto second_phase;
                     }
                 }

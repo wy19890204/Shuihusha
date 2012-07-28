@@ -62,7 +62,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         name_item->setTextAlignment(Qt::AlignCenter);
         if(general->isLord()){
             name_item->setIcon(lord_icon);
-            name_item->setTextAlignment(Qt::AlignCenter);
+            name_item->setTextAlignment(Qt::AlignVCenter);
         }
 
         if(general->isHidden()){
@@ -82,8 +82,18 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QTableWidgetItem *max_hp_item = new QTableWidgetItem(max_hp);
         max_hp_item->setTextAlignment(Qt::AlignCenter);
 
+        if(package.length() > 3)
+            package.chop(2);
         QTableWidgetItem *package_item = new QTableWidgetItem(package);
         package_item->setTextAlignment(Qt::AlignCenter);
+
+        QString id = Sanguosha->translate("$" + general->objectName());
+        QTableWidgetItem *id_item;
+        if(!id.startsWith("$"))
+            id_item = new QTableWidgetItem(id);
+        else
+            id_item = new QTableWidgetItem("-1");
+        id_item->setTextAlignment(Qt::AlignCenter);
 
         ui->tableWidget->setItem(i, 0, nickname_item);
         ui->tableWidget->setItem(i, 1, name_item);
@@ -91,14 +101,16 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         ui->tableWidget->setItem(i, 3, gender_item);
         ui->tableWidget->setItem(i, 4, max_hp_item);
         ui->tableWidget->setItem(i, 5, package_item);
+        ui->tableWidget->setItem(i, 6, id_item);
     }
 
     ui->tableWidget->setColumnWidth(0, 65);
     ui->tableWidget->setColumnWidth(1, 70);
     ui->tableWidget->setColumnWidth(2, 40);
     ui->tableWidget->setColumnWidth(3, 50);
-    ui->tableWidget->setColumnWidth(4, 60);
-    ui->tableWidget->setColumnWidth(5, 73);
+    ui->tableWidget->setColumnWidth(4, 50);
+    ui->tableWidget->setColumnWidth(5, 60);
+    ui->tableWidget->setColumnWidth(6, 40);
 
     ui->tableWidget->setCurrentItem(ui->tableWidget->item(0,0));
 }
@@ -266,6 +278,12 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         ui->coderLineEdit->setText(coder_text);
     else
         ui->coderLineEdit->setText(Sanguosha->translate("DefaultCoder"));
+
+    QString illustrator_text = Sanguosha->translate("illustrator:" + general->objectName());
+    if(!illustrator_text.startsWith("illustrator:"))
+        ui->illustratorLineEdit->setText(illustrator_text);
+    else
+        ui->illustratorLineEdit->setText(Sanguosha->translate("DefaultIllustrator"));
 
     button_layout->addStretch();
     ui->skillTextEdit->append(general->getSkillDescription());

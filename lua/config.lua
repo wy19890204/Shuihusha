@@ -39,6 +39,7 @@ config = {
 	},
 
 	scene_names = {
+	"Dusong",
 	"Couple",
 --[[	"Zombie",
 	"Legend",

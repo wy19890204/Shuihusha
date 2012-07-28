@@ -4,6 +4,7 @@
 return {
 	["rat"] = "子鼠",
 
+	["$liying"] = "011",
 	["#liying"] = "扑天雕", -- guan 4hp (qjwm)
 	["liying"] = "李应",
 	["cv:liying"] = "鹏少",
@@ -15,8 +16,10 @@ return {
 	["$kong1iang3"] = "如何调拨，吾自有分寸。", -- 弃花色牌播放
 	["~liying"] = "粮尽援绝，以何取胜？",
 
+	["$dongping"] = "015",
 	["#dongping"] = "双枪将", -- guan 4hp (fcdc)
 	["dongping"] = "董平",
+	["illustrator:dongping"] = "刘彤&赵鑫",
 	["cv:dongping"] = "倔强的小红军【剪刀剧团】",
 	["coder:dongping"] = "战栗贵公子",
 	["shuangzhan"] = "双战",
@@ -29,8 +32,10 @@ return {
 	["$shuangzhan4"] = "匹夫，受死！",
 	["~dongping"] = "背后有人？",
 
+	["$zhangqing"] = "016",
 	["#zhangqing"] = "没羽箭", -- guan 4hp (ttxd)
 	["zhangqing"] = "张清",
+	["illustrator:zhangqing"] = "嘻哈绿豆沙",
 	["cv:zhangqing"] = "鸢飞【天子会工作室】",
 	["coder:zhangqing"] = "roxiel",
 	["yinyu"] = "饮羽",
@@ -48,6 +53,7 @@ return {
 	["$yinyu7"] = "叫汝等饮羽沙场吧！", -- 方块使用杀播放
 	["~zhangqing"] = "一技之长，不足傍身啊！",
 
+	["$ruanxiaoer"] = "027",
 	["#ruanxiaoer"] = "立地太岁", -- min 4hp (zcyn)
 	["ruanxiaoer"] = "阮小二",
 	["cv:ruanxiaoer"] = "卡修【天子会工作室】",
@@ -60,8 +66,10 @@ return {
 	["~ruanxiaoer"] = "不好，被包围了！",
 --	["~ruanxiaoer"] = "斜阳影下空踏浪，休言村里一渔人。",
 
+	["$zhangshun"] = "030",
 	["#zhangshun"] = "浪里白条", -- min 3hp (xzdd)
 	["zhangshun"] = "张顺",
+	["illustrator:zhangshun"] = "刘彤&赵鑫",
 	["cv:zhangshun"] = "小V【天子会工作室】",
 	["shunshui"] = "顺水",
 	[":shunshui"] = "当任一角色判定区里的一张牌进入弃牌堆时，你可以弃置一张与该牌花色相同的牌，视为对任一其他角色使用一张【杀】（不计入每回合使用限制）。",
@@ -74,6 +82,7 @@ return {
 	["$lihun2"] = "能感龙君权作神，势杀天定血带刀！",
 	["~zhangshun"] = "江中多浊浪，万里无风平。",
 
+	["$zhuwu"] = "037",
 	["#zhuwu"] = "神机军师", -- kou 3hp (qjwm)
 	["zhuwu"] = "朱武",
 	["pozhen"] = "破阵",
@@ -96,6 +105,7 @@ return {
 	["$fangzhen2"] = "九宫八卦已无敌，河洛四象真堪奇！",
 	["~zhuwu"] = "生门已破，此战败也。",
 
+	["$qingzhang"] = "102",
 	["#qingzhang"] = "菜园子", -- kou 3hp (bwqz)
 	["qingzhang"] = "张青",
 	["cv:qingzhang"] = "流岚【裔美声社】",
@@ -112,6 +122,7 @@ return {
 	["$qiongtu2"] = "这里就是张家店，客官，里边请！",
 	["~qingzhang"] = "日头落了。",
 
+	["$baisheng"] = "106",
 	["#baisheng"] = "白日鼠", -- kou 3hp (bwqz)
 	["baisheng"] = "白胜",
 	["designer:baisheng"] = "Kaycent",
@@ -129,6 +140,7 @@ return {
 	["$shudan2"] = "别～别杀我！",
 	["~baisheng"] = "我招～我全招了！",
 
+	["$shiqian"] = "107",
 	["#shiqian"] = "鼓上蚤", -- kou 3hp (xzdd)
 	["shiqian"] = "时迁",
 	["cv:shiqian"] = "爪子【天子会工作室】",
@@ -142,6 +154,7 @@ return {
 	["$shentou3"] = "夜静穿墙过，更深绕屋悬。",
 	["~shiqian"] = "上天不公，无过于此！",
 
+	["$shiwengong"] = "119",
 	["#shiwengong"] = "大教师", -- jiang 4hp (zcyn)
 	["shiwengong"] = "史文恭",
 	["cv:shiwengong"] = "笑谈",
@@ -151,6 +164,7 @@ return {
 	["$dujian2"] = "活捉晁盖！",
 	["~shiwengong"] = "动，动不了了！呃～",
 
+	["$qiaodaoqing"] = "122",
 	["#qiaodaoqing"] = "幻魔君", -- jiang 3hp (ttxd)
 	["qiaodaoqing"] = "乔道清",
 	["cv:qiaodaoqing"] = "烨子风暴【天子会工作室】",
@@ -170,6 +184,7 @@ return {
 	["$mozhang2"] = "攻于外道，不悟玄微。",
 	["~qiaodaoqing"] = "这，就是五雷轰顶的滋味吗？",
 
+	["$qiongying"] = "127",
 	["#qiongying"] = "琼矢镞", -- jiang 3hp (ybyt)
 	["qiongying"] = "琼英",
 	["designer:qiongying"] = "烨子&凌天翼",

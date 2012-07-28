@@ -4,7 +4,8 @@ return {
 	["DefaultDesigner"] = "烨子",
 	["DefaultCV"] = "佚名",
 	["DefaultCoder"] = "宇文天启",
-	["UnknowNick"] = "无绰号",
+	["UnknowNick"] = "",
+	["DefaultIllustrator"] = "",
 
 	["Pairs"] = "双将",
 	["spade"] = "黑桃",
@@ -124,6 +125,8 @@ return {
 	["#AnalepticBuff"] = "%from 喝了【%arg】，对 %to 造成的杀伤害 +1",
 	["#GetMark"] = "%from 得到了 %arg2 枚 %arg 标记",
 	["#LoseMark"] = "%from 失去了 %arg2 枚 %arg 标记",
+	["#GuanxingUpOnly"] = "%from 将 %arg 张牌放到了牌堆顶",
+	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
 	["$CheatCard"] = "%from 使用了作弊，获得了 %card",
 
@@ -147,10 +150,13 @@ return {
 
 -- test
 	["test"] = "测试",
+
 	["sujiang"] = "稻草男",
 	["sujiangf"] = "稻草女",
 	["#sujiang"] = "金童",
 	["#sujiangf"] = "玉女",
+	["$sujiang"] = "T01",
+	["$sujiangf"] = "T02",
 	["designer:sujiang"] = "游卡桌游",
 	["cv:sujiang"] = "",
 	["coder:sujiang"] = "",
@@ -160,7 +166,7 @@ return {
 	["~sujiang"] = "赤条条来去无牵挂！",
 	["~sujiangf"] = "赤条条……流氓啊~!",
 
-	["#ubuntenkei"] = "",
+	["$ubuntenkei"] = "T03",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
 	["cv:ubuntenkei"] = "佚名",
@@ -187,7 +193,7 @@ return {
 	["$qiapai"] = "别碰人家的裙子……",
 	["~ubuntenkei"] = "嗯？不要啊……",
 
-	["#zhuanjia"] = "",
+	["$zhuanjia"] = "T04",
 	["zhuanjia"] = "砖家叫兽",
 	["designer:zhuanjia"] = "宇文天启",
 	["coder:zhuanjia"] = "宇文天启 [测试专用]",

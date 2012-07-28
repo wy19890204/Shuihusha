@@ -3,7 +3,8 @@
 return {
 	["sp"] = "SP",
 
-	["#luda"] = "鲁提辖",
+	["$luda"] = "S01",
+	["#luda"] = "鲁提辖", -- guan 4hp
 	["luda"] = "鲁达",
 	["cv:luda"] = "东方胤弘【天子会工作室】",
 	["baoquan"] = "暴拳",
