@@ -493,6 +493,7 @@ void Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &ta
         if(lijun && targets.length() > 1 &&
            (inherits("AOE") || inherits("GlobalEffect")) &&
            lijun->askForSkillInvoke("nizhuan")){
+            room->playSkillEffect("nizhuan");
             room->reverseFor3v3(this, lijun, players);
         }
         if(room->getMode() == "06_3v3"){

@@ -141,8 +141,8 @@ public:
         log.arg = objectName();
         room->sendLog(log);
         room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$aoxiang:1500");
-        room->getThread()->delay(1500);
+        room->broadcastInvoke("animate", "lightbox:$aoxiang:2500");
+        room->getThread()->delay(2500);
 
         room->loseMaxHp(tg, 1);
         if(tg->getGeneralName() == "tongguan")
@@ -213,13 +213,14 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
         uset.mute = true;
         uset.from = tonguan;
         uset.to = targets;
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
         room->useCard(uset);
     }
     else{
+        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 2);
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
+            //room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
             room->setPlayerFlag(tonguan, "Zhengfa");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
@@ -284,6 +285,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
     log.from = huyanzhuo;
     log.arg = "lianma";
     if(choice == "lian"){
+        room->playSkillEffect("lianma", qrand() % 2 + 1);
         log.type = "#LianmaOn";
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
@@ -296,6 +298,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
             }
         }
     }else{
+        room->playSkillEffect("lianma", qrand() % 2 + 3);
         log.type = "#LianmaOff";
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
@@ -344,8 +347,22 @@ public:
     }
 };
 
+class ZhongjiaEffect: public PhaseChangeSkill{
+public:
+    ZhongjiaEffect():PhaseChangeSkill("#zhongjia_effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *hyz) const{
+        if(hyz->getPhase() == Player::Discard &&
+           hyz->getHandcardNum() > hyz->getHp() && hyz->getHandcardNum() <= hyz->getMaxCards())
+            hyz->getRoom()->playSkillEffect("zhongjia");
+        return false;
+    }
+};
+
 SheruCard::SheruCard(){
     once = true;
+    mute = true;
 }
 
 bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -361,9 +378,11 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
     QString choice = room->askForChoice(effect.from, "sheru", "she+ru");
     int x = effect.to->getLostHp();
     if(choice == "she"){
+        room->playSkillEffect("sheru", qrand() % 2 + 1);
         effect.to->drawCards(x);
         room->loseHp(effect.to);
     }else{
+        room->playSkillEffect("sheru", qrand() % 2 + 3);
         if(effect.to->getCardCount(true) <= x){
             effect.to->throwAllHandCards();
             effect.to->throwAllEquips();
@@ -456,7 +475,6 @@ public:
                 ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
                 if(!target)
                     target = hx;
-                //room->takeAG(target, card_id);
                 if(card->inherits("EquipCard")){
                     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
                     QList<ServerPlayer *> targets;
@@ -838,6 +856,7 @@ public:
 };
 
 XunlieCard::XunlieCard(){
+    mute = true;
 }
 
 bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -845,6 +864,27 @@ bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player
     if(targets.length() >= x)
         return false;
     return !to_select->isKongcheng() && to_select != Self;
+}
+
+void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    if(getSubcards().isEmpty()){
+        room->playSkillEffect("xunlie", qrand() % 2 + 1);
+        //QList<ServerPlayer *> players = targets;
+        //qSort(players.begin(), players.end(), CompareByActionOrder);
+        foreach(ServerPlayer *target, targets){
+            CardEffectStruct effect;
+            effect.card = this;
+            effect.from = source;
+            effect.to = target;
+            effect.multiple = true;
+
+            room->cardEffect(effect);
+        }
+    }else{
+        room->playSkillEffect("xunlie", qrand() % 2 + 3);
+        room->cardEffect(this, source, targets.first());
+    }
 }
 
 void XunlieCard::onEffect(const CardEffectStruct &effect) const{
@@ -1051,6 +1091,8 @@ OxPackage::OxPackage()
     General *huyanzhuo = new General(this, "huyanzhuo", "guan");
     huyanzhuo->addSkill(new Lianma);
     huyanzhuo->addSkill(new Zhongjia);
+    huyanzhuo->addSkill(new ZhongjiaEffect);
+    related_skills.insertMulti("zhongjia", "#zhongjia_effect");
 
     General *dongchaoxueba = new General(this, "dongchaoxueba", "jiang");
     dongchaoxueba->addSkill(new Sheru);

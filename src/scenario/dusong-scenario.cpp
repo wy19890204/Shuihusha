@@ -79,6 +79,7 @@ public:
 
     virtual int getDrawNum(ServerPlayer *player, int n) const{
         if(player->hasEquip() && player->askForSkillInvoke(objectName())){
+            player->getRoom()->playSkillEffect(objectName());
             return n + player->getEquips().count();
         }
         return n;
@@ -102,6 +103,7 @@ public:
             return false;
         }
         if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 && player->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
             QList<ServerPlayer *> tarc;
             for(int i = player->getMark("@true"); i > 0; i--){
                 QList<ServerPlayer *> targets, players;
@@ -156,7 +158,7 @@ public:
                         room->killPlayer(player);
                 }
 
-                return false;
+                return true;
             }
 
         case CardUsed:{
