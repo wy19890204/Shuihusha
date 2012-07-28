@@ -11,7 +11,7 @@ sgs.ai_skill_invoke["draw_1v3"] = function(self, data)
 	return not (self.player:hasSkill("kongcheng") and self.player:isKongcheng())
 end
 
-function sgs.ai_cardsview.douzhan(class_name, player)
+sgs.ai_cardsview["douzhan"] = function(class_name, player)
 	if class_name ~= "Slash" then return end
 	local cards = sgs.QList2Table(player:getCards("h"))
 	local newcards = {}
@@ -21,53 +21,53 @@ function sgs.ai_cardsview.douzhan(class_name, player)
 	if #newcards<(player:getHp()+1) then return nil end
 	if #newcards<2 then return nil end
 
-	local dzcards[2]
+	local dzcards = {}
 	local suit
 	for _, card1 in ipairs(newcards) do
 		for _, card2 in ipairs(newcards) do
 			if card1 ~= card2 and card1:getSuit() == card2:getSuit() then
-				dzcards[1] = card1:getEffectiveId()
-				dzcards[2] = card2:getEffectiveId()
+				table.insert(dzcards, card1:getEffectiveId())
+				table.insert(dzcards, card2:getEffectiveId())
 				suit = card1:getSuitString()
 				break
 			end
 		end
-		if dzcards[1] and dzcards[2] then
+		if #dzcards >= 2 then
 			break
 		end
 	end
-	if dzcards[1] and dzcards[2] then
+	if #dzcards == 2 then
 		local card_str = ("slash:douzhan[%s:%s]=%d+%d"):format(suit, 0, dzcards[1], dzcards[2])
 		return card_str
 	end
 end
 
-local douzhan = {}
-douzhan.name = "douzhan"
-table.insert(sgs.ai_skills, douzhan)
-douzhan.getTurnUseCard=function(self, inclusive)
+local douzhan_skill = {}
+douzhan_skill.name = "douzhan"
+table.insert(sgs.ai_skills, douzhan_skill)
+douzhan_skill.getTurnUseCard = function(self, inclusive)
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	if #cards < (self.player:getHp()+1) then return nil end
 	if #cards < 2 then return nil end
 
 	self:sortByUseValue(cards, true)
-	local dzcards[2]
+	local dzcards = {}
 	local suit
 	for _, card1 in ipairs(cards) do
 		for _, card2 in ipairs(cards) do
 			if card1 ~= card2 and card1:getSuit() == card2:getSuit() then
-				dzcards[1] = card1:getEffectiveId()
-				dzcards[2] = card2:getEffectiveId()
+				table.insert(dzcards, card1:getEffectiveId())
+				table.insert(dzcards, card2:getEffectiveId())
 				suit = card1:getSuitString()
 				break
 			end
 		end
-		if dzcards[1] and dzcards[2] then
+		if #dzcards >= 2 then
 			break
 		end
 	end
 
-	if dzcards[1] and dzcards[2] then
+	if #dzcards == 2 then
 		local card_str = ("slash:douzhan[%s:%s]=%d+%d"):format(suit, 0, dzcards[1], dzcards[2])
 		local slash = sgs.Card_Parse(card_str)
 		return slash

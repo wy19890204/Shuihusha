@@ -2,6 +2,8 @@
 
 -- gaolian
 -- guibing
+sgs.ai_card_intention.GuibingCard = sgs.ai_card_intention.Slash
+
 sgs.ai_skill_invoke["guibing"] = true
 local guibing_skill = {}
 guibing_skill.name = "guibing"
@@ -46,6 +48,14 @@ end
 
 -- tongguan
 -- zhengfa
+sgs.ai_card_intention.ZhengfaCard = function(card, from, tos)
+	if from:hasFlag("Zhengfa") then
+		sgs.updateIntentions(from, tos, 100)
+	else
+		sgs.updateIntentions(from, tos, 10)
+	end
+end
+
 sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	if self.player:hasFlag("Zhengfa") then
 		local enemies = {}
@@ -109,7 +119,27 @@ sgs.ai_skill_choice["lianma"] = function(self, choice)
 end
 
 -- dongchaoxueba
+sgs.dongchaoxueba_suit_value =
+{
+	spade = 3.8,
+	club = 3.8
+}
+sgs.dongchaoxueba_keep_value =
+{
+	BasicCard = 3.8
+}
+
 -- sheru
+sgs.ai_card_intention.SheruCard = function(card, from, tos)
+	if tos[1]:isWounded() and tos[1]:getHp() > 1 then
+		sgs.updateIntentions(from, tos, -40)
+	elseif tos[1]:getLostHp() == 1 then
+		sgs.updateIntentions(from, tos, 40)
+	else
+		sgs.updateIntentions(from, tos, math.random(-10, 10))
+	end
+end
+
 sheru_skill={}
 sheru_skill.name = "sheru"
 table.insert(sgs.ai_skills, sheru_skill)
@@ -236,6 +266,12 @@ end
 sgs.ai_skill_invoke["huaxian"] = true
 
 -- lili
+sgs.lili_suit_value =
+{
+	spade = 3.7,
+	club = 3.7
+}
+
 -- moucai
 sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 
@@ -243,6 +279,11 @@ sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
 
 -- shijin
+sgs.shijin_keep_value = 
+{
+	EquipCard = 5
+}
+
 -- wubang
 sgs.ai_skill_invoke["wubang"] = true
 
@@ -266,6 +307,11 @@ function sgs.ai_cardneed.xiagu(to, card, self)
 end
 
 -- lijun
+sgs.lijun_keep_value = 
+{
+	TrickCard = 5
+}
+
 -- nizhuan
 sgs.ai_skill_invoke["nizhuan"] = true
 
@@ -304,7 +350,15 @@ sgs.ai_skill_invoke["dingce"] = function(self, data)
 end
 
 -- xiezhen
+sgs.xiezhen_suit_value =
+{
+	heart = 3.5,
+	diamond = 3.0
+}
+
 -- xunlie
+sgs.ai_card_intention.XunlieCard = 80
+
 sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 	if self.player:getEquips():length() > 1 and #self.enemies > 1 then
 		local enemies = {}
@@ -339,6 +393,8 @@ end
 
 -- linniangzi
 -- shouwang
+sgs.ai_card_intention.ShouwangCard = -60
+
 shouwang_skill={}
 shouwang_skill.name = "shouwang"
 table.insert(sgs.ai_skills, shouwang_skill)

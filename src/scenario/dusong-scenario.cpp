@@ -119,7 +119,8 @@ public:
                 if(!tarc.contains(target) && tarc.length() < 3)
                     tarc << target;
                 int card_id = room->askForCardChosen(player, target, "he", objectName());
-                room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
+                room->throwCard(card_id);
+                //room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
             }
             room->setPlayerMark(player, "@true", 0);
         }
