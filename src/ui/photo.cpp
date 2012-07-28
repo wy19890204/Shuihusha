@@ -84,6 +84,7 @@ Photo::Photo()
     small_avatar_area = new QGraphicsRectItem(0, 0, 42, 36, this);
     small_avatar_area->setPos(86, 30);
     small_avatar_area->setPen(Qt::NoPen);
+    small_avatar_area->setZValue(0.3);
 
     equips << &weapon << &armor << &defensive_horse << &offensive_horse;
     int i;

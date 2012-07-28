@@ -235,21 +235,23 @@ end
 
 -- luozhenren
 -- butian
-sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
-	judge = judge or self.player:getTag("Judge"):toJudge()
+sgs.ai_skill_cardask["@butian-card"] = function(self, data)
+	local judge = data:toJudge()
 
 	if self:needRetrial(judge) then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
+		self.butianjudge = judge
+	--	return "@ButianCard[" .. cards[1]:getSuitString() .. ":" .. cards[1]:getNumberString() .. "]=" .. cards[1]:getEffectiveId()
 		return "@ButianCard=" .. cards[1]:getEffectiveId()
 	end
 	return "."
 end
 sgs.ai_skill_askforag["butian"] = function(self, card_ids)
-	local judge = self.player:getTag("Judge"):toJudge()
+	local judge = self.butianjudge
 	local cards = {}
 	local card_id
-	if self:needRetrial(judge) then
+	if judge and self:needRetrial(judge) then
 		for _, card_id in ipairs(card_ids) do
 			local card = sgs.Sanguosha:getCard(card_id)
 			table.insert(cards, card)

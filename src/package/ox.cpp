@@ -143,7 +143,7 @@ public:
 
         room->loseMaxHp(tg, 1);
         room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$aoxiang:2500");
+        room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
         room->getThread()->delay(2500);
         room->acquireSkill(tg, "wanghuan");
 
@@ -151,6 +151,8 @@ public:
             room->setPlayerProperty(tg, "general", "tongguanf");
         else if(tg->getGeneral2Name() == "tongguan")
             room->setPlayerProperty(tg, "general2", "tongguanf");
+
+        room->getThread()->delay(2500);
         room->setPlayerMark(tg, "aoxiang", 1);
         return false;
     }
@@ -206,6 +208,7 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
+    const General *player = tonguan->getGeneral2Name().startsWith("tongguan") ? tonguan->getGeneral2() : tonguan->getGeneral();
     if(getSubcards().isEmpty()){
         Slash *slash = new Slash(Card::NoSuit, 0);
         slash->setSkillName("zhengfa");
@@ -214,18 +217,18 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
         uset.mute = true;
         uset.from = tonguan;
         uset.to = targets;
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
+        room->playSkillEffect("zhengfa", player->isMale()? 3: 4);
         room->useCard(uset);
     }
     else{
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 2);
+        room->playSkillEffect("zhengfa", player->isMale()? 1: 2);
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
             //room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
             room->setPlayerFlag(tonguan, "Zhengfa");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
+            room->playSkillEffect("zhengfa", player->isMale()? 5: 6);
             tonguan->turnOver();
         }
     }
@@ -550,9 +553,7 @@ public:
                 << "" << judge->reason << judge->card->getEffectIdString();
         QString prompt = prompt_list.join(":");
 
-        player->tag["Judge"] = data;
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
-
         if(card){
             int index = qrand() % 2 + 1;
             if(player->getMark("wudao") == 0)
