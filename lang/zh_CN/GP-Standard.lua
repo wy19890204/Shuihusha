@@ -44,6 +44,7 @@ return {
 	["$wuyong"] = "003",
 	["#wuyong"] = "智多星", -- kou 3hp (cgdk)
 	["wuyong"] = "吴用",
+	["illustrator:wuyong"] = "刘彤&赵鑫",
 	["cv:wuyong"] = "鸢飞【天子会工作室】",
 	["huace"] = "画策",
 	[":huace"] = "出牌阶段，你可以将你的任一锦囊牌当任一非延时类锦囊使用。每阶段限一次。",
@@ -104,6 +105,7 @@ return {
 	["$huarong"] = "009",
 	["#huarong"] = "小李广", -- guan 4hp (qjwm)
 	["huarong"] = "花荣",
+	["illustrator:huarong"] = "刘彤&赵鑫",
 	["cv:huarong"] = "烨子风暴【天子会工作室】",
 	["jingzhun"] = "精准",
 	[":jingzhun"] = "<b>锁定技</b>，当你使用【杀】指定一名其他角色为目标后，若你与其的距离等于你的攻击范围，则该【杀】不能被【闪】响应。",
@@ -142,6 +144,7 @@ return {
 	["$zhutong"] = "012",
 	["#zhutong"] = "美髯公", -- guan 4hp (xzdd)
 	["zhutong"] = "朱仝",
+	["illustrator:zhutong"] = "刘彤&赵鑫",
 	["designer:zhutong"] = "烨子&喀什葛尔胡杨",
 	["cv:zhutong"] = "爪子【天子会工作室】",
 	["sijiu"] = "私救",
@@ -158,6 +161,7 @@ return {
 	["$luzhishen"] = "013",
 	["#luzhishen"] = "花和尚", -- kou 4hp (qjwm)
 	["luzhishen"] = "鲁智深",
+	["illustrator:luzhishen"] = "刘彤&赵鑫",
 	["cv:luzhishen"] = "东方胤弘【天子会工作室】",
 	["liba"] = "力拔",
 	[":liba"] = "出牌阶段，当你使用【杀】对目标角色造成伤害时，你可以展示该角色的一张手牌：若不为基本牌，则你弃掉该牌并令该伤害+1。",
@@ -174,6 +178,7 @@ return {
 	["#wusong"] = "行者", -- kou 4hp (qjwm)
 	["wusong"] = "武松",
 	["fuhu"] = "伏虎",
+	["illustrator:wusong"] = "麒麟水浒传",
 	["cv:wusong"] = "猎狐【天子会工作室】",
 	[":fuhu"] = "其他角色每使用【杀】造成一次伤害，你可以弃置一张♠或♣牌，视为你对该角色使用一张【杀】。额外的，若你弃置的牌为【酒】或武器牌，则该【杀】造成的伤害+1。",
 	["@fuhu"] = "你可以弃置一张黑色牌，发动【伏虎】（视为对 %src 使用一张【杀】）",
@@ -185,6 +190,7 @@ return {
 	["$yangzhi"] = "017",
 	["#yangzhi"] = "青面兽", -- guan 4hp (xzzd)
 	["yangzhi"] = "杨志",
+	["illustrator:yangzhi"] = "刘彤&赵鑫",
 	["cv:yangzhi"] = "猎狐【天子会工作室】",
 	["maidao"] = "卖刀",
 	[":maidao"] = "出牌阶段，你可以将任意数量的武器牌置于你的武将牌上，称为“刀”；若“刀”的数量不少于1，则其他角色可以在其出牌阶段交给你两张手牌，获得任意一张“刀”。",
@@ -206,6 +212,7 @@ return {
 	["$xuning"] = "018",
 	["#xuning"] = "金枪手", -- jiang 4hp (ybyt)
 	["xuning"] = "徐宁",
+	["illustrator:xuning"] = "刘彤&赵鑫",
 	["cv:xuning"] = "卡修【天子会工作室】",
 	["coder:xuning"] = "战栗贵公子",
 	["goulian"] = "钩镰",
@@ -224,6 +231,7 @@ return {
 	["$daizong"] = "020",
 	["#daizong"] = "神行太保", -- jiang 3hp (fcdc)
 	["daizong"] = "戴宗",
+	["illustrator:daizong"] = "花狐貂",
 	["cv:daizong"] = "莫名【忆昔端华工作室】",
 	["coder:daizong"] = "宇文天启、皇叔",
 	["mitan"] = "密探",
@@ -242,6 +250,7 @@ return {
 	["#likui"] = "黑旋风", -- kou 4hp (xzdd)
 	["likui"] = "李逵",
 	["designer:likui"] = "凌天翼",
+	["illustrator:likui"] = "刘彤&赵鑫",
 	["cv:likui"] = "鹏少",
 	["coder:likui"] = "凌天翼、宇文天启",
 	["shalu"] = "杀戮",
@@ -254,6 +263,7 @@ return {
 	["$ruanxiaoqi"] = "031",
 	["#ruanxiaoqi"] = "活阎罗", -- min 4hp (cgdk)
 	["ruanxiaoqi"] = "阮小七",
+	["illustrator:ruanxiaoqi"] = "水浒无双",
 	["cv:ruanxiaoqi"] = "小V【天子会工作室】",
 	["jueming"] = "绝命",
 	[":jueming"] = "<b>锁定技</b>，若你的当前体力值为1，则你不能成为【杀】、【决斗】和【行刺】的目标。",
@@ -343,6 +353,7 @@ return {
 	["$sunerniang"] = "103",
 	["#sunerniang"] = "母夜叉", -- kou 3hp (cgdk)
 	["sunerniang"] = "孙二娘",
+	["illustrator:sunerniang"] = "花狐貂",
 	["cv:sunerniang"] = "南宫泓【「御」】",
 	["heidian"] = "黑店",
 	[":heidian"] = "<b>锁定技</b>，其他角色每对你造成一次伤害，须弃置一张手牌；当其他角色失去最后的手牌时，需交给你一张其装备区里的牌，否则失去1点体力。",

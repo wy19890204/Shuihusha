@@ -19,6 +19,7 @@ return {
 	["$dongping"] = "015",
 	["#dongping"] = "双枪将", -- guan 4hp (fcdc)
 	["dongping"] = "董平",
+	["illustrator:dongping"] = "刘彤&赵鑫",
 	["cv:dongping"] = "倔强的小红军【剪刀剧团】",
 	["coder:dongping"] = "战栗贵公子",
 	["shuangzhan"] = "双战",
@@ -34,6 +35,7 @@ return {
 	["$zhangqing"] = "016",
 	["#zhangqing"] = "没羽箭", -- guan 4hp (ttxd)
 	["zhangqing"] = "张清",
+	["illustrator:zhangqing"] = "嘻哈绿豆沙",
 	["cv:zhangqing"] = "鸢飞【天子会工作室】",
 	["coder:zhangqing"] = "roxiel",
 	["yinyu"] = "饮羽",
@@ -67,6 +69,7 @@ return {
 	["$zhangshun"] = "030",
 	["#zhangshun"] = "浪里白条", -- min 3hp (xzdd)
 	["zhangshun"] = "张顺",
+	["illustrator:zhangshun"] = "刘彤&赵鑫",
 	["cv:zhangshun"] = "小V【天子会工作室】",
 	["shunshui"] = "顺水",
 	[":shunshui"] = "当任一角色判定区里的一张牌进入弃牌堆时，你可以弃置一张与该牌花色相同的牌，视为对任一其他角色使用一张【杀】（不计入每回合使用限制）。",
