@@ -674,7 +674,7 @@ public:
             return false;
         room->setPlayerFlag(player, "Duoming");
         foreach(ServerPlayer *lili, lily){
-            if(room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
+            if(lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
                 DamageStruct damage;
                 damage.from = lili;
                 damage.to = player;

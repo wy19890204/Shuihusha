@@ -3487,7 +3487,7 @@ void Room::askForGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_
     }
 
     LogMessage log;
-    log.type = "#GuanxingResult";
+    log.type = up_only ? "#GuanxingUpOnly" : "#GuanxingResult";
     log.from = zhuge;
     log.arg = QString::number(top_cards.length());
     log.arg2 = QString::number(bottom_cards.length());

@@ -12,7 +12,6 @@ return {
 	[":guibing"] = "当你需要使用或打出一张【杀】时，你可以进行一次判定：若结果不为♥，则视为你使用或打出一张【杀】，否则你不能使用或打出【杀】，直到回合结束。",
 	["heiwu"] = "黑雾",
 	[":heiwu"] = "出牌阶段，你可以将任意数量的手牌以任意顺序置于牌堆顶。",
-	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
 
 	["$tongguan"] = "111A",
 	["#tongguan"] = "广阳郡王", -- guan 4hp (bwqz)
@@ -42,6 +41,7 @@ return {
 
 	["#huyanzhuo"] = "双鞭", -- guan 4hp (fcdc)
 	["huyanzhuo"] = "呼延灼",
+	["illustrator:huyanzhuo"] = "刘彤&赵鑫",
 	["coder:huyanzhuo"] = "Slob",
 	["lianma"] = "链马",
 	[":lianma"] = "出牌阶段，你可以选择一项：横置所有装备区里有坐骑牌的角色的武将牌，或重置所有装备区里没有坐骑牌的角色的武将牌。每阶段限一次。",
