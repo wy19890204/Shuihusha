@@ -322,7 +322,7 @@ void CihuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     if(target){
         RecoverStruct recover;
         recover.who = source;
-        room->recover(target, recover);
+        room->recover(target, recover, true);
     }
 }
 

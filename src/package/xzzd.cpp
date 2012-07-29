@@ -163,7 +163,7 @@ void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     if(num >= 3){
         RecoverStruct rev;
         rev.who = source;
-        room->recover(source, rev);
+        room->recover(source, rev, true);
     }
 }
 

@@ -469,9 +469,9 @@ public:
             log.type = "#Qiangqu";
             log.to << damage.to;
             room->sendLog(log);
-            room->recover(damage.to, re);
+            room->recover(damage.to, re, true);
             room->playSkillEffect(objectName());
-            room->recover(damage.from, re);
+            room->recover(damage.from, re, true);
             return true;
         }
         return false;
@@ -504,7 +504,7 @@ public:
                     RecoverStruct recovvv;
                     recovvv.who = player;
                     room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                    room->recover(target, recovvv);
+                    room->recover(target, recovvv, true);
                 }
             }
             return false;

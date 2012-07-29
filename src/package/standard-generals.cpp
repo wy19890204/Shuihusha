@@ -2336,7 +2336,7 @@ public:
             log.from = player;
             log.arg = objectName();
             room->sendLog(log);
-            room->recover(wangqing, rev);
+            room->recover(wangqing, rev, true);
         }
     }
 };

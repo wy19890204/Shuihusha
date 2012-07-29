@@ -548,8 +548,8 @@ public:
             RecoverStruct rev;
             rev.who = player;
             rev.recover = player->getMaxHP();
-            room->recover(player, rev);
-            room->setPlayerProperty(player, "hp", player->getMaxHP());
+            room->recover(player, rev, true);
+            room->setPlayerProperty(player, "hp", player->getMaxHp());
         }
         return false;
     }

@@ -110,6 +110,7 @@ return {
 	["$huangxin"] = "038",
 	["#huangxin"] = "镇三山", -- jiang 4hp (xzdd)
 	["huangxin"] = "黄信",
+	["illustrator:huangxin"] = "三国豪杰传",
 	["designer:huangxin"] = "烨子&裁之刃·散",
 	["cv:huangxin"] = "流岚【裔美声社】",
 	["tongxia"] = "统辖",
