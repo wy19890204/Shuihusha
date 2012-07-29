@@ -546,7 +546,7 @@ void ReplayerControlBar::setTime(int secs){
 }
 
 void RoomScene::createReplayControlBar(){
-    // hide all buttons    
+    // hide all buttons
     reverse_button->hide();
 
     new ReplayerControlBar(dashboard);
@@ -1419,7 +1419,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     }else if(skill->inherits("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
         if(filter && dashboard->getFilter() == NULL)
-            dashboard->setFilter(filter);        
+            dashboard->setFilter(filter);
         button = new QPushButton();
 
     }else if(skill->inherits("ViewAsSkill")){
@@ -2851,7 +2851,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         StatisticsStruct *statistics = player->getStatistics();
         /*
-		item = new QTableWidgetItem;
+                item = new QTableWidgetItem;
         QString designations;
         foreach(QString designation, statistics->designation){
             designations.append(Sanguosha->translate(designation) + ", ");
@@ -3286,9 +3286,11 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
+        QString bgmusic_path = ServerInfo.GameMode != "dusong" ?
+                               "audio/system/background.mp3" :
+                               "audio/system/dsgbackground.mp3";
 
-        Audio::playBGM(bgmusic_path);
+        Audio::playBGM(Config.value("BackgroundMusic", bgmusic_path).toString());
         Audio::setBGMVolume(Config.BGMVolume);
     }
 
@@ -3663,7 +3665,7 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         (this->*func)(name, args);
 }
 
-void RoomScene::adjustDashboard(bool expand){   
+void RoomScene::adjustDashboard(bool expand){
     int texture_width = dashboard->getTextureWidth();
     int window_width = main_window->width()-10;
 
@@ -3717,7 +3719,7 @@ void RoomScene::kick(){
 }
 
 void RoomScene::surrender(){
-    
+
      if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("You can only initiate a surrender poll at your play phase!"));
         return;

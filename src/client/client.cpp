@@ -914,10 +914,10 @@ void Client::askForNullification(const Json::Value &arg){
     QString trick_path = trick_card->getPixmapPath();
     QString to = target_player->getGeneral()->getPixmapPath("big");
     if(source == NULL){
-        prompt_doc->setHtml(QString("<img src='%1' /> ==&gt; <img src='%2' />").arg(trick_path).arg(to));
+        prompt_doc->setHtml(QString("<img src='%1' /> <img src='image/system/arrow.png' />  <img src='%2' />").arg(trick_path).arg(to));
     }else{
         QString from = source->getGeneral()->getPixmapPath("big");
-        prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2'/> ==&gt; <img src='%3' />").arg(trick_path).arg(from).arg(to));
+        prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2'/> <img src='image/system/arrow.png' />  <img src='%3' />").arg(trick_path).arg(from).arg(to));
     }
 
     card_pattern = !trick_card->inherits("SingleTargetTrick") ?
