@@ -6,12 +6,14 @@
 #include "roomthread.h"
 #include "skill.h"
 
+/*
 class CustomCardPackage: public Package{
     Q_OBJECT
 
 public:
     CustomCardPackage();
 };
+*/
 
 class TestPackage: public Package{
     Q_OBJECT
