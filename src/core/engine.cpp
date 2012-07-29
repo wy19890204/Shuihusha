@@ -275,6 +275,11 @@ Card *Engine::cloneCard(const QString &name, Card::Suit suit, int number) const{
         return NULL;
 }
 
+Card *Engine::cloneCard(const QString &name, const QString &suit_string, int number) const{
+    Card::Suit suit = Card::String2Suit(suit_string);
+    return cloneCard(name, suit, number);
+}
+
 SkillCard *Engine::cloneSkillCard(const QString &name) const{
     const QMetaObject *meta = metaobjects.value(name, NULL);
     if(meta){
