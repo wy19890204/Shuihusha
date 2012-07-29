@@ -22,7 +22,8 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 		if ((self.player:canSlash(enemy, not no_distance)) or
 			(use.isDummy and (self.player:distanceTo(enemy)<=self.predictedRange))) and
 			self:objectiveLevel(enemy)>3 and
-			self:slashIsEffective(card, enemy) then
+			self:slashIsEffective(card, enemy) and
+			not self:slashProhibit(card, enemy) then
 			if not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))
 				self:sortByUseValue(cards, true)

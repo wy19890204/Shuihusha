@@ -3529,7 +3529,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="278"/>
         <source>AI Chat</source>
-        <translation>开启 AI 聊天</translation>
+        <translation>允许AI卖萌聊天</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="285"/>

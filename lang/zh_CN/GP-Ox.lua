@@ -7,6 +7,7 @@ return {
 	["$gaolian"] = "116",
 	["#gaolian"] = "高唐魔君", -- guan 3hp (ybyt)
 	["gaolian"] = "高廉",
+	["illustrator:gaolian"] = "封神榜",
 	["cv:gaolian"] = "烨子风暴【天子会工作室】",
 	["coder:gaolian"] = "战栗贵公子",
 	["guibing"] = "鬼兵",
@@ -22,6 +23,7 @@ return {
 	["$tongguan"] = "111A",
 	["#tongguan"] = "广阳郡王", -- guan 4hp (bwqz)
 	["tongguan"] = "童贯",
+	["illustrator:tongguan"] = "影枫",
 	["designer:tongguan"] = "烨子&大Ｒ",
 	["cv:tongguan"] = "北落师门【心水蓝音】",
 	["aoxiang"] = "媪相",
@@ -39,6 +41,7 @@ return {
 	["$tongguanf"] = "111B",
 	["#tongguanf"] = "广阴郡王",
 	["tongguanf"] = "童公公",
+	["illustrator:tongguanf"] = "Shadow.D",
 	["designer:tongguanf"] = "烨子&大Ｒ",
 	["cv:tongguanf"] = "北落师门【心水蓝音】",
 	["wanghuan"] = "王宦",
@@ -93,6 +96,7 @@ return {
 	["$pangwanchun"] = "120",
 	["#pangwanchun"] = "小养由基", -- jiang 4hp (fcdc)
 	["pangwanchun"] = "庞万春",
+	["illustrator:pangwanchun"] = "幻想世界",
 	["designer:pangwanchun"] = "烨子&宇文天启",
 	["cv:pangwanchun"] = "尘埃【一诺文化】",
 	["lianzhu"] = "连珠",
@@ -117,6 +121,7 @@ return {
 	["$luozhenren"] = "124",
 	["#luozhenren"] = "半仙", -- kou 3hp (qjwm)
 	["luozhenren"] = "罗真人",
+	["illustrator:luozhenren"] = "封神榜",
 	["cv:luozhenren"] = "东方胤弘【天子会工作室】",
 	["butian"] = "卜天",
 	[":butian"] = "在任一角色的判定牌生效前，你可以弃置一张牌，观看牌堆顶的三张牌，然后用其中的任意一张牌替换该判定牌。",
@@ -132,6 +137,7 @@ return {
 	["$lili"] = "096",
 	["#lili"] = "催命判官", -- kou 3hp (cgdk)
 	["lili"] = "李立",
+	["illustrator:lili"] = "牛哞哞",
 	["cv:lili"] = "莫名【忆昔端华工作室】",
 	["duoming"] = "夺命",
 	[":duoming"] = "其他角色的回合内，该角色每回复1点体力，你可以交给其两张黑色手牌，对其造成1点伤害。",
@@ -164,6 +170,7 @@ return {
 	["$lijun"] = "026",
 	["#lijun"] = "混江龙", -- min 3hp (yxqd)
 	["lijun"] = "李俊",
+	["illustrator:lijun"] = "NF1",
 	["designer:lijun"] = "扈成",
 	["cv:lijun"] = "冥引【天子会工作室】",
 	["nizhuan"] = "逆转",
@@ -179,6 +186,7 @@ return {
 	["$xiezhen"] = "034",
 	["#xiezhen"] = "两头蛇", -- min 4hp (fcdc)
 	["xiezhen"] = "解珍",
+	["illustrator:xiezhen"] = "沧海",
 	["cv:xiezhen"] = "鹏少",
 	["xunlie"] = "巡猎",
 	[":xunlie"] = "摸牌阶段，你可以放弃摸牌，然后分别获得一至X名其他角色的一张手牌（X为你装备区里的牌数且至少为1），或弃置一张♥或♦手牌并获得任一其他角色的两张手牌。",
@@ -192,6 +200,7 @@ return {
 	["$linniangzi"] = "148",
 	["#linniangzi"] = "腊梅傲雪", -- min 3hp (qlfd)
 	["linniangzi"] = "林娘子",
+	["illustrator:linniangzi"] = "小李飞刀",
 	["designer:linniangzi"] = "烨子&大Ｒ",
 	["cv:linniangzi"] = "蒲小猫【天子会工作室】",
 	["shouwang"] = "守望",

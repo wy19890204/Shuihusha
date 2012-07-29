@@ -200,7 +200,7 @@
   <widget class="QLineEdit" name="illustratorLineEdit">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>500</x>
      <y>310</y>
      <width>141</width>
      <height>20</height>
