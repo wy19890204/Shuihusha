@@ -17,7 +17,7 @@ public:
     void handCardChange(int delta);
     QList<const Card *> getCards() const;
     void setCards(const QList<int> &card_ids);
-    QTextDocument *getMarkDoc() const;
+    QTextDocument *getMarkDoc(bool dashboard = true) const;
     void changePile(const QString &name, bool add, int card_id);
     QString getDeathPixmapPath() const;
     void setHandcardNum(int n);
@@ -35,7 +35,7 @@ public:
 private:
     int handcard_num;
     QList<const Card *> known_cards;
-    QTextDocument *mark_doc;
+    QTextDocument *mark_doc, *mark_doc_small;
 
 signals:
     void pile_changed(const QString &name);

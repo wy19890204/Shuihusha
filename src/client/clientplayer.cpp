@@ -15,6 +15,9 @@ ClientPlayer::ClientPlayer(Client *client)
     mark_doc = new QTextDocument(this);
     mark_doc->setTextWidth(128);
     mark_doc->setDefaultTextOption(QTextOption(Qt::AlignRight));
+    mark_doc_small = new QTextDocument(this);
+    mark_doc_small->setTextWidth(128);
+    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignRight));
 }
 
 void ClientPlayer::handCardChange(int delta){
@@ -100,8 +103,8 @@ void ClientPlayer::setCards(const QList<int> &card_ids){
     }
 }
 
-QTextDocument *ClientPlayer::getMarkDoc() const{
-    return mark_doc;
+QTextDocument *ClientPlayer::getMarkDoc(bool dashboard) const{
+    return dashboard ? mark_doc: mark_doc_small;
 }
 
 void ClientPlayer::changePile(const QString &name, bool add, int card_id){
@@ -165,17 +168,23 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     // set mark doc
     QString text = "";
+    QString text_small = "";
     QMapIterator<QString, int> itor(marks);
     while(itor.hasNext()){
         itor.next();
 
         if(itor.key().startsWith("@") && itor.value() > 0){
             QString mark_text = QString("<img src='image/mark/%1.png' />").arg(itor.key());
-            if(itor.value() != 1)
+            QString mark_text_small = QString("<img src='image/mark/%1.png' width='15' height='15' />").arg(itor.key());
+            if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
+                mark_text_small.append(QString("x%1").arg(itor.value()));
+            }
             text.append(mark_text);
+            text_small.append(mark_text_small);
         }
     }
 
     mark_doc->setHtml(text);
+    mark_doc_small->setHtml(text_small);
 }

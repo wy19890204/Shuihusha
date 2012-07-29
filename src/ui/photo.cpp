@@ -102,7 +102,7 @@ Photo::Photo()
     ready_item->hide();
 
     mark_item = new QGraphicsTextItem(this);
-    mark_item->setPos(5, 79);
+    mark_item->setPos(0, 178);
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
@@ -278,7 +278,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
-        mark_item->setDocument(player->getMarkDoc());
+        mark_item->setDocument(player->getMarkDoc(false));
     }
 
     updateAvatar();

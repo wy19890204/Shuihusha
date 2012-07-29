@@ -278,6 +278,7 @@ public:
 LianmaCard::LianmaCard(){
     target_fixed = true;
     once = true;
+    mute = true;
 }
 
 void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
@@ -775,7 +776,7 @@ public:
 class Xiagu: public TriggerSkill{
 public:
     Xiagu():TriggerSkill("xiagu"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -948,7 +949,7 @@ public:
 class Zhongzhen: public TriggerSkill{
 public:
     Zhongzhen():TriggerSkill("zhongzhen"){
-        events << Predamaged;
+        events << DamagedProceed;
     }
 
     virtual int getPriority() const{
@@ -957,7 +958,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *linko, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.from->getGeneral()->isMale() || damage.damage <= 0)
+        if(!damage.from || damage.from == damage.to)
             return false;
         if(!linko->isKongcheng() && !damage.from->isKongcheng() &&
            linko->askForSkillInvoke(objectName(), data)){
@@ -987,11 +988,15 @@ bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *
 }
 
 void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *o = effect.from->getRoom();
     effect.from->loseAllMarks("@rope");
     RecoverStruct r;
     r.who = effect.from;
     r.recover = 2;
-    effect.from->getRoom()->recover(effect.to, r, true);
+    o->broadcastInvoke("animate", "lightbox:$Ziyi:5000");
+    o->getThread()->delay(2500);
+    o->recover(effect.to, r, true);
+    o->getThread()->delay(2500);
     effect.from->setFlags("Hanging");
 }
 
@@ -1022,12 +1027,9 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *lnz) const{
         if(lnz->hasFlag("Hanging") && lnz->getPhase() == Player::Finish){
-            Room *o = lnz->getRoom();
-            o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
-            o->getThread()->delay(3000);
             DamageStruct damage;
             damage.from = lnz;
-            o->killPlayer(lnz, &damage);
+            lnz->getRoom()->killPlayer(lnz, &damage);
         }
         return false;
     }

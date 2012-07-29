@@ -150,7 +150,7 @@ public:
 class Baoguo:public TriggerSkill{
 public:
     Baoguo():TriggerSkill("baoguo"){
-        events << Predamaged << Damaged;
+        events << DamagedProceed << Damaged;
         frequency = Frequent;
     }
 
@@ -1733,7 +1733,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                room->recover(player, lty);
+                room->recover(player, lty, true);
             }
         }
         return false;

@@ -314,8 +314,8 @@ public:
 class Xiaozai: public TriggerSkill{
 public:
     Xiaozai():TriggerSkill("xiaozai"){
+        events << DamagedProceed;
         view_as_skill = new XiaozaiViewAsSkill;
-        events << Predamaged;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
