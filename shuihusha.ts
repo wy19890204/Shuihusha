@@ -3809,17 +3809,17 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/core/skill.cpp" line="41"/>
         <source> [Limited]</source>
-        <translation>【限定技】</translation>
+        <translation> [限]</translation>
     </message>
     <message>
         <location filename="src/core/skill.cpp" line="42"/>
         <source> [Compulsory]</source>
-        <translation> [锁定技]</translation>
+        <translation> [锁]</translation>
     </message>
     <message>
         <location filename="src/core/skill.cpp" line="43"/>
         <source> [Wake]</source>
-        <translation> [觉醒技]</translation>
+        <translation> [醒]</translation>
     </message>
 </context>
 <context>
