@@ -86,7 +86,7 @@ void Skill::playEffect(int index) const{
         if(index == -1)
             index = qrand() % sources.length();
         else
-            index--;
+            index --;
 
         // check length
         QString filename;

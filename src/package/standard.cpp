@@ -400,6 +400,7 @@ public:
     }
 };
 
+/*
 #include <QFile>
 #include <QTextStream>
 #include "plough.h"
@@ -448,6 +449,8 @@ CustomCardPackage::CustomCardPackage()
 
     type = CardPack;
 }
+ADD_PACKAGE(CustomCard)
+*/
 
 // test main
 #include "carditem.h"
@@ -661,5 +664,4 @@ TestPackage::TestPackage()
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 }
 
-ADD_PACKAGE(CustomCard)
 ADD_PACKAGE(Test)

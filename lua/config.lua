@@ -15,7 +15,6 @@ config = {
 	"ExCard",
 	"Events",
 	"Gift",
---	"CustomCard",
 --	"Kuso",
 --	"Joy",
 
