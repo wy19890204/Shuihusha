@@ -71,7 +71,7 @@ public:
     }
 };
 
-class Zhengzhuang:public DrawCardsSkill{
+class Zhengzhuang: public DrawCardsSkill{
 public:
     Zhengzhuang():DrawCardsSkill("zhengzhuang"){
         frequency = Frequent;
@@ -79,6 +79,7 @@ public:
 
     virtual int getDrawNum(ServerPlayer *player, int n) const{
         if(player->hasEquip() && player->askForSkillInvoke(objectName())){
+            player->getRoom()->playSkillEffect(objectName());
             return n + player->getEquips().count();
         }
         return n;
@@ -101,7 +102,9 @@ public:
             }
             return false;
         }
-        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 && player->askForSkillInvoke(objectName())){
+        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 &&
+           player->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
             QList<ServerPlayer *> tarc;
             for(int i = player->getMark("@true"); i > 0; i--){
                 QList<ServerPlayer *> targets, players;
@@ -116,7 +119,8 @@ public:
                 if(!tarc.contains(target) && tarc.length() < 3)
                     tarc << target;
                 int card_id = room->askForCardChosen(player, target, "he", objectName());
-                room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
+                room->throwCard(card_id);
+                //room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
             }
             room->setPlayerMark(player, "@true", 0);
         }
@@ -151,12 +155,7 @@ public:
                 }else
                     player->drawCards(player->getSeat() + 1, false);
 
-                if(player->getGeneralName() == "zhangchunhua"){
-                    if(qrand() % 3 == 0)
-                        room->killPlayer(player);
-                }
-
-                return false;
+                return true;
             }
 
         case CardUsed:{
@@ -165,7 +164,7 @@ public:
                     player->playCardEffect("@recast");
                     room->throwCard(use.card);
                     player->drawCards(1, false);
-                    return false;
+                    return true;
                 }
 
                 break;
@@ -242,7 +241,7 @@ public:
                         player->play();
                 }
 
-                return false;
+                return true;
             }
 
         default:

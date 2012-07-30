@@ -20,9 +20,8 @@ bool Zongzi::isAvailable(const Player *quyuan) const{
 
 void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
-    room->setPlayerProperty(source, "maxhp", source->getMaxHP() + 1);
-    if(source->getLostHp() == 1)
-        room->setPlayerProperty(source, "hp", source->getMaxHP());
+    room->setPlayerProperty(source, "maxhp", source->getMaxHp() + 1);
+    room->setPlayerProperty(source, "hp", source->getHp() + 1);
     room->acquireSkill(source, "lisao");
 
     room->setEmotion(source, "zongzi");

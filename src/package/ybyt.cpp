@@ -377,7 +377,7 @@ public:
         }
         RecoverStruct rev;
         rev.recover = a;
-        room->recover(sq, rev);
+        room->recover(sq, rev, true);
         return false;
     }
 };

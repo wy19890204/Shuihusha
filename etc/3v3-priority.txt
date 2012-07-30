@@ -38,3 +38,16 @@ dongping 3
 zhangqing 3
 xuning 3
 ruanxiaoqi 1
+
+xiezhen 8
+tongguan 8
+huangxin 7
+shijin 7
+pangwanchun 7
+dongchaoxueba 6
+lili 6
+lijun 5
+huyanzhuo 5
+luozhenren 5
+linniangzi 5
+gaolian 4

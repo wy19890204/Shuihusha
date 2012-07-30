@@ -6,6 +6,7 @@ return {
 	["$songjiang"] = "001",
 	["#songjiang"] = "及时雨", -- kou 4hp (ttxd)
 	["songjiang"] = "宋江",
+	["illustrator:songjiang"] = "星魂",
 	["designer:songjiang"] = "烨子&凌天翼",
 	["cv:songjiang"] = "猎狐【天子会工作室】",
 	["coder:songjiang"] = "宇文天启、凌天翼",
@@ -31,6 +32,7 @@ return {
 	["$lujunyi"] = "002",
 	["#lujunyi"] = "玉麒麟", -- guan 4hp (ttxd)
 	["lujunyi"] = "卢俊义",
+	["illustrator:lujunyi"] = "战火纷争",
 	["cv:lujunyi"] = "猎狐【天子会工作室】",
 	["coder:lujunyi"] = "roxiel",
 	["baoguo"] = "报国",
@@ -61,6 +63,7 @@ return {
 	["$gongsunsheng"] = "004",
 	["#gongsunsheng"] = "入云龙", -- kou 3hp (ttxd)
 	["gongsunsheng"] = "公孙胜",
+	["illustrator:gongsunsheng"] = "叶智成",
 	["cv:gongsunsheng"] = "流岚【裔美声社】",
 	["yixing"] = "移星",
 	[":yixing"] = "在任一角色的判定牌生效前，你可以用任一角色装备区里的一张牌替换之。",
@@ -82,6 +85,7 @@ return {
 	["$guansheng"] = "005",
 	["#guansheng"] = "大刀", -- jiang 4hp (zcyn)
 	["guansheng"] = "关胜",
+	["illustrator:guansheng"] = "SAM.猩",
 	["cv:guansheng"] = "鹏少",
 	["huqi"] = "虎骑",
 	[":huqi"] = "<b>锁定技</b>，当你计算与其他角色的距离时，始终-1。",
@@ -94,6 +98,7 @@ return {
 	["$linchong"] = "006",
 	["#linchong"] = "豹子头", -- jiang 4hp (xzdd)
 	["linchong"] = "林冲",
+	["illustrator:linchong"] = "zhangjiang",
 	["cv:linchong"] = "猎狐【天子会工作室】",
 	["duijue"] = "对决",
 	[":duijue"] = "你每使用【杀】造成一次伤害或受到一次其他角色使用【杀】造成的伤害，可以令除你外的任一角色进行一次判定：若结果不为♠，则视为你对其使用一张【决斗】（不能被【将计就计】和【无懈可击】响应）。",
@@ -123,6 +128,7 @@ return {
 	["$chaijin"] = "010",
 	["#chaijin"] = "小旋风", -- guan 3hp (ttxd)
 	["chaijin"] = "柴进",
+	["illustrator:chaijin"] = "刀剑英雄",
 	["designer:chaijin"] = "烨子&小花荣",
 	["cv:chaijin"] = "烨子风暴【天子会工作室】",
 	["coder:chaijin"] = "roxiel、宇文天启",
@@ -218,7 +224,8 @@ return {
 	["goulian"] = "钩镰",
 	[":goulian"] = "你每使用【杀】或【决斗】对目标角色造成一次伤害，可以弃掉其装备区里的一张防具牌或坐骑牌。",
 	["jinjia"] = "金甲",
-	[":jinjia"] = "<b>锁定技</b>，当你没装备防具时，始终视为你装备着【赛唐猊】。",
+	[":jinjia"] = "<b>锁定技</b>，当你没装备防具时，始终视为你装备着【赛唐猊】。\
+<font size=2><br>★防具【赛唐猊】效果：锁定技，具属性伤害的【杀】对你无效；你每受到一次【杀】造成的伤害，伤害来源须弃置其装备区里的武器。</font>",
 	["#JinjiaNullify"] = "%from 的【%arg】技能被触发，【%arg2】对其无效",
 	["#ThrowJinjiaWeapon"] = "%from 的技能【%arg】生效",
 	["$goulian1"] = "以巧破敌，四两拨千斤！",
@@ -233,7 +240,7 @@ return {
 	["daizong"] = "戴宗",
 	["illustrator:daizong"] = "花狐貂",
 	["cv:daizong"] = "莫名【忆昔端华工作室】",
-	["coder:daizong"] = "宇文天启、皇叔",
+	["coder:daizong"] = "宇文天启、Lycio",
 	["mitan"] = "密探",
 	[":mitan"] = "你可以将你的任一锦囊牌或事件牌当【探听】使用；当你使用【探听】观看目标角色的手牌时，你可以展示其中的任意一张牌。",
 	["jibao"] = "急报",
@@ -279,6 +286,7 @@ return {
 	["$yangxiong"] = "032",
 	["#yangxiong"] = "病关索", -- jiang 4hp (zcyn)
 	["yangxiong"] = "杨雄",
+	["illustrator:yangxiong"] = "山海传奇",
 	["designer:yangxiong"] = "裁之刃•散&宇文天启",
 	["cv:yangxiong"] = "莫名【忆昔端华工作室】",
 	["xingxing"] = "行刑",
@@ -292,6 +300,7 @@ return {
 	["$yanqing"] = "036",
 	["#yanqing"] = "浪子", -- min 3hp (qjwm)
 	["yanqing"] = "燕青",
+	["illustrator:yanqing"] = "大秦天下",
 	["cv:yanqing"] = "烨子风暴【天子会工作室】",
 	["dalei"] = "打擂",
 	[":dalei"] = "出牌阶段，你可以和一名男性角色拼点。若你赢，则你获得以下技能，直到回合结束：你每对该角色造成1点伤害，可以令除该角色外的任一已受伤的角色回复1点体力。若你没赢，则其对你造成1点伤害。每阶段限一次。",
@@ -315,6 +324,7 @@ return {
 	["$andaoquan"] = "056",
 	["#andaoquan"] = "神医", -- min 3hp (ttxd)
 	["andaoquan"] = "安道全",
+	["illustrator:andaoquan"] = "天龙八部",
 	["cv:andaoquan"] = "澪乱の风【天子会工作室】",
 	["jishi"] = "济世",
 	[":jishi"] = "任一角色的回合开始时，若其已受伤，则你可以弃置一张基本牌或锦囊牌，令其回复1点体力。",
@@ -336,6 +346,7 @@ return {
 	["$husanniang"] = "059",
 	["#husanniang"] = "一丈青", -- jiang 3hp (ttxd)
 	["husanniang"] = "扈三娘",
+	["illustrator:husanniang"] = "水浒无双",
 	["cv:husanniang"] = "蒲小猫【天子会工作室】",
 	["hongjin"] = "红锦",
 	[":hongjin"] = "你每对男性角色造成一次伤害，可以选择一项：摸一张牌，或弃掉该角色一张牌。",
@@ -372,6 +383,7 @@ return {
 	["$gaoqiu"] = "109",
 	["#gaoqiu"] = "殿帅府太尉", -- guan 3hp (ttxd)
 	["gaoqiu"] = "高俅",
+	["illustrator:gaoqiu"] = "大熊",
 	["cv:gaoqiu"] = "爪子【天子会工作室】",
 	["coder:gaoqiu"] = "roxiel、宇文天启",
 	["hengxing"] = "横行",
@@ -392,6 +404,7 @@ return {
 	["$caijing"] = "110",
 	["#caijing"] = "奸相", -- guan 4hp (fcdc)
 	["caijing"] = "蔡京",
+	["illustrator:caijing"] = "侠客行",
 	["cv:caijing"] = "东方胤弘【天子会工作室】",
 	["jiashu"] = "家书",
 	[":jiashu"] = "出牌阶段，你可以将一张手牌交给任一其他角色并声明一种花色。然后若该角色交给你一张你所声明花色的手牌，则其摸一张牌，否则其失去1点体力。每阶段限一次。",
@@ -407,6 +420,7 @@ return {
 	["$fangla"] = "112",
 	["#fangla"] = "永乐圣公", -- jiang 4hp (bwqz)
 	["fangla"] = "方腊",
+	["illustrator:fangla"] = "黄玉郎",
 	["cv:fangla"] = "谈笑",
 	["yongle"] = "永乐",
 	[":yongle"] = "出牌阶段，你可以分别获得至多X名其他角色的一张手牌（X为场上现存势力数），然后你分别交给这些角色一张手牌。每阶段限一次。",
@@ -422,6 +436,7 @@ return {
 	["$wangqing"] = "114",
 	["#wangqing"] = "楚王", -- min 4hp (qjwm)
 	["wangqing"] = "王庆",
+	["illustrator:wangqing"] = "黄玉郎",
 	["cv:wangqing"] = "猎狐【天子会工作室】",
 	["qibing"] = "起兵",
 	[":qibing"] = "<b>锁定技</b>，锁定技，摸牌阶段，你摸X张牌（X为你的当前体力值且至多为4）。",
@@ -439,6 +454,7 @@ return {
 	["$panjinlian"] = "126",
 	["#panjinlian"] = "墙头杏", -- min 3hp (qlfd)
 	["panjinlian"] = "潘金莲",
+	["illustrator:panjinlian"] = "hs8887",
 	["designer:panjinlian"] = "烨子&凌天翼",
 	["cv:panjinlian"] = "小酒【天子会工作室】",
 	["meihuo"] = "魅惑",
@@ -459,8 +475,9 @@ return {
 	["$lishishi"] = "128",
 	["#lishishi"] = "绝色", -- min 3hp (fcdc)
 	["lishishi"] = "李师师",
+	["illustrator:lishishi"] = "热血水浒",
 	["cv:lishishi"] = "空无的念【月玲珑】",
-	["coder:lishishi"] = "皇叔",
+	["coder:lishishi"] = "Lycio",
 	["qinxin"] = "沁心",
 	[":qinxin"] = "回合开始时，你可以声明一种花色并进行一次判定：若结果为你所声明的花色，则你回复1点体力，否则你获得该判定牌。",
 	["yinjian"] = "引荐",
@@ -474,6 +491,7 @@ return {
 	["$yanxijiao"] = "129",
 	["#yanxijiao"] = "花魁女", -- min 3hp (qlfd)
 	["yanxijiao"] = "阎婆惜",
+	["illustrator:yanxijiao"] = "LIUQU",
 	["cv:yanxijiao"] = "蒲小猫【天子会工作室】",
 	["suocai"] = "索财",
 	[":suocai"] = "出牌阶段，你可以和一名男性角色拼点。若你赢，则你获得双方拼点的牌。若你没赢，则该角色对你造成1点伤害。每阶段限一次。",

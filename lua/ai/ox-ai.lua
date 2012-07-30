@@ -2,6 +2,8 @@
 
 -- gaolian
 -- guibing
+sgs.ai_card_intention.GuibingCard = sgs.ai_card_intention.Slash
+
 sgs.ai_skill_invoke["guibing"] = true
 local guibing_skill = {}
 guibing_skill.name = "guibing"
@@ -20,7 +22,8 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 		if ((self.player:canSlash(enemy, not no_distance)) or
 			(use.isDummy and (self.player:distanceTo(enemy)<=self.predictedRange))) and
 			self:objectiveLevel(enemy)>3 and
-			self:slashIsEffective(card, enemy) then
+			self:slashIsEffective(card, enemy) and
+			not self:slashProhibit(card, enemy) then
 			if not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))
 				self:sortByUseValue(cards, true)
@@ -46,6 +49,14 @@ end
 
 -- tongguan
 -- zhengfa
+sgs.ai_card_intention.ZhengfaCard = function(card, from, tos)
+	if from:hasFlag("Zhengfa") then
+		sgs.updateIntentions(from, tos, 100)
+	else
+		sgs.updateIntentions(from, tos, 10)
+	end
+end
+
 sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	if self.player:hasFlag("Zhengfa") then
 		local enemies = {}
@@ -109,7 +120,27 @@ sgs.ai_skill_choice["lianma"] = function(self, choice)
 end
 
 -- dongchaoxueba
+sgs.dongchaoxueba_suit_value =
+{
+	spade = 3.8,
+	club = 3.8
+}
+sgs.dongchaoxueba_keep_value =
+{
+	BasicCard = 3.8
+}
+
 -- sheru
+sgs.ai_card_intention.SheruCard = function(card, from, tos)
+	if tos[1]:isWounded() and tos[1]:getHp() > 1 then
+		sgs.updateIntentions(from, tos, -40)
+	elseif tos[1]:getLostHp() == 1 then
+		sgs.updateIntentions(from, tos, 40)
+	else
+		sgs.updateIntentions(from, tos, math.random(-10, 10))
+	end
+end
+
 sheru_skill={}
 sheru_skill.name = "sheru"
 table.insert(sgs.ai_skills, sheru_skill)
@@ -205,21 +236,23 @@ end
 
 -- luozhenren
 -- butian
-sgs.ai_skill_invoke["@butian"]=function(self,prompt,judge)
-	judge = judge or self.player:getTag("Judge"):toJudge()
+sgs.ai_skill_cardask["@butian-card"] = function(self, data)
+	local judge = data:toJudge()
 
 	if self:needRetrial(judge) then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
+		self.butianjudge = judge
+	--	return "@ButianCard[" .. cards[1]:getSuitString() .. ":" .. cards[1]:getNumberString() .. "]=" .. cards[1]:getEffectiveId()
 		return "@ButianCard=" .. cards[1]:getEffectiveId()
 	end
 	return "."
 end
 sgs.ai_skill_askforag["butian"] = function(self, card_ids)
-	local judge = self.player:getTag("Judge"):toJudge()
+	local judge = self.butianjudge
 	local cards = {}
 	local card_id
-	if self:needRetrial(judge) then
+	if judge and self:needRetrial(judge) then
 		for _, card_id in ipairs(card_ids) do
 			local card = sgs.Sanguosha:getCard(card_id)
 			table.insert(cards, card)
@@ -236,6 +269,12 @@ end
 sgs.ai_skill_invoke["huaxian"] = true
 
 -- lili
+sgs.lili_suit_value =
+{
+	spade = 3.7,
+	club = 3.7
+}
+
 -- moucai
 sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 
@@ -243,6 +282,11 @@ sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
 
 -- shijin
+sgs.shijin_keep_value =
+{
+	EquipCard = 5
+}
+
 -- wubang
 sgs.ai_skill_invoke["wubang"] = true
 
@@ -266,6 +310,11 @@ function sgs.ai_cardneed.xiagu(to, card, self)
 end
 
 -- lijun
+sgs.lijun_keep_value =
+{
+	TrickCard = 5
+}
+
 -- nizhuan
 sgs.ai_skill_invoke["nizhuan"] = true
 
@@ -304,7 +353,15 @@ sgs.ai_skill_invoke["dingce"] = function(self, data)
 end
 
 -- xiezhen
+sgs.xiezhen_suit_value =
+{
+	heart = 3.5,
+	diamond = 3.0
+}
+
 -- xunlie
+sgs.ai_card_intention.XunlieCard = 80
+
 sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 	if self.player:getEquips():length() > 1 and #self.enemies > 1 then
 		local enemies = {}
@@ -339,6 +396,8 @@ end
 
 -- linniangzi
 -- shouwang
+sgs.ai_card_intention.ShouwangCard = -60
+
 shouwang_skill={}
 shouwang_skill.name = "shouwang"
 table.insert(sgs.ai_skills, shouwang_skill)
@@ -362,9 +421,16 @@ end
 -- zhongzhen
 sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
 	local damage = data:toDamage()
+	if damage.damage < 1 then return false end
+
 	local max_card = self:getMaxCard()
-	if max_card and max_card:getNumber() > 11 and self:isEnemy(damage.from) then
-		return true
+	local max_care = self:getMaxCard(damage.from)
+	if max_card and max_care and max_card:getNumber() > max_care:getNumber() then
+		if self:isWeak() then
+			return true
+		else
+			return self:isEnemy(damage.from)
+		end
 	else
 		return false
 	end

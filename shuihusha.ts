@@ -263,8 +263,8 @@
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1009"/>
-        <source>Colla skill</source>
-        <translation>联动技</translation>
+        <source>Tenkei skill</source>
+        <translation>天启技</translation>
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1010"/>
@@ -3529,7 +3529,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="278"/>
         <source>AI Chat</source>
-        <translation>开启 AI 聊天</translation>
+        <translation>允许AI卖萌聊天</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="285"/>
@@ -3802,24 +3802,6 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/core/settings.cpp" line="102"/>
         <source>%1&apos;s server</source>
         <translation>%1的服务器</translation>
-    </message>
-</context>
-<context>
-    <name>Skill</name>
-    <message>
-        <location filename="src/core/skill.cpp" line="41"/>
-        <source> [Limited]</source>
-        <translation>【限定技】</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="42"/>
-        <source> [Compulsory]</source>
-        <translation> [锁定技]</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="43"/>
-        <source> [Wake]</source>
-        <translation> [觉醒技]</translation>
     </message>
 </context>
 <context>

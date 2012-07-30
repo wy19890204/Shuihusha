@@ -140,16 +140,19 @@ public:
         log.from = tg;
         log.arg = objectName();
         room->sendLog(log);
-        room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$aoxiang:1500");
-        room->getThread()->delay(1500);
 
         room->loseMaxHp(tg, 1);
+        room->playSkillEffect(objectName());
+        room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
+        room->getThread()->delay(2500);
+        room->acquireSkill(tg, "wanghuan");
+
         if(tg->getGeneralName() == "tongguan")
             room->setPlayerProperty(tg, "general", "tongguanf");
         else if(tg->getGeneral2Name() == "tongguan")
             room->setPlayerProperty(tg, "general2", "tongguanf");
-        room->acquireSkill(tg, "wanghuan");
+
+        room->getThread()->delay(2500);
         room->setPlayerMark(tg, "aoxiang", 1);
         return false;
     }
@@ -174,14 +177,14 @@ public:
         if(event == CardEffect){
             if(effect.to->getGender() == General::Male && !effect.to->isKongcheng()){
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 room->askForDiscard(effect.to, objectName(), 1);
             }
         }
         else{
             if(effect.from->getGender() == General::Male){
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 player->drawCards(1);
             }
         }
@@ -205,6 +208,7 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlayer *> &targets) const{
+    const General *player = tonguan->getGeneral2Name().startsWith("tongguan") ? tonguan->getGeneral2() : tonguan->getGeneral();
     if(getSubcards().isEmpty()){
         Slash *slash = new Slash(Card::NoSuit, 0);
         slash->setSkillName("zhengfa");
@@ -213,17 +217,18 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
         uset.mute = true;
         uset.from = tonguan;
         uset.to = targets;
-        room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 2: 4);
+        room->playSkillEffect("zhengfa", player->isMale()? 3: 4);
         room->useCard(uset);
     }
     else{
+        room->playSkillEffect("zhengfa", player->isMale()? 1: 2);
         bool success = tonguan->pindian(targets.first(), "zhengfa", this);
         if(success){
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 1: 3);
+            //room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
             room->setPlayerFlag(tonguan, "Zhengfa");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
-            room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 5: 6);
+            room->playSkillEffect("zhengfa", player->isMale()? 5: 6);
             tonguan->turnOver();
         }
     }
@@ -273,6 +278,7 @@ public:
 LianmaCard::LianmaCard(){
     target_fixed = true;
     once = true;
+    mute = true;
 }
 
 void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
@@ -284,6 +290,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
     log.from = huyanzhuo;
     log.arg = "lianma";
     if(choice == "lian"){
+        room->playSkillEffect("lianma", qrand() % 2 + 1);
         log.type = "#LianmaOn";
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
@@ -296,6 +303,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
             }
         }
     }else{
+        room->playSkillEffect("lianma", qrand() % 2 + 3);
         log.type = "#LianmaOff";
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
@@ -344,8 +352,22 @@ public:
     }
 };
 
+class ZhongjiaEffect: public PhaseChangeSkill{
+public:
+    ZhongjiaEffect():PhaseChangeSkill("#zhongjia_effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *hyz) const{
+        if(hyz->getPhase() == Player::Discard &&
+           hyz->getHandcardNum() > hyz->getHp() && hyz->getHandcardNum() <= hyz->getMaxCards())
+            hyz->getRoom()->playSkillEffect("zhongjia");
+        return false;
+    }
+};
+
 SheruCard::SheruCard(){
     once = true;
+    mute = true;
 }
 
 bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -361,9 +383,11 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
     QString choice = room->askForChoice(effect.from, "sheru", "she+ru");
     int x = effect.to->getLostHp();
     if(choice == "she"){
+        room->playSkillEffect("sheru", qrand() % 2 + 1);
         effect.to->drawCards(x);
         room->loseHp(effect.to);
     }else{
+        room->playSkillEffect("sheru", qrand() % 2 + 3);
         if(effect.to->getCardCount(true) <= x){
             effect.to->throwAllHandCards();
             effect.to->throwAllEquips();
@@ -456,7 +480,6 @@ public:
                 ServerPlayer *target = room->askForPlayerChosen(hx, room->getAllPlayers(), objectName());
                 if(!target)
                     target = hx;
-                //room->takeAG(target, card_id);
                 if(card->inherits("EquipCard")){
                     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
                     QList<ServerPlayer *> targets;
@@ -531,9 +554,7 @@ public:
                 << "" << judge->reason << judge->card->getEffectIdString();
         QString prompt = prompt_list.join(":");
 
-        player->tag["Judge"] = data;
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
-
         if(card){
             int index = qrand() % 2 + 1;
             if(player->getMark("wudao") == 0)
@@ -755,7 +776,7 @@ public:
 class Xiagu: public TriggerSkill{
 public:
     Xiagu():TriggerSkill("xiagu"){
-        events << Predamage;
+        events << DamageProceed;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -838,6 +859,7 @@ public:
 };
 
 XunlieCard::XunlieCard(){
+    mute = true;
 }
 
 bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -845,6 +867,27 @@ bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player
     if(targets.length() >= x)
         return false;
     return !to_select->isKongcheng() && to_select != Self;
+}
+
+void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    if(getSubcards().isEmpty()){
+        room->playSkillEffect("xunlie", qrand() % 2 + 1);
+        //QList<ServerPlayer *> players = targets;
+        //qSort(players.begin(), players.end(), CompareByActionOrder);
+        foreach(ServerPlayer *target, targets){
+            CardEffectStruct effect;
+            effect.card = this;
+            effect.from = source;
+            effect.to = target;
+            effect.multiple = true;
+
+            room->cardEffect(effect);
+        }
+    }else{
+        room->playSkillEffect("xunlie", qrand() % 2 + 3);
+        room->cardEffect(this, source, targets.first());
+    }
 }
 
 void XunlieCard::onEffect(const CardEffectStruct &effect) const{
@@ -906,7 +949,7 @@ public:
 class Zhongzhen: public TriggerSkill{
 public:
     Zhongzhen():TriggerSkill("zhongzhen"){
-        events << Predamaged;
+        events << DamagedProceed;
     }
 
     virtual int getPriority() const{
@@ -915,7 +958,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *linko, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.from->getGeneral()->isMale() || damage.damage <= 0)
+        if(!damage.from || damage.from == damage.to)
             return false;
         if(!linko->isKongcheng() && !damage.from->isKongcheng() &&
            linko->askForSkillInvoke(objectName(), data)){
@@ -945,11 +988,15 @@ bool ZiyiCard::targetFilter(const QList<const Player *> &targets, const Player *
 }
 
 void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
+    Room *o = effect.from->getRoom();
     effect.from->loseAllMarks("@rope");
     RecoverStruct r;
     r.who = effect.from;
     r.recover = 2;
-    effect.from->getRoom()->recover(effect.to, r, true);
+    o->broadcastInvoke("animate", "lightbox:$Ziyi:5000");
+    o->getThread()->delay(2500);
+    o->recover(effect.to, r, true);
+    o->getThread()->delay(2500);
     effect.from->setFlags("Hanging");
 }
 
@@ -980,12 +1027,9 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *lnz) const{
         if(lnz->hasFlag("Hanging") && lnz->getPhase() == Player::Finish){
-            Room *o = lnz->getRoom();
-            o->broadcastInvoke("animate", "lightbox:$ziyi:3000");
-            o->getThread()->delay(3000);
             DamageStruct damage;
             damage.from = lnz;
-            o->killPlayer(lnz, &damage);
+            lnz->getRoom()->killPlayer(lnz, &damage);
         }
         return false;
     }
@@ -1039,18 +1083,19 @@ OxPackage::OxPackage()
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
-    skills << new Wanghuan;
-    tongguan->addRelateSkill("wanghuan");
+    //skills << new Wanghuan;
+    //tongguan->addRelateSkill("wanghuan");
     tongguan->addSkill(new Zhengfa);
 
-    tongguan = new General(this, "tongguanf", "yan", 4, false, true);
-    tongguan->addSkill("aoxiang");
-    tongguan->addSkill("zhengfa");
+    tongguan = new General(this, "tongguanf", "yan", 3, false, true);
+    tongguan->addSkill(new Wanghuan);
     tongguan->addSkill("zhengfa");
 
     General *huyanzhuo = new General(this, "huyanzhuo", "guan");
     huyanzhuo->addSkill(new Lianma);
     huyanzhuo->addSkill(new Zhongjia);
+    huyanzhuo->addSkill(new ZhongjiaEffect);
+    related_skills.insertMulti("zhongjia", "#zhongjia_effect");
 
     General *dongchaoxueba = new General(this, "dongchaoxueba", "jiang");
     dongchaoxueba->addSkill(new Sheru);

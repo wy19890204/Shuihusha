@@ -131,23 +131,25 @@ void Dashboard::createRight(){
     handcard_pixmap->hide();
 
     mark_item = new QGraphicsTextItem(right);
-    mark_item->setPos(-110 - getButtonWidgetWidth(), 5);
+    mark_item->setPos(-120 - getButtonWidgetWidth(), 5);
     mark_item->setDefaultTextColor(Qt::white);
 
     action_item = NULL;
+
+    avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    avatar_area->setPos(22, 64);
+    avatar_area->setZValue(0.3);
+    avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    avatar_area->setVisible(false);
 }
 
 void Dashboard::setEcstState(){
-    QGraphicsRectItem *avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
-    avatar_area->setPos(22, 64);
-    avatar_area->setZValue(0.3);
-
     if(Self->hasFlag("ecst"))
-        avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+        avatar_area->setVisible(true);
     //else if(Self->getMark("poison") > 0)
     //    setPoisonState();
     else
-        avatar_area->setBrush(Qt::NoBrush);
+        avatar_area->setVisible(false);
 }
 
 void Dashboard::setActionState(){

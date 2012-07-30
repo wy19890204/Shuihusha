@@ -400,6 +400,7 @@ public:
     }
 };
 
+/*
 #include <QFile>
 #include <QTextStream>
 #include "plough.h"
@@ -448,6 +449,8 @@ CustomCardPackage::CustomCardPackage()
 
     type = CardPack;
 }
+ADD_PACKAGE(CustomCard)
+*/
 
 // test main
 #include "carditem.h"
@@ -548,8 +551,8 @@ public:
             RecoverStruct rev;
             rev.who = player;
             rev.recover = player->getMaxHP();
-            room->recover(player, rev);
-            room->setPlayerProperty(player, "hp", player->getMaxHP());
+            room->recover(player, rev, true);
+            room->setPlayerProperty(player, "hp", player->getMaxHp());
         }
         return false;
     }
@@ -661,5 +664,4 @@ TestPackage::TestPackage()
     patterns["peach+analeptic"] = new ExpPattern("Peach,Analeptic");
 }
 
-ADD_PACKAGE(CustomCard)
 ADD_PACKAGE(Test)

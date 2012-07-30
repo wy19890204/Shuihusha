@@ -91,8 +91,8 @@ struct CircularRoomLayout : public RoomLayout{
 static RoomLayout *GetRoomLayout(){
     static NormalRoomLayout normal;
     static CircularRoomLayout circular;
-
-    if(Config.value("CircularView", false).toBool()){
+    //return Config.CircularView ? &circular : &normal;
+    if(Config.CircularView){
         return &circular;
     }else
         return &normal;
@@ -112,7 +112,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
 
     room_layout = GetRoomLayout();
 
-    bool circular = Config.value("CircularView", false).toBool();
+    bool circular = Config.CircularView;
 
     // create photos
     int i;
@@ -546,7 +546,7 @@ void ReplayerControlBar::setTime(int secs){
 }
 
 void RoomScene::createReplayControlBar(){
-    // hide all buttons    
+    // hide all buttons
     reverse_button->hide();
 
     new ReplayerControlBar(dashboard);
@@ -596,7 +596,7 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
         nine = 1;
     }
 
-    if(Config.value("CircularView").toBool()){
+    if(Config.CircularView){
         cxw=1;
         cxw2=0;
     }
@@ -652,7 +652,7 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
                              - dashboard->boundingRect().height()*(1-stretch_y)/2);
 
 
-    if(!Config.value("CircularView",false).toBool())
+    if(!Config.CircularView)
     {
         stretch_x = 1;
         stretch_y = 1;
@@ -1057,7 +1057,7 @@ void RoomScene::viewDiscards(){
 
         int start = (mid - width)/2;
         int y     = room_layout->discard.y() - 140;
-        if(!Config.value("CircularView", false).toBool())
+        if(!Config.CircularView)
         {
             width = 0;
             start = room_layout->discard.x();
@@ -1419,7 +1419,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     }else if(skill->inherits("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
         if(filter && dashboard->getFilter() == NULL)
-            dashboard->setFilter(filter);        
+            dashboard->setFilter(filter);
         button = new QPushButton();
 
     }else if(skill->inherits("ViewAsSkill")){
@@ -2851,7 +2851,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         StatisticsStruct *statistics = player->getStatistics();
         /*
-		item = new QTableWidgetItem;
+                item = new QTableWidgetItem;
         QString designations;
         foreach(QString designation, statistics->designation){
             designations.append(Sanguosha->translate(designation) + ", ");
@@ -3038,7 +3038,7 @@ void RoomScene::doGongxin(const QList<int> &card_ids, bool enable_heart){
 }
 
 void RoomScene::createStateItem(){
-    QString state_url = Config.value("CircularView", false).toBool() ?
+    QString state_url = Config.CircularView ?
                         "image/system/state_c.png" : "image/system/state.png";
     QPixmap state(state_url);
 
@@ -3053,7 +3053,7 @@ void RoomScene::createStateItem(){
     text_item->setParentItem(state_item);
     text_item->setPos(2, 30);
     text_item->setDocument(ClientInstance->getLinesDoc());
-    if(Config.value("CircularView", false).toBool())
+    if(Config.CircularView)
         text_item->setTextWidth(270);
     else
         text_item->setTextWidth(220);
@@ -3286,9 +3286,11 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = Config.value("BackgroundMusic", "audio/system/background.mp3").toString();
+        QString bgmusic_path = ServerInfo.GameMode != "dusong" ?
+                               "audio/system/background.mp3" :
+                               "audio/system/dsgbackground.mp3";
 
-        Audio::playBGM(bgmusic_path);
+        Audio::playBGM(Config.value("BackgroundMusic", bgmusic_path).toString());
         Audio::setBGMVolume(Config.BGMVolume);
     }
 
@@ -3663,7 +3665,7 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         (this->*func)(name, args);
 }
 
-void RoomScene::adjustDashboard(bool expand){   
+void RoomScene::adjustDashboard(bool expand){
     int texture_width = dashboard->getTextureWidth();
     int window_width = main_window->width()-10;
 
@@ -3717,7 +3719,7 @@ void RoomScene::kick(){
 }
 
 void RoomScene::surrender(){
-    
+
      if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("You can only initiate a surrender poll at your play phase!"));
         return;
@@ -4032,7 +4034,7 @@ void RoomScene::updateStateItem(const QString &roles)
     foreach(QChar c, roles){
         if(map.contains(c)){
             QGraphicsPixmapItem *item = addPixmap(map.value(c));
-            if(Config.value("CircularView", false).toBool())
+            if(Config.CircularView)
                 item->setPos(21*role_items.length()+5, 3.2);
             else
                 item->setPos(21*role_items.length(), 4.5);
@@ -4070,7 +4072,7 @@ void RoomScene::reLayout(QMatrix matrix)
 
     if(matrix.m11()>1)matrix.setMatrix(1,0,0,1,matrix.dx(),matrix.dy());
     view_transform = matrix;
-    //if(!Config.value("circularView",false).toBool())
+    //if(!Config.CircularView)
     //    if(!game_started)return;
 
     QPoint pos = QPoint(dashboard->getMidPosition(),0);
@@ -4099,7 +4101,7 @@ void RoomScene::reLayout(QMatrix matrix)
     pos.rx()-= padding_left;
     pos.ry()+=padding_top;
 
-    if(!Config.value("CircularView",false).toBool())
+    if(!Config.CircularView)
     {
         pos.ry() = state_item->y();
         pos.rx() = state_item->x()-padding_left;

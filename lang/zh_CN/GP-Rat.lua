@@ -7,6 +7,7 @@ return {
 	["$liying"] = "011",
 	["#liying"] = "扑天雕", -- guan 4hp (qjwm)
 	["liying"] = "李应",
+	["illustrator:liying"] = "飘渺之旅",
 	["cv:liying"] = "鹏少",
 	["kong1iang"] = "控粮",
 	[":kong1iang"] = "摸牌阶段，你可以摸X张牌（X为你的体力上限与你已损失的体力值之和）。若如此做，则你须展示你的所有手牌，然后弃置其中任意两种花色的所有牌（不足则全弃）。",
@@ -56,6 +57,7 @@ return {
 	["$ruanxiaoer"] = "027",
 	["#ruanxiaoer"] = "立地太岁", -- min 4hp (zcyn)
 	["ruanxiaoer"] = "阮小二",
+	["illustrator:ruanxiaoer"] = "陈松",
 	["cv:ruanxiaoer"] = "卡修【天子会工作室】",
 	["fuji"] = "伏击",
 	[":fuji"] = "其他角色的判定阶段开始时，若该角色的判定区里有牌，则你可以弃置一张手牌，视为对其使用一张【行刺】（不能被【将计就计】和【无懈可击】响应）。",
@@ -86,6 +88,7 @@ return {
 	["#zhuwu"] = "神机军师", -- kou 3hp (qjwm)
 	["zhuwu"] = "朱武",
 	["pozhen"] = "破阵",
+	["illustrator:zhuwu"] = "三国鼎立",
 	["cv:zhuwu"] = "北落师门【心水蓝音】",
 	[":pozhen"] = "<b>锁定技</b>，你使用的非延时类锦囊不能被【将计就计】和【无懈可击】响应。",
 	["#Pozhen"] = "%from 的锁定技【%arg】被触发，使用的这张 %arg2 不能被【无懈可击】或【将计就计】抵消",
@@ -108,6 +111,7 @@ return {
 	["$qingzhang"] = "102",
 	["#qingzhang"] = "菜园子", -- kou 3hp (bwqz)
 	["qingzhang"] = "张青",
+	["illustrator:qingzhang"] = "龙",
 	["cv:qingzhang"] = "流岚【裔美声社】",
 	["shouge"] = "收割",
 	[":shouge"] = "出牌阶段，你可以将任意数量的【肉】或【酒】置于你的武将牌上，称为“菜”；你的回合外，当你失去一张手牌时，你可以将一张“菜”置入弃牌堆，然后摸三张牌。",
@@ -125,6 +129,7 @@ return {
 	["$baisheng"] = "106",
 	["#baisheng"] = "白日鼠", -- kou 3hp (bwqz)
 	["baisheng"] = "白胜",
+	["illustrator:baisheng"] = "大熊",
 	["designer:baisheng"] = "Kaycent",
 	["cv:baisheng"] = "卜音悠扬【天子会工作室】",
 	["coder:baisheng"] = "太阳神上",
@@ -143,6 +148,7 @@ return {
 	["$shiqian"] = "107",
 	["#shiqian"] = "鼓上蚤", -- kou 3hp (xzdd)
 	["shiqian"] = "时迁",
+	["illustrator:shiqian"] = "Raysun",
 	["cv:shiqian"] = "爪子【天子会工作室】",
 	["coder:shiqian"] = "凌天翼",
 	["feiyan"] = "飞檐",
@@ -157,6 +163,7 @@ return {
 	["$shiwengong"] = "119",
 	["#shiwengong"] = "大教师", -- jiang 4hp (zcyn)
 	["shiwengong"] = "史文恭",
+	["illustrator:shiwengong"] = "东方传奇",
 	["cv:shiwengong"] = "笑谈",
 	["dujian"] = "毒箭",
 	[":dujian"] = "当你对其他角色造成伤害时，若你不在其攻击范围内，则你可以防止该伤害，令该角色将其武将牌翻面。",
@@ -167,6 +174,7 @@ return {
 	["$qiaodaoqing"] = "122",
 	["#qiaodaoqing"] = "幻魔君", -- jiang 3hp (ttxd)
 	["qiaodaoqing"] = "乔道清",
+	["illustrator:qiaodaoqing"] = "星辰变",
 	["cv:qiaodaoqing"] = "烨子风暴【天子会工作室】",
 	["coder:qiaodaoqing"] = "roxiel",
 	["huanshu"] = "幻术",
@@ -187,6 +195,7 @@ return {
 	["$qiongying"] = "127",
 	["#qiongying"] = "琼矢镞", -- jiang 3hp (ybyt)
 	["qiongying"] = "琼英",
+	["illustrator:qiongying"] = "南帝北丐",
 	["designer:qiongying"] = "烨子&凌天翼",
 	["cv:qiongying"] = "Paddy【天子会工作室】",
 	["coder:qiongying"] = "战栗贵公子",
