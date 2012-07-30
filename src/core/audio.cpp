@@ -14,10 +14,14 @@ static FMOD_CHANNEL *BGMChannel;
 
 class Sound{
 public:
-    Sound(const char *filename)
+    Sound(const char *filename, int size)
         :sound(NULL), channel(NULL)
     {
-        FMOD_System_CreateSound(System, filename, FMOD_DEFAULT, NULL, &sound);
+        FMOD_CREATESOUNDEXINFO info;
+        memset(&info, 0, sizeof(info));
+        info.length = size;
+        info.cbsize = sizeof(info);
+        FMOD_System_CreateSound(System, filename, FMOD_OPENMEMORY, &info, &sound);
     }
 
     ~Sound(){
@@ -69,10 +73,11 @@ void Audio::quit(){
 
 void Audio::play(const QString &filename){
     //char *buffer = filename.toLocal8Bit().data();
-    char *buffer = Crypto::doCrypto(Crypto::Jiemi, filename);
+    CryStruct cry = Crypto::doCrypto(Crypto::Jiemi, filename);
+    char *buffer = cry.buffer;
     Sound *sound = SoundCache[buffer];
     if(sound == NULL){
-        sound = new Sound(buffer);
+        sound = new Sound(buffer, cry.size);
         SoundCache.insert(buffer, sound);
     }else if(sound->isPlaying())
         return;
