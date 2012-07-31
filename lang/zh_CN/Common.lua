@@ -173,7 +173,7 @@ return {
 	["designer:ubuntenkei"] = "宇文天启",
 	["cv:ubuntenkei"] = "佚名",
 	["coder:ubuntenkei"] = "宇文天启 [测试专用]",
-	["illustrator:ubuntenkei"] = "三国志大战",
+	["illustrator:ubuntenkei"] = "烨子风暴",
 	["ubuna"] = "超能",
 	[":ubuna"] = "锁定技，你没有手牌上限",
 	["ubunc"] = "鳞栉",
