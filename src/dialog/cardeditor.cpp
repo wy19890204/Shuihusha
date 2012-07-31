@@ -1006,7 +1006,7 @@ QWidget *CardEditor::createSkillBox(){
     bold_combobox->addItem(tr("Compulsory"));
     bold_combobox->addItem(tr("Limited"));
     bold_combobox->addItem(tr("Wake skill"));
-    bold_combobox->addItem(tr("Colla skill"));
+    bold_combobox->addItem(tr("Tenkei skill"));
     layout->addRow(tr("Insert bold text"), bold_combobox);
 
     connect(bold_combobox, SIGNAL(activated(QString)), skill_box, SLOT(insertBoldText(QString)));

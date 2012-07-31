@@ -81,6 +81,7 @@ return {
 	["$dongchaoxueba"] = "131",
 	["#dongchaoxueba"] = "黑狱吏", -- jiang 4hp (yxqd)
 	["dongchaoxueba"] = "董超薛霸",
+	["illustrator:dongchaoxueba"] = "黑山老妖",
 	["cv:dongchaoxueba"] = "秦奋&卡修【天子会工作室】",
 	["coder:dongchaoxueba"] = "Slob",
 	["sheru"] = "折辱",
