@@ -46,7 +46,7 @@ public:
             log.arg = objectName();
             room->sendLog(log);
 
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), player->getGeneral()->isMale() ? qrand() % 2 + 1 : qrand() % 2 + 3);
             room->loseMaxHp(player);
         }
         return false;
