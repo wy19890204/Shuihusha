@@ -86,6 +86,8 @@ private:
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;
 
+    QGraphicsRectItem *avatar_area;
+
     int sort_type;
     QGraphicsSimpleTextItem *handcard_num;
     QList<CardItem *> judging_area;

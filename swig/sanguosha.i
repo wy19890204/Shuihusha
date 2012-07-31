@@ -85,7 +85,7 @@ public:
 	int getMaxHp() const;
 	void setMaxHP(int max_hp);
 	void setMaxHp(int max_hp);
-	int getLostHp() const;
+	int getLostHp(bool zeromax = true) const;
 	bool isWounded() const;
 
 	int getMaxCards() const;
@@ -657,6 +657,7 @@ public:
 	void addBanPackage(const char *package_name);
 	QStringList getBanPackages() const;
 	Card *cloneCard(const char *name, Card::Suit suit, int number) const;
+	Card *cloneCard(const char *name, const char *suit_string, int number) const;
 	SkillCard *cloneSkillCard(const char *name) const;
 	QString getVersion() const;
 	QString getVersionName() const;

@@ -190,22 +190,20 @@ void Tsunami::takeEffect(ServerPlayer *target, bool good) const{
 class DoubleWhipSkill : public WeaponSkill{
 public:
     DoubleWhipSkill():WeaponSkill("double_whip"){
-        events << CardUsed;
+        events << CardEffect;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
-            foreach(ServerPlayer *effecto, use.to){
-                if(!effecto->isChained())
-                    player->playCardEffect("Edouble_whip1", "weapon");
-                else
-                    player->playCardEffect("Edouble_whip2", "weapon");
-                bool chained = ! effecto->isChained();
-                effecto->setChained(chained);
-                room->broadcastProperty(effecto, "chained");
-                room->setEmotion(effecto, "chain");
-            }
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.card->inherits("Slash") && player->askForSkillInvoke("double_whip", data)){
+            if(!effect.to->isChained())
+                player->playCardEffect("Edouble_whip1", "weapon");
+            else
+                player->playCardEffect("Edouble_whip2", "weapon");
+            bool chained = ! effect.to->isChained();
+            effect.to->setChained(chained);
+            room->broadcastProperty(effect.to, "chained");
+            room->setEmotion(effect.to, "chain");
         }
         return false;
     }

@@ -3,8 +3,10 @@
 return {
 	["standard"] = "基础包",
 
+	["$songjiang"] = "001",
 	["#songjiang"] = "及时雨", -- kou 4hp (ttxd)
 	["songjiang"] = "宋江",
+	["illustrator:songjiang"] = "星魂",
 	["designer:songjiang"] = "烨子&凌天翼",
 	["cv:songjiang"] = "猎狐【天子会工作室】",
 	["coder:songjiang"] = "宇文天启、凌天翼",
@@ -27,8 +29,10 @@ return {
 	["$juyi4"] = "如今，尚不是时候。",
 	["~songjiang"] = "望天王降诏，早招安，心方足。",
 
+	["$lujunyi"] = "002",
 	["#lujunyi"] = "玉麒麟", -- guan 4hp (ttxd)
 	["lujunyi"] = "卢俊义",
+	["illustrator:lujunyi"] = "战火纷争",
 	["cv:lujunyi"] = "猎狐【天子会工作室】",
 	["coder:lujunyi"] = "roxiel",
 	["baoguo"] = "报国",
@@ -39,8 +43,10 @@ return {
 	["$baoguo2"] = "但愿共存忠义于心，共著功勋于国！",
 	["~lujunyi"] = "我，生为大宋人，死为大宋鬼！",
 
+	["$wuyong"] = "003",
 	["#wuyong"] = "智多星", -- kou 3hp (cgdk)
 	["wuyong"] = "吴用",
+	["illustrator:wuyong"] = "刘彤&赵鑫",
 	["cv:wuyong"] = "鸢飞【天子会工作室】",
 	["huace"] = "画策",
 	[":huace"] = "出牌阶段，你可以将你的任一锦囊牌当任一非延时类锦囊使用。每阶段限一次。",
@@ -54,8 +60,10 @@ return {
 	["$yunchou2"] = "有了，有了！",
 	["~wuyong"] = "八百里水泊，化作南柯一梦。",
 
+	["$gongsunsheng"] = "004",
 	["#gongsunsheng"] = "入云龙", -- kou 3hp (ttxd)
 	["gongsunsheng"] = "公孙胜",
+	["illustrator:gongsunsheng"] = "叶智成",
 	["cv:gongsunsheng"] = "流岚【裔美声社】",
 	["yixing"] = "移星",
 	[":yixing"] = "在任一角色的判定牌生效前，你可以用任一角色装备区里的一张牌替换之。",
@@ -74,8 +82,10 @@ return {
 	["$qimen2"] = "小奇改门户，大奇变格局。",
 	["~gongsunsheng"] = "天罡尽已归天界，地煞还应入地中。",
 
+	["$guansheng"] = "005",
 	["#guansheng"] = "大刀", -- jiang 4hp (zcyn)
 	["guansheng"] = "关胜",
+	["illustrator:guansheng"] = "SAM.猩",
 	["cv:guansheng"] = "鹏少",
 	["huqi"] = "虎骑",
 	[":huqi"] = "<b>锁定技</b>，当你计算与其他角色的距离时，始终-1。",
@@ -85,8 +95,10 @@ return {
 	["$tongwu2"] = "可胜者，攻也！不可胜者，守也！",
 	["~guansheng"] = "武虽通，人难长。",
 
+	["$linchong"] = "006",
 	["#linchong"] = "豹子头", -- jiang 4hp (xzdd)
 	["linchong"] = "林冲",
+	["illustrator:linchong"] = "zhangjiang",
 	["cv:linchong"] = "猎狐【天子会工作室】",
 	["duijue"] = "对决",
 	[":duijue"] = "你每使用【杀】造成一次伤害或受到一次其他角色使用【杀】造成的伤害，可以令除你外的任一角色进行一次判定：若结果不为♠，则视为你对其使用一张【决斗】（不能被【将计就计】和【无懈可击】响应）。",
@@ -95,8 +107,10 @@ return {
 	["$duijue2"] = "一枪在手，试问天下英雄！",
 	["~linchong"] = "神枪绕指柔，家恨何人报！",
 
+	["$huarong"] = "009",
 	["#huarong"] = "小李广", -- guan 4hp (qjwm)
 	["huarong"] = "花荣",
+	["illustrator:huarong"] = "刘彤&赵鑫",
 	["cv:huarong"] = "烨子风暴【天子会工作室】",
 	["jingzhun"] = "精准",
 	[":jingzhun"] = "<b>锁定技</b>，当你使用【杀】指定一名其他角色为目标后，若你与其的距离等于你的攻击范围，则该【杀】不能被【闪】响应。",
@@ -111,8 +125,10 @@ return {
 	["$kaixian2"] = "汝等可敢踏前一步？",
 	["~huarong"] = "一腔义烈元相契，封树高悬两命亡。",
 
+	["$chaijin"] = "010",
 	["#chaijin"] = "小旋风", -- guan 3hp (ttxd)
 	["chaijin"] = "柴进",
+	["illustrator:chaijin"] = "刀剑英雄",
 	["designer:chaijin"] = "烨子&小花荣",
 	["cv:chaijin"] = "烨子风暴【天子会工作室】",
 	["coder:chaijin"] = "roxiel、宇文天启",
@@ -131,8 +147,10 @@ return {
 	["$haoshen4"] = "客气什么，拿去便是。",
 	["~chaijin"] = "难道～这先朝之物，没用了？",
 
+	["$zhutong"] = "012",
 	["#zhutong"] = "美髯公", -- guan 4hp (xzdd)
 	["zhutong"] = "朱仝",
+	["illustrator:zhutong"] = "刘彤&赵鑫",
 	["designer:zhutong"] = "烨子&喀什葛尔胡杨",
 	["cv:zhutong"] = "爪子【天子会工作室】",
 	["sijiu"] = "私救",
@@ -146,8 +164,10 @@ return {
 	["$yixian2"] = "此地虽好，也不是安身之处。",
 	["~zhutong"] = "可恨这黑厮～",
 
+	["$luzhishen"] = "013",
 	["#luzhishen"] = "花和尚", -- kou 4hp (qjwm)
 	["luzhishen"] = "鲁智深",
+	["illustrator:luzhishen"] = "刘彤&赵鑫",
 	["cv:luzhishen"] = "东方胤弘【天子会工作室】",
 	["liba"] = "力拔",
 	[":liba"] = "出牌阶段，当你使用【杀】对目标角色造成伤害时，你可以展示该角色的一张手牌：若不为基本牌，则你弃掉该牌并令该伤害+1。",
@@ -160,9 +180,11 @@ return {
 	["$zuohua1"] = "钱塘江上潮信来，今日方知我是我。",
 	["$zuohua2"] = "忽地随潮归去，果然无处跟寻。", -- 天灾死亡
 
+	["$wusong"] = "014",
 	["#wusong"] = "行者", -- kou 4hp (qjwm)
 	["wusong"] = "武松",
 	["fuhu"] = "伏虎",
+	["illustrator:wusong"] = "麒麟水浒传",
 	["cv:wusong"] = "猎狐【天子会工作室】",
 	[":fuhu"] = "其他角色每使用【杀】造成一次伤害，你可以弃置一张♠或♣牌，视为你对该角色使用一张【杀】。额外的，若你弃置的牌为【酒】或武器牌，则该【杀】造成的伤害+1。",
 	["@fuhu"] = "你可以弃置一张黑色牌，发动【伏虎】（视为对 %src 使用一张【杀】）",
@@ -171,8 +193,10 @@ return {
 	["$fuhu2"] = "哨棒断了，俺还有一双拳头！",
 	["~wusong"] = "招安，招安，冷了兄弟们的心啊！",
 
+	["$yangzhi"] = "017",
 	["#yangzhi"] = "青面兽", -- guan 4hp (xzzd)
 	["yangzhi"] = "杨志",
+	["illustrator:yangzhi"] = "刘彤&赵鑫",
 	["cv:yangzhi"] = "猎狐【天子会工作室】",
 	["maidao"] = "卖刀",
 	[":maidao"] = "出牌阶段，你可以将任意数量的武器牌置于你的武将牌上，称为“刀”；若“刀”的数量不少于1，则其他角色可以在其出牌阶段交给你两张手牌，获得任意一张“刀”。",
@@ -191,14 +215,17 @@ return {
 	["$fengmang3"] = "杀人不见血！", 
 	["~yangzhi"] = "无颜面对～列祖列宗！",
 
+	["$xuning"] = "018",
 	["#xuning"] = "金枪手", -- jiang 4hp (ybyt)
 	["xuning"] = "徐宁",
+	["illustrator:xuning"] = "刘彤&赵鑫",
 	["cv:xuning"] = "卡修【天子会工作室】",
 	["coder:xuning"] = "战栗贵公子",
 	["goulian"] = "钩镰",
 	[":goulian"] = "你每使用【杀】或【决斗】对目标角色造成一次伤害，可以弃掉其装备区里的一张防具牌或坐骑牌。",
 	["jinjia"] = "金甲",
-	[":jinjia"] = "<b>锁定技</b>，当你没装备防具时，始终视为你装备着【赛唐猊】。",
+	[":jinjia"] = "<b>锁定技</b>，当你没装备防具时，始终视为你装备着【赛唐猊】。\
+<font size=2><br>★防具【赛唐猊】效果：锁定技，具属性伤害的【杀】对你无效；你每受到一次【杀】造成的伤害，伤害来源须弃置其装备区里的武器。</font>",
 	["#JinjiaNullify"] = "%from 的【%arg】技能被触发，【%arg2】对其无效",
 	["#ThrowJinjiaWeapon"] = "%from 的技能【%arg】生效",
 	["$goulian1"] = "以巧破敌，四两拨千斤！",
@@ -208,10 +235,12 @@ return {
 	["~xuning"] = "刀枪入库，马放南山。",
 --	["~xuning"] = "草！还我宝甲！",
 
+	["$daizong"] = "020",
 	["#daizong"] = "神行太保", -- jiang 3hp (fcdc)
 	["daizong"] = "戴宗",
+	["illustrator:daizong"] = "花狐貂",
 	["cv:daizong"] = "莫名【忆昔端华工作室】",
-	["coder:daizong"] = "宇文天启、皇叔",
+	["coder:daizong"] = "宇文天启、Lycio",
 	["mitan"] = "密探",
 	[":mitan"] = "你可以将你的任一锦囊牌或事件牌当【探听】使用；当你使用【探听】观看目标角色的手牌时，你可以展示其中的任意一张牌。",
 	["jibao"] = "急报",
@@ -224,9 +253,11 @@ return {
 	["$jibao2"] = "日行八百，朝发夕至。",
 	["~daizong"] = "消息有误，啊～",
 
+	["$likui"] = "022",
 	["#likui"] = "黑旋风", -- kou 4hp (xzdd)
 	["likui"] = "李逵",
 	["designer:likui"] = "凌天翼",
+	["illustrator:likui"] = "刘彤&赵鑫",
 	["cv:likui"] = "鹏少",
 	["coder:likui"] = "凌天翼、宇文天启",
 	["shalu"] = "杀戮",
@@ -236,8 +267,10 @@ return {
 	["$shalu3"] = "虽然没了功劳，也吃俺杀得快活。", --判定红色播放
 	["~likui"] = "生时服侍哥哥，死了也只是哥哥部下一个小鬼。",
 
+	["$ruanxiaoqi"] = "031",
 	["#ruanxiaoqi"] = "活阎罗", -- min 4hp (cgdk)
 	["ruanxiaoqi"] = "阮小七",
+	["illustrator:ruanxiaoqi"] = "水浒无双",
 	["cv:ruanxiaoqi"] = "小V【天子会工作室】",
 	["jueming"] = "绝命",
 	[":jueming"] = "<b>锁定技</b>，若你的当前体力值为1，则你不能成为【杀】、【决斗】和【行刺】的目标。",
@@ -250,8 +283,10 @@ return {
 	["$jiuhan2"] = "不愧是御酒！",
 	["~ruanxiaoqi"] = "爷爷生在天地间，不求富贵不做官。",
 
+	["$yangxiong"] = "032",
 	["#yangxiong"] = "病关索", -- jiang 4hp (zcyn)
 	["yangxiong"] = "杨雄",
+	["illustrator:yangxiong"] = "山海传奇",
 	["designer:yangxiong"] = "裁之刃•散&宇文天启",
 	["cv:yangxiong"] = "莫名【忆昔端华工作室】",
 	["xingxing"] = "行刑",
@@ -262,8 +297,10 @@ return {
 	["$xingxing2"] = "斩！",
 	["~yangxiong"] = "背疮疼痛，恨不能战死沙场～",
 
+	["$yanqing"] = "036",
 	["#yanqing"] = "浪子", -- min 3hp (qjwm)
 	["yanqing"] = "燕青",
+	["illustrator:yanqing"] = "大秦天下",
 	["cv:yanqing"] = "烨子风暴【天子会工作室】",
 	["dalei"] = "打擂",
 	[":dalei"] = "出牌阶段，你可以和一名男性角色拼点。若你赢，则你获得以下技能，直到回合结束：你每对该角色造成1点伤害，可以令除该角色外的任一已受伤的角色回复1点体力。若你没赢，则其对你造成1点伤害。每阶段限一次。",
@@ -284,8 +321,10 @@ return {
 	["$fuqin4"] = "可长可短，见机而作。",
 	["~yanqing"] = "时人苦把功名恋，只怕功名不到头。",
 
+	["$andaoquan"] = "056",
 	["#andaoquan"] = "神医", -- min 3hp (ttxd)
 	["andaoquan"] = "安道全",
+	["illustrator:andaoquan"] = "天龙八部",
 	["cv:andaoquan"] = "澪乱の风【天子会工作室】",
 	["jishi"] = "济世",
 	[":jishi"] = "任一角色的回合开始时，若其已受伤，则你可以弃置一张基本牌或锦囊牌，令其回复1点体力。",
@@ -304,8 +343,10 @@ return {
 	["$fengyue2"] = "活色生香伴佳人。",
 	["~andaoquan"] = "救人易，救己难！",
 
+	["$husanniang"] = "059",
 	["#husanniang"] = "一丈青", -- jiang 3hp (ttxd)
 	["husanniang"] = "扈三娘",
+	["illustrator:husanniang"] = "水浒无双",
 	["cv:husanniang"] = "蒲小猫【天子会工作室】",
 	["hongjin"] = "红锦",
 	[":hongjin"] = "你每对男性角色造成一次伤害，可以选择一项：摸一张牌，或弃掉该角色一张牌。",
@@ -320,8 +361,10 @@ return {
 	["$wuji2"] = "连环铠甲衬红纱。",
 	["~husanniang"] = "卿本佳人，奈何从贼？",
 
+	["$sunerniang"] = "103",
 	["#sunerniang"] = "母夜叉", -- kou 3hp (cgdk)
 	["sunerniang"] = "孙二娘",
+	["illustrator:sunerniang"] = "花狐貂",
 	["cv:sunerniang"] = "南宫泓【「御」】",
 	["heidian"] = "黑店",
 	[":heidian"] = "<b>锁定技</b>，其他角色每对你造成一次伤害，须弃置一张手牌；当其他角色失去最后的手牌时，需交给你一张其装备区里的牌，否则失去1点体力。",
@@ -337,8 +380,10 @@ return {
 	["$renrou2"] = "客官，这可是上好的黄牛肉！", --发牌播放
 	["~sunerniang"] = "就让这仇怨～生根发芽吧。",
 
+	["$gaoqiu"] = "109",
 	["#gaoqiu"] = "殿帅府太尉", -- guan 3hp (ttxd)
 	["gaoqiu"] = "高俅",
+	["illustrator:gaoqiu"] = "大熊",
 	["cv:gaoqiu"] = "爪子【天子会工作室】",
 	["coder:gaoqiu"] = "roxiel、宇文天启",
 	["hengxing"] = "横行",
@@ -356,8 +401,10 @@ return {
 	["$panquan2"] = "共求富贵！",
 	["~gaoqiu"] = "报应啊～报应！",
 
+	["$caijing"] = "110",
 	["#caijing"] = "奸相", -- guan 4hp (fcdc)
 	["caijing"] = "蔡京",
+	["illustrator:caijing"] = "侠客行",
 	["cv:caijing"] = "东方胤弘【天子会工作室】",
 	["jiashu"] = "家书",
 	[":jiashu"] = "出牌阶段，你可以将一张手牌交给任一其他角色并声明一种花色。然后若该角色交给你一张你所声明花色的手牌，则其摸一张牌，否则其失去1点体力。每阶段限一次。",
@@ -370,8 +417,10 @@ return {
 	["$duoquan"] = "这朝事还不由我说了算！",
 	["~caijing"] = "时至今日，方知百姓之恨！",
 
+	["$fangla"] = "112",
 	["#fangla"] = "永乐圣公", -- jiang 4hp (bwqz)
 	["fangla"] = "方腊",
+	["illustrator:fangla"] = "黄玉郎",
 	["cv:fangla"] = "谈笑",
 	["yongle"] = "永乐",
 	[":yongle"] = "出牌阶段，你可以分别获得至多X名其他角色的一张手牌（X为场上现存势力数），然后你分别交给这些角色一张手牌。每阶段限一次。",
@@ -384,8 +433,10 @@ return {
 	["$zhiyuan2"] = "吾大军援兵何在？",
 	["~fangla"] = "打虎武松，不过如此。",
 
+	["$wangqing"] = "114",
 	["#wangqing"] = "楚王", -- min 4hp (qjwm)
 	["wangqing"] = "王庆",
+	["illustrator:wangqing"] = "黄玉郎",
 	["cv:wangqing"] = "猎狐【天子会工作室】",
 	["qibing"] = "起兵",
 	[":qibing"] = "<b>锁定技</b>，锁定技，摸牌阶段，你摸X张牌（X为你的当前体力值且至多为4）。",
@@ -400,8 +451,10 @@ return {
 	["$jiachu2"] = "好一片繁华景象！",
 	["~wangqing"] = "来世再不渡清江。",
 
+	["$panjinlian"] = "126",
 	["#panjinlian"] = "墙头杏", -- min 3hp (qlfd)
 	["panjinlian"] = "潘金莲",
+	["illustrator:panjinlian"] = "hs8887",
 	["designer:panjinlian"] = "烨子&凌天翼",
 	["cv:panjinlian"] = "小酒【天子会工作室】",
 	["meihuo"] = "魅惑",
@@ -419,10 +472,12 @@ return {
 	["$shengui2"] = "奴家有夫家了。",
 	["~panjinlian"] = "大错铸成两命丧，风吹败柳赴黄泉。",
 
+	["$lishishi"] = "128",
 	["#lishishi"] = "绝色", -- min 3hp (fcdc)
 	["lishishi"] = "李师师",
+	["illustrator:lishishi"] = "热血水浒",
 	["cv:lishishi"] = "空无的念【月玲珑】",
-	["coder:lishishi"] = "皇叔",
+	["coder:lishishi"] = "Lycio",
 	["qinxin"] = "沁心",
 	[":qinxin"] = "回合开始时，你可以声明一种花色并进行一次判定：若结果为你所声明的花色，则你回复1点体力，否则你获得该判定牌。",
 	["yinjian"] = "引荐",
@@ -433,8 +488,10 @@ return {
 	["$yinjian2"] = "今晚，教你见天子一面。",
 	["~lishishi"] = "陛下，妾身去矣！",
 
+	["$yanxijiao"] = "129",
 	["#yanxijiao"] = "花魁女", -- min 3hp (qlfd)
 	["yanxijiao"] = "阎婆惜",
+	["illustrator:yanxijiao"] = "LIUQU",
 	["cv:yanxijiao"] = "蒲小猫【天子会工作室】",
 	["suocai"] = "索财",
 	[":suocai"] = "出牌阶段，你可以和一名男性角色拼点。若你赢，则你获得双方拼点的牌。若你没赢，则该角色对你造成1点伤害。每阶段限一次。",

@@ -79,10 +79,12 @@ Photo::Photo()
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
     avatar_area->setPen(Qt::NoPen);
+    avatar_area->setZValue(0.3);
 
     small_avatar_area = new QGraphicsRectItem(0, 0, 42, 36, this);
     small_avatar_area->setPos(86, 30);
     small_avatar_area->setPen(Qt::NoPen);
+    small_avatar_area->setZValue(0.3);
 
     equips << &weapon << &armor << &defensive_horse << &offensive_horse;
     int i;
@@ -100,7 +102,7 @@ Photo::Photo()
     ready_item->hide();
 
     mark_item = new QGraphicsTextItem(this);
-    mark_item->setPos(5, 79);
+    mark_item->setPos(0, 178);
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
@@ -276,7 +278,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
-        mark_item->setDocument(player->getMarkDoc());
+        mark_item->setDocument(player->getMarkDoc(false));
     }
 
     updateAvatar();
@@ -664,9 +666,11 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     int n = player->getHandcardNum();
     if(n > 0){
         painter->drawPixmap(2, 68, handcard);
+        painter->setPen(Qt::yellow);
         painter->drawText(8, 86, QString::number(n));
     }
 
+    painter->setPen(Qt::white);
     QString state_str = player->getState();
     if(!state_str.isEmpty() && state_str != "online"){
         painter->drawText(1, 100, Sanguosha->translate(state_str));

@@ -26,7 +26,7 @@ Settings::Settings()
 #ifdef Q_OS_WIN32
     :QSettings("config.ini", QSettings::IniFormat)
 #else
-    :QSettings("QSanguosha.com", "QSanguosha")
+    :QSettings("QSanguosha.org", "QSanguosha")
 #endif
 
      ,Rect(-ViewWidth/2, -ViewHeight/2, ViewWidth, ViewHeight)
@@ -59,16 +59,14 @@ void Settings::init(){
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
     GameMode = value("GameMode", "02p").toString();
 
-/*
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "CGDK" << "YBYT" << "FCDC";
-        banlist << "test" << "god" << "sp" << "interchange"
-                << "guben" << "stanley" << "pass"
-                << "joy" << "kuso" << "joyer";
+        banlist << "test" << "god" << "sp" << "gift"
+                //<< "joy" << "kuso" << "joyer"
+                ;
 
         setValue("BanPackages", banlist);
-    }*/
+    }
     BanPackages = value("BanPackages").toStringList();
 
     ContestMode = value("ContestMode", false).toBool();
@@ -107,6 +105,7 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
+    CircularView = value("CircularView", true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
@@ -143,13 +142,16 @@ void Settings::init(){
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
     }
-/*
-    pairs_ban << "shenwuyong"
-              << "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
-              << "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
-              << "oupeng+wangqing" << "gaoqiu+luozhenren" << "jiashi+shenzhangqing"
-              << "husanniang+zhaoji" << "dingdesun+wangqing";
-*/
+
+    pairs_ban << "tongguan" << "tongguanf" << "caijing"
+              << "gaoqiu+luozhenren"
+              //<< "shenwuyong"
+              //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
+              //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
+              //<< "oupeng+wangqing" << "jiashi+shenzhangqing"
+              //<< "husanniang+zhaoji" << "dingdesun+wangqing"
+              ;
+
     QStringList banlist = value("Banlist/Roles").toStringList();
     foreach(QString ban_general, roles_ban){
         if(!banlist.contains(ban_general))

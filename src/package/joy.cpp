@@ -388,7 +388,7 @@ public:
                 //womei:recover self
                 RecoverStruct womei;
                 womei.who = miheng;
-                room->recover(miheng, womei);
+                room->recover(miheng, womei, true);
             }
             else if(word == "dc"){
                 room->sendLog(gitlog);
@@ -430,7 +430,7 @@ public:
                     RecoverStruct rini;
                     rini.card = card;
                     rini.who = miheng;
-                    room->recover(target, rini);
+                    room->recover(target, rini, true);
                 }
             }
             else if(word == "hs"){
@@ -458,8 +458,8 @@ public:
                     ServerPlayer *target = room->askForPlayerChosen(miheng, players, objectName());
                     RecoverStruct worimei;
                     worimei.who = miheng;
-                    room->recover(target, worimei);
-                    room->recover(miheng, worimei);
+                    room->recover(target, worimei, true);
+                    room->recover(miheng, worimei, true);
                 }
             }
             else if(word == "dsh"){
@@ -495,7 +495,7 @@ public:
 
                 RecoverStruct riwomei;
                 riwomei.who = miheng;
-                room->recover(target, riwomei);
+                room->recover(target, riwomei, true);
             }
             else if(word == "hhh"){
                 room->sendLog(gitlog);

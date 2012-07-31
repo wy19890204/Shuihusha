@@ -395,7 +395,7 @@ void MainWindow::on_actionAbout_triggered()
                       "My QQ: 365840793 <br/>"
                       "My Weibo: http://weibo.com/moligaloo <br/>"
                       ).arg(email));
-
+/*
     QString config;
 
 #ifdef QT_NO_DEBUG
@@ -403,10 +403,10 @@ void MainWindow::on_actionAbout_triggered()
 #else
     config = "debug";
 #endif
-
-    content.append(tr("Current version: %1 %2 (%3)<br/>")
+*/
+    content.append(tr("Current version: %1 (%2)<br/>")
                    .arg(Sanguosha->getVersion())
-                   .arg(config)
+                   //.arg(config)
                    .arg(Sanguosha->getVersionName()));
 
     const char *date = __DATE__;
@@ -416,10 +416,10 @@ void MainWindow::on_actionAbout_triggered()
     QString project_url = "http://github.com/Moligaloo/QSanguosha";
     content.append(tr("Project home: <a href='%1'>%1</a> <br/>").arg(project_url));
 
-    QString forum_url = "http://qsanguosha.com";
+    QString forum_url = "http://qsanguosha.org";
     content.append(tr("Forum: <a href='%1'>%1</a> <br/>").arg(forum_url));
 
-    Window *window = new Window(tr("About QSanguosha"), QSize(365, 411));
+    Window *window = new Window(tr("About QSanguosha"), QSize(425, 451));
     scene->addItem(window);
 
     window->addContent(content);

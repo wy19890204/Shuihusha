@@ -1377,7 +1377,7 @@ void Room::swapPile(){
     else{
         if(times == 6)
             gameOver(".");
-        if(mode == "04_1v3"){
+        if(mode == "dusong"){
             int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
             if(times == limit)
                 gameOver(".");
@@ -1626,7 +1626,7 @@ void Room::prepareForStart(){
             broadcastProperty(m_players.at(i), "role");
         }
 
-    }else if(mode == "04_1v3"){
+    }else if(mode == "dusong"){
         ServerPlayer *lord = m_players.at(qrand() % 4);
         int i = 0;
         for(i=0; i<4; i++){
@@ -2204,7 +2204,6 @@ void Room::chooseGenerals(){
 }
 
 void Room::run(){
-    setGerenalGender("anjiang", "M");
     // initialize random seed for later use
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
@@ -2244,9 +2243,9 @@ void Room::run(){
         thread_1v1->start();
 
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
-    }else if(mode == "04_1v3"){
+    }else if(mode == "dusong"){
         ServerPlayer *lord = m_players.first();
-        setPlayerProperty(lord, "general", "dongping");
+        setPlayerProperty(lord, "general", "zhang1dong");
 
         const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
         const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
@@ -2712,7 +2711,7 @@ void Room::sendDamageLog(const DamageStruct &data){
 bool Room::hasWelfare(const ServerPlayer *player) const{
     if(mode == "06_3v3")
         return player->isLord() || player->getRole() == "renegade";
-    else if(mode == "04_1v3")
+    else if(mode == "dusong")
         return false;
     else if(Config.EnableHegemony)
         return false;
@@ -2820,7 +2819,7 @@ void Room::startGame(){
         }
     }
 
-    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3" && mode != "04_1v3" && !Config.EnableBasara){
+    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3" && mode != "dusong" && !Config.EnableBasara){
         foreach(ServerPlayer *player, m_players)
             broadcastProperty(player, "general2");
     }
@@ -2868,9 +2867,7 @@ void Room::startGame(){
     connect(thread, SIGNAL(started()), this, SIGNAL(game_start()));
 
     GameRule *game_rule;
-    if(mode == "04_1v3")
-        game_rule = new HulaoPassMode(this);
-    else if(Config.EnableScene)	//changjing
+    if(Config.EnableScene)	//changjing
         game_rule = new SceneRule(this);	//changjing
     else
         game_rule = new GameRule(this);
@@ -3489,7 +3486,7 @@ void Room::askForGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_
     }
 
     LogMessage log;
-    log.type = "#GuanxingResult";
+    log.type = up_only ? "#GuanxingUpOnly" : "#GuanxingResult";
     log.from = zhuge;
     log.arg = QString::number(top_cards.length());
     log.arg2 = QString::number(bottom_cards.length());

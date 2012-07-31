@@ -57,6 +57,7 @@ public:
     ushort DetectorPort;
     int MaxCards;
 
+    bool CircularView;
     bool FitInView;
     bool EnableHotKey;
     bool EnableMinimizeDialog;

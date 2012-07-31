@@ -78,8 +78,9 @@ void Player::setMaxHp(int max_hp){
     setMaxHP(max_hp);
 }
 
-int Player::getLostHp() const{
-    return max_hp - qMax(hp, 0);
+int Player::getLostHp(bool zeromax) const{
+    int local_hp = zeromax ? qMax(hp, 0) : hp;
+    return max_hp - local_hp;
 }
 
 bool Player::isWounded() const{

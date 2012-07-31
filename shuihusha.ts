@@ -263,8 +263,8 @@
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1009"/>
-        <source>Colla skill</source>
-        <translation>联动技</translation>
+        <source>Tenkei skill</source>
+        <translation>天启技</translation>
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1010"/>
@@ -1599,11 +1599,6 @@
         <translation>4 人局</translation>
     </message>
     <message>
-        <location filename="src/core/engine.cpp" line="65"/>
-        <source>4 players (Hulao Pass)</source>
-        <translation>4 人局 [独松关1v3]</translation>
-    </message>
-    <message>
         <location filename="src/core/engine.cpp" line="66"/>
         <source>5 players</source>
         <translation>5 人局</translation>
@@ -1745,7 +1740,7 @@
     <message>
         <location filename="src/dialog/generaloverview.ui" line="62"/>
         <source>MaxHP</source>
-        <translation>初始体力</translation>
+        <translation>体力</translation>
     </message>
     <message>
         <location filename="src/dialog/generaloverview.ui" line="67"/>
@@ -1753,9 +1748,14 @@
         <translation>包</translation>
     </message>
     <message>
-        <location filename="src/dialog/generaloverview.ui" line="81"/>
-        <source>Skill</source>
-        <translation>技能</translation>
+        <location filename="src/dialog/generaloverview.ui" line="72"/>
+        <source>ID</source>
+        <translation>编号</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/generaloverview.ui" line="229"/>
+        <source>Illustrator</source>
+        <translation>插画</translation>
     </message>
     <message>
         <location filename="src/dialog/generaloverview.ui" line="152"/>
@@ -1917,7 +1917,7 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="134"/>
         <source>Start game</source>
-        <translation>启动游戏</translation>
+        <translation>联机启动</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="142"/>
@@ -2206,8 +2206,8 @@
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="407"/>
-        <source>Current version: %1 %2 (%3)&lt;br/&gt;</source>
-        <translation>当前版本: %1 %2 (%3)&lt;br/&gt;</translation>
+        <source>Current version: %1 (%2)&lt;br/&gt;</source>
+        <translation>当前版本: %1 (%2)&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="414"/>
@@ -2251,7 +2251,7 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="392"/>
         <source>This is the open source clone of the popular &lt;b&gt;Sanguosha&lt;/b&gt; game,totally written in C++ Qt GUI framework &lt;br /&gt;My Email: &lt;a href=&apos;mailto:%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;My QQ: 365840793 &lt;br/&gt;My Weibo: http://weibo.com/moligaloo &lt;br/&gt;</source>
-        <translation>这是 &lt;b&gt;三国杀&lt;/b&gt; 的开源克隆，完全基于 C++ Qt GUI 框架&lt;br /&gt; 我的电子邮件：moligaloo@gmail.com &lt;br/&gt;</translation>
+        <translation>这是 &lt;b&gt;三国杀&lt;/b&gt; 的开源克隆，完全基于 C++ Qt GUI 框架&lt;br /&gt; 我的电子邮件：moligaloo@gmail.com &lt;br/&gt; 我的QQ: 365840793 &lt;br/&gt; 我的微博: http://weibo.com/moligaloo &lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="631"/>
@@ -3529,7 +3529,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="278"/>
         <source>AI Chat</source>
-        <translation>开启 AI 聊天</translation>
+        <translation>允许AI卖萌聊天</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="285"/>
@@ -3802,24 +3802,6 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/core/settings.cpp" line="102"/>
         <source>%1&apos;s server</source>
         <translation>%1的服务器</translation>
-    </message>
-</context>
-<context>
-    <name>Skill</name>
-    <message>
-        <location filename="src/core/skill.cpp" line="41"/>
-        <source> [Limited]</source>
-        <translation>【限定技】</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="42"/>
-        <source> [Compulsory]</source>
-        <translation> [锁定技]</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="43"/>
-        <source> [Wake]</source>
-        <translation> [觉醒技]</translation>
     </message>
 </context>
 <context>

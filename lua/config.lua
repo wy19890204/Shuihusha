@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20120621",
-	version_name = "终结版F1.9 党の版",
+	version = "20120731",
+	version_name = "终结版F2.0α",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -15,7 +15,6 @@ config = {
 	"ExCard",
 	"Events",
 	"Gift",
---	"CustomCard",
 --	"Kuso",
 --	"Joy",
 
@@ -39,6 +38,7 @@ config = {
 	},
 
 	scene_names = {
+	"Dusong",
 	"Couple",
 --[[	"Zombie",
 	"Legend",
