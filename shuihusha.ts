@@ -263,8 +263,8 @@
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1009"/>
-        <source>Colla skill</source>
-        <translation>联动技</translation>
+        <source>Tenkei skill</source>
+        <translation>天启技</translation>
     </message>
     <message>
         <location filename="src/dialog/cardeditor.cpp" line="1010"/>
@@ -2206,8 +2206,8 @@
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="407"/>
-        <source>Current version: %1 %2 (%3)&lt;br/&gt;</source>
-        <translation>当前版本: %1 %2 (%3)&lt;br/&gt;</translation>
+        <source>Current version: %1 (%2)&lt;br/&gt;</source>
+        <translation>当前版本: %1 (%2)&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="414"/>
@@ -2251,7 +2251,7 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="392"/>
         <source>This is the open source clone of the popular &lt;b&gt;Sanguosha&lt;/b&gt; game,totally written in C++ Qt GUI framework &lt;br /&gt;My Email: &lt;a href=&apos;mailto:%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt; &lt;br/&gt;My QQ: 365840793 &lt;br/&gt;My Weibo: http://weibo.com/moligaloo &lt;br/&gt;</source>
-        <translation>这是 &lt;b&gt;三国杀&lt;/b&gt; 的开源克隆，完全基于 C++ Qt GUI 框架&lt;br /&gt; 我的电子邮件：moligaloo@gmail.com &lt;br/&gt;</translation>
+        <translation>这是 &lt;b&gt;三国杀&lt;/b&gt; 的开源克隆，完全基于 C++ Qt GUI 框架&lt;br /&gt; 我的电子邮件：moligaloo@gmail.com &lt;br/&gt; 我的QQ: 365840793 &lt;br/&gt; 我的微博: http://weibo.com/moligaloo &lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="631"/>
@@ -3802,24 +3802,6 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/core/settings.cpp" line="102"/>
         <source>%1&apos;s server</source>
         <translation>%1的服务器</translation>
-    </message>
-</context>
-<context>
-    <name>Skill</name>
-    <message>
-        <location filename="src/core/skill.cpp" line="41"/>
-        <source> [Limited]</source>
-        <translation>【限定技】</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="42"/>
-        <source> [Compulsory]</source>
-        <translation> [锁定技]</translation>
-    </message>
-    <message>
-        <location filename="src/core/skill.cpp" line="43"/>
-        <source> [Wake]</source>
-        <translation> [觉醒技]</translation>
     </message>
 </context>
 <context>
