@@ -18,3 +18,4 @@ font/font.7z
 etc/customScenes/custom_scenario.txt
 *.dylib
 *sha.exe
+image/*.rcc
