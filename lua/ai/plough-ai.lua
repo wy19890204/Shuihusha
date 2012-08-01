@@ -188,7 +188,7 @@ end
 sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
 	self:speak("assassinate", self.player:getGeneral():isFemale(), to)
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
-	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end	
+	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end
 end
 
 sgs.ai_card_intention.Assassinate = 90

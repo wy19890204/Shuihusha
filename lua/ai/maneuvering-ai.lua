@@ -64,7 +64,7 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 		return
 	end
 
-	if ((enemy:getArmor() and enemy:getArmor():objectName() == "eight_diagram") or enemy:getHandcardNum() > 2) 
+	if ((enemy:getArmor() and enemy:getArmor():objectName() == "eight_diagram") or enemy:getHandcardNum() > 2)
 		and not ((self:isEquip("Axe") and #allcards > 4) or self.player:getHandcardNum() > 1+self.player:getHp()) then
 		return
 	end
@@ -141,20 +141,20 @@ function SmartAI:getChainedEnemies()
 	return chainedEnemies
 end
 
-function SmartAI:isGoodChainPartner(player)  
+function SmartAI:isGoodChainPartner(player)
     player = player or self.player
 	if player:getRole() == "lord" then
 		return false
 	end
 	if player:hasSkill("buqu") or (self:hasSkills(sgs.masochism_skill,player) and player:getHp() > 1) or
-		(self.player:hasSkill("niepan") and self.player:getMark("@@nirvana") > 0) then  
+		(self.player:hasSkill("niepan") and self.player:getMark("@@nirvana") > 0) then
 		return true
 	end
 	return false
 end
 
-function SmartAI:isGoodChainTarget(who)    
-    local haslord                                                           
+function SmartAI:isGoodChainTarget(who)
+    local haslord
 	local good = #(self:getChainedEnemies(self.player))
 	local bad = #(self:getChainedFriends(self.player))
 	for _, friend in ipairs(self:getChainedFriends(self.player)) do
@@ -167,11 +167,11 @@ function SmartAI:isGoodChainTarget(who)
 		if self:cantbeHurt(friend) then
 			return false
 		end
-		if self:isGoodChainPartner(friend) then 
-			good = good+1 
+		if self:isGoodChainPartner(friend) then
+			good = good+1
 		end
-		if self:isWeak(friend) then 
-			good = good-1 
+		if self:isWeak(friend) then
+			good = good-1
 		end
 	end
 	for _, enemy in ipairs(self:getChainedEnemies(self.player)) do
@@ -181,18 +181,18 @@ function SmartAI:isGoodChainTarget(who)
 		if self:cantbeHurt(enemy) then
 			return false
 		end
-		if self:isGoodChainPartner(enemy) then 
-			bad = bad+1 
+		if self:isGoodChainPartner(enemy) then
+			bad = bad+1
 		end
-		if self:isWeak(enemy) then 
-			bad = bad-1 
+		if self:isWeak(enemy) then
+			bad = bad-1
 		end
 	end
 	return good > bad
 end
 
 
-function SmartAI:useCardIronChain(card, use)    
+function SmartAI:useCardIronChain(card, use)
 	use.card = card
 	if #self.enemies == 1 and #(self:getChainedFriends()) <= 1 then return end
 	local friendtargets = {}
@@ -240,7 +240,7 @@ sgs.ai_card_intention.IronChain=function(card,from,tos)
 	for _, to in ipairs(tos) do
 		if to:isChained() then
 			sgs.updateIntention(from, to, 80)
-		else 
+		else
 			sgs.updateIntention(from, to, -80)
 		end
 	end
@@ -251,7 +251,7 @@ sgs.ai_use_priority.IronChain = 2.8
 
 sgs.dynamic_value.benefit.IronChain = true
 
-function SmartAI:useCardFireAttack(fire_attack, use)  
+function SmartAI:useCardFireAttack(fire_attack, use)
 	if self.player:hasSkill("wuyan") then return end
 	local lack = {
 		spade = true,
@@ -271,7 +271,7 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 
 	self:sort(self.enemies, "defense")
 	for _, enemy in ipairs(self.enemies) do
-		if (self:objectiveLevel(enemy) > 3) and not enemy:isKongcheng() and not self.room:isProhibited(self.player, enemy, fire_attack)  
+		if (self:objectiveLevel(enemy) > 3) and not enemy:isKongcheng() and not self.room:isProhibited(self.player, enemy, fire_attack)
 			and self:damageIsEffective(enemy, sgs.DamageStruct_Fire, self.player) and self:hasTrickEffective(fire_attack, enemy)
 			and not self:cantbeHurt(enemy)
 			and not (enemy:isChained() and not self:isGoodChainTarget(enemy)) then
@@ -303,7 +303,7 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 	if #targets_succ > 0 then
 		use.card = fire_attack
 		if use.to then use.to:append(targets_succ[1]) end
-	elseif self.player:isChained() and self:isGoodChainTarget(self.player) and (self:isGoodChainPartner(self.player) 
+	elseif self.player:isChained() and self:isGoodChainTarget(self.player) and (self:isGoodChainPartner(self.player)
 	or (self:isEquip("SilverLion") and self:hasSkill("fankui"))) and self.player:getHandcardNum() > 1 then
 		use.card = fire_attack
 		if use.to then use.to:append(self.player) end
