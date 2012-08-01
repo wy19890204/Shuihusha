@@ -62,10 +62,13 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 		local enemies = {}
 		local i = 0
 		local king = self.room:getKingdoms()
+		local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 		self:sort(self.enemies, "handcard")
 		for _, enemy in ipairs(self.enemies) do
-			table.insert(enemies, enemy:objectName())
-			i = i + 1
+			if not self:slashProhibit(slash, enemy) then
+				table.insert(enemies, enemy:objectName())
+				i = i + 1
+			end
 			if i >= king then break end
 		end
 		if king >= #enemies and #enemies > 0 then

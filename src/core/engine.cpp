@@ -610,7 +610,7 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false, using_new_3v3 = false;
+    bool exclude_disaters = false, using_new_3v3 = false, include_gifts = true;
 
     if(Config.GameMode == "06_3v3"){
         using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
@@ -618,14 +618,19 @@ QList<int> Engine::getRandomCards() const{
                             using_new_3v3;
     }
 
-    if(Config.GameMode == "dusong")
+    if(Config.GameMode == "dusong"){
         exclude_disaters = true;
+        include_gifts = false;
+    }
 
     QList<int> list;
     foreach(Card *card, cards){
         card->clearFlags();
 
         if(exclude_disaters && card->inherits("Disaster"))
+            continue;
+
+        if(!include_gifts && card->getPackage() == "gift")
             continue;
 
         if(card->getPackage() == "Special3v3" && using_new_3v3){
