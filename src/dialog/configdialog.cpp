@@ -142,6 +142,7 @@ void ConfigDialog::saveConfig()
     Config.FitInView = ui->fitInViewCheckBox->isChecked();
     Config.setValue("FitInView", Config.FitInView);
 
+    Config.CircularView = ui->circularViewCheckBox->isChecked();
     Config.setValue("CircularView", Config.CircularView);
 
     Config.setValue("NoIndicator", ui->noIndicatorCheckBox->isChecked());
