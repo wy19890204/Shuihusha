@@ -677,7 +677,7 @@ sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
 				if #card_ids == 2 then
 					use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
 					if use.to then use.to:append(yangzhi) end
-					return 
+					return
 				end
 			end
 		end
