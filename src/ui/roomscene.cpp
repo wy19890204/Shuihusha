@@ -3286,7 +3286,7 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = ServerInfo.GameMode != "dusong" ?
+        QString bgmusic_path = ServerInfo.GameMode != "dusong" && !ServerInfo.EnableBasara && !ServerInfo.EnableHegemony ?
                                "audio/system/background.mp3" :
                                "audio/system/dsgbackground.mp3";
 

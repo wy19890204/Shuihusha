@@ -24,7 +24,8 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 			self:objectiveLevel(enemy)>3 and
 			self:slashIsEffective(card, enemy) and
 			not self:slashProhibit(card, enemy) then
-			if not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
+			local cheat_card = sgs.Sanguosha:getCard(self.room:getDrawPile():first())
+			if cheat_card:getSuit() == sgs.Card_Heart and not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))
 				self:sortByUseValue(cards, true)
 				for _, car in ipairs(cards) do
