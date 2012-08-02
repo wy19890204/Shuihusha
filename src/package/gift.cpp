@@ -1,5 +1,6 @@
 #include "gift.h"
 #include "skill.h"
+#include "clientstruct.h"
 
 Zongzi::Zongzi(Suit suit, int number):BasicCard(suit, number){
     setObjectName("zongzi");
@@ -15,14 +16,19 @@ QString Zongzi::getEffectPath(bool is_male) const{
 }
 
 bool Zongzi::isAvailable(const Player *quyuan) const{
-    return !quyuan->hasSkill("lisao");
+    if(ServerInfo.GameMode != "dusong")
+        return quyuan->getMark("HaveEaten") == 0;
+    else
+        return true;
 }
 
 void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
-    room->setPlayerProperty(source, "maxhp", source->getMaxHp() + 1);
-    room->setPlayerProperty(source, "hp", source->getHp() + 1);
+    int n = ServerInfo.GameMode != "dusong" ? 1 : -1;
+    room->setPlayerProperty(source, "maxhp", source->getMaxHp() + n);
+    room->setPlayerProperty(source, "hp", source->getHp() + n);
     room->acquireSkill(source, "lisao");
+    room->setPlayerMark(source, "HaveEaten", 1);
 
     room->setEmotion(source, "zongzi");
 }
