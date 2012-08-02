@@ -50,11 +50,11 @@ sgs.ai_skill_cardask["@shunshui"] = function(self, data)
 	local move = data:toCardMove()
 	local suit = sgs.Sanguosha:getCard(move.card_id):getSuitString()
 	local cards = self.player:getCards("he")
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuitString() == suit then
-		    return card:getEffectiveId()
+			return card:getEffectiveId()
 		end
 	end
 	return "."
@@ -80,7 +80,7 @@ sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 	self:sort(friends, "hp")
 	for _, friend in ipairs(friends) do
 		if self:isFriend(friend) and friend ~= self.player then
-		    return friend
+			return friend
 		end
 	end
 	return friends[1]
@@ -96,11 +96,11 @@ sgs.ai_skill_cardask["@fangzhen"] = function(self, data)
 	end
 	local suit = damage.card:getSuitString()
 	local cards = self.player:getCards("he")
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuitString() == suit then
-		    return card:getEffectiveId()
+			return card:getEffectiveId()
 		end
 	end
 	return "."
@@ -150,11 +150,11 @@ local xiayao_skill={}
 xiayao_skill.name = "xiayao"
 table.insert(sgs.ai_skills, xiayao_skill)
 xiayao_skill.getTurnUseCard = function(self, inclusive)
-    local cards = sgs.QList2Table(self.player:getHandcards())
+	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuit() == sgs.Card_Spade then
-		    local suit = card:getSuitString()
+			local suit = card:getSuitString()
 			local number = card:getNumberString()
 			local card_id = card:getEffectiveId()
 			local card_str = ("ecstasy:xiayao[%s:%s]=%d"):format(suit, number, card_id)
@@ -267,7 +267,7 @@ local yuanpei_skill={}
 yuanpei_skill.name = "yuanpei"
 table.insert(sgs.ai_skills, yuanpei_skill)
 yuanpei_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YuanpeiCard") then
+	if self.player:hasUsed("YuanpeiCard") then
 		if not self.player:hasFlag("yuanpei") or self.player:isKongcheng() then return end
 		local cards = sgs.QList2Table(self.player:getCards("h"))
 		self:sortByUseValue(cards, true)
@@ -290,9 +290,9 @@ sgs.ai_skill_use_func["YuanpeiCard"] = function(card,use,self)
 	self:sort(self.friends, "defense")
 	for _, enemy in ipairs(self.friends) do
 		if enemy:getGeneral():isMale() then
-            use.card = card
-		    if use.to then use.to:append(enemy) end
-            return
+			use.card = card
+			if use.to then use.to:append(enemy) end
+			return
 		end
 	end
 end

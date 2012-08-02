@@ -10,16 +10,16 @@ jieao=sgs.CreateTriggerSkill{
 	events={sgs.PhaseChange},
 
 	on_trigger = function(self,event,player,data)
-        local room = player:getRoom()
+		local room = player:getRoom()
 		if player:getPhase() == sgs.Player_Start and player:getHp() > player:getHandcardNum() then
-            local log = sgs.LogMessage()
-            log.type = "#TriggerSkill";
-            log.from = player;
-            log.arg = self:objectName();
-            room:sendLog(log);
-            player:drawCards(2);
-        end
-        return false
+			local log = sgs.LogMessage()
+			log.type = "#TriggerSkill";
+			log.from = player;
+			log.arg = self:objectName();
+			room:sendLog(log);
+			player:drawCards(2);
+		end
+		return false
 	end
 }
 
@@ -37,7 +37,7 @@ yulucard=sgs.CreateSkillCard{
 yulu=sgs.CreateViewAsSkill{
 	name = "yulu",
 	n = 998,
-	
+
 	view_filter = function(self, selected, to_select)
 		return not to_select:isEquipped()
 	end,
@@ -85,7 +85,7 @@ ViewMyWords=sgs.CreateViewAsSkill{
 	end,
 
 	enabled_at_play=function(self, player)
-        return not player:getPile("word"):isEmpty()
+		return not player:getPile("word"):isEmpty()
 	end,
 }
 
@@ -94,17 +94,17 @@ numa=sgs.CreateTriggerSkill{
 	frequency = sgs.Skill_NotFrequent,
 	events = {sgs.PhaseChange},
 	view_as_skill = ViewMyWords,
-	
+
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()
 		if player:getPhase() ~= sgs.Player_Finish then return false end
 		if player:getPile("word"):isEmpty() then return false end
-        if not room:askForSkillInvoke(player, self:objectName()) then return false end
-        
+		if not room:askForSkillInvoke(player, self:objectName()) then return false end
+
 		local c, word = "", ""
 		for _, i in sgs.qlist(player:getPile("word")) do
 			c = string.sub(sgs.Sanguosha:getCard(i):getSuitString(), 1, 1)
-		
+
 			local log = sgs.LogMessage()
 			log.type = "#Numasingle"
 			log.from = player
@@ -113,7 +113,7 @@ numa=sgs.CreateTriggerSkill{
 			word = word .. c
 		end
 
-        local gitlog = sgs.LogMessage()
+		local gitlog = sgs.LogMessage()
 		gitlog.type = "#Numa_" .. word
 		gitlog.from = player
 		gitlog.arg = "numa_notice"
@@ -475,7 +475,7 @@ numa=sgs.CreateTriggerSkill{
 		for _, i in sgs.qlist(player:getPile("word")) do
 			room:throwCard(i)
 		end
-        return false;
+		return false;
 	end,
 }
 
@@ -522,7 +522,7 @@ huanzicard=sgs.CreateSkillCard{
 	name = "huanzi",
 	target_fixed=false,
 	filter = function(self, targets, to_select, player)
-	    return #targets==0 and not to_select:getGeneral():isMale() and not to_select:faceUp()
+		return #targets==0 and not to_select:getGeneral():isMale() and not to_select:faceUp()
 	end,
 	on_effect=function(self, effect)
 		effect.to:turnOver()

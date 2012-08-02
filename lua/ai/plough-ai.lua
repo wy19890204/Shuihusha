@@ -24,7 +24,7 @@ function sgs.ai_armor_value.gold_armor(player, self)
 end
 
 function SmartAI:searchForEcstasy(use,enemy,slash)
-    if not self.toUse then return nil end
+	if not self.toUse then return nil end
 
 	for _,card in ipairs(self.toUse) do
 		if card:getId()~= slash:getId() then return nil end

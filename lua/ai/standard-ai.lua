@@ -802,7 +802,7 @@ local dalei_skill={}
 dalei_skill.name = "dalei"
 table.insert(sgs.ai_skills, dalei_skill)
 dalei_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("DaleiCard") or self.player:isKongcheng() then return end
+	if self.player:hasUsed("DaleiCard") or self.player:isKongcheng() then return end
 	return sgs.Card_Parse("@DaleiCard=.")
 end
 sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
@@ -907,7 +907,7 @@ sgs.ai_skill_cardask["@jishi"] = function(self, data)
 	for _, card in ipairs(cards) do
 		if card:inherits("TrickCard") or card:inherits("BasicCard") then
 			self:speak("jishi")
-		    return card:getEffectiveId()
+			return card:getEffectiveId()
 		end
 	end
 	return "."
@@ -926,11 +926,11 @@ yanshou_skill.getTurnUseCard = function(self)
 	if self.player:getMark("@life") < 1 then return end
 	local cards = self.player:getHandcards()
 	local hearts = {}
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuit() == sgs.Card_Heart then
-		    table.insert(hearts, card:getId())
+			table.insert(hearts, card:getId())
 		end
 		if #hearts == 2 then break end
 	end
@@ -976,11 +976,11 @@ wuji_skill.getTurnUseCard = function(self)
 	if self:slashIsAvailable() and self:getCardsNum("Slash") > 0 then return end
 	local cards = self.player:getCards("h")
 	local slashs = {}
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards,true)
 	for _,card in ipairs(cards)  do
 		if card:inherits("Slash") then
-		    table.insert(slashs, card:getId())
+			table.insert(slashs, card:getId())
 		end
 	end
 	if #slashs == 0 then return end
@@ -1116,7 +1116,7 @@ local yongle_skill={}
 yongle_skill.name = "yongle"
 table.insert(sgs.ai_skills, yongle_skill)
 yongle_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YongleCard") then return end
+	if self.player:hasUsed("YongleCard") then return end
 	return sgs.Card_Parse("@YongleCard=.")
 end
 sgs.ai_skill_use_func["YongleCard"]=function(card,use,self)
@@ -1197,7 +1197,7 @@ meihuo_skill.getTurnUseCard = function(self)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards)  do
 		if card:getSuit() == sgs.Card_Heart then
-		    return sgs.Card_Parse("@MeihuoCard=" .. card:getEffectiveId())
+			return sgs.Card_Parse("@MeihuoCard=" .. card:getEffectiveId())
 		end
 	end
 	return
@@ -1247,7 +1247,7 @@ local yinjian_skill={}
 yinjian_skill.name = "yinjian"
 table.insert(sgs.ai_skills, yinjian_skill)
 yinjian_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() <= 2 then return end
+	if self.player:hasUsed("YinjianCard") or self.player:getHandcardNum() <= 2 then return end
 	return sgs.Card_Parse("@YinjianCard=.")
 end
 sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
@@ -1290,7 +1290,7 @@ local suocai_skill={}
 suocai_skill.name = "suocai"
 table.insert(sgs.ai_skills, suocai_skill)
 suocai_skill.getTurnUseCard = function(self)
-    if not self.player:hasUsed("SuocaiCard") and not self.player:isKongcheng() then
+	if not self.player:hasUsed("SuocaiCard") and not self.player:isKongcheng() then
 		local max_card = self:getMaxCard()
 		if max_card and self.player:getHandcardNum() > 2 then
 			return sgs.Card_Parse("@SuocaiCard=" .. max_card:getEffectiveId())
@@ -1301,9 +1301,9 @@ sgs.ai_skill_use_func["SuocaiCard"]=function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
 		if not enemy:isKongcheng() and enemy:getGeneral():isMale() then
-            use.card = card
-		    if use.to then use.to:append(enemy) end
-            return
+			use.card = card
+			if use.to then use.to:append(enemy) end
+			return
 		end
 	end
 end

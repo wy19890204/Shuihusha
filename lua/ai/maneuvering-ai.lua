@@ -23,7 +23,7 @@ sgs.ai_use_priority.Fan = 2.655
 sgs.ai_use_priority.Vine = 0.6
 
 sgs.ai_skill_invoke.fan = function(self, data)
-    local target = data:toSlashEffect().to
+	local target = data:toSlashEffect().to
 		if self:isFriend(target) then
 			return target:isChained() and self:isGoodChainTarget(target)
 		else
@@ -142,7 +142,7 @@ function SmartAI:getChainedEnemies()
 end
 
 function SmartAI:isGoodChainPartner(player)
-    player = player or self.player
+	player = player or self.player
 	if player:getRole() == "lord" then
 		return false
 	end
@@ -154,11 +154,11 @@ function SmartAI:isGoodChainPartner(player)
 end
 
 function SmartAI:isGoodChainTarget(who)
-    local haslord
+	local haslord
 	local good = #(self:getChainedEnemies(self.player))
 	local bad = #(self:getChainedFriends(self.player))
 	for _, friend in ipairs(self:getChainedFriends(self.player)) do
-	    if friend:getRole() == "lord" then
+		if friend:getRole() == "lord" then
 			return false
 		end
 		if friend:objectName() == self.player:objectName() and not self:isGoodChainPartner(self.player) then
@@ -216,7 +216,7 @@ function SmartAI:useCardIronChain(card, use)
 			if use.to then use.to:append(friendtargets[1]) end
 			if use.to then use.to:append(friendtargets[2]) end
 		elseif #friendtargets == 1 then
-		    if #enemytargets > 0 then
+			if #enemytargets > 0 then
 				if use.to then use.to:append(friendtargets[1]) end
 				if use.to then use.to:append(enemytargets[1]) end
 			elseif zourun and self:isFriend(zourun) then
