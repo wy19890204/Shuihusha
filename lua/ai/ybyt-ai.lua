@@ -103,7 +103,7 @@ local shexin_skill={}
 shexin_skill.name = "shexin"
 table.insert(sgs.ai_skills, shexin_skill)
 shexin_skill.getTurnUseCard = function(self)
-    if not self.player:hasUsed("ShexinCard") and not self.player:isNude() then
+	if not self.player:hasUsed("ShexinCard") and not self.player:isNude() then
 		self:sort(self.enemies, "handcard2")
 		if self.enemies[1]:getHandcardNum() <= 3 then return end
 		local cards = self.player:getCards("he")
@@ -121,7 +121,7 @@ sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
 	if use.to then
 		use.to:append(self.enemies[1])
 	end
-    use.card=card
+	use.card=card
 end
 
 -- jiayao
@@ -148,5 +148,5 @@ sheyan_skill.getTurnUseCard = function(self)
 	end
 end
 sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
-    use.card=card
+	use.card=card
 end

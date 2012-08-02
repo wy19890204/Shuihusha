@@ -68,8 +68,8 @@ local banzhuang_skill={}
 banzhuang_skill.name = "banzhuang"
 table.insert(sgs.ai_skills, banzhuang_skill)
 banzhuang_skill.getTurnUseCard = function(self,inclusive)
-    local cards = self.player:getHandcards()
-    cards = sgs.QList2Table(cards)
+	local cards = self.player:getHandcards()
+	cards = sgs.QList2Table(cards)
 	for _,card in ipairs(cards)  do
 		if card:getSuit() == sgs.Card_Heart or inclusive then
 			local number = card:getNumberString()
@@ -123,7 +123,7 @@ sgs.ai_skill_use["@@zishi"] = function(self, prompt)
 	self:sortByUseValue(cards, true)
 	for _,card in ipairs(cards) do
 		if card:isBlack() and self:getUseValue(card) < 6 then
-		    if (self:isFriend(target) and target:getHandcardNum() < 3) or self:isEnemy(target) then
+			if (self:isFriend(target) and target:getHandcardNum() < 3) or self:isEnemy(target) then
 				return "@ZishiCard=" .. card:getEffectiveId() .. "->."
 			end
 		end
@@ -169,16 +169,16 @@ eyan_skill.name = "eyan"
 table.insert(sgs.ai_skills, eyan_skill)
 eyan_skill.getTurnUseCard = function(self)
 	local jink = self:getCard("Jink")
-    if self.player:hasUsed("EyanCard") or not jink then return end
+	if self.player:hasUsed("EyanCard") or not jink then return end
 	return sgs.Card_Parse("@EyanCard=.")
 end
 sgs.ai_skill_use_func["EyanCard"]=function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:inMyAttackRange(self.player) and enemy:getGeneral():isMale() then
-            use.card = card
-		    if use.to then use.to:append(enemy) end
-            return
+			use.card = card
+			if use.to then use.to:append(enemy) end
+			return
 		end
 	end
 end
@@ -318,7 +318,7 @@ local qianxian_skill={}
 qianxian_skill.name = "qianxian"
 table.insert(sgs.ai_skills, qianxian_skill)
 qianxian_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("QianxianCard") then return end
+	if self.player:hasUsed("QianxianCard") then return end
 	local cards = self.player:getCards("h")
 	cards = sgs.QList2Table(cards)
 	for _, acard in ipairs(cards) do
