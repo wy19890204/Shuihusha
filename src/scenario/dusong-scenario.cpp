@@ -144,12 +144,18 @@ public:
                 if(player->isLord()){
                     if(setjmp(env) == Transfiguration){
                         player = room->getLord();
+
+                        room->broadcastInvoke("animate", "lightbox:$vqdp:3000");
+                        room->getThread()->delay(1500);
                         room->transfigure(player, "zhang2dong", true, true);
 
                         QList<const Card *> tricks = player->getJudgingArea();
                         foreach(const Card *trick, tricks)
                             room->throwCard(trick);
+                        if(player->isChained())
+                            room->setPlayerProperty(player, "chained", false);
 
+                        room->getThread()->delay(1500);
                     }else
                         player->drawCards(8, false);
                 }else
@@ -175,7 +181,7 @@ public:
                     longjmp(env, Transfiguration);
                 }
 
-                return false;
+                break;
             }
 
         case Death:{
