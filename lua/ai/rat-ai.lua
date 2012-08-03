@@ -150,8 +150,7 @@ local xiayao_skill={}
 xiayao_skill.name = "xiayao"
 table.insert(sgs.ai_skills, xiayao_skill)
 xiayao_skill.getTurnUseCard = function(self, inclusive)
-    local cards = self.player:getCards("h")
-    cards=sgs.QList2Table(cards)
+    local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuit() == sgs.Card_Spade then
@@ -169,7 +168,7 @@ sgs.ai_view_as["xiayao"] = function(card, player, card_place)
 	local suit = card:getSuitString()
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
-	if card:getSuit() == sgs.Card_Spade then
+	if card:getSuit() == sgs.Card_Spade and card_place ~= sgs.Player_Equip then
 		return ("ecstasy:xiayao[%s:%s]=%d"):format(suit, number, card_id)
 	end
 end
