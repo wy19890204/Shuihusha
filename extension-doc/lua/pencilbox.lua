@@ -65,6 +65,6 @@ sgs.LoadTranslationTable{
 	[":luapoji"] = "若你的手牌数小于你的体力值，你可以失去1点体力，视为你使用了一张【无懈可击】；若你的手牌数大于或等于你的体力值，你可以将一张手牌当【无懈可击】使用。",
 
 	["LuapojiCard"] = "破计",
-    ["pencilbox"] = "笔筒",
+	["pencilbox"] = "笔筒",
 }
 

@@ -78,10 +78,10 @@ function setInitialTables()
 	sgs.priority_skill = 		"haoshen|jishi|qiaogong|shentou|shenhuo|yushui|huatian|cuihuo"
 	sgs.save_skill = 			"jijiu|buyi"
 	sgs.exclusive_skill = 		"qingshang"
-	sgs.cardneed_skill =        "paoxiao|tianyi|xianzhen|shuangxiong|jizhi|guose|duanliang|qixi|qingnang|" ..
+	sgs.cardneed_skill = 		"paoxiao|tianyi|xianzhen|shuangxiong|jizhi|guose|duanliang|qixi|qingnang|" ..
 								"jieyin|renjie|zhiheng|rende|jujian|guicai|guidao|jilve|longhun|wusheng|longdan"
-	sgs.drawpeach_skill =       "guitai|shentou|yongle"
-	sgs.recover_skill =         "jishi|kongmen|guitai|yushui|qiangqu|sijiu"
+	sgs.drawpeach_skill = 		"guitai|shentou|yongle"
+	sgs.recover_skill =			"jishi|kongmen|guitai|yushui|qiangqu|sijiu"
 
 	for _, aplayer in sgs.qlist(global_room:getAllPlayers()) do
 		table.insert(sgs.role_evaluation, aplayer:objectName())

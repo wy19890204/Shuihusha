@@ -13,7 +13,7 @@ local taolue_skill={}
 taolue_skill.name = "taolue"
 table.insert(sgs.ai_skills, taolue_skill)
 taolue_skill.getTurnUseCard = function(self)
-    if not self.player:hasUsed("TaolueCard") and not self.player:isKongcheng() then
+	if not self.player:hasUsed("TaolueCard") and not self.player:isKongcheng() then
 		local max_card
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
@@ -31,9 +31,9 @@ sgs.ai_skill_use_func["TaolueCard"]=function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
 		if not enemy:isKongcheng() and not enemy:getEquips():isEmpty() then
-		    if use.to then use.to:append(enemy) end
-            use.card=card
-            return
+			if use.to then use.to:append(enemy) end
+			use.card=card
+			return
 		end
 	end
 end

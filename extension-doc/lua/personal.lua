@@ -14,7 +14,7 @@ eatdeath=sgs.CreateTriggerSkill{
 	end,
 
 	on_trigger = function(self,event,player,data)
-        local room = player:getRoom()
+		local room = player:getRoom()
 		local tenkei = room:findPlayerBySkillName(self:objectName())
 		if not tenkei then return false end
 
@@ -46,7 +46,7 @@ eatdeath=sgs.CreateTriggerSkill{
 			end
 			tenkei:setTag("EatDeath", sgs.QVariant(table.concat(eatdeath_skills, "+")))
 		end
-        return false
+		return false
 	end
 }
 
@@ -57,16 +57,16 @@ skydao=sgs.CreateTriggerSkill
 	events={sgs.Damaged},
 
 	on_trigger=function(self,event,player,data)
-        local room = player:getRoom()
+		local room = player:getRoom()
 		if player:getPhase() == sgs.Player_NotActive then
-            local log = sgs.LogMessage()
+			local log = sgs.LogMessage()
 			log.type = "#SkydaoMAXHP"
 			log.from = player
 			log.arg = tonumber(player:getMaxHp())
 			log.arg2 = self:objectName()
 			room:setPlayerProperty(player, "maxhp", sgs.QVariant(player:getMaxHp() + 1))
 			room:sendLog(log)
-        end
+		end
 	end
 }
 
@@ -77,12 +77,12 @@ noqing=sgs.CreateTriggerSkill{
 	priority = -1,
 
 	default_choice = function(player)
-        if player:getMaxHp() >= player:getHp() + 2 then
-            return "maxhp"
-        else
-            return "hp"
+		if player:getMaxHp() >= player:getHp() + 2 then
+			return "maxhp"
+		else
+			return "hp"
 		end
-        end,
+		end,
 
 	on_trigger=function(self,event,player,data)
 		local room = player:getRoom()

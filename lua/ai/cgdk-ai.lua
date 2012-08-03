@@ -76,7 +76,7 @@ sgs.ai_skill_playerchosen["citan"] = function(self, targets)
 	self:sort(friends, "handcard")
 	for _, friend in ipairs(friends) do
 		if self:isFriend(friend) then
-		    return friend
+			return friend
 		end
 	end
 	return targets[1]
@@ -171,7 +171,7 @@ local lingdi_skill={}
 lingdi_skill.name = "lingdi"
 table.insert(sgs.ai_skills, lingdi_skill)
 lingdi_skill.getTurnUseCard = function(self)
-    if self.player:hasUsed("LingdiCard") or self.player:isNude() then return end
+	if self.player:hasUsed("LingdiCard") or self.player:isNude() then return end
 	local cards = self.player:getCards("he")
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)

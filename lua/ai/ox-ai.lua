@@ -82,7 +82,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	self:sort(self.friends_noself, "handcard")
 	for i = #self.friends_noself, 1, -1 do
 		if not self.friends_noself[i]:isKongcheng() and self.player:getKingdom() ~= self.friends_noself[i]:getKingdom() then
-		    if max_card then
+			if max_card then
 				return "@ZhengfaCard=" .. max_card:getEffectiveId() .. "->" .. self.friends_noself[i]:objectName()
 			end
 		end
@@ -151,11 +151,11 @@ table.insert(sgs.ai_skills, sheru_skill)
 sheru_skill.getTurnUseCard = function(self)
 	if self.player:hasUsed("SheruCard") then return end
 	local cards = self.player:getCards("h")
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:isBlack() and card:inherits("BasicCard") then
-		    return sgs.Card_Parse("@SheruCard=" .. card:getEffectiveId())
+			return sgs.Card_Parse("@SheruCard=" .. card:getEffectiveId())
 		end
 	end
 end
@@ -205,7 +205,7 @@ lianzhu_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["LianzhuCard"] = function(card,use,self)
 	if not use.isDummy then self:speak("lianzhu") end
-    use.card=card
+	use.card=card
 end
 
 -- huangxin
