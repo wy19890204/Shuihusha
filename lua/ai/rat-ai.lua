@@ -85,6 +85,17 @@ sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
 	end
 	return friends[1]
 end
+sgs.ai_skill_cardchosen["lihun"] = function(self, who)
+	if not who:isKongcheng() then
+		local cards = sgs.QList2Table(who:getHandcards())
+		self:sortByUseValue(cards)
+		return cards[1]
+	else
+		local cards = sgs.QList2Table(who:getCards("ej"))
+		self:sortByUseValue(cards)
+		return cards[1]
+	end
+end
 
 -- zhuwu
 -- fangzhen

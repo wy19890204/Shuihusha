@@ -147,7 +147,7 @@ public:
     void addDelayedTrick(const Card *trick);
     void removeDelayedTrick(const Card *trick);
     QList<const DelayedTrick *> delayedTricks() const;
-    bool containsTrick(const QString &trick_name) const;
+    bool containsTrick(const QString &trick_name, bool consi_hq = true) const;
     const DelayedTrick *topDelayedTrick() const;
 
     virtual int getHandcardNum() const = 0;
