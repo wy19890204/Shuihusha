@@ -316,7 +316,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     if(source){
                         bool invoke = false;
                         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-                            if(tmp->containsTrick("treasury")){
+                            if(tmp->containsTrick("treasury", false)){
                                 invoke = true;
                                 break;
                             }

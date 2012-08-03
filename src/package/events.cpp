@@ -205,7 +205,7 @@ NanaStars::NanaStars(Suit suit, int number):EventsCard(suit, number){
 }
 
 bool NanaStars::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->containsTrick("treasury");
+    return targets.isEmpty() && to_select->containsTrick("treasury", false);
 }
 
 void NanaStars::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{

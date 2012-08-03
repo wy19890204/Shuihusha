@@ -57,7 +57,7 @@ void Settings::init(){
     }
 
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
-    GameMode = value("GameMode", "02p").toString();
+    GameMode = value("GameMode", "08p").toString();
 
     if(!contains("BanPackages")){
         QStringList banlist;

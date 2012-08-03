@@ -482,7 +482,7 @@ public:
                 const DelayedTrick *trick = DelayedTrick::CastFrom(card);
                 QList<ServerPlayer *> tos;
                 foreach(ServerPlayer *p, room->getAlivePlayers()){
-                    if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName()))
+                    if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName(), false))
                         tos << p;
                 }
                 if(trick && trick->isVirtualCard())
