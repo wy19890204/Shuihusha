@@ -370,7 +370,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::NotActive){
+        if(zhuwu->getMark("@embattle") > 0 && zhuwu->getPhase() == Player::NotActive){
             Room *room = zhuwu->getRoom();
             if(zhuwu->isNude())
                 return false;
@@ -383,7 +383,7 @@ public:
             if(n < 5){
                 room->playSkillEffect(objectName());
                 room->broadcastInvoke("animate", "lightbox:$buzhen:5500");
-                zhuwu->loseMark("@buvr");
+                zhuwu->loseMark("@embattle");
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
                 room->getThread()->delay(5000);
@@ -881,8 +881,8 @@ RatPackage::RatPackage()
     General *zhuwu = new General(this, "zhuwu", "kou", 3);
     zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
-    zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
-    related_skills.insertMulti("buzhen", "#@buvr-1");
+    zhuwu->addSkill(new MarkAssignSkill("@embattle", 1));
+    related_skills.insertMulti("buzhen", "#@embattle-1");
     zhuwu->addSkill(new Fangzhen);
 
     General *qingzhang = new General(this, "qingzhang", "kou", 3);
