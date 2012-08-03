@@ -515,7 +515,7 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
     QString suit_str = judge.card->getSuitString();
     QString pattern = QString(".|%1").arg(suit_str);
     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-    if(room->askForCard(dragon, pattern, prompt, true, QVariant(), CardDiscarded)){
+    if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
         if(dragon->getMark("wudao") == 0)
             room->playSkillEffect("qimen", qrand() % 2 + 1);
         else

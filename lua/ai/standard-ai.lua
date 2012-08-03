@@ -344,10 +344,12 @@ sgs.ai_skill_invoke["yunchou"] = true
 -- yixing
 function SmartAI:getYixingCard(judge)
 	local equips = {}
-	for _, player in ipairs(self.enemies) do
-		local pequips = player:getEquips()
-		for _, equip in sgs.qlist(pequips) do
-			table.insert(equips, equip)
+	if self:getUseValue(judge.card) < 5.5 or judge.card:inherits("Jink") or judge.card:inherits("Collateral") then
+		for _, player in ipairs(self.enemies) do
+			local pequips = player:getEquips()
+			for _, equip in sgs.qlist(pequips) do
+				table.insert(equips, equip)
+			end
 		end
 	end
 	for _, player in ipairs(self.friends) do
@@ -364,7 +366,7 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 	if self:needRetrial(judge) then
 		local players = sgs.QList2Table(self.room:getAllPlayers())
 		local card_id = self:getYixingCard(judge)
-		if card_id == -1 then return "." end
+		if card_id < 0 then return "." end
 		for _, player in ipairs(players) do
 			local pequips = player:getEquips()
 			for _, equip in sgs.qlist(pequips) do
@@ -384,18 +386,51 @@ sgs.ai_card_intention.QimenCard = function(card, from, tos)
 	sgs.updateIntentions(from, tos, 90)
 end
 
-sgs.ai_skill_use["@@qimen"] = function(self, prompt)
-	local player = self.room:getCurrent()
-	if player == self.player or self:isFriend(player) then return "." end
-	local rm = math.random(1, 3)
-	if rm ~= 2 then
-		return "@QimenCard=.->" .. player:objectName()
+function SmartAI:qimenValue(current, target) -- 判断是否有被奇门的必要，参数为当前行动者和被奇门者
+--	if current:distanceTo(target) > 2 then return false end
+	if target:getMark("@shut") > 0 then return false end
+	if current == target then
+		if self:hasSkills("ganlin|huace|haoshen|jiashu|yongle|qinxin|shuangzhan|shentou|yuanpei|tongxia|xunlie", target) then
+			return true
+		end
 	else
-		return "."
+		if self:hasSkills(sgs.masochism_skill, target) then return true end
+		if self:isFriend(current) and target:hasSkill("xiagu") and self:getCardsNum("EquipCard", target) > 0 then return true end
+		if self:isEnemy(current) and current:isWounded() and target:hasSkill("jishi") and not target:isKongcheng() then return true end
+	end
+	return false -- false没必要，true有必要
+end
+sgs.ai_skill_use["@@qimen"] = function(self, prompt)
+	local current = self.room:getCurrent()
+	local target
+	for _, tmp in ipairs(self.enemies) do
+		if self:qimenValue(current, tmp) then
+			target = tmp
+			break
+		end
+	end
+	if target then
+		return "@QimenCard=.->" .. target:objectName()
+	else
+		if self:isEnemy(current) and math.random(1, 3) ~= 2 then
+			return "@QimenCard=.->" .. current:objectName()
+		else
+			return "."
+		end
 	end
 end
---sgs.ai_skill_cardask["@qimen"] = function(self, data)
---end
+sgs.ai_skill_cardask["@qimen"] = function(self, data)
+	if self:isWeak() or self.player:isKongcheng() then return "." end
+	local suit = data:toString()
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByKeepValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit and self:getUseValue(card) < 5.7 then
+			return card:getEffectiveId()
+		end
+	end
+	return "."
+end
 
 -- guansheng
 -- tongwu
