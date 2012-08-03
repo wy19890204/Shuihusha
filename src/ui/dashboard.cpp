@@ -575,13 +575,11 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
         QPixmapCache::insert(path, label);
     }
 
-    if(label.isNull())
-    {
+    if(label.isNull()){
         painter->setPen(Qt::white);
         QString text = QString("%1").arg(card->label());
         painter->drawText(10, y + 20, text);
-    }else
-    {
+    }else{
         QFont font("Algerian",12);
         font.setBold(true);
         painter->setFont(font);
@@ -592,12 +590,10 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     QRect suit_rect(width - 19, y + 10, 13, 13);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
-
     // draw the number of equip
 
     //painter->drawText(width - 4,y + 23,QString("%1").arg(card->getNumberString()));
     painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
-
 
     painter->setPen(Qt::white);
     if(equip->isMarked()){
