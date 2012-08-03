@@ -572,13 +572,13 @@ QList<const DelayedTrick *> Player::delayedTricks() const{
     return delayed_tricks;
 }
 
-bool Player::containsTrick(const QString &trick_name) const{
+bool Player::containsTrick(const QString &trick_name, bool consi_hq) const{
     foreach(const DelayedTrick *trick, delayed_tricks){
         if(trick->objectName() == trick_name)
             return true;
     }
 
-    if(hasEquip("haiqiu"))
+    if(hasEquip("haiqiu") && consi_hq)
         return trick_name != "tsunami";
     return false;
 }

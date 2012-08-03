@@ -48,7 +48,7 @@ void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer 
             if(p->getEquip(equip_index) == NULL)
                 tos << p;
         }else{
-            if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName()))
+            if(!player->isProhibited(p, trick) && !p->containsTrick(trick->objectName(), false))
                 tos << p;
         }
     }
