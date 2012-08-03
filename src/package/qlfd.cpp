@@ -116,13 +116,13 @@ public:
         ServerPlayer *qiaoyun = room->findPlayerBySkillName(objectName());
         if(!qiaoyun || qiaoyun->isLord() || player->isLord() || qiaoyun == player)
             return false;
-        if(qiaoyun->getMark("@pfxl") && qiaoyun->askForSkillInvoke(objectName())){
+        if(qiaoyun->getMark("@spray") && qiaoyun->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$panxin:2000");
             QString role = player->getRole();
             player->setRole(qiaoyun->getRole());
             room->setPlayerProperty(player, "panxin", true);
-            qiaoyun->loseMark("@pfxl");
+            qiaoyun->loseMark("@spray");
             qiaoyun->setRole(role);
             qiaoyun->drawCards(1);
             room->getThread()->delay(1500);
@@ -802,8 +802,8 @@ QLFDPackage::QLFDPackage()
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
     panqiaoyun->addSkill(new Panxin);
-    panqiaoyun->addSkill(new MarkAssignSkill("@pfxl", 1));
-    related_skills.insertMulti("panxin", "#@pfxl-1");
+    panqiaoyun->addSkill(new MarkAssignSkill("@spray", 1));
+    related_skills.insertMulti("panxin", "#@spray-1");
     panqiaoyun->addSkill(new Foyuan);
 
     General *wangpo = new General(this, "wangpo", "min", 3, false);

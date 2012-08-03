@@ -186,7 +186,7 @@ function sgs.getDefense(player)
 	if player:hasSkill("qiaojiang") and player:getHandcardNum()>1 then
 		defense = defense + 0.5
 	end
-	if player:hasSkill("shunshui") then
+	if player:hasSkill("fangzhen") or player:hasSkill("zhenlie") then
 		defense = defense + 0.3
 	end
 	return defense
@@ -2323,7 +2323,7 @@ function SmartAI:getTurnUse()
 	self.weaponUsed = false
 
 	if self.player:isLord() then self.retain_thresh = 6 end
-	if self.player:hasSkill("yinyu") and self.player:getMark("@ylyuh") > 0 then
+	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then
 		self.slash_distance_limit = true
 	end
 
@@ -2583,7 +2583,7 @@ function SmartAI:canPaoxiao(player)
 	if player:hasWeapon("crossbow") or player:hasSkill("paoxiao") then
 		return true
 	end
-	if player:hasSkill("yinyu") and player:getMark("@ylyus") > 0 then
+	if player:hasSkill("yinyu") and player:getMark("@stones") > 0 then
 		return true
 	end
 	if player:hasSkill("shalu") and player:getMark("shalu") > 0 then
@@ -2792,15 +2792,9 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 				end
 			end
 		end
-		if player:hasSkill("shunshui") then
-			for _, target in sgs.qlist(self.room:getAllPlayers()) do
-				local juds = target:getJudgingArea():length()
-				n = n + juds
-			end
-		end
 	elseif class_name == "Slash" then
-		if player:hasSkill("wushuang") then
-			n = n * 2
+		if player:hasSkill("guibing") then
+			n = 100
 		end
 		if player:hasSkill("yuanyin") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do

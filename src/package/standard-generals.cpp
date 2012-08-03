@@ -1452,7 +1452,7 @@ public:
         if(damage.card->inherits("Slash")){
             if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
                 && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
-                && !(likui->hasSkill("yinyu") && likui->getMark("@ylyus") > 0))
+                && !(likui->hasSkill("yinyu") && likui->getMark("@stones") > 0))
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
             if(!room->askForSkillInvoke(likui, objectName(), data))
                 return false;
@@ -1773,7 +1773,7 @@ bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->broadcastInvoke("animate", "lightbox:$yanshou");
-    effect.from->loseMark("@life");
+    effect.from->loseMark("@relic");
     LogMessage log;
     log.type = "#Yanshou";
     log.from = effect.from;
@@ -1791,7 +1791,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@life") > 0;
+        return player->getMark("@relic") > 0;
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
@@ -2159,7 +2159,7 @@ public:
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
         ServerPlayer *caijing = room->findPlayerBySkillName(objectName());
-        if(caijing && caijing != killer && caijing->getMark("@quan") > 0){
+        if(caijing && caijing != killer && caijing->getMark("@power") > 0){
             QVariant shiti = QVariant::fromValue((PlayerStar)player);
             if(!room->askForSkillInvoke(caijing, objectName(), shiti))
                 return false;
@@ -2179,7 +2179,7 @@ public:
             }
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$duoquan");
-            caijing->loseMark("@quan");
+            caijing->loseMark("@power");
 
             caijing->obtainCard(player->getWeapon());
             caijing->obtainCard(player->getArmor());
@@ -2398,7 +2398,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         ServerPlayer *xing = room->findPlayerBySkillName(objectName());
-        if(!xing || xing->getMark("@vi") < 1)
+        if(!xing || xing->getMark("@methanol") < 1)
             return false;
         CardUseStruct use = data.value<CardUseStruct>();
         if(!use.card->inherits("Analeptic") || !use.from->isWounded())
@@ -2414,7 +2414,7 @@ public:
             room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
             room->playSkillEffect(objectName());
             room->loseMaxHp(use.from, use.from->getLostHp());
-            xing->loseMark("@vi");
+            xing->loseMark("@methanol");
             if(use.from->isDead())
                 return true;
         }
@@ -2723,8 +2723,8 @@ StandardPackage::StandardPackage()
     General *andaoquan = new General(this, "andaoquan", "min", 3);
     andaoquan->addSkill(new Jishi);
     andaoquan->addSkill(new Yanshou);
-    andaoquan->addSkill(new MarkAssignSkill("@life", 1));
-    related_skills.insertMulti("yanshou", "#@life-1");
+    andaoquan->addSkill(new MarkAssignSkill("@relic", 1));
+    related_skills.insertMulti("yanshou", "#@relic-1");
     andaoquan->addSkill(new Fengyue);
 
     General *husanniang = new General(this, "husanniang", "jiang", 3, false);
@@ -2744,8 +2744,8 @@ StandardPackage::StandardPackage()
     General *caijing = new General(this, "caijing", "guan");
     caijing->addSkill(new Jiashu);
     caijing->addSkill(new Duoquan);
-    caijing->addSkill(new MarkAssignSkill("@quan", 1));
-    related_skills.insertMulti("duoquan", "#@quan-1");
+    caijing->addSkill(new MarkAssignSkill("@power", 1));
+    related_skills.insertMulti("duoquan", "#@power-1");
 
     General *fangla = new General(this, "fangla$", "jiang");
     fangla->addSkill(new Yongle);
@@ -2759,8 +2759,8 @@ StandardPackage::StandardPackage()
     panjinlian->addSkill(new Meihuo);
     panjinlian->addSkill(new Zhensha);
     panjinlian->addSkill(new Shengui);
-    panjinlian->addSkill(new MarkAssignSkill("@vi", 1));
-    related_skills.insertMulti("zhensha", "#@vi-1");
+    panjinlian->addSkill(new MarkAssignSkill("@methanol", 1));
+    related_skills.insertMulti("zhensha", "#@methanol-1");
 
     General *lishishi = new General(this, "lishishi", "min", 3, false);
     lishishi->addSkill(new Qinxin);

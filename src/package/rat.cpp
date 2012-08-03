@@ -104,10 +104,10 @@ public:
     }
 
     static void ClearMarks(Room *room, ServerPlayer *qing){
-        room->setPlayerMark(qing, "@ylyuh", 0);
-        room->setPlayerMark(qing, "@ylyuc", 0);
-        room->setPlayerMark(qing, "@ylyus", 0);
-        room->setPlayerMark(qing, "@ylyud", 0);
+        room->setPlayerMark(qing, "@stoneh", 0);
+        room->setPlayerMark(qing, "@stonec", 0);
+        room->setPlayerMark(qing, "@stones", 0);
+        room->setPlayerMark(qing, "@stoned", 0);
         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
             tmp->removeMark("qinggang");
         room->detachSkillFromPlayer(qing, "#yinyu_range", false);
@@ -115,7 +115,7 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
         if(event == SlashProceed){
-            if(qing->getMark("@ylyud")){
+            if(qing->getMark("@stoned")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 if(effect.slash->getSkillName() != "yuanpei"){
                     int index = effect.from->getMark("mengshi") > 0 ? 13: 7;
@@ -143,20 +143,20 @@ public:
                 log.from = qing;
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
-                        room->setPlayerMark(qing, "@ylyuh", 1);
+                        room->setPlayerMark(qing, "@stoneh", 1);
                         room->acquireSkill(qing, "#yinyu_range");
                         //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
-                        room->setPlayerMark(qing, "@ylyud", 1);
+                        room->setPlayerMark(qing, "@stoned", 1);
                         //room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
-                        room->setPlayerMark(qing, "@ylyus", 1);
+                        room->setPlayerMark(qing, "@stones", 1);
                         //room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
@@ -164,7 +164,7 @@ public:
                 case Card::Club:{
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                             tmp->addMark("qinggang");
-                        room->setPlayerMark(qing, "@ylyuc", 1);
+                        room->setPlayerMark(qing, "@stonec", 1);
                         log.type = "#Yinyu8";
                         break;
                     }
@@ -186,7 +186,7 @@ public:
     }
 
     virtual int getAtkrg(const Player *from) const{
-        if(from->getMark("@ylyuh") > 0)
+        if(from->getMark("@stoneh") > 0)
             return 1234;
         else
             return 0;
@@ -370,7 +370,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@buvr") > 0 && zhuwu->getPhase() == Player::NotActive){
+        if(zhuwu->getMark("@embattle") > 0 && zhuwu->getPhase() == Player::NotActive){
             Room *room = zhuwu->getRoom();
             if(zhuwu->isNude())
                 return false;
@@ -383,7 +383,7 @@ public:
             if(n < 5){
                 room->playSkillEffect(objectName());
                 room->broadcastInvoke("animate", "lightbox:$buzhen:5500");
-                zhuwu->loseMark("@buvr");
+                zhuwu->loseMark("@embattle");
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
                 room->getThread()->delay(5000);
@@ -881,8 +881,8 @@ RatPackage::RatPackage()
     General *zhuwu = new General(this, "zhuwu", "kou", 3);
     zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
-    zhuwu->addSkill(new MarkAssignSkill("@buvr", 1));
-    related_skills.insertMulti("buzhen", "#@buvr-1");
+    zhuwu->addSkill(new MarkAssignSkill("@embattle", 1));
+    related_skills.insertMulti("buzhen", "#@embattle-1");
     zhuwu->addSkill(new Fangzhen);
 
     General *qingzhang = new General(this, "qingzhang", "kou", 3);

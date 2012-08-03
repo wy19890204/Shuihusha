@@ -90,7 +90,7 @@ function SmartAI:useCardSlash(card, use)
 	local no_distance = self.slash_distance_limit
 	self.slash_targets = 1
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
-	if self.player:hasSkill("yinyu") and self.player:getMark("@ylyuh") > 0 then no_distance = true end
+	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then no_distance = true end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
 		self.slash_targets = self.slash_targets + 1
 	end

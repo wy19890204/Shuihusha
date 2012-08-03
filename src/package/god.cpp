@@ -220,7 +220,7 @@ void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->throwCard(this);
     ServerPlayer *target = targets.first();
     room->broadcastInvoke("animate", "lightbox:$duanbi");
-    source->loseMark("@bi");
+    source->loseMark("@arm");
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;
     damage.from = source;
@@ -243,7 +243,7 @@ public:
 
 protected:
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@bi") == 1
+        return player->getMark("@arm") == 1
                 && player->getHp() == 1
                 && player->getMaxHP() > 1;
     }
@@ -611,8 +611,8 @@ GodPackage::GodPackage()
     shenwusong->addRelateSkill("zhusha");
     skills << new Zhusha;
     shenwusong->addSkill(new Duanbi);
-    shenwusong->addSkill(new MarkAssignSkill("@bi", 1));
-    related_skills.insertMulti("duanbi", "#@bi-1");
+    shenwusong->addSkill(new MarkAssignSkill("@arm", 1));
+    related_skills.insertMulti("duanbi", "#@arm-1");
 
     General *shenwuyong = new General(this, "shenwuyong", "god", 3);
     shenwuyong->addSkill(new Xianji);

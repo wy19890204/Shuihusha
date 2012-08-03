@@ -164,7 +164,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *opt) const{
-        if(opt->getMark("@vfui") > 0 && opt->getPhase() == Player::Judge){
+        if(opt->getMark("@wings") > 0 && opt->getPhase() == Player::Judge){
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), 1);
@@ -172,7 +172,7 @@ public:
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
-                opt->loseMark("@vfui");
+                opt->loseMark("@wings");
             }
         }
         return false;
@@ -679,8 +679,8 @@ TigerPackage::TigerPackage()
     General *oupeng = new General(this, "oupeng", "jiang", 5);
     oupeng->addSkill(new Losthp);
     oupeng->addSkill(new Zhanchi);
-    oupeng->addSkill(new MarkAssignSkill("@vfui", 1));
-    related_skills.insertMulti("zhanchi", "#@vfui-1");
+    oupeng->addSkill(new MarkAssignSkill("@wings", 1));
+    related_skills.insertMulti("zhanchi", "#@wings-1");
     oupeng->addRelateSkill("tengfei");
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
