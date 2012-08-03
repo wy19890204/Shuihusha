@@ -394,8 +394,18 @@ sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 		return "."
 	end
 end
---sgs.ai_skill_cardask["@qimen"] = function(self, data)
---end
+sgs.ai_skill_cardask["@qimen"] = function(self, data)
+	if self:isWeak() or self.player:isKongcheng() then return "." end
+	local suit = data:toString()
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByKeepValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit and self:getUseValue(card) < 5.7 then
+			return card:getEffectiveId()
+		end
+	end
+	return "."
+end
 
 -- guansheng
 -- tongwu
