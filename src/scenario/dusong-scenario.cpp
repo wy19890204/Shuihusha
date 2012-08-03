@@ -98,7 +98,7 @@ public:
                 CardStar card = data.value<CardStar>();
                 int n = card->subcardsLength();
                 if(n > 0)
-                    player->gainMark("@true", n);
+                    room->setPlayerMark(player, "@true", n);
             }
             return false;
         }
@@ -120,7 +120,7 @@ public:
                     tarc << target;
                 int card_id = room->askForCardChosen(player, target, "he", objectName());
                 room->throwCard(card_id);
-                //room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
+                room->setPlayerMark(player, "@true", i - 1);
             }
             room->setPlayerMark(player, "@true", 0);
         }
@@ -146,6 +146,7 @@ public:
                         player = room->getLord();
 
                         room->broadcastInvoke("animate", "lightbox:$vqdp:3000");
+                        room->broadcastInvoke("playAudio", "zombify-male");
                         room->getThread()->delay(1500);
                         room->transfigure(player, "zhang2dong", true, true);
 

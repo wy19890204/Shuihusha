@@ -24,8 +24,8 @@ Rectangle {
                 }
             }
             id: image2
-            x: 736
-            y: 510
+            x: 716
+            y: 444
             source: "back.png"
         }
     }
