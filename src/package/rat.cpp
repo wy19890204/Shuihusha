@@ -104,10 +104,10 @@ public:
     }
 
     static void ClearMarks(Room *room, ServerPlayer *qing){
-        room->setPlayerMark(qing, "@ylyuh", 0);
-        room->setPlayerMark(qing, "@ylyuc", 0);
-        room->setPlayerMark(qing, "@ylyus", 0);
-        room->setPlayerMark(qing, "@ylyud", 0);
+        room->setPlayerMark(qing, "@stoneh", 0);
+        room->setPlayerMark(qing, "@stonec", 0);
+        room->setPlayerMark(qing, "@stones", 0);
+        room->setPlayerMark(qing, "@stoned", 0);
         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
             tmp->removeMark("qinggang");
         room->detachSkillFromPlayer(qing, "#yinyu_range", false);
@@ -115,7 +115,7 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
         if(event == SlashProceed){
-            if(qing->getMark("@ylyud")){
+            if(qing->getMark("@stoned")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 if(effect.slash->getSkillName() != "yuanpei"){
                     int index = effect.from->getMark("mengshi") > 0 ? 13: 7;
@@ -143,20 +143,20 @@ public:
                 log.from = qing;
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
-                        room->setPlayerMark(qing, "@ylyuh", 1);
+                        room->setPlayerMark(qing, "@stoneh", 1);
                         room->acquireSkill(qing, "#yinyu_range");
                         //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
-                        room->setPlayerMark(qing, "@ylyud", 1);
+                        room->setPlayerMark(qing, "@stoned", 1);
                         //room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
-                        room->setPlayerMark(qing, "@ylyus", 1);
+                        room->setPlayerMark(qing, "@stones", 1);
                         //room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
@@ -164,7 +164,7 @@ public:
                 case Card::Club:{
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
                             tmp->addMark("qinggang");
-                        room->setPlayerMark(qing, "@ylyuc", 1);
+                        room->setPlayerMark(qing, "@stonec", 1);
                         log.type = "#Yinyu8";
                         break;
                     }
@@ -186,7 +186,7 @@ public:
     }
 
     virtual int getAtkrg(const Player *from) const{
-        if(from->getMark("@ylyuh") > 0)
+        if(from->getMark("@stoneh") > 0)
             return 1234;
         else
             return 0;

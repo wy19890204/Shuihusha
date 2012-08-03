@@ -958,7 +958,7 @@ yanshou_skill={}
 yanshou_skill.name = "yanshou"
 table.insert(sgs.ai_skills, yanshou_skill)
 yanshou_skill.getTurnUseCard = function(self)
-	if self.player:getMark("@life") < 1 then return end
+	if self.player:getMark("@relic") < 1 then return end
 	local cards = self.player:getHandcards()
 	local hearts = {}
 	cards=sgs.QList2Table(cards)
@@ -1134,7 +1134,7 @@ end
 
 -- duoquan
 sgs.ai_skill_invoke["duoquan"] = function(self, data)
-	if self.player:getMark("@quan") == 0 then return false end
+	if self.player:getMark("@power") == 0 then return false end
 	local shiti = data:toPlayer()
 	if shiti:getHandcardNum() <= 3 then
 		return sgs.ai_chaofeng[shiti:getGeneralName()] > 4
@@ -1266,7 +1266,7 @@ end
 function SmartAI:isNoZhenshaMark()
 	if not self.player:isWounded() then return true end
 	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
-		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@vi") > 0 then return false end
+		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@methanol") > 0 then return false end
 	end
 	return true
 end

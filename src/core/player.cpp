@@ -773,7 +773,7 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
 
 bool Player::canSlashWithoutCrossbow() const{
     int n = 1;
-    if(hasSkill("yinyu") && getMark("@ylyus") > 0)
+    if(hasSkill("yinyu") && getMark("@stones") > 0)
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;

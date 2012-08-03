@@ -469,17 +469,17 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
         playSkillEffect("qinlong");
     if(effect.from->hasSkill("yinyu") && effect.slash->getSkillName() != "yuanpei"){
-        if(effect.from->getMark("@ylyus") > 0 && effect.from->getMark("SlashCount") > 1){
+        if(effect.from->getMark("@stones") > 0 && effect.from->getMark("SlashCount") > 1){
             int index = effect.from->getMark("mengshi") > 0 ? qrand() % 2 + 9: qrand() % 2 + 3;
             playSkillEffect("yinyu", index);
         }
-        else if(effect.from->getMark("@ylyuh") > 0){
+        else if(effect.from->getMark("@stoneh") > 0){
             if(effect.from->distanceTo(effect.to) > getAlivePlayers().count() / 4){
                 int index = effect.from->getMark("mengshi") > 0 ? 11: 5;
                 playSkillEffect("yinyu", index);
             }
         }
-        else if(effect.from->getMark("@ylyuc") > 0){
+        else if(effect.from->getMark("@stonec") > 0){
             if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia"))){
                 int index = effect.from->getMark("mengshi") > 0 ? 12: 6;
                 playSkillEffect("yinyu", index);
