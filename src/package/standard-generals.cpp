@@ -2509,7 +2509,7 @@ void YinjianCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     ServerPlayer *to = targets.last();
 
     from->obtainCard(this, false);
-
+    room->getThread()->delay();
     room->obtainCard(to, room->askForCardShow(from, source, "yinjian"), false);
 }
 
