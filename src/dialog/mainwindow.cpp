@@ -379,7 +379,7 @@ void MainWindow::on_actionEnable_Hotkey_toggled(bool checked)
 void MainWindow::on_actionAbout_triggered()
 {
     // Cao Cao's pixmap
-    QString content =  "<center><img src='image/system/moligaloo.png'> <br /> </center>";
+    QString content =  "<center><img src='image/logo/moligaloo.png'> <br /> </center>";
 
     // Cao Cao' poem
     QString poem = tr("Disciples dressed in blue, my heart worries for you. You are the cause, of this song without pause");

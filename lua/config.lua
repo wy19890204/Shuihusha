@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20120731",
-	version_name = "终结版F2.0α",
+	version = "20120804",
+	version_name = "终结版F2.0β",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {

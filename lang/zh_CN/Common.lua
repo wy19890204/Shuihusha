@@ -172,6 +172,7 @@ return {
 	["~sujiangf"] = "赤条条……流氓啊~!",
 
 	["$ubuntenkei"] = "T03",
+	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
 	["cv:ubuntenkei"] = "佚名",

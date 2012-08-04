@@ -17,5 +17,5 @@ font/font.7z
 *sha.pro.user*
 etc/customScenes/custom_scenario.txt
 *.dylib
-*sha.exe
 image/*.rcc
+*sha.exe
