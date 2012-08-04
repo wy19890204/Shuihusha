@@ -26,6 +26,7 @@
 #include <QSystemTrayIcon>
 #include <QInputDialog>
 #include <QLabel>
+#include <QResource>
 
 class FitView : public QGraphicsView
 {
@@ -60,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     scene = NULL;
 
+    QResource::registerResource("image/card.rcc");
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
     connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
@@ -129,6 +131,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
 
 MainWindow::~MainWindow()
 {
+    QResource::unregisterResource("image/card.rcc");
     delete ui;
 }
 

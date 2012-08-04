@@ -6,7 +6,6 @@
 #include "carditem.h"
 #include "lua-wrapper.h"
 #include <QFile>
-#include <QResource>
 
 const Card::Suit Card::AllSuits[4] = {
     Card::Spade,
@@ -23,8 +22,6 @@ Card::Card(Suit suit, int number, bool target_fixed)
 
     if(number < 1 || number > 13)
         number = 0;
-
-    QResource::registerResource("image/card.rcc");
 }
 
 QString Card::getSuitString() const{
