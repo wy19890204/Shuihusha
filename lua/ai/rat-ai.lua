@@ -40,6 +40,8 @@ end
 -- fuji
 sgs.ai_skill_cardask["@fuji"] = function(self, data)
 	local who = data:toPlayer()
+	local card = sgs.Sanguosha:cloneCard("assassinate", sgs.Card_NoSuit, 0)
+	if not self:hasTrickEffective(card, who) then return "." end
 	if self:isFriend(who) or self.player:isKongcheng() then return "." end
 	return self.player:getRandomHandCard():getEffectiveId() or "."
 end
