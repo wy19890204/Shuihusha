@@ -149,7 +149,24 @@ sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 	if self.player:hasSkill("qiongtu") then
 		speak(target, "qiongtu")
 	end
-	return self:isEnemy(target)
+	if self:isFriend(target) and self:isEquip("SilverLion", target) and target:isWounded() then
+		return true
+	else
+		return self:isEnemy(target)
+	end
+end
+sgs.ai_skill_cardchosen["qiongtu"] = function(self, who)
+	if self:isFriend(who) and self:isEquip("SilverLion", who) and who:isWounded() then
+		return who:getArmor()
+	end
+	local cards = {}
+	if not who:isKongcheng() then
+		cards = sgs.QList2Table(who:getHandcards())
+	else
+		cards = sgs.QList2Table(who:getCards("e"))
+	end
+	self:sortByUseValue(cards)
+	return cards[1]
 end
 
 -- baisheng
