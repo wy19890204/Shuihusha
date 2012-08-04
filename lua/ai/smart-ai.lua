@@ -3184,7 +3184,7 @@ function SmartAI:getAoeValue(card, player)
 	return good - bad
 end
 
-function SmartAI:hasTrickEffective(card, player)
+function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护，锦囊无效
 	if player then
 		if self.room:isProhibited(self.player, player, card) then return false end
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
