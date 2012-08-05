@@ -3467,6 +3467,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>双将模式</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="183"/>
+        <source>Enable Reincarnation</source>
+        <translation>启用转世规则</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="184"/>
         <source>Enable Scene</source>
         <translation>场景模式</translation>

@@ -165,6 +165,28 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         room->askForUseCard(player, "Jiefachang", "@jiefachang");
                 }
             }
+            if(player->getNext()->isDead() && Config.EnableReincarnation){
+                ServerPlayer *next = player->getNext();
+                if(next->getHandcardNum() >= 4){
+                    LogMessage log;
+                    log.type = "#ReincarnRevive";
+                    log.from = next;
+                    room->sendLog(log);
+
+                    room->revivePlayer(next);
+
+                    QString oldname = next->getGeneralName();
+                    QString newname = Sanguosha->getRandomGenerals(1).first();
+                    room->transfigure(next, newname, false, true, oldname);
+                    if(next->getMaxHp() == 0)
+                        room->setPlayerProperty(next, "maxhp", 1);
+                    room->setPlayerProperty(next, "hp", 1);
+
+                    QStringList deathnote = room->getTag("DeadPerson").toStringList();
+                    deathnote.removeOne(oldname);
+                    room->setTag("DeadPerson", deathnote);
+                }
+            }
             return;
         }
     }
@@ -221,6 +243,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(player->isLord())
                     setGameProcess(room);
             }
+
+            if(Config.EnableReincarnation)
+                room->attachSkillToPlayer(player, "sacrifice");
 
             room->setTag("FirstRound", true);
             int init = player->hasSkill("beizhan") ? 6 : 4;
@@ -707,6 +732,11 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
 
+            if(Config.EnableReincarnation){
+                QStringList deathnote = room->getTag("DeadPerson").toStringList();
+                deathnote << player->getGeneralName();
+                room->setTag("DeadPerson", deathnote);
+            }
             break;
         }
 

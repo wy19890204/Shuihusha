@@ -35,6 +35,7 @@ public:
     bool DisableChat;
     bool FreeAssignSelf;
     bool Enable2ndGeneral;
+    bool EnableReincarnation;
     bool EnableScene;	//changjing
     bool EnableSame;
     bool EnableEndless;

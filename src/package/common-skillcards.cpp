@@ -39,6 +39,23 @@ void QingnangCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->getRoom()->recover(effect.to, recover);
 }
 
+SacrificeCard::SacrificeCard(){
+    will_throw = false;
+    target_fixed = true;
+}
+
+void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QStringList deathnote = room->getTag("DeadPerson").toStringList();
+    if(deathnote.isEmpty())
+        return;
+    QString choice = deathnote.length() == 1 ? deathnote.first() :
+                     room->askForChoice(source, "sacrifice", deathnote.join("+"));
+    ServerPlayer *target = room->findPlayer(choice, true);
+    const Card *card = room->askForCardShow(source, target, "sacrifice");
+    target->obtainCard(card, false);
+    target->drawCards(1);
+}
+
 UbuncCard::UbuncCard(){
 }
 

@@ -181,6 +181,9 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     second_general_checkbox = new QCheckBox(tr("Enable second general"));
 
+    reincarnation_checkbox  = new QCheckBox(tr("Enable Reincarnation"));
+    reincarnation_checkbox->setChecked(Config.EnableReincarnation);
+
     scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
 
@@ -241,7 +244,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addWidget(free_choose_checkbox);
     layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
-    layout->addWidget(second_general_checkbox);
+    layout->addLayout(HLay(second_general_checkbox, reincarnation_checkbox));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
@@ -884,6 +887,7 @@ bool ServerDialog::config(){
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
+    Config.EnableReincarnation = reincarnation_checkbox->isChecked();
     Config.EnableScene = scene_checkbox->isChecked();		//changjing
     Config.EnableSame = same_checkbox->isChecked();
     Config.EnableEndless = endless_checkbox->isChecked();
@@ -923,6 +927,7 @@ bool ServerDialog::config(){
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);
     Config.setValue("Enable2ndGeneral", Config.Enable2ndGeneral);
+    Config.setValue("EnableReincarnation", Config.EnableReincarnation);
     Config.setValue("EnableScene", Config.EnableScene);	//changjing
     Config.setValue("EnableSame", Config.EnableSame);
     Config.setValue("EnableEndless", Config.EnableEndless);
