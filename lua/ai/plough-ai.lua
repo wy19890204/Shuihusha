@@ -217,7 +217,7 @@ sgs.dynamic_value.lucky_chance.Treasury = true
 -- hai xiao
 function SmartAI:useCardTsunami(card, use)
 	if self.player:containsTrick("tsunami") then return end
---	if self.player:hasSkill("weimu") and card:isBlack() then return end
+	if self.player:hasEquip("haiqiu") then return end
 
 	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
 		if self:hasWizard(self.friends) then

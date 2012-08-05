@@ -452,8 +452,28 @@ CustomCardPackage::CustomCardPackage()
 ADD_PACKAGE(CustomCard)
 */
 
-// test main
 #include "carditem.h"
+// zhuanshi-mode
+class Sacrifice:public ZeroCardViewAsSkill{
+public:
+    Sacrifice():ZeroCardViewAsSkill("sacrifice"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        if(player->hasUsed("SacrificeCard"))
+            return false;
+        foreach(const Player *p, player->getSiblings())
+            if(p->isDead())
+                return !player->isKongcheng();
+        return false;
+    }
+
+    virtual const Card *viewAs() const{
+        return new SacrificeCard;
+    }
+};
+
+// test main
 class Ubuna: public ClientSkill{
 public:
     Ubuna():ClientSkill("ubuna"){
@@ -622,6 +642,8 @@ public:
 TestPackage::TestPackage()
     :Package("test")
 {
+    skills << new Sacrifice;
+    addMetaObject<SacrificeCard>();
 /*
     General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
     zhuanjia->addSkill(new Zhichi);

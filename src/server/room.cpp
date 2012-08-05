@@ -373,6 +373,8 @@ QList<int> Room::getNCards(int n, bool update_pile_number){
 QStringList Room::aliveRoles(ServerPlayer *except) const{
     QStringList roles;
     foreach(ServerPlayer *player, m_alivePlayers){
+        if(Config.EnableReincarnation && player->getMark("@skull") > 0)
+            continue;
         if(player != except)
             roles << player->getRole();
     }
@@ -2459,10 +2461,10 @@ void Room::processResponse(ServerPlayer *player, const QSanGeneralPacket *packet
         emit room_message(tr("Reply command should be %1 instead of %2")
             .arg(player->m_expectedReplyCommand).arg(packet->getCommandType()));
     }
-    else if (packet->m_localSerial != player->m_expectedReplySerial)
+    else if ((int)packet->m_localSerial != player->m_expectedReplySerial)
     {
         emit room_message(tr("Reply serial should be %1 instead of %2")
-            .arg(player->m_expectedReplySerial).arg(packet->m_localSerial));
+            .arg(player->m_expectedReplySerial).arg((int)packet->m_localSerial));
     }
     else success = true; 
 

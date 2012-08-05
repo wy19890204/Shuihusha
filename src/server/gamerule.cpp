@@ -165,6 +165,34 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         room->askForUseCard(player, "Jiefachang", "@jiefachang");
                 }
             }
+            if(Config.EnableReincarnation){
+                ServerPlayer *next = player->getNext();
+                while(next->isDead()){
+                    if(next->getHandcardNum() >= 4){
+                        LogMessage log;
+                        log.type = "#ReincarnRevive";
+                        log.from = next;
+                        room->sendLog(log);
+
+                        room->broadcastInvoke("playAudio", "reincarnation");
+                        room->revivePlayer(next);
+                        room->setPlayerMark(next, "@skull", 1);
+
+                        QString oldname = next->getGeneralName();
+                        QString newname = Sanguosha->getRandomGenerals(1).first();
+                        room->transfigure(next, newname, false, true, oldname);
+                        if(next->getMaxHp() == 0)
+                            room->setPlayerProperty(next, "maxhp", 1);
+                        room->setPlayerProperty(next, "hp", 1);
+
+                        QStringList deathnote = room->getTag("DeadPerson").toStringList();
+                        deathnote.removeOne(oldname);
+                        room->setTag("DeadPerson", deathnote);
+                        room->getThread()->delay(1500);
+                    }
+                    next = next->getNext();
+                }
+            }
             return;
         }
     }
@@ -221,6 +249,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(player->isLord())
                     setGameProcess(room);
             }
+
+            if(Config.EnableReincarnation)
+                room->attachSkillToPlayer(player, "sacrifice");
 
             room->setTag("FirstRound", true);
             int init = player->hasSkill("beizhan") ? 6 : 4;
@@ -707,6 +738,12 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
 
+            if(Config.EnableReincarnation){
+                QStringList deathnote = room->getTag("DeadPerson").toStringList();
+                if(!deathnote.contains(player->getGeneralName()))
+                    deathnote << player->getGeneralName();
+                room->setTag("DeadPerson", deathnote);
+            }
             break;
         }
 
@@ -851,6 +888,9 @@ void GameRule::changeGeneral1v1(ServerPlayer *player) const{
 
 void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const{
     if(killer->isDead())
+        return;
+
+    if(Config.EnableReincarnation && victim->getMark("@skull") > 0)
         return;
 
     if(victim->hasSkill("zuohua")){

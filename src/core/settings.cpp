@@ -77,6 +77,7 @@ void Settings::init(){
     DisableChat = value("DisableChat", false).toBool();
     FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();
+    EnableReincarnation = value("EnableReincarnation", false).toBool();
     EnableScene = value("EnableScene", false).toBool();	//changjing
     EnableSame = value("EnableSame", false).toBool();
     EnableEndless = value("EnableEndless", false).toBool();
@@ -123,7 +124,7 @@ void Settings::init(){
     EnableLastWord = value("EnableLastWord", true).toBool();
     EnableCheatRing = value("EnableCheatRing", true).toBool();
     EnableBgMusic = value("EnableBgMusic", true).toBool();
-    BGMVolume = value("BGMVolume", 1.0f).toFloat();
+    BGMVolume = value("BGMVolume", 0.75f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 

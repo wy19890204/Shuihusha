@@ -326,9 +326,10 @@ sgs.ai_cardshow.fire_attack = function(self, requestor)
 	local result
 	local cards = self.player:getHandcards()
 	for _, card in sgs.qlist(cards) do
-		if priority[card:getSuitString()] > index then
+		local pity = priority[card:getSuitString()]
+		if pity and pity > index then
 			result = card
-			index = priority[card:getSuitString()]
+			index = pity
 		end
 	end
 
