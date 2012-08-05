@@ -146,8 +146,8 @@ void StartScene::printServerInfo(){
                         tr("Scene Mode is disabled"));
 
     server_log->append( Config.EnableReincarnation ?
-                        tr("Reincarnation Mode is enabled") :
-                        tr("Reincarnation Mode is disabled"));
+                        tr("Reincarnation Rule is enabled") :
+                        tr("Reincarnation Rule is disabled"));
 
     server_log->append( Config.EnableSame ?
                         tr("Same Mode is enabled") :

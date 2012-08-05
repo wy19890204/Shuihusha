@@ -99,7 +99,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     if(ServerInfo.Enable2ndGeneral)
         layout->addRow(tr("Max HP scheme"), max_hp_label);
     if(ServerInfo.EnableReincarnation)
-        layout->addRow(tr("Reincarnation Mode"), reincarnation_label);
+        layout->addRow(tr("Reincarnation Rule"), reincarnation_label);
     if(ServerInfo.EnableScene)
         layout->addRow(tr("Scene Mode"), scene_label);
     if(ServerInfo.EnableSame)

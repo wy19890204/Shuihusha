@@ -47,7 +47,7 @@ SacrificeCard::SacrificeCard(){
 void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(!Config.EnableReincarnation)
         return;
-    QStringList deathnote = room->getTag("DeadPerson").toStringList();
+    QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
     if(deathnote.isEmpty())
         return;
     QString choice = deathnote.length() == 1 ? deathnote.first() :

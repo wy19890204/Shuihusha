@@ -1346,3 +1346,37 @@ end
 
 -- huakui
 sgs.ai_skill_invoke["huakui"] = true
+
+-- reincarnation
+local sacrifice_skill={}
+sacrifice_skill.name = "sacrifice"
+table.insert(sgs.ai_skills, sacrifice_skill)
+sacrifice_skill.getTurnUseCard = function(self)
+	if not sgs.GetConfig("EnableReincarnation", false) then return end
+	if not self.player:hasUsed("SacrificeCard") and not self.player:isKongcheng() then
+		local deathnote = self.room:getTag("DeadPerson"):toString():split("+")
+		if deathnote[1] == "" then table.remove(deathnote, 1) end
+		if #deathnote == 0 then return end
+		for _, name in ipairs(deathnote) do
+			local target = self.room:findPlayer(name, true)
+			if self:isFriend(target) then
+				local cards = sgs.QList2Table(self.player:getCards("h"))
+				self:sortByUseValue(cards, true)
+				if self:getUseValue(cards[1]) < 3 then
+					self.xjtarget = name
+					self.xjcard = cards[1]
+					return sgs.Card_Parse("@SacrificeCard=.")
+				end
+			end
+		end
+	end
+end
+sgs.ai_skill_use_func["SacrificeCard"] = function(card,use,self)
+	use.card=card
+end
+sgs.ai_skill_choice["sacrifice"] = function(self, choice)
+	return self.xjtarget
+end
+sgs.ai_cardshow["sacrifice"] = function(self, requestor)
+	return self.xjcard
+end

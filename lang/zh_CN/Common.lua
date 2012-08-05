@@ -150,7 +150,7 @@ return {
 	["sacrifice"] = "献祭",
 	[":sacrifice"] = "转世规则专属技能：出牌阶段，可选择给已死亡角色一张手牌。每回合限一次。\
 ★当任一已死亡角色手牌数达到4张且其上家行动结束后，变身为随机分配的一名武将，以1体力状态复活。",
-	["#ReincarnRevive"] = "%from 获得了足够多的手牌，得到新生！",
+	["#ReincarnRevive"] = "%from 获得了足够多的手牌，转世成功！",
 
 -- endless&custom
 	["endlessmode"] = "无尽模式",
