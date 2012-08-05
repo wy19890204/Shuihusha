@@ -123,7 +123,7 @@ void Settings::init(){
     EnableLastWord = value("EnableLastWord", true).toBool();
     EnableCheatRing = value("EnableCheatRing", true).toBool();
     EnableBgMusic = value("EnableBgMusic", true).toBool();
-    BGMVolume = value("BGMVolume", 1.0f).toFloat();
+    BGMVolume = value("BGMVolume", 0.75f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
