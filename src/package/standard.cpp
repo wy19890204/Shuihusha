@@ -460,7 +460,12 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return !player->isKongcheng() && !player->hasUsed("SacrificeCard");
+        if(player->hasUsed("SacrificeCard"))
+            return false;
+        foreach(const Player *p, player->getSiblings())
+            if(p->isDead())
+                return !player->isKongcheng();
+        return false;
     }
 
     virtual const Card *viewAs() const{

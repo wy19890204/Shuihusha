@@ -45,6 +45,8 @@ SacrificeCard::SacrificeCard(){
 }
 
 void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(!Config.EnableReincarnation)
+        return;
     QStringList deathnote = room->getTag("DeadPerson").toStringList();
     if(deathnote.isEmpty())
         return;
@@ -53,7 +55,6 @@ void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlay
     ServerPlayer *target = room->findPlayer(choice, true);
     const Card *card = room->askForCardShow(source, target, "sacrifice");
     target->obtainCard(card, false);
-    target->drawCards(1);
 }
 
 UbuncCard::UbuncCard(){

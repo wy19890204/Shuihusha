@@ -11,7 +11,7 @@ ServerInfoStruct ServerInfo;
 #include <QCheckBox>
 
 bool ServerInfoStruct::parse(const QString &str){
-    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSCTEZBHAM12]*)");
+    QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSZCTEZBHAM12]*)");
     if(!rx.exactMatch(str)){
         // older version, just take the player count
         int count = str.split(":").at(1).toInt();
@@ -45,6 +45,7 @@ bool ServerInfoStruct::parse(const QString &str){
 
     FreeChoose = flags.contains("F");
     Enable2ndGeneral = flags.contains("S");
+    EnableReincarnation = flags.contains("Z");
     EnableScene = flags.contains("C");
     EnableSame = flags.contains("T");
     EnableEndless = flags.contains("E");
@@ -72,6 +73,7 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     game_mode_label = new QLabel;
     player_count_label = new QLabel;
     two_general_label = new QLabel;
+    reincarnation_label = new QLabel;
     scene_label = new QLabel;
     same_label = new QLabel;
     endless_label = new QLabel;
@@ -96,6 +98,8 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     layout->addRow(tr("2nd general mode"), two_general_label);
     if(ServerInfo.Enable2ndGeneral)
         layout->addRow(tr("Max HP scheme"), max_hp_label);
+    if(ServerInfo.EnableReincarnation)
+        layout->addRow(tr("Reincarnation Mode"), reincarnation_label);
     if(ServerInfo.EnableScene)
         layout->addRow(tr("Scene Mode"), scene_label);
     if(ServerInfo.EnableSame)
@@ -130,6 +134,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     player_count_label->setText(QString::number(player_count));
     port_label->setText(QString::number(Config.ServerPort));
     two_general_label->setText(info.Enable2ndGeneral ? tr("Enabled") : tr("Disabled"));
+    reincarnation_label->setText(info.EnableReincarnation ? tr("Enabled") : tr("Disabled"));
     scene_label->setText(info.EnableScene ? tr("Enabled") : tr("Disabled"));
     same_label->setText(info.EnableSame ? tr("Enabled") : tr("Disabled"));
     endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
@@ -188,6 +193,7 @@ void ServerInfoWidget::clear(){
     game_mode_label->clear();
     player_count_label->clear();
     two_general_label->clear();
+    reincarnation_label->clear();
     scene_label->clear();
     same_label->clear();
     endless_label->clear();

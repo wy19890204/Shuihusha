@@ -3955,6 +3955,16 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/ui/startscene.cpp" line="145"/>
+        <source>Reincarnation Mode is enabled</source>
+        <translation>启用转世规则</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="146"/>
+        <source>Reincarnation Mode is disabled</source>
+        <translation>禁用转世规则</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="145"/>
         <source>Scene Mode is enabled</source>
         <translation>启用场景模式</translation>
     </message>
