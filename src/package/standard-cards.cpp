@@ -636,15 +636,15 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         log.arg = "lianzhu";
         log.to << effect.to;
         room->sendLog(log);
-        first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
+        first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
         if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName());
+            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
 
         if(first_jink && second_jink)
             jink = first_jink;
     }
     else
-        jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName());
+        jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
     if(jink)
         room->setEmotion(effect.to, "jink");
     else{
