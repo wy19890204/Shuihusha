@@ -68,16 +68,18 @@ sgs.dynamic_value.benefit.Counterplot = true
 
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
---	if self.player:hasSkill("wuyan") then return end
 	local target
 	self:sort(self.enemies, "hp")
-	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and self.enemies[1]:getKingdom() ~= self.player:getKingdom() then
+	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and
+		self.enemies[1]:getKingdom() ~= self.player:getKingdom() and
+		self:hasTrickEffective(drivolt, self.enemies[1]) then
 		target = self.enemies[1]
 	end
 	if not target then
 		for _, friend in ipairs(self.friends_noself) do
 			if not friend:isWounded() and not self:isWeak(friend) and
-				friend:getKingdom() ~= self.player:getKingdom() then
+				friend:getKingdom() ~= self.player:getKingdom() and
+				self:hasTrickEffective(drivolt, friend) then
 				target = friend
 				break
 			end
@@ -85,7 +87,8 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	end
 	if not target then
 		for _, enemy in ipairs(self.enemies) do
-			if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() then
+			if enemy:getHp() == 2 and enemy:getKingdom() ~= self.player:getKingdom() and
+				self:hasTrickEffective(drivolt, enemy) then
 				target = enemy
 				break
 			end
@@ -156,12 +159,11 @@ sgs.dynamic_value.benefit.Wiretap = true
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
---	if self.player:hasSkill("wuyan") then return end
 	if not self.enemies[1] then return end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			use.card = ass
-			if use.to then
+			if use.to and self:hasTrickEffective(ass, enemy) then
 				use.to:append(enemy)
 			end
 			return
@@ -172,7 +174,15 @@ function SmartAI:useCardAssassinate(ass, use)
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:hasFlag("ecst") or
 			(not self:isEquip("EightDiagram", enemy) and enemy:getHandcardNum() < 6) then
-			target = enemy
+			if self:hasTrickEffective(ass, enemy) then target = enemy end
+		end
+	end
+	if not target then
+		for _, enemy in ipairs(self.enemies) do
+			if self:hasTrickEffective(ass, enemy) then
+				target = enemy
+				break
+			end
 		end
 	end
 	use.card = ass
@@ -180,7 +190,8 @@ function SmartAI:useCardAssassinate(ass, use)
 		if target then
 			use.to:append(target)
 		else
-			use.to:append(self.enemies[1])
+			local r = math.random(1, #self.enemies)
+			use.to:append(self.enemies[r])
 		end
 	end
 end
@@ -269,12 +280,16 @@ function SmartAI:useCardInspiration(inspiration, use)
 	self:sort(self.friends, "hp")
 	local f = 0
 	for _, friend in ipairs(self.friends) do
-		f = f + friend:getLostHp()
+		if self:hasTrickEffective(inspiration, friend) then
+			f = f + friend:getLostHp()
+		end
 	end
 	self:sort(self.enemies, "hp")
 	local e = 0
 	for _, enemy in ipairs(self.enemies) do
-		e = e + enemy:getLostHp()
+		if self:hasTrickEffective(inspiration, enemy) then
+			e = e + enemy:getLostHp()
+		end
 	end
 	if e > f then return "." end
 	use.card = inspiration

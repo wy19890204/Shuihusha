@@ -43,7 +43,7 @@ sgs.ai_use_value =
 --	DuijueCard = 7,
 --	HaoshenCard = 4,
 	SijiuCard = 5,
-	MaidaoCard = 6.5,
+	MaidaoCard = 4.4,
 	BuyaKnifeCard = 3,
 --	FengmangCard = 8,
 	DaleiCard = 7.2,
@@ -75,7 +75,6 @@ sgs.ai_use_value =
 --	XunlieCard = 2.0,
 	ZiyiCard = -2,
 	ShouwangCard = 3.3,
-	DouzhanCard = 8.4,
 
 	-- qjwm
 	TaolueCard = 7.5,
@@ -136,6 +135,7 @@ sgs.ai_use_value =
 	Drivolt = 5.2,
 	Counterplot = 9,
 --	Wiretap = 9,
+	Wiretap = 1,
 	Assassinate = 8.8,
 	Provistore = 1,
 	Treasury = 1,
@@ -159,8 +159,8 @@ sgs.ai_use_priority = {
 --	DuijueCard = 7,
 --	HaoshenCard = 4,
 	SijiuCard = 3.5,
-	MaidaoCard = 4.5,
-	BuyaKnifeCard = 2,
+	MaidaoCard = 1.2,
+	BuyaKnifeCard = 1.8,
 	DaleiCard = 4.3,
 	WujiCard = 3.3,
 	YanshouCard = 5,
@@ -190,7 +190,6 @@ sgs.ai_use_priority = {
 --	XunlieCard = 2.0,
 	ZiyiCard = 1,
 	ShouwangCard = 4.5,
-	DouzhanCard = 2.5,
 
 	-- qjwm
 	TaolueCard = 5,
