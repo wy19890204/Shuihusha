@@ -7,6 +7,53 @@
 
 static int Transfiguration = 1;
 
+DouzhanCard::DouzhanCard(){
+    mute = true;
+}
+
+bool DouzhanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int slash_targets = 2;
+
+    bool distance_limit = true;
+
+    if(Self->hasSkill("shuangzhan")){
+        int x = 0;
+        foreach(const Player *tmp, Self->getSiblings())
+            if(tmp->isAlive() && Self->inMyAttackRange(tmp))
+                x++;
+        if(x > 2)
+            slash_targets ++;
+    }
+
+    if(Self->hasSkill("qinlong") && !Self->hasEquip())
+        slash_targets ++;
+
+    if(Self->hasWeapon("sun_bow") && isRed() && objectName() == "slash"){
+        slash_targets ++;
+    }
+
+    if(targets.length() >= slash_targets)
+        return false;
+
+    if(Self->hasSkill("paohong") && isBlack()){
+        distance_limit = false;
+    }
+
+    return Self->canSlash(to_select, distance_limit);
+}
+
+void DouzhanCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->setSkillName("douzhan");
+    foreach(int x, getSubcards())
+        slash->addSubcard(Sanguosha->getCard(x));
+    CardUseStruct use;
+    use.card = slash;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
 class Douzhan: public ViewAsSkill{
 public:
     Douzhan():ViewAsSkill("douzhan"){
@@ -31,18 +78,12 @@ public:
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
+        if(cards.length() == 2){
+            DouzhanCard *card = new DouzhanCard();
+            card->addSubcards(cards);
+            return card;
+        }else
             return NULL;
-
-        const Card *first = cards.at(0)->getFilteredCard();
-        const Card *second = cards.at(1)->getFilteredCard();
-
-        Slash *slash = new Slash(first->getSuit(), 0);
-        slash->setSkillName(objectName());
-        slash->addSubcard(first);
-        slash->addSubcard(second);
-
-        return slash;
     }
 };
 
@@ -108,7 +149,7 @@ public:
             QList<ServerPlayer *> tarc;
             for(int i = player->getMark("@true"); i > 0; i--){
                 QList<ServerPlayer *> targets, players;
-                players = tarc.length() == 3 ? tarc : room->getAlivePlayers();
+                players = tarc.length() == 3 ? tarc : room->getOtherPlayers(player);
                 foreach(ServerPlayer *tmp, players){
                     if(!tmp->isNude())
                         targets << tmp;
@@ -311,6 +352,7 @@ DusongScenario::DusongScenario()
     zhang2dong->addSkill(new Zhengzhuang);
     zhang2dong->addSkill(new Feizhi);
 
+    addMetaObject<DouzhanCard>();
 }
 
-ADD_SCENARIO(Dusong);
+ADD_SCENARIO(Dusong)
