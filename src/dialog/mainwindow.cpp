@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     scene = NULL;
 
+    QResource::registerResource("image/skin.rcc");
     QResource::registerResource("image/card.rcc");
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
@@ -132,6 +133,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
 MainWindow::~MainWindow()
 {
     QResource::unregisterResource("image/card.rcc");
+    QResource::unregisterResource("image/skin.rcc");
     delete ui;
 }
 
