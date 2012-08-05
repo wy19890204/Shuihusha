@@ -658,10 +658,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(scenario_button, scenario_combobox);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
-        //hide
-        mini_scenes->setVisible(false);
-        mini_scene_combobox->setVisible(false);
-        mini_scene_button->setVisible(false);
     }
 
     QVBoxLayout *left = new QVBoxLayout;

@@ -108,7 +108,7 @@ public:
             QList<ServerPlayer *> tarc;
             for(int i = player->getMark("@true"); i > 0; i--){
                 QList<ServerPlayer *> targets, players;
-                players = tarc.length() == 3 ? tarc : room->getAlivePlayers();
+                players = tarc.length() == 3 ? tarc : room->getOtherPlayers(player);
                 foreach(ServerPlayer *tmp, players){
                     if(!tmp->isNude())
                         targets << tmp;
@@ -313,4 +313,4 @@ DusongScenario::DusongScenario()
 
 }
 
-ADD_SCENARIO(Dusong);
+ADD_SCENARIO(Dusong)
