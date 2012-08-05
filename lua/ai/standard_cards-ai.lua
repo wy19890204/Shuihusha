@@ -640,6 +640,8 @@ sgs.ai_skill_cardask["savage-assault-slash"] = function(self, data, pattern, tar
 end
 
 sgs.ai_skill_cardask["archery-attack-jink"] = function(self, data, pattern, target)
+	local effect = data:toCardEffect()
+	if effect.from:hasSkill("lianzhu") and self:getCardsNum("Jink") == 1 then return "." end
 	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, target2, "archery_attack")
 end
 
