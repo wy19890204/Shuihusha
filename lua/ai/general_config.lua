@@ -75,6 +75,7 @@ sgs.ai_use_value =
 --	XunlieCard = 2.0,
 	ZiyiCard = -2,
 	ShouwangCard = 3.3,
+	DouzhanCard = 8.4,
 
 	-- qjwm
 	TaolueCard = 7.5,
@@ -189,6 +190,7 @@ sgs.ai_use_priority = {
 --	XunlieCard = 2.0,
 	ZiyiCard = 1,
 	ShouwangCard = 4.5,
+	DouzhanCard = 2.5,
 
 	-- qjwm
 	TaolueCard = 5,
