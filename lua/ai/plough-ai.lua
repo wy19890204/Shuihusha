@@ -177,12 +177,21 @@ function SmartAI:useCardAssassinate(ass, use)
 			if self:hasTrickEffective(ass, enemy) then target = enemy end
 		end
 	end
+	if not target then
+		for _, enemy in ipairs(self.enemies) do
+			if self:hasTrickEffective(ass, enemy) then
+				target = enemy
+				break
+			end
+		end
+	end
 	use.card = ass
 	if use.to then
 		if target then
 			use.to:append(target)
 		else
-			use.to:append(self.enemies[1])
+			local r = math.random(1, #self.enemies)
+			use.to:append(self.enemies[r])
 		end
 	end
 end
