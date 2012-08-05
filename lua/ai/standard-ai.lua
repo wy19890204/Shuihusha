@@ -1137,7 +1137,8 @@ sgs.ai_skill_invoke["duoquan"] = function(self, data)
 	if self.player:getMark("@power") == 0 then return false end
 	local shiti = data:toPlayer()
 	if shiti:getHandcardNum() <= 3 then
-		return sgs.ai_chaofeng[shiti:getGeneralName()] > 4
+		local chaofeng = sgs.ai_chaofeng[shiti:getGeneralName()]
+		return chaofeng and chaofeng > 4
 	else
 		return shiti:getHandcardNum() > 3
 	end
