@@ -227,6 +227,12 @@ void Room::revivePlayer(ServerPlayer *player){
     updateStateItem();
 
     thread->addPlayerSkills(player, true);
+
+    if(Config.EnableReincarnation){
+        QStringList deathnote = getTag("DeadPerson").toString().split("+");
+        deathnote.removeOne(player->getGeneralName());
+        setTag("DeadPerson", deathnote.join("+"));
+    }
 }
 
 static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){

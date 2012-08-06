@@ -185,9 +185,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                             room->setPlayerProperty(next, "maxhp", 1);
                         room->setPlayerProperty(next, "hp", 1);
 
-                        QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
-                        deathnote.removeOne(oldname);
-                        room->setTag("DeadPerson", deathnote.join("+"));
                         room->getThread()->delay(1500);
                     }
                     next = next->getNext();
@@ -736,15 +733,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         return false;
                     }
                 }
-            }
-
-            if(Config.EnableReincarnation){
-                QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
-                if(!deathnote.contains(player->getGeneralName()))
-                    deathnote << player->getGeneralName();
-                if(deathnote.first() == "")
-                    deathnote.removeFirst();
-                room->setTag("DeadPerson", deathnote.join("+"));
             }
             break;
         }
