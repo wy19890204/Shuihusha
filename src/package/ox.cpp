@@ -202,7 +202,7 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
         return targets.isEmpty() && to_select->getKingdom() != Self->getKingdom()
             && !to_select->isKongcheng() && to_select != Self;
     else if(Self->hasFlag("Zhengfa") && getSubcards().isEmpty())
-        return targets.length() < Self->getKingdoms() && to_select != Self;
+        return targets.length() < Self->getKingdoms() && to_select != Self && Self->canSlash(to_select, false);
     else
         return false;
 }

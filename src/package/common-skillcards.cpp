@@ -101,6 +101,12 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
             QString ski = room->askForChoice(source, "ubund", skills.join("+"));
             room->acquireSkill(source, ski);
         }
+        //
+        QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+        qShuffle(all_generals);
+        QStringList choices = all_generals.mid(0, 4);
+        QString name = room->askForGeneral(source, choices);
+        room->transfigure(target, name, false, true, target->getGeneralName());
     }
 }
 
