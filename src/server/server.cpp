@@ -241,10 +241,10 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addWidget(free_choose_checkbox);
+    layout->addLayout(HLay(free_choose_checkbox, reincarnation_checkbox));
     layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
-    layout->addLayout(HLay(second_general_checkbox, reincarnation_checkbox));
+    layout->addWidget(second_general_checkbox);
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
