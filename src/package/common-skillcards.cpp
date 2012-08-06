@@ -57,6 +57,22 @@ void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlay
     target->obtainCard(card, false);
 }
 
+UbunbCard::UbunbCard(){
+}
+
+bool UbunbCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+void UbunbCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+    qShuffle(all_generals);
+    QStringList choices = all_generals.mid(0, 4);
+    QString name = room->askForGeneral(effect.from, choices, "guansheng");
+    room->transfigure(effect.to, name, false, true, effect.to->getGeneralName());
+}
+
 UbuncCard::UbuncCard(){
 }
 
@@ -66,7 +82,8 @@ bool UbuncCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void UbuncCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.length() == 1){
-        QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
+        QString kingdom = room->askForKingdom(source);
+        //QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
         room->setPlayerProperty(targets.first(), "kingdom", kingdom);
     }
     else{
@@ -101,12 +118,6 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
             QString ski = room->askForChoice(source, "ubund", skills.join("+"));
             room->acquireSkill(source, ski);
         }
-        //
-        QStringList all_generals = Sanguosha->getLimitedGeneralNames();
-        qShuffle(all_generals);
-        QStringList choices = all_generals.mid(0, 4);
-        QString name = room->askForGeneral(source, choices);
-        room->transfigure(target, name, false, true, target->getGeneralName());
     }
 }
 
