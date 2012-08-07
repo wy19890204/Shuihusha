@@ -138,6 +138,15 @@ void ServerPlayer::bury(){
 
     room->clearPlayerCardLock(this);
     room->setEmotion(this, "death");
+
+    if(Config.EnableReincarnation){
+        QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
+        if(!deathnote.contains(getGeneralName()))
+            deathnote << getGeneralName();
+        if(deathnote.first() == "")
+            deathnote.removeFirst();
+        room->setTag("DeadPerson", deathnote.join("+"));
+    }
 }
 
 void ServerPlayer::throwAllCards(){

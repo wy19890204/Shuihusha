@@ -476,7 +476,7 @@ public:
 // test main
 class Ubuna: public ClientSkill{
 public:
-    Ubuna():ClientSkill("ubuna"){
+    Ubuna():ClientSkill("#ubuna"){
     }
 
     virtual int getExtra(const Player *target) const{
@@ -484,6 +484,16 @@ public:
             return 1358;
         else
             return 0;
+    }
+};
+
+class Ubunb:public ZeroCardViewAsSkill{
+public:
+    Ubunb():ZeroCardViewAsSkill("ubunb"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new UbunbCard;
     }
 };
 
@@ -653,15 +663,18 @@ TestPackage::TestPackage()
 */
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
+    ubuntenkei->addSkill(new Qiapai);
+    addMetaObject<QiapaiCard>();
+    ubuntenkei->addSkill(new Ubune);
+    addMetaObject<UbuneCard>();
+    ubuntenkei->addSkill(new Ubunb);
+    addMetaObject<UbunbCard>();
+    related_skills.insertMulti("ubunb", "#ubuna");
     ubuntenkei->addSkill(new Ubunc);
     addMetaObject<UbuncCard>();
     ubuntenkei->addSkill(new Ubund);
     addMetaObject<UbundCard>();
-    ubuntenkei->addSkill(new Ubune);
-    addMetaObject<UbuneCard>();
     ubuntenkei->addSkill(new Ubunf);
-    ubuntenkei->addSkill(new Qiapai);
-    addMetaObject<QiapaiCard>();
 
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
