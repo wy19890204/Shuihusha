@@ -102,25 +102,29 @@ public:
             }
             return false;
         }
-        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0 &&
-           player->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            QList<ServerPlayer *> tarc;
-            for(int i = player->getMark("@true"); i > 0; i--){
-                QList<ServerPlayer *> targets, players;
-                players = tarc.length() == 3 ? tarc : room->getOtherPlayers(player);
-                foreach(ServerPlayer *tmp, players){
-                    if(!tmp->isNude())
-                        targets << tmp;
+        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0){
+            int totalcard = 0;
+            foreach(ServerPlayer *tmp, room->getOtherPlayers(player))
+                totalcard += tmp->getCardCount(true);
+            if(totalcard >= player->getMark("@true") && player->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                QList<ServerPlayer *> tarc;
+                for(int i = player->getMark("@true"); i > 0; i--){
+                    QList<ServerPlayer *> targets, players;
+                    players = tarc.length() == 3 ? tarc : room->getOtherPlayers(player);
+                    foreach(ServerPlayer *tmp, players){
+                        if(!tmp->isNude())
+                            targets << tmp;
+                    }
+                    if(targets.isEmpty())
+                        continue;
+                    ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+                    if(!tarc.contains(target) && tarc.length() < 3)
+                        tarc << target;
+                    int card_id = room->askForCardChosen(player, target, "he", objectName());
+                    room->throwCard(card_id);
+                    room->setPlayerMark(player, "@true", i - 1);
                 }
-                if(targets.isEmpty())
-                    continue;
-                ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
-                if(!tarc.contains(target) && tarc.length() < 3)
-                    tarc << target;
-                int card_id = room->askForCardChosen(player, target, "he", objectName());
-                room->throwCard(card_id);
-                room->setPlayerMark(player, "@true", i - 1);
             }
             room->setPlayerMark(player, "@true", 0);
         }
