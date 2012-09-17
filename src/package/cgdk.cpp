@@ -6,35 +6,6 @@
 #include "engine.h"
 #include "plough.h"
 
-class Liehuo: public TriggerSkill{
-public:
-    Liehuo():TriggerSkill("liehuo"){
-        events << SlashMissed << Damage;
-    }
-
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *bao, QVariant &data) const{
-        PlayerStar target;
-        if(event == SlashMissed){
-            SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            target = effect.to;
-        }
-        else{
-            DamageStruct damage = data.value<DamageStruct>();
-            if(damage.to && damage.card->inherits("Slash"))
-                target = damage.to;
-            else
-                return false;
-        }
-        if(target && !target->isKongcheng() &&
-           target->getHandcardNum() > bao->getHandcardNum() &&
-           room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
-            room->playSkillEffect(objectName());
-            bao->obtainCard(target->getRandomHandCard(), false);
-        }
-        return false;
-    }
-};
-
 class Citan: public PhaseChangeSkill{
 public:
     Citan():PhaseChangeSkill("citan"){
@@ -614,9 +585,6 @@ public:
 CGDKPackage::CGDKPackage()
     :Package("CGDK")
 {
-    General *xiebao = new General(this, "xiebao", "min");
-    xiebao->addSkill(new Liehuo);
-
     General *xiaorang = new General(this, "xiaorang", "min", 3);
     xiaorang->addSkill(new Linmo);
     xiaorang->addSkill(new Zhaixing);

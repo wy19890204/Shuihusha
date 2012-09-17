@@ -90,25 +90,6 @@ public:
     }
 };
 
-class Huxiao: public OneCardViewAsSkill{
-public:
-    Huxiao():OneCardViewAsSkill("huxiao"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->inherits("EquipCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        SavageAssault *savage_assault = new SavageAssault(card->getSuit(), card->getNumber());
-        savage_assault->addSubcard(card->getId());
-        savage_assault->setSkillName(objectName());
-        return savage_assault;
-    }
-};
-
 class Shenpan: public TriggerSkill{
 public:
     Shenpan():TriggerSkill("shenpan"){
@@ -210,36 +191,6 @@ public:
     }
 };
 
-class Linse: public ClientSkill{
-public:
-    Linse():ClientSkill("linse"){
-    }
-
-    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
-        return card->inherits("Snatch") || card->inherits("Dismantlement");
-    }
-
-    virtual int getExtra(const Player *target) const{
-        if(target->hasSkill(objectName()))
-            return target->getMaxHp();
-        else
-            return 0;
-    }
-};
-
-class LinseEffect: public PhaseChangeSkill{
-public:
-    LinseEffect():PhaseChangeSkill("#linse_effect"){
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *lz) const{
-        if(lz->getPhase() == Player::Discard &&
-           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
-            lz->getRoom()->playSkillEffect("linse");
-        return false;
-    }
-};
-
 FeiqiangCard::FeiqiangCard(){
     once = true;
 }
@@ -287,18 +238,9 @@ XZDDPackage::XZDDPackage()
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
 
-    General *yanshun = new General(this, "yanshun", "jiang");
-    yanshun->addSkill(new Huxiao);
-
     General *peixuan = new General(this, "peixuan", "guan", 3);
     peixuan->addSkill(new Shenpan);
     peixuan->addSkill(new Binggong);
-
-    General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill("#losthp");
-    lizhong->addSkill(new Linse);
-    lizhong->addSkill(new LinseEffect);
-    related_skills.insertMulti("linse", "#linse_effect");
 
     General *gongwang = new General(this, "gongwang", "jiang");
     gongwang->addSkill(new Feiqiang);

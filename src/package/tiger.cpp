@@ -5,7 +5,7 @@
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
-
+/*
 TaolueCard::TaolueCard(){
     once = true;
     mute = true;
@@ -217,6 +217,35 @@ public:
         return false;
     }
 };
+*/
+class Liehuo: public TriggerSkill{
+public:
+    Liehuo():TriggerSkill("liehuo"){
+        events << SlashMissed << Damage;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *bao, QVariant &data) const{
+        PlayerStar target;
+        if(event == SlashMissed){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            target = effect.to;
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.to && damage.card->inherits("Slash"))
+                target = damage.to;
+            else
+                return false;
+        }
+        if(target && !target->isKongcheng() &&
+           target->getHandcardNum() > bao->getHandcardNum() &&
+           room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
+            room->playSkillEffect(objectName());
+            bao->obtainCard(target->getRandomHandCard(), false);
+        }
+        return false;
+    }
+};
 
 class Longluo:public TriggerSkill{
 public:
@@ -338,6 +367,55 @@ public:
     }
 };
 
+class Huxiao: public OneCardViewAsSkill{
+public:
+    Huxiao():OneCardViewAsSkill("huxiao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        SavageAssault *savage_assault = new SavageAssault(card->getSuit(), card->getNumber());
+        savage_assault->addSubcard(card->getId());
+        savage_assault->setSkillName(objectName());
+        return savage_assault;
+    }
+};
+
+class Linse: public ClientSkill{
+public:
+    Linse():ClientSkill("linse"){
+    }
+
+    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
+        return card->inherits("Snatch") || card->inherits("Dismantlement");
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return target->getMaxHp();
+        else
+            return 0;
+    }
+};
+
+class LinseEffect: public PhaseChangeSkill{
+public:
+    LinseEffect():PhaseChangeSkill("#linse_effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *lz) const{
+        if(lz->getPhase() == Player::Discard &&
+           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
+            lz->getRoom()->playSkillEffect("linse");
+        return false;
+    }
+};
+/*
 class Yueli:public TriggerSkill{
 public:
     Yueli():TriggerSkill("yueli"){
@@ -668,10 +746,10 @@ public:
         return false;
     }
 };
-
+*/
 TigerPackage::TigerPackage()
     :Package("tiger"){
-
+/*
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
@@ -684,11 +762,24 @@ TigerPackage::TigerPackage()
     oupeng->addRelateSkill("tengfei");
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
+*/
+    General *xiebao = new General(this, "xiebao", "min");
+    xiebao->addSkill(new Liehuo);
 
     General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
+    General *yanshun = new General(this, "yanshun", "jiang");
+    yanshun->addSkill(new Huxiao);
+
+    General *lizhong = new General(this, "lizhong", "kou", 4);
+    lizhong->addSkill("#losthp");
+    lizhong->addSkill(new Linse);
+    lizhong->addSkill(new LinseEffect);
+    related_skills.insertMulti("linse", "#linse_effect");
+
+/*
     General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
@@ -708,9 +799,10 @@ TigerPackage::TigerPackage()
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
 
+    addMetaObject<HuazhuCard>();
+*/
     addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();
-    addMetaObject<HuazhuCard>();
 }
 
 ADD_PACKAGE(Tiger)
