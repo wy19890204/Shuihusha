@@ -392,6 +392,7 @@ public:
             log.from = player;
             log.to << effect.from;
             log.arg = objectName();
+            log.arg2 = choice;
             room->sendLog(log);
             player->drawCards(1);
             if(choice == "tan1"){
@@ -411,12 +412,12 @@ public:
 class Houfa: public TriggerSkill{
 public:
     Houfa():TriggerSkill("houfa"){
-        events << CardLost;
+        events << CardDiscarded;
         frequency = Frequent;
     }
 
-    virtual bool triggerable(const ServerPlayer *ta) const{
-        return !ta->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *pa) const{
+        return !pa->hasSkill(objectName());
     }
 
     virtual int getPriority() const{
@@ -427,13 +428,26 @@ public:
         ServerPlayer *selang = room->findPlayerBySkillName(objectName());
         if(!selang)
             return false;
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->to_place == Player::DiscardedPile){
-            const Card *equ = Sanguosha->getCard(move->card_id);
-            if(equ->inherits("Slash") && selang->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-                selang->obtainCard(equ);
+        CardStar slash = data.value<CardStar>();
+        if(slash->isVirtualCard()){
+            bool hasslash = false;
+            foreach(int card_id, slash->getSubcards()){
+                if(Sanguosha->getCard(card_id)->inherits("Slash")){
+                    hasslash = true;
+                    break;
+                }
             }
+            if(hasslash && selang->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                foreach(int card_id, slash->getSubcards()){
+                    if(Sanguosha->getCard(card_id)->inherits("Slash"))
+                        room->obtainCard(selang, card_id);
+                }
+            }
+        }
+        else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            selang->obtainCard(slash);
         }
         return false;
     }
