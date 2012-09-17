@@ -141,22 +141,6 @@ public:
     }
 };
 
-class Losthp: public TriggerSkill{
-public:
-    Losthp():TriggerSkill("#losthp"){
-        events << GameStart;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        room->setPlayerProperty(player, "hp", player->getHp() - 1);
-        return false;
-    }
-};
-
 class Zhanchi:public PhaseChangeSkill{
 public:
     Zhanchi():PhaseChangeSkill("zhanchi"){
@@ -383,6 +367,91 @@ public:
         savage_assault->addSubcard(card->getId());
         savage_assault->setSkillName(objectName());
         return savage_assault;
+    }
+};
+
+class Tanse:public TriggerSkill{
+public:
+    Tanse():TriggerSkill("tanse"){
+        events << CardEffected;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale()){
+            QString choice = effect.from->getEquips().isEmpty() ? "tan1+cancel" : "tan1+se2+cancel";
+            choice = room->askForChoice(player, objectName(), choice);
+            if(choice == "cancel")
+                return false;
+            LogMessage log;
+            log.type = "#Tanse";
+            log.from = player;
+            log.to << effect.from;
+            log.arg = objectName();
+            room->sendLog(log);
+            player->drawCards(1);
+            if(choice == "tan1"){
+                const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+                if(equip)
+                    effect.from->obtainCard(equip);
+                else
+                    return false;
+            }
+            else
+                room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
+        }
+        return false;
+    }
+};
+
+class Houfa: public TriggerSkill{
+public:
+    Houfa():TriggerSkill("houfa"){
+        events << CardLost;
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *ta) const{
+        return !ta->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *selang = room->findPlayerBySkillName(objectName());
+        if(!selang)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->to_place == Player::DiscardedPile){
+            const Card *equ = Sanguosha->getCard(move->card_id);
+            if(equ->inherits("Slash") && selang->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                selang->obtainCard(equ);
+            }
+        }
+        return false;
+    }
+};
+
+class Losthp: public TriggerSkill{
+public:
+    Losthp():TriggerSkill("#losthp"){
+        events << GameStart;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        room->setPlayerProperty(player, "hp", player->getHp() - 1);
+        return false;
     }
 };
 
@@ -755,7 +824,7 @@ TigerPackage::TigerPackage()
     hantao->addSkill(new Changsheng);
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
-    oupeng->addSkill(new Losthp);
+    oupeng->addSkill("#losthp");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
@@ -770,11 +839,15 @@ TigerPackage::TigerPackage()
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
-    General *yanshun = new General(this, "yanshun", "jiang");
+    General *yanshun = new General(this, "yanshun", "kou");
     yanshun->addSkill(new Huxiao);
 
+    General *wangying = new General(this, "wangying", "kou", 3);
+    wangying->addSkill(new Tanse);
+    wangying->addSkill(new Houfa);
+
     General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill("#losthp");
+    lizhong->addSkill(new Losthp);
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse_effect");
@@ -799,9 +872,9 @@ TigerPackage::TigerPackage()
     General *maling = new General(this, "maling", "jiang", 3);
     maling->addSkill(new Fengxing);
 
+    addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
-    addMetaObject<TaolueCard>();
     addMetaObject<XiaozaiCard>();
 }
 
