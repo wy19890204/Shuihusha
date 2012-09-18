@@ -1,6 +1,7 @@
 #include "tiger.h"
 #include "skill.h"
 #include "standard.h"
+#include "plough.h"
 #include "maneuvering.h"
 #include "clientplayer.h"
 #include "carditem.h"
@@ -288,6 +289,42 @@ public:
                 room->throwCard(card_id);
         }
         return false;
+    }
+};
+
+class Neiying:public ViewAsSkill{
+public:
+    Neiying():ViewAsSkill("neiying"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.isEmpty())
+            return true;
+        else if(selected.length() == 1){
+            const Card *card = selected.first()->getCard();
+            return to_select->getCard()->getColor() == card->getColor();
+        }else
+            return false;
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() == 2){
+            const Card *first = cards.first()->getCard();
+            Counterplot *aa = new Counterplot(first->getSuit(), 0);
+            aa->addSubcards(cards);
+            aa->setSkillName(objectName());
+            return aa;
+        }else
+            return NULL;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        //return pattern == "nullification";
+        return pattern == "counterplot";
     }
 };
 
@@ -659,11 +696,38 @@ public:
     }
 };
 
+class HoufaViewAsSkill: public ViewAsSkill{
+public:
+    HoufaViewAsSkill():ViewAsSkill("houfa"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        if(selected.length() >= 2)
+            return false;
+        return to_select->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+        const Card *card = cards.first()->getCard();
+        Slash *slash = new Slash(card->getSuit(), 0);
+        slash->addSubcards(cards);
+        slash->setSkillName(objectName());
+        return slash;
+    }
+};
+
 class Houfa: public TriggerSkill{
 public:
     Houfa():TriggerSkill("houfa"){
         events << CardDiscarded;
-        frequency = Frequent;
+        //frequency = Frequent;
+        view_as_skill = new HoufaViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *pa) const{
@@ -698,6 +762,22 @@ public:
         else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             selang->obtainCard(slash);
+        }
+        return false;
+    }
+};
+
+class HoufaSlash: public TriggerSkill{
+public:
+    HoufaSlash():TriggerSkill("#houfa-slash"){
+        events << SlashProceed;
+    }
+
+    virtual bool trigger(TriggerEvent , Room* room, ServerPlayer *, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.slash->getSkillName() == "houfa"){
+            room->slashResult(effect, NULL);
+            return true;
         }
         return false;
     }
@@ -1101,6 +1181,9 @@ TigerPackage::TigerPackage()
     leiheng->addSkill(new GuzongGet);
     related_skills.insertMulti("guzong", "#guzong-get");
 
+    General *sunli = new General(this, "sunli", "guan");
+    sunli->addSkill(new Neiying);
+
     General *tianhu = new General(this, "tianhu$", "jiang");
     tianhu->addSkill(new Wuzhou);
     tianhu->addSkill(new Huwei);
@@ -1123,6 +1206,8 @@ TigerPackage::TigerPackage()
     General *wangying = new General(this, "wangying", "kou", 3);
     wangying->addSkill(new Tanse);
     wangying->addSkill(new Houfa);
+    wangying->addSkill(new HoufaSlash);
+    related_skills.insertMulti("houfa", "#houfa-slash");
 
     General *lizhong = new General(this, "lizhong", "kou", 4);
     lizhong->addSkill(new Losthp);

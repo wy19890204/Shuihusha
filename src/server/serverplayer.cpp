@@ -464,6 +464,10 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
                 return true;
         }
     }
+    if(hasSkill("neiying") && getCardCount(true) > 1){
+        if(include_counterplot)
+            return true;
+    }
     foreach(const Card *card, handcards){
         if(include_counterplot && card->inherits("Nullification"))
             return true; // all trick
