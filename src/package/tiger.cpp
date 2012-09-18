@@ -202,6 +202,95 @@ public:
     }
 };
 */
+class Guzong: public TriggerSkill{
+public:
+    Guzong():TriggerSkill("guzong"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        ServerPlayer *leiheng = room->findPlayerBySkillName(objectName());
+        ServerPlayer *current = room->getCurrent();
+
+        if(!leiheng || leiheng == current)
+            return false;
+        if(current->getPhase() == Player::Discard){
+            QVariantList guzong = leiheng->tag["Guzong"].toList();
+
+            CardMoveStar move = data.value<CardMoveStar>();
+                guzong << move->card_id;
+
+            leiheng->tag["Guzong"] = guzong;
+        }
+
+        return false;
+    }
+};
+
+class GuzongGet: public PhaseChangeSkill{
+public:
+    GuzongGet():PhaseChangeSkill("#guzong-get"){
+
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL && !target->hasSkill("guzong");
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->isDead() || !player->isWounded() || player->getPhase() != Player::Finish)
+            return false;
+
+        Room *room = player->getRoom();
+        ServerPlayer *leiheng = room->findPlayerBySkillName("guzong");
+        if(!leiheng)
+            return false;
+
+        QVariantList guzong_cards = leiheng->tag["Guzong"].toList();
+        leiheng->tag.remove("Guzong");
+
+        QList<int> cards;
+        foreach(QVariant card_data, guzong_cards){
+            int card_id = card_data.toInt();
+            if(room->getCardPlace(card_id) == Player::DiscardedPile)
+                cards << card_id;
+        }
+
+        if(cards.isEmpty())
+            return false;
+
+        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue(cards.length()))){
+            room->fillAG(cards, leiheng);
+
+            while(!leiheng->isNude() && !cards.isEmpty()){
+                int to_back = room->askForAG(leiheng, cards, true, "guzong");
+                if(to_back < 0)
+                    break;
+                room->askForDiscard(leiheng, "guzong", 1, false, true);
+                player->obtainCard(Sanguosha->getCard(to_back));
+                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), leiheng);
+                cards.removeOne(to_back);
+                room->broadcastInvoke("clearAG");
+                room->fillAG(cards, leiheng);
+            }
+
+            leiheng->invoke("clearAG");
+
+            foreach(int card_id, cards)
+                room->throwCard(card_id);
+        }
+        return false;
+    }
+};
+
 class Wuzhou:public TriggerSkill{
 public:
     Wuzhou():TriggerSkill("wuzhou"){
@@ -219,38 +308,36 @@ public:
                 return false;
             int x = 5 - player->getEquips().count();
             if(player->getHandcardNum() < x && player->askForSkillInvoke(objectName()))
-                player->drawCards(5 - player->getHandcardNum());
+                player->drawCards(x - player->getHandcardNum());
         }
         return false;
     }
 };
 
-HuangtianCard::HuangtianCard(){
+HuweiCard::HuweiCard(){
     will_throw = false;
-    m_skillName = "huangtianv";
-    mute = true;
 }
 
-void HuangtianCard::onEffect(const CardEffectStruct &effect) const{
-    ServerPlayer *zhangjiao = effect.to;
-    if(zhangjiao->hasLordSkill("huangtian")){
-        if(effect.card->inherits("EquipCard")){
-            const EquipCard *equipped = qobject_cast<const EquipCard *>(effect.card);
-            QList<ServerPlayer *> targets;
-            targets << zhangjiao;
-            equipped->use(zhangjiao->getRoom(), effect.from, targets);
-        }
+void HuweiCard::onEffect(const CardEffectStruct &effect) const{
+    ServerPlayer *frog = effect.to;
+    if(frog->hasLordSkill("huwei")){
+        const Card *card = Sanguosha->getCard(getSubcards().first());
+        const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+        QList<ServerPlayer *> targets;
+        targets << frog;
+        equipped->use(frog->getRoom(), effect.from, targets);
+        effect.from->drawCards(1);
     }
 }
 
-bool HuangtianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->hasLordSkill("huangtian")
+bool HuweiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->hasLordSkill("huwei")
             && to_select != Self && to_select->getEquips().isEmpty();
 }
 
-class HuangtianViewAsSkill: public OneCardViewAsSkill{
+class HuweiViewAsSkill: public OneCardViewAsSkill{
 public:
-    HuangtianViewAsSkill():OneCardViewAsSkill("huangtianv"){
+    HuweiViewAsSkill():OneCardViewAsSkill("huweiv"){
 
     }
 
@@ -258,39 +345,39 @@ public:
         return player->getKingdom() == "jiang";
     }
 
-    virtual bool viewFilter(const Card* to_select) const{
-        const Card *card = to_select;
-        return card->inherits("EquipCard");
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("EquipCard");
     }
 
-    virtual const Card *viewAs(const Card *originalCard) const{
-        HuangtianCard *card = new HuangtianCard;
-        card->addSubcard(originalCard);
-
+    virtual const Card *viewAs(CardItem *card_item) const{
+        HuweiCard *card = new HuweiCard;
+        card->addSubcard(card_item->getFilteredCard());
         return card;
     }
 };
 
-class Huangtian: public GameStartSkill{
+class Huwei: public GameStartSkill{
 public:
-    Huangtian():GameStartSkill("huangtian$"){
+    Huwei():GameStartSkill("huwei$"){
     }
 
-    virtual void onGameStart(ServerPlayer *yangvi) const{
-        Room *room = yangvi->getRoom();
+    virtual void onGameStart(ServerPlayer *tigger) const{
+        if(!tigger->isLord())
+            return;
+        Room *room = tigger->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){
-            room->attachSkillToPlayer(player, "huangtianv");
+            room->attachSkillToPlayer(player, "huweiv");
         }
     }
 
-    virtual void onIdied(ServerPlayer *yangvi) const{
-        Room *room = yangvi->getRoom();
-        if(room->findPlayerBySkillName("huangtian"))
+    virtual void onIdied(ServerPlayer *tigger) const{
+        Room *room = tigger->getRoom();
+        if(room->findPlayerBySkillName("huwei"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){
-            room->detachSkillFromPlayer(player, "huangtianv", false);
+            room->detachSkillFromPlayer(player, "huweiv", false);
         }
     }
 };
@@ -361,8 +448,6 @@ public:
             room->detachSkillFromPlayer(zhang, "jielue");
             room->setPlayerMark(zhang, "fuhun", 1);
         }
-
-
         return false;
     }
 };
@@ -1011,11 +1096,15 @@ TigerPackage::TigerPackage()
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
-    General *zhangjiao = new General(this, "zhangjiao$", "qun", 3);
-    zhangjiao->addSkill(new Guidao);
-    zhangjiao->addSkill(new Leiji);
-    zhangjiao->addSkill(new Huangtian);
-    skills << new HuangtianViewAsSkill;
+    General *leiheng = new General(this, "leiheng", "guan");
+    leiheng->addSkill(new Guzong);
+    leiheng->addSkill(new GuzongGet);
+    related_skills.insertMulti("guzong", "#guzong-get");
+
+    General *tianhu = new General(this, "tianhu$", "jiang");
+    tianhu->addSkill(new Wuzhou);
+    tianhu->addSkill(new Huwei);
+    skills << new HuweiViewAsSkill;
 
     General *zhangheng = new General(this, "zhangheng", "min", 3);
     zhangheng->addSkill(new Jielue);
@@ -1064,7 +1153,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
-    addMetaObject<HuangtianCard>();
+    addMetaObject<HuweiCard>();
     addMetaObject<XiaozaiCard>();
 }
 
