@@ -202,6 +202,77 @@ public:
     }
 };
 */
+class Jielue:public TriggerSkill{
+public:
+    Jielue():TriggerSkill("jielue"){
+        events << FinishJudge;
+    }
+
+    virtual bool triggerable(const ServerPlayer *tat) const{
+        return !tat->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        //JudgeStar judge = data.value<JudgeStar>();
+        QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *zhah, zhangs){
+            if(zhah->getMark("fuhun") > 0 || player->isKongcheng())
+                continue;
+            if(zhah->askForSkillInvoke(objectName(), data))
+                room->obtainCard(zhah, room->askForCardChosen(zhah, player, "h", objectName()), false);
+        }
+        return false;
+    }
+};
+
+class Fuhun: public TriggerSkill{
+public:
+    Fuhun():TriggerSkill("fuhun"){
+        events << Death;
+        frequency = Wake;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName()) &&
+                target->getMark("fuhun") == 0;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *zhang, zhangs){
+            LogMessage log;
+            log.type = "#WakeUp";
+            log.from = zhang;
+            log.arg = objectName();
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            RecoverStruct r;
+            room->recover(zhang, r);
+            room->broadcastInvoke("animate", "lightbox:$fuhun:1500");
+            room->getThread()->delay(1500);
+
+            room->acquireSkill(zhang, "lihun");
+            foreach(const Skill *skill, player->getVisibleSkillList()){
+                if(skill->getLocation() == Skill::Right &&
+                   skill->getFrequency() != Skill::Limited &&
+                   skill->getFrequency() != Skill::Wake &&
+                   !skill->isLordSkill()){
+                    room->acquireSkill(zhang, skill->objectName());
+                }
+            }
+            room->detachSkillFromPlayer(zhang, "jielue");
+            room->setPlayerMark(zhang, "fuhun", 1);
+        }
+
+
+        return false;
+    }
+};
+
 class Liehuo: public TriggerSkill{
 public:
     Liehuo():TriggerSkill("liehuo"){
@@ -392,6 +463,7 @@ public:
             log.from = player;
             log.to << effect.from;
             log.arg = objectName();
+            log.arg2 = choice;
             room->sendLog(log);
             player->drawCards(1);
             if(choice == "tan1"){
@@ -411,12 +483,12 @@ public:
 class Houfa: public TriggerSkill{
 public:
     Houfa():TriggerSkill("houfa"){
-        events << CardLost;
+        events << CardDiscarded;
         frequency = Frequent;
     }
 
-    virtual bool triggerable(const ServerPlayer *ta) const{
-        return !ta->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *pa) const{
+        return !pa->hasSkill(objectName());
     }
 
     virtual int getPriority() const{
@@ -427,13 +499,26 @@ public:
         ServerPlayer *selang = room->findPlayerBySkillName(objectName());
         if(!selang)
             return false;
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->to_place == Player::DiscardedPile){
-            const Card *equ = Sanguosha->getCard(move->card_id);
-            if(equ->inherits("Slash") && selang->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-                selang->obtainCard(equ);
+        CardStar slash = data.value<CardStar>();
+        if(slash->isVirtualCard()){
+            bool hasslash = false;
+            foreach(int card_id, slash->getSubcards()){
+                if(Sanguosha->getCard(card_id)->inherits("Slash")){
+                    hasslash = true;
+                    break;
+                }
             }
+            if(hasslash && selang->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                foreach(int card_id, slash->getSubcards()){
+                    if(Sanguosha->getCard(card_id)->inherits("Slash"))
+                        room->obtainCard(selang, card_id);
+                }
+            }
+        }
+        else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            selang->obtainCard(slash);
         }
         return false;
     }
@@ -832,6 +917,10 @@ TigerPackage::TigerPackage()
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
+    General *zhangheng = new General(this, "zhangheng", "min", 3);
+    zhangheng->addSkill(new Jielue);
+    zhangheng->addSkill(new Fuhun);
+
     General *xiebao = new General(this, "xiebao", "min");
     xiebao->addSkill(new Liehuo);
 
