@@ -38,7 +38,7 @@ public:
                 do{
                     card_id = room->askForAG(liying, card_ids, false, objectName());
                 }while(card_id < 0);
-                room->throwCard(card_id);
+                room->throwCard(card_id, liying);
                 card_ids.removeOne(card_id);
 
                 // throw the rest cards that matches the same suit
@@ -53,7 +53,7 @@ public:
                     const Card *c = Sanguosha->getCard(card_ids.at(i));
                     if(c->getSuit() == suit){
                         card_ids.removeAt(i);
-                        room->throwCard(c);
+                        room->throwCard(c, liying);
                     }
                 }
                 count ++;

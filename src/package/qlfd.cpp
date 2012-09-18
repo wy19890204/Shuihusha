@@ -224,7 +224,7 @@ ZishiCard::ZishiCard(){
 
 void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     int num = this->getSubcards().length();
-    room->throwCard(this);
+    room->throwCard(this, source);
     source->tag["ZiShi"] = num;
 }
 

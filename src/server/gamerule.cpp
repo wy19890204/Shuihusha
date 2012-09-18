@@ -166,9 +166,13 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 }
             }
             if(Config.EnableReincarnation){
+                int count = Sanguosha->getPlayerCount(room->getMode());
+                if(count < 4)
+                    return;
+                int max = count > 5 ? 4 : 3;
                 ServerPlayer *next = player->getNext();
                 while(next->isDead()){
-                    if(next->getHandcardNum() >= 4){
+                    if(next->getHandcardNum() >= max){
                         LogMessage log;
                         log.type = "#ReincarnRevive";
                         log.from = next;
@@ -184,10 +188,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         if(next->getMaxHp() == 0)
                             room->setPlayerProperty(next, "maxhp", 1);
                         room->setPlayerProperty(next, "hp", 1);
+                        room->attachSkillToPlayer(player, "sacrifice");
 
-                        QStringList deathnote = room->getTag("DeadPerson").toStringList();
-                        deathnote.removeOne(oldname);
-                        room->setTag("DeadPerson", deathnote);
                         room->getThread()->delay(1500);
                     }
                     next = next->getNext();
@@ -250,8 +252,11 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     setGameProcess(room);
             }
 
-            if(Config.EnableReincarnation)
-                room->attachSkillToPlayer(player, "sacrifice");
+            if(Config.EnableReincarnation){
+                int count = Sanguosha->getPlayerCount(room->getMode());
+                if(count > 3)
+                    room->attachSkillToPlayer(player, "sacrifice");
+            }
 
             room->setTag("FirstRound", true);
             int init = player->hasSkill("beizhan") ? 6 : 4;
@@ -736,13 +741,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         return false;
                     }
                 }
-            }
-
-            if(Config.EnableReincarnation){
-                QStringList deathnote = room->getTag("DeadPerson").toStringList();
-                if(!deathnote.contains(player->getGeneralName()))
-                    deathnote << player->getGeneralName();
-                room->setTag("DeadPerson", deathnote);
             }
             break;
         }

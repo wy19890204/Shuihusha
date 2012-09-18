@@ -360,6 +360,8 @@ QString Engine::getSetupString() const{
         flags.append("F");
     if(Config.Enable2ndGeneral)
         flags.append("S");
+    if(Config.EnableReincarnation)
+        flags.append("R");
     if(Config.EnableScene)
         flags.append("C");
     if(Config.EnableSame)

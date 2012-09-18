@@ -20,7 +20,7 @@ bool QingnangCard::targetsFeasible(const QList<const Player *> &targets, const P
 }
 
 void QingnangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
+    room->throwCard(this, source);
 
     ServerPlayer *target = targets.value(0, source);
 
@@ -47,7 +47,7 @@ SacrificeCard::SacrificeCard(){
 void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(!Config.EnableReincarnation)
         return;
-    QStringList deathnote = room->getTag("DeadPerson").toStringList();
+    QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
     if(deathnote.isEmpty())
         return;
     QString choice = deathnote.length() == 1 ? deathnote.first() :
@@ -55,6 +55,22 @@ void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlay
     ServerPlayer *target = room->findPlayer(choice, true);
     const Card *card = room->askForCardShow(source, target, "sacrifice");
     target->obtainCard(card, false);
+}
+
+UbunbCard::UbunbCard(){
+}
+
+bool UbunbCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+void UbunbCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+    qShuffle(all_generals);
+    QStringList choices = all_generals.mid(0, 4);
+    QString name = room->askForGeneral(effect.from, choices, "guansheng");
+    room->transfigure(effect.to, name, false, true, effect.to->getGeneralName());
 }
 
 UbuncCard::UbuncCard(){
@@ -66,7 +82,8 @@ bool UbuncCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void UbuncCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.length() == 1){
-        QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
+        QString kingdom = room->askForKingdom(source);
+        //QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
         room->setPlayerProperty(targets.first(), "kingdom", kingdom);
     }
     else{
