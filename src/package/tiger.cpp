@@ -202,6 +202,99 @@ public:
     }
 };
 */
+class Wuzhou:public TriggerSkill{
+public:
+    Wuzhou():TriggerSkill("wuzhou"){
+        events << CardLostDone;
+        frequency = Frequent;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(room->getCurrent() == player && player->getPhase() == Player::Play){
+            if(player->getEquips().isEmpty())
+                return false;
+            int x = 5 - player->getEquips().count();
+            if(player->getHandcardNum() < x && player->askForSkillInvoke(objectName()))
+                player->drawCards(5 - player->getHandcardNum());
+        }
+        return false;
+    }
+};
+
+HuangtianCard::HuangtianCard(){
+    will_throw = false;
+    m_skillName = "huangtianv";
+    mute = true;
+}
+
+void HuangtianCard::onEffect(const CardEffectStruct &effect) const{
+    ServerPlayer *zhangjiao = effect.to;
+    if(zhangjiao->hasLordSkill("huangtian")){
+        if(effect.card->inherits("EquipCard")){
+            const EquipCard *equipped = qobject_cast<const EquipCard *>(effect.card);
+            QList<ServerPlayer *> targets;
+            targets << zhangjiao;
+            equipped->use(zhangjiao->getRoom(), effect.from, targets);
+        }
+    }
+}
+
+bool HuangtianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->hasLordSkill("huangtian")
+            && to_select != Self && to_select->getEquips().isEmpty();
+}
+
+class HuangtianViewAsSkill: public OneCardViewAsSkill{
+public:
+    HuangtianViewAsSkill():OneCardViewAsSkill("huangtianv"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getKingdom() == "jiang";
+    }
+
+    virtual bool viewFilter(const Card* to_select) const{
+        const Card *card = to_select;
+        return card->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(const Card *originalCard) const{
+        HuangtianCard *card = new HuangtianCard;
+        card->addSubcard(originalCard);
+
+        return card;
+    }
+};
+
+class Huangtian: public GameStartSkill{
+public:
+    Huangtian():GameStartSkill("huangtian$"){
+    }
+
+    virtual void onGameStart(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->attachSkillToPlayer(player, "huangtianv");
+        }
+    }
+
+    virtual void onIdied(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        if(room->findPlayerBySkillName("huangtian"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->detachSkillFromPlayer(player, "huangtianv", false);
+        }
+    }
+};
+
 class Jielue:public TriggerSkill{
 public:
     Jielue():TriggerSkill("jielue"){
@@ -237,13 +330,14 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName()) &&
-                target->getMark("fuhun") == 0;
+        return !target->hasSkill(objectName());
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhang, zhangs){
+            if(zhang->getMark("fuhun") > 0)
+                continue;
             LogMessage log;
             log.type = "#WakeUp";
             log.from = zhang;
@@ -917,6 +1011,12 @@ TigerPackage::TigerPackage()
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
+    General *zhangjiao = new General(this, "zhangjiao$", "qun", 3);
+    zhangjiao->addSkill(new Guidao);
+    zhangjiao->addSkill(new Leiji);
+    zhangjiao->addSkill(new Huangtian);
+    skills << new HuangtianViewAsSkill;
+
     General *zhangheng = new General(this, "zhangheng", "min", 3);
     zhangheng->addSkill(new Jielue);
     zhangheng->addSkill(new Fuhun);
@@ -964,6 +1064,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+    addMetaObject<HuangtianCard>();
     addMetaObject<XiaozaiCard>();
 }
 
