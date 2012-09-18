@@ -256,7 +256,7 @@ bool NushaCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void NushaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
+    room->throwCard(this, source);
     DamageStruct damage;
     damage.from = source;
     damage.to = targets.first();

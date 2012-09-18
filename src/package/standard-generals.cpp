@@ -302,7 +302,7 @@ const Card *HuaceCard::validate(const CardUseStruct *card_use) const{
     Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
     use_card->setSkillName("huace");
     use_card->addSubcard(card);
-    room->throwCard(this);
+    room->throwCard(this, card_use->from);
 
     return use_card;
 }
@@ -319,7 +319,7 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
     use_card->setSkillName("huace");
     use_card->addSubcard(card);
-    room->throwCard(this);
+    room->throwCard(this, player);
 
     player->addHistory("HuaceCard", 1);
     Self->addHistory("HuaceCard", 1);
@@ -991,7 +991,7 @@ public:
             room->playSkillEffect(objectName());
             int dust = !damage.to->hasEquip() && damage.to->getJudgingArea().isEmpty() ? damage.to->getRandomHandCardId() :
                           room->askForCardChosen(player, damage.to, "hej", objectName());
-            room->throwCard(dust);
+            room->throwCard(dust, damage.to);
 
             LogMessage log;
             log.type = "$Yixian";
@@ -1681,7 +1681,7 @@ public:
                 if(damage.from->isNude())
                     break;
                 int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
-                room->throwCard(card_id);
+                room->throwCard(card_id, damage.from);
             }
             log.to << damage.from;
             log.arg2 = QString::number(i);
@@ -1814,7 +1814,7 @@ WujiCard::WujiCard(){
 }
 
 void WujiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->throwCard(this);
+    room->throwCard(this, source);
     if(source->isAlive())
         room->drawCards(source, subcards.length());
 }
@@ -1843,7 +1843,7 @@ public:
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 int card_id = room->askForCardChosen(hu3niang, damage.to, "he", objectName());
-                room->throwCard(card_id);
+                room->throwCard(card_id, damage.to);
             }
             else{
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
@@ -1910,7 +1910,7 @@ public:
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     room->sendLog(log);
                     if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), false, data, CardDiscarded))
-                        room->throwCard(damage.from->getRandomHandCard());
+                        room->throwCard(damage.from->getRandomHandCard(), damage.from);
                 }
             }
             else if(v == CardLost){

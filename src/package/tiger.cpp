@@ -5,7 +5,7 @@
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
-
+/*
 TaolueCard::TaolueCard(){
     once = true;
     mute = true;
@@ -141,22 +141,6 @@ public:
     }
 };
 
-class Losthp: public TriggerSkill{
-public:
-    Losthp():TriggerSkill("#losthp"){
-        events << GameStart;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        room->setPlayerProperty(player, "hp", player->getHp() - 1);
-        return false;
-    }
-};
-
 class Zhanchi:public PhaseChangeSkill{
 public:
     Zhanchi():PhaseChangeSkill("zhanchi"){
@@ -217,7 +201,7 @@ public:
         return false;
     }
 };
-
+*/
 class Guzong: public TriggerSkill{
 public:
     Guzong():TriggerSkill("guzong"){
@@ -306,33 +290,30 @@ public:
     }
 };
 
-class Guzong: public PhaseChangeSkill{
+class Liehuo: public TriggerSkill{
 public:
-    Guzong():PhaseChangeSkill("guzong"){
+    Liehuo():TriggerSkill("liehuo"){
+        events << SlashMissed << Damage;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *tig) const{
-        if(tig->getPhase() == Player::Finish){
-            Room *room = opt->getRoom();
-            if(opt->getMaxHP() > 3)
-                room->playSkillEffect(objectName(), 1);
-            else if(opt->getMaxHP() > 1)
-                room->playSkillEffect(objectName(), 2);
-            room->loseMaxHp(opt);
-
-            if(opt->isAlive()){
-                LogMessage log;
-                log.type = "#Tengfei";
-                log.from = opt;
-                log.arg = objectName();
-                room->sendLog(log);
-
-                opt->gainAnExtraTurn(opt);
-            }
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *bao, QVariant &data) const{
+        PlayerStar target;
+        if(event == SlashMissed){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            target = effect.to;
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.to && damage.card->inherits("Slash"))
+                target = damage.to;
+            else
+                return false;
+        }
+        if(target && !target->isKongcheng() &&
+           target->getHandcardNum() > bao->getHandcardNum() &&
+           room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
+            room->playSkillEffect(objectName());
+            bao->obtainCard(target->getRandomHandCard(), false);
         }
         return false;
     }
@@ -458,6 +439,154 @@ public:
     }
 };
 
+class Huxiao: public OneCardViewAsSkill{
+public:
+    Huxiao():OneCardViewAsSkill("huxiao"){
+
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        SavageAssault *savage_assault = new SavageAssault(card->getSuit(), card->getNumber());
+        savage_assault->addSubcard(card->getId());
+        savage_assault->setSkillName(objectName());
+        return savage_assault;
+    }
+};
+
+class Tanse:public TriggerSkill{
+public:
+    Tanse():TriggerSkill("tanse"){
+        events << CardEffected;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale()){
+            QString choice = effect.from->getEquips().isEmpty() ? "tan1+cancel" : "tan1+se2+cancel";
+            choice = room->askForChoice(player, objectName(), choice);
+            if(choice == "cancel")
+                return false;
+            LogMessage log;
+            log.type = "#Tanse";
+            log.from = player;
+            log.to << effect.from;
+            log.arg = objectName();
+            log.arg2 = choice;
+            room->sendLog(log);
+            player->drawCards(1);
+            if(choice == "tan1"){
+                const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+                if(equip)
+                    effect.from->obtainCard(equip);
+                else
+                    return false;
+            }
+            else
+                room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
+        }
+        return false;
+    }
+};
+
+class Houfa: public TriggerSkill{
+public:
+    Houfa():TriggerSkill("houfa"){
+        events << CardDiscarded;
+        frequency = Frequent;
+    }
+
+    virtual bool triggerable(const ServerPlayer *pa) const{
+        return !pa->hasSkill(objectName());
+    }
+
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *selang = room->findPlayerBySkillName(objectName());
+        if(!selang)
+            return false;
+        CardStar slash = data.value<CardStar>();
+        if(slash->isVirtualCard()){
+            bool hasslash = false;
+            foreach(int card_id, slash->getSubcards()){
+                if(Sanguosha->getCard(card_id)->inherits("Slash")){
+                    hasslash = true;
+                    break;
+                }
+            }
+            if(hasslash && selang->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                foreach(int card_id, slash->getSubcards()){
+                    if(Sanguosha->getCard(card_id)->inherits("Slash"))
+                        room->obtainCard(selang, card_id);
+                }
+            }
+        }
+        else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName());
+            selang->obtainCard(slash);
+        }
+        return false;
+    }
+};
+
+class Losthp: public TriggerSkill{
+public:
+    Losthp():TriggerSkill("#losthp"){
+        events << GameStart;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        room->setPlayerProperty(player, "hp", player->getHp() - 1);
+        return false;
+    }
+};
+
+class Linse: public ClientSkill{
+public:
+    Linse():ClientSkill("linse"){
+    }
+
+    virtual bool isProhibited(const Player *, const Player *, const Card *card) const{
+        return card->inherits("Snatch") || card->inherits("Dismantlement");
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(target->hasSkill(objectName()))
+            return target->getMaxHp();
+        else
+            return 0;
+    }
+};
+
+class LinseEffect: public PhaseChangeSkill{
+public:
+    LinseEffect():PhaseChangeSkill("#linse_effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *lz) const{
+        if(lz->getPhase() == Player::Discard &&
+           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
+            lz->getRoom()->playSkillEffect("linse");
+        return false;
+    }
+};
+/*
 class Yueli:public TriggerSkill{
 public:
     Yueli():TriggerSkill("yueli"){
@@ -788,27 +917,49 @@ public:
         return false;
     }
 };
-
+*/
 TigerPackage::TigerPackage()
     :Package("tiger"){
-
+/*
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
-    oupeng->addSkill(new Losthp);
+    oupeng->addSkill("#losthp");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
     oupeng->addRelateSkill("tengfei");
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
+*/
+    General *leiheng = new General(this, "leiheng", "guan");
+    leiheng->addSkill(new Guzong);
+    leiheng->addSkill(new GuzongGet);
+    related_skills.insertMulti("guzong", "#guzong-get");
+
+    General *xiebao = new General(this, "xiebao", "min");
+    xiebao->addSkill(new Liehuo);
 
     General *shien = new General(this, "shien", "min", 3);
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
+    General *yanshun = new General(this, "yanshun", "kou");
+    yanshun->addSkill(new Huxiao);
+
+    General *wangying = new General(this, "wangying", "kou", 3);
+    wangying->addSkill(new Tanse);
+    wangying->addSkill(new Houfa);
+
+    General *lizhong = new General(this, "lizhong", "kou", 4);
+    lizhong->addSkill(new Losthp);
+    lizhong->addSkill(new Linse);
+    lizhong->addSkill(new LinseEffect);
+    related_skills.insertMulti("linse", "#linse_effect");
+
+/*
     General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
@@ -829,8 +980,9 @@ TigerPackage::TigerPackage()
     maling->addSkill(new Fengxing);
 
     addMetaObject<TaolueCard>();
-    addMetaObject<XiaozaiCard>();
     addMetaObject<HuazhuCard>();
+*/
+    addMetaObject<XiaozaiCard>();
 }
 
 ADD_PACKAGE(Tiger)
