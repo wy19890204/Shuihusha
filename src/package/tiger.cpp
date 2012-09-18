@@ -218,6 +218,126 @@ public:
     }
 };
 
+class Guzong: public TriggerSkill{
+public:
+    Guzong():TriggerSkill("guzong"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *erzhang = room->findPlayerBySkillName(objectName());
+        ServerPlayer *current = room->getCurrent();
+
+        if(erzhang == NULL)
+            return false;
+        if(erzhang == current)
+            return false;
+        if(current->getPhase() == Player::Discard){
+            QVariantList guzong = erzhang->tag["Guzong"].toList();
+
+            CardMoveStar move = data.value<CardMoveStar>();
+                guzong << move->card_id;
+
+            erzhang->tag["Guzong"] = guzong;
+        }
+
+        return false;
+    }
+};
+
+class GuzongGet: public PhaseChangeSkill{
+public:
+    GuzongGet():PhaseChangeSkill("#guzong-get"){
+
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL && !target->hasSkill("guzong");
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        if(player->isDead() || !player->isWounded())
+            return false;
+
+        Room *room = player->getRoom();
+        ServerPlayer *erzhang = room->findPlayerBySkillName(objectName());
+        if(erzhang == NULL)
+            return false;
+
+        QVariantList guzong_cards = erzhang->tag["Guzong"].toList();
+        erzhang->tag.remove("Guzong");
+
+        QList<int> cards;
+        foreach(QVariant card_data, guzong_cards){
+            int card_id = card_data.toInt();
+            if(room->getCardPlace(card_id) == Player::DiscardedPile)
+                cards << card_id;
+        }
+
+        if(cards.isEmpty())
+            return false;
+
+        if(!erzhang->isNude() && erzhang->askForSkillInvoke("guzong", cards.length())){
+            room->fillAG(cards, erzhang);
+
+            while(!erzhang->isNude() || !cards.isEmpty()){
+                room->askForDiscard(erzhang, objectName(), 1, false, true);
+                int to_back = room->askForAG(erzhang, cards, false, objectName());
+                player->obtainCard(Sanguosha->getCard(to_back));
+                room->throwCard(room->askForCardChosen(erzhang, player, "he", objectName()), erzhang);
+                cards.removeOne(to_back);
+            }
+
+            erzhang->invoke("clearAG");
+
+            foreach(int card_id, cards)
+                room->throwCard(card_id);
+        }
+
+        return false;
+    }
+};
+
+class Guzong: public PhaseChangeSkill{
+public:
+    Guzong():PhaseChangeSkill("guzong"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *tig) const{
+        if(tig->getPhase() == Player::Finish){
+            Room *room = opt->getRoom();
+            if(opt->getMaxHP() > 3)
+                room->playSkillEffect(objectName(), 1);
+            else if(opt->getMaxHP() > 1)
+                room->playSkillEffect(objectName(), 2);
+            room->loseMaxHp(opt);
+
+            if(opt->isAlive()){
+                LogMessage log;
+                log.type = "#Tengfei";
+                log.from = opt;
+                log.arg = objectName();
+                room->sendLog(log);
+
+                opt->gainAnExtraTurn(opt);
+            }
+        }
+        return false;
+    }
+};
+
 class Longluo:public TriggerSkill{
 public:
     Longluo():TriggerSkill("longluo"){
