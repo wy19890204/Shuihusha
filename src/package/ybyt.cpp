@@ -254,7 +254,7 @@ bool ShexinCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void ShexinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
+    room->throwCard(this, source);
 
     ServerPlayer *target = targets.value(0, source);
     CardEffectStruct effect;
@@ -397,7 +397,7 @@ bool MaiyiCard::targetsFeasible(const QList<const Player *> &targets, const Play
 }
 
 void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
+    room->throwCard(this, source);
     room->playSkillEffect(objectName());
     if(targets.isEmpty())
         room->setPlayerFlag(source, "maiyi");
@@ -653,9 +653,9 @@ public:
     }
 };
 
-class Jintang: public MasochismSkill{
+class Goldsoup: public MasochismSkill{
 public:
-    Jintang():MasochismSkill("jintang"){
+    Goldsoup():MasochismSkill("goldsoup"){
         frequency = Compulsory;
     }
 
@@ -701,12 +701,12 @@ YBYTPackage::YBYTPackage()
     songqing->addSkill(new Jiayao);
 
     General *xueyong = new General(this, "xueyong", "min");
+    xueyong->addSkill("#losthp_1");
     xueyong->addSkill(new Maiyi);
-    xueyong->addSkill("#losthp");
 
     General *tanglong = new General(this, "tanglong", "jiang", 3);
     tanglong->addSkill(new Cuihuo);
-    tanglong->addSkill(new Jintang);
+    tanglong->addSkill(new Goldsoup);
 
     General *zouyan = new General(this, "zouyuan", "min");
     zouyan->addSkill(new Longao);

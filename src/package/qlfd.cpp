@@ -224,7 +224,7 @@ ZishiCard::ZishiCard(){
 
 void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     int num = this->getSubcards().length();
-    room->throwCard(this);
+    room->throwCard(this, source);
     source->tag["ZiShi"] = num;
 }
 
@@ -834,7 +834,7 @@ QLFDPackage::QLFDPackage()
     jiashi->addSkill(new Zhuying);
 
     General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
-    ximenqing->addSkill("#losthp");
+    ximenqing->addSkill("#losthp_1");
     ximenqing->addSkill(new Caiquan);
 
     addMetaObject<FanwuCard>();

@@ -2461,7 +2461,7 @@ void RoomScene::onStandoff(){
 #endif
 
     QDialog *dialog = new QDialog(main_window);
-    dialog->resize(500, 600);
+    dialog->resize(600, 500);
     dialog->setWindowTitle(tr("Standoff"));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -2501,7 +2501,7 @@ void RoomScene::onGameOver(){
 #endif
 
     QDialog *dialog = new QDialog(main_window);
-    dialog->resize(500, 600);
+    dialog->resize(600, 500);
     dialog->setWindowTitle(victory ? tr("Victory") : tr("Failure"));
 
     QGroupBox *winner_box = new QGroupBox(tr("Winner(s)"));
@@ -2817,7 +2817,10 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         const ClientPlayer *player = players.at(i);
 
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(Sanguosha->translate(player->getGeneralName()));
+        QString name = !player->getGeneral2() ?
+                       Sanguosha->translate(player->getGeneralName()) :
+                       Sanguosha->translate(player->getGeneralName()) + "+" + Sanguosha->translate(player->getGeneral2Name());
+        item->setText(name);
         table->setItem(i, 0, item);
 
         item = new QTableWidgetItem;
@@ -2851,7 +2854,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         StatisticsStruct *statistics = player->getStatistics();
         /*
-                item = new QTableWidgetItem;
+        item = new QTableWidgetItem;
         QString designations;
         foreach(QString designation, statistics->designation){
             designations.append(Sanguosha->translate(designation) + ", ");
@@ -2880,15 +2883,15 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         item->setText(QString::number(statistics->cheat));
         table->setItem(i, 8, item);
 
-        table->setColumnWidth(0, 65);
+        table->setColumnWidth(0, 85);
         table->setColumnWidth(1, 65);
-        table->setColumnWidth(2, 60);
+        table->setColumnWidth(2, 50);
         table->setColumnWidth(3, 65);
-        table->setColumnWidth(4, 40);
-        table->setColumnWidth(5, 40);
-        table->setColumnWidth(6, 40);
-        table->setColumnWidth(7, 40);
-        table->setColumnWidth(8, 35);
+        table->setColumnWidth(4, 37);
+        table->setColumnWidth(5, 37);
+        table->setColumnWidth(6, 37);
+        table->setColumnWidth(7, 37);
+        table->setColumnWidth(8, 37);
     }
 }
 

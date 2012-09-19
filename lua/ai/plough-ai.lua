@@ -106,8 +106,8 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	end
 
 	if not target then
-		local r = math.random(1, #players)
-		target = players[r]
+		use.card = nil
+		return "."
 	end
 	if use.to then
 		speak(target, "drivolt")
