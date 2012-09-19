@@ -273,8 +273,8 @@ CONFIG(joystick){
 	unix: LIBS += -lplibjs -lplibul
 }
 
-TRANSLATIONS += sanguosha.ts
+TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-	sanguosha.qss
+        shuihusha.qss
 
