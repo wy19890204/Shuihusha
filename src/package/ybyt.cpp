@@ -653,9 +653,9 @@ public:
     }
 };
 
-class Jintang: public MasochismSkill{
+class Goldsoup: public MasochismSkill{
 public:
-    Jintang():MasochismSkill("jintang"){
+    Goldsoup():MasochismSkill("goldsoup"){
         frequency = Compulsory;
     }
 
@@ -706,7 +706,7 @@ YBYTPackage::YBYTPackage()
 
     General *tanglong = new General(this, "tanglong", "jiang", 3);
     tanglong->addSkill(new Cuihuo);
-    tanglong->addSkill(new Jintang);
+    tanglong->addSkill(new Goldsoup);
 
     General *zouyan = new General(this, "zouyuan", "min");
     zouyan->addSkill(new Longao);

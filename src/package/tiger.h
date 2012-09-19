@@ -11,6 +11,16 @@ public:
     TigerPackage();
 };
 
+class JintangCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JintangCard();
+
+    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+};
+
 class HuweiCard: public SkillCard{
     Q_OBJECT
 

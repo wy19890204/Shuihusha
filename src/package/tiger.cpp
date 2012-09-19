@@ -328,6 +328,78 @@ public:
     }
 };
 
+JintangCard::JintangCard(){
+}
+
+bool JintangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void JintangCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    CardStar card = effect.from->tag["Jintg"].value<CardStar>();
+    const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+    QList<ServerPlayer *> targets;
+    targets << effect.to;
+    equipped->use(room, effect.from, targets);
+}
+
+class JintangViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    JintangViewAsSkill():ZeroCardViewAsSkill("jintang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@jintang";
+    }
+
+    virtual const Card *viewAs() const{
+        return new JintangCard;
+    }
+};
+
+class Jintang: public TriggerSkill{
+public:
+    Jintang(): TriggerSkill("jintang"){
+        events << Predamaged << Death;
+        view_as_skill = new JintangViewAsSkill;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Predamaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            LogMessage log;
+            log.from = player;
+            log.arg = objectName();
+            if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
+                log.type = "#JintangForb";
+                room->sendLog(log);
+                return true;
+            }
+            if(player->getHp() <= 2 && damage.damage > 1){
+                log.type = "#JintangCut";
+                log.arg2 = QString::number(damage.damage);
+                room->sendLog(log);
+
+                damage.damage = 1;
+                data = QVariant::fromValue(damage);
+            }
+        }
+        else if(event == Death){
+            foreach(CardStar equip, player->getEquips()){
+                player->tag["Jintg"] = QVariant::fromValue(equip);
+                room->askForUseCard(player, "@@jintang", "@jintang:" + equip->objectName(), true);
+            }
+        }
+        return false;
+    }
+};
+
 class Wuzhou:public TriggerSkill{
 public:
     Wuzhou():TriggerSkill("wuzhou"){
@@ -1183,6 +1255,8 @@ TigerPackage::TigerPackage()
 
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
+
+    General *wuyanguang = new General(this, "wuyanguang", "guan");
 
     General *tianhu = new General(this, "tianhu$", "jiang");
     tianhu->addSkill(new Wuzhou);
