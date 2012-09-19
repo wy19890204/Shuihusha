@@ -307,9 +307,19 @@ bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Pl
     return targets.length() == 2;
 }
 
+void NeiyingCard::weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const{
+    QList<int> all1 = you->handCards();
+    QList<int> all2 = me->handCards();
+    room->fillAG(all1, me);
+    room->fillAG(all2, you);
+    room->getThread()->delay(4000);
+    //room->askForAG(you, me, true, "neiying");
+    me->invoke("clearAG");
+    you->invoke("clearAG");
+}
+
 void NeiyingCard::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &targets) const{
-    room->showAllCards(targets.last(), targets.first());
-    room->showAllCards(targets.first(), targets.last());
+    weAreFriends(room, targets.first(), targets.last());
     LogMessage log;
     log.type = "#Neiying";
     log.to = targets;
