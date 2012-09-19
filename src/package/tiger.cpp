@@ -3,6 +3,7 @@
 #include "standard.h"
 #include "plough.h"
 #include "maneuvering.h"
+#include "client.h"
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
@@ -292,39 +293,68 @@ public:
     }
 };
 
+NeiyingCard::NeiyingCard(){
+    mute = true;
+}
+
+bool NeiyingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() >= 2)
+        return false;
+    return true;
+}
+
+bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+void NeiyingCard::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &targets) const{
+    room->showAllCards(targets.last(), targets.first());
+    room->showAllCards(targets.first(), targets.last());
+    LogMessage log;
+    log.type = "#Neiying";
+    log.to = targets;
+    room->sendLog(log);
+}
+
 class Neiying:public ViewAsSkill{
 public:
     Neiying():ViewAsSkill("neiying"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.isEmpty())
-            return true;
-        else if(selected.length() == 1){
-            const Card *card = selected.first()->getCard();
-            return to_select->getCard()->getColor() == card->getColor();
-        }else
-            return false;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 2){
-            const Card *first = cards.first()->getCard();
-            Counterplot *aa = new Counterplot(first->getSuit(), 0);
-            aa->addSubcards(cards);
-            aa->setSkillName(objectName());
-            return aa;
-        }else
-            return NULL;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
+        if(ClientInstance->getPattern() == "nulliplot"){
+            if(selected.isEmpty())
+                return true;
+            else if(selected.length() == 1){
+                const Card *card = selected.first()->getCard();
+                return to_select->getCard()->getColor() == card->getColor();
+            }
+        }
         return false;
     }
 
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(ClientInstance->getPattern() == "nulliplot"){
+            if(cards.length() == 2){
+                const Card *first = cards.first()->getCard();
+                Counterplot *aa = new Counterplot(first->getSuit(), 0);
+                aa->addSubcards(cards);
+                aa->setSkillName(objectName());
+                return aa;
+            }else
+                return NULL;
+        }
+        else{
+            return new NeiyingCard;
+        }
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("NeiyingCard");
+    }
+
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        //return pattern == "nullification";
-        return pattern == "counterplot";
+        return pattern == "nulliplot";
     }
 };
 
@@ -1452,6 +1482,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+    addMetaObject<NeiyingCard>();
     addMetaObject<JintangCard>();
     addMetaObject<LiejiCard>();
     addMetaObject<HuweiCard>();
