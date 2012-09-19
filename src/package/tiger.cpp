@@ -328,6 +328,82 @@ public:
     }
 };
 
+JintangCard::JintangCard(){
+}
+
+bool JintangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+void JintangCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    CardStar card = effect.from->tag["Jintg"].value<CardStar>();
+    effect.from->tag.remove("Jintg");
+    const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
+    QList<ServerPlayer *> targets;
+    targets << effect.to;
+    equipped->use(room, effect.from, targets);
+}
+
+class JintangViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    JintangViewAsSkill():ZeroCardViewAsSkill("jintang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@jintang!";
+    }
+
+    virtual const Card *viewAs() const{
+        return new JintangCard;
+    }
+};
+
+class Jintang: public TriggerSkill{
+public:
+    Jintang(): TriggerSkill("jintang"){
+        events << Predamaged << Death;
+        view_as_skill = new JintangViewAsSkill;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Predamaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            LogMessage log;
+            log.from = player;
+            log.arg = objectName();
+            log.arg2 = QString::number(damage.damage);
+            if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
+                log.type = "#JintangForb";
+                room->sendLog(log);
+                return true;
+            }
+            if(player->getHp() <= 2 && damage.damage > 1){
+                log.type = "#JintangCut";
+                room->sendLog(log);
+                damage.damage = 1;
+                data = QVariant::fromValue(damage);
+            }
+        }
+        else if(event == Death){
+            foreach(CardStar equip, player->getEquips()){
+                player->tag["Jintg"] = QVariant::fromValue(equip);
+                room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
+            }
+        }
+        return false;
+    }
+};
+
 class Losthp: public TriggerSkill{
 public:
     Losthp(int n): TriggerSkill("#losthp_" + QString::number(n)), n(n){
@@ -361,34 +437,44 @@ public:
         return true;
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> sanlangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *sanlang, sanlangs){
-            if(event == Damaged){
-                DamageStruct damage = data.value<DamageStruct>();
+            DamageStruct damage = data.value<DamageStruct>();
 
-                if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName())){
-                    room->loseMaxHp(sanlang);
-                    DamageStruct dag = damage;
-                    dag.from = sanlang;
-                    dag.to = damage.from;
-                    room->damage(dag);
-                }
-                continue;
+            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName())){
+                room->loseMaxHp(sanlang);
+                DamageStruct dag = damage;
+                dag.from = sanlang;
+                dag.to = damage.from;
+                room->damage(dag);
             }
-            else{
-                DyingStruct dying = data.value<DyingStruct>();
-                if(dying.damage && dying.damage->from && dying.damage->from->hasSkill(objectName())
-                         && dying.damage->from->askForSkillInvoke(objectName(), QVariant::fromValue(dying.damage))){
-                    room->playSkillEffect(objectName());
-                    room->getThread()->delay(500);
-                    room->killPlayer(dying.damage->to, dying.damage);
-                    room->getThread()->delay(1000);
-                    room->killPlayer(dying.damage->from);
+        }
+        return false;
+    }
+};
 
-                    return true;
-                }
-            }
+class PinmingDie: public TriggerSkill{
+public:
+    PinmingDie():TriggerSkill("#pinming-die"){
+        events << Dying;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill("pinming");
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        DyingStruct dying = data.value<DyingStruct>();
+        if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")
+                 && dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage))){
+            room->playSkillEffect("pinming", 2);
+            room->getThread()->delay(500);
+            room->killPlayer(dying.damage->to, dying.damage);
+            room->getThread()->delay(1000);
+            room->killPlayer(dying.damage->from);
+
+            return true;
         }
         return false;
     }
@@ -934,7 +1020,7 @@ public:
 
 class LinseEffect: public PhaseChangeSkill{
 public:
-    LinseEffect():PhaseChangeSkill("#linse_effect"){
+    LinseEffect():PhaseChangeSkill("#linse-effect"){
     }
 
     virtual bool onPhaseChange(ServerPlayer *lz) const{
@@ -1284,7 +1370,7 @@ TigerPackage::TigerPackage()
     hantao->addSkill(new Changsheng);
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
-    //oupeng->addSkill("#losthp");
+    oupeng->addSkill("#losthp_1");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
@@ -1300,9 +1386,14 @@ TigerPackage::TigerPackage()
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
 
+    General *wuyanguang = new General(this, "wuyanguang", "guan");
+    wuyanguang->addSkill(new Jintang);
+
     General *shixiu = new General(this, "shixiu", "jiang", 6);
     shixiu->addSkill(new Losthp(2));
     shixiu->addSkill(new Pinming);
+    shixiu->addSkill(new PinmingDie);
+    related_skills.insertMulti("pinming", "#pinming-die");
 
     General *lvfang = new General(this, "lvfang", "jiang");
     lvfang->addSkill(new Lieji);
@@ -1336,7 +1427,7 @@ TigerPackage::TigerPackage()
     lizhong->addSkill(new Losthp(1));
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
-    related_skills.insertMulti("linse", "#linse_effect");
+    related_skills.insertMulti("linse", "#linse-effect");
 
 /*
     General *yuehe = new General(this, "yuehe", "min", 3);
@@ -1361,6 +1452,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+    addMetaObject<JintangCard>();
     addMetaObject<LiejiCard>();
     addMetaObject<HuweiCard>();
     addMetaObject<XiaozaiCard>();

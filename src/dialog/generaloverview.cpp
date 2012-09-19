@@ -45,8 +45,13 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         name = Sanguosha->translate(general->objectName());
         kingdom = Sanguosha->translate(general->getKingdom());
         gender = general->isMale() ? tr("Male") : tr("Female");
-        max_hp = !general->hasSkill("#losthp") ? QString::number(general->getMaxHp())
-            : QString::number(general->getMaxHp() - 1) + "/" + QString::number(general->getMaxHp());
+        max_hp = QString::number(general->getMaxHp());
+        for(int n = 1; n <= 3; n++){
+            if(general->hasSkill("#losthp_" + QString::number(n))){
+                max_hp = QString::number(general->getMaxHp() - n) + "/" + QString::number(general->getMaxHp());
+                break;
+            }
+        }
         package = Sanguosha->translate(general->getPackage());
 
         QString nickname = Sanguosha->translate("#" + general->objectName());
