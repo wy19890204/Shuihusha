@@ -370,12 +370,17 @@ public:
         frequency = Compulsory;
     }
 
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == Predamaged){
             DamageStruct damage = data.value<DamageStruct>();
             LogMessage log;
             log.from = player;
             log.arg = objectName();
+            log.arg2 = QString::number(damage.damage);
             if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
                 log.type = "#JintangForb";
                 room->sendLog(log);
@@ -383,9 +388,7 @@ public:
             }
             if(player->getHp() <= 2 && damage.damage > 1){
                 log.type = "#JintangCut";
-                log.arg2 = QString::number(damage.damage);
                 room->sendLog(log);
-
                 damage.damage = 1;
                 data = QVariant::fromValue(damage);
             }
@@ -1257,6 +1260,7 @@ TigerPackage::TigerPackage()
     sunli->addSkill(new Neiying);
 
     General *wuyanguang = new General(this, "wuyanguang", "guan");
+    wuyanguang->addSkill(new Jintang);
 
     General *tianhu = new General(this, "tianhu$", "jiang");
     tianhu->addSkill(new Wuzhou);
@@ -1312,6 +1316,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+    addMetaObject<JintangCard>();
     addMetaObject<HuweiCard>();
     addMetaObject<XiaozaiCard>();
 }
