@@ -354,7 +354,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@jintang";
+        return pattern == "@@jintang!";
     }
 
     virtual const Card *viewAs() const{
@@ -396,7 +396,7 @@ public:
         else if(event == Death){
             foreach(CardStar equip, player->getEquips()){
                 player->tag["Jintg"] = QVariant::fromValue(equip);
-                room->askForUseCard(player, "@@jintang", "@jintang:" + equip->objectName(), true);
+                room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
             }
         }
         return false;
