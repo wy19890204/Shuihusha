@@ -328,6 +328,119 @@ public:
     }
 };
 
+class Pinming: public TriggerSkill{
+public:
+    Pinming():TriggerSkill("pinming"){
+        events << Damaged << Dying;
+    }
+
+    virtual int getPriority() const{
+        return -2;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        QList<ServerPlayer *> sanlangs = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *sanlang, sanlangs){
+            if(event == Damaged){
+                DamageStruct damage = data.value<DamageStruct>();
+
+                if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName())){
+                    room->loseMaxHp(sanlang);
+                    DamageStruct dag = damage;
+                    dag.from = sanlang;
+                    dag.to = damage.from;
+                    room->damage(dag);
+                }
+                continue;
+            }
+            else{
+                DyingStruct dying = data.value<DyingStruct>();
+                if(dying.damage && dying.damage->from && dying.damage->from->hasSkill(objectName())
+                         && dying.damage->from->askForSkillInvoke(objectName(), QVariant::fromValue(dying.damage))){
+                    room->playSkillEffect(objectName());
+                    room->getThread()->delay(500);
+                    room->killPlayer(dying.damage->to, &dying.damage);
+                    room->getThread()->delay(1000);
+                    room->killPlayer(dying.damage->from);
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+LiejiCard::LiejiCard(){
+}
+
+bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() >= 2)
+        return false;
+    return to_select != Self;
+}
+
+bool LiejiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    room->throwCard(this, card_use.from);
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->setSkillName("lieji");
+    CardUseStruct use;
+    use.card = slash;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
+class LiejiViewAsSkill: public OneCardViewAsSkill{
+public:
+    LiejiViewAsSkill():OneCardViewAsSkill("lieji"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@lieji";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("BasicCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        Card *card = new LiejiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Lieji:public PhaseChangeSkill{
+public:
+    Lieji():PhaseChangeSkill("lieji"){
+        view_as_skill = new LiejiViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
+        if(zhuwu->getPhase() == Player::Play){
+            Room *room = zhuwu->getRoom();
+            if(zhuwu->isKongcheng())
+                return false;
+            if(room->askForUseCard(zhuwu, "@@lieji", "@lieji", true))
+                return true;
+        }
+        return false;
+    }
+};
+
 class Wuzhou:public TriggerSkill{
 public:
     Wuzhou():TriggerSkill("wuzhou"){
@@ -1184,6 +1297,12 @@ TigerPackage::TigerPackage()
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
 
+    General *shixiu = new General(this, "shixiu", "jiang", 6);
+    shixiu->addSkill(new Pinming);
+
+    General *lvfang = new General(this, "lvfang", "jiang");
+    lvfang->addSkill(new Lieji);
+
     General *tianhu = new General(this, "tianhu$", "jiang");
     tianhu->addSkill(new Wuzhou);
     tianhu->addSkill(new Huwei);
@@ -1238,6 +1357,7 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+    addMetaObject<LiejiCard>();
     addMetaObject<HuweiCard>();
     addMetaObject<XiaozaiCard>();
 }
