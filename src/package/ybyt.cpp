@@ -702,7 +702,7 @@ YBYTPackage::YBYTPackage()
 
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill(new Maiyi);
-    xueyong->addSkill("#losthp");
+    //xueyong->addSkill("#losthp");
 
     General *tanglong = new General(this, "tanglong", "jiang", 3);
     tanglong->addSkill(new Cuihuo);

@@ -328,6 +328,25 @@ public:
     }
 };
 
+class Losthp: public TriggerSkill{
+public:
+    Losthp(int n): TriggerSkill("#losthp_" + QString::number(n)), n(n){
+        events << GameStart;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        room->setPlayerProperty(player, "hp", player->getHp() - n);
+        return false;
+    }
+
+private:
+    int n;
+};
+
 class Pinming: public TriggerSkill{
 public:
     Pinming():TriggerSkill("pinming"){
@@ -363,7 +382,7 @@ public:
                          && dying.damage->from->askForSkillInvoke(objectName(), QVariant::fromValue(dying.damage))){
                     room->playSkillEffect(objectName());
                     room->getThread()->delay(500);
-                    room->killPlayer(dying.damage->to, &dying.damage);
+                    room->killPlayer(dying.damage->to, dying.damage);
                     room->getThread()->delay(1000);
                     room->killPlayer(dying.damage->from);
 
@@ -896,22 +915,6 @@ public:
     }
 };
 
-class Losthp: public TriggerSkill{
-public:
-    Losthp():TriggerSkill("#losthp"){
-        events << GameStart;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        room->setPlayerProperty(player, "hp", player->getHp() - 1);
-        return false;
-    }
-};
-
 class Linse: public ClientSkill{
 public:
     Linse():ClientSkill("linse"){
@@ -1281,7 +1284,7 @@ TigerPackage::TigerPackage()
     hantao->addSkill(new Changsheng);
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
-    oupeng->addSkill("#losthp");
+    //oupeng->addSkill("#losthp");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
@@ -1298,6 +1301,7 @@ TigerPackage::TigerPackage()
     sunli->addSkill(new Neiying);
 
     General *shixiu = new General(this, "shixiu", "jiang", 6);
+    shixiu->addSkill(new Losthp(2));
     shixiu->addSkill(new Pinming);
 
     General *lvfang = new General(this, "lvfang", "jiang");
@@ -1329,7 +1333,7 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("houfa", "#houfa-slash");
 
     General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill(new Losthp);
+    lizhong->addSkill(new Losthp(1));
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse_effect");

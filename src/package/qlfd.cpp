@@ -834,7 +834,7 @@ QLFDPackage::QLFDPackage()
     jiashi->addSkill(new Zhuying);
 
     General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
-    ximenqing->addSkill("#losthp");
+    //ximenqing->addSkill("#losthp");
     ximenqing->addSkill(new Caiquan);
 
     addMetaObject<FanwuCard>();
