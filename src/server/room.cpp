@@ -2350,7 +2350,7 @@ void Room::run(){
                     names.removeOne(name);
                     choices.removeOne(name);
                 }
-                this->setTag(player->objectName(), QVariant(generals));
+                player->tag["Changban"] = generals.join("+");
             }
         }
         foreach(ServerPlayer *rebel, rebels){

@@ -502,9 +502,11 @@ public:
 
     void changeGeneral(ServerPlayer *player) const{
         Room *room = player->getRoom();
-        QStringList generals = room->getTag(player->objectName()).toStringList();
+        QString general_list = player->tag["Changban"].toString();
+        QStringList generals = general_list.split("+");
         QString new_general = generals.takeFirst();
-        room->setTag(player->objectName(), QVariant(generals));
+        player->tag["Changban"] = generals.isEmpty() ? QVariant() : generals.join("+");
+        //room->setTag(player->objectName(), QVariant(generals));
         room->transfigure(player, new_general, true, true);
         room->revivePlayer(player);
 
@@ -585,8 +587,7 @@ public:
                         player->play();
                 }else{
                     if(player->isDead()){
-                        QStringList generals = room->getTag(player->objectName()).toStringList();
-                        if(!generals.isEmpty()){
+                        if(player->tag["Changban"] != QVariant()){
                             changeGeneral(player);
                             player->play();
                         }
@@ -604,8 +605,7 @@ public:
                 player->bury();
 
                 if(player->getRoleEnum() == Player::Rebel){
-                    QStringList generals = room->getTag(player->objectName()).toStringList();
-                    if(generals.isEmpty()){
+                    if(player->tag["Changban"] == QVariant()){
                         QStringList alive_roles = room->aliveRoles(player);
                         if(!alive_roles.contains("rebel"))
                             room->gameOver("lord+loyalist");
@@ -640,9 +640,7 @@ public:
 
         case GameOverJudge:{
                 if(player->getRole() == "rebel"){
-                    QStringList list = room->getTag(player->objectName()).toStringList();
-
-                    if(!list.isEmpty())
+                    if(player->tag["Changban"] != QVariant())
                         return false;
                 }
 

@@ -75,7 +75,7 @@ SOURCES += \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/dusong-scenario.cpp \
-        src/scenario/changban-scenario.cpp \
+	src/scenario/changban-scenario.cpp \
 	src/scenario/miniscenarios.cpp \
 	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
@@ -86,7 +86,7 @@ SOURCES += \
 	src/server/gamerule.cpp \
 	src/server/generalselector.cpp \
 	src/server/room.cpp \
-        src/server/roomthread.cpp \
+	src/server/roomthread.cpp \
 	src/server/roomthread1v1.cpp \
 	src/server/roomthread3v3.cpp \
 	src/server/server.cpp \
@@ -208,7 +208,7 @@ HEADERS += \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/dusong-scenario.h \
-        src/scenario/changban-scenario.h \
+	src/scenario/changban-scenario.h \
 	src/scenario/miniscenarios.h \
 	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
@@ -336,7 +336,7 @@ CONFIG(chatvoice){
 TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-        shuihusha.qss \
+	shuihusha.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png
