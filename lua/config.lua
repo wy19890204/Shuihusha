@@ -40,7 +40,7 @@ config = {
 	scene_names = {
 	"Dusong",
 	"Couple",
-	"Changban",
+--	"Changban",
 --[[	"Zombie",
 	"Legend",
 	"Impasse",]]

@@ -1,10 +1,9 @@
-#include "ChangbanSlope.h"
+#include "changban-scenario.h"
 #include "skill.h"
 #include "maneuvering.h"
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
-#include "ai.h"
 #include "general.h"
 #include "standard.h"
 #include "client.h"
@@ -564,8 +563,7 @@ public:
                 }else
                     player->drawCards(4, false);
 
-
-                return false;
+                return true;
             }
 
         case HpChanged:{
@@ -599,7 +597,7 @@ public:
                         player->play();
                 }
 
-                return false;
+                return true;
             }
 
         case Death:{
@@ -656,7 +654,6 @@ public:
         }
 
         return false;
-        //return GameRule::trigger(event, room, player, data);
     }
 
 private:
@@ -670,7 +667,7 @@ bool ChangbanScenario::exposeRoles() const{
 void ChangbanScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    roles << "lord";
+    roles << "lord" << "loyalist";
     int i;
     for(i=0; i<3; i++)
         roles << "rebel";
@@ -697,7 +694,7 @@ bool ChangbanScenario::generalSelection() const{
 ChangbanScenario::ChangbanScenario()
     :Scenario("changban")
 {
-    lord = "zhang1dong";
+    //lord = "zhang1dong";
     rule = new ChangbanRule(this);
 
     General *cbzhaoyun1 = new General(this, "cbzhaoyun1", "god", 8, true, true);

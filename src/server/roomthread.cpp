@@ -374,7 +374,7 @@ void RoomThread::run(){
                 int i = 0;
                 foreach(ServerPlayer *player, league){
                     room->setCurrent(player);
-                    trigger(TurnStart, room->getCurrent());
+                    trigger(TurnStart, room, room->getCurrent());
 
                     if(!player->hasFlag("actioned"))
                         room->setPlayerFlag(player, "actioned");
@@ -385,13 +385,13 @@ void RoomThread::run(){
                     if(player->isAlive()){
                         if(i % 2 == 0){
                             room->setCurrent(cbzhaoyun);
-                            trigger(TurnStart, room->getCurrent());
+                            trigger(TurnStart, room, room->getCurrent());
 
                             if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                                 goto cbsecond_phase;
                         }else{
                             room->setCurrent(cbzhangfei);
-                            trigger(TurnStart, room->getCurrent());
+                            trigger(TurnStart, room, room->getCurrent());
 
                             if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                                 goto cbsecond_phase;
@@ -403,7 +403,7 @@ void RoomThread::run(){
 
                 if(i == 1){
                     room->setCurrent(cbzhangfei);
-                    trigger(TurnStart, room->getCurrent());
+                    trigger(TurnStart, room, room->getCurrent());
 
                     if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                         goto cbsecond_phase;
@@ -423,7 +423,7 @@ void RoomThread::run(){
                         room->setPlayerProperty(player, "phase", "not_active");
                         phase.to = player->getPhase();
                         QVariant data = QVariant::fromValue(phase);
-                        trigger(PhaseChange, player, data);
+                        trigger(PhaseChange, room, player, data);
                     }
                 }
             }
@@ -431,7 +431,7 @@ void RoomThread::run(){
             room->setCurrent(cbzhaoyun);
 
             forever{
-                trigger(TurnStart, room->getCurrent());
+                trigger(TurnStart, room, room->getCurrent());
                 room->setCurrent(room->getCurrent()->getNext());
             }
         }
