@@ -72,11 +72,11 @@ QString Moonpie::getEffectPath(bool is_male) const{
 }
 
 bool Moonpie::isAvailable(const Player *change) const{
-    return ServerInfo.GameMode == "dusong";
+    return ServerInfo.GameMode != "dusong";
 }
 
 bool Moonpie::targetFilter(const QList<const Player *> &targets, const Player *houyi, const Player *change) const{
-    return targets.isEmpty() && change->getMark("HaveEaten2") == 0 && change->inMyAttackRange(houyi);
+    return targets.isEmpty() && houyi->getMark("HaveEaten2") == 0 && change->inMyAttackRange(houyi);
 }
 
 void Moonpie::onEffect(const CardEffectStruct &effect) const{
@@ -88,6 +88,7 @@ void Moonpie::onEffect(const CardEffectStruct &effect) const{
                           .arg(effect.to->objectName()));
 
     room->acquireSkill(effect.to, "beatjapan");
+    //room->acquireSkill(effect.from, "beatjapan");
     room->setPlayerMark(effect.to, "HaveEaten2", 1);
 }
 
@@ -111,21 +112,36 @@ public:
         events << CardUsed;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *wusong, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("TrickCard") && use.card->isRed()){
-            room->playSkillEffect(objectName());
+            QList<PlayerStar> targets = use.to;
+            if(use.to.isEmpty())
+                targets << use.from;
+
+            room->playSkillEffect("beatjapan");
             LogMessage ogg;
             ogg.type = "#BeatJapan";
-            ogg.from = wusong;
-            ogg.arg = objectName();
+            ogg.from = player;
+            ogg.arg = "beatjapan";
+            ogg.arg2 = "iron_chain";
+            ogg.to = targets;
+            room->sendLog(ogg);
+            room->throwCard(use.card);
 
-            Card *card = new IronChain(use.card->getSuit(), use.card->getNumber());
+            foreach(ServerPlayer *target, targets){
+                bool chained = ! target->isChained();
+                target->setChained(chained);
+                room->broadcastProperty(target, "chained");
+                room->setEmotion(target, "chain");
+            }
+
+            /*Card *card = new IronChain(use.card->getSuit(), use.card->getNumber());
             card->addSubcard(use.card);
-            card->setSkillName(objectName());
+            card->setSkillName("beatjapan");
             CardUseStruct usechange = use;
             usechange.card = card;
-            room->useCard(usechange);
+            room->useCard(usechange);*/
             return true;
         }
         return false;
