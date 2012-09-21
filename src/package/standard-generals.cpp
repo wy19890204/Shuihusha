@@ -1064,7 +1064,7 @@ public:
         foreach(ServerPlayer *wusong, wusOng){
             if(damage.from->isDead())
                 break;
-            if(wusong->canSlash(damage.from, false)
+            if(wusong->canSlash(damage.from, NULL, false)
                     && !wusong->isKongcheng() && damage.from != wusong){
                 const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), true, data, CardDiscarded);
                 if(!card)

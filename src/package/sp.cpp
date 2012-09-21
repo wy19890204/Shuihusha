@@ -112,6 +112,41 @@ public:
     }
 };
 
+class Strike: public ViewAsSkill{
+public:
+    Strike():ViewAsSkill("strike"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getPhase() == Player::Play && Slash::IsAvailable(player);
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return selected.length() < 2 && !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+
+        const Card *first = cards.at(0)->getFilteredCard();
+        const Card *second = cards.at(1)->getFilteredCard();
+
+        Card::Suit suit = Card::NoSuit;
+        if(first->isBlack() && second->isBlack())
+            suit = Card::Spade;
+        else if(first->isRed() && second->isRed())
+            suit = Card::Heart;
+
+        Slash *slash = new Slash(suit, 0);
+        slash->setSkillName(objectName());
+        slash->addSubcard(first);
+        slash->addSubcard(second);
+
+        return slash;
+    }
+};
+
 /*
 class Shemi: public TriggerSkill{
 public:

@@ -312,7 +312,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
     PlayerStar target = effect.to;
     Room *room = effect.from->getRoom();
     const Card *slash = NULL;
-    if(effect.from->canSlash(target)){
+    if(effect.from->canSlash(target, slash)){
         QVariant source = QVariant::fromValue((PlayerStar)effect.from);
         slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), false, source, NonTrigger);
     }
@@ -339,7 +339,7 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(target == NULL || target->isDead())
         return;
 
-    if(!card_use.from->canSlash(target, false))
+    if(!card_use.from->canSlash(target, NULL, false))
         return;
 
     const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", true, QVariant(), NonTrigger);
