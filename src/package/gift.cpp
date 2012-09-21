@@ -135,7 +135,7 @@ public:
 GiftPackage::GiftPackage()
     :Package("gift")
 {
-    skills << new Lisao << new BeatJapan << Beatjapan;
+    skills << new Lisao << new BeatJapan << new Beatjapan;
     related_skills.insertMulti("beatjapan", "#beat-japan");
     QList<Card *> cards;
 

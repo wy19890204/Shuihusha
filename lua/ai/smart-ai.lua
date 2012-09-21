@@ -1989,25 +1989,7 @@ function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
 	if sunerniang and self.player:getHandcardNum() == 1 then return "." end
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
-	if pattern == "slash" then
-		return self:getCardId("Slash") or "."
-	end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
-	if target and self:isFriend(target) then
-		if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
-		if target:hasSkill("huatian") then return "." end
-	end
-	if pattern == "jink" and target and self:isEnemy(target) and not target:hasFlag("drank") then
-		if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
-		else return self:getCardId("Jink") or "." end
-		if not self:hasSkills(sgs.need_kongcheng, player) then
-		if self:isEquip("Axe", target) then
-			if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
-			if target:getHandcardNum() - target:getHp() > 2 then return "." end
-		elseif self:isEquip("Blade", target) then
-			if self:getCardsNum("Jink") <= self:getCardsNum("Slash", target) then return "." end
-		end
-	end
 end
 
 function SmartAI:askForCard(pattern, prompt, data)

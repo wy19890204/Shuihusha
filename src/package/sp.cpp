@@ -112,9 +112,9 @@ public:
     }
 };
 
-class Strike: public ViewAsSkill{
+class StrikeViewAsSkill: public ViewAsSkill{
 public:
-    Strike():ViewAsSkill("strike"){
+    StrikeViewAsSkill():ViewAsSkill("strike"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -147,6 +147,51 @@ public:
     }
 };
 
+class Strike: public TriggerSkill{
+public:
+    Strike():TriggerSkill("strike"){
+        events << CardUsed;
+        view_as_skill = new StrikeViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Slash") && use.card->isVirtualCard() && use.card->getSkillName() == objectName()){
+            LogMessage log;
+            log.type = "#Strike";
+            log.from = use.from;
+            log.arg = objectName();
+            room->sendLog(log);
+        }
+        return false;
+    }
+};
+
+class Lift: public TriggerSkill{
+public:
+    Lift(): TriggerSkill("lift"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+
+        if(player->askForSkillInvoke(objectName(), data)){
+            player->turnOver();
+            LogMessage log;
+            log.type = "#Lift";
+            log.from = player;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->slashResult(effect, NULL);
+        }
+
+        return false;
+    }
+};
+
 class Exterminate: public TriggerSkill{
 public:
     Exterminate():TriggerSkill("exterminate"){
@@ -162,7 +207,7 @@ public:
         if(!damage.from || !damage.from->hasSkill(objectName()) || damage.from == damage.to)
             return false;
         ServerPlayer *hanae = damage.from;
-        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName())){
+        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
 
             QList<ServerPlayer *> targets;
@@ -178,12 +223,12 @@ public:
             room->sendLog(log);
 
             room->loseMaxHp(hanae);
+            hanae->loseMark("@kacha");
             DamageStruct dama = damage;
             foreach(ServerPlayer *tmp, targets){
                 dama.to = tmp;
                 room->damage(dama);
             }
-            hanae->loseMark("@kacha");
         }
         return false;
     }
@@ -619,6 +664,14 @@ SPPackage::SPPackage()
 {
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
+
+    General *tola = new General(this, "tola", "god", 4, false);
+    tola->addSkill(new Strike);
+    tola->addSkill(new Lift);
+    tola->addSkill(new Exterminate);
+    tola->addSkill(new MarkAssignSkill("@kacha", 1));
+    related_skills.insertMulti("exterminate", "#@kacha-1");
+
 /*
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);

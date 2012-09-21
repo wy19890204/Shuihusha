@@ -1,2 +1,2 @@
 ﻿general:select|role:rebel
-general:wangqing|general2:duansanniang|maxhp:5|hp:4|role:lord|equip:lhh|starter:true
+general:wangqing|general2:tianhu|maxhp:5|hp:4|role:lord|equip:lhh|starter:true

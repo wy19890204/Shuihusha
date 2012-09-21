@@ -59,8 +59,7 @@ sgs.ai_skill_invoke["@zhaixing"] = function(self,prompt)
 	return "."
 end
 
--- liehuo&citan
-sgs.ai_skill_invoke["liehuo"] = sgs.ai_skill_invoke["lihun"]
+-- citan
 sgs.ai_skill_invoke["citan"] = sgs.ai_skill_invoke["lihun"]
 sgs.ai_skill_askforag["citan"] = function(self, card_ids)
 	local cards = {}
