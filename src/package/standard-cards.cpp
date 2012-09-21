@@ -632,7 +632,7 @@ ArcheryAttack::ArcheryAttack(Card::Suit suit, int number)
 void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     const Card *jink = NULL;
-    if(effect.from->hasSkill("lianzhu")){
+    if(effect.card->getSkillName() == "lianzhu"){
         const Card *first_jink = NULL, *second_jink = NULL;
         LogMessage log;
         log.type = "#Lianzhu";

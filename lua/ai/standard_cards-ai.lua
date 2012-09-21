@@ -126,7 +126,7 @@ function SmartAI:useCardSlash(card, use)
 		and (hasExplicitRebel(self.room) or not friend:isLord()))
 		then
 			if not slash_prohibit then
-				if ((self.player:canSlash(friend, not no_distance)) or
+				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
 					self:slashIsEffective(card, friend) then
 					use.card = card
@@ -158,7 +158,7 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("xiayao") then self.mi_targets = self.mi_targets + 1 end
 	for _, target in ipairs(targets) do
 		local canliuli = false
-		if (self.player:canSlash(target, not no_distance) or
+		if (self.player:canSlash(target, card, not no_distance) or
 		(use.isDummy and self.predictedRange and (self.player:distanceTo(target) <= self.predictedRange))) and
 		self:objectiveLevel(target) > 3
 		and self:slashIsEffective(card, target) then
@@ -214,7 +214,7 @@ function SmartAI:useCardSlash(card, use)
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card, friend)
 			if not slash_prohibit then
-				if ((self.player:canSlash(friend, not no_distance)) or
+				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
 					self:slashIsEffective(card, friend) then
 					use.card = card
@@ -234,7 +234,7 @@ sgs.ai_skill_use.slash = function(self, prompt)
 	local slash = self:getCard("Slash")
 	if not slash then return "." end
 	for _, enemy in ipairs(self.enemies) do
-		if self.player:canSlash(enemy, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
+		if self.player:canSlash(enemy, slash, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
 			return ("%s->%s"):format(slash:toString(), enemy:objectName())
 		end
 	end
@@ -1053,7 +1053,7 @@ function SmartAI:useCardCollateral(card, use)
 			and enemy:getWeapon() then
 
 			for _, enemy2 in ipairs(self.enemies) do
-				if enemy:canSlash(enemy2) then
+				if enemy:canSlash(enemy2, card) then
 					if enemy:getHandcardNum() == 0 then
 						use.card = card
 						if use.to then use.to:append(enemy) end

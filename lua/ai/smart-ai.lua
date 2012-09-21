@@ -541,14 +541,14 @@ sgs.ai_compare_funcs = {
 		local players = sgs.QList2Table(a:getRoom():getOtherPlayers(a))
 		local d1 = a:getHandcardNum()
 		for _, player in ipairs(players) do
-			if a:canSlash(player,true) then
+			if a:canSlash(player, nil, true) then
 				d1 = d1+10/(sgs.getDefense(player))
 			end
 		end
 		players = sgs.QList2Table(b:getRoom():getOtherPlayers(b))
 		local d2 = b:getHandcardNum()
 		for _, player in ipairs(players) do
-			if b:canSlash(player,true) then
+			if b:canSlash(player, nil, true) then
 				d2 = d2+10/(sgs.getDefense(player))
 			end
 		end
@@ -1989,6 +1989,9 @@ function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
 	if sunerniang and self.player:getHandcardNum() == 1 then return "." end
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
+	if pattern == "slash" then
+		return self:getCardId("Slash") or "."
+	end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
 	if target and self:isFriend(target) then
 		if target:hasSkill("yixian") and not self.player:faceUp() then return "." end

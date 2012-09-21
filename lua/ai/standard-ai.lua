@@ -168,7 +168,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 
 	if self.player:getHandcardNum()==1 then
 		for _, enemy in ipairs(self.enemies) do
-			if self:isEquip("GudingBlade", enemy) and enemy:canSlash(self.player, true) then return end
+			if self:isEquip("GudingBlade", enemy) and enemy:canSlash(self.player, nil, true) then return end
 		end
 	end
 
@@ -1266,8 +1266,8 @@ end
 
 function SmartAI:isNoZhenshaMark()
 	if not self.player:isWounded() then return true end
-	for _, player in sgs.qlist(self.room:getAlivePlayers()) do
-		if self:isEnemy(player) and not player:isKongcheng() and player:getMark("@methanol") > 0 then return false end
+	for _, enemy in ipairs(self:getEnemies(self.player)) do
+		if not enemy:isKongcheng() and enemy:getMark("@methanol") > 0 then return false end
 	end
 	return true
 end
