@@ -112,9 +112,9 @@ public:
     }
 };
 
-class Strike: public ViewAsSkill{
+class StrikeViewAsSkill: public ViewAsSkill{
 public:
-    Strike():ViewAsSkill("strike"){
+    StrikeViewAsSkill():ViewAsSkill("strike"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -144,6 +144,26 @@ public:
         slash->addSubcard(second);
 
         return slash;
+    }
+};
+
+class Strike: public TriggerSkill{
+public:
+    Strike():TriggerSkill("strike"){
+        events << CardUsed;
+        view_as_skill = new StrikeViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Slash") && use.card->isVirtualCard() && use.card->getSkillName() == objectName()){
+            LogMessage log;
+            log.type = "#Strike";
+            log.from = use.from;
+            log.arg = objectName();
+            room->sendLog(log);
+        }
+        return false;
     }
 };
 
@@ -203,12 +223,12 @@ public:
             room->sendLog(log);
 
             room->loseMaxHp(hanae);
+            hanae->loseMark("@kacha");
             DamageStruct dama = damage;
             foreach(ServerPlayer *tmp, targets){
                 dama.to = tmp;
                 room->damage(dama);
             }
-            hanae->loseMark("@kacha");
         }
         return false;
     }

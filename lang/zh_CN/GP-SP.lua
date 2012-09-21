@@ -33,6 +33,7 @@ return {
 	["exterminate"] = "剪",
 	[":exterminate"] = "<font color=purple><b>限定技</b></font>，当你对其他角色造成伤害后，你可以扣减1点体力上限，分别对与该角色距离为1的所有角色造成相同的伤害。",
 	["#Exterminate"] = "%from 吼一声，却似半天里起个霹雳，振得那山冈也动，把这铁棒也似虎尾倒竖起来只一%arg。%to 难逃此劫！",
+	["@kacha"] = "虎魂",
 
 	["#zhaoji"] = "宋徽宗",
 	["zhaoji"] = "赵佶",
