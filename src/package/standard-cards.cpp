@@ -113,7 +113,7 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
         distance_limit = false;
     }
 
-    return Self->canSlash(to_select, distance_limit);
+    return Self->canSlash(to_select, this, distance_limit);
 }
 
 Jink::Jink(Suit suit, int number):BasicCard(suit, number){
@@ -260,7 +260,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(!player->canSlash(effect.to, false))
+        if(!player->canSlash(effect.to, NULL, false))
             return false;
         if(player->hasFlag("triggered"))
             return false;
@@ -632,7 +632,7 @@ ArcheryAttack::ArcheryAttack(Card::Suit suit, int number)
 void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
     const Card *jink = NULL;
-    if(effect.from->hasSkill("lianzhu")){
+    if(effect.card->getSkillName() == "lianzhu"){
         const Card *first_jink = NULL, *second_jink = NULL;
         LogMessage log;
         log.type = "#Lianzhu";

@@ -11,6 +11,20 @@ public:
     TigerPackage();
 };
 
+<<<<<<< HEAD
+=======
+class NeiyingCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE NeiyingCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual void weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const;
+};
+
+>>>>>>> 11599abb6ef2826b229bc8e5cfbe9acf051b02bc
 class JintangCard: public SkillCard{
     Q_OBJECT
 

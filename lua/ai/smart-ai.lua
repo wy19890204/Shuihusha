@@ -518,6 +518,10 @@ sgs.ai_compare_funcs = {
 		return a:getHandcardNum() > b:getHandcardNum()
 	end,
 
+	equip = function(a, b)
+		return a:getEquips():length() < b:getEquips():length()
+	end,
+
 	value = function(a, b)
 		return sgs.getValue(a) < sgs.getValue(b)
 	end,
@@ -541,14 +545,14 @@ sgs.ai_compare_funcs = {
 		local players = sgs.QList2Table(a:getRoom():getOtherPlayers(a))
 		local d1 = a:getHandcardNum()
 		for _, player in ipairs(players) do
-			if a:canSlash(player,true) then
+			if a:canSlash(player, nil, true) then
 				d1 = d1+10/(sgs.getDefense(player))
 			end
 		end
 		players = sgs.QList2Table(b:getRoom():getOtherPlayers(b))
 		local d2 = b:getHandcardNum()
 		for _, player in ipairs(players) do
-			if b:canSlash(player,true) then
+			if b:canSlash(player, nil, true) then
 				d2 = d2+10/(sgs.getDefense(player))
 			end
 		end
@@ -1990,21 +1994,6 @@ function sgs.ai_skill_cardask.nullfilter(self, data, pattern, target)
 	if not self:damageIsEffective(nil, nil, target) then return "." end
 	if self:getDamagedEffects(self) then return "." end
 	if target and target:getWeapon() and target:getWeapon():inherits("IceSword") and self.player:getCards("he"):length() > 2 then return end
-	if target and self:isFriend(target) then
-		if target:hasSkill("yixian") and not self.player:faceUp() then return "." end
-		if target:hasSkill("huatian") then return "." end
-	end
-	if pattern == "jink" and target and self:isEnemy(target) and not target:hasFlag("drank") then
-		if target:hasSkill("tongwu") and self.player:getHp() > 2 and self:getCardsNum("Jink") > 0 then return "." end
-		else return self:getCardId("Jink") or "." end
-		if not self:hasSkills(sgs.need_kongcheng, player) then
-		if self:isEquip("Axe", target) then
-			if self:hasSkills(sgs.lose_equip_skill, target) and target:getEquips():length() > 1 then return "." end
-			if target:getHandcardNum() - target:getHp() > 2 then return "." end
-		elseif self:isEquip("Blade", target) then
-			if self:getCardsNum("Jink") <= self:getCardsNum("Slash", target) then return "." end
-		end
-	end
 end
 
 function SmartAI:askForCard(pattern, prompt, data)

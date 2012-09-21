@@ -121,7 +121,7 @@ CoupleScenario::CoupleScenario()
     //map["lujunyi"] = "jiashi";
     map["zhangqing"] = "qiongying";
     map["linchong"] = "linniangzi";
-    //map["wangying"] = "husanniang";
+    map["wangying"] = "husanniang";
     map["qingzhang"] = "sunerniang";
     //map["sunxin"] = "gudasao";
     //map["wangqing"] = "duansanniang";

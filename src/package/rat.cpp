@@ -253,7 +253,7 @@ public:
             if(card){
                 QList<ServerPlayer *> targets;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers())
-                    if(zhangshun->canSlash(tmp, false))
+                    if(zhangshun->canSlash(tmp, NULL, false))
                         targets << tmp;
                 if(!targets.isEmpty()){
                     ServerPlayer *target = room->askForPlayerChosen(zhangshun, targets, objectName());

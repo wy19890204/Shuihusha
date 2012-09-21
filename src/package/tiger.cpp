@@ -3,6 +3,7 @@
 #include "standard.h"
 #include "plough.h"
 #include "maneuvering.h"
+#include "client.h"
 #include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
@@ -292,39 +293,78 @@ public:
     }
 };
 
+NeiyingCard::NeiyingCard(){
+    mute = true;
+}
+
+bool NeiyingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(targets.length() >= 2)
+        return false;
+    return true;
+}
+
+bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() == 2;
+}
+
+void NeiyingCard::weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const{
+    QList<int> all1 = you->handCards();
+    QList<int> all2 = me->handCards();
+    room->fillAG(all1, me);
+    room->fillAG(all2, you);
+    room->getThread()->delay(4000);
+    //room->askForAG(you, me, true, "neiying");
+    me->invoke("clearAG");
+    you->invoke("clearAG");
+}
+
+void NeiyingCard::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &targets) const{
+    weAreFriends(room, targets.first(), targets.last());
+    LogMessage log;
+    log.type = "#Neiying";
+    log.to = targets;
+    room->sendLog(log);
+}
+
 class Neiying:public ViewAsSkill{
 public:
     Neiying():ViewAsSkill("neiying"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.isEmpty())
-            return true;
-        else if(selected.length() == 1){
-            const Card *card = selected.first()->getCard();
-            return to_select->getCard()->getColor() == card->getColor();
-        }else
-            return false;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 2){
-            const Card *first = cards.first()->getCard();
-            Counterplot *aa = new Counterplot(first->getSuit(), 0);
-            aa->addSubcards(cards);
-            aa->setSkillName(objectName());
-            return aa;
-        }else
-            return NULL;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
+        if(ClientInstance->getPattern() == "nulliplot"){
+            if(selected.isEmpty())
+                return true;
+            else if(selected.length() == 1){
+                const Card *card = selected.first()->getCard();
+                return to_select->getCard()->getColor() == card->getColor();
+            }
+        }
         return false;
     }
 
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(ClientInstance->getPattern() == "nulliplot"){
+            if(cards.length() == 2){
+                const Card *first = cards.first()->getCard();
+                Counterplot *aa = new Counterplot(first->getSuit(), 0);
+                aa->addSubcards(cards);
+                aa->setSkillName(objectName());
+                return aa;
+            }else
+                return NULL;
+        }
+        else{
+            return new NeiyingCard;
+        }
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("NeiyingCard");
+    }
+
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        //return pattern == "nullification";
-        return pattern == "counterplot";
+        return pattern == "nulliplot";
     }
 };
 
@@ -338,6 +378,7 @@ bool JintangCard::targetFilter(const QList<const Player *> &targets, const Playe
 void JintangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     CardStar card = effect.from->tag["Jintg"].value<CardStar>();
+    effect.from->tag.remove("Jintg");
     const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
     QList<ServerPlayer *> targets;
     targets << effect.to;
@@ -441,7 +482,11 @@ public:
         foreach(ServerPlayer *sanlang, sanlangs){
             DamageStruct damage = data.value<DamageStruct>();
 
+<<<<<<< HEAD
             if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName())){
+=======
+            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
+>>>>>>> 11599abb6ef2826b229bc8e5cfbe9acf051b02bc
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;
                 dag.from = sanlang;
@@ -465,14 +510,25 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
+<<<<<<< HEAD
         if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")
                  && dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage))){
+=======
+        if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")){
+            dying.damage->from->setFlags("PinmingDie");
+            if(!dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage)))
+                return false;
+>>>>>>> 11599abb6ef2826b229bc8e5cfbe9acf051b02bc
             room->playSkillEffect("pinming", 2);
             room->getThread()->delay(500);
             room->killPlayer(dying.damage->to, dying.damage);
             room->getThread()->delay(1000);
             room->killPlayer(dying.damage->from);
 
+<<<<<<< HEAD
+=======
+            dying.damage->from->setFlags("-PinmingDie");
+>>>>>>> 11599abb6ef2826b229bc8e5cfbe9acf051b02bc
             return true;
         }
         return false;
@@ -533,12 +589,12 @@ public:
         view_as_skill = new LiejiViewAsSkill;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getPhase() == Player::Play){
-            Room *room = zhuwu->getRoom();
-            if(zhuwu->isKongcheng())
+    virtual bool onPhaseChange(ServerPlayer *lvfang) const{
+        if(lvfang->getPhase() == Player::Play){
+            Room *room = lvfang->getRoom();
+            if(lvfang->isKongcheng())
                 return false;
-            if(room->askForUseCard(zhuwu, "@@lieji", "@lieji", true))
+            if(room->askForUseCard(lvfang, "@@lieji", "@lieji", true))
                 return true;
         }
         return false;
@@ -652,7 +708,7 @@ public:
         foreach(ServerPlayer *zhah, zhangs){
             if(zhah->getMark("fuhun") > 0 || player->isKongcheng())
                 continue;
-            if(zhah->askForSkillInvoke(objectName(), data))
+            if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
                 room->obtainCard(zhah, room->askForCardChosen(zhah, player, "h", objectName()), false);
         }
         return false;
@@ -886,28 +942,15 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale()){
-            QString choice = effect.from->getEquips().isEmpty() ? "tan1+cancel" : "tan1+se2+cancel";
-            choice = room->askForChoice(player, objectName(), choice);
-            if(choice == "cancel")
-                return false;
-            LogMessage log;
-            log.type = "#Tanse";
-            log.from = player;
-            log.to << effect.from;
-            log.arg = objectName();
-            log.arg2 = choice;
-            room->sendLog(log);
-            player->drawCards(1);
-            if(choice == "tan1"){
-                const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
-                if(equip)
-                    effect.from->obtainCard(equip);
-                else
+        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
+            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+            if(equip)
+                effect.from->obtainCard(equip);
+            else{
+                if(effect.from->getEquips().isEmpty())
                     return false;
-            }
-            else
                 room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
+            }
         }
         return false;
     }
@@ -1451,6 +1494,10 @@ TigerPackage::TigerPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<HuazhuCard>();
 */
+<<<<<<< HEAD
+=======
+    addMetaObject<NeiyingCard>();
+>>>>>>> 11599abb6ef2826b229bc8e5cfbe9acf051b02bc
     addMetaObject<JintangCard>();
     addMetaObject<LiejiCard>();
     addMetaObject<HuweiCard>();

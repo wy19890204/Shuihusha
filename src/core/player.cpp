@@ -617,18 +617,20 @@ int Player::getMark(const QString &mark) const{
     return marks.value(mark, 0);
 }
 
-bool Player::canSlash(const Player *other, bool distance_limit) const{
-    const Card *slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
+bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
+    if(slash == NULL)
+        slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
     if(isProhibited(other, slash))
         return false;
 
     if(other == this)
         return false;
 
-    if(distance_limit)
-        return distanceTo(other) <= getAttackRange();
+    bool target_rule = distance_limit ? distanceTo(other) <= getAttackRange() : true;
+    if(slash->getSkillName() == "strike")
+        return !target_rule;
     else
-        return true;
+        return target_rule;
 }
 
 int Player::getCardCount(bool include_equip) const{

@@ -112,6 +112,127 @@ public:
     }
 };
 
+class StrikeViewAsSkill: public ViewAsSkill{
+public:
+    StrikeViewAsSkill():ViewAsSkill("strike"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->getPhase() == Player::Play && Slash::IsAvailable(player);
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return selected.length() < 2 && !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.length() != 2)
+            return NULL;
+
+        const Card *first = cards.at(0)->getFilteredCard();
+        const Card *second = cards.at(1)->getFilteredCard();
+
+        Card::Suit suit = Card::NoSuit;
+        if(first->isBlack() && second->isBlack())
+            suit = Card::Spade;
+        else if(first->isRed() && second->isRed())
+            suit = Card::Heart;
+
+        Slash *slash = new Slash(suit, 0);
+        slash->setSkillName(objectName());
+        slash->addSubcard(first);
+        slash->addSubcard(second);
+
+        return slash;
+    }
+};
+
+class Strike: public TriggerSkill{
+public:
+    Strike():TriggerSkill("strike"){
+        events << CardUsed;
+        view_as_skill = new StrikeViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Slash") && use.card->isVirtualCard() && use.card->getSkillName() == objectName()){
+            LogMessage log;
+            log.type = "#Strike";
+            log.from = use.from;
+            log.arg = objectName();
+            room->sendLog(log);
+        }
+        return false;
+    }
+};
+
+class Lift: public TriggerSkill{
+public:
+    Lift(): TriggerSkill("lift"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+
+        if(player->askForSkillInvoke(objectName(), data)){
+            player->turnOver();
+            LogMessage log;
+            log.type = "#Lift";
+            log.from = player;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->slashResult(effect, NULL);
+        }
+
+        return false;
+    }
+};
+
+class Exterminate: public TriggerSkill{
+public:
+    Exterminate():TriggerSkill("exterminate"){
+        events << DamageComplete;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || !damage.from->hasSkill(objectName()) || damage.from == damage.to)
+            return false;
+        ServerPlayer *hanae = damage.from;
+        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
+
+            QList<ServerPlayer *> targets;
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                if(damage.to->distanceTo(tmp) == 1)
+                    targets << tmp;
+            }
+            LogMessage log;
+            log.type = "#Exterminate";
+            log.from = hanae;
+            log.to = targets;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->loseMaxHp(hanae);
+            hanae->loseMark("@kacha");
+            DamageStruct dama = damage;
+            foreach(ServerPlayer *tmp, targets){
+                dama.to = tmp;
+                room->damage(dama);
+            }
+        }
+        return false;
+    }
+};
 /*
 class Shemi: public TriggerSkill{
 public:
@@ -543,6 +664,14 @@ SPPackage::SPPackage()
 {
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
+
+    General *tora = new General(this, "tora", "god", 4, false);
+    tora->addSkill(new Strike);
+    tora->addSkill(new Lift);
+    tora->addSkill(new Exterminate);
+    tora->addSkill(new MarkAssignSkill("@kacha", 1));
+    related_skills.insertMulti("exterminate", "#@kacha-1");
+
 /*
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);

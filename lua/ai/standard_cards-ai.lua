@@ -89,6 +89,12 @@ function SmartAI:useCardSlash(card, use)
 	if not self:slashIsAvailable() then return end
 	local no_distance = self.slash_distance_limit
 	self.slash_targets = 1
+	if self.player:hasSkill("houfa") then
+		houfacard = houfa_skill.getTurnUseCard(self, true)
+		if houfacard then
+			card = houfacard
+		end
+	end
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then no_distance = true end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
@@ -126,7 +132,7 @@ function SmartAI:useCardSlash(card, use)
 		and (hasExplicitRebel(self.room) or not friend:isLord()))
 		then
 			if not slash_prohibit then
-				if ((self.player:canSlash(friend, not no_distance)) or
+				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
 					self:slashIsEffective(card, friend) then
 					use.card = card
@@ -158,7 +164,7 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("xiayao") then self.mi_targets = self.mi_targets + 1 end
 	for _, target in ipairs(targets) do
 		local canliuli = false
-		if (self.player:canSlash(target, not no_distance) or
+		if (self.player:canSlash(target, card, not no_distance) or
 		(use.isDummy and self.predictedRange and (self.player:distanceTo(target) <= self.predictedRange))) and
 		self:objectiveLevel(target) > 3
 		and self:slashIsEffective(card, target) then
@@ -214,7 +220,7 @@ function SmartAI:useCardSlash(card, use)
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card, friend)
 			if not slash_prohibit then
-				if ((self.player:canSlash(friend, not no_distance)) or
+				if ((self.player:canSlash(friend, card, not no_distance)) or
 					(use.isDummy and (self.player:distanceTo(friend) <= self.predictedRange))) and
 					self:slashIsEffective(card, friend) then
 					use.card = card
@@ -234,7 +240,7 @@ sgs.ai_skill_use.slash = function(self, prompt)
 	local slash = self:getCard("Slash")
 	if not slash then return "." end
 	for _, enemy in ipairs(self.enemies) do
-		if self.player:canSlash(enemy, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
+		if self.player:canSlash(enemy, slash, true) and not self:slashProhibit(slash, enemy) and self:slashIsEffective(slash, enemy) then
 			return ("%s->%s"):format(slash:toString(), enemy:objectName())
 		end
 	end
@@ -627,22 +633,21 @@ sgs.ai_use_priority.ArcheryAttack = 3.5
 sgs.ai_use_value.SavageAssault = 3.9
 sgs.ai_use_priority.SavageAssault = 3.5
 
-sgs.ai_skill_cardask.aoe = function(self, data, pattern, target, target2, name)
+sgs.ai_skill_cardask.aoe = function(self, data, pattern, target, name)
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
 	if not self:damageIsEffective(nil, nil, target) then return "." end
-	local aoe = sgs.Sanguosha:cloneCard(name, sgs.Card_NoSuit, 0)
 end
 
-sgs.ai_skill_cardask["savage-assault-slash"] = function(self, data, pattern, target, target2)
+sgs.ai_skill_cardask["savage-assault-slash"] = function(self, data, pattern, target)
 	local effect = data:toCardEffect()
 	speakTrigger(effect.card,effect.from,effect.to)
-	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, target2, "savage_assault")
+	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, "savage_assault")
 end
 
 sgs.ai_skill_cardask["archery-attack-jink"] = function(self, data, pattern, target)
 	local effect = data:toCardEffect()
 	if effect.from:hasSkill("lianzhu") and self:getCardsNum("Jink") == 1 then return "." end
-	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, target2, "archery_attack")
+	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, "archery_attack")
 end
 
 sgs.ai_keep_value.Nullification = 3
@@ -1053,7 +1058,7 @@ function SmartAI:useCardCollateral(card, use)
 			and enemy:getWeapon() then
 
 			for _, enemy2 in ipairs(self.enemies) do
-				if enemy:canSlash(enemy2) then
+				if enemy:canSlash(enemy2, card) then
 					if enemy:getHandcardNum() == 0 then
 						use.card = card
 						if use.to then use.to:append(enemy) end
