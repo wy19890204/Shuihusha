@@ -518,6 +518,10 @@ sgs.ai_compare_funcs = {
 		return a:getHandcardNum() > b:getHandcardNum()
 	end,
 
+	equip = function(a, b)
+		return a:getEquips():length() < b:getEquips():length()
+	end,
+
 	value = function(a, b)
 		return sgs.getValue(a) < sgs.getValue(b)
 	end,
