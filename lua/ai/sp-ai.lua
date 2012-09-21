@@ -30,6 +30,54 @@ sgs.ai_skill_use["@@baoquan"] = function(self, prompt)
 	end
 end
 
+-- tola
+-- pu
+local strike_skill = {}
+strike_skill.name = "strike"
+table.insert(sgs.ai_skills, strike_skill)
+strike_skill.getTurnUseCard = function(self, inclusive)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	if #cards<(self.player:getHp()+1) then return nil end
+	if #cards<2 then return nil end
+
+	self:sortByUseValue(cards,true)
+	local suit1 = cards[1]:getSuitString()
+	local card_id1 = cards[1]:getEffectiveId()
+
+	local suit2 = cards[2]:getSuitString()
+	local card_id2 = cards[2]:getEffectiveId()
+
+	local suit = "no_suit"
+	if cards[1]:isBlack() == cards[2]:isBlack() then suit = suit1 end
+	local card_str = ("slash:strike[%s:%s]=%d+%d"):format(suit, 0, card_id1, card_id2)
+
+	local slash = sgs.Card_Parse(card_str)
+	return slash
+end
+
+-- xian
+sgs.ai_skill_invoke["lift"] = function(self, data)
+	if not self.player:faceUp() then return true end
+	if self:isWeak() then return false end
+	local effect = data:toSlashEffect()
+	if self:isFriend(effect.to) then return false end
+	return self:isWeak(effect.to) or self.player:getHandcardNum() >= 3
+end
+
+-- jian
+sgs.ai_skill_invoke["exterminate"] = function(self, data)
+	local damage = data:toDamage()
+	local notarget = true
+	for _, aplayer in sgs.qlist(global_room:getAllPlayers()) do
+		if damage.to:distanceTo(aplayer) == 1 then
+			notarget = false
+			if self:isFriend(aplayer) then return false end
+		end
+	end
+	return not notarget
+end
+
 -- shemi
 sgs.ai_skill_invoke["shemi"] = function(self, data)
 	return self.player:getHandcardNum() >= self.player:getHp()
