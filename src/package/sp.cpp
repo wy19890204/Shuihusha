@@ -665,11 +665,11 @@ SPPackage::SPPackage()
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
 
-    General *tola = new General(this, "tola", "god", 4, false);
-    tola->addSkill(new Strike);
-    tola->addSkill(new Lift);
-    tola->addSkill(new Exterminate);
-    tola->addSkill(new MarkAssignSkill("@kacha", 1));
+    General *tora = new General(this, "tora", "god", 4, false);
+    tora->addSkill(new Strike);
+    tora->addSkill(new Lift);
+    tora->addSkill(new Exterminate);
+    tora->addSkill(new MarkAssignSkill("@kacha", 1));
     related_skills.insertMulti("exterminate", "#@kacha-1");
 
 /*

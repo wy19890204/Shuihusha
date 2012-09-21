@@ -48,7 +48,7 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	for _, card in ipairs(cards) do
 		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
 			return "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. enemies[1]:objectName() .. "+" enemies[2]:objectName()
+				.. enemies[1]:objectName() .. "+" .. enemies[2]:objectName()
 		end
 	end
 end
