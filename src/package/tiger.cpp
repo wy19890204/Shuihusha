@@ -482,7 +482,7 @@ public:
         foreach(ServerPlayer *sanlang, sanlangs){
             DamageStruct damage = data.value<DamageStruct>();
 
-            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName())){
+            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;
                 dag.from = sanlang;
@@ -506,14 +506,17 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
-        if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")
-                 && dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage))){
+        if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")){
+            dying.damage->from->setFlags("PinmingDie");
+            if(!dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage)))
+                return false;
             room->playSkillEffect("pinming", 2);
             room->getThread()->delay(500);
             room->killPlayer(dying.damage->to, dying.damage);
             room->getThread()->delay(1000);
             room->killPlayer(dying.damage->from);
 
+            dying.damage->from->setFlags("-PinmingDie");
             return true;
         }
         return false;
@@ -574,12 +577,12 @@ public:
         view_as_skill = new LiejiViewAsSkill;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getPhase() == Player::Play){
-            Room *room = zhuwu->getRoom();
-            if(zhuwu->isKongcheng())
+    virtual bool onPhaseChange(ServerPlayer *lvfang) const{
+        if(lvfang->getPhase() == Player::Play){
+            Room *room = lvfang->getRoom();
+            if(lvfang->isKongcheng())
                 return false;
-            if(room->askForUseCard(zhuwu, "@@lieji", "@lieji", true))
+            if(room->askForUseCard(lvfang, "@@lieji", "@lieji", true))
                 return true;
         }
         return false;
@@ -693,7 +696,7 @@ public:
         foreach(ServerPlayer *zhah, zhangs){
             if(zhah->getMark("fuhun") > 0 || player->isKongcheng())
                 continue;
-            if(zhah->askForSkillInvoke(objectName(), data))
+            if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
                 room->obtainCard(zhah, room->askForCardChosen(zhah, player, "h", objectName()), false);
         }
         return false;
