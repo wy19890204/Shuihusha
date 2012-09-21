@@ -927,28 +927,15 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale()){
-            QString choice = effect.from->getEquips().isEmpty() ? "tan1+cancel" : "tan1+se2+cancel";
-            choice = room->askForChoice(player, objectName(), choice);
-            if(choice == "cancel")
-                return false;
-            LogMessage log;
-            log.type = "#Tanse";
-            log.from = player;
-            log.to << effect.from;
-            log.arg = objectName();
-            log.arg2 = choice;
-            room->sendLog(log);
-            player->drawCards(1);
-            if(choice == "tan1"){
-                const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
-                if(equip)
-                    effect.from->obtainCard(equip);
-                else
+        if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
+            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+            if(equip)
+                effect.from->obtainCard(equip);
+            else{
+                if(effect.from->getEquips().isEmpty())
                     return false;
-            }
-            else
                 room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
+            }
         }
         return false;
     }
