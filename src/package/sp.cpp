@@ -147,6 +147,31 @@ public:
     }
 };
 
+class Lift: public TriggerSkill{
+public:
+    Lift(): TriggerSkill("lift"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+
+        if(player->askForSkillInvoke(objectName())){
+            player->turnOver();
+            LogMessage log;
+            log.type = "#Lift";
+            log.from = player;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            room->slashResult(effect, NULL);
+        }
+
+        return false;
+    }
+};
+
 class Exterminate: public TriggerSkill{
 public:
     Exterminate():TriggerSkill("exterminate"){
@@ -619,6 +644,14 @@ SPPackage::SPPackage()
 {
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
+
+    General *tola = new General(this, "tola", "god", 4, false);
+    tola->addSkill(new Strike);
+    tola->addSkill(new Lift);
+    tola->addSkill(new Exterminate);
+    tola->addSkill(new MarkAssignSkill("@kacha", 1));
+    related_skills.insertMulti("exterminate", "#@kacha-1");
+
 /*
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);
