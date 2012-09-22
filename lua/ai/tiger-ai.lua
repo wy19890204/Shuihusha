@@ -38,12 +38,12 @@ end
 -- sunli
 -- neiying
 sgs.ai_view_as["neiying"] = function(card, player, card_place)
---	if player:getHandcardNum() < 2 then return end	
+	if player:getCardCount(true) < 3 then return end	
 	local first_found, second_found = false, false
 	local first_card, second_card
-	local cards = self.player:getCards("he")
+	local cards = player:getCards("he")
 	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
+--	self:sortByUseValue(cards, true)
 	for _, fcard in ipairs(cards) do
 		if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo")) then
 			first_card = fcard

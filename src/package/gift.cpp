@@ -67,10 +67,6 @@ QString Moonpie::getSubtype() const{
     return "gift_card";
 }
 
-QString Moonpie::getEffectPath(bool is_male) const{
-    return "audio/card/common/moonpie.ogg";
-}
-
 bool Moonpie::isAvailable(const Player *change) const{
     return ServerInfo.GameMode != "dusong";
 }
