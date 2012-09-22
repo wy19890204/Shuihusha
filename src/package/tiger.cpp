@@ -948,13 +948,13 @@ public:
         if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
             const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
             if(equip){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 effect.from->obtainCard(equip);
             }
             else{
                 if(!effect.from->hasEquip())
                     return false;
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
             }
         }
@@ -988,7 +988,7 @@ public:
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return 2;
+        return qrand() % 2 + 3;
     }
 };
 
@@ -1022,7 +1022,7 @@ public:
                 }
             }
             if(hasslash && selang->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 foreach(int card_id, slash->getSubcards()){
                     if(Sanguosha->getCard(card_id)->inherits("Slash"))
                         room->obtainCard(selang, card_id);
