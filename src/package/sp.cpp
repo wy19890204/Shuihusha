@@ -176,7 +176,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(player->askForSkillInvoke(objectName())){
+        if(player->askForSkillInvoke(objectName(), data)){
             player->turnOver();
             LogMessage log;
             log.type = "#Lift";
@@ -207,7 +207,7 @@ public:
         if(!damage.from || !damage.from->hasSkill(objectName()) || damage.from == damage.to)
             return false;
         ServerPlayer *hanae = damage.from;
-        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName())){
+        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
 
             QList<ServerPlayer *> targets;

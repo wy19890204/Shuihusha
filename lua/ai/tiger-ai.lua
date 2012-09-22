@@ -11,17 +11,73 @@
 
 -- shixiu
 -- pinming
+sgs.ai_skill_invoke["pinming"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isFriend(damage.from) or damage.damage < 1 then return false end
+	if not self.player:hasFlag("PinmingDie") then
+		if self.player:getMaxHp() > 3 then
+			if damage.damage > 1 then
+				return true
+			else
+				return math.random(0, 2)
+			end
+		end
+	else
+		if #self:getEnemies() == 1 then
+			return true
+		end
+		if self.player:isLord() then return false end
+		if #self:getEnemies() == 2 and self.player:getRole() == "loyalist" then
+			return true
+		end
+	end
+	return false
+end
 
 -- lvfang
 -- lieji
+sgs.ai_skill_use["@@lieji"] = function(self, prompt)
+	local basiccard = self:getCard("BasicCard")
+	if not basiccard or self.player:getHandcardNum() - 1 > self.player:getMaxCards() then return "." end
+	enemies = self:getEnemies()
+	if #enemies < 2 then return "." end
+	self:sort(enemies)
+
+	local cards = sgs.QList2Table(self.player:getCards("h"))
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
+			return "@LiejiCard=" .. card:getEffectiveId() .. "->"
+					.. enemies[1]:objectName() .. "+" enemies[2]:objectName()
+		end
+	end
+end
 
 -- tianhu
 -- wuzhou
+sgs.ai_skill_invoke["wuzhou"] = true
+
 -- huwei
+huwei_skill={}
+huwei_skill.name = "huweiv"
+table.insert(sgs.ai_skills, huwei_skill)
+huwei_skill.getTurnUseCard = function(self)
+	local lord = self.room:getLord()
+	if self:isFriend(lord) and lord:hasLordSkill("huwei") and lord:getEquips():isEmpty() then
+		local slash = self:getCard("EquipCard")
+		if slash then
+			return sgs.Card_Parse("@HuweiCard=" .. slash:getEffectiveId())
+		end
+	end
+end
+sgs.ai_skill_use_func["HuweiCard"] = function(card, use, self)
+	use.card = card
+	if use.to then use.to:append(self.room:getLord()) end
+end
 
 -- zhangheng
 -- jielue
--- fuhun
+sgs.ai_skill_invoke["jielue"] = sgs.ai_skill_invoke["lihun"]
 
 -- xiebao
 -- liehuo
