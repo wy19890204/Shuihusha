@@ -1033,7 +1033,7 @@ public:
             }
         }
         else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName(), 1);
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
             selang->obtainCard(slash);
         }
         return false;

@@ -138,6 +138,7 @@ huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
 huwei_skill.getTurnUseCard = function(self)
 	local lord = self.room:getLord()
+	if self.player == lord or self.player:getKingdom() ~= "jiang" then return end
 	if self:isFriend(lord) and lord:hasLordSkill("huwei") and not lord:hasEquip() then
 		local slash = self:getCard("EquipCard")
 		if slash then
