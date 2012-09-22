@@ -432,20 +432,20 @@ public:
             if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
                 log.type = "#JintangForb";
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), 3);
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){
                 log.type = "#JintangCut";
                 room->sendLog(log);
                 damage.damage = 1;
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 data = QVariant::fromValue(damage);
             }
         }
         else if(event == Death){
             if(player->hasEquip())
-                room->playSkillEffect(objectName(), 3);
+                room->playSkillEffect(objectName(), qrand() % 2 + 4);
             foreach(CardStar equip, player->getEquips()){
                 player->tag["Jintg"] = QVariant::fromValue(equip);
                 room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
@@ -494,7 +494,7 @@ public:
             DamageStruct damage = data.value<DamageStruct>();
 
             if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 3 + 1);
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;
                 dag.from = sanlang;
@@ -522,7 +522,7 @@ public:
             dying.damage->from->setFlags("PinmingDie");
             if(!dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage)))
                 return false;
-            room->playSkillEffect("pinming", 2);
+            room->playSkillEffect("pinming", qrand() % 2 + 4);
             room->getThread()->delay(500);
             room->killPlayer(dying.damage->to, dying.damage);
             room->getThread()->delay(1000);
