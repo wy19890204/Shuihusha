@@ -13,7 +13,7 @@
 #include <QPixmapCache>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
-    :left_pixmap("image/system/dashboard-equip.png"), right_pixmap("image/system/dashboard-avatar.png"),
+    :left_pixmap(":system/dashboard-equip.png"), right_pixmap(":system/dashboard-avatar.png"),
     button_widget(button_widget), selected(NULL), avatar(NULL),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
