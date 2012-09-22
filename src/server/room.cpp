@@ -3194,6 +3194,12 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
             const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
             if(fight){
                 sour->playCardEffect("@jiangjieshi2");
+                LogMessage log;
+                log.type = "#Jiangjs";
+                log.from = sour;
+                log.arg = "jiangjieshi";
+                log.arg2 = card->objectName();
+                sendLog(log);
                 sour->obtainCard(card);
             }
         }
