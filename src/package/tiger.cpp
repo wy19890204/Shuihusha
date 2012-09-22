@@ -614,7 +614,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         if(room->getCurrent() == player && player->getPhase() == Player::Play){
-            if(player->getEquips().isEmpty())
+            if(!player->hasEquip())
                 return false;
             int x = 5 - player->getEquips().count();
             if(player->getHandcardNum() < x && player->askForSkillInvoke(objectName())){
@@ -644,7 +644,7 @@ void HuweiCard::onEffect(const CardEffectStruct &effect) const{
 
 bool HuweiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     return targets.isEmpty() && to_select->hasLordSkill("huwei")
-            && to_select != Self && to_select->getEquips().isEmpty();
+            && to_select != Self && !to_select->hasEquip();
 }
 
 class HuweiViewAsSkill: public OneCardViewAsSkill{
@@ -953,7 +953,7 @@ public:
                 effect.from->obtainCard(equip);
             }
             else{
-                if(effect.from->getEquips().isEmpty())
+                if(!effect.from->hasEquip())
                     return false;
                 room->playSkillEffect(objectName(), 2);
                 room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
