@@ -103,6 +103,8 @@ void ServerPlayer::throwAllMarks(){
     foreach(QString mark_name, marks.keys()){
         if(!mark_name.startsWith("@"))
             continue;
+        if(mark_name == "@skull") //zhuanshi's mark
+            continue;
 
         int n = marks.value(mark_name, 0);
         if(n != 0){
