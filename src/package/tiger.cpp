@@ -745,11 +745,10 @@ public:
             log.arg = objectName();
             room->sendLog(log);
             room->playSkillEffect(objectName());
-            RecoverStruct r;
-            room->recover(zhang, r);
             room->broadcastInvoke("animate", "lightbox:$fuhun:1500");
             room->getThread()->delay(1500);
 
+            room->loseMaxHp(zhang);
             room->acquireSkill(zhang, "lihun");
             foreach(const Skill *skill, player->getVisibleSkillList()){
                 if(skill->getLocation() == Skill::Right &&

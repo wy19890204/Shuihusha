@@ -58,6 +58,8 @@ return {
 	["$tianhu"] = "113",
 	["#tianhu"] = "晋王", -- jiang 4hp
 	["tianhu"] = "田虎",
+	["illustrator:tianhu"] = "飘渺之旅",
+	["cv:tianhu"] = "特伦叔【未名声社】",
 	["wuzhou"] = "五州",
 	[":wuzhou"] = "出牌阶段，若你的装备区里有牌，则当你的手牌数小于X时，你可以将手牌补至X张（X为5与你装备区里的牌数之差）。",
 	["huwei"] = "护卫",
