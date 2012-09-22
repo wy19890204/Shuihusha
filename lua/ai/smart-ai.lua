@@ -1708,7 +1708,7 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	elseif optional then return {} end
 
 	local flag = "h"
-	if include_equip and (self.player:getEquips():isEmpty() or not self.player:isJilei(self.player:getEquips():first())) then flag = flag .. "e" end
+	if include_equip and (not self.player:hasEquip() or not self.player:isJilei(self.player:getEquips():first())) then flag = flag .. "e" end
 	local cards = self.player:getCards(flag)
 	local to_discard = {}
 	cards = sgs.QList2Table(cards)

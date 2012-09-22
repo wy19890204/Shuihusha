@@ -248,7 +248,14 @@ sgs.ai_chat.zhangshi=
 "美人儿莫怕，我来啦~"
 }
 
-sgs.ai_chat.gift=
+sgs.ai_chat.zongzi=
 {
-"哇，有礼物耶！"
+"哇，有粽子吃耶！"
+}
+
+sgs.ai_chat.moonpie=
+{
+"杀光小日本！活捉苍井空！",
+"日本省是我大天朝固有领土！",
+"这什么东西，难吃的要死~"
 }

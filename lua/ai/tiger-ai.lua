@@ -62,7 +62,7 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	for _, card in ipairs(cards) do
 		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
 			return "@LiejiCard=" .. card:getEffectiveId() .. "->"
-				.. enemies[1]:objectName() .. "+" .. enemies[2]:objectName()
+					.. enemies[1]:objectName() .. "+" .. enemies[2]:objectName()
 		end
 	end
 end
@@ -77,7 +77,7 @@ huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
 huwei_skill.getTurnUseCard = function(self)
 	local lord = self.room:getLord()
-	if self:isFriend(lord) and lord:hasLordSkill("huwei") and lord:getEquips():isEmpty() then
+	if self:isFriend(lord) and lord:hasLordSkill("huwei") and not lord:hasEquip() then
 		local slash = self:getCard("EquipCard")
 		if slash then
 			return sgs.Card_Parse("@HuweiCard=" .. slash:getEffectiveId())
@@ -169,7 +169,7 @@ sgs.ai_skill_invoke["tanse"] = function(self, data)
 			return true
 		end
 	else
-		if not effect.from:getEquips():isEmpty() then
+		if effect.from:hasEquip() then
 			return true
 		end
 	end

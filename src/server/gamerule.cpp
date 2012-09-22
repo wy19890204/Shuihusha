@@ -822,6 +822,12 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
                         if(fight){
                             sour->playCardEffect("@jiangjieshi2");
+                            LogMessage log;
+                            log.type = "#Jiangjs";
+                            log.from = sour;
+                            log.arg = "jiangjieshi";
+                            log.arg2 = judge->card->objectName();
+                            room->sendLog(log);
                             sour->obtainCard(judge->card);
                         }
                     }
