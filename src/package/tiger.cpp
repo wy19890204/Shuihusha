@@ -311,7 +311,7 @@ bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Pl
 void NeiyingCard::weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const{
     QList<int> all1 = you->handCards();
     QList<int> all2 = me->handCards();
-    room->playSkillEffect("neiying", 2);
+    room->playSkillEffect("neiying", qrand() % 2 + 5);
     room->fillAG(all1, me);
     room->fillAG(all2, you);
     room->getThread()->delay(4000);
@@ -370,7 +370,7 @@ public:
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return 1;
+        return qrand() % 4 + 1;
     }
 };
 
