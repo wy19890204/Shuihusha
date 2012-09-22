@@ -1922,7 +1922,7 @@ public:
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         room->sendLog(log);
 
-                        const Card *card = player->getEquips().isEmpty() ? NULL :
+                        const Card *card = !player->hasEquip() ? NULL :
                                            room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), false, data, NonTrigger);
                         if(card)
                             sun->obtainCard(card);

@@ -1708,7 +1708,7 @@ function SmartAI:askForDiscard(reason, discard_num, optional, include_equip)
 	elseif optional then return {} end
 
 	local flag = "h"
-	if include_equip and (self.player:getEquips():isEmpty() or not self.player:isJilei(self.player:getEquips():first())) then flag = flag .. "e" end
+	if include_equip and (not self.player:hasEquip() or not self.player:isJilei(self.player:getEquips():first())) then flag = flag .. "e" end
 	local cards = self.player:getCards(flag)
 	local to_discard = {}
 	cards = sgs.QList2Table(cards)
@@ -2051,7 +2051,9 @@ function SmartAI:askForAG(card_ids, refusable, reason)
 	local cardchosen = sgs.ai_skill_askforag[string.gsub(reason, "%-", "_")]
 	if type(cardchosen) == "function" then
 		local card_id = cardchosen(self, card_ids)
-		if card_id then return card_id end
+		if card_id and card_id ~= 9999 then
+			return card_id
+		end
 	end
 
 	if refusable and self:hasSkill("xinzhan") then

@@ -40,6 +40,10 @@ bool ServerInfoStruct::parse(const QString &str){
 
         Extensions << package_name;
     }
+    foreach(QString e, Extensions){
+        if(Extensions.indexOf(e) != Extensions.lastIndexOf(e))
+            Extensions.removeAt(Extensions.lastIndexOf(e));
+    }
 
     QString flags = texts.at(5);
 
