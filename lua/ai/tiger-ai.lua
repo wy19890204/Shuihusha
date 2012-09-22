@@ -8,12 +8,26 @@
 
 -- wuyanguang
 -- jintang
+sgs.ai_skill_use["@@jintang!"] = function(self, prompt)
+--	local count = self.player:getEquips():length()
+	local equip = self.player:getTag("Jintg"):toCard()
+	self:sort(self.friends_noself, "equip")
+	for _, friend in ipairs(self.friends_noself) do
+		local cards = sgs.QList2Table(friend:getCards("e"))
+		for _, card in ipairs(cards) do
+			if equip:getSubtype() ~= card:getSubtype() then
+				return "@JintangCard=.->" .. friend:objectName()
+			end
+		end
+	end
+	return "@JintangCard=.->" .. self.friends_noself[1]:objectName()
+end
 
 -- shixiu
 -- pinming
 sgs.ai_skill_invoke["pinming"] = function(self, data)
 	local damage = data:toDamage()
-	if self:isFriend(damage.from) or damage.damage < 1 then return false end
+	if (damage.from and self:isFriend(damage.from)) or damage.damage < 1 then return false end
 	if not self.player:hasFlag("PinmingDie") then
 		if self.player:getMaxHp() > 3 then
 			if damage.damage > 1 then
@@ -48,7 +62,7 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	for _, card in ipairs(cards) do
 		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
 			return "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. enemies[1]:objectName() .. "+" enemies[2]:objectName()
+					.. enemies[1]:objectName() .. "+" .. enemies[2]:objectName()
 		end
 	end
 end
@@ -180,7 +194,7 @@ houfa_skill.getTurnUseCard = function(self, inclusive)
 	cards=sgs.QList2Table(cards)
 	for _, card in ipairs(cards)  do
 		if card:inherits("Slash") then
-			table.insert(slashs, card:getId())
+			table.insert(slashs, card)
 		end
 	end
 	if #slashs < 2 then return end

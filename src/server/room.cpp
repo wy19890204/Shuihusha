@@ -912,6 +912,10 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     bool continuable = false;
     card = card->validateInResposing(repliedPlayer, &continuable);
     if (card == NULL) return false;
+    if(repliedPlayer->hasSkill("beatjapan")){  //moonpie
+        throwCard(card);
+        return false;
+    }
 
     CardUseStruct use;
     use.card = card;

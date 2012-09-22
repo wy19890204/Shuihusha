@@ -30,7 +30,7 @@ sgs.ai_skill_use["@@baoquan"] = function(self, prompt)
 	end
 end
 
--- tola
+-- tora
 -- pu
 local strike_skill = {}
 strike_skill.name = "strike"
