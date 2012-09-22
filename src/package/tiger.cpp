@@ -257,7 +257,6 @@ public:
             return false;
 
         QVariantList guzong_cards = leiheng->tag["Guzong"].toList();
-        leiheng->tag.remove("Guzong");
 
         QList<int> cards;
         foreach(QVariant card_data, guzong_cards){
@@ -269,7 +268,7 @@ public:
         if(cards.isEmpty())
             return false;
 
-        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue(cards.length()))){
+        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue((PlayerStar)player))){
             room->fillAG(cards, leiheng);
             room->playSkillEffect("guzong");
 
@@ -290,6 +289,8 @@ public:
             foreach(int card_id, cards)
                 room->throwCard(card_id);
         }
+
+        leiheng->tag.remove("Guzong");
         return false;
     }
 };
@@ -444,11 +445,13 @@ public:
             }
         }
         else if(event == Death){
-            if(player->hasEquip())
+            if(player->hasEquip()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 4);
-            foreach(CardStar equip, player->getEquips()){
-                player->tag["Jintg"] = QVariant::fromValue(equip);
-                room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
+                foreach(CardStar equip, player->getEquips()){
+                    player->tag["Jintg"] = QVariant::fromValue(equip);
+                    room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
+                }
+                //room->getThread()->delay(1500);
             }
         }
         return false;
@@ -493,7 +496,7 @@ public:
         foreach(ServerPlayer *sanlang, sanlangs){
             DamageStruct damage = data.value<DamageStruct>();
 
-            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
+            if(player->isAlive() && damage.from && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName(), qrand() % 3 + 1);
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;

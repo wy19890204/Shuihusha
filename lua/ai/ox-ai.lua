@@ -243,7 +243,7 @@ end
 sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 	local judge = data:toJudge()
 
-	if self:needRetrial(judge) then
+	if self:needRetrial(judge) and not self.player:isKongcheng() then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
 		self.butianjudge = judge
