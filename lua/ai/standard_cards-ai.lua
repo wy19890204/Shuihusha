@@ -32,9 +32,15 @@ function SmartAI:slashProhibit(card,enemy)
 		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(card,enemy) then return true end
 		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:inherits("NatureSlash") or self.player:hasWeapon("fan")) then
+			return true
+		end
 	else
 		if enemy:isChained() and not self:isGoodChainTarget(enemy) and self:slashIsEffective(card,enemy)
 			and (card:inherits("NatureSlash") or self.player:hasSkill("fenhui")) then
+			return true
+		end
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and not card:inherits("NatureSlash") and not self.player:hasWeapon("fan") then
 			return true
 		end
 	end
@@ -44,6 +50,9 @@ end
 
 function SmartAI:slashIsEffective(slash, to)
 	if to:hasSkill("jueming") and to:getHp() == 1 then
+		return false
+	end
+	if to:hasSkill("jintang") and to:getHp() == 1 and not slash:inherits("NatureSlash") then
 		return false
 	end
 	if to:hasSkill("qianshui") and not self.player:getWeapon() then
@@ -178,7 +187,7 @@ function SmartAI:useCardSlash(card, use)
 			end
 			if not use.to or use.to:isEmpty() then
 				local anal = self:searchForAnaleptic(use,target,card)
-				if anal and self:isNoZhenshaMark() and not self:isEquip("SilverLion", target) and not self:isWeak() then
+				if anal and self:isNoZhenshaMark() and not hasSilverLion(target) and not self:isWeak() then
 					if anal:getEffectiveId() ~= card:getEffectiveId() then use.card = anal return end
 				end
 				local equips = self:getCards("EquipCard", self.player, "h")

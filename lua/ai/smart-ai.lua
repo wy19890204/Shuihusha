@@ -2563,7 +2563,7 @@ function SmartAI:damageIsEffective(player, nature, source)
 		return false
 	end
 
-	if player:getMark("@fog") > 0 and nature ~= sgs.DamageStruct_Thunder then
+	if player:hasSkill("jintang") and player:getHp() == 1 and nature == sgs.DamageStruct_Normal then
 		return false
 	end
 	return true
@@ -3007,6 +3007,10 @@ function SmartAI:aoeIsEffective(card, to)
 	if to:hasSkill("shengui") and self.player:getGeneral():isMale() and not to:getArmor() then
 		return false
 	end
+	--πyanguang's jintang
+	if to:hasSkill("jintang") and to:getHp() == 1 and card:getSkillName() ~= "lianzhu" then
+		return false
+	end
 	--Wangding6's kongying
 	if card:inherits("ArcheryAttack") then
 		if (to:hasSkill("kongying") and self:getCardsNum("Jink", to) > 0) or (self:isEquip("EightDiagram", to) and to:getHp() > 1) then
@@ -3314,6 +3318,10 @@ function SmartAI:hasSameEquip(card, player) -- obsolete
 end
 
 function SmartAI:useEquipCard(card, use)
+	if self:hasSkill("wuzhou") and not self:hasSameEquip(card) then
+		if self.player:getEquips():length() > 1 then return end
+		if self.player:getEquips():length() > 0 and math.random(1, 2) == 2 then return end
+	end
 	if self:hasSkill("qinlong") then
 		local targets = {}
 		for _, player in ipairs(self.enemies) do
@@ -3406,7 +3414,7 @@ function SmartAI:damageMinusHp(self, enemy, type)
 						slash_damagenum = slash_damagenum + 1
 						analepticpowerup = analepticpowerup + 1
 				end
-				if self:isEquip("GudingBlade", self.player) and enemy:isKongcheng() and not self:isEquip("SilverLion", enemy) then
+				if self:isEquip("GudingBlade", self.player) and enemy:isKongcheng() and not hasSilverLion(enemy) then
 					slash_damagenum = slash_damagenum + 1
 				end
 			end
