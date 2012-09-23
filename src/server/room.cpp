@@ -379,7 +379,7 @@ QList<int> Room::getNCards(int n, bool update_pile_number){
 QStringList Room::aliveRoles(ServerPlayer *except) const{
     QStringList roles;
     foreach(ServerPlayer *player, m_alivePlayers){
-        if(Config.EnableReincarnation && player->getMark("@skull") > 0)
+        if(Config.EnableReincarnation && player->property("isDead").toBool())
             continue;
         if(player != except)
             roles << player->getRole();
@@ -2785,6 +2785,8 @@ void Room::damage(const DamageStruct &damage_data){
     if(broken)
         return;
 
+    if(damage_data.from)
+        thread->trigger(DamageConclude, this, damage_data.from, data);
     thread->trigger(DamageComplete, this, damage_data.to, data);
 }
 

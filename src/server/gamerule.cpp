@@ -187,10 +187,11 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         if(next->getMaxHp() == 0)
                             room->setPlayerProperty(next, "maxhp", 1);
                         room->setPlayerProperty(next, "hp", 1);
-                        room->attachSkillToPlayer(next, "sacrifice");
-                        room->setPlayerMark(next, "@skull", 1);
 
                         room->getThread()->delay(1500);
+                        room->attachSkillToPlayer(next, "sacrifice");
+                        room->setPlayerMark(next, "@skull", 1);
+                        room->setPlayerProperty(next, "isDead", true);
                     }
                     next = next->getNext();
                 }
@@ -895,10 +896,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
         return;
 
     Room *room = victim->getRoom();
-    if(Config.EnableReincarnation && victim->getMark("@skull") > 0){
-        room->setPlayerMark(victim, "@skull", 0);
+    if(Config.EnableReincarnation && victim->property("isDead").toBool())
         return;
-    }
 
     if(victim->hasSkill("zuohua")){
         LogMessage log;

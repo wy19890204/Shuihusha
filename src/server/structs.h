@@ -161,6 +161,7 @@ enum TriggerEvent{
     DamageDone,
     Damage,
     Damaged,
+    DamageConclude,
     DamageComplete,
 
     Dying,
