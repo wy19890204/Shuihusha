@@ -261,11 +261,6 @@ houfa_skill.getTurnUseCard = function(self, inclusive)
 	end
 	if #slashs < 2 then return end
 
-	local anal = self:getCard("Analeptic")
-	if anal and self:isNoZhenshaMark() and not hasSilverLion(target) and not self:isWeak() then
-		return sgs.Card_Parse(anal:getEffectiveId())
-	end
-
 	local suit1 = slashs[1]:getSuitString()
 	local card_id1 = slashs[1]:getEffectiveId()
 	local suit2 = slashs[2]:getSuitString()

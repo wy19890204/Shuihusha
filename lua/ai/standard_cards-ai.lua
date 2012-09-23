@@ -98,12 +98,6 @@ function SmartAI:useCardSlash(card, use)
 	if not self:slashIsAvailable() then return end
 	local no_distance = self.slash_distance_limit
 	self.slash_targets = 1
-	if self.player:hasSkill("houfa") then
-		houfacard = houfa_skill.getTurnUseCard(self, true)
-		if houfacard then
-			card = houfacard
-		end
-	end
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then no_distance = true end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
@@ -198,6 +192,9 @@ function SmartAI:useCardSlash(card, use)
 						self:useEquipCard(equip, use)
 						if use.card then return end
 					end
+				end
+				if self.player:hasSkill("houfa") then
+					use.card = houfa_skill.getTurnUseCard(self, true)
 				end
 				if target:isChained() and self:isGoodChainTarget(target) and not use.card then
 					if self:isEquip("Crossbow") and card:inherits("NatureSlash") then

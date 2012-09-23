@@ -47,7 +47,14 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 
 	local card_str = self:getCardId("Ecstasy")
-	if card_str then return sgs.Card_Parse(card_str) end
+	if not card_str then
+		if self.player:hasSkill("xiayao") then
+			card_str = xiayao_skill.getTurnUseCard(self, true)
+		end
+	end
+	if card_str then
+		return sgs.Card_Parse(card_str)
+	end
 
 	for _, mi in ipairs(cards) do
 		if (mi:className() == "Ecstasy") and not (mi:getEffectiveId() == slash:getEffectiveId()) and

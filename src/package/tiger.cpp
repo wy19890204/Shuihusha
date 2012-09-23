@@ -986,10 +986,6 @@ public:
         slash->setSkillName(objectName());
         return slash;
     }
-
-    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return qrand() % 2 + 3;
-    }
 };
 
 class Houfa: public TriggerSkill{
@@ -1038,6 +1034,10 @@ public:
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 3;
     }
 };
 
