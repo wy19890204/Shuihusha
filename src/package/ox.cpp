@@ -683,19 +683,17 @@ public:
         events << HpRecovered;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->getPhase() == Player::NotActive)
             return false;
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
-        if(lily.isEmpty())
-            return false;
         room->setPlayerFlag(player, "Duoming");
         foreach(ServerPlayer *lili, lily){
-            if(lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
+            if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
                 DamageStruct damage;
                 damage.from = lili;
                 damage.to = player;
@@ -712,17 +710,15 @@ public:
     Moucai():MasochismSkill("moucai"){
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
-        if(lily.isEmpty())
-            return;
         foreach(ServerPlayer *lili, lily){
-            if(lili && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
+            if(lili != player && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
                 const Card *wolegequ = player->getRandomHandCard();
                 lili->obtainCard(wolegequ, false);
@@ -738,8 +734,8 @@ public:
         frequency = Frequent;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual int getPriority() const{
@@ -747,26 +743,32 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *jiuwenlong = room->findPlayerBySkillName(objectName());
-        if(!jiuwenlong || player == jiuwenlong)
+        QList<ServerPlayer *> jiuwenl0ng = room->findPlayersBySkillName(objectName());
+        if(jiuwenl0ng.isEmpty())
             return false;
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
-            if(move->to_place == Player::DiscardedPile){
-                const Card *weapon = Sanguosha->getCard(move->card_id);
-                if(weapon->inherits("Weapon") &&
-                   jiuwenlong->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    jiuwenlong->obtainCard(weapon);
+            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
+                if(jiuwenlong != player && move->to_place == Player::DiscardedPile){
+                    const Card *weapon = Sanguosha->getCard(move->card_id);
+                    if(weapon->inherits("Weapon") &&
+                       jiuwenlong->askForSkillInvoke(objectName())){
+                        room->playSkillEffect(objectName());
+                        jiuwenlong->obtainCard(weapon);
+                        break;
+                    }
                 }
             }
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
-            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
-               judge->card->inherits("Weapon") &&
-               jiuwenlong->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
-                jiuwenlong->obtainCard(judge->card);
+            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
+                if(jiuwenlong != player && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
+                   judge->card->inherits("Weapon") &&
+                   jiuwenlong->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName());
+                    jiuwenlong->obtainCard(judge->card);
+                    break;
+                }
             }
         }
         return false;
@@ -779,15 +781,12 @@ public:
         events << DamageProceed;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
+    virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         QList<ServerPlayer *> jiuwennong = room->findPlayersBySkillName(objectName());
-        if(jiuwennong.isEmpty())
-            return false;
-
         DamageStruct damage = data.value<DamageStruct>();
         foreach(ServerPlayer *jiuwenlong, jiuwennong){
             if(!jiuwenlong->isNude() && damage.nature == DamageStruct::Normal &&

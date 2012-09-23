@@ -483,7 +483,7 @@ public:
         events << DamageConclude;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
+    virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
@@ -491,13 +491,12 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         QList<ServerPlayer *> sanlangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *sanlang, sanlangs){
-
-            if(player->isAlive() && damage.from && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
+            if(damage.to->isAlive() && player != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName(), qrand() % 3 + 1);
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;
                 dag.from = sanlang;
-                dag.to = damage.from;
+                dag.to = player;
                 room->damage(dag);
             }
         }
@@ -511,8 +510,8 @@ public:
         events << Dying;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill("pinming");
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
@@ -699,15 +698,15 @@ public:
         events << FinishJudge;
     }
 
-    virtual bool triggerable(const ServerPlayer *tat) const{
-        return !tat->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         //JudgeStar judge = data.value<JudgeStar>();
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhah, zhangs){
-            if(zhah->getMark("fuhun") > 0 || player->isKongcheng())
+            if(zhah == player || zhah->getMark("fuhun") > 0 || player->isKongcheng())
                 continue;
             if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
@@ -729,14 +728,14 @@ public:
         return -1;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhang, zhangs){
-            if(zhang->getMark("fuhun") > 0)
+            if(zhang == player || zhang->getMark("fuhun") > 0)
                 continue;
             LogMessage log;
             log.type = "#WakeUp";
@@ -999,8 +998,8 @@ public:
         view_as_skill = new HoufaViewAsSkill;
     }
 
-    virtual bool triggerable(const ServerPlayer *pa) const{
-        return !pa->hasSkill(objectName());
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual int getPriority() const{
@@ -1008,29 +1007,33 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *selang = room->findPlayerBySkillName(objectName());
-        if(!selang)
-            return false;
-        CardStar slash = data.value<CardStar>();
-        if(slash->isVirtualCard()){
-            bool hasslash = false;
-            foreach(int card_id, slash->getSubcards()){
-                if(Sanguosha->getCard(card_id)->inherits("Slash")){
-                    hasslash = true;
+        QList<ServerPlayer *> se1ang = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *selang, se1ang){
+            if(selang == player)
+                continue;
+            CardStar slash = data.value<CardStar>();
+            if(slash->isVirtualCard()){
+                bool hasslash = false;
+                foreach(int card_id, slash->getSubcards()){
+                    if(Sanguosha->getCard(card_id)->inherits("Slash")){
+                        hasslash = true;
+                        break;
+                    }
+                }
+                if(hasslash && selang->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                    foreach(int card_id, slash->getSubcards()){
+                        if(Sanguosha->getCard(card_id)->inherits("Slash"))
+                            room->obtainCard(selang, card_id);
+                    }
                     break;
                 }
             }
-            if(hasslash && selang->askForSkillInvoke(objectName())){
+            else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                foreach(int card_id, slash->getSubcards()){
-                    if(Sanguosha->getCard(card_id)->inherits("Slash"))
-                        room->obtainCard(selang, card_id);
-                }
+                selang->obtainCard(slash);
+                break;
             }
-        }
-        else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName(), qrand() % 2 + 1);
-            selang->obtainCard(slash);
         }
         return false;
     }
