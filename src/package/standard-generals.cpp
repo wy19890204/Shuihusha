@@ -2401,11 +2401,11 @@ public:
                 log.to << player;
                 log.arg = objectName();
                 room->sendLog(log);
+                xing->loseMark("@methanol");
 
                 room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
                 room->playSkillEffect(objectName());
                 room->loseMaxHp(player, player->getLostHp());
-                xing->loseMark("@methanol");
                 if(player->isDead())
                     return true;
             }

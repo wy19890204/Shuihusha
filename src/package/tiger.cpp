@@ -602,7 +602,7 @@ public:
 class Wuzhou:public TriggerSkill{
 public:
     Wuzhou():TriggerSkill("wuzhou"){
-        events << CardLostDone;
+        events << CardLostDone << CardGotDone;
         frequency = Frequent;
     }
 
@@ -901,6 +901,8 @@ public:
             if(cup){
                 damage.to = cup;
                 room->damage(damage);
+                room->setPlayerFlag(damage.from, "-Xiaozai");
+                player->tag.remove("Xiaozai");
                 return true;
             }
         }

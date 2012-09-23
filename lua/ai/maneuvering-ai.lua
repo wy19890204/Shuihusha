@@ -1,3 +1,11 @@
+function hasSilverLion(who)
+	if not who then return false end
+	if who:hasSkill("jintang") and who:getHp() <= 2 then
+		return true
+	end
+	return who:getArmor() and who:getArmor():objectName() == "silver_lion"
+end
+
 function SmartAI:useCardThunderSlash(...)
 	self:useCardSlash(...)
 end
@@ -60,7 +68,7 @@ function SmartAI:searchForAnaleptic(use,enemy,slash)
 	local allcards = self.player:getCards("he")
 	allcards = sgs.QList2Table(allcards)
 
-	if enemy:getArmor() and enemy:getArmor():objectName() == "silver_lion" then
+	if hasSilverLion(enemy) then
 		return
 	end
 
@@ -285,9 +293,10 @@ function SmartAI:useCardFireAttack(fire_attack, use)
 				end
 			end
 
-			if success  then
+			if success then
 				if self:isEquip("Vine", enemy) or
 					(enemy:isChained() and self:isGoodChainTarget(enemy)) or
+					(enemy:hasSkill("jintang") and enemy:getHp() == 1) or
 					(enemy:hasSkill("fushang") and enemy:getHp() > 3 and not enemy:hasSkill("fenhui")) then
 					table.insert(targets_succ, 1, enemy)
 					break
