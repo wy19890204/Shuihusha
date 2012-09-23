@@ -195,18 +195,13 @@ public:
 class Exterminate: public TriggerSkill{
 public:
     Exterminate():TriggerSkill("exterminate"){
-        events << DamageComplete;
+        events << DamageConclude;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *hanae, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.from->hasSkill(objectName()) || damage.from == damage.to)
+        if(hanae->hasSkill(objectName()) || hanae == damage.to)
             return false;
-        ServerPlayer *hanae = damage.from;
         if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
 

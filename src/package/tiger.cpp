@@ -480,11 +480,7 @@ private:
 class Pinming: public TriggerSkill{
 public:
     Pinming():TriggerSkill("pinming"){
-        events << Damaged << Dying;
-    }
-
-    virtual int getPriority() const{
-        return -2;
+        events << DamageConclude;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -492,9 +488,9 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
         QList<ServerPlayer *> sanlangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *sanlang, sanlangs){
-            DamageStruct damage = data.value<DamageStruct>();
 
             if(player->isAlive() && damage.from && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName(), qrand() % 3 + 1);

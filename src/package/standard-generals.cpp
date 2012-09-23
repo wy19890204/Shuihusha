@@ -1046,7 +1046,7 @@ public:
 class Fuhu: public TriggerSkill{
 public:
     Fuhu():TriggerSkill("fuhu"){
-        events << DamageComplete;
+        events << DamageConclude;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
@@ -1055,18 +1055,15 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.from || !damage.card || !damage.card->inherits("Slash"))
+        if(!damage.card || !damage.card->inherits("Slash"))
             return false;
         QList<ServerPlayer *> wusOng = room->findPlayersBySkillName(objectName());
-        if(wusOng.isEmpty())
-            return false;
-
         foreach(ServerPlayer *wusong, wusOng){
-            if(damage.from->isDead())
+            if(player->isDead())
                 break;
-            if(wusong->canSlash(damage.from, NULL, false)
-                    && !wusong->isKongcheng() && damage.from != wusong){
-                const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + damage.from->objectName(), true, data, CardDiscarded);
+            if(wusong->canSlash(player, NULL, false)
+                    && !wusong->isKongcheng() && player != wusong){
+                const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + player->objectName(), true, data, CardDiscarded);
                 if(!card)
                     continue;
                 Slash *slash = new Slash(Card::NoSuit, 0);
@@ -1074,7 +1071,7 @@ public:
                 CardUseStruct use;
                 use.card = slash;
                 use.from = wusong;
-                use.to << damage.from;
+                use.to << player;
 
                 if(card->inherits("Analeptic") || card->inherits("Weapon")){
                     LogMessage log;

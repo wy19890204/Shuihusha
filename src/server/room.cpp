@@ -2785,6 +2785,8 @@ void Room::damage(const DamageStruct &damage_data){
     if(broken)
         return;
 
+    if(damage_data.from)
+        thread->trigger(DamageConclude, this, damage_data.from, data);
     thread->trigger(DamageComplete, this, damage_data.to, data);
 }
 
