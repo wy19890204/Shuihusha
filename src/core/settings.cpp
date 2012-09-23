@@ -146,7 +146,8 @@ void Settings::init(){
     }
 
     pairs_ban << "tongguan" << "tongguanf" << "caijing"
-              << "gaoqiu+luozhenren"
+              << "gaoqiu+luozhenren" << "wangying+zhangqing" << "wangying+qiongying"
+              << "tianhu+yanshun" << "zhangheng+shixiu"
               //<< "shenwuyong"
               //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
               //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
