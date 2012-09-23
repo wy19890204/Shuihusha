@@ -28,7 +28,6 @@ class Moonpie: public BasicCard{
 public:
     Q_INVOKABLE Moonpie(Card::Suit suit, int number);
     virtual QString getSubtype() const;
-    virtual QString getEffectPath(bool is_male) const;
     virtual bool isAvailable(const Player *change) const;
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *houyi, const Player *change) const;
     virtual void onEffect(const CardEffectStruct &effect) const;

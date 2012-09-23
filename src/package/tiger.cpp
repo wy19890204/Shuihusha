@@ -257,7 +257,6 @@ public:
             return false;
 
         QVariantList guzong_cards = leiheng->tag["Guzong"].toList();
-        leiheng->tag.remove("Guzong");
 
         QList<int> cards;
         foreach(QVariant card_data, guzong_cards){
@@ -269,7 +268,7 @@ public:
         if(cards.isEmpty())
             return false;
 
-        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue(cards.length()))){
+        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue((PlayerStar)player))){
             room->fillAG(cards, leiheng);
             room->playSkillEffect("guzong");
 
@@ -290,6 +289,8 @@ public:
             foreach(int card_id, cards)
                 room->throwCard(card_id);
         }
+
+        leiheng->tag.remove("Guzong");
         return false;
     }
 };
@@ -311,7 +312,7 @@ bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Pl
 void NeiyingCard::weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const{
     QList<int> all1 = you->handCards();
     QList<int> all2 = me->handCards();
-    room->playSkillEffect("neiying", 2);
+    room->playSkillEffect("neiying", qrand() % 2 + 5);
     room->fillAG(all1, me);
     room->fillAG(all2, you);
     room->getThread()->delay(4000);
@@ -370,7 +371,7 @@ public:
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return 1;
+        return qrand() % 4 + 1;
     }
 };
 
@@ -432,23 +433,25 @@ public:
             if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
                 log.type = "#JintangForb";
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), 3);
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){
                 log.type = "#JintangCut";
                 room->sendLog(log);
                 damage.damage = 1;
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 data = QVariant::fromValue(damage);
             }
         }
         else if(event == Death){
-            if(player->hasEquip())
-                room->playSkillEffect(objectName(), 3);
-            foreach(CardStar equip, player->getEquips()){
-                player->tag["Jintg"] = QVariant::fromValue(equip);
-                room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
+            if(player->hasEquip()){
+                room->playSkillEffect(objectName(), qrand() % 2 + 4);
+                foreach(CardStar equip, player->getEquips()){
+                    player->tag["Jintg"] = QVariant::fromValue(equip);
+                    room->askForUseCard(player, "@@jintang!", "@jintang:::" + equip->objectName(), true);
+                }
+                //room->getThread()->delay(1500);
             }
         }
         return false;
@@ -493,8 +496,8 @@ public:
         foreach(ServerPlayer *sanlang, sanlangs){
             DamageStruct damage = data.value<DamageStruct>();
 
-            if(player->isAlive() && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
-                room->playSkillEffect(objectName(), 1);
+            if(player->isAlive() && damage.from && damage.from != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
+                room->playSkillEffect(objectName(), qrand() % 3 + 1);
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;
                 dag.from = sanlang;
@@ -522,7 +525,7 @@ public:
             dying.damage->from->setFlags("PinmingDie");
             if(!dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage)))
                 return false;
-            room->playSkillEffect("pinming", 2);
+            room->playSkillEffect("pinming", qrand() % 2 + 4);
             room->getThread()->delay(500);
             room->killPlayer(dying.damage->to, dying.damage);
             room->getThread()->delay(1000);
@@ -948,13 +951,13 @@ public:
         if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
             const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
             if(equip){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 effect.from->obtainCard(equip);
             }
             else{
                 if(!effect.from->hasEquip())
                     return false;
-                room->playSkillEffect(objectName(), 2);
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 room->obtainCard(player, room->askForCardChosen(player, effect.from, "e", objectName()));
             }
         }
@@ -988,7 +991,7 @@ public:
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return 2;
+        return qrand() % 2 + 3;
     }
 };
 
@@ -1022,7 +1025,7 @@ public:
                 }
             }
             if(hasslash && selang->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName(), 1);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 foreach(int card_id, slash->getSubcards()){
                     if(Sanguosha->getCard(card_id)->inherits("Slash"))
                         room->obtainCard(selang, card_id);
@@ -1030,7 +1033,7 @@ public:
             }
         }
         else if(slash->inherits("Slash") && selang->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName(), 1);
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
             selang->obtainCard(slash);
         }
         return false;

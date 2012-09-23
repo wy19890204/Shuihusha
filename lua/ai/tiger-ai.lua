@@ -2,9 +2,70 @@
 
 -- leiheng
 -- guzong
+sgs.ai_skill_invoke["guzong"] = function(self, data)
+	local player = data:toPlayer()
+	self.guzongtarget = player
+--	local cards = self.player:getTag("Guzong")
+	if self:isEnemy(player) then
+		return math.random(1, 3) == 2
+	else
+		return math.random(2, 3) == 2
+	end
+--[[for _, card_id in sgs.qlist(cards) do
+		local card = sgs.Sanguosha:getCard(card_id:toInt())
+		if card:inherits("Peach") or card:inherits("Analeptic") then
+			return true
+		end
+	end]]
+end
+sgs.ai_skill_askforag["guzong"] = function(self, card_ids)
+	if self.player:getHandcardNum() < 2 then return -1 end
+	if self:isEnemy(self.guzongtarget) then return 9999 end
+	for _, card_id in ipairs(card_ids) do
+		local card = sgs.Sanguosha:getCard(card_id)
+		if card:inherits("Peach") or card:inherits("Analeptic") then
+			return card_id
+		end
+	end
+	return -1
+end
+sgs.ai_skill_cardchosen["guzong"] = function(self, who)
+	local cards = sgs.QList2Table(who:getCards("he"))
+	self:sortByUseValue(cards, self:isEnemy(who))
+	return cards[1]
+end
 
 -- sunli
 -- neiying
+sgs.ai_view_as["neiying"] = function(card, player, card_place)
+	if player:getCardCount(true) < 3 then return end	
+	local first_found, second_found = false, false
+	local first_card, second_card
+	local cards = player:getCards("he")
+	cards=sgs.QList2Table(cards)
+--	self:sortByUseValue(cards, true)
+	for _, fcard in ipairs(cards) do
+		if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo")) then
+			first_card = fcard
+			first_found = true
+			for _, scard in ipairs(cards) do
+				if first_card ~= scard and scard:getColor() == first_card:getColor() and 
+					not (scard:inherits("Peach") or scard:inherits("ExNihilo")) then
+					second_card = scard
+					second_found = true
+					break
+				end
+			end
+			if second_card then break end
+		end
+	end
+	if first_found and second_found then
+		local first_suit, first_number, first_id = first_card:getSuitString(), first_card:getNumberString(), first_card:getId()
+		local second_suit, second_number, second_id = second_card:getSuitString(), second_card:getNumberString(), second_card:getId()
+		local card_str = ("counterplot:neiying[%s:%s]=%d+%d"):format(first_suit, first_number, first_id, second_id)
+		return card_str
+	end
+end
 
 -- wuyanguang
 -- jintang
@@ -77,6 +138,7 @@ huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
 huwei_skill.getTurnUseCard = function(self)
 	local lord = self.room:getLord()
+	if self.player == lord or self.player:getKingdom() ~= "jiang" then return end
 	if self:isFriend(lord) and lord:hasLordSkill("huwei") and not lord:hasEquip() then
 		local slash = self:getCard("EquipCard")
 		if slash then

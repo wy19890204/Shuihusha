@@ -2051,7 +2051,9 @@ function SmartAI:askForAG(card_ids, refusable, reason)
 	local cardchosen = sgs.ai_skill_askforag[string.gsub(reason, "%-", "_")]
 	if type(cardchosen) == "function" then
 		local card_id = cardchosen(self, card_ids)
-		if card_id then return card_id end
+		if card_id and card_id ~= 9999 then
+			return card_id
+		end
 	end
 
 	if refusable and self:hasSkill("xinzhan") then

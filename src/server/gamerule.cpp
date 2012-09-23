@@ -180,7 +180,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
                         room->broadcastInvoke("playAudio", "reincarnation");
                         room->revivePlayer(next);
-                        room->setPlayerMark(next, "@skull", 1);
 
                         QString oldname = next->getGeneralName();
                         QString newname = Sanguosha->getRandomGenerals(1).first();
@@ -188,9 +187,11 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         if(next->getMaxHp() == 0)
                             room->setPlayerProperty(next, "maxhp", 1);
                         room->setPlayerProperty(next, "hp", 1);
-                        room->attachSkillToPlayer(player, "sacrifice");
 
                         room->getThread()->delay(1500);
+                        room->attachSkillToPlayer(next, "sacrifice");
+                        room->setPlayerMark(next, "@skull", 1);
+                        room->setPlayerProperty(next, "isDead", true);
                     }
                     next = next->getNext();
                 }
@@ -894,7 +895,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
     if(killer->isDead())
         return;
 
-    if(Config.EnableReincarnation && victim->getMark("@skull") > 0)
+    Room *room = victim->getRoom();
+    if(Config.EnableReincarnation && victim->property("isDead").toBool())
         return;
 
     if(victim->hasSkill("zuohua")){
@@ -903,12 +905,12 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
         log.from = victim;
         log.to << killer;
         log.arg = "zuohua";
-        victim->getRoom()->playSkillEffect("zuohua", 1);
-        victim->getRoom()->sendLog(log);
+        room->playSkillEffect("zuohua", 1);
+        room->sendLog(log);
         return;
     }
 
-    if(killer->getRoom()->getMode() == "06_3v3"){
+    if(room->getMode() == "06_3v3"){
         if(Config.value("3v3/UsingNewMode", false).toBool())
             killer->drawCards(2);
         else
