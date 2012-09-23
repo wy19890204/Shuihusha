@@ -1006,11 +1006,11 @@ public:
                 && !damage.chain && player->askForSkillInvoke("ice_sword", data)){
             player->playCardEffect("Eice_sword", "weapon");
             int card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
-            room->throwCard(card_id, damage.to);
+            room->throwCard(card_id, player);
 
             if(!damage.to->isNude()){
                 card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
-                room->throwCard(card_id, damage.to);
+                room->throwCard(card_id, player);
             }
 
             return true;

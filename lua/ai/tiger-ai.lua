@@ -38,12 +38,12 @@ end
 -- sunli
 -- neiying
 sgs.ai_view_as["neiying"] = function(card, player, card_place)
---	if player:getHandcardNum() < 2 then return end	
+	if player:getCardCount(true) < 3 then return end	
 	local first_found, second_found = false, false
 	local first_card, second_card
-	local cards = self.player:getCards("he")
+	local cards = player:getCards("he")
 	cards=sgs.QList2Table(cards)
-	self:sortByUseValue(cards, true)
+--	self:sortByUseValue(cards, true)
 	for _, fcard in ipairs(cards) do
 		if not (fcard:inherits("Peach") or fcard:inherits("ExNihilo")) then
 			first_card = fcard
@@ -138,6 +138,7 @@ huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
 huwei_skill.getTurnUseCard = function(self)
 	local lord = self.room:getLord()
+	if self.player == lord or self.player:getKingdom() ~= "jiang" then return end
 	if self:isFriend(lord) and lord:hasLordSkill("huwei") and not lord:hasEquip() then
 		local slash = self:getCard("EquipCard")
 		if slash then

@@ -476,6 +476,7 @@ enum TriggerEvent{
     DamageDone,
     Damage,
     Damaged,
+	DamageConclude,
     DamageComplete,
 
     Dying,
@@ -518,6 +519,7 @@ public:
 	// enumeration type
 	enum Suit {Spade, Club, Heart, Diamond, NoSuit};
 	static const Suit AllSuits[4];
+	enum Color {Red, Black, Colorless};
 	
 	// card types
 	enum CardType{
@@ -547,6 +549,7 @@ public:
 	Suit getSuit() const;
 	void setSuit(Suit suit);
 
+	Color getColor() const;
 	bool sameColorWith(const Card *other) const;
 	bool isEquipped() const;
 
