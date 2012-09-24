@@ -72,10 +72,8 @@ void Settings::init(){
 
     ContestMode = value("ContestMode", false).toBool();
     Statistic = value("Statistic", false).toBool();
-    FreeChoose = value("FreeChoose", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();
-    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();
     EnableReincarnation = value("EnableReincarnation", false).toBool();
     EnableScene = value("EnableScene", false).toBool();	//changjing
@@ -87,6 +85,8 @@ void Settings::init(){
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
+    FreeChoose = value("FreeChoose", false).toBool();
+    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
