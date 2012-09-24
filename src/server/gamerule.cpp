@@ -37,6 +37,11 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
+            LogMessage log;
+            log.type = "#ShowRole";
+            log.from = player;
+            log.arg = player->getRole();
+            room->sendLog(log);
             if(player->getMark("poison") > 0 && !player->isAllNude()){
                 LogMessage log;
                 log.from = player;

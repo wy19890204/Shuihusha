@@ -1035,7 +1035,7 @@ void RoomScene::putToDiscard(CardItem *item)
     item->setEnabled(true);
     item->setFlag(QGraphicsItem::ItemIsFocusable, false);
     item->setOpacity(1.0);
-    item->setZValue(0.0001*ClientInstance->discarded_list.length());
+    item->setZValue(0.0001 * ClientInstance->discarded_list.length());
 
     viewDiscards();
 }
@@ -1529,8 +1529,6 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 2: break;
-    case 3: break;
     case 4: map = &threeV3_mode; break;
     case 5: map = &hegemony_mode; break;
     default:

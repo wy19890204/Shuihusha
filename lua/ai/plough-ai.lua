@@ -76,11 +76,12 @@ sgs.dynamic_value.benefit.Counterplot = true
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 	local target
-	self:sort(self.enemies, "hp")
-	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and
-		self.enemies[1]:getKingdom() ~= self.player:getKingdom() and
-		self:hasTrickEffective(drivolt, self.enemies[1]) then
-		target = self.enemies[1]
+	local enemies = self:exclude(self.enemies, drivolt)
+	self:sort(enemies, "hp")
+	if #enemies > 0 and enemies[1]:getHp() == 1 and
+		enemies[1]:getKingdom() ~= self.player:getKingdom() and
+		self:hasTrickEffective(drivolt, enemies[1]) then
+		target = enemies[1]
 	end
 	if not target then
 		for _, friend in ipairs(self.friends_noself) do

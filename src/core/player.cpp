@@ -249,7 +249,7 @@ QString Player::getGeneral2Name() const{
     if(general2)
         return general2->objectName();
     else
-        return "";
+        return QString();
 }
 
 const General *Player::getGeneral2() const{
@@ -414,6 +414,7 @@ bool Player::hasEquip() const{
 }
 
 bool Player::hasEquip(const QString &name, bool inherit) const{
+//for example: hasEquip("axe") ;  hasEquip("Weapon", true)
     bool ok = false;
     foreach(const Card *equip, getEquips()){
         if((!inherit && equip->objectName() == name) ||

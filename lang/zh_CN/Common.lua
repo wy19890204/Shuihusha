@@ -132,6 +132,7 @@ return {
 	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
 	["@askforslash"] = "你可以对你攻击范围内的一名角色使用一张【杀】",
 	["$CheatCard"] = "%from 使用了作弊，获得了 %card",
+	["#ShowRole"] = "%from 的身份是【%arg】",
 
 	-- askForChoice相关
 	["draw1card"] = "摸1张牌",
