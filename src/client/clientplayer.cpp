@@ -118,7 +118,7 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
 }
 
 QString ClientPlayer::getDeathPixmapPath() const{
-    QString basename;
+    QString basename = "unknown";
     if(ServerInfo.GameMode == "06_3v3"){
         if(getRole() == "lord" || getRole() == "renegade")
             basename = "marshal";
@@ -129,9 +129,8 @@ QString ClientPlayer::getDeathPixmapPath() const{
     }else
         basename = getRole();
 
-    if(basename.isEmpty() || property("panxin").toBool()){
+    if(property("panxin").toBool())
         basename = "unknown";
-    }
 
     return QString("image/system/death/%1.png").arg(basename);
 }

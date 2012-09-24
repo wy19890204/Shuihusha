@@ -127,7 +127,7 @@ void StartScene::printServerInfo(){
     if(Config.ContestMode)
         server_log->append(tr("The contest mode is enabled"));
 
-    server_log->append(tr("Free general choose is %1").arg(Config.FreeChoose ? tr("Enabled") : tr("Disabled")));
+    server_log->append(tr("Free general choose is %1").arg(Config.FreeChooseGenerals ? tr("Enabled") : tr("Disabled")));
 
     if(Config.Enable2ndGeneral){
         QString scheme_str;

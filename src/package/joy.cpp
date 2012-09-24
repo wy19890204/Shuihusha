@@ -586,7 +586,8 @@ public:
             else if(word == "dshc"){
                 room->sendLog(gitlog);
                 //niriwomei:kill-self
-                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "kno+kyes") == "kno"){
+                if(Config.value("EnableCheatMenu", false).toBool() &&
+                   room->askForChoice(miheng, "numat", "kno+kyes") == "kno"){
                     gitlog.type = "#Numa_tequan";
                     gitlog.from = miheng;
                     room->sendLog(gitlog);
@@ -694,7 +695,8 @@ public:
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
                 //worinimeimei:Wake-Skill, lost all skills
-                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "suno+suyes") == "suno"){
+                if(Config.value("EnableCheatMenu", false).toBool() &&
+                   room->askForChoice(miheng, "numat", "suno+suyes") == "suno"){
                     gitlog.type = "#Numa_tequan";
                     gitlog.from = miheng;
                     room->sendLog(gitlog);
@@ -713,7 +715,8 @@ public:
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
                 //worinimeimei:Wake-Skill
-                if(Config.FreeChoose && room->askForChoice(miheng, "numat", "lhno+lhyes") == "lhno"){
+                if(Config.value("EnableCheatMenu", false).toBool() &&
+                   room->askForChoice(miheng, "numat", "lhno+lhyes") == "lhno"){
                     gitlog.type = "#Numa_tequan";
                     gitlog.from = miheng;
                     room->sendLog(gitlog);
