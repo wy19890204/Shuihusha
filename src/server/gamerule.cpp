@@ -37,11 +37,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
-            LogMessage log;
-            log.type = "#ShowRole";
-            log.from = player;
-            log.arg = player->getRole();
-            room->sendLog(log);
             if(player->getMark("poison") > 0 && !player->isAllNude()){
                 LogMessage log;
                 log.from = player;
@@ -273,6 +268,13 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     case TurnStart:{
             player = room->getCurrent();
+            if(Config.value("FreeShowRole", false).toBool()){
+                LogMessage log;
+                log.type = "#ShowRole";
+                log.from = player;
+                log.arg = player->getRole();
+                room->sendLog(log);
+            }
             if(!player->faceUp())
                 player->turnOver();
             else if(player->isAlive())
@@ -704,7 +706,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             ServerPlayer *killer = damage ? damage->from : NULL;
 
             if(Config.EnableEndless){
-                if(player->getMaxHP() <= 0)
+                if(player->getMaxHp() <= 0)
                     room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                 if(player->getHp() <= 0)
                     room->setPlayerProperty(player, "hp", 1);
@@ -715,6 +717,17 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 return true;
             }
 
+            if(Config.FreeUndead){
+                if(player->getMaxHp() <= 0)
+                    room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
+                if(player->getHp() <= 0)
+                    room->setPlayerProperty(player, "hp", 1);
+                LogMessage log;
+                log.type = "#Undead";
+                log.from = player;
+                room->sendLog(log);
+                return true;
+            }
             break;
         }
 

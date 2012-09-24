@@ -156,6 +156,7 @@ return {
 -- endless&custom
 	["endlessmode"] = "无尽模式",
 	["@endless"] = "铜板",
+	["#Undead"] = "%from 开启了不死之身，本次死亡无效",
 	["custom"] = "自定义模式",
 	["custom_cards"] = "自定义卡牌包",
 

@@ -293,12 +293,20 @@ QWidget *ServerDialog::createCheatTab(){
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
     free_change_general_checkbox->setChecked(Config.FreeChange);
 
+    free_showrole_checkbox = new QCheckBox(tr("Show everyone's role in turnstart"));
+    free_showrole_checkbox->setChecked(Config.value("FreeShowRole").toBool());
+
+    free_undead_checkbox = new QCheckBox(tr("Undead body"));
+    free_undead_checkbox->setChecked(Config.FreeUndead);
+
     laybox->addWidget(free_choose_generals_checkbox);
     laybox->addWidget(free_choose_cards_checkbox);
     laybox->addWidget(free_assign_checkbox);
     laybox->addWidget(free_assign_self_checkbox);
     laybox->addWidget(free_discard_checkbox);
     laybox->addWidget(free_change_general_checkbox);
+    laybox->addWidget(free_showrole_checkbox);
+    laybox->addWidget(free_undead_checkbox);
     box->setLayout(laybox);
 
     layout->addWidget(cheat_enable_checkbox);
@@ -938,6 +946,7 @@ bool ServerDialog::config(){
     Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.FreeDiscard = free_discard_checkbox->isChecked();
     Config.FreeChange = free_change_general_checkbox->isChecked();
+    Config.FreeUndead = free_undead_checkbox->isChecked();
     Config.EnableAI = ai_enable_checkbox->isChecked();
     Config.AIDelay = ai_delay_spinbox->value();
     Config.ServerPort = port_edit->text().toInt();
@@ -981,6 +990,8 @@ bool ServerDialog::config(){
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
     Config.setValue("FreeDiscard", Config.FreeDiscard);
     Config.setValue("FreeChange", Config.FreeChange);
+    Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
+    Config.setValue("FreeUndead", Config.FreeUndead);
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
