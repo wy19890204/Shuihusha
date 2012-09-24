@@ -299,7 +299,7 @@ function SmartAI:useCardInspiration(inspiration, use)
 			e = e + enemy:getLostHp()
 		end
 	end
-	if e > f then return "." end
+	if e > f or f == 0 then return "." end
 	use.card = inspiration
 end
 

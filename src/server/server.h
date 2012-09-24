@@ -112,7 +112,8 @@ private:
     QLineEdit *address_edit;
     QLineEdit *port_edit;
     QCheckBox *cheat_enable_checkbox;
-    QCheckBox *free_choose_checkbox;
+    QCheckBox *free_choose_generals_checkbox;
+    QCheckBox *free_choose_cards_checkbox;
     QCheckBox *free_assign_checkbox;
     QCheckBox *free_assign_self_checkbox;
     QCheckBox *ai_enable_checkbox;

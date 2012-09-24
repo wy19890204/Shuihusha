@@ -273,8 +273,11 @@ QWidget *ServerDialog::createCheatTab(){
 
     QVBoxLayout *laybox = new QVBoxLayout;
 
-    free_choose_checkbox = new QCheckBox(tr("Choose generals and cards freely"));
-    free_choose_checkbox->setChecked(Config.FreeChoose);
+    free_choose_generals_checkbox = new QCheckBox(tr("Choose generals freely"));
+    free_choose_generals_checkbox->setChecked(Config.FreeChooseGenerals);
+
+    free_choose_cards_checkbox = new QCheckBox(tr("Choose cards freely"));
+    free_choose_cards_checkbox->setChecked(Config.FreeChooseCards);
 
     free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
     free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
@@ -284,7 +287,8 @@ QWidget *ServerDialog::createCheatTab(){
     free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
-    laybox->addWidget(free_choose_checkbox);
+    laybox->addWidget(free_choose_generals_checkbox);
+    laybox->addWidget(free_choose_cards_checkbox);
     laybox->addWidget(free_assign_checkbox);
     laybox->addWidget(free_assign_self_checkbox);
     box->setLayout(laybox);
@@ -908,8 +912,6 @@ bool ServerDialog::config(){
     Config.OperationNoLimit = nolimit_checkbox->isChecked();
     Config.ContestMode = contest_mode_checkbox->isChecked();
     Config.Statistic = advanced_statistic_checkbox->isChecked();
-    Config.FreeChoose = free_choose_checkbox->isChecked();
-    Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
@@ -923,6 +925,9 @@ bool ServerDialog::config(){
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
     Config.AnnounceIP = announce_ip_checkbox->isChecked();
     Config.Address = address_edit->text();
+    Config.FreeChooseGenerals = free_choose_generals_checkbox->isChecked();
+    Config.FreeChooseCards = free_choose_cards_checkbox->isChecked();
+    Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.EnableAI = ai_enable_checkbox->isChecked();
     Config.AIDelay = ai_delay_spinbox->value();
     Config.ServerPort = port_edit->text().toInt();
@@ -960,7 +965,8 @@ bool ServerDialog::config(){
     Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
     Config.setValue("EnableCheatMenu", cheat_enable_checkbox->isChecked());
-    Config.setValue("FreeChoose", Config.FreeChoose);
+    Config.setValue("FreeChooseGenerals", Config.FreeChooseGenerals);
+    Config.setValue("FreeChooseCards", Config.FreeChooseCards);
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
     Config.setValue("EnableAI", Config.EnableAI);
