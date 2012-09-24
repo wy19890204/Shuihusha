@@ -116,6 +116,8 @@ private:
     QCheckBox *free_choose_cards_checkbox;
     QCheckBox *free_assign_checkbox;
     QCheckBox *free_assign_self_checkbox;
+    QCheckBox *free_discard_checkbox;
+    QCheckBox *free_change_general_checkbox;
     QCheckBox *ai_enable_checkbox;
     QCheckBox *role_predictable_checkbox;
     QCheckBox *ai_chat_checkbox;

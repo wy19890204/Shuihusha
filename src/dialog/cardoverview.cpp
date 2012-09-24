@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "clientstruct.h"
 #include "client.h"
+#include "settings.h"
 
 static CardOverview *Overview;
 
@@ -25,7 +26,8 @@ CardOverview::CardOverview(QWidget *parent) :
     ui->tableWidget->setColumnWidth(3, 60);
     ui->tableWidget->setColumnWidth(4, 70);
 
-    if(ServerInfo.FreeChoose)
+    //if(ServerInfo.FreeChoose)
+    if(Config.FreeChooseCards)
         connect(ui->getCardButton, SIGNAL(clicked()), this, SLOT(askCard()));
     else
         ui->getCardButton->hide();
@@ -92,7 +94,8 @@ void CardOverview::on_tableWidget_itemSelectionChanged()
 }
 
 void CardOverview::askCard(){
-    if(!ServerInfo.FreeChoose)
+    //if(!ServerInfo.FreeChoose)
+    if(!Config.FreeChooseCards)
         return;
 
     int row = ui->tableWidget->currentRow();

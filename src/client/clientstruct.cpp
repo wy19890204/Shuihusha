@@ -47,8 +47,7 @@ bool ServerInfoStruct::parse(const QString &str){
 
     QString flags = texts.at(5);
 
-    FreeChooseGenerals = flags.contains("F");
-    FreeChooseCards = flags.contains("F");
+    FreeChoose = flags.contains("F");
     Enable2ndGeneral = flags.contains("S");
     EnableReincarnation = flags.contains("R");
     EnableScene = flags.contains("C");
@@ -158,7 +157,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
         max_hp_label->setEnabled(false);
     }
 
-    free_choose_label->setText(info.FreeChooseCards || info.FreeChooseGenerals ? tr("Enabled") : tr("Disabled"));
+    free_choose_label->setText(info.FreeChoose ? tr("Enabled") : tr("Disabled"));
     enable_ai_label->setText(info.EnableAI ? tr("Enabled") : tr("Disabled"));
 
     if(info.OperationTimeout == 0)

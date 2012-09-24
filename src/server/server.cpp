@@ -287,10 +287,18 @@ QWidget *ServerDialog::createCheatTab(){
     free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
+    free_discard_checkbox = new QCheckBox(tr("Discard freely"));
+    free_discard_checkbox->setChecked(Config.FreeDiscard);
+
+    free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
+    free_change_general_checkbox->setChecked(Config.FreeChange);
+
     laybox->addWidget(free_choose_generals_checkbox);
     laybox->addWidget(free_choose_cards_checkbox);
     laybox->addWidget(free_assign_checkbox);
     laybox->addWidget(free_assign_self_checkbox);
+    laybox->addWidget(free_discard_checkbox);
+    laybox->addWidget(free_change_general_checkbox);
     box->setLayout(laybox);
 
     layout->addWidget(cheat_enable_checkbox);
@@ -928,6 +936,8 @@ bool ServerDialog::config(){
     Config.FreeChooseGenerals = free_choose_generals_checkbox->isChecked();
     Config.FreeChooseCards = free_choose_cards_checkbox->isChecked();
     Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
+    Config.FreeDiscard = free_discard_checkbox->isChecked();
+    Config.FreeChange = free_change_general_checkbox->isChecked();
     Config.EnableAI = ai_enable_checkbox->isChecked();
     Config.AIDelay = ai_delay_spinbox->value();
     Config.ServerPort = port_edit->text().toInt();
@@ -969,6 +979,8 @@ bool ServerDialog::config(){
     Config.setValue("FreeChooseCards", Config.FreeChooseCards);
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
+    Config.setValue("FreeDiscard", Config.FreeDiscard);
+    Config.setValue("FreeChange", Config.FreeChange);
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
