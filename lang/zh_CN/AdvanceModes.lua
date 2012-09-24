@@ -1,4 +1,4 @@
--- translations for Advance mode
+-- translations for Advance modes
 
 return{
 -- 3v3
