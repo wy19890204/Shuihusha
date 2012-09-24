@@ -88,9 +88,6 @@ void Settings::init(){
     FreeChooseGenerals = value("FreeChooseGenerals", false).toBool();
     FreeChooseCards = value("FreeChooseCards", false).toBool();
     FreeAssignSelf = value("FreeAssignSelf", false).toBool();
-    FreeDiscard = value("FreeDiscard", false).toBool();
-    FreeChange = value("FreeChange", false).toBool();
-    FreeUndead = value("FreeUndead", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();

@@ -3237,7 +3237,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     //if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
-    if(Config.FreeDiscard && !ClientInstance->getReplayer()){
+    if(Config.value("FreeDiscard", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-discard", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
         FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);

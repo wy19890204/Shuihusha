@@ -717,7 +717,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 return true;
             }
 
-            if(Config.FreeUndead){
+            if(player->getState() == "online" && Config.value("FreeUnDead", false).toBool()){
                 if(player->getMaxHp() <= 0)
                     room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                 if(player->getHp() <= 0)

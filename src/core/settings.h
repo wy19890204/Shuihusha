@@ -45,9 +45,6 @@ public:
     QString Address;
     bool FreeChooseGenerals;
     bool FreeChooseCards;
-    bool FreeDiscard;
-    bool FreeChange;
-    bool FreeUndead;
     bool FreeAssignSelf;
     bool EnableAI;
     int AIDelay;
