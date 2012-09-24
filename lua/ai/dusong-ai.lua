@@ -42,7 +42,7 @@ sgs.ai_cardsview["douzhan"] = function(class_name, player)
 	end
 end
 
-local douzhan_skill = {}
+douzhan_skill = {}
 douzhan_skill.name = "douzhan"
 table.insert(sgs.ai_skills, douzhan_skill)
 douzhan_skill.getTurnUseCard = function(self, inclusive)

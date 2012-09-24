@@ -156,11 +156,11 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableEndless ?
                         tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
                         tr("Endless Mode is disabled"));
-/*
+
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
                         tr("Anzhan Mode is disabled"));
-*/
+
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));

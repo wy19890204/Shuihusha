@@ -176,18 +176,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
 
-    same_checkbox  = new QCheckBox(tr("Enable Same"));
-    same_checkbox->setChecked(Config.EnableSame);
-
     anzhan_checkbox  = new QCheckBox(tr("Enable Anzhan"));
     anzhan_checkbox->setChecked(Config.EnableAnzhan);
-
-    endless_checkbox  = new QCheckBox(tr("Endless Mode"));
-    endless_checkbox->setChecked(Config.EnableEndless);
-    endless_timebox = new QSpinBox;
-    endless_timebox->setRange(1, 100);
-    endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
-    endless_timebox->setToolTip(tr("This box set the swap times"));
 
     max_hp_label = new QLabel(tr("Max HP scheme"));
     max_hp_scheme_combobox = new QComboBox;
@@ -230,14 +220,13 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addWidget(reincarnation_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addWidget(second_general_checkbox);
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
-    layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
-    layout->addLayout(HLay(endless_checkbox, endless_timebox));
-    //layout->addWidget(anzhan_checkbox);
+    layout->addWidget(scene_checkbox); //changjing
+    layout->addWidget(anzhan_checkbox);
+    layout->addWidget(reincarnation_checkbox);
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
@@ -247,8 +236,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
 
-    endless_timebox->setVisible(Config.EnableEndless);
-    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
     max_hp_label->setVisible(Config.Enable2ndGeneral);
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
     max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
@@ -309,12 +296,28 @@ QWidget *ServerDialog::createCheatTab(){
     laybox->addWidget(free_undead_checkbox);
     box->setLayout(laybox);
 
+    same_checkbox  = new QCheckBox(tr("Enable Same"));
+    same_checkbox->setChecked(Config.EnableSame);
+
+    endless_checkbox  = new QCheckBox(tr("Endless Mode"));
+    endless_checkbox->setChecked(Config.EnableEndless);
+    endless_timebox = new QSpinBox;
+    endless_timebox->setRange(1, 100);
+    endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
+    endless_timebox->setToolTip(tr("This box set the swap times"));
+
     layout->addWidget(cheat_enable_checkbox);
     layout->addWidget(box);
+    layout->addWidget(same_checkbox);
+    layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
+
+    endless_timebox->setVisible(Config.EnableEndless);
+    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
+
     return widget;
 }
 

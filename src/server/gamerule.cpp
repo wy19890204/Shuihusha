@@ -243,14 +243,33 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
             }
 
-            if(Config.EnableAnzhan){
-                PlayerStar head = room->getTag("StandsOutBird").value<PlayerStar>();
-                if(player == head)
-                    setGameProcess(room);
-            }
-            else{
-                if(player->isLord())
-                    setGameProcess(room);
+            if(player->isLord())
+                setGameProcess(room);
+
+            if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
+                LogMessage log;
+                log.type = "#AnzhanShuffle";
+                log.from = player;
+                log.arg = "anzhan";
+                room->sendLog(log);
+
+                QStringList roles;
+                foreach(ServerPlayer *plr, room->getAllPlayers()){
+                    roles << plr->getRole();
+                }
+                qShuffle(roles);
+                foreach(ServerPlayer *plr, room->getAllPlayers()){
+                    plr->setRole(roles.first());
+                    roles.removeFirst();
+                }
+                room->updateStateItem();
+                room->broadcastProperty(player, "role");
+                room->setPlayerProperty(player, "maxhp", player->getMaxHp() + 1);
+                log.type = "#AnzhanShow";
+                log.arg = player->getRole();
+                room->sendLog(log);
+
+                room->setTag("AnzhanInit", true);
             }
 
             if(Config.EnableReincarnation){

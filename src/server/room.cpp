@@ -2381,24 +2381,10 @@ void Room::assignRoles(){
 
         player->setRole(role);
 
-        if(ServerInfo.EnableAnzhan){
-            int i = (qrand() % n) + 1;
-            foreach(PlayerStar bird, getAllPlayers()){
-                if(bird->getSeat() == i){
-                    broadcastProperty(bird, "role", bird->getRole());
-                    setTag("StandsOutBird", QVariant::fromValue(bird));
-                }
-                else
-                    bird->sendProperty("role");
-            }
-            break;
-        }
-        else{
-            if(role == "lord")
-                broadcastProperty(player, "role", "lord");
-            else
-                player->sendProperty("role");
-        }
+        if(role == "lord")
+            broadcastProperty(player, "role", "lord");
+        else
+            player->sendProperty("role");
     }
 }
 
@@ -2821,8 +2807,7 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
     else if(Config.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){
-        PlayerStar head = getTag("StandsOutBird").value<PlayerStar>();
-        return player == head;
+        return false;
     }
     else
         return player->isLord() && player_count > 4;

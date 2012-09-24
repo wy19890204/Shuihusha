@@ -128,7 +128,7 @@ public:
 
         room->broadcastInvoke("animate", "lightbox:$wujie");
         room->setPlayerMark(wusong, "wujie", 1);
-        room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHP() + 1));
+        room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHp() + 1));
 
         room->playSkillEffect(objectName());
         room->acquireSkill(wusong, "zhusha");
