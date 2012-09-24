@@ -47,7 +47,14 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 
 	local card_str = self:getCardId("Ecstasy")
-	if card_str then return sgs.Card_Parse(card_str) end
+	if not card_str then
+		if self.player:hasSkill("xiayao") then
+			card_str = xiayao_skill.getTurnUseCard(self, true)
+		end
+	end
+	if card_str then
+		return sgs.Card_Parse(card_str)
+	end
 
 	for _, mi in ipairs(cards) do
 		if (mi:className() == "Ecstasy") and not (mi:getEffectiveId() == slash:getEffectiveId()) and
@@ -69,11 +76,12 @@ sgs.dynamic_value.benefit.Counterplot = true
 -- bi shang liang shan
 function SmartAI:useCardDrivolt(drivolt, use)
 	local target
-	self:sort(self.enemies, "hp")
-	if #self.enemies > 0 and self.enemies[1]:getHp() == 1 and
-		self.enemies[1]:getKingdom() ~= self.player:getKingdom() and
-		self:hasTrickEffective(drivolt, self.enemies[1]) then
-		target = self.enemies[1]
+	local enemies = self:exclude(self.enemies, drivolt)
+	self:sort(enemies, "hp")
+	if #enemies > 0 and enemies[1]:getHp() == 1 and
+		enemies[1]:getKingdom() ~= self.player:getKingdom() and
+		self:hasTrickEffective(drivolt, enemies[1]) then
+		target = enemies[1]
 	end
 	if not target then
 		for _, friend in ipairs(self.friends_noself) do
@@ -291,7 +299,7 @@ function SmartAI:useCardInspiration(inspiration, use)
 			e = e + enemy:getLostHp()
 		end
 	end
-	if e > f then return "." end
+	if e > f or f == 0 then return "." end
 	use.card = inspiration
 end
 

@@ -14,8 +14,8 @@ function SmartAI:useCardMoonpie(card, use)
 	self:sort(self.enemies, "defense")
 	for _, enemy in ipairs(self.enemies) do
 		if self.player:inMyAttackRange(enemy) and enemy:getMark("HaveEaten2") == 0 then
-			use.card = card
-			if use.to then
+			if self.player ~= enemy and use.to then
+				use.card = card
 				speak(enemy, "moonpie")
 				use.to:append(enemy)
 			end

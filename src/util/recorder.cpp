@@ -128,6 +128,7 @@ QByteArray Replayer::PNG2TXT(const QString filename){
 QString &Replayer::commandProceed(QString &cmd){
     static QStringList split_flags;
     if(split_flags.isEmpty()){
+        //split_flags << ":" << "+" << "->";
         split_flags << ":" << "+" << "_" << "->";
     }
 
@@ -187,7 +188,7 @@ QString &Replayer::commandTranslation(QString &cmd){
 
 void Replayer::initCommandPair(){
     if(m_nameTranslation.isEmpty()){
-  //      m_nameTranslation["erzhang"]            = "zhangzhaozhanghong";
+        m_nameTranslation["huabantaisui"]            = "tora";
     }
 
     if(m_commandMapping.isEmpty()){

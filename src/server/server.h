@@ -79,6 +79,7 @@ private:
     QWidget *createBasicTab();
     QWidget *createPackageTab();
     QWidget *createAdvancedTab();
+    QWidget *createCheatTab();
     QWidget *createAITab();
     QLayout *createButtonLayout();
 
@@ -90,9 +91,6 @@ private:
     QCheckBox *nolimit_checkbox;
     QCheckBox *contest_mode_checkbox;
     QCheckBox *advanced_statistic_checkbox;
-    QCheckBox *free_choose_checkbox;
-    QCheckBox *free_assign_checkbox;
-    QCheckBox *free_assign_self_checkbox;
     QSpinBox *maxchoice_spinbox;
     QCheckBox *forbid_same_ip_checkbox;
     QCheckBox *disable_chat_checkbox;
@@ -113,6 +111,15 @@ private:
     QPushButton *mini_scene_button;
     QLineEdit *address_edit;
     QLineEdit *port_edit;
+    QCheckBox *cheat_enable_checkbox;
+    QCheckBox *free_choose_generals_checkbox;
+    QCheckBox *free_choose_cards_checkbox;
+    QCheckBox *free_assign_checkbox;
+    QCheckBox *free_assign_self_checkbox;
+    QCheckBox *free_discard_checkbox;
+    QCheckBox *free_change_general_checkbox;
+    QCheckBox *free_showrole_checkbox;
+    QCheckBox *free_undead_checkbox;
     QCheckBox *ai_enable_checkbox;
     QCheckBox *role_predictable_checkbox;
     QCheckBox *ai_chat_checkbox;
