@@ -1803,7 +1803,7 @@ void Room::trustCommand(ServerPlayer *player, const QString &){
 
 bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *packet)
 {
-    if (!Config.FreeChoose) return false;
+    if (!Config.value("EnableCheatMenu", false).toBool()) return false;
     Json::Value arg = packet->getMessageBody();
     if (!arg.isArray() || !arg[0].isInt()) return false;
     //@todo: synchronize this
@@ -2525,7 +2525,7 @@ bool Room::_setPlayerGeneral(ServerPlayer* player, const QString& generalName, b
 {
     const General* general = Sanguosha->getGeneral(generalName);
     if (general == NULL) return false;
-    else if (!Config.FreeChoose && !player->getSelected().contains(generalName))
+    else if (!Config.FreeChooseGenerals && !player->getSelected().contains(generalName))
         return false;
     if (isFirst)
     {
@@ -3401,7 +3401,7 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
         else
         {
             //@todo: change FreeChoose to EnableCheat
-            if (Config.FreeChoose) {
+            if (Config.value("EnableCheatMenu", false).toBool()) {
                 if(makeCheat(player)){
                     if(player->isAlive())
                         return activate(player, card_use);
@@ -3733,7 +3733,7 @@ QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, Q
 
         Json::Value clientResponse = player->getClientReply();
         if(!success || !clientResponse.isString() 
-            || (!Config.FreeChoose && !generals.contains(clientResponse.asCString())))
+            || (!Config.FreeChooseGenerals && !generals.contains(clientResponse.asCString())))
             return default_choice;
         else
             return toQString(clientResponse);

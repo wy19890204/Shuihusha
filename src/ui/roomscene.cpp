@@ -984,7 +984,8 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(ServerInfo.FreeChoose && arrange_button){
+    //}else if(ServerInfo.FreeChoose && arrange_button){
+    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -3235,7 +3236,8 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
+    //if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
+    if(Config.FreeDiscard && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-discard", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
         FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);
