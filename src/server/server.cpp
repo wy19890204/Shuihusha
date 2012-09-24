@@ -288,7 +288,7 @@ QWidget *ServerDialog::createAITab(){
     ai_delay_spinbox->setMinimum(0);
     ai_delay_spinbox->setMaximum(5000);
     ai_delay_spinbox->setValue(Config.AIDelay);
-    ai_delay_spinbox->setSuffix(tr(" millisecond"));
+    ai_delay_spinbox->setSuffix(tr("millisecond"));
 
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);

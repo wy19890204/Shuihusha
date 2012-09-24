@@ -3538,7 +3538,7 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="291"/>
-        <source> millisecond</source>
+        <source>millisecond</source>
         <translation> 毫秒</translation>
     </message>
     <message>
