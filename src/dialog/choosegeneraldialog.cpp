@@ -188,8 +188,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         last_layout->addWidget(progress_bar);
     }
 
-    //bool free_choose = ServerInfo.FreeChoose;
-
     if(Config.FreeChooseGenerals){
         QPushButton *free_choose_button = new QPushButton(tr("Free choose ..."));
         connect(free_choose_button, SIGNAL(clicked()), this, SLOT(freeChoose()));

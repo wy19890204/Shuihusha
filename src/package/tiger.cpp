@@ -278,7 +278,7 @@ public:
                     break;
                 room->askForDiscard(leiheng, "guzong", 1, false, true);
                 player->obtainCard(Sanguosha->getCard(to_back));
-                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), leiheng);
+                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), player, leiheng);
                 cards.removeOne(to_back);
                 room->broadcastInvoke("clearAG");
                 room->fillAG(cards, leiheng);
@@ -821,7 +821,7 @@ public:
                 lolo.card_str = card->getEffectIdString();
                 if(!card->inherits("BasicCard")){
                     lolo.type = "$Longluo1";
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, shien);
                     room->sendLog(lolo);
                 }else{
                     lolo.type = "$Longluo2";

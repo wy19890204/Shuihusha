@@ -122,7 +122,7 @@ public:
                     if(!tarc.contains(target) && tarc.length() < 3)
                         tarc << target;
                     int card_id = room->askForCardChosen(player, target, "he", objectName());
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, target, player);
                     room->setPlayerMark(player, "@true", i - 1);
                 }
             }
@@ -173,7 +173,7 @@ public:
                 CardUseStruct use = data.value<CardUseStruct>();
                 if(use.card->inherits("Weapon") && player->askForSkillInvoke("weapon_recast", data)){
                     player->playCardEffect("@recast");
-                    room->throwCard(use.card);
+                    room->throwCard(use.card, use.from);
                     player->drawCards(1, false);
                     return true;
                 }

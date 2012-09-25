@@ -98,12 +98,12 @@ void YuanyinCard::onUse(Room *room, const CardUseStruct &card_use) const{
     else
         return;
 
-    const Card *weapon = targets.first()->getWeapon();
+    const Card *weapon = target->getWeapon();
     if(weapon){
         Slash *slash = new Slash(weapon->getSuit(), weapon->getNumber());
         slash->setSkillName("yuanyin");
         slash->addSubcard(weapon);
-        room->throwCard(weapon->getId());
+        room->throwCard(weapon->getId(), target, source);
         CardUseStruct use;
         use.card = slash;
         use.from = source;

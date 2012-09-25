@@ -300,7 +300,7 @@ const Card *HuaceCard::validate(const CardUseStruct *card_use) const{
     Card *use_card = Sanguosha->cloneCard(user_string, card->getSuit(), card->getNumber());
     use_card->setSkillName("huace");
     use_card->addSubcard(card);
-    room->throwCard(this, card_use->from);
+    room->throwCard(this);
 
     return use_card;
 }
@@ -317,7 +317,7 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     Card *use_card = Sanguosha->cloneCard(string, card->getSuit(), card->getNumber());
     use_card->setSkillName("huace");
     use_card->addSubcard(card);
-    room->throwCard(this, player);
+    room->throwCard(this);
 
     player->addHistory("HuaceCard", 1);
     Self->addHistory("HuaceCard", 1);
@@ -989,7 +989,7 @@ public:
             room->playSkillEffect(objectName());
             int dust = !damage.to->hasEquip() && damage.to->getJudgingArea().isEmpty() ? damage.to->getRandomHandCardId() :
                           room->askForCardChosen(player, damage.to, "hej", objectName());
-            room->throwCard(dust, damage.to);
+            room->throwCard(dust, damage.to, player);
 
             LogMessage log;
             log.type = "$Yixian";
@@ -1024,7 +1024,7 @@ public:
                 room->showCard(damage.to, card_id);
                 room->getThread()->delay();
                 if(!card->inherits("BasicCard")){
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, damage.to, luda);
                     LogMessage log;
                     log.type = "$ForceDiscardCard";
                     log.from = luda;
@@ -1168,7 +1168,7 @@ void FengmangCard::use(Room *room, ServerPlayer *yang, const QList<ServerPlayer 
     }
     else{
         dmgcard = Sanguosha->getCard(getSubcards().first());
-        room->throwCard(this);
+        room->throwCard(this, yang);
     }
     DamageStruct dmg;
     dmg.card = dmgcard;
@@ -1317,11 +1317,11 @@ public:
             horse_type = horses.first();
 
         if(horse_type == "defensive_horse")
-            room->throwCard(damage.to->getDefensiveHorse(), damage.to);
+            room->throwCard(damage.to->getDefensiveHorse(), damage.to, player);
         else if(horse_type == "offensive_horse")
-            room->throwCard(damage.to->getOffensiveHorse(), damage.to);
+            room->throwCard(damage.to->getOffensiveHorse(), damage.to, player);
         else if(horse_type == "armor")
-            room->throwCard(damage.to->getArmor(), damage.to);
+            room->throwCard(damage.to->getArmor(), damage.to, player);
 
         return false;
     }
@@ -1364,7 +1364,7 @@ public:
                     room->playSkillEffect(objectName(), 2);
                     room->sendLog(log);
                     room->setEmotion(player, "armor");
-                    room->throwCard(damage.from->getWeapon());
+                    room->throwCard(damage.from->getWeapon(), damage.from);
                 }
             }
         }
@@ -1675,7 +1675,7 @@ public:
                 if(damage.from->isNude())
                     break;
                 int card_id = room->askForCardChosen(yan, damage.from, "he", objectName());
-                room->throwCard(card_id, damage.from);
+                room->throwCard(card_id, damage.from, yan);
             }
             log.to << damage.from;
             log.arg2 = QString::number(i);
@@ -1714,7 +1714,8 @@ public:
             if(lingtianyi->isKongcheng())
                 continue;
             QVariant data = QVariant::fromValue((PlayerStar)player);
-            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), true, data, CardDiscarded);
+            QString prompt = "@jishi:" + player->objectName();
+            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", prompt, true, data, CardDiscarded);
             if(card){
                 RecoverStruct lty;
                 lty.card = card;
@@ -1838,7 +1839,7 @@ public:
             if(ball == "throw"){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 int card_id = room->askForCardChosen(hu3niang, damage.to, "he", objectName());
-                room->throwCard(card_id, damage.to);
+                room->throwCard(card_id, damage.to, hu3niang);
             }
             else{
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);

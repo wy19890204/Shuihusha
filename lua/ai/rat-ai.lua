@@ -30,6 +30,9 @@ sgs.ai_skill_cardask["@shuangzhan-jink-1"] = sgs.ai_skill_cardask["@assas1"]
 -- zhangqing
 -- yinyu
 sgs.ai_skill_invoke["yinyu"] = function(self, data)
+	if self:getZhangheng() then
+		return false
+	end
 	if self.player:getMark("mengshi") == 0 then
 		self:speak("yinyu")
 	end

@@ -1,4 +1,4 @@
--- translations for Advance mode
+-- translations for Advance modes
 
 return{
 -- 3v3
@@ -33,7 +33,7 @@ return{
 -- anzhan
 	["anzhan"] = "暗战模式",
 	["#AnzhanShuffle"] = "%arg 启动，%from 正在为场上角色重新分配身份牌",
-	["#AnzhanShow"] = "%from 亮出了自己的身份牌【%arg】",
+	["#AnzhanShow"] = "%from 亮出了自己的身份牌【%arg】，并增加了1点体力上限",
 
 -- endless
 	["endlessmode"] = "无尽模式",

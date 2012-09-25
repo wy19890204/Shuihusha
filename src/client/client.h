@@ -32,7 +32,7 @@ public:
         AskForPlayerChoose,
         AskForYiji,
         AskForGuanxing,
-        AskForGongxin,
+        AskForGongxin
     };
 
     explicit Client(QObject *parent, const QString &filename = QString());
@@ -100,6 +100,7 @@ public:
     void activate(const Json::Value &playerId);
     void startGame(const QString &);
     void hpChange(const QString &change_str);
+    void maxhpChange(const QString &change_str);
     void playSkillEffect(const QString &play_str);
     void playCardEffect(const QString &play_str);
     void playAudio(const QString &name);
@@ -229,7 +230,9 @@ private:
     void _askForCardOrUseCard(const Json::Value&);
 
 private slots:
-    void processCommand(const QString &cmd);
+    void processServerPacket(const QString &cmd);
+    void processServerPacket(char *cmd);
+    bool processServerRequest(const QSanProtocol::QSanGeneralPacket& packet);
     void processReply(char *reply);
     void notifyRoleChange(const QString &new_role);
     void onPlayerChooseSuit();
@@ -247,6 +250,7 @@ signals:
     void generals_got(const QStringList &generals);
     void seats_arranged(const QList<const ClientPlayer*> &seats);
     void hp_changed(const QString &who, int delta, DamageStruct::Nature nature, bool losthp);
+    void maxhp_changed(const QString &who, int delta);
     void status_changed(Client::Status new_status);
     void avatars_hiden();
     void pile_cleared();

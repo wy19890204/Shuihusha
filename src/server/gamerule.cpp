@@ -44,7 +44,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 int index = qrand() % player->getCards("hej").length();
                 const Card *card = player->getCards("hej").at(index);
                 log.card_str = card->getEffectIdString();
-                room->throwCard(card);
+                room->throwCard(card, player);
                 room->sendLog(log);
             }
             break;

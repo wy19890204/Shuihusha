@@ -388,6 +388,7 @@ end
 
 function SmartAI:qimenValue(current, target) -- 判断是否有被奇门的必要，参数为当前行动者和被奇门者
 --	if current:distanceTo(target) > 2 then return false end
+	if self:getZhanghengf(target, current) then return true end
 	if target:getMark("@shut") > 0 then return false end
 	if current == target then
 		if self:hasSkills("ganlin|huace|haoshen|jiashu|yongle|qinxin|shuangzhan|shentou|yuanpei|tongxia|xunlie", target) then
@@ -403,6 +404,7 @@ end
 sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 	local current = self.room:getCurrent()
 	local target
+	self:sort(self.enemies, "handcard2")
 	for _, tmp in ipairs(self.enemies) do
 		if self:qimenValue(current, tmp) then
 			target = tmp
@@ -783,7 +785,9 @@ end
 
 -- likui
 -- shalu
-sgs.ai_skill_invoke["shalu"] = true
+sgs.ai_skill_invoke["shalu"] = function(self, data)
+	return not self:getZhangheng(player)
+end
 
 -- ruanxiao7
 -- jueming
@@ -1034,7 +1038,7 @@ sgs.ai_skill_cardask["@heidian2"] = function(self)
 	return ecards[1]:getEffectiveId() or "."
 end
 
-function SmartAI:getSun2niang(player)
+function SmartAI:getSun2niang(player) -- enemy sun2niang's threat
 	player = player or self.player
 	local room = player:getRoom()
 	local flag = 0
@@ -1274,7 +1278,7 @@ end
 
 -- lishishi
 -- qinxin
-sgs.ai_skill_invoke["qinxin"] = true
+sgs.ai_skill_invoke["qinxin"] = sgs.ai_skill_invoke["shalu"]
 
 -- yinjian
 sgs.ai_card_intention.YinjianCard = -75

@@ -157,6 +157,32 @@ end
 -- jielue
 sgs.ai_skill_invoke["jielue"] = sgs.ai_skill_invoke["lihun"]
 
+function SmartAI:getZhangheng(player) -- enemy zhangheng's threat
+	player = player or self.player
+	if player:isKongcheng() then return false end
+	local room = player:getRoom()
+	for _, zhangheng in sgs.qlist(room:findPlayersBySkillName("jielue")) do
+		if zhangheng ~= player then
+			if self:isEnemy(player, zhangheng) and zhangheng:getMark("fuhun") == 0 then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function SmartAI:getZhanghengf(target, player) -- has friend zhangheng (for qimen)
+	player = player or self.player
+	if target:isKongcheng() then return false end
+	local room = player:getRoom()
+	for _, zhangheng in sgs.qlist(room:findPlayersBySkillName("jielue")) do
+		if self:isEnemy(target, player) and zhangheng:getMark("fuhun") == 0 then
+			return true
+		end
+	end
+	return false
+end
+
 -- xiebao
 -- liehuo
 sgs.ai_skill_invoke["liehuo"] = sgs.ai_skill_invoke["lihun"]

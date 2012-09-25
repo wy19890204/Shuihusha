@@ -44,11 +44,11 @@ public:
                 // throw the rest cards that matches the same suit
                 const Card *card = Sanguosha->getCard(card_id);
                 Card::Suit suit = card->getSuit();
-                LogMessage ogg;
+                /*LogMessage ogg;
                 ogg.type = "#Kongrice";
                 ogg.from = liying;
                 ogg.arg = card->getSuitString();
-                room->sendLog(ogg);
+                room->sendLog(ogg);*/
 
                 DummyCard *dummy_card = new DummyCard;
                 for(int i = card_ids.length() - 1; i > -1; i --){

@@ -830,7 +830,7 @@ void DingceCard::onEffect(const CardEffectStruct &effect) const{
     room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
     room->showCard(effect.from, card_id);
     if(Sanguosha->getCard(card_id)->inherits("TrickCard") && effect.from->askForSkillInvoke("dingce")){
-        room->throwCard(card_id);
+        room->throwCard(card_id, effect.to, effect.from);
         RecoverStruct tec;
         room->recover(effect.from, tec, true);
     }

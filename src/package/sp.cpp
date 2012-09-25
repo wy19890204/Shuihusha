@@ -10,15 +10,15 @@ BaoquanCard::BaoquanCard(){
     mute = true;
 }
 
-void BaoquanCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
+void BaoquanCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this, source);
     room->playSkillEffect("baoquan", qrand() % 2 + 5);
     int fist = getSubcards().count();
 
     DamageStruct damage;
     damage.damage = fist;
-    damage.from = effect.from;
-    damage.to = effect.to;
+    damage.from = source;
+    damage.to = targets.first();
     room->damage(damage);
 }
 

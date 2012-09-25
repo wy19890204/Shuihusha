@@ -275,7 +275,7 @@ void ShexinCard::onEffect(const CardEffectStruct &effect) const{
         if(!card->inherits("BasicCard")){
             room->showCard(effect.to, card->getEffectiveId());
             room->getThread()->delay();
-            room->throwCard(card);
+            room->throwCard(card, effect.to, effect.from);
         }else{
             room->showCard(effect.to, card->getEffectiveId());
             room->getThread()->delay();
@@ -513,7 +513,7 @@ public:
             if(choice == "qi" && !effect.from->isNude()){
                 room->playSkillEffect(objectName(), 2);
                 int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
-                room->throwCard(to_throw);
+                room->throwCard(to_throw, effect.from, zouyuan);
             }
         }
         return false;

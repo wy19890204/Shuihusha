@@ -4041,6 +4041,16 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>禁用无尽模式</translation>
     </message>
     <message>
+        <location filename="src/ui/startscene.cpp" line="161"/>
+        <source>Anzhan Mode is enabled</source>
+        <translation>启用暗战模式</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="162"/>
+        <source>Anzhan Mode is disabled</source>
+        <translation>禁用暗战模式</translation>
+    </message>
+    <message>
         <location filename="src/ui/startscene.cpp" line="165"/>
         <source>Basara Mode is enabled</source>
         <translation>暗将模式已开启</translation>
