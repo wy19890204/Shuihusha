@@ -306,7 +306,6 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
 
     thread->trigger(GameOverJudge, this, victim, data);
 
-
     broadcastProperty(victim, "role");
     thread->delay(300);
     broadcastInvoke("killPlayer", victim->objectName());
@@ -1819,7 +1818,7 @@ void Room::trustCommand(ServerPlayer *player, const QString &){
 
 bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *packet)
 {
-    if (!Config.FreeChoose) return false;
+    if (!Config.value("EnableCheatMenu", false).toBool()) return false;
     Json::Value arg = packet->getMessageBody();
     if (!arg.isArray() || !arg[0].isInt()) return false;
     //@todo: synchronize this
@@ -2397,24 +2396,10 @@ void Room::assignRoles(){
 
         player->setRole(role);
 
-        if(ServerInfo.EnableAnzhan){
-            int i = (qrand() % n) + 1;
-            foreach(PlayerStar bird, getAllPlayers()){
-                if(bird->getSeat() == i){
-                    broadcastProperty(bird, "role", bird->getRole());
-                    setTag("StandsOutBird", QVariant::fromValue(bird));
-                }
-                else
-                    bird->sendProperty("role");
-            }
-            break;
-        }
-        else{
-            if(role == "lord")
-                broadcastProperty(player, "role", "lord");
-            else
-                player->sendProperty("role");
-        }
+        if(role == "lord")
+            broadcastProperty(player, "role", "lord");
+        else
+            player->sendProperty("role");
     }
 }
 
@@ -2541,7 +2526,7 @@ bool Room::_setPlayerGeneral(ServerPlayer* player, const QString& generalName, b
 {
     const General* general = Sanguosha->getGeneral(generalName);
     if (general == NULL) return false;
-    else if (!Config.FreeChoose && !player->getSelected().contains(generalName))
+    else if (!Config.FreeChooseGenerals && !player->getSelected().contains(generalName))
         return false;
     if (isFirst)
     {
@@ -2837,8 +2822,7 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
     else if(Config.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){
-        PlayerStar head = getTag("StandsOutBird").value<PlayerStar>();
-        return player == head;
+        return false;
     }
     else
         return player->isLord() && player_count > 4;
@@ -3428,7 +3412,7 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
         else
         {
             //@todo: change FreeChoose to EnableCheat
-            if (Config.FreeChoose) {
+            if (Config.value("EnableCheatMenu", false).toBool()) {
                 if(makeCheat(player)){
                     if(player->isAlive())
                         return activate(player, card_use);
@@ -3759,8 +3743,8 @@ QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, Q
         //executeCommand(player, "askForGeneral", "chooseGeneralCommand", generals.join("+"), ".");
 
         Json::Value clientResponse = player->getClientReply();
-        if(!success || !clientResponse.isString()
-            || (!Config.FreeChoose && !generals.contains(clientResponse.asCString())))
+        if(!success || !clientResponse.isString() 
+            || (!Config.FreeChooseGenerals && !generals.contains(clientResponse.asCString())))
             return default_choice;
         else
             return toQString(clientResponse);

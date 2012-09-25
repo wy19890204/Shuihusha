@@ -30,10 +30,8 @@ public:
     QStringList BanPackages;
     bool ContestMode;
     bool Statistic;
-    bool FreeChoose;
     bool ForbidSIMC;
     bool DisableChat;
-    bool FreeAssignSelf;
     bool Enable2ndGeneral;
     bool EnableReincarnation;
     bool EnableScene;	//changjing
@@ -45,6 +43,9 @@ public:
     int MaxHpScheme;
     bool AnnounceIP;
     QString Address;
+    bool FreeChooseGenerals;
+    bool FreeChooseCards;
+    bool FreeAssignSelf;
     bool EnableAI;
     int AIDelay;
     ushort ServerPort;

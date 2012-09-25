@@ -14,7 +14,6 @@ struct ServerInfoStruct{
     int OperationTimeout;
     QStringList Extensions;
     //bool Statistic;
-    bool FreeChoose;
     bool Enable2ndGeneral;
     bool EnableReincarnation;
     bool EnableScene;
@@ -23,6 +22,7 @@ struct ServerInfoStruct{
     bool EnableAnzhan;
     bool EnableBasara;
     bool EnableHegemony;
+    bool FreeChoose;
     bool EnableAI;
     bool DisableChat;
     int MaxHPScheme;

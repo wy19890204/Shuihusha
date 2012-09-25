@@ -127,7 +127,7 @@ void StartScene::printServerInfo(){
     if(Config.ContestMode)
         server_log->append(tr("The contest mode is enabled"));
 
-    server_log->append(tr("Free general choose is %1").arg(Config.FreeChoose ? tr("Enabled") : tr("Disabled")));
+    server_log->append(tr("Free general choose is %1").arg(Config.FreeChooseGenerals ? tr("Enabled") : tr("Disabled")));
 
     if(Config.Enable2ndGeneral){
         QString scheme_str;
@@ -156,11 +156,11 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableEndless ?
                         tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
                         tr("Endless Mode is disabled"));
-/*
+
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
                         tr("Anzhan Mode is disabled"));
-*/
+
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));

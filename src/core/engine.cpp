@@ -356,7 +356,7 @@ QColor Engine::getKingdomColor(const QString &kingdom) const{
 QString Engine::getSetupString() const{
     int timeout = Config.OperationNoLimit ? 0 : Config.OperationTimeout;
     QString flags;
-    if(Config.FreeChoose)
+    if(Config.FreeChooseGenerals || Config.FreeChooseCards)
         flags.append("F");
     if(Config.Enable2ndGeneral)
         flags.append("S");

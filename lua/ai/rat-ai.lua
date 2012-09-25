@@ -267,7 +267,7 @@ sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	local target = self.enemies[1]
 	if self.player:isChained() and self:isWeak() then
 		for _, enemy in ipairs(self.enemies) do
-			if not enemy:isChained() then
+			if not enemy:isChained() and not hasSilverLion(enemy) then
 				target = enemy
 				break
 			end

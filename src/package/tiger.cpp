@@ -433,14 +433,14 @@ public:
             if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
                 log.type = "#JintangForb";
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 3);
+                room->playSkillEffect(objectName(), qrand() % 2 + 2);
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){
                 log.type = "#JintangCut";
                 room->sendLog(log);
                 damage.damage = 1;
-                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                room->playSkillEffect(objectName(), 1);
                 data = QVariant::fromValue(damage);
             }
         }

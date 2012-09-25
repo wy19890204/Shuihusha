@@ -982,7 +982,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(ServerInfo.FreeChoose && arrange_button){
+    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -1033,7 +1033,7 @@ void RoomScene::putToDiscard(CardItem *item)
     item->setEnabled(true);
     item->setFlag(QGraphicsItem::ItemIsFocusable, false);
     item->setOpacity(1.0);
-    item->setZValue(0.0001*ClientInstance->discarded_list.length());
+    item->setZValue(0.0001 * ClientInstance->discarded_list.length());
 
     viewDiscards();
 }
@@ -1527,8 +1527,6 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 2: break;
-    case 3: break;
     case 4: map = &threeV3_mode; break;
     case 5: map = &hegemony_mode; break;
     default:
@@ -3234,7 +3232,7 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
+    if(Config.value("FreeDiscard", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-discard", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
         FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);
