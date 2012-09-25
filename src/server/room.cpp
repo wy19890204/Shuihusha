@@ -995,8 +995,6 @@ int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QStrin
 
     QVariant decisionData = QVariant::fromValue("cardChosen:"+reason+":"+QString::number(card_id));
     thread->trigger(ChoiceMade, this, player, decisionData);
-
-
     return card_id;
 }
 
@@ -1044,7 +1042,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     card = card->validateInResposing(player, &continuable);
 
     if(card){
-        bool thrower = trigger_event == CardDiscarded ? player : NULL;
+        ServerPlayer *thrower = trigger_event == CardDiscarded ? player : NULL;
         if(card->getTypeId() != Card::Skill){
             const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
             if(card_pattern == NULL || card_pattern->willThrow())
@@ -2665,6 +2663,7 @@ void Room::loseMaxHp(ServerPlayer *victim, int lose){
     if(hp_changed)
         setPlayerProperty(victim, "hp", victim->getHp());
 
+    broadcastInvoke("maxhpChange", QString("%1:%2").arg(victim->objectName()).arg(-lose));
     LogMessage log;
     log.type = !hp_changed ? "#LoseMaxHp" : "#LostMaxHpPlus";
     log.from = victim;

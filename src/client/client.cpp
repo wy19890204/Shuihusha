@@ -54,6 +54,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["gameOver"] = &Client::gameOver;
 
     callbacks["hpChange"] = &Client::hpChange;
+    callbacks["maxhpChange"] = &Client::maxhpChange;
     callbacks["killPlayer"] = &Client::killPlayer;
     callbacks["revivePlayer"] = &Client::revivePlayer;
     m_callbacks[S_COMMAND_SHOW_CARD] = &Client::showCard;
@@ -646,6 +647,16 @@ void Client::hpChange(const QString &change_str){
     emit hp_changed(who, delta, nature, nature_str == "L");
 }
 
+void Client::maxhpChange(const QString &change_str){
+    QRegExp rx("(.+):(-?\\d+)");
+    if(!rx.exactMatch(change_str))
+        return;
+    QStringList texts = rx.capturedTexts();
+    QString who = texts.at(1);
+    int delta = texts.at(2).toInt();
+    emit maxhp_changed(who, delta);
+}
+
 void Client::setStatus(Status status){
     if(this->status != status||status == NotActive){
         this->status = status;
@@ -958,12 +969,14 @@ void Client::playCardEffect(const QString &play_str){
 }
 
 void Client::onPlayerChooseCard(int card_id){
+    Q_ASSERT(ask_dialog->inherits("PlayerCardDialog"));
     Json::Value reply = Json::Value::null;
     if(card_id != -2){
+        delete ask_dialog;
+        ask_dialog = NULL;
         reply = card_id;
     }
     replyToServer(S_COMMAND_CHOOSE_CARD, reply);
-    setStatus(NotActive);
 }
 
 void Client::onPlayerChoosePlayer(const Player *player){
