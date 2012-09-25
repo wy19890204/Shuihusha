@@ -2067,13 +2067,14 @@ void RoomScene::updateStatus(Client::Status status){
         }
 
     case Client::ExecDialog:{
-            ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
-            ClientInstance->ask_dialog->exec();
+            if(ClientInstance->ask_dialog != NULL){
+                ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
+                ClientInstance->ask_dialog->exec();
 
-            ok_button->setEnabled(false);
-            cancel_button->setEnabled(true);
-            discard_button->setEnabled(false);
-
+                ok_button->setEnabled(false);
+                cancel_button->setEnabled(true);
+                discard_button->setEnabled(false);
+            }
             break;
         }
 
@@ -2088,12 +2089,10 @@ void RoomScene::updateStatus(Client::Status status){
                     }
                 }
             }
-
             prompt_box->appear();
             ok_button->setEnabled(true);
             cancel_button->setEnabled(true);
             discard_button->setEnabled(false);
-
             break;
         }
 
