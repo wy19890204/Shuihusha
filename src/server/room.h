@@ -33,6 +33,7 @@ public:
     bool isFull() const;
     bool isFinished() const;
     int getLack() const;
+    int getPlayerCount() const;
     QString getMode() const;
     const Scenario *getScenario() const;
     RoomThread *getThread() const;

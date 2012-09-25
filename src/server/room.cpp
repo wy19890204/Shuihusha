@@ -1359,6 +1359,10 @@ int Room::getLack() const{
     return player_count - m_players.length();
 }
 
+int Room::getPlayerCount() const{
+    return player_count;
+}
+
 QString Room::getMode() const{
     return mode;
 }
@@ -2816,6 +2820,8 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
     else if(mode == "dusong")
         return false;
     else if(mode == "changban")
+        return false;
+    else if(mode == "contract")
         return false;
     else if(Config.EnableHegemony)
         return false;

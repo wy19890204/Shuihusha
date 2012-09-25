@@ -41,6 +41,7 @@ config = {
 	"Dusong",
 	"Couple",
 --	"Changban",
+	"Contract",
 --[[	"Zombie",
 	"Legend",
 	"Impasse",]]

@@ -73,6 +73,7 @@ SOURCES += \
 	src/package/guben.cpp \
 	src/package/stanley.cpp \
 	src/scenario/boss-mode-scenario.cpp \
+	src/scenario/contract-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
 	src/scenario/dusong-scenario.cpp \
 	src/scenario/changban-scenario.cpp \
@@ -206,6 +207,7 @@ HEADERS += \
 	src/package/guben.h \
 	src/package/stanley.h \
 	src/scenario/boss-mode-scenario.h \
+	src/scenario/contract-scenario.h \
 	src/scenario/couple-scenario.h \
 	src/scenario/dusong-scenario.h \
 	src/scenario/changban-scenario.h \
