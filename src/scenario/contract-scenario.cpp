@@ -17,15 +17,16 @@ public:
         switch(event){
         case GameStart:{
                 if(player->isLord()){
+                    room->setTag("ConTotal", 0);
                     foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                        room->attachSkillToPlayer(tmp, "#joint_attack");
-                        room->attachSkillToPlayer(tmp, "#protection");
+                        room->acquireSkill(tmp, "#joint_attack", false);
+                        room->acquireSkill(tmp, "#protection", false);
                     }
                 }
                 break;
             }
         case PhaseChange:{
-                if(player->isLord() && player->getPhase() == Player::Finish){
+                if(player->isLord() && player->getPhase() == Player::Play){
                     player->setRole("renegade");
                     room->broadcastProperty(player, "role");
                 }
@@ -105,15 +106,33 @@ void ContractScenario::setSpouse(ServerPlayer *player, ServerPlayer *spouse) con
 void ContractScenario::marry(ServerPlayer *husband, ServerPlayer *wife) const{
     if(getSpouse(husband) == wife)
         return;
+    Room *room = husband->getRoom();
 
     LogMessage log;
     log.type = "#CMarry";
     log.from = husband;
     log.to << wife;
-    husband->getRoom()->sendLog(log);
+    room->sendLog(log);
 
     setSpouse(husband, wife);
     setSpouse(wife, husband);
+
+    QVariant n = room->getTag("ConTotal").toInt() + 1;
+    room->setTag("ConTotal", n);
+    for(int i = 1; i <= 4; i ++){
+        bool hasused = false;
+        foreach(ServerPlayer *tmp, getMarried(room)){
+            if(tmp->getMark("@ctt" + QString::number(i)) > 0){
+                hasused = true;
+                break;
+            }
+        }
+        if(hasused)
+            continue;
+        room->setPlayerMark(husband, "@ctt" + QString::number(i), 1);
+        room->setPlayerMark(wife, "@ctt" + QString::number(i), 1);
+        break;
+    }
 }
 
 void ContractScenario::divorce(ServerPlayer *enkemann, ServerPlayer *widow) const{
@@ -133,10 +152,28 @@ void ContractScenario::divorce(ServerPlayer *enkemann, ServerPlayer *widow) cons
 
     setSpouse(enkemann);
     setSpouse(widow);
+
+    QVariant n = room->getTag("ConTotal").toInt() - 1;
+    room->setTag("ConTotal", n);
+    for(int i = 1; i <= 4; i ++){
+        if(widow->getMark("@ctt" + QString::number(i)) > 0){
+            room->setPlayerMark(widow, "@ctt" + QString::number(i), 0);
+            break;
+        }
+    }
 }
 
 ServerPlayer *ContractScenario::getSpouse(const ServerPlayer *player){
     return player->tag["spouse"].value<PlayerStar>();
+}
+
+QList<ServerPlayer *> ContractScenario::getMarried(Room *room) const{
+    QList<ServerPlayer *> ss;
+    foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+        if(getSpouse(tmp))
+            ss << tmp;
+    }
+    return ss;
 }
 
 void ContractScenario::assign(QStringList &generals, QStringList &roles) const{

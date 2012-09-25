@@ -179,7 +179,7 @@ sgs.baisheng_suit_value =
 }
 
 -- xiayao
-local xiayao_skill={}
+xiayao_skill={}
 xiayao_skill.name = "xiayao"
 table.insert(sgs.ai_skills, xiayao_skill)
 xiayao_skill.getTurnUseCard = function(self, inclusive)

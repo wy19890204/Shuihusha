@@ -20,6 +20,7 @@ public:
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
     static ServerPlayer *getSpouse(const ServerPlayer *player);
+    QList<ServerPlayer *> getMarried(Room *room) const;
     void setSpouse(ServerPlayer *player, ServerPlayer *spouse = NULL) const;
     void marry(ServerPlayer *husband, ServerPlayer *wife) const;
     void divorce(ServerPlayer *enkemann, ServerPlayer *widow = NULL) const;

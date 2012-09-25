@@ -218,7 +218,7 @@ juyi_skill.name = "jui"
 table.insert(sgs.ai_skills, juyi_skill)
 juyi_skill.getTurnUseCard = function(self)
 	local sj = self.room:getLord()
-	if self.player:getKingdom() ~= "kou" or self.player:hasUsed("JuyiCard") or self:isEnemy(sj) then return end
+	if not sj or self.player:getKingdom() ~= "kou" or self.player:hasUsed("JuyiCard") or self:isEnemy(sj) then return end
 	local mycardnum = self.player:getHandcardNum()
 	local sjcardnum = sj:getHandcardNum()
 	if mycardnum - sjcardnum > 1 then
@@ -1099,7 +1099,7 @@ end
 -- panquan
 sgs.ai_skill_invoke["panquan"] = function(self, data)
 	local gaoqiu = self.room:getLord()
-	return self:isFriend(gaoqiu)
+	return gaoqiu and self:isFriend(gaoqiu)
 end
 
 -- caijing
@@ -1186,7 +1186,7 @@ end
 sgs.ai_skill_invoke["zhiyuan"] = true
 sgs.ai_skill_cardask["@zhiyuan"] = function(self)
 	local lord = self.room:getLord()
-	if self:isFriend(lord) and not self.player:isKongcheng() then
+	if lord and self:isFriend(lord) and not self.player:isKongcheng() then
 		local cards = self.player:getCards("h")
 		cards=sgs.QList2Table(cards)
 		self:sortByUseValue(cards)
@@ -1204,7 +1204,7 @@ end
 -- jiachu
 sgs.ai_skill_cardask["@jiachu"] = function(self)
 	local target = self.room:getLord()
-	if self:isFriend(target) then
+	if target and self:isFriend(target) then
 		local allcards = self.player:getCards("he")
 		for _, card in sgs.qlist(allcards) do
 			if card:getSuit() == sgs.Card_Heart then
