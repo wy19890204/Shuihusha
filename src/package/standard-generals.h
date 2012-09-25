@@ -178,7 +178,7 @@ class CujuCard: public SkillCard{
 public:
     Q_INVOKABLE CujuCard();
 
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class JiashuCard: public SkillCard{

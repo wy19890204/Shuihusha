@@ -3475,7 +3475,8 @@ bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discar
         }            
     }
 
-    if (to_discard.isEmpty()) return false;
+    if(to_discard.isEmpty())
+        return false;
 
     DummyCard *dummy_card = new DummyCard;
     foreach(int card_id, to_discard)

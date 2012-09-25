@@ -377,34 +377,33 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
     return to_select->isWounded() && to_select != Self;
 }
 
-void SheruCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    //room->throwCard(this);
-    QString choice = room->askForChoice(effect.from, "sheru", "she+ru");
-    int x = effect.to->getLostHp();
+void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this, source);
+    PlayerStar target = targets.first();
+    QString choice = room->askForChoice(source, "sheru", "she+ru");
+    int x = target->getLostHp();
     if(choice == "she"){
         room->playSkillEffect("sheru", qrand() % 2 + 1);
-        effect.to->drawCards(x);
-        room->loseHp(effect.to);
+        target->drawCards(x);
+        room->loseHp(target);
     }else{
         room->playSkillEffect("sheru", qrand() % 2 + 3);
-        if(effect.to->getCardCount(true) <= x){
-            effect.to->throwAllHandCards();
-            effect.to->throwAllEquips();
+        if(target->getCardCount(true) <= x){
+            target->throwAllHandCards();
+            target->throwAllEquips();
         }else{
             int card_id = -1;
             for(int i=1; i<=x; i++){
-                card_id = room->askForCardChosen(effect.from, effect.to, "he", "sheru");
-                room->throwCard(card_id);
-                if(effect.to->isNude())
+                card_id = room->askForCardChosen(source, target, "he", "sheru");
+                room->throwCard(card_id, target, source);
+                if(target->isNude())
                     break;
             }
         }
         RecoverStruct recover;
-        recover.who = effect.from;
-        room->recover(effect.to, recover, true);
+        recover.who = source;
+        room->recover(target, recover, true);
     }
-    //room->broadcastSkillInvoke("sheru");
 }
 
 class Sheru: public OneCardViewAsSkill{
@@ -869,11 +868,8 @@ bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     if(getSubcards().isEmpty()){
         room->playSkillEffect("xunlie", qrand() % 2 + 1);
-        //QList<ServerPlayer *> players = targets;
-        //qSort(players.begin(), players.end(), CompareByActionOrder);
         foreach(ServerPlayer *target, targets){
             CardEffectStruct effect;
             effect.card = this;
@@ -884,6 +880,7 @@ void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
             room->cardEffect(effect);
         }
     }else{
+        room->throwCard(this, source);
         room->playSkillEffect("xunlie", qrand() % 2 + 3);
         room->cardEffect(this, source, targets.first());
     }

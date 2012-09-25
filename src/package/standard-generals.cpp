@@ -1713,7 +1713,8 @@ public:
                 break;
             if(lingtianyi->isKongcheng())
                 continue;
-            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), true, QVariant::fromValue((PlayerStar)player), CardDiscarded);
+            QVariant data = QVariant::fromValue((PlayerStar)player);
+            const Card *card = room->askForCard(lingtianyi, "BasicCard,TrickCard", "@jishi:" + player->objectName(), true, data, CardDiscarded);
             if(card){
                 RecoverStruct lty;
                 lty.card = card;
@@ -1992,11 +1993,11 @@ public:
 CujuCard::CujuCard(){
 }
 
-void CujuCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.to->getRoom();
-    DamageStruct damage = effect.from->tag["CujuDamage"].value<DamageStruct>();
-    damage.to = effect.to;
-    damage.chain = true;
+void CujuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this, source);
+    DamageStruct damage = source->tag["CujuDamage"].value<DamageStruct>();
+    damage.to = targets.first();
+    //damage.chain = true;
     room->damage(damage);
 }
 
@@ -2313,10 +2314,9 @@ public:
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
         ServerPlayer *wangqing = room->getLord();
-        if(!wangqing || !wangqing->hasLordSkill(objectName()))
+        if(player->getKingdom() != "min" || !wangqing || !wangqing->hasLordSkill(objectName()))
             return;
-        if(wangqing->isWounded() && player->getKingdom() == "min"
-           && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), false, QVariant::fromValue(damage), CardDiscarded)){
+        if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), false, QVariant::fromValue(damage), CardDiscarded)){
             RecoverStruct rev;
             rev.who = player;
             room->playSkillEffect(objectName());
@@ -2342,15 +2342,14 @@ bool MeihuoCard::targetFilter(const QList<const Player *> &targets, const Player
     return to_select->getGeneral()->isMale() && to_select->isWounded();
 }
 
-void MeihuoCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-
+void MeihuoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this, source);
     RecoverStruct recover;
     recover.card = this;
-    recover.who = effect.from;
+    recover.who = source;
 
-    room->recover(effect.from, recover, true);
-    room->recover(effect.to, recover, true);
+    room->recover(source, recover, true);
+    room->recover(targets.first(), recover, true);
 }
 
 class Meihuo: public OneCardViewAsSkill{
