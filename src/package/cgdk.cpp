@@ -318,7 +318,7 @@ public:
                     return false;
                 player->property("linmostore") = "";
                 foreach(int a, player->getPile("zi"))
-                    room->throwCard(a, player);
+                    room->throwCard(a);
             }
             return false;
         }

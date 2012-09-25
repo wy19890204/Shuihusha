@@ -24,7 +24,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        for(int i=player->getMaxHP();i>0;i--)
+        for(int i=player->getMaxHp();i>0;i--)
             room->throwCard(room->drawCard());
         room->acquireSkill(player, "chuanqi");
         return false;

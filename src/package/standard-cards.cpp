@@ -458,9 +458,9 @@ public:
                 horse_type = horses.first();
 
             if(horse_type == "dhorse")
-                room->throwCard(damage.to->getDefensiveHorse(), damage.to);
+                room->throwCard(damage.to->getDefensiveHorse(), damage.to, player);
             else if(horse_type == "ohorse")
-                room->throwCard(damage.to->getOffensiveHorse(), damage.to);
+                room->throwCard(damage.to->getOffensiveHorse(), damage.to, player);
         }
 
         return false;
@@ -916,7 +916,7 @@ void Dismantlement::onEffect(const CardEffectStruct &effect) const{
 
     Room *room = effect.to->getRoom();
     int card_id = room->askForCardChosen(effect.from, effect.to, "hej", objectName());
-    room->throwCard(card_id, room->getCardPlace(card_id) == Player::Judging ? NULL : effect.to);
+    room->throwCard(card_id, room->getCardPlace(card_id) == Player::Judging ? NULL : effect.to, effect.from);
 
     LogMessage log;
     log.type = "$Dismantlement";
@@ -1006,11 +1006,11 @@ public:
                 && !damage.chain && player->askForSkillInvoke("ice_sword", data)){
             player->playCardEffect("Eice_sword", "weapon");
             int card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
-            room->throwCard(card_id, player);
+            room->throwCard(card_id, damage.to, player);
 
             if(!damage.to->isNude()){
                 card_id = room->askForCardChosen(player, damage.to, "he", "ice_sword");
-                room->throwCard(card_id, player);
+                room->throwCard(card_id, damage.to, player);
             }
 
             return true;

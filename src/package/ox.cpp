@@ -379,7 +379,6 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void SheruCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    //room->throwCard(this);
     QString choice = room->askForChoice(effect.from, "sheru", "she+ru");
     int x = effect.to->getLostHp();
     if(choice == "she"){
@@ -395,7 +394,7 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
             int card_id = -1;
             for(int i=1; i<=x; i++){
                 card_id = room->askForCardChosen(effect.from, effect.to, "he", "sheru");
-                room->throwCard(card_id);
+                room->throwCard(card_id, effect.to, effect.from);
                 if(effect.to->isNude())
                     break;
             }
@@ -404,7 +403,6 @@ void SheruCard::onEffect(const CardEffectStruct &effect) const{
         recover.who = effect.from;
         room->recover(effect.to, recover, true);
     }
-    //room->broadcastSkillInvoke("sheru");
 }
 
 class Sheru: public OneCardViewAsSkill{
@@ -831,7 +829,7 @@ void DingceCard::onEffect(const CardEffectStruct &effect) const{
     room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
     room->showCard(effect.from, card_id);
     if(Sanguosha->getCard(card_id)->inherits("TrickCard") && effect.from->askForSkillInvoke("dingce")){
-        room->throwCard(card_id);
+        room->throwCard(card_id, effect.to, effect.from);
         RecoverStruct tec;
         room->recover(effect.from, tec, true);
     }

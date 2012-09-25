@@ -1045,12 +1045,13 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     card = card->validateInResposing(player, &continuable);
 
     if(card){
+        bool thrower = trigger_event == CardDiscarded ? player : NULL;
         if(card->getTypeId() != Card::Skill){
             const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
             if(card_pattern == NULL || card_pattern->willThrow())
-                throwCard(card);
+                throwCard(card, thrower);
         }else if(card->willThrow())
-            throwCard(card);
+            throwCard(card, thrower);
 
         if(card->getSkillName() == "spear")
             player->playCardEffect("Espear", "weapon");
@@ -3072,41 +3073,52 @@ void Room::drawCards(ServerPlayer *player, int n, const QString &reason){
     thread->trigger(CardDrawnDone, this, player, data);
 }
 
-void Room::throwCard(const Card *card, ServerPlayer *who){
+void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower){
     if(card == NULL)
         return;
 
-    if (who) {
-        LogMessage log;
-        log.type = "$DiscardCard";
-        log.from = who;
-        QList<int> to_discard;
-        if(card->isVirtualCard())
-            to_discard.append(card->getSubcards());
-        else
-            to_discard << card->getEffectiveId();
-
-        foreach(int card_id, to_discard){
-            setCardFlag(card_id, "visible");
-            if(log.card_str.isEmpty())
-                log.card_str = QString::number(card_id);
-            else
-                log.card_str += "+" + QString::number(card_id);
+    LogMessage log;
+    if(who) {
+        if(thrower){
+            log.type = "$DiscardCardByOther"; //thrower throw who's card
+            log.from = thrower;
+            log.to << who;
         }
-        sendLog(log);
+        else{
+            log.type = "$DiscardCard";  //who throw the card
+            log.from = who;
+        }
     }
+    else{
+        log.type = "$EnterDiscardPile";
+    }
+    QList<int> to_discard;
+    if(card->isVirtualCard())
+        to_discard.append(card->getSubcards());
+    else
+        to_discard << card->getEffectiveId();
+
+    foreach(int card_id, to_discard){
+        setCardFlag(card_id, "visible");
+        if(log.card_str.isEmpty())
+            log.card_str = QString::number(card_id);
+        else
+            log.card_str += "+" + QString::number(card_id);
+    }
+    if(who)
+        sendLog(log);
 
     moveCardTo(card, NULL, Player::DiscardedPile);
 
     if(who){
         CardStar card_ptr = card;
         QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, this, who, data);
+        thread->trigger(CardDiscarded, this, thrower ? thrower : who, data);
     }
 }
 
-void Room::throwCard(int card_id, ServerPlayer *who){
-    throwCard(Sanguosha->getCard(card_id), who);
+void Room::throwCard(int card_id, ServerPlayer *who, ServerPlayer *thrower){
+    throwCard(Sanguosha->getCard(card_id), who, thrower);
 }
 
 RoomThread *Room::getThread() const{
