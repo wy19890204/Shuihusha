@@ -67,15 +67,10 @@ public:
                 break;
             }
         case Death:{
-                if(!scenario->getSpouse(player))
-                    break;
-                scenario->divorce(player);
                 DamageStar damage = data.value<DamageStar>();
                 if(damage && damage->from){
                     ServerPlayer *killer = damage->from;
-                    if(killer == player)
-                        return false;
-                    if(scenario->getSpouse(killer) == player){
+                    if(scenario->getSpouse(player) && scenario->getSpouse(killer) == player){
                         LogMessage log;
                         log.type = "#Uron";
                         log.from = killer;
@@ -88,6 +83,7 @@ public:
                     else
                         killer->drawCards(3);
                 }
+                scenario->divorce(player);
             }
         default:
             break;
