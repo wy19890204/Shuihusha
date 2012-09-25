@@ -229,7 +229,9 @@ private:
     void _askForCardOrUseCard(const Json::Value&);
 
 private slots:
-    void processCommand(const QString &cmd);
+    void processServerPacket(const QString &cmd);
+    void processServerPacket(char *cmd);
+    bool processServerRequest(const QSanProtocol::QSanGeneralPacket& packet);
     void processReply(char *reply);
     void notifyRoleChange(const QString &new_role);
     void onPlayerChooseSuit();

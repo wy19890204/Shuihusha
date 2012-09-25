@@ -177,7 +177,7 @@ Client::Client(QObject *parent, const QString &filename)
         recorder = NULL;
 
         replayer = new Replayer(this, filename);
-        connect(replayer, SIGNAL(command_parsed(QString)), this, SLOT(processCommand(QString)));
+        connect(replayer, SIGNAL(command_parsed(QString)), this, SLOT(processServerPacket(QString)));
     }else{
         socket = new NativeClientSocket;
         socket->setParent(this);
@@ -185,7 +185,7 @@ Client::Client(QObject *parent, const QString &filename)
         recorder = new Recorder(this);
 
         connect(socket, SIGNAL(message_got(char*)), recorder, SLOT(record(char*)));
-        connect(socket, SIGNAL(message_got(char*)), this, SLOT(processReply(char*)));
+        connect(socket, SIGNAL(message_got(char*)), this, SLOT(processServerPacket(char*)));
         connect(socket, SIGNAL(error_message(QString)), this, SIGNAL(error_message(QString)));
         socket->connectToHost();
 
@@ -278,14 +278,14 @@ void Client::disconnectFromHost(){
 
 typedef char buffer_t[1024];
 
-void Client::processCommand(const QString &cmd){
-    processReply(cmd.toAscii().data());
+void Client::processServerPacket(const QString &cmd){
+    processServerPacket(cmd.toAscii().data());
 }
 
-void Client::processReply(char *reply){    
+void Client::processServerPacket(char *cmd){
 
     QSanGeneralPacket packet;
-    if (packet.parse(reply))
+    if (packet.parse(cmd))
     {
         if (packet.getPacketType() == S_SERVER_NOTIFICATION)
         {
@@ -295,16 +295,24 @@ void Client::processReply(char *reply){
             }
         }
         else if (packet.getPacketType() == S_SERVER_REQUEST)
-        {
-            _m_lastServerSerial = packet.m_globalSerial;
-            CallBack callback = m_interactions[packet.getCommandType()];
-            if (callback) {    
-                (this->*callback)(packet.getMessageBody());
-            }
-        }
-        return;
+            processServerRequest(packet);
     }
+    else processReply(cmd);
+}
 
+bool Client::processServerRequest(const QSanGeneralPacket& packet)
+{
+    setStatus(Client::NotActive);
+    _m_lastServerSerial = packet.m_globalSerial;
+    CommandType command = packet.getCommandType();
+    Json::Value msg = packet.getMessageBody();    
+    CallBack callback = m_interactions[command];
+    if (!callback) return false;
+    (this->*callback)(msg);    
+    return true;
+}
+
+void Client::processReply(char *reply){    
     if(strlen(reply) <= 2)
         return;
 
@@ -420,10 +428,12 @@ void Client::drawNCards(const QString &draw_str){
 }
 
 void Client::onPlayerChooseGeneral(const QString &item_name){
+    setStatus(Client::NotActive);
     if(!item_name.isEmpty()){
         replyToServer(S_COMMAND_CHOOSE_GENERAL, toJsonString(item_name));        
         Sanguosha->playAudio("choose-item");
     }
+
 }
 
 void Client::requestCheatRunScript(const QString& script)
@@ -970,11 +980,8 @@ void Client::playCardEffect(const QString &play_str){
 }
 
 void Client::onPlayerChooseCard(int card_id){
-    Q_ASSERT(ask_dialog->inherits("PlayerCardDialog"));
     Json::Value reply = Json::Value::null;
     if(card_id != -2){   
-        delete ask_dialog;
-        ask_dialog = NULL;
         reply = card_id;
     }
     replyToServer(S_COMMAND_CHOOSE_CARD, reply);
@@ -1569,8 +1576,8 @@ void Client::onPlayerAssignRole(const QList<QString> &names, const QList<QString
 {
     Q_ASSERT(names.size() == roles.size());
     Json::Value reply(Json::arrayValue);
-    reply[0] = toJsonStringArray(names);
-    reply[1] = toJsonStringArray(roles);    
+    reply[0] = toJsonArray(names);
+    reply[1] = toJsonArray(roles);    
     replyToServer(S_COMMAND_CHOOSE_ROLE, reply);
 }
 
@@ -1652,7 +1659,7 @@ void Client::onPlayerReplyYiji(const Card *card, const Player *to){
     else 
     {
         req = Json::Value(Json::arrayValue);
-        req[0] = toJsonIntArray(card->getSubcards());
+        req[0] = toJsonArray(card->getSubcards());
         req[1] = toJsonString(to->objectName());
     }        
     replyToServer(S_COMMAND_SKILL_YIJI, req);
@@ -1662,8 +1669,8 @@ void Client::onPlayerReplyYiji(const Card *card, const Player *to){
 
 void Client::onPlayerReplyGuanxing(const QList<int> &up_cards, const QList<int> &down_cards){
     Json::Value decks(Json::arrayValue);
-    decks[0] = toJsonIntArray(up_cards);
-    decks[1] = toJsonIntArray(down_cards);
+    decks[0] = toJsonArray(up_cards);
+    decks[1] = toJsonArray(down_cards);
 
     replyToServer(S_COMMAND_SKILL_GUANXING, decks);
     //request(QString("replyGuanxing %1:%2").arg(up_items.join("+")).arg(down_items.join("+")));

@@ -462,14 +462,12 @@ void RoomScene::createControlButtons(){
 }
 
 void RoomScene::createExtraButtons(){
-    /*
     reverse_button = dashboard->createButton("reverse-select");
     reverse_button->setEnabled(true);
 
-    --dashboard->addWidget(sort_combobox, 2, true);
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
-    */
+
     free_discard = NULL;
 }
 

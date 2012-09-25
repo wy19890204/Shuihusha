@@ -461,6 +461,11 @@ void Room::gameOver(const QString &winner){
             }
         }
     }
+
+    Json::Value arg(Json::arrayValue);
+    arg[0] = toJsonString(winner);
+    arg[1] = toJsonArray(all_roles);
+    doBroadcastNotify(S_COMMAND_GAME_OVER, arg);
 }
 
 void Room::slashEffect(const SlashEffectStruct &effect){
@@ -657,13 +662,19 @@ ServerPlayer* Room::getRaceResult(QList<ServerPlayer*> &players, QSanProtocol::C
             _m_semRaceRequest.acquire();
         else
             tryAcquireResult = _m_semRaceRequest.tryAcquire(1, timeRemain);
-                
+
         if (!tryAcquireResult)
             _m_semRoomMutex.tryAcquire(1); 
         // So that processResponse cannot update raceWinner when we are reading it.
 
-        if (validateFunc == NULL ||
-            (this->*validateFunc)(_m_raceWinner, _m_raceWinner->getClientReply(), funcArg))        
+        if (_m_raceWinner == NULL) 
+        {
+            _m_semRoomMutex.release();
+            continue;
+        }
+
+        if (validateFunc == NULL || (_m_raceWinner->m_isClientResponseReady &&
+            (this->*validateFunc)(_m_raceWinner, _m_raceWinner->getClientReply(), funcArg)))     
         {
             validResult = true;
             break;        
@@ -792,7 +803,10 @@ QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, cons
     AI *ai = player->getAI();
     QString answer;
     if(ai)
+    {
         answer = ai->askForChoice(skill_name, choices);
+        thread->delay(Config.AIDelay);
+    }
     else{
         bool success = doRequest(player, S_COMMAND_MULTIPLE_CHOICE, toJsonArray(skill_name, choices));
         Json::Value clientReply = player->getClientReply();
@@ -3569,7 +3583,7 @@ void Room::askForGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_
         top_cards = cards;
     }else{
         Json::Value guanxingArgs(Json::arrayValue);
-        guanxingArgs[0] = toJsonIntArray(cards);        
+        guanxingArgs[0] = toJsonArray(cards);
         guanxingArgs[1] = up_only;
         bool success = doRequest(zhuge, S_COMMAND_SKILL_GUANXING, guanxingArgs);
 
@@ -3634,7 +3648,7 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
     Json::Value gongxinArgs(Json::arrayValue);    
     gongxinArgs[0] = toJsonString(target->objectName());
     gongxinArgs[1] = true;
-    gongxinArgs[2] = toJsonIntArray(target->handCards());
+    gongxinArgs[2] = toJsonArray(target->handCards());
     bool success = doRequest(shenlvmeng, S_COMMAND_SKILL_GONGXIN, gongxinArgs);
     Json::Value clientReply = shenlvmeng->getClientReply();
     if (!success || !clientReply.isInt() 
@@ -3714,7 +3728,7 @@ ServerPlayer *Room::askForPlayerChosen(ServerPlayer *player, const QList<ServerP
 }
 
 void Room::_setupChooseGeneralRequestArgs(ServerPlayer *player){
-    Json::Value options = toJsonStringArray(player->getSelected());
+    Json::Value options = toJsonArray(player->getSelected());
     if(!Config.EnableBasara) 
         options.append(toJsonString(QString("%1(lord)").arg(getLord()->getGeneralName())));
     else 
@@ -3728,7 +3742,7 @@ QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, Q
 
     if(player->isOnline())
     {
-        Json::Value options = toJsonStringArray(generals);
+        Json::Value options = toJsonArray(generals);
         bool success = doRequest(player, S_COMMAND_CHOOSE_GENERAL, options);
         //executeCommand(player, "askForGeneral", "chooseGeneralCommand", generals.join("+"), ".");
 
@@ -3990,7 +4004,7 @@ void Room::showAllCards(ServerPlayer *player, ServerPlayer *to){
     Json::Value gongxinArgs(Json::arrayValue);    
     gongxinArgs[0] = toJsonString(player->objectName());
     gongxinArgs[1] = false;
-    gongxinArgs[2] = toJsonIntArray(player->handCards());    
+    gongxinArgs[2] = toJsonArray(player->handCards());
     bool isUnicast = (to != NULL);
     if (isUnicast)
         doNotify(player, S_COMMAND_SHOW_ALL_CARDS, gongxinArgs);
@@ -4017,7 +4031,7 @@ bool Room::askForYiji(ServerPlayer *guojia, QList<int> &cards){
             return false;
     }else{
 
-        bool success = doRequest(guojia, S_COMMAND_SKILL_YIJI, toJsonIntArray(cards));         
+        bool success = doRequest(guojia, S_COMMAND_SKILL_YIJI, toJsonArray(cards));
 
         //Validate client response
         Json::Value clientReply = guojia->getClientReply();
@@ -4090,7 +4104,7 @@ QString Room::askForRole(ServerPlayer *player, const QStringList &roles, const Q
     QStringList squeezed = roles.toSet().toList();
     Json::Value arg(Json::arrayValue);
     arg[0] = toJsonString(scheme);
-    arg[1] = toJsonStringArray(squeezed);
+    arg[1] = toJsonArray(squeezed);
     bool success = doRequest(player, S_COMMAND_CHOOSE_ROLE_3V3, arg, false);
     Json::Value clientReply = player->getClientReply();
     QString result = "abstain";
