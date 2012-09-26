@@ -19,8 +19,8 @@ public:
                 if(player->isLord()){
                     room->setTag("ConTotal", 0);
                     foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                        room->acquireSkill(tmp, "#joint_attack", false);
-                        room->acquireSkill(tmp, "#protection", false);
+                        room->acquireSkill(tmp, "joint_attack", false);
+                        room->acquireSkill(tmp, "protection", false);
                     }
                 }
                 break;
@@ -199,8 +199,9 @@ bool ContractScenario::generalSelection() const{
 
 class JointAttack: public TriggerSkill{
 public:
-    JointAttack():TriggerSkill("#joint_attack"){
+    JointAttack():TriggerSkill("joint_attack"){
         events << SlashProceed;
+        frequency = NotSkill;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -226,8 +227,9 @@ public:
 
 class Protection: public TriggerSkill{
 public:
-    Protection():TriggerSkill("#protection"){
+    Protection():TriggerSkill("protection"){
         events << DamagedProceed;
+        frequency = NotSkill;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{

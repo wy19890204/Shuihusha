@@ -487,6 +487,8 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
     foreach(const SkillClass *skill, target->getVisibleSkillList()){
         if(skill->getLocation() != Skill::Right)
             continue;
+        if(skill->getFrequency() == Skill::NotSkill)
+            continue;
         QString skill_name = skill->objectName();
         skills << skill_name;
         room->detachSkillFromPlayer(target, skill_name, false);

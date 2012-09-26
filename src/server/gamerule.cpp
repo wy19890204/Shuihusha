@@ -181,9 +181,11 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         room->broadcastInvoke("playAudio", "reincarnation");
                         room->revivePlayer(next);
 
-                        QString oldname = next->getGeneralName();
-                        QString newname = Sanguosha->getRandomGenerals(1).first();
-                        room->transfigure(next, newname, false, true, oldname);
+                        if(!Config.value("ReincaPersist", false).toBool()){
+                            QString oldname = next->getGeneralName();
+                            QString newname = Sanguosha->getRandomGenerals(1).first();
+                            room->transfigure(next, newname, false, true, oldname);
+                        }
                         if(next->getMaxHp() == 0)
                             room->setPlayerProperty(next, "maxhp", 1);
                         room->setPlayerProperty(next, "hp", 1);

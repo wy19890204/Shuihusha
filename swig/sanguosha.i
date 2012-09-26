@@ -719,7 +719,8 @@ public:
 		NotFrequent,
 		Compulsory,
 		Limited,
-		Wake
+		Wake,
+		NotSkill
 	};
 
 	enum Location{

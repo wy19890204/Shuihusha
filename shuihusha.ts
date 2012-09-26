@@ -3457,6 +3457,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>启用转世规则</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="175"/>
+        <source>Persist general in reincarnation</source>
+        <translation>转世后原武将不变</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="176"/>
         <source>Enable Scene</source>
         <translation>场景模式</translation>

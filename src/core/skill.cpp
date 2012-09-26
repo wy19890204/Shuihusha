@@ -41,6 +41,7 @@ QString Skill::getText() const{
     case Skill::Limited: skill_name.append(Sanguosha->translate("[Limited]")); break;
     case Skill::Compulsory: skill_name.append(Sanguosha->translate("[Compulsory]")); break;
     case Skill::Wake: skill_name.append(Sanguosha->translate("[Wake]")); break;
+    default: break;
     }
 
     return skill_name;

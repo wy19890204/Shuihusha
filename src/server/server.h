@@ -96,6 +96,7 @@ private:
     QCheckBox *disable_chat_checkbox;
     QCheckBox *second_general_checkbox;
     QCheckBox *reincarnation_checkbox;
+    QCheckBox *reinca_unchange_checkbox;
     QCheckBox *scene_checkbox;	//changjing
     QCheckBox *same_checkbox;
     QCheckBox *endless_checkbox;
