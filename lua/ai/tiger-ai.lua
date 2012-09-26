@@ -90,12 +90,14 @@ sgs.ai_skill_invoke["pinming"] = function(self, data)
 	local damage = data:toDamage()
 	if (damage.from and self:isFriend(damage.from)) or damage.damage < 1 then return false end
 	if not self.player:hasFlag("PinmingDie") then
-		if self.player:getMaxHp() > 3 then
+		if self.player:getMaxHp() > 4 then
 			if damage.damage > 1 then
 				return true
 			else
-				return math.random(0, 2)
+				return math.random(0, 2) == 1
 			end
+		elseif self.player:getMaxHp() > 3 then
+			return damage.damage > 1
 		end
 	else
 		if #self:getEnemies() == 1 then
@@ -138,7 +140,7 @@ huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
 huwei_skill.getTurnUseCard = function(self)
 	local lord = self.room:getLord()
-	if self.player == lord or self.player:getKingdom() ~= "jiang" then return end
+	if not lord or self.player:hasLordSkill("huwei") or self.player:getKingdom() ~= "jiang" then return end
 	if self:isFriend(lord) and lord:hasLordSkill("huwei") and not lord:hasEquip() then
 		local slash = self:getCard("EquipCard")
 		if slash then
@@ -154,6 +156,32 @@ end
 -- zhangheng
 -- jielue
 sgs.ai_skill_invoke["jielue"] = sgs.ai_skill_invoke["lihun"]
+
+function SmartAI:getZhangheng(player) -- enemy zhangheng's threat
+	player = player or self.player
+	if player:isKongcheng() then return false end
+	local room = player:getRoom()
+	for _, zhangheng in sgs.qlist(room:findPlayersBySkillName("jielue")) do
+		if zhangheng ~= player then
+			if self:isEnemy(player, zhangheng) and zhangheng:getMark("fuhun") == 0 then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function SmartAI:getZhanghengf(target, player) -- has friend zhangheng (for qimen)
+	player = player or self.player
+	if target:isKongcheng() then return false end
+	local room = player:getRoom()
+	for _, zhangheng in sgs.qlist(room:findPlayersBySkillName("jielue")) do
+		if self:isEnemy(target, player) and zhangheng:getMark("fuhun") == 0 then
+			return true
+		end
+	end
+	return false
+end
 
 -- xiebao
 -- liehuo

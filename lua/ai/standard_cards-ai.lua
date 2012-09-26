@@ -98,12 +98,6 @@ function SmartAI:useCardSlash(card, use)
 	if not self:slashIsAvailable() then return end
 	local no_distance = self.slash_distance_limit
 	self.slash_targets = 1
-	if self.player:hasSkill("houfa") then
-		houfacard = houfa_skill.getTurnUseCard(self, true)
-		if houfacard then
-			card = houfacard
-		end
-	end
 	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
 	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then no_distance = true end
 	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
@@ -120,9 +114,9 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = self.slash_targets + 1
 	end
-	if card:getSkillName() == "douzhan" then
-		self.slash_targets = self.slash_targets + 1
-	end
+--	if card:getSkillName() == "douzhan" then
+--		self.slash_targets = self.slash_targets + 1
+--	end
 
 	if (self.player:getHandcardNum() == 1
 		and self.player:getHandcards():first():inherits("Slash")
@@ -199,6 +193,12 @@ function SmartAI:useCardSlash(card, use)
 						if use.card then return end
 					end
 				end
+				if self.player:hasSkill("houfa") then
+					use.card = houfa_skill.getTurnUseCard(self, true)
+				end
+				if self.player:hasSkill("douzhan") then
+					use.card = douzhan_skill.getTurnUseCard(self, true)
+				end
 				if target:isChained() and self:isGoodChainTarget(target) and not use.card then
 					if self:isEquip("Crossbow") and card:inherits("NatureSlash") then
 						local slashes = self:getCards("Slash")
@@ -218,7 +218,9 @@ function SmartAI:useCardSlash(card, use)
 			use.card = use.card or usecard
 			if use.to and not use.to:contains(target) then
 				use.to:append(target)
-				if self.slash_targets <= use.to:length() then return end
+				local targetplus = 0
+				if use.card:getSkillName() == "douzhan" then targetplus = 1 end
+				if self.slash_targets + targetplus <= use.to:length() then return end
 			end
 		end
 	end

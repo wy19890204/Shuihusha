@@ -44,7 +44,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 int index = qrand() % player->getCards("hej").length();
                 const Card *card = player->getCards("hej").at(index);
                 log.card_str = card->getEffectIdString();
-                room->throwCard(card);
+                room->throwCard(card, player);
                 room->sendLog(log);
             }
             break;
@@ -243,14 +243,36 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
             }
 
-            if(Config.EnableAnzhan){
-                PlayerStar head = room->getTag("StandsOutBird").value<PlayerStar>();
-                if(player == head)
-                    setGameProcess(room);
-            }
-            else{
-                if(player->isLord())
-                    setGameProcess(room);
+            if(player->isLord())
+                setGameProcess(room);
+
+            if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
+                LogMessage log;
+                log.type = "#AnzhanShuffle";
+                log.from = player;
+                log.arg = "anzhan";
+                room->sendLog(log);
+
+                QStringList roles;
+                foreach(ServerPlayer *plr, room->getAllPlayers()){
+                    roles << plr->getRole();
+                }
+                qShuffle(roles);
+                foreach(ServerPlayer *plr, room->getAllPlayers()){
+                    plr->setRole(roles.first());
+                    roles.removeFirst();
+                }
+                room->updateStateItem();
+                room->broadcastProperty(player, "role");
+                log.type = "#AnzhanShow";
+                if(room->getPlayerCount() > 4){
+                    room->setPlayerProperty(player, "maxhp", player->getMaxHp() + 1);
+                    log.type = "#AnzhanShow2";
+                }
+                log.arg = player->getRole();
+                room->sendLog(log);
+
+                room->setTag("AnzhanInit", true);
             }
 
             if(Config.EnableReincarnation){
@@ -268,6 +290,13 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     case TurnStart:{
             player = room->getCurrent();
+            if(Config.value("FreeShowRole", false).toBool()){
+                LogMessage log;
+                log.type = "#ShowRole";
+                log.from = player;
+                log.arg = player->getRole();
+                room->sendLog(log);
+            }
             if(!player->faceUp())
                 player->turnOver();
             else if(player->isAlive())
@@ -699,7 +728,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             ServerPlayer *killer = damage ? damage->from : NULL;
 
             if(Config.EnableEndless){
-                if(player->getMaxHP() <= 0)
+                if(player->getMaxHp() <= 0)
                     room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                 if(player->getHp() <= 0)
                     room->setPlayerProperty(player, "hp", 1);
@@ -710,6 +739,17 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 return true;
             }
 
+            if(player->getState() == "online" && Config.value("FreeUnDead", false).toBool()){
+                if(player->getMaxHp() <= 0)
+                    room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
+                if(player->getHp() <= 0)
+                    room->setPlayerProperty(player, "hp", 1);
+                LogMessage log;
+                log.type = "#Undead";
+                log.from = player;
+                room->sendLog(log);
+                return true;
+            }
             break;
         }
 
@@ -917,6 +957,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
             killer->drawCards(3);
     }
     else{
+        if(room->getMode() == "contract")
+            return;
         if(victim->getRole() == "rebel" && killer != victim){
             killer->drawCards(3);
         }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){

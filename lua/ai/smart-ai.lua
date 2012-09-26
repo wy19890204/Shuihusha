@@ -1050,6 +1050,7 @@ end
 
 function sgs.isLordHealthy()
 	local lord = global_room:getLord()
+	if not lord then return end
 	local lord_hp
 	if lord:hasSkill("benghuai") and lord:getHp() > 4 then lord_hp = 4
 	else lord_hp = lord:getHp() end
@@ -1058,6 +1059,7 @@ end
 
 function sgs.isLordInDanger()
 	local lord = global_room:getLord()
+	if not lord then return end
 	local lord_hp
 	if lord:hasSkill("benghuai") and lord:getHp() > 4 then lord_hp = 4
 	else lord_hp = lord:getHp() end

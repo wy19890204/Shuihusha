@@ -199,6 +199,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(status_changed(Client::Status)), this, SLOT(updateStatus(Client::Status)));
     connect(ClientInstance, SIGNAL(avatars_hiden()), this, SLOT(hideAvatars()));
     connect(ClientInstance, SIGNAL(hp_changed(QString,int,DamageStruct::Nature,bool)), SLOT(changeHp(QString,int,DamageStruct::Nature,bool)));
+    connect(ClientInstance, SIGNAL(maxhp_changed(QString,int)), SLOT(changeMaxHp(QString,int)));
     connect(ClientInstance, SIGNAL(pile_cleared()), this, SLOT(clearPile()));
     connect(ClientInstance, SIGNAL(player_killed(QString)), this, SLOT(killPlayer(QString)));
     connect(ClientInstance, SIGNAL(player_revived(QString)), this, SLOT(revivePlayer(QString)));
@@ -462,14 +463,13 @@ void RoomScene::createControlButtons(){
 }
 
 void RoomScene::createExtraButtons(){
-    /*
     reverse_button = dashboard->createButton("reverse-select");
     reverse_button->setEnabled(true);
 
-    --dashboard->addWidget(sort_combobox, 2, true);
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
-    */
+    reverse_button->setVisible(false);
+
     free_discard = NULL;
 }
 
@@ -984,7 +984,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(ServerInfo.FreeChoose && arrange_button){
+    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -1035,7 +1035,7 @@ void RoomScene::putToDiscard(CardItem *item)
     item->setEnabled(true);
     item->setFlag(QGraphicsItem::ItemIsFocusable, false);
     item->setOpacity(1.0);
-    item->setZValue(0.0001*ClientInstance->discarded_list.length());
+    item->setZValue(0.0001 * ClientInstance->discarded_list.length());
 
     viewDiscards();
 }
@@ -1529,8 +1529,6 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 2: break;
-    case 3: break;
     case 4: map = &threeV3_mode; break;
     case 5: map = &hegemony_mode; break;
     default:
@@ -2069,13 +2067,14 @@ void RoomScene::updateStatus(Client::Status status){
         }
 
     case Client::ExecDialog:{
-            ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
-            ClientInstance->ask_dialog->exec();
+            if(ClientInstance->ask_dialog != NULL){
+                ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
+                ClientInstance->ask_dialog->exec();
 
-            ok_button->setEnabled(false);
-            cancel_button->setEnabled(true);
-            discard_button->setEnabled(false);
-
+                ok_button->setEnabled(false);
+                cancel_button->setEnabled(true);
+                discard_button->setEnabled(false);
+            }
             break;
         }
 
@@ -2090,12 +2089,10 @@ void RoomScene::updateStatus(Client::Status status){
                     }
                 }
             }
-
             prompt_box->appear();
             ok_button->setEnabled(true);
             cancel_button->setEnabled(true);
             discard_button->setEnabled(false);
-
             break;
         }
 
@@ -2442,6 +2439,11 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
 
         log_box->appendLog(type, from_general, QStringList(), QString(), n);
     }
+}
+
+void RoomScene::changeMaxHp(const QString &who, int delta) {
+    if (delta < 0)
+        Sanguosha->playAudio("maxhplost");
 }
 
 void RoomScene::clearPile(){
@@ -3237,7 +3239,7 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
+    if(Config.value("FreeDiscard", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-discard", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
         FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);

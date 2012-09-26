@@ -30,6 +30,9 @@ sgs.ai_skill_cardask["@shuangzhan-jink-1"] = sgs.ai_skill_cardask["@assas1"]
 -- zhangqing
 -- yinyu
 sgs.ai_skill_invoke["yinyu"] = function(self, data)
+	if self:getZhangheng() then
+		return false
+	end
 	if self.player:getMark("mengshi") == 0 then
 		self:speak("yinyu")
 	end
@@ -176,7 +179,7 @@ sgs.baisheng_suit_value =
 }
 
 -- xiayao
-local xiayao_skill={}
+xiayao_skill={}
 xiayao_skill.name = "xiayao"
 table.insert(sgs.ai_skills, xiayao_skill)
 xiayao_skill.getTurnUseCard = function(self, inclusive)
@@ -267,7 +270,7 @@ sgs.ai_skill_use["@@huanshu"] = function(self, prompt)
 	local target = self.enemies[1]
 	if self.player:isChained() and self:isWeak() then
 		for _, enemy in ipairs(self.enemies) do
-			if not enemy:isChained() then
+			if not enemy:isChained() and not hasSilverLion(enemy) then
 				target = enemy
 				break
 			end

@@ -290,7 +290,7 @@ public:
             room->showCard(damage.to, dust);
 
             if(Sanguosha->getCard(dust)->isRed()){
-                room->throwCard(dust);
+                room->throwCard(dust, damage.to, player);
                 player->drawCards(1);
             }
         }

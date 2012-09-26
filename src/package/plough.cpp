@@ -281,7 +281,7 @@ public:
                 if(damage.from->getWeapon()){
                     player->playCardEffect("Egold_armor2", "armor");
                     room->sendLog(log);
-                    room->throwCard(damage.from->getWeapon());
+                    room->throwCard(damage.from->getWeapon(), damage.from);
                 }
             }
         }

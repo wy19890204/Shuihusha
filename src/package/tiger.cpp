@@ -278,7 +278,7 @@ public:
                     break;
                 room->askForDiscard(leiheng, "guzong", 1, false, true);
                 player->obtainCard(Sanguosha->getCard(to_back));
-                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), leiheng);
+                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), player, leiheng);
                 cards.removeOne(to_back);
                 room->broadcastInvoke("clearAG");
                 room->fillAG(cards, leiheng);
@@ -433,14 +433,14 @@ public:
             if(player->getHp() == 1 && damage.nature == DamageStruct::Normal){
                 log.type = "#JintangForb";
                 room->sendLog(log);
-                room->playSkillEffect(objectName(), 3);
+                room->playSkillEffect(objectName(), qrand() % 2 + 2);
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){
                 log.type = "#JintangCut";
                 room->sendLog(log);
                 damage.damage = 1;
-                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                room->playSkillEffect(objectName(), 1);
                 data = QVariant::fromValue(damage);
             }
         }
@@ -821,7 +821,7 @@ public:
                 lolo.card_str = card->getEffectIdString();
                 if(!card->inherits("BasicCard")){
                     lolo.type = "$Longluo1";
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, shien);
                     room->sendLog(lolo);
                 }else{
                     lolo.type = "$Longluo2";
@@ -986,10 +986,6 @@ public:
         slash->setSkillName(objectName());
         return slash;
     }
-
-    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return qrand() % 2 + 3;
-    }
 };
 
 class Houfa: public TriggerSkill{
@@ -1038,6 +1034,10 @@ public:
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 3;
     }
 };
 

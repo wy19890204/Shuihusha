@@ -33,6 +33,7 @@ public:
     bool isFull() const;
     bool isFinished() const;
     int getLack() const;
+    int getPlayerCount() const;
     QString getMode() const;
     const Scenario *getScenario() const;
     RoomThread *getThread() const;
@@ -226,8 +227,8 @@ public:
     void obtainCard(ServerPlayer *target, const Card *card, bool unhide = true);
     void obtainCard(ServerPlayer *target, int card_id, bool unhide = true);
 
-    void throwCard(const Card *card, ServerPlayer *who = NULL);
-    void throwCard(int card_id, ServerPlayer *who = NULL);
+    void throwCard(const Card *card, ServerPlayer *who = NULL, ServerPlayer *thrower = NULL);
+    void throwCard(int card_id, ServerPlayer *who = NULL, ServerPlayer *thrower = NULL);
     void moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, bool open = true);
     void doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope);
 

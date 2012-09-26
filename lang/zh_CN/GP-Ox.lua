@@ -170,7 +170,7 @@ return {
 	["~shijin"] = "何以别离久，何以不得安。",
 
 	["$lijun"] = "026",
-	["#lijun"] = "混江龙", -- min 3hp (yxqd)
+	["#lijun"] = "混江龙", -- min 4hp (yxqd)
 	["lijun"] = "李俊",
 	["illustrator:lijun"] = "NF1",
 	["designer:lijun"] = "扈成",
