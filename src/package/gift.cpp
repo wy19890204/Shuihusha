@@ -83,14 +83,14 @@ void Moonpie::onEffect(const CardEffectStruct &effect) const{
                           .arg(effect.from->objectName())
                           .arg(effect.to->objectName()));
 
+    room->acquireSkill(effect.to, "yaoyue");
     room->acquireSkill(effect.to, "beatjapan");
-    //room->acquireSkill(effect.from, "beatjapan");
     room->setPlayerMark(effect.to, "HaveEaten2", 1);
 }
 
-class BeatJapan: public ClientSkill{
+class Yaoyue: public ClientSkill{
 public:
-    BeatJapan():ClientSkill("beatjapan"){
+    Yaoyue():ClientSkill("yaoyue"){
     }
 
     virtual int getExtra(const Player *target) const{
@@ -101,10 +101,23 @@ public:
     }
 };
 
-#include "maneuvering.h"
-class Beatjapan:public TriggerSkill{
+class YaoyueEffect: public PhaseChangeSkill{
 public:
-    Beatjapan():TriggerSkill("#beat-japan"){
+    YaoyueEffect():PhaseChangeSkill("#yaoyue-effect"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *lz) const{
+        if(lz->getPhase() == Player::Discard &&
+           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
+            lz->getRoom()->playSkillEffect("yaoyue", lz->getGeneral()->isMale() ? 1 : 2);
+        return false;
+    }
+};
+
+#include "maneuvering.h"
+class BeatJapan:public TriggerSkill{
+public:
+    BeatJapan():TriggerSkill("beatjapan"){
         events << CardUsed;
     }
 
@@ -115,11 +128,11 @@ public:
             if(use.to.isEmpty())
                 targets << use.from;
 
-            room->playSkillEffect("beatjapan");
+            room->playSkillEffect(objectName(), player->getGeneral()->isMale() ? 1 : 2);
             LogMessage ogg;
             ogg.type = "#BeatJapan";
             ogg.from = player;
-            ogg.arg = "beatjapan";
+            ogg.arg = objectName();
             ogg.arg2 = "iron_chain";
             ogg.to = targets;
             room->sendLog(ogg);
@@ -147,8 +160,8 @@ public:
 GiftPackage::GiftPackage()
     :Package("gift")
 {
-    skills << new Lisao << new BeatJapan << new Beatjapan;
-    related_skills.insertMulti("beatjapan", "#beat-japan");
+    skills << new Lisao << new Yaoyue << new YaoyueEffect << new BeatJapan;
+    related_skills.insertMulti("yaoyue", "#yaoyue-effect");
     QList<Card *> cards;
 
     cards

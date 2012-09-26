@@ -959,6 +959,8 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
             killer->drawCards(3);
     }
     else{
+        if(room->getMode() == "contract")
+            return;
         if(victim->getRole() == "rebel" && killer != victim){
             killer->drawCards(3);
         }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){

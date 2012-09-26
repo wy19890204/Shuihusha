@@ -1068,7 +1068,7 @@ public:
 
     virtual int getExtra(const Player *target) const{
         if(target->hasSkill(objectName()))
-            return target->getMaxHp();
+            return - target->getMaxHp();
         else
             return 0;
     }

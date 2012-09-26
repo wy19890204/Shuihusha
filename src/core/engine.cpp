@@ -748,8 +748,13 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
     int x = 0;
 
     foreach(const ClientSkill *skill, client_skills){
-        if(type == "maxcard")
-            x += skill->getExtra(from);
+        if(type == "maxcard"){
+            int y = skill->getExtra(from);
+            if(y < 0) // fixed maxcard
+                return qAbs(y);
+            else
+                x += y;
+        }
         else if(type == "distance")
             x += skill->getCorrect(from, to);
         else if(type == "attackrange"){

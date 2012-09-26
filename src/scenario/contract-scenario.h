@@ -19,11 +19,11 @@ public:
     virtual bool generalSelection() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
-    static ServerPlayer *getSpouse(const ServerPlayer *player);
-    QList<ServerPlayer *> getMarried(Room *room) const;
-    void setSpouse(ServerPlayer *player, ServerPlayer *spouse = NULL) const;
-    void marry(ServerPlayer *husband, ServerPlayer *wife) const;
-    void divorce(ServerPlayer *enkemann, ServerPlayer *widow = NULL) const;
+    static ServerPlayer *getComrade(const ServerPlayer *player);
+    QList<ServerPlayer *> getComraded(Room *room) const;
+    void setComrade(ServerPlayer *player, ServerPlayer *comrade = NULL) const;
+    void annex(ServerPlayer *seme, ServerPlayer *uke) const;
+    void rupture(ServerPlayer *seme, ServerPlayer *uke = NULL) const;
 };
 
 #endif // CONTRACTSCENARIO_H

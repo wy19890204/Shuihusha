@@ -27,7 +27,7 @@ public:
             }
         case PhaseChange:{
                 if(player->isLord() && player->getPhase() == Player::Play){
-                    player->setRole("renegade");
+                    player->setRole("rebel");
                     room->broadcastProperty(player, "role");
                 }
                 break;
@@ -36,9 +36,9 @@ public:
                 QList<ServerPlayer *> players = room->getAlivePlayers();
                 if(players.length() == 2){
                     ServerPlayer *survivor = players.first();
-                    ServerPlayer *spouse = players.last();
-                    if(scenario->getSpouse(survivor) == spouse){
-                        room->gameOver(QString("%1+%2").arg(survivor->objectName()).arg(spouse->objectName()));
+                    ServerPlayer *comrade = players.last();
+                    if(scenario->getComrade(survivor) == comrade){
+                        room->gameOver(QString("%1+%2").arg(survivor->objectName()).arg(comrade->objectName()));
                         return true;
                     }
                 }else if(players.length() == 1){
@@ -49,13 +49,13 @@ public:
             }
         case PreDeath:{
                 DamageStar damage = data.value<DamageStar>();
-                if(damage){
-                    if(scenario->getSpouse(damage->from) || scenario->getSpouse(player))
+                if(damage && damage->from){
+                    if(scenario->getComrade(damage->from) || scenario->getComrade(player))
                         break;
                     const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), false, data, NonTrigger);
                     if(card){
                         player->obtainCard(card);
-                        scenario->marry(damage->from, damage->to);
+                        scenario->annex(damage->from, damage->to);
                         if(player->getMaxHp() < 1)
                             room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                         RecoverStruct rs;
@@ -70,7 +70,7 @@ public:
                 DamageStar damage = data.value<DamageStar>();
                 if(damage && damage->from){
                     ServerPlayer *killer = damage->from;
-                    if(scenario->getSpouse(player) && scenario->getSpouse(killer) == player){
+                    if(scenario->getComrade(player) && scenario->getComrade(killer) == player){
                         LogMessage log;
                         log.type = "#Uron";
                         log.from = killer;
@@ -83,7 +83,7 @@ public:
                     else
                         killer->drawCards(3);
                 }
-                scenario->divorce(player);
+                scenario->rupture(player);
             }
         default:
             break;
@@ -92,32 +92,32 @@ public:
     }
 };
 
-void ContractScenario::setSpouse(ServerPlayer *player, ServerPlayer *spouse) const{
-    if(spouse)
-        player->tag["spouse"] = QVariant::fromValue(spouse);
+void ContractScenario::setComrade(ServerPlayer *player, ServerPlayer *comrade) const{
+    if(comrade)
+        player->tag["comrade"] = QVariant::fromValue(comrade);
     else
-        player->tag.remove("spouse");
+        player->tag.remove("comrade");
 }
 
-void ContractScenario::marry(ServerPlayer *husband, ServerPlayer *wife) const{
-    if(getSpouse(husband) == wife)
+void ContractScenario::annex(ServerPlayer *seme, ServerPlayer *uke) const{
+    if(getComrade(seme) == uke)
         return;
-    Room *room = husband->getRoom();
+    Room *room = seme->getRoom();
 
     LogMessage log;
-    log.type = "#CMarry";
-    log.from = husband;
-    log.to << wife;
+    log.type = "#Annex";
+    log.from = seme;
+    log.to << uke;
     room->sendLog(log);
 
-    setSpouse(husband, wife);
-    setSpouse(wife, husband);
+    setComrade(seme, uke);
+    setComrade(uke, seme);
 
     QVariant n = room->getTag("ConTotal").toInt() + 1;
     room->setTag("ConTotal", n);
     for(int i = 1; i <= 4; i ++){
         bool hasused = false;
-        foreach(ServerPlayer *tmp, getMarried(room)){
+        foreach(ServerPlayer *tmp, getComraded(room)){
             if(tmp->getMark("@ctt" + QString::number(i)) > 0){
                 hasused = true;
                 break;
@@ -125,48 +125,48 @@ void ContractScenario::marry(ServerPlayer *husband, ServerPlayer *wife) const{
         }
         if(hasused)
             continue;
-        room->setPlayerMark(husband, "@ctt" + QString::number(i), 1);
-        room->setPlayerMark(wife, "@ctt" + QString::number(i), 1);
+        room->setPlayerMark(seme, "@ctt" + QString::number(i), 1);
+        room->setPlayerMark(uke, "@ctt" + QString::number(i), 1);
         break;
     }
 }
 
-void ContractScenario::divorce(ServerPlayer *enkemann, ServerPlayer *widow) const{
-    if(!widow)
-        widow = getSpouse(enkemann);
-    if(getSpouse(enkemann) != widow)
+void ContractScenario::rupture(ServerPlayer *seme, ServerPlayer *uke) const{
+    if(!uke)
+        uke = getComrade(seme);
+    if(!uke || getComrade(seme) != uke)
         return;
-    Room *room = enkemann->getRoom();
+    Room *room = seme->getRoom();
 
-    ServerPlayer *ex_husband = getSpouse(widow);
-    setSpouse(ex_husband, NULL);
+    ServerPlayer *ex_seme = getComrade(uke);
+    setComrade(ex_seme, NULL);
     LogMessage log;
-    log.type = "#CDivorse";
-    log.from = enkemann;
-    log.to << widow;
+    log.type = "#Rupture";
+    log.from = seme;
+    log.to << uke;
     room->sendLog(log);
 
-    setSpouse(enkemann);
-    setSpouse(widow);
+    setComrade(seme);
+    setComrade(uke);
 
     QVariant n = room->getTag("ConTotal").toInt() - 1;
     room->setTag("ConTotal", n);
     for(int i = 1; i <= 4; i ++){
-        if(widow->getMark("@ctt" + QString::number(i)) > 0){
-            room->setPlayerMark(widow, "@ctt" + QString::number(i), 0);
+        if(uke->getMark("@ctt" + QString::number(i)) > 0){
+            room->setPlayerMark(uke, "@ctt" + QString::number(i), 0);
             break;
         }
     }
 }
 
-ServerPlayer *ContractScenario::getSpouse(const ServerPlayer *player){
-    return player->tag["spouse"].value<PlayerStar>();
+ServerPlayer *ContractScenario::getComrade(const ServerPlayer *player){
+    return player->tag["comrade"].value<PlayerStar>();
 }
 
-QList<ServerPlayer *> ContractScenario::getMarried(Room *room) const{
+QList<ServerPlayer *> ContractScenario::getComraded(Room *room) const{
     QList<ServerPlayer *> ss;
     foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-        if(getSpouse(tmp))
+        if(getComrade(tmp))
             ss << tmp;
     }
     return ss;
@@ -178,7 +178,7 @@ void ContractScenario::assign(QStringList &generals, QStringList &roles) const{
     roles << "lord";
     int i;
     for(i=0; i<7; i++)
-        roles << "renegade";
+        roles << "rebel";
 }
 
 int ContractScenario::getPlayerCount() const{
@@ -186,7 +186,7 @@ int ContractScenario::getPlayerCount() const{
 }
 
 void ContractScenario::getRoles(char *roles) const{
-    strcpy(roles, "ZNNNNNNN");
+    strcpy(roles, "FFFFFFFF");
 }
 
 void ContractScenario::onTagSet(Room *room, const QString &key) const{
@@ -207,7 +207,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
         //ContractScenario *contra = new ContractScenario();
-        ServerPlayer *jiyou = ContractScenario::getSpouse(player);
+        ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(effect.to) &&
            room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), false, data)){
             LogMessage log;
@@ -218,6 +218,8 @@ public:
             room->sendLog(log);
             //room->playSkillEffect(objectName());
 
+            room->setEmotion(effect.to, "bad");
+            room->getThread()->delay();
             room->slashResult(effect, NULL);
             return true;
         }
@@ -235,7 +237,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         //ContractScenario *contra = new ContractScenario();
-        ServerPlayer *jiyou = ContractScenario::getSpouse(player);
+        ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(player) &&
            room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), false, data)){
             LogMessage log;
@@ -246,6 +248,8 @@ public:
             //room->playSkillEffect(objectName());
 
             damage.damage --;
+            room->setEmotion(player, "good");
+            room->getThread()->delay();
             data = QVariant::fromValue(damage);;
         }
         return false;
@@ -260,13 +264,13 @@ ContractScenario::ContractScenario()
 }
 
 AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
-    if(getSpouse(a) == b)
+    if(getComrade(a) == b)
         return AI::Friend;
 
-    if(getSpouse(a) && getSpouse(b))
+    if(getComrade(a) && getComrade(b))
         return AI::Neutrality;
 
     return AI::Enemy;
 }
 
-ADD_SCENARIO(Contract);
+ADD_SCENARIO(Contract)
