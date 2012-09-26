@@ -751,7 +751,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
         if(type == "maxcard"){
             int y = skill->getExtra(from);
             if(y < 0) // fixed maxcard
-                return qAbs(y);
+                return y;
             else
                 x += y;
         }

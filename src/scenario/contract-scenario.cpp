@@ -49,6 +49,8 @@ public:
             }
         case PreDeath:{
                 DamageStar damage = data.value<DamageStar>();
+                if(room->getAlivePlayers().length() == 2)
+                    break;
                 if(damage && damage->from){
                     if(scenario->getComrade(damage->from) || scenario->getComrade(player))
                         break;
