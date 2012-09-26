@@ -27,7 +27,7 @@ public:
             }
         case PhaseChange:{
                 if(player->isLord() && player->getPhase() == Player::Play){
-                    player->setRole("renegade");
+                    player->setRole("rebel");
                     room->broadcastProperty(player, "role");
                 }
                 break;
@@ -49,7 +49,7 @@ public:
             }
         case PreDeath:{
                 DamageStar damage = data.value<DamageStar>();
-                if(damage){
+                if(damage && damage->from){
                     if(scenario->getSpouse(damage->from) || scenario->getSpouse(player))
                         break;
                     const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), false, data, NonTrigger);
@@ -67,15 +67,10 @@ public:
                 break;
             }
         case Death:{
-                if(!scenario->getSpouse(player))
-                    break;
-                scenario->divorce(player);
                 DamageStar damage = data.value<DamageStar>();
                 if(damage && damage->from){
                     ServerPlayer *killer = damage->from;
-                    if(killer == player)
-                        return false;
-                    if(scenario->getSpouse(killer) == player){
+                    if(scenario->getSpouse(player) && scenario->getSpouse(killer) == player){
                         LogMessage log;
                         log.type = "#Uron";
                         log.from = killer;
@@ -88,6 +83,7 @@ public:
                     else
                         killer->drawCards(3);
                 }
+                scenario->divorce(player);
             }
         default:
             break;
@@ -138,7 +134,7 @@ void ContractScenario::marry(ServerPlayer *husband, ServerPlayer *wife) const{
 void ContractScenario::divorce(ServerPlayer *enkemann, ServerPlayer *widow) const{
     if(!widow)
         widow = getSpouse(enkemann);
-    if(getSpouse(enkemann) != widow)
+    if(!widow || getSpouse(enkemann) != widow)
         return;
     Room *room = enkemann->getRoom();
 
@@ -182,7 +178,7 @@ void ContractScenario::assign(QStringList &generals, QStringList &roles) const{
     roles << "lord";
     int i;
     for(i=0; i<7; i++)
-        roles << "renegade";
+        roles << "rebel";
 }
 
 int ContractScenario::getPlayerCount() const{
@@ -190,7 +186,7 @@ int ContractScenario::getPlayerCount() const{
 }
 
 void ContractScenario::getRoles(char *roles) const{
-    strcpy(roles, "ZNNNNNNN");
+    strcpy(roles, "FFFFFFFF");
 }
 
 void ContractScenario::onTagSet(Room *room, const QString &key) const{
@@ -221,6 +217,8 @@ public:
             room->sendLog(log);
             //room->playSkillEffect(objectName());
 
+            room->setEmotion(effect.to, "bad");
+            room->getThread()->delay();
             room->slashResult(effect, NULL);
             return true;
         }
@@ -248,6 +246,8 @@ public:
             //room->playSkillEffect(objectName());
 
             damage.damage --;
+            room->setEmotion(player, "good");
+            room->getThread()->delay();
             data = QVariant::fromValue(damage);;
         }
         return false;
@@ -271,4 +271,4 @@ AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPla
     return AI::Enemy;
 }
 
-ADD_SCENARIO(Contract);
+ADD_SCENARIO(Contract)
