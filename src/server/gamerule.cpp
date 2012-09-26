@@ -267,7 +267,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->updateStateItem();
                 room->broadcastProperty(player, "role");
                 log.type = "#AnzhanShow";
-                if(room->getPlayerCount() > 4){
+                if(room->getPlayerCount() > 4 && !Config.value("AnzhanEqual", false).toBool()){
                     room->setPlayerProperty(player, "maxhp", player->getMaxHp() + 1);
                     log.type = "#AnzhanShow2";
                 }

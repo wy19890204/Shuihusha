@@ -31,7 +31,7 @@ return{
 	["#ReincarnRevive"] = "%from 获得了足够多的手牌，转世成功！",
 
 -- anzhan
-	["anzhan"] = "暗战模式",
+	["anzhan"] = "暗战规则",
 	["#AnzhanShuffle"] = "%arg 启动，%from 正在为场上角色重新分配身份牌",
 	["#AnzhanShow"] = "%from 亮出了自己的身份牌【%arg】",
 	["#AnzhanShow2"] = "%from 亮出了自己的身份牌【%arg】，并增加了1点体力上限",
@@ -40,6 +40,14 @@ return{
 	["endlessmode"] = "无尽模式",
 	["@endless"] = "铜板",
 	["#Undead"] = "%from 开启了不死之身，本次死亡无效",
+	["cheat0"] = "作弊菜单开启",
+	["cheat1"] = "自由选择武将",
+	["cheat2"] = "自由选择卡牌",
+	["cheat3"] = "自选身份座次",
+	["cheat4"] = "可自由弃牌",
+	["cheat5"] = "可自我变身",
+	["cheat6"] = "开启身份宣布",
+	["cheat7"] = "开启不死之身",
 
 -- custom
 	["custom"] = "自定义模式",

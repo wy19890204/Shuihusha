@@ -127,7 +127,25 @@ void StartScene::printServerInfo(){
     if(Config.ContestMode)
         server_log->append(tr("The contest mode is enabled"));
 
-    server_log->append(tr("Free general choose is %1").arg(Config.FreeChooseGenerals ? tr("Enabled") : tr("Disabled")));
+    QStringList cheats;
+    if(Config.value("EnableCheatMenu", false).toBool())
+        cheats << Sanguosha->translate("cheat0");
+    if(Config.FreeChooseGenerals)
+        cheats << Sanguosha->translate("cheat1");
+    if(Config.FreeChooseCards)
+        cheats << Sanguosha->translate("cheat2");
+    if(Config.value("FreeAssign", false).toBool())
+        cheats << Sanguosha->translate("cheat3");
+    if(Config.value("FreeDiscard", false).toBool())
+        cheats << Sanguosha->translate("cheat4");
+    if(Config.value("FreeChange", false).toBool())
+        cheats << Sanguosha->translate("cheat5");
+    if(Config.value("FreeShowRole", false).toBool())
+        cheats << Sanguosha->translate("cheat6");
+    if(Config.value("FreeUnDead", false).toBool())
+        cheats << Sanguosha->translate("cheat7");
+    QString cheating = cheats.isEmpty() ? tr("Disabled") : cheats.join(" , ");
+    server_log->append(tr("Cheat choose is") + cheating);
 
     if(Config.Enable2ndGeneral){
         QString scheme_str;
@@ -140,22 +158,14 @@ void StartScene::printServerInfo(){
         server_log->append(tr("Secondary general is enabled, max hp scheme is %1").arg(scheme_str));
     }else
         server_log->append(tr("Seconardary general is disabled"));
-
+/*
     server_log->append( Config.EnableScene ?
                         tr("Scene Mode is enabled") :
                         tr("Scene Mode is disabled"));
-
+*/
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :
                         tr("Reincarnation Rule is disabled"));
-
-    server_log->append( Config.EnableSame ?
-                        tr("Same Mode is enabled") :
-                        tr("Same Mode is disabled"));
-
-    server_log->append( Config.EnableEndless ?
-                        tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
-                        tr("Endless Mode is disabled"));
 
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
@@ -168,6 +178,14 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableHegemony ?
                         tr("Hegemony Mode is enabled") :
                         tr("Hegemony Mode is disabled"));
+
+    server_log->append( Config.EnableSame ?
+                        tr("Same Mode is enabled") :
+                        tr("Same Mode is disabled"));
+
+    server_log->append( Config.EnableEndless ?
+                        tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
+                        tr("Endless Mode is disabled"));
 
     if(Config.EnableAI){
         server_log->append(tr("This server is AI enabled, AI delay is %1 milliseconds").arg(Config.AIDelay));

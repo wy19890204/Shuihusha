@@ -3354,7 +3354,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="182"/>
         <source>Enable Anzhan</source>
-        <translation>暗战模式</translation>
+        <translation>启用暗战规则</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="185"/>
@@ -3729,7 +3729,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/client/clientstruct.cpp" line="114"/>
         <source>Anzhan Mode</source>
-        <translation>暗战模式</translation>
+        <translation>暗战规则</translation>
     </message>
     <message>
         <location filename="src/client/clientstruct.cpp" line="116"/>
@@ -3972,6 +3972,11 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/ui/startscene.cpp" line="130"/>
+        <source>Cheat choose is</source>
+        <translation>测试选项启用情况：</translation>
+    </message>
+    <message>
+        <location filename="src/ui/startscene.cpp" line="130"/>
         <source>Enabled</source>
         <translation>启用</translation>
     </message>
@@ -4048,12 +4053,12 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/ui/startscene.cpp" line="161"/>
         <source>Anzhan Mode is enabled</source>
-        <translation>启用暗战模式</translation>
+        <translation>启用暗战规则</translation>
     </message>
     <message>
         <location filename="src/ui/startscene.cpp" line="162"/>
         <source>Anzhan Mode is disabled</source>
-        <translation>禁用暗战模式</translation>
+        <translation>禁用暗战规则</translation>
     </message>
     <message>
         <location filename="src/ui/startscene.cpp" line="165"/>
@@ -4104,11 +4109,6 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/ui/startscene.cpp" line="125"/>
         <source>Operation timeout is %1 seconds</source>
         <translation>操作时间是 %1 秒</translation>
-    </message>
-    <message>
-        <location filename="src/ui/startscene.cpp" line="130"/>
-        <source>Free general choose is %1</source>
-        <translation>自由选将是 %1</translation>
     </message>
 </context>
 <context>

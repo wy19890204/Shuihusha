@@ -102,6 +102,7 @@ private:
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
     QCheckBox *anzhan_checkbox;
+    QCheckBox *anzhan_equal_checkbox;
     QCheckBox *basara_checkbox;
     QCheckBox *hegemony_checkbox;
     QLabel *max_hp_label;
