@@ -1352,6 +1352,8 @@ end
 sgs.ai_skill_invoke["huakui"] = true
 
 -- reincarnation
+sgs.ai_card_intention.SacrificeCard = -40
+
 local sacrifice_skill={}
 sacrifice_skill.name = "sacrifice"
 table.insert(sgs.ai_skills, sacrifice_skill)

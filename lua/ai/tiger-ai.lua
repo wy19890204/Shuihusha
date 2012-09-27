@@ -69,6 +69,8 @@ end
 
 -- wuyanguang
 -- jintang
+sgs.ai_card_intention.JintangCard = -80
+
 sgs.ai_skill_use["@@jintang!"] = function(self, prompt)
 --	local count = self.player:getEquips():length()
 	local equip = self.player:getTag("Jintg"):toCard()
@@ -112,7 +114,14 @@ sgs.ai_skill_invoke["pinming"] = function(self, data)
 end
 
 -- lvfang
+sgs.lvfang_keep_value =
+{
+	BasicCard = 4
+}
+
 -- lieji
+sgs.ai_card_intention.LiejiCard = 80
+
 sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	local basiccard = self:getCard("BasicCard")
 	if not basiccard or self.player:getHandcardNum() - 1 > self.player:getMaxCards() then return "." end
@@ -131,10 +140,17 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 end
 
 -- tianhu
+sgs.tianhu_keep_value =
+{
+	EquipCard = 1
+}
+
 -- wuzhou
 sgs.ai_skill_invoke["wuzhou"] = true
 
 -- huwei
+sgs.ai_card_intention.HuweiCard = -70
+
 huwei_skill={}
 huwei_skill.name = "huweiv"
 table.insert(sgs.ai_skills, huwei_skill)
@@ -204,6 +220,8 @@ sgs.ai_skill_playerchosen["longluo"] = function(self, targets)
 end
 
 -- xiaozai
+sgs.ai_card_intention.XiaozaiCard = math.random(-50, 50)
+
 sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 	if self.player:getHandcardNum() >= 4 then
 		local players = {}
@@ -230,6 +248,11 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 end
 
 -- yanshun
+sgs.yanshun_keep_value =
+{
+	EquipCard = 3.5
+}
+
 -- huxiao
 local huxiao_skill={}
 huxiao_skill.name = "huxiao"
@@ -303,6 +326,12 @@ houfa_skill.getTurnUseCard = function(self, inclusive)
 end
 
 -- lizhong
+sgs.lizhong_keep_value =
+{
+	Peach = 5.5,
+	Analeptic = 5
+}
+
 -- linse
 function sgs.ai_trick_prohibit.linse(card)
 	return card:inherits("Dismantlement") or card:inherits("Snatch")
