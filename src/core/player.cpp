@@ -512,7 +512,10 @@ int Player::getMaxCards() const{
     }
     extra += Sanguosha->correctClient("maxcard", this);
 
-    return (qMax(hp,0) + rule + extra);
+    if(extra < 0)
+        return qAbs(extra);
+    else
+        return (qMax(hp,0) + rule + extra);
 }
 
 QString Player::getKingdom() const{
@@ -730,6 +733,8 @@ QList<const Skill *> Player::getVisibleSkillList() const{
 
     foreach(QString skill_name, acquired_skills){
         const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill->getFrequency() == Skill::NotSkill)
+            continue;
         if(skill->isVisible())
             skills << skill;
     }
@@ -745,6 +750,8 @@ QStringList Player::getVisSkist(const QString &exclude) const{
         skills << general2->getVisibleSkillList();
     foreach(QString skill_name, acquired_skills){
         const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill->getFrequency() == Skill::NotSkill)
+            continue;
         if(skill->isVisible())
             skills << skill;
     }
