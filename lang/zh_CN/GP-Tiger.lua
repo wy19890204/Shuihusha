@@ -1,7 +1,7 @@
 -- translation for TigerPackage
 
 return {
-	["tiger"] = "淫包",
+	["tiger"] = "寅虎",
 
 	["$leiheng"] = "025",
 	["#leiheng"] = "插翅虎", -- guan 4hp
