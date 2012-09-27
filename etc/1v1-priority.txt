@@ -39,6 +39,8 @@ daizong 3
 caijing 3
 songjiang 2
 
+luda 6
+
 luozhenren 8
 huangxin 7
 shijin 7
@@ -64,4 +66,4 @@ shien 6
 yanshun 7
 wangying 7
 lizhong 6
-
+tora 2
