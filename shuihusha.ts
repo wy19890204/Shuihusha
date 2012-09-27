@@ -2531,6 +2531,21 @@
 <context>
     <name>PackagingEditor</name>
     <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="81"/>
+        <source>DIY package manager</source>
+        <translation>DIY 包管理器</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="84"/>
+        <source>Package format is 7z, see its offcial site :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</source>
+        <translation>打包格式为 7z, 官方网站 :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="87"/>
+        <source>Package management</source>
+        <translation>包管理</translation>
+    </message>
+    <message>
         <location filename="src/dialog/packagingeditor.cpp" line="180"/>
         <source>Browse files</source>
         <translation>浏览文件</translation>
@@ -2545,21 +2560,6 @@
         <location filename="src/dialog/packagingeditor.cpp" line="183"/>
         <source>Make package</source>
         <translation>打包</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="81"/>
-        <source>DIY package manager</source>
-        <translation>DIY 包管理器</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="84"/>
-        <source>Package format is 7z, see its offcial site :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</source>
-        <translation>打包格式为 7z, 官方网站 :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="87"/>
-        <source>Package management</source>
-        <translation>包管理</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="128"/>

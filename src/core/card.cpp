@@ -181,7 +181,7 @@ bool Card::CompareByType(const Card *a, const Card *b){
 }
 
 QString Card::getPixmapPath() const{
-    QString path = QString("image/card/%1.jpg").arg(objectName());
+    QString path = QString(":card/%1.jpg").arg(objectName());
     return QFile::exists(path) ? path : "image/card/unknown.jpg";
 }
 
