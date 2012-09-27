@@ -193,10 +193,13 @@ function SmartAI:useCardSlash(card, use)
 						if use.card then return end
 					end
 				end
-				if self.player:hasSkill("houfa") then
+				if self.player:hasSkill("guibing") then
+					use.card = guibing_skill.getTurnUseCard(self)
+				elseif self.player:hasSkill("houfa") then
 					use.card = houfa_skill.getTurnUseCard(self, true)
-				end
-				if self.player:hasSkill("douzhan") then
+				elseif self.player:hasSkill("strike") then
+					use.card = strike_skill.getTurnUseCard(self, true)
+				elseif self.player:hasSkill("douzhan") then
 					use.card = douzhan_skill.getTurnUseCard(self, true)
 				end
 				if target:isChained() and self:isGoodChainTarget(target) and not use.card then

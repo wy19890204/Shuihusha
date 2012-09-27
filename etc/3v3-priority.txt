@@ -39,6 +39,8 @@ zhangqing 3
 xuning 3
 ruanxiaoqi 1
 
+luda 4
+
 xiezhen 8
 tongguan 8
 huangxin 7
@@ -64,3 +66,4 @@ shien 7
 yanshun 3
 wangying 5
 lizhong 4
+tora 5

@@ -32,7 +32,7 @@ end
 
 -- tora
 -- pu
-local strike_skill = {}
+strike_skill = {}
 strike_skill.name = "strike"
 table.insert(sgs.ai_skills, strike_skill)
 strike_skill.getTurnUseCard = function(self, inclusive)

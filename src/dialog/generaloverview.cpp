@@ -87,8 +87,8 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QTableWidgetItem *max_hp_item = new QTableWidgetItem(max_hp);
         max_hp_item->setTextAlignment(Qt::AlignCenter);
 
-        if(package.length() > 3)
-            package.chop(2);
+        //if(package.length() > 3)
+        //    package.chop(2);
         QTableWidgetItem *package_item = new QTableWidgetItem(package);
         package_item->setTextAlignment(Qt::AlignCenter);
 
