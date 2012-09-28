@@ -268,11 +268,12 @@ ContractScenario::ContractScenario()
 AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(getComrade(a) == b)
         return AI::Friend;
-
-    if(getComrade(a) && getComrade(b))
+    else if(!getComrade(a) && !getComrade(b))
+        return AI::Enemy;
+    else if(getComrade(a) && getComrade(b))
         return AI::Neutrality;
-
-    return AI::Enemy;
+    else
+        return AI::Enemy;
 }
 
-ADD_SCENARIO(Contract)
+//ADD_SCENARIO(Contract)

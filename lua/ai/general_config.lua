@@ -1,4 +1,4 @@
-﻿sgs.ai_keep_value = {
+sgs.ai_keep_value = {
 	Shit = 6,
 
 	Peach = 5,
@@ -76,13 +76,18 @@ sgs.ai_use_value =
 	ZiyiCard = -2,
 	ShouwangCard = 3.3,
 
-	-- qjwm
-	TaolueCard = 7.5,
+	-- tiger
+	NeiyingCard = 8.5,
+--	JintangCard = 0.1,
+--	LiejiCard = 5.4,
+	HuweiCard = 4.2,
 --	XiaozaiCard = 7.7,
+	SacrificeCard = 2.2,
 
 	-- xzdd
 --	BinggongCard = 2.1,
 	FeiqiangCard = 9.2,
+	TaolueCard = 7.5,
 
 	-- bwqz
 	YuanyinCard = 4.3,
@@ -188,16 +193,21 @@ sgs.ai_use_priority = {
 --	DuomingCard = 2.0,
 	DingceCard = 3.8,
 --	XunlieCard = 2.0,
-	ZiyiCard = 1,
+	ZiyiCard = 0.5,
 	ShouwangCard = 4.5,
 
-	-- qjwm
-	TaolueCard = 5,
+	-- tiger
+	NeiyingCard = 6.6,
+--	JintangCard = 0.1,
+--	LiejiCard = 5.4,
+	HuweiCard = 2.2,
 --	XiaozaiCard = 3,
+	SacrificeCard = 1,
 
 	-- xzdd
 --	BinggongCard = 2.1,
 	FeiqiangCard = 5.4,
+	TaolueCard = 5,
 
 	-- bwqz
 	YuanyinCard = 8.3,

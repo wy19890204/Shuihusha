@@ -4,7 +4,7 @@
 
 config = {
 	version = "20120918",
-	version_name = "终结版F2.4δ",
+	version_name = "终结版F2.5pre",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -41,7 +41,7 @@ config = {
 	"Dusong",
 	"Couple",
 --	"Changban",
-	"Contract",
+--	"Contract",
 --[[	"Zombie",
 	"Legend",
 	"Impasse",]]

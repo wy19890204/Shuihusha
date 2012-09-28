@@ -66,4 +66,7 @@ shien 7
 yanshun 3
 wangying 5
 lizhong 4
+<<<<<<< HEAD
 tora 5
+=======
+>>>>>>> 8b2b42b3f906b4aea8bc2d42a2d698ce5c53075b
