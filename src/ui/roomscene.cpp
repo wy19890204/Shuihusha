@@ -3148,6 +3148,9 @@ void KOFOrderBox::revealGeneral(const QString &name){
             Pixmap *avatar = avatars[revealed ++];
             avatar->changePixmap(general->getPixmapPath("small"));
             avatar->setObjectName(name);
+
+            //QRect arrayRect(0,0,122,50); //截取图片区域
+            //QGraphicsRectItem *rect_item = new QGraphicsRectItem(arrayRect, avatar);
         }
     }
 }

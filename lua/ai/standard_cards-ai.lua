@@ -117,6 +117,7 @@ function SmartAI:useCardSlash(card, use)
 --	if card:getSkillName() == "douzhan" then
 --		self.slash_targets = self.slash_targets + 1
 --	end
+	if self.player:hasSkill("guibing") then return end
 
 	if (self.player:getHandcardNum() == 1
 		and self.player:getHandcards():first():inherits("Slash")
@@ -193,14 +194,14 @@ function SmartAI:useCardSlash(card, use)
 						if use.card then return end
 					end
 				end
-				if self.player:hasSkill("guibing") then
+		--[[	if self.player:hasSkill("guibing") then
 					use.card = guibing_skill.getTurnUseCard(self)
-				elseif self.player:hasSkill("houfa") then
+				else]]if self.player:hasSkill("houfa") then
 					use.card = houfa_skill.getTurnUseCard(self, true)
-				elseif self.player:hasSkill("strike") then
-					use.card = strike_skill.getTurnUseCard(self, true)
 				elseif self.player:hasSkill("douzhan") then
 					use.card = douzhan_skill.getTurnUseCard(self, true)
+		--		elseif self.player:hasSkill("strike") then
+		--			use.card = strike_skill.getTurnUseCard(self, true)
 				end
 				if target:isChained() and self:isGoodChainTarget(target) and not use.card then
 					if self:isEquip("Crossbow") and card:inherits("NatureSlash") then
