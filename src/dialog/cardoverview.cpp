@@ -28,9 +28,10 @@ CardOverview::CardOverview(QWidget *parent) :
     ui->tableWidget->setColumnWidth(3, 60);
     ui->tableWidget->setColumnWidth(4, 70);
 
-    if(Config.FreeChooseCards)
+    if(Config.FreeChooseCards){
+        ui->getCardButton->show();
         connect(ui->getCardButton, SIGNAL(clicked()), this, SLOT(askCard()));
-    else
+    }else
         ui->getCardButton->hide();
 
     ui->cardDescriptionBox->setProperty("description", true);

@@ -229,6 +229,19 @@
     <string>Illustrator</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="changeGeneralButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>280</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Change this general</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
