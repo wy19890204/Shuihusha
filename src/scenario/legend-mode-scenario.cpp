@@ -72,7 +72,7 @@ ChuanqiDialog *ChuanqiDialog::GetInstance(){
 ChuanqiDialog::ChuanqiDialog()
 {
     setWindowTitle(Sanguosha->translate("ChuanqiSelect"));
-    //setStyleSheet("background-image: url(./image/system/state.png)");
+    //setStyleSheet("background-image: url(:system/state.png)");
     group = new QButtonGroup(this);
 
     QHBoxLayout *layout = new QHBoxLayout;

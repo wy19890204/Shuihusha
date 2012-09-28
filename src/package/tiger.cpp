@@ -497,6 +497,8 @@ public:
                 DamageStruct dag = damage;
                 dag.from = sanlang;
                 dag.to = player;
+                dag.card = NULL;
+                dag.chain = false;
                 room->damage(dag);
             }
         }
