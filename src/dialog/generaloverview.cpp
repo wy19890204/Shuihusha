@@ -1,6 +1,7 @@
 #include "generaloverview.h"
 #include "ui_generaloverview.h"
 #include "engine.h"
+#include "settings.h"
 
 #include <QMessageBox>
 #include <QRadioButton>
@@ -21,6 +22,14 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
     ui->skillTextEdit->setProperty("description", true);
+
+    if(Config.value("FreeChange", false).toBool()){
+        ui->changeGeneralButton->show();
+        connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
+    }
+    else
+        ui->changeGeneralButton->hide();
+
 }
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
@@ -210,6 +219,13 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
+
+    QString resume = Sanguosha->translate("resume:" + general->objectName());
+    if(!resume.startsWith("resume:"))
+        ui->generalPhoto->setToolTip(resume);
+    else
+        ui->generalPhoto->setToolTip(Sanguosha->translate("DefaultResume"));
+
     QList<const Skill *> skills = general->getVisibleSkillList();
 
     foreach(QString skill_name, general->getRelatedSkillNames()){
@@ -306,12 +322,17 @@ void GeneralOverview::playEffect()
 
 #include "clientstruct.h"
 #include "client.h"
-#include "settings.h"
+void GeneralOverview::askChange(){
+    if(!Config.value("FreeChange", false).toBool())
+        return;
+
+    int row = ui->tableWidget->currentRow();
+    QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
+    ClientInstance->requestCheatChangeGeneral(general_name);
+}
+
 void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
 {
-    if(Config.value("FreeChange", false).toBool() && Self){
-        int row = ui->tableWidget->currentRow();
-        QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-        ClientInstance->requestCheatChangeGeneral(general_name);
-    }
+    if(Self)
+        askChange();
 }
