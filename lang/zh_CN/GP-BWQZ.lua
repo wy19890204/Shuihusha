@@ -3,18 +3,6 @@
 return {
 	["BWQZ"] = "博闻强识",
 
-	["#dingdesun"] = "中箭虎",
-	["dingdesun"] = "丁得孙",
-	["designer:dingdesun"] = "烨子&宇文天启",
-	["cv:dingdesun"] = "东方胤弘【夜澜锦音】",
-	["coder:dingdesun"] = "凌天翼",
-	["beizhan"] = "备战",
-	[":beizhan"] = "分发起始手牌时，共发你六张牌作为手牌。",
-	["fushang"] = "负伤",
-	[":fushang"] = "<b>锁定技</b>，你每受到一次伤害，若你的体力上限大于3，你须减1点体力上限，然后摸3张牌。",
-	["$fushang1"] = "小伤而已。",
-	["$fushang2"] = "沙场征战，难免负伤。",
-
 	["#houjian"] = "通臂猿",
 	["houjian"] = "侯健",
 	["designer:houjian"] = "宇文天启",
