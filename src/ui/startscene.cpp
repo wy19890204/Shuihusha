@@ -167,11 +167,11 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :
                         tr("Reincarnation Rule is disabled"));
-
+/* //hare package unlock
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
                         tr("Anzhan Mode is disabled"));
-
+*/
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));
