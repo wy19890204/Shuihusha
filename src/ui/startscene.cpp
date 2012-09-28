@@ -158,11 +158,12 @@ void StartScene::printServerInfo(){
         server_log->append(tr("Secondary general is enabled, max hp scheme is %1").arg(scheme_str));
     }else
         server_log->append(tr("Seconardary general is disabled"));
-/*
-    server_log->append( Config.EnableScene ?
+
+    QString changjing = Config.EnableScene ?
                         tr("Scene Mode is enabled") :
-                        tr("Scene Mode is disabled"));
-*/
+                        tr("Scene Mode is disabled");
+    //server_log->append(changjing);
+
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :
                         tr("Reincarnation Rule is disabled"));
