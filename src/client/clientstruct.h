@@ -26,6 +26,7 @@ struct ServerInfoStruct{
     bool EnableAI;
     bool DisableChat;
     int MaxHPScheme;
+    bool isPlay;
 };
 
 extern ServerInfoStruct ServerInfo;

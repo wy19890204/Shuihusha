@@ -67,6 +67,23 @@ sgs.ai_view_as["neiying"] = function(card, player, card_place)
 	end
 end
 
+neiying_skill={}
+neiying_skill.name = "neiying"
+table.insert(sgs.ai_skills, neiying_skill)
+neiying_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("NeiyingCard") then return end
+	return sgs.Card_Parse("@NeiyingCard=.")
+end
+sgs.ai_skill_use_func["NeiyingCard"] = function(card, use, self)
+	self:sort(self.friends, "threat")
+	if #self.friends < 2 then return "." end
+	use.card = card
+	if use.to then
+		use.to:append(self.friends[1])
+		use.to:append(self.friends[2])
+	end
+end
+
 -- wuyanguang
 -- jintang
 sgs.ai_card_intention.JintangCard = -80
