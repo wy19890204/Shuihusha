@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20120930",
-	version_name = "终结版F2.5",
+	version = "20120928",
+	version_name = "终结版F2.4ε",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -23,6 +23,14 @@ config = {
 	"Ox",
 	"Tiger",
 --	"Hare",
+--[[	"XZDD",
+	"BWQZ",
+	"QLFD",
+	"ZCYN",
+	"YBYT",
+	"God",
+	"Stanley",
+	"InterChange",]]
 	"SP",
 	"Test",
 
@@ -33,6 +41,10 @@ config = {
 	"Dusong",
 	"Couple",
 --	"Changban",
+	"Contract",
+--[[	"Zombie",
+	"Legend",
+	"Impasse",]]
 	"Custom",
 	},
 
