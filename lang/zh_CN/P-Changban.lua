@@ -2,8 +2,7 @@
 
 return {
 
-	["changban"] = "长坂坡模式",
-	["Changban"] = "长坂坡",
+	["changban"] = "长坂坡",
 	
 	["cbzhaoyun1"] = "神赵云（1）",
 	["designer:cbzhaoyun1"] = "洛神工作室",

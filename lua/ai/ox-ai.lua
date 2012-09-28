@@ -5,7 +5,7 @@
 sgs.ai_card_intention.GuibingCard = sgs.ai_card_intention.Slash
 
 sgs.ai_skill_invoke["guibing"] = sgs.ai_skill_invoke["shalu"]
-local guibing_skill = {}
+guibing_skill = {}
 guibing_skill.name = "guibing"
 table.insert(sgs.ai_skills, guibing_skill)
 guibing_skill.getTurnUseCard = function(self)

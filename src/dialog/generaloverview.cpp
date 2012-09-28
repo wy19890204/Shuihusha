@@ -1,6 +1,9 @@
 #include "generaloverview.h"
 #include "ui_generaloverview.h"
 #include "engine.h"
+#include "settings.h"
+#include "clientstruct.h"
+#include "client.h"
 
 #include <QMessageBox>
 #include <QRadioButton>
@@ -21,6 +24,13 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
     ui->skillTextEdit->setProperty("description", true);
+/* //hare package unlock
+    if(ServerInfo.isPlay && Config.value("FreeChange", false).toBool()){
+        ui->changeGeneralButton->show();
+        connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
+    }
+    else*/
+        ui->changeGeneralButton->hide();
 }
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
@@ -87,8 +97,8 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QTableWidgetItem *max_hp_item = new QTableWidgetItem(max_hp);
         max_hp_item->setTextAlignment(Qt::AlignCenter);
 
-        if(package.length() > 3)
-            package.chop(2);
+        //if(package.length() > 3)
+        //    package.chop(2);
         QTableWidgetItem *package_item = new QTableWidgetItem(package);
         package_item->setTextAlignment(Qt::AlignCenter);
 
@@ -210,6 +220,17 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
+/* //hare package unlock
+    QString resume = Sanguosha->translate("resume:" + general->objectName());
+    if(!resume.startsWith("resume:"))
+        ui->generalPhoto->setToolTip(resume);
+    else
+        ui->generalPhoto->setToolTip(Sanguosha->translate("DefaultResume"));
+    if(Self && general->objectName() == Self->getGeneralName())
+        ui->changeGeneralButton->setEnabled(false);
+    else
+        ui->changeGeneralButton->setEnabled(true);
+*/
     QList<const Skill *> skills = general->getVisibleSkillList();
 
     foreach(QString skill_name, general->getRelatedSkillNames()){
@@ -304,14 +325,20 @@ void GeneralOverview::playEffect()
     }
 }
 
-#include "clientstruct.h"
-#include "client.h"
-#include "settings.h"
+void GeneralOverview::askChange(){
+    if(!Config.value("FreeChange", false).toBool())
+        return;
+
+    int row = ui->tableWidget->currentRow();
+    QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
+    if(general_name != Self->getGeneralName()){
+        ClientInstance->requestCheatChangeGeneral(general_name);
+        ui->changeGeneralButton->setEnabled(false);
+    }
+}
+
 void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
 {
-    if(Config.value("FreeChange", false).toBool() && Self){
-        int row = ui->tableWidget->currentRow();
-        QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-        ClientInstance->requestCheatChangeGeneral(general_name);
-    }
+    if(Self)
+        askChange();
 }

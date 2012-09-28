@@ -133,8 +133,6 @@ public:
             ogg.type = "#BeatJapan";
             ogg.from = player;
             ogg.arg = objectName();
-            ogg.arg2 = "iron_chain";
-            ogg.to = targets;
             room->sendLog(ogg);
             room->throwCard(use.card);
 

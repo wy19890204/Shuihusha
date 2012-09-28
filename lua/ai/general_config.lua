@@ -61,6 +61,7 @@ sgs.ai_use_value =
 	ShougeCard = 4.4,
 --	HuanshuCard = 8.8,
 	YuanpeiCard = 7.7,
+--	BaoquanCard = 3,
 
 	-- ox
 	GuibingCard = 4.5,
@@ -181,6 +182,7 @@ sgs.ai_use_priority = {
 	ShougeCard = 3.8,
 --	HuanshuCard = 8.8,
 	YuanpeiCard = 4.5,
+--	BaoquanCard = 3,
 
 	-- ox
 	GuibingCard = 2.3,
@@ -338,12 +340,14 @@ sgs.ai_chaofeng = {
 	tongguan = 4,
 	huangxin = 4,
 	sunli = 4,
+	tora = 4,
 	likui = 3,
 	zhutong = 3,
 	lishishi = 3,
 	shiwengong = 3,
 	baisheng = 3,
 	gaolian = 3,
+	luda = 3,
 	luzhishen = 2,
 	wusong = 2,
 	liying = 2,

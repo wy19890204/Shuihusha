@@ -726,4 +726,4 @@ ChangbanScenario::ChangbanScenario()
     addMetaObject<CBShiShenCard>();
 }
 
-//ADD_SCENARIO(Changban)
+ADD_SCENARIO(Changban)

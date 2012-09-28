@@ -2,8 +2,7 @@
 
 return {
 
-	["dusong"] = "独松关模式",
-	["Dusong"] = "独松关",
+	["dusong"] = "独松关",
 
 	["$zhang1dong"] = "S02A",
 	["#zhang1dong"] = "独松关双英",

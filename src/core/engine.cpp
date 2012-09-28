@@ -591,13 +591,12 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 
     Q_ASSERT(all_generals.count() >= count);
 
-    if(Config.EnableBasara) general_set =
-            general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
-    if(Config.EnableHegemony) general_set =
-            general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
+    if(Config.EnableBasara)
+        general_set = general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
+    if(Config.EnableHegemony)
+        general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
 
-    if(ServerInfo.GameMode.endsWith("p") ||
-                      ServerInfo.GameMode.endsWith("pd"))
+    if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd"))
         general_set.subtract(Config.value("Banlist/Roles","").toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
