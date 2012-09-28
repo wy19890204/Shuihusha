@@ -17,7 +17,9 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual void onTagSet(Room *room, const QString &key) const;
+    virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection() const;
+    virtual void Prerun(Room *room, QList<ServerPlayer *> players) const;
 };
 
 class CBLongNuCard: public SkillCard{

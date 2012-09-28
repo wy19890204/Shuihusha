@@ -49,8 +49,20 @@ void Scenario::assign(QStringList &generals, QStringList &roles) const{
     }
 }
 
-bool Scenario::generalSelection() const{
+bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp +1 on game start, return true
+    return player->isLord() && player->getRoom()->getPlayerCount() > 4;
+}
+
+bool Scenario::generalSelection() const{ // if need choose general freely, return true
     return false;
+}
+
+bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
+    return false;
+}
+
+void Scenario::Prerun(Room *, QList<ServerPlayer *>) const{ // if generalSelection == true then do
+    return;
 }
 
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

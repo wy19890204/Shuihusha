@@ -195,6 +195,10 @@ void ContractScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
+bool ContractScenario::lordWelfare(const ServerPlayer *) const{
+    return false;
+}
+
 bool ContractScenario::generalSelection() const{
     return true;
 }

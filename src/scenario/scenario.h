@@ -23,7 +23,10 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
     virtual void onTagSet(Room *room, const QString &key) const = 0;
+    virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection() const;
+    virtual bool setCardPiles(const Card *card) const;
+    virtual void Prerun(Room *room, QList<ServerPlayer *> players) const;
 
 protected:
     QString lord;

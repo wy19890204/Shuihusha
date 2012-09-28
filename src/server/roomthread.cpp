@@ -292,7 +292,11 @@ void RoomThread::run(){
         trigger(GameStart, room, player);
     }
 
-    if(room->mode == "06_3v3"){
+    /*if(room->getScenario()){
+        const Scenario *scenario = room->getScenario();
+        scenario->Threadrun(room);
+    }
+    else */if(room->mode == "06_3v3"){
         run3v3();
     }else if(room->getMode() == "dusong"){
         ServerPlayer *shenlvbu = room->getLord();
