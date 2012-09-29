@@ -170,6 +170,7 @@ enum TriggerEvent{
     PreDeath,
     Death,
     GameOverJudge,
+    RewardAndPunish,
 
     SlashEffect,
     SlashEffected,

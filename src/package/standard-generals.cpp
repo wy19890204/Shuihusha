@@ -1043,6 +1043,26 @@ public:
     }
 };
 
+class Zuohua: public TriggerSkill{
+public:
+    Zuohua():TriggerSkill("zuohua"){
+        events << RewardAndPunish;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *victim, QVariant &data) const{
+        ServerPlayer *killer = data.value<PlayerStar>();
+        LogMessage log;
+        log.type = "#Zuohua";
+        log.from = victim;
+        log.to << killer;
+        log.arg = objectName();
+        room->playSkillEffect(objectName(), 1);
+        room->sendLog(log);
+        return true;
+    }
+};
+
 class Fuhu: public TriggerSkill{
 public:
     Fuhu():TriggerSkill("fuhu"){
@@ -2680,7 +2700,7 @@ StandardPackage::StandardPackage()
 
     General *luzhishen = new General(this, "luzhishen", "kou");
     luzhishen->addSkill(new Liba);
-    luzhishen->addSkill(new Skill("zuohua", Skill::Compulsory));
+    luzhishen->addSkill(new Zuohua);
 
     General *wusong = new General(this, "wusong", "kou");
     wusong->addSkill(new Fuhu);
