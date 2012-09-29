@@ -195,6 +195,10 @@ void ContractScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
+bool ContractScenario::lordWelfare(const ServerPlayer *) const{
+    return false;
+}
+
 bool ContractScenario::generalSelection() const{
     return true;
 }
@@ -276,4 +280,4 @@ AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPla
         return AI::Enemy;
 }
 
-//ADD_SCENARIO(Contract) //hare package unlock
+ADD_SCENARIO(Contract)

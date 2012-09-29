@@ -2811,14 +2811,10 @@ void Room::sendDamageLog(const DamageStruct &data){
 }
 
 bool Room::hasWelfare(const ServerPlayer *player) const{
-    if(mode == "06_3v3")
+    if(scenario)
+        return scenario->lordWelfare(player);
+    else if(mode == "06_3v3")
         return player->isLord() || player->getRole() == "renegade";
-    else if(mode == "dusong")
-        return false;
-    else if(mode == "changban")
-        return false;
-    else if(mode == "contract")
-        return false;
     else if(Config.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){

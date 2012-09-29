@@ -687,6 +687,10 @@ void ChangbanScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
+bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
+    return false;
+}
+
 bool ChangbanScenario::generalSelection() const{
     return true;
 }
