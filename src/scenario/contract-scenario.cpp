@@ -280,4 +280,4 @@ AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPla
         return AI::Enemy;
 }
 
-//ADD_SCENARIO(Contract) //hare package unlock
+ADD_SCENARIO(Contract) //hare package unlock
