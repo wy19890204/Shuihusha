@@ -1648,33 +1648,6 @@ void Room::prepareForStart(){
         for(i=0; i<2; i++){
             broadcastProperty(m_players.at(i), "role");
         }
-
-    }else if(mode == "dusong"){
-        ServerPlayer *lord = m_players.at(qrand() % 4);
-        int i = 0;
-        for(i=0; i<4; i++){
-            ServerPlayer *player = m_players.at(i);
-            if(player == lord)
-                player->setRole("lord");
-            else
-                player->setRole("rebel");
-            broadcastProperty(player, "role");
-        }
-    }else if(mode == "changban"){
-        int x = qrand() % 5;
-        ServerPlayer *lord = m_players.at(x);
-        ServerPlayer *loyalist = m_players.at((x + qrand() % 4 + 1) % 5);
-        int i = 0;
-        for(i=0; i<5; i++){
-            ServerPlayer *player = m_players.at(i);
-            if(player == lord)
-                player->setRole("lord");
-            else if(player == loyalist)
-                player->setRole("loyalist");
-            else
-                player->setRole("rebel");
-            broadcastProperty(player, "role");
-        }
     }else if(Config.value("FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
         if(owner && owner->isOnline()){
