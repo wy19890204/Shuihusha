@@ -212,10 +212,6 @@ bool TriggerSkill::triggerable(const ServerPlayer *target) const{
     return target->isAlive() && target->hasSkill(objectName());
 }
 
-bool TriggerSkill::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
-    return trigger(event, player->getRoom(), player, data);
-}
-
 ScenarioRule::ScenarioRule(Scenario *scenario)
     :TriggerSkill(scenario->objectName())
 {
