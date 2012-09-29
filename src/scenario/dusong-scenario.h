@@ -18,6 +18,7 @@ public:
     virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection() const;
     virtual bool setCardPiles(const Card *card) const;
+    virtual void Prerun(Room *room, QList<ServerPlayer *> players) const;
 };
 
 #endif // DUSONGSCENARIO_H

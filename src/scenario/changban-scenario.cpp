@@ -695,6 +695,72 @@ bool ChangbanScenario::generalSelection() const{
     return true;
 }
 
+void ChangbanScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
+    QList<const General *> generals;
+    QStringList packages;
+    packages << "standard" << "rat" << "ox";
+
+    foreach(const Package *package, Sanguosha->findChildren<const Package *>()){
+        if(packages.contains(package->objectName()))
+            generals << package->findChildren<const General *>();
+        else
+            continue;
+    }
+
+    // remove hidden generals
+    QMutableListIterator<const General *> itor(generals);
+    while(itor.hasNext()){
+        itor.next();
+
+        if(itor.value()->isHidden())
+            itor.remove();
+    }
+
+    QStringList ban_list;
+    ban_list << "zuoci" << "zuocif" << "yuji" ;
+    foreach(QString name, ban_list)
+        generals.removeOne(Sanguosha->getGeneral(name));
+
+    QString kingdom = "guan";
+    QStringList kingdoms;
+    kingdoms << "guan" << "jiang" << "min" << "kou";
+    kingdom = kingdoms.at(qrand() % 4);
+
+    QStringList names;
+    foreach(const General *general, generals){
+        if(general->getKingdom() == kingdom)
+            names << general->objectName();
+    }
+
+    QList<ServerPlayer *> rebels;
+    foreach(ServerPlayer *player, players){
+        if(player->getRole() == "lord"){
+            room->setPlayerProperty(player, "general", "cbzhaoyun1");
+            continue;
+        }else if(player->getRole() == "loyalist"){
+            room->setPlayerProperty(player, "general", "cbzhangfei1");
+            continue;
+        }else{
+            rebels << player;
+            qShuffle(names);
+            QStringList choices = names.mid(0, 6), generals;
+            int i;
+            for(i=0; i<3; i++){
+                QString name = room->askForGeneral(player, choices);
+                generals << name;
+                names.removeOne(name);
+                choices.removeOne(name);
+            }
+            room->setTag(player->objectName(), QVariant(generals));
+        }
+    }
+    foreach(ServerPlayer *rebel, rebels){
+        QStringList generals = room->getTag(rebel->objectName()).toStringList();
+        room->setPlayerProperty(rebel, "general", generals.takeFirst());
+        room->setTag(rebel->objectName(), QVariant(generals));
+    }
+}
+
 ChangbanScenario::ChangbanScenario()
     :Scenario("changban")
 {

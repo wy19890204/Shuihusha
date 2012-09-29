@@ -2269,8 +2269,13 @@ void Room::run(){
     }else
         broadcastInvoke("startInXs", "0");
 
-    if(scenario && !scenario->generalSelection())
+    if(scenario){
+        if(scenario->generalSelection()){
+            scenario->Prerun(this, m_players);
+        }
+        //if(!scenario->generalSelection()) // fix generals' mode
         startGame();
+    }
     else if(mode == "06_3v3"){
         thread_3v3 = new RoomThread3v3(this);
         thread_3v3->start();
@@ -2281,100 +2286,6 @@ void Room::run(){
         thread_1v1->start();
 
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
-    }else if(mode == "dusong"){
-        ServerPlayer *lord = m_players.first();
-        setPlayerProperty(lord, "general", "zhang1dong");
-
-        const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
-
-        QList<const General *> generals = stdpack->findChildren<const General *>();
-        generals << ratpack->findChildren<const General *>();
-
-        QStringList names;
-        foreach(const General *general, generals){
-            names << general->objectName();
-        }
-
-        foreach(ServerPlayer *player, m_players){
-            if (player == lord)
-                continue;
-
-            qShuffle(names);
-            QStringList choices = names.mid(0, 3);
-            QString name = askForGeneral(player, choices);
-
-            setPlayerProperty(player, "general", name);
-            names.removeOne(name);
-        }
-
-        startGame();
-    }else if(mode == "changban"){
-        QList<const General *> generals;
-        QStringList packages;
-        packages << "standard" << "rat" << "ox";
-
-        foreach(const Package *package, Sanguosha->findChildren<const Package *>()){
-            if(packages.contains(package->objectName()))
-                generals << package->findChildren<const General *>();
-            else
-                continue;
-        }
-
-        // remove hidden generals
-        QMutableListIterator<const General *> itor(generals);
-        while(itor.hasNext()){
-            itor.next();
-
-            if(itor.value()->isHidden())
-                itor.remove();
-        }
-
-        QStringList ban_list;
-        ban_list << "zuoci" << "zuocif" << "yuji" ;
-        foreach(QString name, ban_list)
-            generals.removeOne(Sanguosha->getGeneral(name));
-
-        QString kingdom = "guan";
-        QStringList kingdoms;
-        kingdoms << "guan" << "jiang" << "min" << "kou";
-        kingdom = kingdoms.at(qrand() % 4);
-
-        QStringList names;
-        foreach(const General *general, generals){
-            if(general->getKingdom() == kingdom)
-                names << general->objectName();
-        }
-
-        QList<ServerPlayer *> rebels;
-        foreach(ServerPlayer *player, m_players){
-            if(player->getRole() == "lord"){
-                setPlayerProperty(player, "general", "cbzhaoyun1");
-                continue;
-            }else if(player->getRole() == "loyalist"){
-                setPlayerProperty(player, "general", "cbzhangfei1");
-                continue;
-            }else{
-                rebels << player;
-                qShuffle(names);
-                QStringList choices = names.mid(0, 6), generals;
-                int i;
-                for(i=0; i<3; i++){
-                    QString name = askForGeneral(player, choices);
-                    generals << name;
-                    names.removeOne(name);
-                    choices.removeOne(name);
-                }
-                this->setTag(player->objectName(), QVariant(generals));
-            }
-        }
-        foreach(ServerPlayer *rebel, rebels){
-            QStringList generals = this->getTag(rebel->objectName()).toStringList();
-            setPlayerProperty(rebel, "general", generals.takeFirst());
-            this->setTag(rebel->objectName(), QVariant(generals));
-        }
-
-        startGame();
     }else{
         chooseGenerals();
         startGame();
@@ -2815,7 +2726,7 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
         return scenario->lordWelfare(player);
     else if(mode == "06_3v3")
         return player->isLord() || player->getRole() == "renegade";
-    else if(Config.EnableHegemony)
+    else if(ServerInfo.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){
         return false;

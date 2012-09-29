@@ -61,6 +61,10 @@ bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, retu
     return false;
 }
 
+void Scenario::Prerun(Room *, QList<ServerPlayer *>) const{ // if generalSelection == true then do
+    return;
+}
+
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     return AI::GetRelation(a, b);
 }

@@ -308,6 +308,34 @@ bool DusongScenario::setCardPiles(const Card *card) const{
     return card->inherits("Disaster");
 }
 
+void DusongScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
+    ServerPlayer *lord = players.first();
+    room->setPlayerProperty(lord, "general", "zhang1dong");
+
+    const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
+    const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
+
+    QList<const General *> generals = stdpack->findChildren<const General *>();
+    generals << ratpack->findChildren<const General *>();
+
+    QStringList names;
+    foreach(const General *general, generals){
+        names << general->objectName();
+    }
+
+    foreach(ServerPlayer *player, players){
+        if (player == lord)
+            continue;
+
+        qShuffle(names);
+        QStringList choices = names.mid(0, 3);
+        QString name = room->askForGeneral(player, choices);
+
+        room->setPlayerProperty(player, "general", name);
+        names.removeOne(name);
+    }
+}
+
 DusongScenario::DusongScenario()
     :Scenario("dusong")
 {
