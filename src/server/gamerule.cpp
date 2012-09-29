@@ -19,7 +19,7 @@ GameRule::GameRule(QObject *)
             << CardAsk << CardUseAsk << CardFinished
             << CardEffected << HpRecover << HpLost << AskForPeachesDone
             << AskForPeaches << Death << Dying << GameOverJudge
-            << PreDeath << AskForRetrial
+            << PreDeath << AskForRetrial << RewardAndPunish
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
             << DamageDone << DamageComplete << Predamaged
             << StartJudge << FinishJudge << Pindian;
@@ -763,8 +763,10 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
-            if(killer)
-                rewardAndPunish(killer, player);
+            if(killer){
+                QVariant data = QVariant::fromValue((PlayerStar)killer);
+                room->getThread()->trigger(RewardAndPunish, room, player, data);
+            }
             else if(player->hasSkill("zuohua"))
                 room->playSkillEffect("zuohua", 2);
 
@@ -787,7 +789,33 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             }
             break;
         }
+    case RewardAndPunish:{
+            PlayerStar killer = data.value<PlayerStar>();
+            PlayerStar victim = player;
 
+            if(killer->isDead())
+                return true;
+            if(Config.EnableReincarnation && victim->property("isDead").toBool())
+                return true;
+
+            if(room->getMode() == "06_3v3"){
+                if(Config.value("3v3/UsingNewMode", false).toBool())
+                    killer->drawCards(2);
+                else
+                    killer->drawCards(3);
+            }
+            else{
+                if(room->getMode() == "contract")
+                    return true;
+                if(victim->getRole() == "rebel" && killer != victim){
+                    killer->drawCards(3);
+                }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
+                    killer->throwAllEquips();
+                    killer->throwAllHandCards();
+                }
+            }
+            break;
+        }
     case StartJudge:{
             int card_id = room->drawCard();
 
@@ -931,36 +959,6 @@ void GameRule::changeGeneral1v1(ServerPlayer *player) const{
         room->setPlayerProperty(player, "chained", false);
 
     player->drawCards(4);
-}
-
-void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const{
-    if(killer->isDead())
-        return;
-
-    Room *room = victim->getRoom();
-    if(Config.EnableReincarnation && victim->property("isDead").toBool())
-        return;
-
-    QVariant data = QVariant::fromValue((PlayerStar)killer);
-    if(room->getThread()->trigger(RewardAndPunish, room, victim, data))
-        return;
-
-    if(room->getMode() == "06_3v3"){
-        if(Config.value("3v3/UsingNewMode", false).toBool())
-            killer->drawCards(2);
-        else
-            killer->drawCards(3);
-    }
-    else{
-        if(room->getMode() == "contract")
-            return;
-        if(victim->getRole() == "rebel" && killer != victim){
-            killer->drawCards(3);
-        }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
-            killer->throwAllEquips();
-            killer->throwAllHandCards();
-        }
-    }
 }
 
 QString GameRule::getWinner(ServerPlayer *victim) const{
