@@ -1294,7 +1294,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.chain || !damage.card || (!damage.card->inherits("Slash") && !damage.card->inherits("Duel")))
+        if(!damage.card || (!damage.card->inherits("Slash") && !damage.card->inherits("Duel")))
             return false;
 
         QStringList horses;
