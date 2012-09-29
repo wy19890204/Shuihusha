@@ -3320,7 +3320,7 @@ function SmartAI:hasSameEquip(card, player) -- obsolete
 end
 
 function SmartAI:useEquipCard(card, use)
-	if self:hasSkill("wuzhou") and not self:hasSameEquip(card) then
+	if self:hasSkill("wuzhou") and not self:hasSameEquip(card) and not self:isWeak() then
 		if self.player:getEquips():length() > 1 then return end
 		if self.player:getEquips():length() > 0 and math.random(1, 2) == 2 then return end
 	end
