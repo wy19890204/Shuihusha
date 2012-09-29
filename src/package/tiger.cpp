@@ -811,7 +811,7 @@ public:
             return false;
 
         if(room->askForSkillInvoke(shien, objectName(), data)){
-            room->playSkillEffect(objectName());
+            bool xoxo = false;
             for(int i = 0; i < 2; i++){
                 int card_id = room->drawCard();
                 room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
@@ -826,6 +826,10 @@ public:
                     room->throwCard(card_id, shien);
                     room->sendLog(lolo);
                 }else{
+                    if(!xoxo){
+                        room->playSkillEffect(objectName());
+                        xoxo = true;
+                    }
                     lolo.type = "$Longluo2";
                     shien->tag["LongluoCard"] = QVariant::fromValue(card);
                     room->sendLog(lolo);

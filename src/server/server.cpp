@@ -244,8 +244,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
     max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
-    anzhan_equal_checkbox->setVisible(Config.value("AnzhanEqual", false).toBool());
-    connect(anzhan_checkbox, SIGNAL(toggled(bool)), anzhan_equal_checkbox, SLOT(setVisible(bool)));
+    //anzhan_equal_checkbox->setVisible(Config.value("AnzhanEqual", false).toBool());  //hare package unlocks
+    //connect(anzhan_checkbox, SIGNAL(toggled(bool)), anzhan_equal_checkbox, SLOT(setVisible(bool)));
     reinca_unchange_checkbox->setVisible(Config.value("ReincaPersist", false).toBool());
     connect(reincarnation_checkbox, SIGNAL(toggled(bool)), reinca_unchange_checkbox, SLOT(setVisible(bool)));
 
