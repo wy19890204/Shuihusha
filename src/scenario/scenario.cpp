@@ -53,6 +53,10 @@ bool Scenario::generalSelection() const{
     return false;
 }
 
+bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
+    return false;
+}
+
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     return AI::GetRelation(a, b);
 }

@@ -24,6 +24,7 @@ public:
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
     virtual void onTagSet(Room *room, const QString &key) const = 0;
     virtual bool generalSelection() const;
+    virtual bool setCardPiles(const Card *card) const;
 
 protected:
     QString lord;

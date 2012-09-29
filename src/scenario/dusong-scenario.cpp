@@ -298,6 +298,12 @@ bool DusongScenario::generalSelection() const{
     return true;
 }
 
+bool DusongScenario::setCardPiles(const Card *card) const{
+    if(card->getPackage() != "standard_cards" && card->getPackage() != "plough")
+        return true;
+    return card->inherits("Disaster");
+}
+
 DusongScenario::DusongScenario()
     :Scenario("dusong")
 {
