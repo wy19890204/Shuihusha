@@ -612,7 +612,7 @@ public:
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
+    virtual bool trigger(TriggerEvent, ServerPlayer *player, QVariant &) const{
         if(room->getCurrent() == player && player->getPhase() == Player::Play){
             if(!player->hasEquip())
                 return false;

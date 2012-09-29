@@ -116,6 +116,7 @@ public:
 
     virtual int getPriority() const;
     virtual bool triggerable(const ServerPlayer *target) const;
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const;
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const = 0;
 
 protected:
