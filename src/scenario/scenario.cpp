@@ -53,16 +53,12 @@ bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp
     return player->isLord() && player->getRoom()->getPlayerCount() > 4;
 }
 
-bool Scenario::generalSelection() const{ // if need choose general freely, return true
-    return false;
+void Scenario::generalSelection(Room *) const{ // if need choose general freely, write code in this eara
+    return; // fix generals' mode
 }
 
 bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
     return false;
-}
-
-void Scenario::Prerun(Room *, QList<ServerPlayer *>) const{ // if generalSelection == true then do
-    return;
 }
 
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

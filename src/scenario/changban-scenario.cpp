@@ -691,11 +691,7 @@ bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool ChangbanScenario::generalSelection() const{
-    return true;
-}
-
-void ChangbanScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
+void ChangbanScenario::generalSelection(Room *room) const{
     QList<const General *> generals;
     QStringList packages;
     packages << "standard" << "rat" << "ox";
@@ -733,7 +729,7 @@ void ChangbanScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
     }
 
     QList<ServerPlayer *> rebels;
-    foreach(ServerPlayer *player, players){
+    foreach(ServerPlayer *player, room->getPlayers()){
         if(player->getRole() == "lord"){
             room->setPlayerProperty(player, "general", "cbzhaoyun1");
             continue;

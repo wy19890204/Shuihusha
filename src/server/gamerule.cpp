@@ -941,16 +941,9 @@ void GameRule::rewardAndPunish(ServerPlayer *killer, ServerPlayer *victim) const
     if(Config.EnableReincarnation && victim->property("isDead").toBool())
         return;
 
-    if(victim->hasSkill("zuohua")){
-        LogMessage log;
-        log.type = "#Zuohua";
-        log.from = victim;
-        log.to << killer;
-        log.arg = "zuohua";
-        room->playSkillEffect("zuohua", 1);
-        room->sendLog(log);
+    QVariant data = QVariant::fromValue((PlayerStar)killer);
+    if(room->getThread()->trigger(RewardAndPunish, room, victim, data))
         return;
-    }
 
     if(room->getMode() == "06_3v3"){
         if(Config.value("3v3/UsingNewMode", false).toBool())

@@ -37,10 +37,6 @@ void LegendScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
-bool LegendScenario::generalSelection() const{
-    return true;
-}
-
 int LegendScenario::getPlayerCount() const{
     return 8;
 }

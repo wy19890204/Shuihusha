@@ -604,7 +604,7 @@ public:
 class Wuzhou:public TriggerSkill{
 public:
     Wuzhou():TriggerSkill("wuzhou"){
-        events << CardLostDone << CardGotDone;
+        events << CardLostDone << CardGotDone << PhaseChange;
         frequency = Frequent;
     }
 

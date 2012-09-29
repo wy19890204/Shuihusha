@@ -298,18 +298,14 @@ bool DusongScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool DusongScenario::generalSelection() const{
-    return true;
-}
-
 bool DusongScenario::setCardPiles(const Card *card) const{
     if(card->getPackage() != "standard_cards" && card->getPackage() != "plough")
         return true;
     return card->inherits("Disaster");
 }
 
-void DusongScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
-    ServerPlayer *lord = players.first();
+void DusongScenario::generalSelection(Room *room) const{
+    ServerPlayer *lord = room->getPlayers().first();
     room->setPlayerProperty(lord, "general", "zhang1dong");
 
     const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
@@ -323,8 +319,8 @@ void DusongScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
         names << general->objectName();
     }
 
-    foreach(ServerPlayer *player, players){
-        if (player == lord)
+    foreach(ServerPlayer *player, room->getPlayers()){
+        if(player == lord)
             continue;
 
         qShuffle(names);

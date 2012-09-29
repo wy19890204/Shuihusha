@@ -199,10 +199,6 @@ bool ContractScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool ContractScenario::generalSelection() const{
-    return true;
-}
-
 class JointAttack: public TriggerSkill{
 public:
     JointAttack():TriggerSkill("joint_attack"){
