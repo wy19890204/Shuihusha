@@ -544,10 +544,6 @@ bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player 
     return to_select != Self;
 }
 
-bool LiejiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->throwCard(this, card_use.from);
     Slash *slash = new Slash(Card::NoSuit, 0);
