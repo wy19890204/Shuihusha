@@ -260,7 +260,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(!player->canSlash(effect.to, NULL, false))
+        if(!player->canSlash(effect.to, false))
             return false;
         if(player->hasFlag("triggered"))
             return false;

@@ -339,7 +339,7 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(target == NULL || target->isDead())
         return;
 
-    if(!card_use.from->canSlash(target, NULL, false))
+    if(!card_use.from->canSlash(target, false))
         return;
 
     const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", true, QVariant(), NonTrigger);

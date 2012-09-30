@@ -1082,7 +1082,7 @@ public:
         foreach(ServerPlayer *wusong, wusOng){
             if(player->isDead())
                 break;
-            if(player != wusong && wusong->canSlash(player, NULL, false) && !wusong->isKongcheng()){
+            if(player != wusong && wusong->canSlash(player, false) && !wusong->isKongcheng()){
                 const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + player->objectName(), true, data, CardDiscarded);
                 if(!card)
                     continue;

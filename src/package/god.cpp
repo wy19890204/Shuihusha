@@ -432,7 +432,7 @@ MeiyuCard::MeiyuCard(){
 }
 
 bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && Self->canSlash(to_select, NULL, false);
+    return targets.isEmpty() && Self->canSlash(to_select, false);
 }
 
 void MeiyuCard::onUse(Room *room, const CardUseStruct &card_use) const{
