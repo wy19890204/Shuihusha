@@ -1463,13 +1463,11 @@ QList<ServerPlayer *>Room::findPlayersBySkillName(const QString &skill_name, boo
 }
 
 ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool include_dead) const{
-    const QList<ServerPlayer *> &list = include_dead ? m_players : m_alivePlayers;
-    foreach(ServerPlayer *player, list){
-        if(player->hasSkill(skill_name))
-            return player;
-    }
-
-    return NULL;
+    QList<ServerPlayer *> list = findPlayersBySkillName(skill_name, include_dead);
+    if(list.isEmpty())
+        return NULL;
+    else
+        return list.first();
 }
 
 ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
@@ -1483,6 +1481,15 @@ ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
         }
     }
     return NULL;
+}
+
+QList<ServerPlayer *>Room::findOnlinePlayers() const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, m_alivePlayers){
+        if(player->getState() == "online")
+            list << player;
+    }
+    return list;
 }
 
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
@@ -2159,6 +2166,8 @@ void Room::chooseGenerals(){
                 lord_list = Sanguosha->getLords();
         else
             lord_list = Sanguosha->getRandomLords();
+        if(Config.EnableSame && the_lord->getState() != "online")
+            the_lord = findOnlinePlayers().first(); // crash this!
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
         if (!Config.EnableBasara)
@@ -2169,8 +2178,15 @@ void Room::chooseGenerals(){
                 if(!p->isLord())
                     p->setGeneralName(general);
             }
-
-            Config.Enable2ndGeneral = false;
+            if(Config.Enable2ndGeneral){
+                QStringList bans;
+                bans << general;
+                QSet<QString> banset = bans.toSet();
+                lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt(), banset);
+                general = askForGeneral(the_lord, lord_list);
+                foreach(ServerPlayer *p, m_players)
+                    p->setGeneral2Name(general);
+            }
             return;
         }
     }

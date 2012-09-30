@@ -550,9 +550,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(!new_general.isEmpty())
                     changeGeneral1v1(player);
             }
+            DamageStruct damage = data.value<DamageStruct>();
             //nanastars
             if(!Config.BanPackages.contains("events")){
-                DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
                 if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
                     if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
@@ -576,11 +576,17 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
 
+            if(Config.EnableEndless){
+                if(damage.from)
+                    damage.from->gainMark("@endless", damage.damage);
+                else
+                    damage.to->gainMark("@endless", damage.damage);
+            }
+
             bool chained = player->isChained();
             if(!chained)
                 break;
 
-            DamageStruct damage = data.value<DamageStruct>();
             if(damage.nature != DamageStruct::Normal){
                 room->setPlayerProperty(player, "chained", false);
 
@@ -603,13 +609,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         room->damage(chain_damage);
                     }
                 }
-            }
-
-            if(Config.EnableEndless){
-                if(damage.from)
-                    damage.from->gainMark("@endless", damage.damage);
-                else
-                    damage.to->gainMark("@endless", damage.damage);
             }
 
             break;
@@ -745,10 +744,11 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                 if(player->getHp() <= 0)
                     room->setPlayerProperty(player, "hp", 1);
-                if(killer && !player->isKongcheng())
-                    killer->gainMark("@endless", qMin(3, player->getHandcardNum()));
-                if(player->getMark("@endless") > 0)
+                if(player->getMark("@endless") > 0){
+                    if(killer)
+                        killer->gainMark("@endless", player->getMark("@endless") / 2);
                     player->loseMark("@endless", player->getMark("@endless") / 2);
+                }
                 return true;
             }
 
