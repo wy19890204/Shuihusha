@@ -24,7 +24,7 @@ return {
 	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启",
-	["cv:ubuntenkei"] = "佚名",
+	["cv:ubuntenkei"] = "新月冰冰",
 	["coder:ubuntenkei"] = "宇文天启 [测试专用]",
 	["illustrator:ubuntenkei"] = "烨子风暴",
 	["ubunb"] = "幻影",
