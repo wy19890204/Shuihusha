@@ -123,30 +123,3 @@ sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
 	end
 	use.card=card
 end
-
--- jiayao
-sgs.ai_skill_invoke["jiayao"] = true
-
--- sheyan
-local sheyan_skill = {}
-sheyan_skill.name = "sheyan"
-table.insert(sgs.ai_skills, sheyan_skill)
-sheyan_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("SheyanCard") then return end
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-	local card
-	self:sortByUseValue(cards, true)
-	for _, acard in ipairs(cards) do
-		if acard:getSuit() == sgs.Card_Heart then
-			card = acard
-			break
-		end
-	end
-	if card then
-		return sgs.Card_Parse("@SheyanCard=" .. card:getEffectiveId())
-	end
-end
-sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
-	use.card=card
-end
