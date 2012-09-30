@@ -11,6 +11,34 @@ public:
     HarePackage();
 };
 
+class SixiangCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE SixiangCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class LinmoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LinmoCard();
+
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class ZhaixingCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ZhaixingCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class BinggongCard: public SkillCard{
     Q_OBJECT
 
@@ -20,14 +48,12 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class FeiqiangCard: public SkillCard{
+class SheyanCard: public SkillCard{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE FeiqiangCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    Q_INVOKABLE SheyanCard();
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 #endif // HAREPACKAGE_H

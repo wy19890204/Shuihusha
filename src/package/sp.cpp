@@ -229,72 +229,6 @@ public:
     }
 };
 /*
-class Shemi: public TriggerSkill{
-public:
-    Shemi():TriggerSkill("shemi"){
-        events << PhaseChange << TurnedOver;
-    }
-
-    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
-        if(e == PhaseChange){
-            if(emperor->getPhase() == Player::Discard &&
-               emperor->askForSkillInvoke(objectName(), data)){
-                emperor->turnOver();
-                return true;
-            }
-        }
-        else{
-            if(!emperor->hasFlag("NongQ")){
-                int index = emperor->faceUp() ? 2: 1;
-                room->playSkillEffect(objectName(), index);
-            }
-            int x = emperor->getLostHp();
-            x = qMax(qMin(x,2),1);
-            emperor->drawCards(x);
-        }
-        return false;
-    }
-};
-
-class Lizheng: public ClientSkill{
-public:
-    Lizheng():ClientSkill("lizheng"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(to->hasSkill(objectName()) && !to->faceUp())
-            return +1;
-        else
-            return 0;
-    }
-};
-
-class Nongquan:public PhaseChangeSkill{
-public:
-    Nongquan():PhaseChangeSkill("nongquan$"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan" && !target->hasLordSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *otherguan) const{
-        Room *room = otherguan->getRoom();
-        if(otherguan->getPhase() != Player::Draw)
-            return false;
-        ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
-           && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            room->setPlayerFlag(head, "NongQ");
-            head->turnOver();
-            room->setPlayerFlag(head, "-NongQ");
-            return true;
-        }
-        return false;
-    }
-};
-
 JiebaoCard::JiebaoCard(){
 }
 
@@ -668,11 +602,6 @@ SPPackage::SPPackage()
     related_skills.insertMulti("exterminate", "#@kacha-1");
 
 /*
-    General *zhaoji = new General(this, "zhaoji$", "guan", 3);
-    zhaoji->addSkill(new Shemi);
-    zhaoji->addSkill(new Lizheng);
-    zhaoji->addSkill(new Nongquan);
-
     General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
