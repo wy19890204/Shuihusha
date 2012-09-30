@@ -22,7 +22,7 @@ config = {
 	"Rat",
 	"Ox",
 	"Tiger",
---	"Hare",
+	"Hare",
 --[["BWQZ",
 	"QLFD",
 	"ZCYN",

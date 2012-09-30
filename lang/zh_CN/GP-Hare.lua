@@ -1,7 +1,7 @@
 -- ZhechongYannan Shuihusha part 7.
 
 return {
-	["CGDK"] = "长歌当哭",
+	["hare"] = "秃纸",
 
 	["#haosiwen"] = "井木犴", -- guan 4hp (zcyn)
 	["haosiwen"] = "郝思文",

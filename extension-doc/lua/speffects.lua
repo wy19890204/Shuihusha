@@ -7,7 +7,7 @@ animate = sgs.CreateTriggerSkill{
 	on_trigger = function(self, event, player, data)
 		local room = player:getRoom()
 		local choice= data:toString():split(":")
-		if choice[1]=="SkillInvoke" and choice[3]=="yes" then
+		if choice[1]=="skillInvoke" and choice[3]=="yes" then
 			local skillname=choice[2]
 			if (sgs.Sanguosha:translate("*"..skillname) ~="*"..skillname) then
 				for _, p in sgs.qlist(room:getAllPlayers()) do
