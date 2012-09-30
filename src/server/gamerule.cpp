@@ -165,6 +165,8 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         room->askForUseCard(player, "Jiefachang", "@jiefachang");
                 }
             }
+
+            // zhuan shi
             if(Config.EnableReincarnation){
                 int count = Sanguosha->getPlayerCount(room->getMode());
                 if(count < 4)
@@ -183,7 +185,13 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
 
                         if(!Config.value("ReincaPersist", false).toBool()){
                             QString oldname = next->getGeneralName();
-                            QString newname = Sanguosha->getRandomGenerals(1).first();
+                            QStringList names;
+                            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                                names << tmp->getGeneralName();
+                                if(tmp->getGeneral2())
+                                    names << tmp->getGeneral2Name();
+                            }
+                            QString newname = Sanguosha->getRandomGenerals(1, names).first();
                             room->transfigure(next, newname, false, true, oldname);
                         }
                         if(next->getMaxHp() == 0)

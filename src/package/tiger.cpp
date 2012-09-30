@@ -542,7 +542,7 @@ bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 bool LiejiCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
+    return targets.length() >= 1;
 }
 
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{

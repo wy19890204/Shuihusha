@@ -1081,7 +1081,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
 const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
                              const QVariant &data, TriggerEvent trigger_event){
-    askForCard(player, pattern, prompt, false, data, trigger_event);
+    return askForCard(player, pattern, prompt, false, data, trigger_event);
 }
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
