@@ -1,12 +1,8 @@
-#include "general.h"
-#include "standard.h"
 #include "skill.h"
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
-#include "serverplayer.h"
 #include "standard-generals.h"
-#include "room.h"
 
 GanlinCard::GanlinCard(){
     will_throw = false;

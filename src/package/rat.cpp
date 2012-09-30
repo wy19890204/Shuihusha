@@ -3,7 +3,6 @@
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
-#include "room.h"
 #include "maneuvering.h"
 
 class Kong1iang: public TriggerSkill{

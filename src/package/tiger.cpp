@@ -1,10 +1,7 @@
 #include "tiger.h"
 #include "skill.h"
-//#include "standard.h"
 #include "plough.h"
-//#include "maneuvering.h"
 #include "client.h"
-#include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
 /*

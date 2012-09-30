@@ -4,7 +4,6 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "ai.h"
 
 BaoquanCard::BaoquanCard(){
     mute = true;

@@ -1,9 +1,7 @@
 #include "hare.h"
-//#include "general.h"
 #include "skill.h"
-//#include "room.h"
 #include "carditem.h"
-//#include "maneuvering.h"
+#include "maneuvering.h"
 #include "clientplayer.h"
 #include "engine.h"
 

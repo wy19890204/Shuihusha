@@ -763,10 +763,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
-            if(killer){
-                //QVariant data = QVariant::fromValue((PlayerStar)killer);
+            if(killer)
                 room->getThread()->trigger(RewardAndPunish, room, player, data);
-            }
             else if(player->hasSkill("zuohua"))
                 room->playSkillEffect("zuohua", 2);
 
