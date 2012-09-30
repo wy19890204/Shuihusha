@@ -1050,8 +1050,13 @@ public:
         frequency = Compulsory;
     }
 
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->hasSkill(objectName());
+    }
+
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *victim, QVariant &data) const{
-        ServerPlayer *killer = data.value<PlayerStar>();
+        DamageStar damage = data.value<DamageStar>();
+        ServerPlayer *killer = damage->from;
         LogMessage log;
         log.type = "#Zuohua";
         log.from = victim;

@@ -1,14 +1,14 @@
-#ifndef XZDDPACKAGE_H
-#define XZDDPACKAGE_H
+#ifndef HAREPACKAGE_H
+#define HAREPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class XZDDPackage: public Package{
+class HarePackage: public Package{
     Q_OBJECT
 
 public:
-    XZDDPackage();
+    HarePackage();
 };
 
 class BinggongCard: public SkillCard{
@@ -30,4 +30,4 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-#endif // XZDDPACKAGE_H
+#endif // HAREPACKAGE_H

@@ -1,4 +1,4 @@
-#include "xzzd.h"
+#include "hare.h"
 #include "general.h"
 #include "skill.h"
 #include "room.h"
@@ -231,8 +231,8 @@ public:
     }
 };
 
-XZDDPackage::XZDDPackage()
-    :Package("XZDD"){
+HarePackage::HarePackage()
+    :Package("hare"){
 
     General *weidingguo = new General(this, "weidingguo", "jiang", 3);
     weidingguo->addSkill(new Fenhui);
@@ -249,4 +249,4 @@ XZDDPackage::XZDDPackage()
     addMetaObject<FeiqiangCard>();
 }
 
-ADD_PACKAGE(XZDD)
+ADD_PACKAGE(Hare)

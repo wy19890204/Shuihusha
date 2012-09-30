@@ -273,10 +273,6 @@ function SmartAI:useCardProvistore(provistore, use)
 			return
 		end
 	end
-	self:sort(self.friends, "hp")
-	if use.to then
-		use.to:append(self.friends[1])
-	end
 end
 
 sgs.ai_card_intention.Provistore = -80

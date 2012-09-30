@@ -23,8 +23,7 @@ config = {
 	"Ox",
 	"Tiger",
 --	"Hare",
---[[	"XZDD",
-	"BWQZ",
+--[["BWQZ",
 	"QLFD",
 	"ZCYN",
 	"YBYT",
@@ -40,7 +39,7 @@ config = {
 	scene_names = {
 	"Dusong",
 	"Couple",
---	"Changban",
+	"Changban",
 	"Contract",
 --[[	"Zombie",
 	"Legend",
