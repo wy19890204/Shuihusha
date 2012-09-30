@@ -247,7 +247,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
             if(player->isLord())
                 setGameProcess(room);
-/* //hare package unlock
+
             if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
                 LogMessage log;
                 log.type = "#AnzhanShuffle";
@@ -276,7 +276,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
                 room->setTag("AnzhanInit", true);
             }
-*/
+
             if(Config.EnableReincarnation){
                 int count = Sanguosha->getPlayerCount(room->getMode());
                 if(count > 3)
