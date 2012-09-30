@@ -56,9 +56,6 @@ sgs.ai_filterskill_filter["paohong"] = function(card, card_place)
 	if card:objectName() == "slash" and card:isBlack() then return ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id) end
 end
 
--- hengchong
-sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
-
 -- tuzai&longjiao
 sgs.ai_skill_invoke["tuzai"] = true
 sgs.ai_skill_invoke["longjiao"] = true

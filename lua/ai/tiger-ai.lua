@@ -143,15 +143,19 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	local basiccard = self:getCard("BasicCard")
 	if not basiccard or self.player:getHandcardNum() - 1 > self.player:getMaxCards() then return "." end
 	enemies = self:getEnemies()
-	if #enemies < 2 then return "." end
+	if #enemies < 2 and self.room:getPlayers():length() > 2 then return "." end
 	self:sort(enemies)
 
 	local cards = sgs.QList2Table(self.player:getCards("h"))
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
-			return "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. enemies[1]:objectName() .. "+" .. enemies[2]:objectName()
+			local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
+					.. enemies[1]:objectName()
+			if #enemies > 1 then
+				src = src .. "+" .. enemies[2]:objectName()
+			end
+			return src
 		end
 	end
 end
@@ -159,7 +163,7 @@ end
 -- tianhu
 sgs.tianhu_keep_value =
 {
-	EquipCard = 1
+	EquipCard = -2
 }
 
 -- wuzhou
