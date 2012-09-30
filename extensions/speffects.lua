@@ -1,10 +1,8 @@
-module("extensions.texiao", package.seeall)
-extension = sgs.Package("texiao")
-
-texiaoanjiang  = sgs.General(extension, 'texiaoanjiang', 'qun', 3, true, true,true)
+module("extensions.speffects", package.seeall)
+extension = sgs.Package("speffects")
 
 animate = sgs.CreateTriggerSkill{
-	name = "#animate",
+	name = "animate",
 	events = sgs.ChoiceMade,
 	on_trigger = function(self, event, player, data)
 		local room = player:getRoom()
@@ -27,7 +25,9 @@ animate = sgs.CreateTriggerSkill{
 	end,
 }
 
-texiaoanjiang:addSkill(animate)
+local skills = sgs.SkillList()
+if not sgs.Sanguosha:getSkill("animate") then skills:append(animate) end
+sgs.Sanguosha:addSkills(skills)
 
 --[[
 特效原则， 
@@ -55,11 +55,7 @@ image\system\emotion\jianxiong\5.png
 
 ]]
 
-
-
 sgs.LoadTranslationTable {
-	["texiao"] = "特效包",
-	
-	
+	["speffects"] = "特效包",
 }
 
