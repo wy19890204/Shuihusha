@@ -191,8 +191,11 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                                 if(tmp->getGeneral2())
                                     names << tmp->getGeneral2Name();
                             }
-                            QString newname = Sanguosha->getRandomGenerals(1, names).first();
-                            room->transfigure(next, newname, false, true, oldname);
+                            if(!names.isEmpty()){
+                                QSet<QString> names_set = names.toSet();
+                                QString newname = Sanguosha->getRandomGenerals(1, names_set).first();
+                                room->transfigure(next, newname, false, true, oldname);
+                            }
                         }
                         if(next->getMaxHp() == 0)
                             room->setPlayerProperty(next, "maxhp", 1);

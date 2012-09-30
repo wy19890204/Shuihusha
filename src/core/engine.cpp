@@ -585,7 +585,8 @@ QStringList Engine::getLimitedGeneralNames() const{
     return general_names;
 }
 
-QStringList Engine::getrandomgenerals(QStringList all_generals, int count, const QSet<QString> &ban_set) const{
+QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) const{
+    QStringList all_generals = getLimitedGeneralNames();
     QSet<QString> general_set = all_generals.toSet();
 
     Q_ASSERT(all_generals.count() >= count);
@@ -607,20 +608,6 @@ QStringList Engine::getrandomgenerals(QStringList all_generals, int count, const
     Q_ASSERT(general_list.count() == count);
 
     return general_list;
-}
-
-QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) const{
-    QStringList all_generals = getLimitedGeneralNames();
-    return getrandomgenerals(all_generals, count, ban_set);
-}
-
-QStringList Engine::getRandomGenerals(int count, QStringList forbids, const QSet<QString> &ban_set) const{
-    QStringList all_generals; // Can not field generals
-    foreach(QString general, getLimitedGeneralNames()){
-        if(!forbids.contains(general))
-            all_generals << general;
-    }
-    return getrandomgenerals(all_generals, count, ban_set);
 }
 
 QList<int> Engine::getRandomCards() const{

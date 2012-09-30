@@ -77,7 +77,6 @@ public:
     QStringList getLords() const;
     QStringList getRandomLords() const;
     QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
-    QStringList getRandomGenerals(int count, QStringList forbids, const QSet<QString> &ban_set = QSet<QString>()) const;
     QList<int> getRandomCards() const;
     QString getRandomGeneralName() const;
     QStringList getLimitedGeneralNames() const;
@@ -98,8 +97,6 @@ private:
     QMap<QString, QString> modes;
     QMap<QString, const CardPattern *> patterns;
     QMultiMap<QString, QString> related_skills;
-
-    QStringList getrandomgenerals(QStringList all_generals, int count, const QSet<QString> &ban_set) const;
 
     // special skills
     QList<const ClientSkill *> client_skills;
