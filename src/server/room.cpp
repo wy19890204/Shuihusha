@@ -1079,6 +1079,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     return card;
 }
 
+const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
+                             const QVariant &data, TriggerEvent trigger_event){
+    return askForCard(player, pattern, prompt, false, data, trigger_event);
+}
+
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
