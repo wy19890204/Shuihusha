@@ -622,6 +622,9 @@ int Player::getMark(const QString &mark) const{
 }
 
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
+    if(slash == NULL)
+        slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
+
     if(isProhibited(other, slash))
         return false;
 

@@ -83,9 +83,9 @@ public:
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
 
             const Card *first_jink = NULL, *second_jink = NULL;
-            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), false, QVariant(), JinkUsed);
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), QVariant(), JinkUsed);
             if(first_jink)
-                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), false, QVariant(), JinkUsed);
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), QVariant(), JinkUsed);
 
             Card *jink = NULL;
             if(first_jink && second_jink){
@@ -761,7 +761,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->playSkillEffect("yuanpei", qrand() % 2 + 1);
-    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), false, QVariant::fromValue(effect), NonTrigger);
+    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.from->drawCards(1);

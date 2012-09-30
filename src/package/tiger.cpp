@@ -949,7 +949,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
         if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
-            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), data, NonTrigger);
             if(equip){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 effect.from->obtainCard(equip);

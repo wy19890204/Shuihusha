@@ -1079,6 +1079,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     return card;
 }
 
+const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
+                             const QVariant &data, TriggerEvent trigger_event){
+    askForCard(player, pattern, prompt, false, data, trigger_event);
+}
+
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
@@ -3080,7 +3085,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
         ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
         if(sour && sour != getCurrent()){
-            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
+            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
             if(fight){
                 sour->playCardEffect("@jiangjieshi2");
                 LogMessage log;
