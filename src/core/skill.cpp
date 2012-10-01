@@ -236,7 +236,7 @@ int MasochismSkill::getPriority() const{
     return -1;
 }
 
-bool MasochismSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+bool MasochismSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
     DamageStruct damage = data.value<DamageStruct>();
 
     if(player->isAlive())
@@ -251,7 +251,7 @@ PhaseChangeSkill::PhaseChangeSkill(const QString &name)
     events << PhaseChange;
 }
 
-bool PhaseChangeSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
+bool PhaseChangeSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &) const{
     bool skipped = onPhaseChange(player);
     if(skipped)
         player->skip(player->getPhase());
@@ -265,7 +265,7 @@ DrawCardsSkill::DrawCardsSkill(const QString &name)
     events << DrawNCards;
 }
 
-bool DrawCardsSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+bool DrawCardsSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
     int n = data.toInt();
     data = getDrawNum(player, n);
     return false;
@@ -277,7 +277,7 @@ SlashBuffSkill::SlashBuffSkill(const QString &name)
     events << SlashProceed;
 }
 
-bool SlashBuffSkill::trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+bool SlashBuffSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
     if(data.canConvert<SlashEffectStruct>()){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
@@ -298,7 +298,7 @@ bool GameStartSkill::triggerable(const ServerPlayer *target) const{
     return target->hasSkill(objectName());
 }
 
-bool GameStartSkill::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &) const{
+bool GameStartSkill::trigger(TriggerEvent event, Room*, ServerPlayer *player, QVariant &) const{
     if (event == GameStart)
         onGameStart(player);
     else

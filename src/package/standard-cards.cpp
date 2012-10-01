@@ -200,7 +200,7 @@ public:
                     draw_card = true;
                 else{
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
-                    const Card *card = room->askForCard(effect.to, ".", prompt, false, QVariant(), CardDiscarded);
+                    const Card *card = room->askForCard(effect.to, ".", prompt, QVariant(), CardDiscarded);
                     if(card){
                         room->throwCard(card, effect.to);
                     }else
@@ -260,12 +260,12 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(!player->canSlash(effect.to, NULL, false))
+        if(!player->canSlash(effect.to, false))
             return false;
         if(player->hasFlag("triggered"))
             return false;
 
-        const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), false, QVariant(), NonTrigger);
+        const Card *card = room->askForCard(player, "slash", "blade-slash:" + effect.to->objectName(), QVariant(), NonTrigger);
         if(card){
             if(qrand() % 2 == 1)
                 player->playCardEffect("Eblade2", "weapon");
@@ -387,7 +387,7 @@ public:
 
         if(player->hasFlag("triggered"))
             return false;
-        CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName(), false, data, CardDiscarded);
+        CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName(), data, CardDiscarded);
         if(card){
             QList<int> card_ids = card->getSubcards();
             foreach(int card_id, card_ids){
@@ -604,7 +604,7 @@ SavageAssault::SavageAssault(Suit suit, int number)
 
 void SavageAssault::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
-    const Card *slash = room->askForCard(effect.to, "slash", "savage-assault-slash:" + effect.from->objectName(), false, QVariant::fromValue(effect));
+    const Card *slash = room->askForCard(effect.to, "slash", "savage-assault-slash:" + effect.from->objectName(), QVariant::fromValue(effect));
     if(slash)
         room->setEmotion(effect.to, "killer");
     else{
@@ -640,15 +640,15 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         log.arg = "lianzhu";
         log.to << effect.to;
         room->sendLog(log);
-        first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
+        first_jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), QVariant::fromValue(effect));
         if(first_jink)
-            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
+            second_jink = room->askForCard(effect.to, "jink", "@lianzhu2jink:" + effect.from->objectName(), QVariant::fromValue(effect));
 
         if(first_jink && second_jink)
             jink = first_jink;
     }
     else
-        jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), false, QVariant::fromValue(effect));
+        jink = room->askForCard(effect.to, "jink", "archery-attack-jink:" + effect.from->objectName(), QVariant::fromValue(effect));
     if(jink)
         room->setEmotion(effect.to, "jink");
     else{
@@ -734,7 +734,7 @@ void Collateral::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     if(on_effect){
         QString prompt = QString("collateral-slash:%1:%2")
                          .arg(source->objectName()).arg(victims.first()->objectName());
-        const Card *slash = room->askForCard(killer, "slash", prompt, false, QVariant(), NonTrigger);
+        const Card *slash = room->askForCard(killer, "slash", prompt, QVariant(), NonTrigger);
         if (victims.first()->isDead()){
             if (source->isDead()){
                 if(killer->isAlive() && killer->getWeapon()){

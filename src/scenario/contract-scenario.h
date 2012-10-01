@@ -16,7 +16,7 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual void onTagSet(Room *room, const QString &key) const;
-    virtual bool generalSelection() const;
+    virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
     static ServerPlayer *getComrade(const ServerPlayer *player);

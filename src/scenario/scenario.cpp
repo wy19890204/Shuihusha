@@ -1,5 +1,7 @@
 #include "scenario.h"
 #include "engine.h"
+#include "settings.h"
+#include <QFile>
 
 Scenario::Scenario(const QString &name)
     :Package(name), rule(NULL)
@@ -49,8 +51,28 @@ void Scenario::assign(QStringList &generals, QStringList &roles) const{
     }
 }
 
-bool Scenario::generalSelection() const{
+QString Scenario::setBackgroundMusic() const{
+    return QString("audio/bgmusic/%1.mp3").arg(objectName());
+}
+
+bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp +1 on game start, return true
+    return player->isLord() && player->getRoom()->getPlayerCount() > 4;
+}
+
+void Scenario::generalSelection(Room *) const{ // if need choose general freely, write code in this eara
+    return; // fix generals' mode
+}
+
+bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
     return false;
+}
+
+void Scenario::run(Room *room) const{ // RoomThread::run(){
+    forever {
+        room->getThread()->trigger(TurnStart, room->getCurrent());
+        if (room->isFinished()) break;
+        room->setCurrent(room->getCurrent()->getNextAlive());
+    }
 }
 
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

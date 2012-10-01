@@ -414,7 +414,7 @@ int Engine::getPlayerCount(const QString &mode) const{
             return rx.capturedTexts().first().toInt();
     }else{
         // scenario mode
-        const Scenario *scenario = scenarios.value(mode, NULL);
+        const Scenario *scenario = getScenario(mode);
         if(scenario)
             return scenario->getPlayerCount();
     }
@@ -623,15 +623,13 @@ QList<int> Engine::getRandomCards() const{
     foreach(Card *card, cards){
         card->clearFlags();
 
+        const Scenario *scenario = getScenario(Config.GameMode);
+        if(scenario)
+            if(scenario->setCardPiles(card))
+                continue;
+
         if(exclude_disaters && card->inherits("Disaster"))
             continue;
-
-        if(Config.GameMode == "dusong"){
-            if(card->getPackage() != "standard_cards" && card->getPackage() != "plough")
-                continue;
-            if(card->inherits("Disaster"))
-                continue;
-        }
 
         if(card->getPackage() == "Special3v3" && using_new_3v3){
             list << card->getId();

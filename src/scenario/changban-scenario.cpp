@@ -660,6 +660,87 @@ private:
     mutable jmp_buf env;
 };
 
+void ChangbanScenario::run(Room *room) const{
+    RoomThread *thread = room->getThread();
+    ServerPlayer *cbzhaoyun = room->getLord();
+    ServerPlayer *cbzhangfei = cbzhaoyun;
+    foreach(ServerPlayer *p, room->getPlayers()){
+        if(p->getRole() == "loyalist")
+            cbzhangfei = p;
+    }
+
+    if(cbzhaoyun->getGeneralName() == "cbzhaoyun1"){
+        QList<ServerPlayer *> league = room->getPlayers();
+        league.removeOne(cbzhaoyun);
+        league.removeOne(cbzhangfei);
+
+        forever{
+            foreach(ServerPlayer *player, league)
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+            int i = 0;
+            foreach(ServerPlayer *player, league){
+                room->setCurrent(player);
+                thread->trigger(TurnStart, room->getCurrent());
+
+                if(!player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "actioned");
+
+                if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                    goto cbsecond_phase;
+
+                if(player->isAlive()){
+                    if(i % 2 == 0){
+                        room->setCurrent(cbzhaoyun);
+                        thread->trigger(TurnStart, room->getCurrent());
+
+                        if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                            goto cbsecond_phase;
+                    }else{
+                        room->setCurrent(cbzhangfei);
+                        thread->trigger(TurnStart, room->getCurrent());
+
+                        if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                            goto cbsecond_phase;
+                    }
+                    i++;
+                }
+            }
+
+            if(i == 1){
+                room->setCurrent(cbzhangfei);
+                thread->trigger(TurnStart, room->getCurrent());
+
+                if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                    goto cbsecond_phase;
+            }
+        }
+    }else{
+        cbsecond_phase:
+        foreach(ServerPlayer *player, room->getPlayers()){
+            if(player != cbzhaoyun){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+                if(player->getPhase() != Player::NotActive){
+                    PhaseChangeStruct phase;
+                    phase.from = player->getPhase();
+                    room->setPlayerProperty(player, "phase", "not_active");
+                    phase.to = player->getPhase();
+                    QVariant data = QVariant::fromValue(phase);
+                    thread->trigger(PhaseChange, player, data);
+                }
+            }
+        }
+        room->setCurrent(cbzhaoyun);
+        forever{
+            thread->trigger(TurnStart, room->getCurrent());
+            room->setCurrent(room->getCurrent()->getNext());
+        }
+    }
+}
+
 bool ChangbanScenario::exposeRoles() const{
     return true;
 }
@@ -687,8 +768,74 @@ void ChangbanScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
-bool ChangbanScenario::generalSelection() const{
-    return true;
+bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
+    return false;
+}
+
+void ChangbanScenario::generalSelection(Room *room) const{
+    QList<const General *> generals;
+    QStringList packages;
+    packages << "standard" << "rat" << "ox";
+
+    foreach(const Package *package, Sanguosha->findChildren<const Package *>()){
+        if(packages.contains(package->objectName()))
+            generals << package->findChildren<const General *>();
+        else
+            continue;
+    }
+
+    // remove hidden generals
+    QMutableListIterator<const General *> itor(generals);
+    while(itor.hasNext()){
+        itor.next();
+
+        if(itor.value()->isHidden())
+            itor.remove();
+    }
+
+    QStringList ban_list;
+    ban_list << "zuoci" << "zuocif" << "yuji" ;
+    foreach(QString name, ban_list)
+        generals.removeOne(Sanguosha->getGeneral(name));
+
+    QString kingdom = "guan";
+    QStringList kingdoms;
+    kingdoms << "guan" << "jiang" << "min" << "kou";
+    kingdom = kingdoms.at(qrand() % 4);
+
+    QStringList names;
+    foreach(const General *general, generals){
+        if(general->getKingdom() == kingdom)
+            names << general->objectName();
+    }
+
+    QList<ServerPlayer *> rebels;
+    foreach(ServerPlayer *player, room->getPlayers()){
+        if(player->getRole() == "lord"){
+            room->setPlayerProperty(player, "general", "cbzhaoyun1");
+            continue;
+        }else if(player->getRole() == "loyalist"){
+            room->setPlayerProperty(player, "general", "cbzhangfei1");
+            continue;
+        }else{
+            rebels << player;
+            qShuffle(names);
+            QStringList choices = names.mid(0, 6), generals;
+            int i;
+            for(i=0; i<3; i++){
+                QString name = room->askForGeneral(player, choices);
+                generals << name;
+                names.removeOne(name);
+                choices.removeOne(name);
+            }
+            room->setTag(player->objectName(), QVariant(generals));
+        }
+    }
+    foreach(ServerPlayer *rebel, rebels){
+        QStringList generals = room->getTag(rebel->objectName()).toStringList();
+        room->setPlayerProperty(rebel, "general", generals.takeFirst());
+        room->setTag(rebel->objectName(), QVariant(generals));
+    }
 }
 
 ChangbanScenario::ChangbanScenario()

@@ -1,10 +1,7 @@
 #include "tiger.h"
 #include "skill.h"
-#include "standard.h"
 #include "plough.h"
-#include "maneuvering.h"
 #include "client.h"
-#include "clientplayer.h"
 #include "carditem.h"
 #include "engine.h"
 /*
@@ -809,18 +806,16 @@ public:
         if(room->askForSkillInvoke(shien, objectName(), data)){
             bool xoxo = false;
             for(int i = 0; i < 2; i++){
-                int card_id = room->drawCard();
-                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+                CardStar card = room->peek(); // get the first card of drawpile(not draw)
                 room->getThread()->delay();
 
-                CardStar card = Sanguosha->getCard(card_id);
                 LogMessage lolo;
                 lolo.from = shien;
                 lolo.card_str = card->getEffectIdString();
                 if(!card->inherits("BasicCard")){
                     lolo.type = "$Longluo1";
-                    room->throwCard(card_id, shien);
                     room->sendLog(lolo);
+                    room->throwCard(card);
                 }else{
                     if(!xoxo){
                         room->playSkillEffect(objectName());
@@ -828,11 +823,12 @@ public:
                     }
                     lolo.type = "$Longluo2";
                     shien->tag["LongluoCard"] = QVariant::fromValue(card);
-                    room->sendLog(lolo);
                     ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
                     if(!target)
                         target = shien;
-                    room->obtainCard(target, card_id);
+                    room->obtainCard(target, card);
+                    lolo.to << target;
+                    room->sendLog(lolo);
                     shien->tag.remove("LongluoCard");
                 }
             }
@@ -948,7 +944,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardEffectStruct effect = data.value<CardEffectStruct>();
         if(effect.card->isNDTrick() && effect.from->getGeneral()->isFemale() && player->askForSkillInvoke(objectName(), data)){
-            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), false, data, NonTrigger);
+            const Card *equip = room->askForCard(player, "EquipCard", "@tanse:" + effect.from->objectName(), data, NonTrigger);
             if(equip){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 effect.from->obtainCard(equip);
@@ -1199,85 +1195,6 @@ public:
     }
 };
 
-class Qiangqu:public TriggerSkill{
-public:
-    Qiangqu():TriggerSkill("qiangqu"){
-        events << DamageProceed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
-            && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
-            int card_id = room->askForCardChosen(damage.from, damage.to, "he", objectName());
-            RecoverStruct re;
-            re.card = Sanguosha->getCard(card_id);
-            re.who = player;
-            room->obtainCard(player, card_id, false);
-
-            LogMessage log;
-            log.from = player;
-            log.type = "#Qiangqu";
-            log.to << damage.to;
-            room->sendLog(log);
-            room->recover(damage.to, re, true);
-            room->playSkillEffect(objectName());
-            room->recover(damage.from, re, true);
-            return true;
-        }
-        return false;
-    }
-};
-
-class Huatian:public TriggerSkill{
-public:
-    Huatian():TriggerSkill("huatian"){
-        events << Damaged << HpRecovered;
-    }
-
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == Damaged){
-            DamageStruct damage = data.value<DamageStruct>();
-            for(int i = 0; i < damage.damage; i++){
-                QList<ServerPlayer *> wounders;
-                foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to)){
-                    if(tmp->isWounded())
-                        wounders << tmp;
-                }
-                if(!wounders.isEmpty()){
-                    room->setPlayerMark(player, "HBTJ", 1);
-                    if(!damage.to->askForSkillInvoke(objectName())){
-                        room->setPlayerMark(player, "HBTJ", 0);
-                        break;
-                    }
-                    ServerPlayer *target = room->askForPlayerChosen(player, wounders, objectName());
-                    room->setPlayerMark(player, "HBTJ", 0);
-                    RecoverStruct recovvv;
-                    recovvv.who = player;
-                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                    room->recover(target, recovvv, true);
-                }
-            }
-            return false;
-        }
-        RecoverStruct rec = data.value<RecoverStruct>();
-        for(int i = rec.recover; i > 0; i--){
-            if(!player->askForSkillInvoke(objectName()))
-                break;
-            room->setPlayerMark(player, "HBTJ", 2);
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
-            room->setPlayerMark(player, "HBTJ", 0);
-
-            room->playSkillEffect(objectName(), qrand() % 2 + 3);
-            DamageStruct damage;
-            damage.from = player;
-            damage.to = target;
-            room->damage(damage);
-        }
-        return false;
-    }
-};
-
 class Tiansuan: public TriggerSkill{
 public:
     Tiansuan():TriggerSkill("tiansuan"){
@@ -1495,10 +1412,6 @@ TigerPackage::TigerPackage()
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     muhong->addSkill("huqi");
-
-    General *zhoutong = new General(this, "zhoutong", "kou", 3);
-    zhoutong->addSkill(new Qiangqu);
-    zhoutong->addSkill(new Huatian);
 
     General *jiangjing = new General(this, "jiangjing", "jiang");
     jiangjing->addSkill(new Tiansuan);

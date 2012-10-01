@@ -1,12 +1,8 @@
-#include "general.h"
-#include "standard.h"
 #include "skill.h"
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
-#include "serverplayer.h"
 #include "standard-generals.h"
-#include "room.h"
 
 GanlinCard::GanlinCard(){
     will_throw = false;
@@ -1086,7 +1082,7 @@ public:
         foreach(ServerPlayer *wusong, wusOng){
             if(player->isDead())
                 break;
-            if(player != wusong && wusong->canSlash(player, NULL, false) && !wusong->isKongcheng()){
+            if(player != wusong && wusong->canSlash(player, false) && !wusong->isKongcheng()){
                 const Card *card = room->askForCard(wusong, ".|.|.|.|black", "@fuhu:" + player->objectName(), true, data, CardDiscarded);
                 if(!card)
                     continue;
@@ -1470,7 +1466,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.card || damage.from != likui)
             return false;
-        if(damage.card->inherits("Slash")){
+        if(likui->getPhase() == Player::Play && damage.card->inherits("Slash")){
             if(likui->hasMark("shalu") && !likui->hasWeapon("crossbow")
                 && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
                 && !(likui->hasSkill("yinyu") && likui->hasMark("@stones")))
@@ -1932,7 +1928,7 @@ public:
                    !damage.from->isKongcheng()){
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     room->sendLog(log);
-                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), false, data, CardDiscarded))
+                    if(!room->askForCard(damage.from, ".", "@heidian1:" + sun->objectName(), data, CardDiscarded))
                         room->throwCard(damage.from->getRandomHandCard(), damage.from);
                 }
             }
@@ -1946,7 +1942,7 @@ public:
                         room->sendLog(log);
 
                         const Card *card = !player->hasEquip() ? NULL :
-                                           room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), false, data, NonTrigger);
+                                           room->askForCard(player, ".Equi", "@heidian2:" + sun->objectName(), data, NonTrigger);
                         if(card)
                             sun->obtainCard(card);
                         else
@@ -2136,7 +2132,7 @@ void JiashuCard::onEffect(const CardEffectStruct &effect) const{
     room->sendLog(log);
     QString pattern = QString(".|%1|.|hand$").arg(suit_str);
     QString prompt = QString("@jiashu:%1::%2").arg(effect.from->objectName()).arg(suit_str);
-    const Card *card = room->askForCard(effect.to, pattern, prompt, false, QVariant(), NonTrigger);
+    const Card *card = room->askForCard(effect.to, pattern, prompt, QVariant(), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.to->drawCards(1);
@@ -2290,7 +2286,7 @@ public:
                 if(!lieges.isEmpty())
                     room->playSkillEffect(objectName());
                 foreach(ServerPlayer *tmp, lieges){
-                    const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), false, data, NonTrigger);
+                    const Card *card = room->askForCard(tmp, ".|.|.|hand$", "@zhiyuan:" + fang1a->objectName(), data, NonTrigger);
                     if(card){
                         LogMessage lo;
                         lo.type = "#InvokeSkill";
@@ -2344,7 +2340,7 @@ public:
         ServerPlayer *wangqing = room->getLord();
         if(player->getKingdom() != "min" || !wangqing || !wangqing->hasLordSkill(objectName()))
             return;
-        if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), false, QVariant::fromValue(damage), CardDiscarded)){
+        if(wangqing->isWounded() && room->askForCard(player, ".H", "@jiachu:" + wangqing->objectName(), QVariant::fromValue(damage), CardDiscarded)){
             RecoverStruct rev;
             rev.who = player;
             room->playSkillEffect(objectName());
@@ -2638,8 +2634,7 @@ public:
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *loli, lolita){
             if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
-                int card_id = room->drawCard();
-                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+                const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 room->setEmotion(loli, "draw-card");
                 room->getThread()->delay();
@@ -2647,10 +2642,10 @@ public:
                 LogMessage log;
                 log.type = "$TakeAG";
                 log.from = loli;
-                log.card_str = QString::number(card_id);
+                log.card_str = card->getEffectIdString();
                 room->sendLog(log);
 
-                room->obtainCard(loli, card_id);
+                room->obtainCard(loli, card);
             }
         }
         return false;

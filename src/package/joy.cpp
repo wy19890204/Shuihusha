@@ -83,7 +83,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
-    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), false, QVariant::fromValue((PlayerStar)source));
+    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
 
