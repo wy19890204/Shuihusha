@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "gamerule.h"
 #include "ai.h"
+#include "scenario.h"
 #include "jsonutils.h"
 #include "settings.h"
 
@@ -307,6 +308,10 @@ void RoomThread::run(){
     }
 }
 
+const QList<EventTriplet> *RoomThread::getEventStack() const{
+    return &event_stack;
+}
+
 static bool CompareByPriority(const TriggerSkill *a, const TriggerSkill *b){
     return a->getPriority() > b->getPriority();
 }
@@ -340,13 +345,17 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, Q
     return broken;
 }
 
-const QList<EventTriplet> *RoomThread::getEventStack() const{
-    return &event_stack;
-}
-
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
     QVariant data;
     return trigger(event, room, target, data);
+}
+
+bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target, QVariant &data){
+    return trigger(event, room, target, data);
+}
+
+bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target){
+    return trigger(event, room, target);
 }
 
 void RoomThread::addTriggerSkill(const TriggerSkill *skill){

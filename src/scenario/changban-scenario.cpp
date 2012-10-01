@@ -664,13 +664,13 @@ void ChangbanScenario::run(Room *room) const{
     RoomThread *thread = room->getThread();
     ServerPlayer *cbzhaoyun = room->getLord();
     ServerPlayer *cbzhangfei = cbzhaoyun;
-    foreach(ServerPlayer *p, room->m_players){
+    foreach(ServerPlayer *p, room->getPlayers()){
         if(p->getRole() == "loyalist")
             cbzhangfei = p;
     }
 
     if(cbzhaoyun->getGeneralName() == "cbzhaoyun1"){
-        QList<ServerPlayer *> league = room->m_players;
+        QList<ServerPlayer *> league = room->getPlayers();
         league.removeOne(cbzhaoyun);
         league.removeOne(cbzhangfei);
 
@@ -718,7 +718,7 @@ void ChangbanScenario::run(Room *room) const{
         }
     }else{
         cbsecond_phase:
-        foreach(ServerPlayer *player, room->m_players){
+        foreach(ServerPlayer *player, room->getPlayers()){
             if(player != cbzhaoyun){
                 if(player->hasFlag("actioned"))
                     room->setPlayerFlag(player, "-actioned");
