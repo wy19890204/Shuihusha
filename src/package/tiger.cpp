@@ -806,18 +806,16 @@ public:
         if(room->askForSkillInvoke(shien, objectName(), data)){
             bool xoxo = false;
             for(int i = 0; i < 2; i++){
-                int card_id = room->drawCard();
-                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+                CardStar card = room->peek(); // get the first card of drawpile(not draw)
                 room->getThread()->delay();
 
-                CardStar card = Sanguosha->getCard(card_id);
                 LogMessage lolo;
                 lolo.from = shien;
                 lolo.card_str = card->getEffectIdString();
                 if(!card->inherits("BasicCard")){
                     lolo.type = "$Longluo1";
-                    room->throwCard(card_id, shien);
                     room->sendLog(lolo);
+                    room->throwCard(card);
                 }else{
                     if(!xoxo){
                         room->playSkillEffect(objectName());
@@ -825,11 +823,12 @@ public:
                     }
                     lolo.type = "$Longluo2";
                     shien->tag["LongluoCard"] = QVariant::fromValue(card);
-                    room->sendLog(lolo);
                     ServerPlayer *target = room->askForPlayerChosen(shien, room->getAllPlayers(), objectName());
                     if(!target)
                         target = shien;
-                    room->obtainCard(target, card_id);
+                    room->obtainCard(target, card);
+                    lolo.to << target;
+                    room->sendLog(lolo);
                     shien->tag.remove("LongluoCard");
                 }
             }

@@ -2634,8 +2634,7 @@ public:
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *loli, lolita){
             if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
-                int card_id = room->drawCard();
-                room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::Special, true);
+                const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 room->setEmotion(loli, "draw-card");
                 room->getThread()->delay();
@@ -2643,10 +2642,10 @@ public:
                 LogMessage log;
                 log.type = "$TakeAG";
                 log.from = loli;
-                log.card_str = QString::number(card_id);
+                log.card_str = card->getEffectIdString();
                 room->sendLog(log);
 
-                room->obtainCard(loli, card_id);
+                room->obtainCard(loli, card);
             }
         }
         return false;

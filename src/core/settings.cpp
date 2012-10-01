@@ -135,12 +135,13 @@ void Settings::init(){
 
     roles_ban << "ubuntenkei";
 
-    kof_ban << "andaoquan"/* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
+    kof_ban << "andaoquan" << "shixiu"
+            /* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
 
     //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
 
     hegemony_ban.append(basara_ban);
-    //hegemony_ban << "jiangsong";
+    hegemony_ban << "gongsunsheng";
     foreach(QString general, Sanguosha->getLimitedGeneralNames()){
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
