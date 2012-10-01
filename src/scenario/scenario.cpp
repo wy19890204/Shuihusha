@@ -1,5 +1,7 @@
 #include "scenario.h"
 #include "engine.h"
+#include "settings.h"
+#include <QFile>
 
 Scenario::Scenario(const QString &name)
     :Package(name), rule(NULL)
@@ -47,6 +49,11 @@ void Scenario::assign(QStringList &generals, QStringList &roles) const{
         else
             roles << "renegade";
     }
+}
+
+QString Scenario::setBackgroundMusic() const{
+    QString url = QString("audio/bgmusic/%1").arg(objectName());
+    return QFile::exists(url) ? url : Config.value("BackgroundMusic", "audio/bgmusic/default.mp3").toString();
 }
 
 bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp +1 on game start, return true

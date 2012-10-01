@@ -2822,10 +2822,10 @@ void Room::startGame(){
         }
     }
 
-    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3"
-       && mode != "dusong" && mode != "changban" && !Config.EnableBasara){
-        foreach(ServerPlayer *player, m_players)
-            broadcastProperty(player, "general2");
+    if(Config.Enable2ndGeneral)
+        if(mode != "02_1v1" && mode != "06_3v3" && !scenario && !Config.EnableBasara){
+            foreach(ServerPlayer *player, m_players)
+                broadcastProperty(player, "general2");
     }
 
     m_alivePlayers = m_players;

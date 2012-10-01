@@ -3295,11 +3295,16 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = ServerInfo.GameMode != "dusong" && !ServerInfo.EnableBasara && !ServerInfo.EnableHegemony ?
-                               "audio/system/background.mp3" :
-                               "audio/system/dsgbackground.mp3";
+        const Scenario *scenario = Sanguosha->getScenario(ServerInfo.GameMode);
+        QString bgmusic_path;
+        if(scenario)
+            bgmusic_path = scenario->setBackgroundMusic();
+        else if(ServerInfo.EnableBasara || ServerInfo.EnableHegemony)
+            Sanguosha->getScenario("dusong")->setBackgroundMusic();
+        else
+            bgmusic_path = Config.value("BackgroundMusic", "audio/bgmusic/default.mp3").toString();
 
-        Audio::playBGM(Config.value("BackgroundMusic", bgmusic_path).toString());
+        Audio::playBGM(bgmusic_path);
         Audio::setBGMVolume(Config.BGMVolume);
     }
 

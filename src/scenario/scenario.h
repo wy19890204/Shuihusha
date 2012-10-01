@@ -26,6 +26,7 @@ public:
     virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual void generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
+    virtual QString setBackgroundMusic() const;
 
 protected:
     QString lord;
