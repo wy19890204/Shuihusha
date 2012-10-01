@@ -69,7 +69,7 @@ bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, retu
 
 void Scenario::run(Room *room) const{ // RoomThread::run(){
     forever {
-        room->getThread()->trigger(TurnStart, room->getCurrent());
+        room->getThread()->trigger(TurnStart, room, room->getCurrent());
         if (room->isFinished()) break;
         room->setCurrent(room->getCurrent()->getNextAlive());
     }

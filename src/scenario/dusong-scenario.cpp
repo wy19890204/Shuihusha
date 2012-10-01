@@ -282,7 +282,7 @@ void DusongScenario::run(Room *room) const{
 
             foreach(ServerPlayer *player, league){
                 room->setCurrent(player);
-                thread->trigger(TurnStart, room->getCurrent());
+                thread->trigger(TurnStart, room, room->getCurrent());
 
                 if(!player->hasFlag("actioned"))
                     room->setPlayerFlag(player, "actioned");
@@ -292,7 +292,7 @@ void DusongScenario::run(Room *room) const{
 
                 if(player->isAlive()){
                     room->setCurrent(shenlvbu);
-                    thread->trigger(TurnStart, room->getCurrent());
+                    thread->trigger(TurnStart, room, room->getCurrent());
 
                     if(shenlvbu->getGeneralName() == "zhang2dong")
                         goto second_phase;
@@ -314,7 +314,7 @@ void DusongScenario::run(Room *room) const{
                     room->setPlayerProperty(player, "phase", "not_active");
                     phase.to = player->getPhase();
                     QVariant data = QVariant::fromValue(phase);
-                    thread->trigger(PhaseChange, player, data);
+                    thread->trigger(PhaseChange, room, player, data);
                 }
             }
         }
@@ -322,7 +322,7 @@ void DusongScenario::run(Room *room) const{
         room->setCurrent(shenlvbu);
 
         forever{
-            thread->trigger(TurnStart, room->getCurrent());
+            thread->trigger(TurnStart, room, room->getCurrent());
             room->setCurrent(room->getCurrent()->getNext());
         }
     }

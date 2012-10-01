@@ -263,7 +263,7 @@ void RoomThread::run3v3(){
 
 void RoomThread::action3v3(ServerPlayer *player){
     room->setCurrent(player);
-    trigger(TurnStart, room->getCurrent());
+    trigger(TurnStart, room, room->getCurrent());
     room->setPlayerFlag(player, "actioned");
 
     bool all_actioned = true;
@@ -290,7 +290,7 @@ void RoomThread::run(){
 
     // start game, draw initial 4 cards
     foreach(ServerPlayer *player, room->getPlayers()){
-        trigger(GameStart, player);
+        trigger(GameStart, room, player);
     }
 
     if(room->scenario)
@@ -301,7 +301,7 @@ void RoomThread::run(){
         room->setCurrent(room->getPlayers().at(1));
     else{
         forever {
-            trigger(TurnStart, room->getCurrent());
+            trigger(TurnStart, room, room->getCurrent());
             if (room->isFinished()) break;
             room->setCurrent(room->getCurrent()->getNextAlive());
         }
@@ -347,15 +347,7 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, Q
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
     QVariant data;
-    return trigger(event, target, data);
-}
-
-bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target, QVariant &data){
     return trigger(event, room, target, data);
-}
-
-bool RoomThread::trigger(TriggerEvent event, ServerPlayer *target){
-    return trigger(event, room, target);
 }
 
 void RoomThread::addTriggerSkill(const TriggerSkill *skill){

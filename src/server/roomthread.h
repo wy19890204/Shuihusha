@@ -42,8 +42,6 @@ public:
     void constructTriggerTable(const GameRule *rule);
     bool trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data);
     bool trigger(TriggerEvent event, Room* room, ServerPlayer *target);
-    bool trigger(TriggerEvent event, ServerPlayer *target, QVariant &data);
-    bool trigger(TriggerEvent event, ServerPlayer *target);
 
     void addPlayerSkills(ServerPlayer *player, bool invoke_game_start = false);
 

@@ -74,7 +74,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     num = 1;
             }
 
-            room->getThread()->trigger(DrawNCards, player, num);
+            room->getThread()->trigger(DrawNCards, room, player, num);
             int n = num.toInt();
             if(n > 0)
                 player->drawCards(n, false);
@@ -334,7 +334,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         room->playSkillEffect("douzhan");
                         mute = true;
                     }
-                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->hasMark("SlashCount"))
+                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
                         mute = true;
                     if(card->getSkillName() == "spear"){
                         player->playCardEffect("Espear", "weapon");
@@ -478,11 +478,11 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(player->getHp() > 0)
                     break;
 
-                thread->trigger(AskForPeaches, saver, data);
+                thread->trigger(AskForPeaches, room, saver, data);
             }
 
             player->setFlags("-dying");
-            thread->trigger(AskForPeachesDone, player, data);
+            thread->trigger(AskForPeachesDone, room, player, data);
 
             break;
         }
@@ -653,7 +653,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
             QVariant data = QVariant::fromValue(effect);
-            room->getThread()->trigger(SlashProceed, effect.from, data);
+            room->getThread()->trigger(SlashProceed, room, effect.from, data);
 
             break;
         }
@@ -775,7 +775,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
             if(killer)
-                room->getThread()->trigger(RewardAndPunish, player, data);
+                room->getThread()->trigger(RewardAndPunish, room, player, data);
             else if(player->hasSkill("zuohua"))
                 room->playSkillEffect("zuohua", 2);
 
@@ -1094,7 +1094,7 @@ void BasaraMode::playerShowed(ServerPlayer *player) const{
         QString general_name = room->askForGeneral(player,names);
 
         generalShowed(player,general_name);
-        if (Config.EnableHegemony) room->getThread()->trigger(GameOverJudge, player);
+        if (Config.EnableHegemony) room->getThread()->trigger(GameOverJudge, room, player);
         playerShowed(player);
     }
 }

@@ -682,7 +682,7 @@ void ChangbanScenario::run(Room *room) const{
             int i = 0;
             foreach(ServerPlayer *player, league){
                 room->setCurrent(player);
-                thread->trigger(TurnStart, room->getCurrent());
+                thread->trigger(TurnStart, room, room->getCurrent());
 
                 if(!player->hasFlag("actioned"))
                     room->setPlayerFlag(player, "actioned");
@@ -693,13 +693,13 @@ void ChangbanScenario::run(Room *room) const{
                 if(player->isAlive()){
                     if(i % 2 == 0){
                         room->setCurrent(cbzhaoyun);
-                        thread->trigger(TurnStart, room->getCurrent());
+                        thread->trigger(TurnStart, room, room->getCurrent());
 
                         if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                             goto cbsecond_phase;
                     }else{
                         room->setCurrent(cbzhangfei);
-                        thread->trigger(TurnStart, room->getCurrent());
+                        thread->trigger(TurnStart, room, room->getCurrent());
 
                         if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                             goto cbsecond_phase;
@@ -710,7 +710,7 @@ void ChangbanScenario::run(Room *room) const{
 
             if(i == 1){
                 room->setCurrent(cbzhangfei);
-                thread->trigger(TurnStart, room->getCurrent());
+                thread->trigger(TurnStart, room, room->getCurrent());
 
                 if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
                     goto cbsecond_phase;
@@ -729,13 +729,13 @@ void ChangbanScenario::run(Room *room) const{
                     room->setPlayerProperty(player, "phase", "not_active");
                     phase.to = player->getPhase();
                     QVariant data = QVariant::fromValue(phase);
-                    thread->trigger(PhaseChange, player, data);
+                    thread->trigger(PhaseChange, room, player, data);
                 }
             }
         }
         room->setCurrent(cbzhaoyun);
         forever{
-            thread->trigger(TurnStart, room->getCurrent());
+            thread->trigger(TurnStart, room, room->getCurrent());
             room->setCurrent(room->getCurrent()->getNext());
         }
     }
