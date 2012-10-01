@@ -13,7 +13,6 @@ class ChangbanScenario: public Scenario{
 public:
     ChangbanScenario();
 
-    virtual void run(Room *room) const;
     virtual bool exposeRoles() const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;

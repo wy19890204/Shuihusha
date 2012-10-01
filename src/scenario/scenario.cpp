@@ -67,14 +67,6 @@ bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, retu
     return false;
 }
 
-void Scenario::run(Room *room) const{ // RoomThread::run(){
-    forever {
-        room->getThread()->trigger(TurnStart, room->getCurrent());
-        if (room->isFinished()) break;
-        room->setCurrent(room->getCurrent()->getNextAlive());
-    }
-}
-
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     return AI::GetRelation(a, b);
 }
