@@ -120,7 +120,7 @@ void ContractScenario::annex(ServerPlayer *seme, ServerPlayer *uke) const{
     for(int i = 1; i <= 4; i ++){
         bool hasused = false;
         foreach(ServerPlayer *tmp, getComraded(room)){
-            if(tmp->getMark("@ctt" + QString::number(i)) > 0){
+            if(tmp->hasMark("@ctt" + QString::number(i))){
                 hasused = true;
                 break;
             }
@@ -154,7 +154,7 @@ void ContractScenario::rupture(ServerPlayer *seme, ServerPlayer *uke) const{
     QVariant n = room->getTag("ConTotal").toInt() - 1;
     room->setTag("ConTotal", n);
     for(int i = 1; i <= 4; i ++){
-        if(uke->getMark("@ctt" + QString::number(i)) > 0){
+        if(uke->hasMark("@ctt" + QString::number(i))){
             room->setPlayerMark(uke, "@ctt" + QString::number(i), 0);
             break;
         }

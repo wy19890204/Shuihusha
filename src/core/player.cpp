@@ -474,7 +474,7 @@ bool Player::hasWeapon(const QString &weapon_name) const{
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
-    return armor && getMark("qinggang") == 0 && armor->objectName() == armor_name;
+    return armor && !hasMark("qinggang") && armor->objectName() == armor_name;
 }
 
 QList<const Card *> Player::getJudgingArea() const{
@@ -619,6 +619,10 @@ void Player::setMark(const QString &mark, int value){
 
 int Player::getMark(const QString &mark) const{
     return marks.value(mark, 0);
+}
+
+bool Player::hasMark(const QString &mark) const{
+    return marks.value(mark, 0) > 0;
 }
 
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
@@ -783,7 +787,7 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
 
 bool Player::canSlashWithoutCrossbow() const{
     int n = 1;
-    if(hasSkill("yinyu") && getMark("@stones") > 0)
+    if(hasSkill("yinyu") && hasMark("@stones"))
         return true;
     if(hasSkill("paoxiao") || hasSkill("huafo"))
         return true;

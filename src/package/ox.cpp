@@ -127,7 +127,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && target->getMark("aoxiang") == 0
+                && !target->hasMark("aoxiang")
                 && target->getPhase() == Player::RoundStart
                 && target->getHp() <= 2;
     }
@@ -556,7 +556,7 @@ public:
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
         if(card){
             int index = qrand() % 2 + 1;
-            if(player->getMark("wudao") == 0)
+            if(!player->hasMark("wudao"))
                 room->playSkillEffect(objectName(), index);
             else
                 room->playSkillEffect(objectName(), index + 2);
@@ -1002,7 +1002,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@rope") > 0 && player->isWounded();
+        return player->hasMark("@rope") && player->isWounded();
     }
 
     virtual const Card *viewAs() const{

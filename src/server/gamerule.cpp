@@ -37,7 +37,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
-            if(player->getMark("poison") > 0 && !player->isAllNude()){
+            if(player->hasMark("poison") && !player->isAllNude()){
                 LogMessage log;
                 log.from = player;
                 log.type = "$Poison_lost";
@@ -51,7 +51,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
         }
     case Player::Start: {
             player->setMark("SlashCount", 0);
-            if(player->getMark("@shang") > 0)
+            if(player->hasMark("@shang"))
                 room->loseHp(player, player->getMark("@shang"));
             break;
         }
@@ -323,7 +323,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         room->playSkillEffect("douzhan");
                         mute = true;
                     }
-                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
+                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->hasMark("SlashCount"))
                         mute = true;
                     if(card->getSkillName() == "spear"){
                         player->playCardEffect("Espear", "weapon");
@@ -408,7 +408,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->setPlayerProperty(player, "hp", new_hp);
             room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(recover));
 
-            if(player->getMark("poison") > 0){
+            if(player->hasMark("poison")){
                 int index = qrand() % 5;
                 if(index == 4){
                     room->setPlayerMark(player, "poison", 0);
@@ -736,7 +736,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     room->setPlayerProperty(player, "hp", 1);
                 if(killer && !player->isKongcheng())
                     killer->gainMark("@endless", qMin(3, player->getHandcardNum()));
-                if(player->getMark("@endless") > 0)
+                if(player->hasMark("@endless"))
                     player->loseMark("@endless", player->getMark("@endless") / 2);
                 return true;
             }

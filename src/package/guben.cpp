@@ -482,7 +482,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return Self->getMark("liegong_p_mark") > 0 && ! player->hasUsed("LiegongPassCard") ;
+        return Self->hasMark("liegong_p_mark") && ! player->hasUsed("LiegongPassCard") ;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{

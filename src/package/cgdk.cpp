@@ -136,7 +136,7 @@ public:
         QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
         if(!fanruis.isEmpty()){
             foreach(ServerPlayer *fanrui, fanruis){
-                if(fanrui->getMark("wudao") == 0 && fanrui->isKongcheng())
+                if(!fanrui->hasMark("wudao") && fanrui->isKongcheng())
                     return true;
             }
         }

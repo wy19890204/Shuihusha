@@ -74,7 +74,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
     QString animation_str = QString("analeptic:%1:%2").arg(who).arg(who);
     room->broadcastInvoke("animate", animation_str);
 
-    if(effect.to->getMark("poison") > 0){
+    if(effect.to->hasMark("poison")){
         LogMessage log;
         log.from = effect.to;
         log.type = "#Poison_ana";
@@ -255,7 +255,7 @@ SilverLion::SilverLion(Suit suit, int number):Armor(suit, number){
 }
 
 void SilverLion::onUninstall(ServerPlayer *player) const{
-    if(player->isAlive() && player->getMark("qinggang") == 0){
+    if(player->isAlive() && !player->hasMark("qinggang")){
         if(player->isWounded())
             player->playCardEffect("Esilver_lion2");
         RecoverStruct recover;

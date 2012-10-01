@@ -146,7 +146,7 @@ void Dashboard::createRight(){
 void Dashboard::setEcstState(){
     if(Self->hasFlag("ecst"))
         avatar_area->setVisible(true);
-    //else if(Self->getMark("poison") > 0)
+    //else if(Self->hasMark("poison"))
     //    setPoisonState();
     else
         avatar_area->setVisible(false);

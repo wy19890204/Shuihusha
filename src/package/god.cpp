@@ -94,7 +94,7 @@ public:
 
     virtual void onDamaged(ServerPlayer *wusong, const DamageStruct &damage) const{
         Room *room = wusong->getRoom();
-        if(wusong->getMark("shenchou") != 0)
+        if(wusong->hasMark("shenchou"))
             return;
         const Card *card = damage.card;
         if(card && room->obtainable(card, wusong)){
@@ -119,7 +119,7 @@ public:
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
                 && target->getPhase() == Player::Start
-                && target->getMark("wujie") == 0
+                && !target->hasMark("wujie")
                 && target->getPile("chou").length() >= 3;
     }
 
@@ -243,7 +243,7 @@ public:
 
 protected:
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@arm") == 1
+        return player->hasMark("@arm")
                 && player->getHp() == 1
                 && player->getMaxHP() > 1;
     }

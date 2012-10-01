@@ -200,11 +200,10 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *hanae, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(hanae->hasSkill(objectName()) || hanae == damage.to)
+        if(hanae == damage.to || !hanae->hasMark("@kacha"))
             return false;
-        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
+        if(hanae->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
-
             QList<ServerPlayer *> targets;
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(damage.to->distanceTo(tmp) == 1)

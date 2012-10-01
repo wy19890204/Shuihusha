@@ -17,7 +17,7 @@ QString Zongzi::getEffectPath(bool is_male) const{
 
 bool Zongzi::isAvailable(const Player *quyuan) const{
     if(ServerInfo.GameMode != "dusong")
-        return quyuan->getMark("HaveEaten") == 0;
+        return !quyuan->hasMark("HaveEaten");
     else
         return true;
 }
@@ -72,7 +72,7 @@ bool Moonpie::isAvailable(const Player *change) const{
 }
 
 bool Moonpie::targetFilter(const QList<const Player *> &targets, const Player *houyi, const Player *change) const{
-    return targets.isEmpty() && houyi->getMark("HaveEaten2") == 0 && change->inMyAttackRange(houyi);
+    return targets.isEmpty() && !houyi->hasMark("HaveEaten2") && change->inMyAttackRange(houyi);
 }
 
 void Moonpie::onEffect(const CardEffectStruct &effect) const{

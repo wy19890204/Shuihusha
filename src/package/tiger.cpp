@@ -150,7 +150,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *opt) const{
-        if(opt->getMark("@wings") > 0 && opt->getPhase() == Player::Judge){
+        if(opt->hasMark("@wings") && opt->getPhase() == Player::Judge){
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), 1);
@@ -704,7 +704,7 @@ public:
         //JudgeStar judge = data.value<JudgeStar>();
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhah, zhangs){
-            if(zhah == player || zhah->getMark("fuhun") > 0 || player->isKongcheng())
+            if(zhah == player || zhah->hasMark("fuhun") || player->isKongcheng())
                 continue;
             if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
@@ -733,7 +733,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhang, zhangs){
-            if(zhang == player || zhang->getMark("fuhun") > 0)
+            if(zhang == player || zhang->hasMark("fuhun"))
                 continue;
             LogMessage log;
             log.type = "#WakeUp";

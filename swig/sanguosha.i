@@ -180,8 +180,9 @@ public:
 
 	void addMark(const char *mark);
 	void removeMark(const char *mark);
-	virtual void setMark(const char *mark, int value);
+	virtual void setMark(const char *mark, int value = 1);
 	int getMark(const char *mark) const;
+	bool hasMark(const char *mark) const;
 
 	void setChained(bool chained);
 	bool isChained() const;

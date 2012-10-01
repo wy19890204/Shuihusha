@@ -116,7 +116,7 @@ public:
         ServerPlayer *qiaoyun = room->findPlayerBySkillName(objectName());
         if(!qiaoyun || qiaoyun->isLord() || player->isLord() || qiaoyun == player)
             return false;
-        if(qiaoyun->getMark("@spray") && qiaoyun->askForSkillInvoke(objectName())){
+        if(qiaoyun->hasMark("@spray") && qiaoyun->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$panxin:2000");
             QString role = player->getRole();

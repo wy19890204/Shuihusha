@@ -25,7 +25,7 @@ bool Slash::IsAvailable(const Player *player){
         return false;
 
     return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
-        || (player->hasSkill("shalu") && player->getMark("shalu") > 0);
+        || (player->hasSkill("shalu") && player->hasMark("shalu"));
 }
 
 bool Slash::isAvailable(const Player *player) const{

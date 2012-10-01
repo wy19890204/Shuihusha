@@ -102,7 +102,7 @@ public:
             }
             return false;
         }
-        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0){
+        if(player->getPhase() == Player::Finish && player->hasMark("@true")){
             int totalcard = 0;
             foreach(ServerPlayer *tmp, room->getOtherPlayers(player))
                 totalcard += tmp->getCardCount(true);

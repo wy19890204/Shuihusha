@@ -117,7 +117,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
         if(event == SlashProceed){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            if(player->getMark("CBLongNu")){
+            if(player->hasMark("CBLongNu")){
                 room->slashResult(effect, NULL);
                 player->removeMark("CBLongNu");
                 return true;

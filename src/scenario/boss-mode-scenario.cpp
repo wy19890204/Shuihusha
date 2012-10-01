@@ -18,7 +18,7 @@ public:
         if(player->getPhase() != Player::Draw)  return false;
         Room *room = player->getRoom();
         QList<ServerPlayer *> players = room->getOtherPlayers(player);
-        bool has_frantic = player->getMark("@frantic")>0;
+        bool has_frantic = player->hasMark("@frantic");
         room->playSkillEffect(objectName());
 
         if(has_frantic){
@@ -47,7 +47,7 @@ public:
     virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
         Room *room = player->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        bool has_frantic = player->getMark("@frantic")>0;
+        bool has_frantic = player->hasMark("@frantic");
 
         if(!room->askForSkillInvoke(player, objectName()))
             return;
@@ -76,7 +76,7 @@ public:
         Room *room = target->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
         QList<ServerPlayer *> others = room->getOtherPlayers(target);
-        bool has_frantic = target->getMark("@frantic")>0;
+        bool has_frantic = target->hasMark("@frantic");
 
         if(target->getPhase() == Player::Start){
             bool invoke_skill = false;
@@ -384,12 +384,12 @@ public:
         case TurnStart:{
                 if(player->isLord() && player->faceUp()){
                     bool hasLoseMark = false;
-                    if(player->getMark("@frantic") > 0){
+                    if(player->hasMark("@frantic")){
                         player->loseMark("@frantic");
                         hasLoseMark = true;
                     }
 
-                    if(hasLoseMark && player->getMark("@frantic") == 0){
+                    if(hasLoseMark && !player->hasMark("@frantic")){
                         startDeadJudge(player);
                         player->addMark("frantic_over");
                     }
@@ -398,7 +398,7 @@ public:
             }
 
         case PhaseChange:{
-                if(player->isLord() && player->getMark("frantic_over") > 0 && player->getPhase() == Player::Finish)
+                if(player->isLord() && player->hasMark("frantic_over") && player->getPhase() == Player::Finish)
                    player->getRoom()->killPlayer(player);
                 break;
             }
@@ -450,7 +450,7 @@ public:
         case HpLost:
         case Damaged:{
             if(player->isLord()){
-                if(player->getHp() <= 3 && player->getMark("@frantic")<=0){
+                if(player->getHp() <= 3 && !player->hasMark("@frantic")){
                     LogMessage log;
                     log.type = "#Baozou";
                     log.from = player;

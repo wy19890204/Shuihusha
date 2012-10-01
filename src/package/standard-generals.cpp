@@ -516,7 +516,7 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
     QString pattern = QString(".|%1").arg(suit_str);
     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
     if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
-        if(dragon->getMark("wudao") == 0)
+        if(!dragon->hasMark("wudao"))
             room->playSkillEffect("qimen", qrand() % 2 + 1);
         else
             room->playSkillEffect("qimen", qrand() % 2 + 3);
@@ -574,7 +574,7 @@ public:
             return false;
         if(player->getPhase() == Player::NotActive){
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(tmp->getMark("@shut") > 0){
+                if(tmp->hasMark("@shut")){
                     stopCry(room, tmp);
 
                     LogMessage log;
@@ -614,7 +614,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
-            if(tmp->getMark("@shut") > 0){
+            if(tmp->hasMark("@shut")){
                 Qimen::stopCry(room, tmp);
 
                 LogMessage log;
@@ -1362,7 +1362,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && target->getMark("qinggang") == 0;
+        return TriggerSkill::triggerable(target) && !target->getArmor() && !target->hasMark("qinggang");
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -1471,9 +1471,9 @@ public:
         if(!damage.card || damage.from != likui)
             return false;
         if(damage.card->inherits("Slash")){
-            if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
+            if(likui->hasMark("shalu") && !likui->hasWeapon("crossbow")
                 && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
-                && !(likui->hasSkill("yinyu") && likui->getMark("@stones") > 0))
+                && !(likui->hasSkill("yinyu") && likui->hasMark("@stones")))
                 room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
             if(!room->askForSkillInvoke(likui, objectName(), data))
                 return false;
@@ -1814,7 +1814,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@relic") > 0;
+        return player->hasMark("@relic");
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
@@ -2181,7 +2181,7 @@ public:
         ServerPlayer *killer = damage ? damage->from : NULL;
         QList<ServerPlayer *> caijings = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *caijing, caijings){
-            if(caijing != player && caijing != killer && caijing->getMark("@power") > 0){
+            if(caijing != player && caijing != killer && caijing->hasMark("@power")){
                 QVariant shiti = QVariant::fromValue((PlayerStar)player);
                 if(!room->askForSkillInvoke(caijing, objectName(), shiti))
                     continue;
@@ -2419,7 +2419,7 @@ public:
             return false;
         QList<ServerPlayer *> xings = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *xing, xings){
-            if(xing == player || xing->getMark("@methanol") < 1)
+            if(xing == player || !xing->hasMark("@methanol"))
                 continue;
             if(room->askForCard(xing, ".S", "@zhensha:" + player->objectName(), true, data, CardDiscarded)){
                 LogMessage log;

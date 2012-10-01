@@ -119,10 +119,10 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
         if(event == SlashProceed){
-            if(qing->getMark("@stoned")){
+            if(qing->hasMark("@stoned")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 if(effect.slash->getSkillName() != "yuanpei"){
-                    int index = effect.from->getMark("mengshi") > 0 ? 13: 7;
+                    int index = effect.from->hasMark("mengshi") ? 13: 7;
                     room->playSkillEffect("yinyu", index);
                 }
                 room->slashResult(effect, NULL);
@@ -133,7 +133,7 @@ public:
         if(qing->getPhase() == Player::RoundStart){
             ClearMarks(room, qing);
             if(qing->askForSkillInvoke(objectName())){
-                int index = qing->getMark("mengshi") > 0 ? 8: qrand() % 2 + 1;
+                int index = qing->hasMark("mengshi") ? 8: qrand() % 2 + 1;
                 room->playSkillEffect(objectName(), index);
 
                 JudgeStruct judge;
@@ -190,7 +190,7 @@ public:
     }
 
     virtual int getAtkrg(const Player *from) const{
-        if(from->getMark("@stoneh") > 0)
+        if(from->hasMark("@stoneh"))
             return 1234;
         else
             return 0;
@@ -376,7 +376,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@embattle") > 0 && zhuwu->getPhase() == Player::NotActive){
+        if(zhuwu->hasMark("@embattle") && zhuwu->getPhase() == Player::NotActive){
             Room *room = zhuwu->getRoom();
             if(zhuwu->isNude())
                 return false;
@@ -836,7 +836,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && target->getMark("mengshi") == 0
+                && !target->hasMark("mengshi")
                 && target->getPhase() == Player::RoundStart
                 && target->getHandcardNum() < target->getAttackRange();
     }
