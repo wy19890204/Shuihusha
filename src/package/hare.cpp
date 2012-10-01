@@ -2,6 +2,7 @@
 #include "skill.h"
 #include "carditem.h"
 #include "maneuvering.h"
+#include "plough.h"
 #include "clientplayer.h"
 #include "engine.h"
 
@@ -768,6 +769,83 @@ public:
     }
 };
 
+class Shihao: public DrawCardsSkill{
+public:
+    Shihao():DrawCardsSkill("shihao"){
+    }
+
+    virtual int getDrawNum(ServerPlayer *x, int n) const{
+        Room *room = x->getRoom();
+        if(room->askForSkillInvoke(x, objectName())){
+            room->playSkillEffect(objectName());
+
+            x->setFlags(objectName());
+            return n - 1;
+        }else
+            return n;
+    }
+};
+
+class Shihaodo:public PhaseChangeSkill{
+public:
+    Shihaodo():PhaseChangeSkill("#shihao-do"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *zhugui) const{
+        if(!zhugui->hasFlag("shihao"))
+            return false;
+        Room *room = zhugui->getRoom();
+        if(zhugui->getPhase() == Player::Play){
+            Wiretap *wp = new Wiretap(Card::NoSuit, 0);
+            wp->setSkillName(objectName());
+            QList<ServerPlayer *> targets;
+            foreach(ServerPlayer *target, room->getOtherPlayers(zhugui)){
+                if(!target->isProhibited(target, wp))
+                    targets << target;
+            }
+            if(targets.isEmpty())
+                return false;
+            PlayerStar target = room->askForPlayerChosen(zhugui, targets, "shihao");
+            CardUseStruct use;
+            use.card = wp;
+            use.from = zhugui;
+            use.to << target;
+            room->useCard(use);
+        }
+        else if(zhugui->getPhase() == Player::Finish){
+            zhugui->drawCards(1);
+            QList<int> yiji_cards = zhugui->handCards().mid(zhugui->getHandcardNum() - 1);
+            room->askForYiji(zhugui, yiji_cards);
+        }
+
+        return false;
+    }
+};
+
+class Laolian: public TriggerSkill{
+public:
+    Laolian():TriggerSkill("laolian"){
+        events << CardUsed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *guigui, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(use.card->inherits("Peach") || use.card->inherits("Analeptic")){
+            if(guigui->askForSkillInvoke(objectName())){
+                PlayerStar target = room->askForPlayerChosen(guigui, room->getOtherPlayers(guigui), objectName());
+                Ecstasy *ey = new Ecstasy(Card::NoSuit, 0);
+                ey->setSkillName(objectName());
+                CardUseStruct use;
+                use.card = ey;
+                use.from = guigui;
+                use.to << target;
+                room->useCard(use, false);
+            }
+        }
+        return false;
+    }
+};
+
 class Shemi: public TriggerSkill{
 public:
     Shemi():TriggerSkill("shemi"){
@@ -870,6 +948,13 @@ HarePackage::HarePackage()
     General *zhoutong = new General(this, "zhoutong", "kou", 3);
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
+
+    General *zhugui = new General(this, "zhugui", "kou");
+    zhugui->addSkill("#losthp_1");
+    zhugui->addSkill(new Shihao);
+    zhugui->addSkill(new Shihaodo);
+    related_skills.insertMulti("shihao", "#shihao-do");
+    zhugui->addSkill(new Laolian);
 
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);

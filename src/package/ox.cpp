@@ -616,7 +616,7 @@ public:
             if(judge.isGood()){
                 RecoverStruct rev;
                 rev.card = judge.card;
-                rev.recover = ren->getLostHp(false) - ren->getMaxHP() + 1;
+                rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
                 rev.who = ren;
                 room->recover(ren, rev);
                 if(ren->getHp() != 1)
