@@ -17,6 +17,7 @@ public:
     explicit Scenario(const QString &name);    
     ScenarioRule *getRule() const;
 
+    virtual void run(Room *room) const;
     virtual bool exposeRoles() const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;

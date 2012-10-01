@@ -52,8 +52,7 @@ void Scenario::assign(QStringList &generals, QStringList &roles) const{
 }
 
 QString Scenario::setBackgroundMusic() const{
-    QString url = QString("audio/bgmusic/%1").arg(objectName());
-    return QFile::exists(url) ? url : Config.value("BackgroundMusic", "audio/bgmusic/default.mp3").toString();
+    return QString("audio/bgmusic/%1.mp3").arg(objectName());
 }
 
 bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp +1 on game start, return true
@@ -66,6 +65,14 @@ void Scenario::generalSelection(Room *) const{ // if need choose general freely,
 
 bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
     return false;
+}
+
+void Scenario::run(Room *room) const{ // RoomThread::run(){
+    forever {
+        room->getThread()->trigger(TurnStart, room, room->getCurrent());
+        if (room->isFinished()) break;
+        room->setCurrent(room->getCurrent()->getNextAlive());
+    }
 }
 
 AI::Relation Scenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

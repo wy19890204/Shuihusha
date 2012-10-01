@@ -10,6 +10,7 @@ class DusongScenario: public Scenario{
 public:
     DusongScenario();
 
+    virtual void run(Room *room) const;
     virtual bool exposeRoles() const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;

@@ -267,6 +267,67 @@ private:
     mutable jmp_buf env;
 };
 
+void DusongScenario::run(Room *room) const{
+    RoomThread *thread = room->getThread();
+    ServerPlayer *shenlvbu = room->getLord();
+    if(shenlvbu->getGeneralName() == "zhang1dong"){
+        QList<ServerPlayer *> league = room->getPlayers();
+        league.removeOne(shenlvbu);
+
+        forever{
+            foreach(ServerPlayer *player, league){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+            }
+
+            foreach(ServerPlayer *player, league){
+                room->setCurrent(player);
+                thread->trigger(TurnStart, room, room->getCurrent());
+
+                if(!player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "actioned");
+
+                if(shenlvbu->getGeneralName() == "zhang2dong")
+                    goto second_phase;
+
+                if(player->isAlive()){
+                    room->setCurrent(shenlvbu);
+                    thread->trigger(TurnStart, room, room->getCurrent());
+
+                    if(shenlvbu->getGeneralName() == "zhang2dong")
+                        goto second_phase;
+                }
+            }
+        }
+
+    }else{
+        second_phase:
+
+        foreach(ServerPlayer *player, room->getPlayers()){
+            if(player != shenlvbu){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+                if(player->getPhase() != Player::NotActive){
+                    PhaseChangeStruct phase;
+                    phase.from = player->getPhase();
+                    room->setPlayerProperty(player, "phase", "not_active");
+                    phase.to = player->getPhase();
+                    QVariant data = QVariant::fromValue(phase);
+                    thread->trigger(PhaseChange, room, player, data);
+                }
+            }
+        }
+
+        room->setCurrent(shenlvbu);
+
+        forever{
+            thread->trigger(TurnStart, room, room->getCurrent());
+            room->setCurrent(room->getCurrent()->getNext());
+        }
+    }
+}
+
 bool DusongScenario::exposeRoles() const{
     return true;
 }
