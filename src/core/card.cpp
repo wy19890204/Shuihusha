@@ -473,9 +473,9 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
 
     QVariant data = QVariant::fromValue(card_use);
     RoomThread *thread = room->getThread();
-    thread->trigger(CardUsed, room, player, data);
+    thread->trigger(CardUsed, player, data);
 
-    thread->trigger(CardFinished, room, player, data);
+    thread->trigger(CardFinished, player, data);
 }
 
 void Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{

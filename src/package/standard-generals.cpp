@@ -1466,7 +1466,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(!damage.card || damage.from != likui)
             return false;
-        if(damage.card->inherits("Slash")){
+        if(likui->getPhase() == Player::Play && damage.card->inherits("Slash")){
             if(likui->getMark("shalu") > 0 && !likui->hasWeapon("crossbow")
                 && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
                 && !(likui->hasSkill("yinyu") && likui->getMark("@stones") > 0))
