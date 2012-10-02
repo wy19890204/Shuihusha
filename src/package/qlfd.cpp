@@ -183,7 +183,7 @@ bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const P
 
 void QianxianCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), false, QVariant::fromValue(effect), NonTrigger);
+    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(club){
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
@@ -314,7 +314,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
     const Card *slash = NULL;
     if(effect.from->canSlash(target, slash)){
         QVariant source = QVariant::fromValue((PlayerStar)effect.from);
-        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), false, source, NonTrigger);
+        slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source, NonTrigger);
     }
     if(slash){
         CardUseStruct use;
@@ -339,7 +339,7 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
     if(target == NULL || target->isDead())
         return;
 
-    if(!card_use.from->canSlash(target, NULL, false))
+    if(!card_use.from->canSlash(target, false))
         return;
 
     const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", true, QVariant(), NonTrigger);
@@ -408,7 +408,7 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
     foreach(ServerPlayer *man, men){
         if(man == white)
             continue;
-        slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), false, tohelp);
+        slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
         if(slash){
             CardUseStruct card_use;
             card_use.card = slash;
@@ -454,7 +454,7 @@ public:
         foreach(ServerPlayer *man, men){
             if(man == white)
                 continue;
-            const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), false, tohelp);
+            const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
             if(slash){
                 room->provide(slash);
                 return true;

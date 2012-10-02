@@ -513,10 +513,6 @@ void ImpasseScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
-bool ImpasseScenario::generalSelection() const{
-    return true;
-}
-
 ImpasseScenario::ImpasseScenario()
     :Scenario("impasse_fight")
 {

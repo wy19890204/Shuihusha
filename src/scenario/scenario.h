@@ -17,13 +17,17 @@ public:
     explicit Scenario(const QString &name);    
     ScenarioRule *getRule() const;
 
+    virtual void run(Room *room) const;
     virtual bool exposeRoles() const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
     virtual void onTagSet(Room *room, const QString &key) const = 0;
-    virtual bool generalSelection() const;
+    virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual void generalSelection(Room *room) const;
+    virtual bool setCardPiles(const Card *card) const;
+    virtual QString setBackgroundMusic() const;
 
 protected:
     QString lord;

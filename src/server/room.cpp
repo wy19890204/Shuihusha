@@ -1463,13 +1463,11 @@ QList<ServerPlayer *>Room::findPlayersBySkillName(const QString &skill_name, boo
 }
 
 ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool include_dead) const{
-    const QList<ServerPlayer *> &list = include_dead ? m_players : m_alivePlayers;
-    foreach(ServerPlayer *player, list){
-        if(player->hasSkill(skill_name))
-            return player;
-    }
-
-    return NULL;
+    QList<ServerPlayer *> list = findPlayersBySkillName(skill_name, include_dead);
+    if(list.isEmpty())
+        return NULL;
+    else
+        return list.first();
 }
 
 ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
@@ -1483,6 +1481,15 @@ ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
         }
     }
     return NULL;
+}
+
+QList<ServerPlayer *>Room::findOnlinePlayers() const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, m_alivePlayers){
+        if(player->getState() == "online")
+            list << player;
+    }
+    return list;
 }
 
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
@@ -1652,33 +1659,6 @@ void Room::prepareForStart(){
         int i;
         for(i=0; i<2; i++){
             broadcastProperty(m_players.at(i), "role");
-        }
-
-    }else if(mode == "dusong"){
-        ServerPlayer *lord = m_players.at(qrand() % 4);
-        int i = 0;
-        for(i=0; i<4; i++){
-            ServerPlayer *player = m_players.at(i);
-            if(player == lord)
-                player->setRole("lord");
-            else
-                player->setRole("rebel");
-            broadcastProperty(player, "role");
-        }
-    }else if(mode == "changban"){
-        int x = qrand() % 5;
-        ServerPlayer *lord = m_players.at(x);
-        ServerPlayer *loyalist = m_players.at((x + qrand() % 4 + 1) % 5);
-        int i = 0;
-        for(i=0; i<5; i++){
-            ServerPlayer *player = m_players.at(i);
-            if(player == lord)
-                player->setRole("lord");
-            else if(player == loyalist)
-                player->setRole("loyalist");
-            else
-                player->setRole("rebel");
-            broadcastProperty(player, "role");
         }
     }else if(Config.value("FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
@@ -2186,6 +2166,8 @@ void Room::chooseGenerals(){
                 lord_list = Sanguosha->getLords();
         else
             lord_list = Sanguosha->getRandomLords();
+        if(Config.EnableSame && the_lord->getState() != "online")
+            the_lord = findOnlinePlayers().first(); // @todo: crash this!
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
         if (!Config.EnableBasara)
@@ -2196,8 +2178,15 @@ void Room::chooseGenerals(){
                 if(!p->isLord())
                     p->setGeneralName(general);
             }
-
-            Config.Enable2ndGeneral = false;
+            if(Config.Enable2ndGeneral){
+                QStringList bans;
+                bans << general;
+                QSet<QString> banset = bans.toSet();
+                lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt(), banset);
+                general = askForGeneral(the_lord, lord_list);
+                foreach(ServerPlayer *p, m_players)
+                    p->setGeneral2Name(general);
+            }
             return;
         }
     }
@@ -2274,8 +2263,10 @@ void Room::run(){
     }else
         broadcastInvoke("startInXs", "0");
 
-    if(scenario && !scenario->generalSelection())
+    if(scenario){
+        scenario->generalSelection(this);
         startGame();
+    }
     else if(mode == "06_3v3"){
         thread_3v3 = new RoomThread3v3(this);
         thread_3v3->start();
@@ -2286,100 +2277,6 @@ void Room::run(){
         thread_1v1->start();
 
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
-    }else if(mode == "dusong"){
-        ServerPlayer *lord = m_players.first();
-        setPlayerProperty(lord, "general", "zhang1dong");
-
-        const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-        const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
-
-        QList<const General *> generals = stdpack->findChildren<const General *>();
-        generals << ratpack->findChildren<const General *>();
-
-        QStringList names;
-        foreach(const General *general, generals){
-            names << general->objectName();
-        }
-
-        foreach(ServerPlayer *player, m_players){
-            if (player == lord)
-                continue;
-
-            qShuffle(names);
-            QStringList choices = names.mid(0, 3);
-            QString name = askForGeneral(player, choices);
-
-            setPlayerProperty(player, "general", name);
-            names.removeOne(name);
-        }
-
-        startGame();
-    }else if(mode == "changban"){
-        QList<const General *> generals;
-        QStringList packages;
-        packages << "standard" << "rat" << "ox";
-
-        foreach(const Package *package, Sanguosha->findChildren<const Package *>()){
-            if(packages.contains(package->objectName()))
-                generals << package->findChildren<const General *>();
-            else
-                continue;
-        }
-
-        // remove hidden generals
-        QMutableListIterator<const General *> itor(generals);
-        while(itor.hasNext()){
-            itor.next();
-
-            if(itor.value()->isHidden())
-                itor.remove();
-        }
-
-        QStringList ban_list;
-        ban_list << "zuoci" << "zuocif" << "yuji" ;
-        foreach(QString name, ban_list)
-            generals.removeOne(Sanguosha->getGeneral(name));
-
-        QString kingdom = "guan";
-        QStringList kingdoms;
-        kingdoms << "guan" << "jiang" << "min" << "kou";
-        kingdom = kingdoms.at(qrand() % 4);
-
-        QStringList names;
-        foreach(const General *general, generals){
-            if(general->getKingdom() == kingdom)
-                names << general->objectName();
-        }
-
-        QList<ServerPlayer *> rebels;
-        foreach(ServerPlayer *player, m_players){
-            if(player->getRole() == "lord"){
-                setPlayerProperty(player, "general", "cbzhaoyun1");
-                continue;
-            }else if(player->getRole() == "loyalist"){
-                setPlayerProperty(player, "general", "cbzhangfei1");
-                continue;
-            }else{
-                rebels << player;
-                qShuffle(names);
-                QStringList choices = names.mid(0, 6), generals;
-                int i;
-                for(i=0; i<3; i++){
-                    QString name = askForGeneral(player, choices);
-                    generals << name;
-                    names.removeOne(name);
-                    choices.removeOne(name);
-                }
-                this->setTag(player->objectName(), QVariant(generals));
-            }
-        }
-        foreach(ServerPlayer *rebel, rebels){
-            QStringList generals = this->getTag(rebel->objectName()).toStringList();
-            setPlayerProperty(rebel, "general", generals.takeFirst());
-            this->setTag(rebel->objectName(), QVariant(generals));
-        }
-
-        startGame();
     }else{
         chooseGenerals();
         startGame();
@@ -2816,15 +2713,11 @@ void Room::sendDamageLog(const DamageStruct &data){
 }
 
 bool Room::hasWelfare(const ServerPlayer *player) const{
-    if(mode == "06_3v3")
+    if(scenario)
+        return scenario->lordWelfare(player);
+    else if(mode == "06_3v3")
         return player->isLord() || player->getRole() == "renegade";
-    else if(mode == "dusong")
-        return false;
-    else if(mode == "changban")
-        return false;
-    else if(mode == "contract")
-        return false;
-    else if(Config.EnableHegemony)
+    else if(ServerInfo.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){
         return false;
@@ -2929,10 +2822,10 @@ void Room::startGame(){
         }
     }
 
-    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3"
-       && mode != "dusong" && mode != "changban" && !Config.EnableBasara){
-        foreach(ServerPlayer *player, m_players)
-            broadcastProperty(player, "general2");
+    if(Config.Enable2ndGeneral)
+        if(mode != "02_1v1" && mode != "06_3v3" && !scenario && !Config.EnableBasara){
+            foreach(ServerPlayer *player, m_players)
+                broadcastProperty(player, "general2");
     }
 
     m_alivePlayers = m_players;
@@ -3208,7 +3101,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
         ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
         if(sour && sour != getCurrent()){
-            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
+            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
             if(fight){
                 sour->playCardEffect("@jiangjieshi2");
                 LogMessage log;

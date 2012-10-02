@@ -60,7 +60,7 @@ SOURCES += \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
 	src/package/tiger.cpp \
-	src/package/xzzd.cpp \
+	src/package/hare.cpp \
 	src/package/bwqz.cpp \
 	src/package/qlfd.cpp \
 	src/package/zcyn.cpp \
@@ -194,7 +194,7 @@ HEADERS += \
 	src/package/rat.h \
 	src/package/ox.h \
 	src/package/tiger.h \
-	src/package/xzzd.h \
+	src/package/hare.h \
 	src/package/bwqz.h \
 	src/package/qlfd.h \
 	src/package/zcyn.h \

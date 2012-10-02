@@ -7,92 +7,6 @@
 #include "engine.h"
 #include "maneuvering.h"
 
-SixiangCard::SixiangCard(){
-}
-
-bool SixiangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int x = Self->getMark("Sixh");
-    return targets.length() < x;
-}
-
-bool SixiangCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    int x = Self->getMark("Sixh");
-    return targets.length() <= x && !targets.isEmpty();
-}
-
-void SixiangCard::onEffect(const CardEffectStruct &effect) const{
-    int handcardnum = effect.to->getHandcardNum();
-    int x = effect.from->getMark("Sixh");
-    int delta = handcardnum - x;
-    Room *room = effect.from->getRoom();
-    if(delta > 0)
-        room->askForDiscard(effect.to, "sixiang", delta);
-    else
-        effect.to->drawCards(qAbs(delta));
-}
-
-class SixiangViewAsSkill: public OneCardViewAsSkill{
-public:
-    SixiangViewAsSkill():OneCardViewAsSkill("sixiang"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@sixiang";
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        SixiangCard *card = new SixiangCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Sixiang:public PhaseChangeSkill{
-public:
-    Sixiang():PhaseChangeSkill("sixiang"){
-        view_as_skill = new SixiangViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *jingmuan) const{
-        Room *room = jingmuan->getRoom();
-        if(jingmuan->getPhase() == Player::Start && !jingmuan->isKongcheng()){
-            room->setPlayerMark(jingmuan, "Sixh", room->getKingdoms());
-            if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang", true))
-                jingmuan->setFlags("elephant");
-        }
-        else if(jingmuan->getPhase() == Player::Discard && jingmuan->hasFlag("elephant")){
-            int x = room->getKingdoms();
-            int total = jingmuan->getEquips().length() + jingmuan->getHandcardNum();
-
-            LogMessage log;
-            log.from = jingmuan;
-            log.arg2 = objectName();
-            if(total <= x){
-                jingmuan->throwAllHandCards();
-                jingmuan->throwAllEquips();
-                log.type = "#SixiangWorst";
-                log.arg = QString::number(total);
-                room->sendLog(log);
-            }else{
-                room->askForDiscard(jingmuan, objectName(), x, false, true);
-                log.type = "#SixiangBad";
-                log.arg = QString::number(x);
-                room->sendLog(log);
-            }
-        }
-        return false;
-    }
-};
-
 class Tianyan: public PhaseChangeSkill{
 public:
     Tianyan():PhaseChangeSkill("tianyan"){
@@ -232,43 +146,6 @@ public:
     }
 };
 
-class Hengchong: public TriggerSkill{
-public:
-    Hengchong():TriggerSkill("hengchong"){
-        events << SlashMissed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(player->getWeapon())
-            return false;
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        QString suit_str = effect.slash->getSuitString();
-        QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
-        QString prompt = QString("@hengchong:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-        CardStar card = room->askForCard(player, pattern, prompt, true, data, CardDiscarded);
-        if(card){
-            room->playSkillEffect(objectName());
-            room->slashResult(effect, NULL);
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getNextandPrevious(effect.to), objectName());
-            DamageStruct damage;
-            damage.from = player;
-            damage.to = target;
-            room->damage(damage);
-
-            LogMessage log;
-            log.type = "#Hengchong";
-            log.from = player;
-            log.to << effect.to << target;
-            log.arg = objectName();
-            log.arg2 = card->objectName();
-            room->sendLog(log);
-
-            return true;
-        }
-        return false;
-    }
-};
-
 class Tuzai: public TriggerSkill{
 public:
     Tuzai():TriggerSkill("tuzai"){
@@ -389,17 +266,11 @@ public:
 ZCYNPackage::ZCYNPackage()
     :Package("ZCYN")
 {
-    General *haosiwen = new General(this, "haosiwen", "guan");
-    haosiwen->addSkill(new Sixiang);
-
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
-
-    General *ligun = new General(this, "ligun", "jiang");
-    ligun->addSkill(new Hengchong);
 
     General *caozheng = new General(this, "caozheng", "min");
     caozheng->addSkill(new Tuzai);
@@ -413,7 +284,6 @@ ZCYNPackage::ZCYNPackage()
     General *gudasao = new General(this, "gudasao", "min", 4, false);
     gudasao->addSkill(new Cihu);
 
-    addMetaObject<SixiangCard>();
     addMetaObject<CihuCard>();
 }
 

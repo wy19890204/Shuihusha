@@ -545,14 +545,14 @@ sgs.ai_compare_funcs = {
 		local players = sgs.QList2Table(a:getRoom():getOtherPlayers(a))
 		local d1 = a:getHandcardNum()
 		for _, player in ipairs(players) do
-			if a:canSlash(player, nil, true) then
+			if a:canSlash(player, true) then
 				d1 = d1+10/(sgs.getDefense(player))
 			end
 		end
 		players = sgs.QList2Table(b:getRoom():getOtherPlayers(b))
 		local d2 = b:getHandcardNum()
 		for _, player in ipairs(players) do
-			if b:canSlash(player, nil, true) then
+			if b:canSlash(player, true) then
 				d2 = d2+10/(sgs.getDefense(player))
 			end
 		end
@@ -3320,7 +3320,7 @@ function SmartAI:hasSameEquip(card, player) -- obsolete
 end
 
 function SmartAI:useEquipCard(card, use)
-	if self:hasSkill("wuzhou") and not self:hasSameEquip(card) then
+	if self:hasSkill("wuzhou") and not self:hasSameEquip(card) and not self:isWeak() then
 		if self.player:getEquips():length() > 1 then return end
 		if self.player:getEquips():length() > 0 and math.random(1, 2) == 2 then return end
 	end

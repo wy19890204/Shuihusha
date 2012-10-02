@@ -202,7 +202,7 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
         return targets.isEmpty() && to_select->getKingdom() != Self->getKingdom()
             && !to_select->isKongcheng() && to_select != Self;
     else if(Self->hasFlag("Zhengfa") && getSubcards().isEmpty())
-        return targets.length() < Self->getKingdoms() && to_select != Self && Self->canSlash(to_select, NULL, false);
+        return targets.length() < Self->getKingdoms() && to_select != Self && Self->canSlash(to_select, false);
     else
         return false;
 }
@@ -616,7 +616,7 @@ public:
             if(judge.isGood()){
                 RecoverStruct rev;
                 rev.card = judge.card;
-                rev.recover = ren->getLostHp(false) - ren->getMaxHP() + 1;
+                rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
                 rev.who = ren;
                 room->recover(ren, rev);
                 if(ren->getHp() != 1)
@@ -912,9 +912,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_selec) const{
-        if(to_selec->getCard()->isRed())
-            return true;
-        return false;
+        return !to_selec->isEquipped() && selected.isEmpty() && to_selec->getCard()->isRed();
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{

@@ -2,8 +2,9 @@
 -- Fourth of the twelve
 
 return {
-	["CGDK"] = "长歌当哭",
+	["hare"] = "秃纸",
 
+	["$haosiwen"] = "041",
 	["#haosiwen"] = "井木犴", -- guan 4hp (zcyn)
 	["haosiwen"] = "郝思文",
 	["cv:haosiwen"] = "芭小乐【声声melody】",
@@ -16,6 +17,7 @@ return {
 	["$sixiang2"] = "朱雀神鸟，为我先导！",
 	["~haosiwen"] = "井宿八星，都陨落了。",
 
+	["$weidingguo"] = "045",
 	["#weidingguo"] = "神火将", -- jiang 3hp (xzdd)
 	["weidingguo"] = "魏定国",
 	["cv:weidingguo"] = "烨子【剪刀剧团】",
@@ -37,6 +39,7 @@ return {
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
 	["~weidingguo"] = "玩火自焚啊！",
 
+	["$xiaorang"] = "046",
 	["#xiaorang"] = "圣手书生", -- min 3hp (cgdk)
 	["xiaorang"] = "萧让",
 	["cv:xiaorang"] = "卡修【剪刀剧团】",
@@ -53,6 +56,7 @@ return {
 	["$zhaixing2"] = "文不按古！",
 	["~xiaorang"] = "心已无声，生命，可否仿造？",
 
+	["$peixuan"] = "047",
 	["#peixuan"] = "铁面孔目", -- guan 3hp (xzdd)
 	["peixuan"] = "裴宣",
 	["cv:peixuan"] = "倔强的小红军【剪刀剧团】",
@@ -67,6 +71,7 @@ return {
 	["$binggong2"] = "定要赏罚分明。",
 	["~peixuan"] = "尽是～暗箱操作！",
 
+	["$ligun"] = "064",
 	["#ligun"] = "飞天大圣", -- jiang 4hp (zcyn)
 	["ligun"] = "李衮",
 	["cv:ligun"] = "蓝调【裔美声社】",
@@ -78,6 +83,7 @@ return {
 	["$hengchong2"] = "汝休想苟活！",
 	["~ligun"] = "冲不出去了！",
 
+	["$tongwei"] = "068",
 	["#tongwei"] = "出洞蛟", -- min 3hp (cgdk)
 	["tongwei"] = "童威",
 	["cv:tongwei"] = "倔强的小红军【剪刀剧团】",
@@ -93,6 +99,7 @@ return {
 	["$qianshui2"] = "汝可敢入水与吾一战？",
 	["~tongwei"] = "祗看后浪推前浪。",
 
+	["$songqing"] = "076",
 	["#songqing"] = "铁扇子", -- min 3hp (ybyt)
 	["songqing"] = "宋清",
 	["cv:songqing"] = "烨子【剪刀剧团】",
@@ -107,6 +114,7 @@ return {
 	["$jiayao2"] = "美酒佳肴，岂不妙哉！",
 	["~songqing"] = "天下哪有不散的宴席。",
 
+	["$dingdesun"] = "079",
 	["#dingdesun"] = "中箭虎", -- jiang 6hp (bwqz)
 	["dingdesun"] = "丁得孙",
 	["designer:dingdesun"] = "烨子&宇文天启",
@@ -120,6 +128,14 @@ return {
 	["$fushang2"] = "沙场征战，难免负伤。",
 	["~dingdesun"] = "呃～毒气～攻心！",
 
+	["$songwan"] = "082",
+	["#songwan"] = "云里金刚", -- kou 4hp
+	["songwan"] = "宋万",
+	["coder:songwan"] = "Slob",
+	["yijie"] = "异界",
+	[":yijie"] = "出牌阶段，你可以失去1点体力，令任一角色摸两张牌。每回合限一次；当你死亡时，你可以将你的所有牌交给任一其他角色并令其回复1点体力。",
+
+	["$zhoutong"] = "087",
 	["#zhoutong"] = "小霸王", -- kou 3hp (ttxd)
 	["zhoutong"] = "周通",
 	["cv:zhoutong"] = "烨子【剪刀剧团】",
@@ -137,6 +153,16 @@ return {
 	["$huatian4"] = "无心插柳，岂是花田之错？",
 	["~zhoutong"] = "虽有霸王相，奈无霸王功啊！",
 
+	["$zhugui"] = "092",
+	["#zhugui"] = "旱地忽律", -- kou 3/4hp
+	["zhugui"] = "朱贵",
+	["coder:zhugui"] = "roxiel",
+	["shihao"] = "施号",
+	[":shihao"] = "摸牌阶段，你可以少摸一张牌，视为你对任一其他角色使用一张【探听】。若如此做，回合结束时，你摸一张牌并将其交给任一角色。",
+	["laolian"] = "老练",
+	[":laolian"] = "你妹使用一张【肉】或【酒】，可视为你对任一其他角色使用一张【迷】（该【迷】不计入每回合使用限制）。",
+
+	["$zhaoji"] = "142",
 	["#zhaoji"] = "宋徽宗", -- guan 3hp (god)
 	["zhaoji"] = "赵佶",
 	["designer:zhaoji"] = "烨子&群龙令",

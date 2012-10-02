@@ -187,7 +187,8 @@ public:
 	void setChained(bool chained);
 	bool isChained() const;
 
-	bool canSlash(const Player *other, const Card *slash = NULL, bool distance_limit = true) const;
+	bool canSlash(const Player *other, const Card *slash, bool distance_limit = true) const;
+	bool canSlash(const Player *other, bool distance_limit = true) const;
 	int getCardCount(bool include_equip) const;
 
 	QList<int> getPile(const char *pile_name);
@@ -921,7 +922,8 @@ public:
 	bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
 	bool isCanceled(const CardEffectStruct &effect);
 	int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const char *flags, const char *reason);
-	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false, const QVariant &data = QVariant());
+	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill, const QVariant &data = QVariant());
+	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, const QVariant &data = QVariant());
 	bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false);
 	int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const char *reason);
 	const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const char *reason);
