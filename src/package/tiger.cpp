@@ -741,17 +741,20 @@ public:
             room->broadcastInvoke("animate", "lightbox:$fuhun:1500");
             room->getThread()->delay(1500);
 
-            room->loseMaxHp(zhang);
+            room->detachSkillFromPlayer(zhang, "jielue");
             room->acquireSkill(zhang, "lihun");
+            int count = 0;
             foreach(const Skill *skill, player->getVisibleSkillList()){
                 if(skill->getLocation() == Skill::Right &&
                    skill->getFrequency() != Skill::Limited &&
                    skill->getFrequency() != Skill::Wake &&
                    !skill->isLordSkill()){
                     room->acquireSkill(zhang, skill->objectName());
+                    count ++;
                 }
             }
-            room->detachSkillFromPlayer(zhang, "jielue");
+            if(count > 1)
+                room->loseMaxHp(zhang);
             room->setPlayerMark(zhang, "fuhun", 1);
         }
         return false;

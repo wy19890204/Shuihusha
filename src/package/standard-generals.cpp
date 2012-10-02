@@ -2601,7 +2601,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         PindianStar pindian = data.value<PindianStar>();
-        if(player == pindian->from && pindian->reason == objectName()){
+        if(pindian->reason == objectName()){
             if(pindian->isSuccess()){
                 room->playSkillEffect(objectName(), 3);
                 player->obtainCard(pindian->from_card);

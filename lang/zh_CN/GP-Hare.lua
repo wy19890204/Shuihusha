@@ -1,4 +1,5 @@
--- ZhechongYannan Shuihusha part 7.
+-- translation for HarePackage
+-- Fourth of the twelve
 
 return {
 	["hare"] = "秃纸",
@@ -36,6 +37,7 @@ return {
 	["$shenhuo2"] = "以火应敌，贼人何处逃窜？！",
 	["$shenhuo3"] = "看我焚诀秘法！",
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
+	["~weidingguo"] = "玩火自焚啊！",
 
 	["$xiaorang"] = "046",
 	["#xiaorang"] = "圣手书生", -- min 3hp (cgdk)
@@ -67,6 +69,7 @@ return {
 	["$shenpan2"] = "阴阳双判，定生死！",
 	["$binggong1"] = "可知这寨中规矩？",
 	["$binggong2"] = "定要赏罚分明。",
+	["~peixuan"] = "尽是～暗箱操作！",
 
 	["$ligun"] = "064",
 	["#ligun"] = "飞天大圣", -- jiang 4hp (zcyn)
@@ -123,11 +126,12 @@ return {
 	[":fushang"] = "<b>锁定技</b>，你每受到一次伤害，若你的体力上限大于3，你须减1点体力上限，然后摸3张牌。",
 	["$fushang1"] = "小伤而已。",
 	["$fushang2"] = "沙场征战，难免负伤。",
+	["~dingdesun"] = "呃～毒气～攻心！",
 
 	["$songwan"] = "082",
 	["#songwan"] = "云里金刚", -- kou 4hp
 	["songwan"] = "宋万",
-	["coder:songwan"] = "青苹果",
+	["coder:songwan"] = "Slob",
 	["yijie"] = "异界",
 	[":yijie"] = "出牌阶段，你可以失去1点体力，令任一角色摸两张牌。每回合限一次；当你死亡时，你可以将你的所有牌交给任一其他角色并令其回复1点体力。",
 

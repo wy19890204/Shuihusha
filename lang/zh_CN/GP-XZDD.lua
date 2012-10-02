@@ -42,6 +42,7 @@ return {
 	["feiqiang:wang"] = "弃掉其装备区里的所有牌",
 	["$feiqiang1"] = "杀汝等个措手不及！",
 	["$feiqiang2"] = "看我飞枪！",
+	["~gongwang"] = "啊！",
 
 	["#yuehe"] = "铁叫子", -- min 3hp (ttxd)
 	["yuehe"] = "乐和",
@@ -145,8 +146,4 @@ return {
 	["fengxing"] = "风行",
 	[":fengxing"] = "<b>锁定技</b>，你始终跳过你的判定阶段、摸牌阶段和弃牌阶段；你每失去一张手牌，若你的手牌数小于你的体力上限，则你须摸一张牌。",
 
--- last words
-	["~weidingguo"] = "玩火自焚啊！",
-	["~peixuan"] = "尽是～暗箱操作！",
-	["~gongwang"] = "啊！",
 }
