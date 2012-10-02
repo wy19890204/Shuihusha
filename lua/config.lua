@@ -13,8 +13,15 @@ config = {
 	"Plough",
 	"Maneuvering",
 	"ExCard",
+<<<<<<< HEAD
 --	"Events",
 --	"Gift",
+=======
+	"Events",
+	"Gift",
+	"ChemCards",
+--	"CustomCard",
+>>>>>>> 18e98fbf160c118e8f0892a902496828cbbca3cb
 --	"Kuso",
 --	"Joy",
 
