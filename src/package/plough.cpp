@@ -30,7 +30,17 @@ bool Ecstasy::targetFilter(const QList<const Player *> &targets, const Player *t
 
     if(targets.length() >= cst_targets)
         return false;
-    return to_select != Sefect.to, "ecst");
+    return to_select != Self && Self->inMyAttackRange(to_select);
+}
+
+void Ecstasy::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+
+    QString animation_str = QString("ecstasy:%1:%2")
+                            .arg(effect.from->objectName()).arg(effect.to->objectName());
+    room->broadcastInvoke("animate", animation_str);
+
+    room->setPlayerFlag(effect.to, "ecst");
 }
 
 Drivolt::Drivolt(Suit suit, int number)
@@ -67,17 +77,7 @@ void Wiretap::onEffect(const CardEffectStruct &effect) const{
     room->setTag("Wiretap", QVariant::fromValue(effect));
     QList<int> all = effect.to->handCards();
     //room->showAllCards(effect.to, effect.from);
-    room->fillAG(all, eflf && Self->inMyAttackRange(to_select);
-}
-
-void Ecstasy::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-
-    QString animation_str = QString("ecstasy:%1:%2")
-                            .arg(effect.from->objectName()).arg(effect.to->objectName());
-    room->broadcastInvoke("animate", animation_str);
-
-    room->setPlayerFlag(effect.from);
+    room->fillAG(all, effect.from);
     int mitan = room->askForAG(effect.from, all, true, "wiretap");
     if(effect.from->hasSkill("mitan") && mitan > -1){
         if(getSkillName() != "mitan")

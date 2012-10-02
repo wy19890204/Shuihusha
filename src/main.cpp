@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     QTranslator qt_translator, translator;
     qt_translator.load("qt_zh_CN.qm");
-    translator.load("shuihusha.qm");
+    translator.load("qinsmoon.qm");
 
     qApp->installTranslator(&qt_translator);
     qApp->installTranslator(&translator);
@@ -46,20 +46,20 @@ int main(int argc, char *argv[])
         printf("Server is starting on port %u\n", Config.ServerPort);
 
         if(server->listen())
-            printf("St
+            printf("Starting successfully\n");
+        else
+            printf("Starting failed!\n");
 
-#ifdef AUDIO_SUarting successfully\n");
-                   else
-                       printf("Starting failed!\n");
+        return qApp->exec();
+    }
 
-                   return qApp->exec();
-               }
+    QFile file("qinsmoon.qss");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        qApp->setStyleSheet(stream.readAll());
+    }
 
-               QFile file("shuihusha.qss");
-               if(file.open(QIODevice::ReadOnly)){
-                   QTextStream stream(&file);
-                   qApp->setStyleSheet(stream.readAll());
-               }PPORT
+#ifdef AUDIO_SUPPORT
 
     Audio::init();
 

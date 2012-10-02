@@ -87,16 +87,7 @@ void Settings::init(){
     Address = value("Address", QString()).toString();
     FreeChooseGenerals = value("FreeChooseGenerals", false).toBool();
     FreeChooseCards = value("FreeChooseCards", false).toBool();
-    FreeAssignSelf = value("FrstoryIPs").toStringList();
-    DetectorPort = value("DetectorPort", 9526u).toUInt();
-    MaxCards = value("MaxCards", 15).toInt();
-
-    CircularView = value("CircularView", true).toBool();
-    FitInView = value("FitInView", false).toBool();
-    EnableHotKey = value("EnableHotKey", true).toBool();
-    NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
-    EnableMinimizeDialog = value("EnableMinimizeDialog", false).toBool();
-    EnableAutoTarget = valeeAssignSelf", false).toBool();
+    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
@@ -108,12 +99,21 @@ void Settings::init(){
 #endif
 
     if(UserName == "Admin" || UserName == "Administrator")
-        UserName = tr("Shuihusha-fans");
+        UserName = tr("QinsMoon-fans");
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
     UserAvatar = value("UserAvatar", "anjiang").toString();
-    HistoryIPs = value("Hiue("EnableAutoTarget", false).toBool();
+    HistoryIPs = value("HistoryIPs").toStringList();
+    DetectorPort = value("DetectorPort", 9526u).toUInt();
+    MaxCards = value("MaxCards", 15).toInt();
+
+    CircularView = value("CircularView", true).toBool();
+    FitInView = value("FitInView", false).toBool();
+    EnableHotKey = value("EnableHotKey", true).toBool();
+    NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
+    EnableMinimizeDialog = value("EnableMinimizeDialog", false).toBool();
+    EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
     ShowAllName = value("ShowAllName", true).toBool();
     SPOpen = value("SPOpen", false).toBool();
