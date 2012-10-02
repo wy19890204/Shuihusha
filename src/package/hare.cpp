@@ -690,6 +690,69 @@ public:
     }
 };
 
+YijieCard::YijieCard(){
+    will_throw = false;
+    target_fixed = false;
+}
+
+bool YijieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return to_select != Self && targets.size() == 0;
+}
+
+void YijieCard::use(Room *room, ServerPlayer *source, QList<ServerPlayer *> &targets) const{
+    room->loseHp(source);
+    targets.first()->drawCards(2);
+}
+
+class YijieViewAsSkill:public ZeroCardViewAsSkill{
+public:
+    YijieViewAsSkill():ZeroCardViewAsSkill("yijie"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new YijieCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("YijieCard");
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return false;
+    }
+};
+
+class Yijie: public TriggerSkill{
+public:
+    Yijie():TriggerSkill("yijie"){
+        events << Death;
+        view_as_skill = new YijieViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL && target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        QList<ServerPlayer *> targets = room->getAlivePlayers();
+
+        if(targets.isEmpty() || !player->askForSkillInvoke(objectName(), data))
+            return false;
+
+        ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+
+        room->broadcastSkillInvoke(objectName());
+        target->obtainCard(player->wholeHandCards(), false);
+        if(target->isWounded()){
+            RecoverStruct recover;
+            recover.who = target;
+            recover.recover = 1;
+            room->recover(target, recover, true);
+        }
+        return false;
+    }
+};
+
 class Qiangqu:public TriggerSkill{
 public:
     Qiangqu():TriggerSkill("qiangqu"){
@@ -797,7 +860,7 @@ public:
         Room *room = zhugui->getRoom();
         if(zhugui->getPhase() == Player::Play){
             Wiretap *wp = new Wiretap(Card::NoSuit, 0);
-            wp->setSkillName(objectName());
+            wp->setSkillName("shihao");
             QList<ServerPlayer *> targets;
             foreach(ServerPlayer *target, room->getOtherPlayers(zhugui)){
                 if(!target->isProhibited(target, wp))
@@ -831,6 +894,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *guigui, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
         if(use.card->inherits("Peach") || use.card->inherits("Analeptic")){
+            room->throwCard(use.card);
             if(guigui->askForSkillInvoke(objectName())){
                 PlayerStar target = room->askForPlayerChosen(guigui, room->getOtherPlayers(guigui), objectName());
                 Ecstasy *ey = new Ecstasy(Card::NoSuit, 0);
@@ -945,6 +1009,9 @@ HarePackage::HarePackage()
     dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
 
+    General *songwan = new General(this, "songwan", "kou");
+    songwan->addSkill(new Yijie);
+
     General *zhoutong = new General(this, "zhoutong", "kou", 3);
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
@@ -966,6 +1033,7 @@ HarePackage::HarePackage()
     addMetaObject<ZhaixingCard>();
     addMetaObject<BinggongCard>();
     addMetaObject<SheyanCard>();
+    addMetaObject<YijieCard>();
 }
 
 ADD_PACKAGE(Hare)

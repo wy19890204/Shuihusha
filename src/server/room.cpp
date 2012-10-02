@@ -2167,7 +2167,7 @@ void Room::chooseGenerals(){
         else
             lord_list = Sanguosha->getRandomLords();
         if(Config.EnableSame && the_lord->getState() != "online")
-            the_lord = findOnlinePlayers().first(); //TODO!
+            the_lord = findOnlinePlayers().first(); // @todo: crash this!
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
         if (!Config.EnableBasara)

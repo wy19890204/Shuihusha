@@ -293,6 +293,8 @@ void RoomThread::run(){
         trigger(GameStart, room, player);
     }
 
+    //if(room->scenario){
+    //  room->scenario->run(room);
     if(room->getMode() == "dusong"){
         ServerPlayer *shenlvbu = room->getLord();
         if(shenlvbu->getGeneralName() == "zhang1dong"){
@@ -434,11 +436,10 @@ void RoomThread::run(){
                 room->setCurrent(room->getCurrent()->getNext());
             }
         }
-
-
-    }else if(room->mode == "06_3v3"){
+    }
+    else if(room->mode == "06_3v3")
         run3v3();
-    }else{
+    else{
         if(room->getMode() == "02_1v1")
             room->setCurrent(room->getPlayers().at(1));
         forever {

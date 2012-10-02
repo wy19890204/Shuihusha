@@ -10,7 +10,7 @@ MiniSceneRule::MiniSceneRule(Scenario *scenario)
 }
 
 void MiniSceneRule::assign(QStringList &generals, QStringList &roles) const{
-    for(int i=0;i<players.length();i++)
+    for(int i = 0; i < players.length(); i++)
     {
         QMap<QString,QString> sp =players.at(i);
         QString name = sp["general"];
@@ -58,8 +58,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             }
         }
 
-        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL
-                )
+        if(player->getPhase() == Player::Start && this->players.first()["beforeNext"] != NULL)
         {
             if(player->tag["playerHasPlayed"].toBool())
                 room->gameOver(this->players.first()["beforeNext"]);
@@ -79,6 +78,18 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
     if(player->getRoom()->getTag("WaitForPlayer").toBool())
         return true;
 
+    if(event == GameStart){
+        if (objectName().startsWith("_mini_")) {
+            room->broadcastInvoke("animate", "lightbox:" + objectName() + ":2000");
+            room->getThread()->delay(2000);
+
+            LogMessage log;
+            log.type = "#WelcomeToMiniScenario";
+            log.arg = objectName().mid(6);
+            log.arg2 = objectName();
+            room->sendLog(log);
+        }
+    }
     QList<ServerPlayer*> players = room->getAllPlayers();
     while(players.first()->getState() == "robot")
         players.append(players.takeFirst());
