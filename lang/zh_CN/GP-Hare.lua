@@ -127,7 +127,7 @@ return {
 	["$songwan"] = "082",
 	["#songwan"] = "云里金刚", -- kou 4hp
 	["songwan"] = "宋万",
-	["coder:songwan"] = "青苹果",
+	["coder:songwan"] = "Slob",
 	["yijie"] = "异界",
 	[":yijie"] = "出牌阶段，你可以失去1点体力，令任一角色摸两张牌。每回合限一次；当你死亡时，你可以将你的所有牌交给任一其他角色并令其回复1点体力。",
 

@@ -691,17 +691,22 @@ public:
 };
 
 YijieCard::YijieCard(){
-    will_throw = false;
-    target_fixed = false;
 }
 
 bool YijieCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select != Self && targets.size() == 0;
+    if(targets.length() >= 1)
+        return false;
+    return true;
 }
 
-void YijieCard::use(Room *room, ServerPlayer *source, QList<ServerPlayer *> &targets) const{
+bool YijieCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return  targets.length() < 2;
+}
+
+void YijieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->loseHp(source);
-    targets.first()->drawCards(2);
+    PlayerStar target = targets.isEmpty() ? source : targets.first();
+    target->drawCards(2);
 }
 
 class YijieViewAsSkill:public ZeroCardViewAsSkill{
@@ -712,14 +717,10 @@ public:
     virtual const Card *viewAs() const{
         return new YijieCard;
     }
-
+/*
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->hasUsed("YijieCard");
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return false;
-    }
+    }*/
 };
 
 class Yijie: public TriggerSkill{
@@ -728,7 +729,11 @@ public:
         events << Death;
         view_as_skill = new YijieViewAsSkill;
     }
-
+/*
+    virtual int getPriority() const{
+        return 2;
+    }
+*/
     virtual bool triggerable(const ServerPlayer *target) const{
         return target != NULL && target->hasSkill(objectName());
     }
@@ -741,12 +746,16 @@ public:
 
         ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
 
-        room->broadcastSkillInvoke(objectName());
-        target->obtainCard(player->wholeHandCards(), false);
+        room->playSkillEffect(objectName(), 2);
+        if(!player->isNude()){
+            DummyCard *dummy = player->wholeHandCards();
+            foreach(const Card *ard, player->getEquips())
+                dummy->addSubcard(ard);
+            target->obtainCard(dummy, false);
+        }
         if(target->isWounded()){
             RecoverStruct recover;
             recover.who = target;
-            recover.recover = 1;
             room->recover(target, recover, true);
         }
         return false;
