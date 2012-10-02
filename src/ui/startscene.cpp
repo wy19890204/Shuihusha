@@ -158,7 +158,7 @@ void StartScene::printServerInfo(){
         server_log->append(tr("Secondary general is enabled, max hp scheme is %1").arg(scheme_str));
     }else
         server_log->append(tr("Seconardary general is disabled"));
-
+/*
     QString changjing = Config.EnableScene ?
                         tr("Scene Mode is enabled") :
                         tr("Scene Mode is disabled");
@@ -171,7 +171,7 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
                         tr("Anzhan Mode is disabled"));
-
+*/
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :
                         tr("Basara Mode is disabled"));

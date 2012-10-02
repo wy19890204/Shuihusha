@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     QTranslator qt_translator, translator;
     qt_translator.load("qt_zh_CN.qm");
-    translator.load("shuihusha.qm");
+    translator.load("qinsmoon.qm");
 
     qApp->installTranslator(&qt_translator);
     qApp->installTranslator(&translator);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         return qApp->exec();
     }
 
-    QFile file("shuihusha.qss");
+    QFile file("qinsmoon.qss");
     if(file.open(QIODevice::ReadOnly)){
         QTextStream stream(&file);
         qApp->setStyleSheet(stream.readAll());

@@ -169,20 +169,20 @@ QWidget *ServerDialog::createAdvancedTab(){
     disable_chat_checkbox->setChecked(Config.DisableChat);
 
     second_general_checkbox = new QCheckBox(tr("Enable second general"));
-
+/*
     reincarnation_checkbox  = new QCheckBox(tr("Enable Reincarnation"));
     reincarnation_checkbox->setChecked(Config.EnableReincarnation);
     reinca_unchange_checkbox  = new QCheckBox(tr("Persist general in reincarnation"));
     reinca_unchange_checkbox->setChecked(Config.value("ReincaPersist").toBool());
-
+*/
     scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
-
+/*
     anzhan_checkbox  = new QCheckBox(tr("Enable Anzhan"));
     anzhan_checkbox->setChecked(Config.EnableAnzhan);
     anzhan_equal_checkbox  = new QCheckBox(tr("Anzhan equality"));
     anzhan_equal_checkbox->setChecked(Config.value("AnzhanEqual").toBool());
-
+*/
     max_hp_label = new QLabel(tr("Max HP scheme"));
     max_hp_scheme_combobox = new QComboBox;
     max_hp_scheme_combobox->addItem(tr("Sum - 3"));
@@ -229,8 +229,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addWidget(scene_checkbox); //changjing
-    layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
-    layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
+    //layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
+    //layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
@@ -244,11 +244,12 @@ QWidget *ServerDialog::createAdvancedTab(){
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
     max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
     connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
+    /*
     anzhan_equal_checkbox->setVisible(Config.value("AnzhanEqual", false).toBool());
     connect(anzhan_checkbox, SIGNAL(toggled(bool)), anzhan_equal_checkbox, SLOT(setVisible(bool)));
     reinca_unchange_checkbox->setVisible(Config.value("ReincaPersist", false).toBool());
     connect(reincarnation_checkbox, SIGNAL(toggled(bool)), reinca_unchange_checkbox, SLOT(setVisible(bool)));
-
+    */
     //hide&disable
     scene_checkbox->setEnabled(false);
 
@@ -306,25 +307,25 @@ QWidget *ServerDialog::createCheatTab(){
 
     same_checkbox  = new QCheckBox(tr("Enable Same"));
     same_checkbox->setChecked(Config.EnableSame);
-
+/*
     endless_checkbox  = new QCheckBox(tr("Endless Mode"));
     endless_checkbox->setChecked(Config.EnableEndless);
     endless_timebox = new QSpinBox;
     endless_timebox->setRange(1, 100);
     endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
     endless_timebox->setToolTip(tr("This box set the swap times"));
-
+*/
     layout->addWidget(cheat_enable_checkbox);
     layout->addWidget(box);
     layout->addWidget(same_checkbox);
-    layout->addLayout(HLay(endless_checkbox, endless_timebox));
+    //layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
 
-    endless_timebox->setVisible(Config.EnableEndless);
-    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
+    //endless_timebox->setVisible(Config.EnableEndless);
+    //connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
 
     return widget;
 }
