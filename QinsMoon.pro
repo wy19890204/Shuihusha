@@ -60,18 +60,9 @@ SOURCES += \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
 	src/package/tiger.cpp \
-	src/package/hare.cpp \
-	src/package/bwqz.cpp \
-	src/package/qlfd.cpp \
-	src/package/zcyn.cpp \
-	src/package/cgdk.cpp \
-	src/package/ybyt.cpp \
-	src/package/sp.cpp \
-	src/package/god.cpp \
-	src/package/joy.cpp \
-	src/package/interchange.cpp \
-	src/package/guben.cpp \
-	src/package/stanley.cpp \
+        src/package/hare.cpp \
+        src/package/sp.cpp \
+        src/package/joy.cpp \
 	src/scenario/boss-mode-scenario.cpp \
 	src/scenario/contract-scenario.cpp \
 	src/scenario/couple-scenario.cpp \
@@ -194,18 +185,9 @@ HEADERS += \
 	src/package/rat.h \
 	src/package/ox.h \
 	src/package/tiger.h \
-	src/package/hare.h \
-	src/package/bwqz.h \
-	src/package/qlfd.h \
-	src/package/zcyn.h \
-	src/package/cgdk.h \
-	src/package/ybyt.h \
-	src/package/sp.h \
-	src/package/god.h \
-	src/package/joy.h \
-	src/package/interchange.h \
-	src/package/guben.h \
-	src/package/stanley.h \
+        src/package/hare.h \
+        src/package/sp.h \
+        src/package/joy.h \
 	src/scenario/boss-mode-scenario.h \
 	src/scenario/contract-scenario.h \
 	src/scenario/couple-scenario.h \
