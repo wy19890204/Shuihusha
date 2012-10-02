@@ -138,14 +138,7 @@ void ServerInfoWidget::fill(const ServerInfoStruct &info, const QString &address
     int player_count = Sanguosha->getPlayerCount(info.GameMode);
     player_count_label->setText(QString::number(player_count));
     port_label->setText(QString::number(Config.ServerPort));
-    two_general_label->setText(info.Enable2ndGeneral ? tr("Enabled") : tr("Disabled"));
-    reincarnation_label->setText(info.EnableReincarnation ? tr("Enabled") : tr("Disabled"));
-    scene_label->setText(info.EnableScene ? tr("Enabled") : tr("Disabled"));
-    same_label->setText(info.EnableSame ? tr("Enabled") : tr("Disabled"));
-    endless_label->setText(info.EnableEndless ? tr("Enabled") : tr("Disabled"));
-    anzhan_label->setText(info.EnableAnzhan ? tr("Enabled") : tr("Disabled"));
-    basara_label->setText(info.EnableBasara ? tr("Enabled") : tr("Disabled"));
-    hegemony_label->setText(info.EnableHegemony ? tr("Enabled") : tr("Disabled"));
+    two_general_label->setText(infoy ? tr("Enabled") : tr("Disabled"));
 
     if(info.Enable2ndGeneral){
         switch(info.MaxHPScheme){

@@ -46,20 +46,20 @@ int main(int argc, char *argv[])
         printf("Server is starting on port %u\n", Config.ServerPort);
 
         if(server->listen())
-            printf("Starting successfully\n");
-        else
-            printf("Starting failed!\n");
+            printf("St
 
-        return qApp->exec();
-    }
+#ifdef AUDIO_SUarting successfully\n");
+                   else
+                       printf("Starting failed!\n");
 
-    QFile file("shuihusha.qss");
-    if(file.open(QIODevice::ReadOnly)){
-        QTextStream stream(&file);
-        qApp->setStyleSheet(stream.readAll());
-    }
+                   return qApp->exec();
+               }
 
-#ifdef AUDIO_SUPPORT
+               QFile file("shuihusha.qss");
+               if(file.open(QIODevice::ReadOnly)){
+                   QTextStream stream(&file);
+                   qApp->setStyleSheet(stream.readAll());
+               }PPORT
 
     Audio::init();
 
