@@ -23,7 +23,7 @@
 #include "pixmapanimation.h"
 
 Photo::Photo()
-    :Pixmap(":system/photo-back.png"),
+    :Pixmap("image/system/photo-back.png"),
     player(NULL),
     handcard("image/system/handcard.png"),
     action_item(NULL), save_me_item(NULL), permanent(false),
