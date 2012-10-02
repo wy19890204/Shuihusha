@@ -184,7 +184,14 @@ public:
             log.arg = objectName();
             room->sendLog(log);
 
+            if(effect.slash->getSkillName() == "strike")
+                player->addMark("tola");
             room->slashResult(effect, NULL);
+            if(player->getMark("tola") >= 3){
+                log.type = "#Tigerhide";
+                room->sendLog(log);
+                room->acquireSkill(player, "tigerou");
+            }
         }
 
         return false;
@@ -226,6 +233,61 @@ public:
         return false;
     }
 };
+
+class Tigerou: public TriggerSkill{
+public:
+    Tigerou():TriggerSkill("tigerou"){
+        events << Predamage << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == CardEffected){
+            if(!player->hasSkill(objectName()))
+                return false;
+            CardEffectStruct effect = data.value<CardEffectStruct>();
+            if(effect.card->inherits("SavageAssault")){
+                LogMessage log;
+                log.type = "#SkillNullify";
+                log.from = player;
+                log.arg = objectName();
+                log.arg2 = "savage_assault";
+                room->sendLog(log);
+                return true;
+            }else
+                return false;
+        }
+        else{
+            if(player->hasSkill(objectName()))
+                return false;
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.card && damage.card->inherits("SavageAssault")){
+                ServerPlayer *menghuo = room->findPlayerBySkillName(objectName());
+                if(menghuo){
+                    LogMessage log;
+                    log.type = "#TigerTransfer";
+                    log.from = menghuo;
+                    log.to << damage.to;
+                    log.arg = player->getGeneralName();
+                    log.arg2 = objectName();
+                    room->sendLog(log);
+
+                    room->playSkillEffect(objectName());
+
+                    damage.from = menghuo;
+                    room->damage(damage);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
 /*
 JiebaoCard::JiebaoCard(){
 }
@@ -598,6 +660,7 @@ SPPackage::SPPackage()
     tora->addSkill(new Exterminate);
     tora->addSkill(new MarkAssignSkill("@kacha", 1));
     related_skills.insertMulti("exterminate", "#@kacha-1");
+    skills << new Tigerou;
 
 /*
     General *chaogai = new General(this, "chaogai", "kou");
@@ -623,4 +686,4 @@ SPPackage::SPPackage()
     addMetaObject<BaoquanCard>();
 }
 
-ADD_PACKAGE(SP);
+ADD_PACKAGE(SP)

@@ -700,7 +700,7 @@ bool YijieCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 bool YijieCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return  targets.length() < 2;
+    return targets.length() < 2;
 }
 
 void YijieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
