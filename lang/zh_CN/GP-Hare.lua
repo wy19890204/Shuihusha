@@ -1,4 +1,5 @@
--- ZhechongYannan Shuihusha part 7.
+-- translation for HarePackage
+-- Fourth of the twelve
 
 return {
 	["CGDK"] = "长歌当哭",
@@ -34,6 +35,7 @@ return {
 	["$shenhuo2"] = "以火应敌，贼人何处逃窜？！",
 	["$shenhuo3"] = "看我焚诀秘法！",
 	["$shenhuo4"] = "火攻之法乃破敌之上计。",
+	["~weidingguo"] = "玩火自焚啊！",
 
 	["#xiaorang"] = "圣手书生", -- min 3hp (cgdk)
 	["xiaorang"] = "萧让",
@@ -63,6 +65,7 @@ return {
 	["$shenpan2"] = "阴阳双判，定生死！",
 	["$binggong1"] = "可知这寨中规矩？",
 	["$binggong2"] = "定要赏罚分明。",
+	["~peixuan"] = "尽是～暗箱操作！",
 
 	["#ligun"] = "飞天大圣", -- jiang 4hp (zcyn)
 	["ligun"] = "李衮",
@@ -115,6 +118,7 @@ return {
 	[":fushang"] = "<b>锁定技</b>，你每受到一次伤害，若你的体力上限大于3，你须减1点体力上限，然后摸3张牌。",
 	["$fushang1"] = "小伤而已。",
 	["$fushang2"] = "沙场征战，难免负伤。",
+	["~dingdesun"] = "呃～毒气～攻心！",
 
 	["#zhoutong"] = "小霸王", -- kou 3hp (ttxd)
 	["zhoutong"] = "周通",

@@ -1,4 +1,5 @@
 -- translation for TigerPackage
+-- Third of the twelve
 
 return {
 	["tiger"] = "寅虎",

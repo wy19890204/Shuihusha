@@ -86,7 +86,6 @@ return {
 	["$kongying2"] = "此步，汝当以何抵对？",
 
 -- last words
-	["~dingdesun"] = "呃～毒气～攻心！",
 	["~mengkang"] = "火炮突袭，快撤！",
 	["~jiaoting"] = "绝技不复代代相传矣！",
 	["~kongliang"] = "吾不识水性啊！",

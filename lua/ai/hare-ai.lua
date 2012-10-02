@@ -154,6 +154,7 @@ sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
 end
 
 -- dingdesun
+-- songwan
 -- zhoutong
 -- qiangqu
 sgs.ai_skill_invoke["qiangqu"] = function(self, data)
@@ -185,6 +186,7 @@ sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
 	end
 end
 
+-- zhugui
 -- zhaoji
 -- shemi
 sgs.ai_skill_invoke["shemi"] = function(self, data)
