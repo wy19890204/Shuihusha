@@ -1,7 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-06-13T04:26:52
 # -------------------------------------------------
-TARGET = Shuihusha
+TARGET = Qinsmoon
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
@@ -335,10 +335,10 @@ CONFIG(chatvoice){
 	}
 }
 
-TRANSLATIONS += shuihusha.ts
+TRANSLATIONS += qinsmoon.ts
 
 OTHER_FILES += \
-	shuihusha.qss \
+	qinsmoon.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png
