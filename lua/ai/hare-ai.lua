@@ -154,6 +154,22 @@ sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
 end
 
 -- dingdesun
+-- songwan
+-- yijie
+sgs.ai_skill_invoke["yijie"] = function(self, data)
+	self:sort(self.friends_noself, "hp")
+	for _, friend in ipairs(self.friends_noself) do
+		if friend:isWounded() then
+			self.yijietarget = friend
+			return true
+		end
+	end
+	return false
+end
+sgs.ai_skill_playerchosen["yijie"] = function(self, targets)
+	return self.yijietarget
+end
+
 -- zhoutong
 -- qiangqu
 sgs.ai_skill_invoke["qiangqu"] = function(self, data)
@@ -183,6 +199,18 @@ sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
 		self:sort(self.enemies, "hp")
 		return self.enemies[1]
 	end
+end
+
+-- zhugui
+-- shihao
+sgs.ai_skill_invoke["shihao"] = function(self, data)
+	return self.player:getHandcardNum() >= 3
+end
+-- laolian
+sgs.ai_skill_invoke["laolian"] = true
+sgs.ai_skill_playerchosen["laolian"] = function(self, targets)
+	self:sort(self.enemies, "defense")
+	return self.enemies[1]
 end
 
 -- zhaoji
