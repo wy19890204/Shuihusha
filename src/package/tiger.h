@@ -38,7 +38,6 @@ class LiejiCard: public SkillCard{
 public:
     Q_INVOKABLE LiejiCard();
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 

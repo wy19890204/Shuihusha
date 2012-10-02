@@ -4,7 +4,6 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "ai.h"
 
 BaoquanCard::BaoquanCard(){
     mute = true;
@@ -185,7 +184,14 @@ public:
             log.arg = objectName();
             room->sendLog(log);
 
+            if(effect.slash->getSkillName() == "strike")
+                player->addMark("tola");
             room->slashResult(effect, NULL);
+            if(player->getMark("tola") >= 3){
+                log.type = "#Tigerhide";
+                room->sendLog(log);
+                room->acquireSkill(player, "tigerou");
+            }
         }
 
         return false;
@@ -200,11 +206,10 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *hanae, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(hanae->hasSkill(objectName()) || hanae == damage.to)
+        if(hanae == damage.to || !hanae->hasMark("@kacha"))
             return false;
-        if(hanae->getMark("@kacha") > 0 && hanae->askForSkillInvoke(objectName(), data)){
+        if(hanae->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
-
             QList<ServerPlayer *> targets;
             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                 if(damage.to->distanceTo(tmp) == 1)
@@ -228,73 +233,62 @@ public:
         return false;
     }
 };
-/*
-class Shemi: public TriggerSkill{
+
+class Tigerou: public TriggerSkill{
 public:
-    Shemi():TriggerSkill("shemi"){
-        events << PhaseChange << TurnedOver;
+    Tigerou():TriggerSkill("tigerou"){
+        events << Predamage << CardEffected;
+        frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
-        if(e == PhaseChange){
-            if(emperor->getPhase() == Player::Discard &&
-               emperor->askForSkillInvoke(objectName(), data)){
-                emperor->turnOver();
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == CardEffected){
+            if(!player->hasSkill(objectName()))
+                return false;
+            CardEffectStruct effect = data.value<CardEffectStruct>();
+            if(effect.card->inherits("SavageAssault")){
+                LogMessage log;
+                log.type = "#SkillNullify";
+                log.from = player;
+                log.arg = objectName();
+                log.arg2 = "savage_assault";
+                room->sendLog(log);
                 return true;
-            }
+            }else
+                return false;
         }
         else{
-            if(!emperor->hasFlag("NongQ")){
-                int index = emperor->faceUp() ? 2: 1;
-                room->playSkillEffect(objectName(), index);
+            if(player->hasSkill(objectName()))
+                return false;
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.card && damage.card->inherits("SavageAssault")){
+                ServerPlayer *menghuo = room->findPlayerBySkillName(objectName());
+                if(menghuo){
+                    LogMessage log;
+                    log.type = "#TigerTransfer";
+                    log.from = menghuo;
+                    log.to << damage.to;
+                    log.arg = player->getGeneralName();
+                    log.arg2 = objectName();
+                    room->sendLog(log);
+
+                    room->playSkillEffect(objectName());
+
+                    damage.from = menghuo;
+                    room->damage(damage);
+                    return true;
+                }
             }
-            int x = emperor->getLostHp();
-            x = qMax(qMin(x,2),1);
-            emperor->drawCards(x);
         }
         return false;
     }
 };
 
-class Lizheng: public ClientSkill{
-public:
-    Lizheng():ClientSkill("lizheng"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(to->hasSkill(objectName()) && !to->faceUp())
-            return +1;
-        else
-            return 0;
-    }
-};
-
-class Nongquan:public PhaseChangeSkill{
-public:
-    Nongquan():PhaseChangeSkill("nongquan$"){
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan" && !target->hasLordSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *otherguan) const{
-        Room *room = otherguan->getRoom();
-        if(otherguan->getPhase() != Player::Draw)
-            return false;
-        ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
-           && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            room->setPlayerFlag(head, "NongQ");
-            head->turnOver();
-            room->setPlayerFlag(head, "-NongQ");
-            return true;
-        }
-        return false;
-    }
-};
-
+/*
 JiebaoCard::JiebaoCard(){
 }
 
@@ -666,13 +660,9 @@ SPPackage::SPPackage()
     tora->addSkill(new Exterminate);
     tora->addSkill(new MarkAssignSkill("@kacha", 1));
     related_skills.insertMulti("exterminate", "#@kacha-1");
+    skills << new Tigerou;
 
 /*
-    General *zhaoji = new General(this, "zhaoji$", "guan", 3);
-    zhaoji->addSkill(new Shemi);
-    zhaoji->addSkill(new Lizheng);
-    zhaoji->addSkill(new Nongquan);
-
     General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
@@ -696,4 +686,4 @@ SPPackage::SPPackage()
     addMetaObject<BaoquanCard>();
 }
 
-ADD_PACKAGE(SP);
+ADD_PACKAGE(SP)

@@ -54,7 +54,7 @@ public:
                 if(damage && damage->from){
                     if(scenario->getComrade(damage->from) || scenario->getComrade(player))
                         break;
-                    const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), false, data, NonTrigger);
+                    const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), data, NonTrigger);
                     if(card){
                         player->obtainCard(card);
                         scenario->annex(damage->from, damage->to);
@@ -120,7 +120,7 @@ void ContractScenario::annex(ServerPlayer *seme, ServerPlayer *uke) const{
     for(int i = 1; i <= 4; i ++){
         bool hasused = false;
         foreach(ServerPlayer *tmp, getComraded(room)){
-            if(tmp->getMark("@ctt" + QString::number(i)) > 0){
+            if(tmp->hasMark("@ctt" + QString::number(i))){
                 hasused = true;
                 break;
             }
@@ -154,7 +154,7 @@ void ContractScenario::rupture(ServerPlayer *seme, ServerPlayer *uke) const{
     QVariant n = room->getTag("ConTotal").toInt() - 1;
     room->setTag("ConTotal", n);
     for(int i = 1; i <= 4; i ++){
-        if(uke->getMark("@ctt" + QString::number(i)) > 0){
+        if(uke->hasMark("@ctt" + QString::number(i))){
             room->setPlayerMark(uke, "@ctt" + QString::number(i), 0);
             break;
         }
@@ -199,10 +199,6 @@ bool ContractScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool ContractScenario::generalSelection() const{
-    return true;
-}
-
 class JointAttack: public TriggerSkill{
 public:
     JointAttack():TriggerSkill("joint_attack"){
@@ -215,7 +211,7 @@ public:
         //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(effect.to) &&
-           room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), false, data)){
+           room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), data)){
             LogMessage log;
             log.type = "#Attack";
             log.from = effect.to;
@@ -245,7 +241,7 @@ public:
         //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(player) &&
-           room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), false, data)){
+           room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), data)){
             LogMessage log;
             log.type = "#Protect";
             log.from = jiyou;
@@ -280,4 +276,4 @@ AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPla
         return AI::Enemy;
 }
 
-ADD_SCENARIO(Contract) //hare package unlock
+//ADD_SCENARIO(Contract) //hare package unlock

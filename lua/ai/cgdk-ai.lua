@@ -8,57 +8,6 @@ sgs.ai_view_as["zhiqu"] = function(card, player, card_place)
 	end
 end
 
--- linmo
-sgs.ai_skill_invoke["linmo"] = true
-
--- dalang
-sgs.ai_skill_invoke["dalang"] = function(self, data)
-	if self.player:getHandcardNum() < 2 then return false end
-	for _, friend in ipairs(self.friends_noself) do
-		if (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage"))
-			and friend:getHandcardNum() > friend:getHp() then
-			self.dalangtarget = friend
-			return true
-		end
-	end
-	return false
-end
-sgs.ai_skill_playerchosen["dalangfrom"] = function(self, targets)
-	local target = self.dalangtarget
-	return target
-end
-sgs.ai_skill_askforag["dalang"] = function(self, card_ids)
-	return card_ids[1]
-end
-sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["hengchong"]
-
--- zhaixing
-sgs.ai_skill_invoke["@zhaixing"] = function(self,prompt)
-	local judge = self.player:getTag("Judge"):toJudge()
-	local all_cards = self.player:getCards("he")
-	local cards = sgs.QList2Table(all_cards)
-
-	if #cards == 0 then return "." end
-	local card_id = self:getRetrialCardId(cards, judge)
-	if card_id == -1 then
-		if self:needRetrial(judge) then
-			self:sortByUseValue(cards, true)
-			if self:getUseValue(judge.card) > self:getUseValue(cards[1]) then
-				return "@ZhaixingCard=" .. cards[1]:getId()
-			end
-		end
-	elseif self:needRetrial(judge) or self:getUseValue(judge.card) > self:getUseValue(sgs.Sanguosha:getCard(card_id)) then
-		return "@ZhaixingCard=" .. card_id
-	end
--- zhaixing can draw card
-	for _, card in ipairs(cards) do
-		if card:getSuit() == sgs.Card_Diamond then
-			return "@ZhaixingCard=" .. card:getId()
-		end
-	end
-	return "."
-end
-
 -- citan
 sgs.ai_skill_invoke["citan"] = sgs.ai_skill_invoke["lihun"]
 sgs.ai_skill_askforag["citan"] = function(self, card_ids)

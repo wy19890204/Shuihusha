@@ -102,7 +102,7 @@ public:
             }
             return false;
         }
-        if(player->getPhase() == Player::Finish && player->getMark("@true") > 0){
+        if(player->getPhase() == Player::Finish && player->hasMark("@true")){
             int totalcard = 0;
             foreach(ServerPlayer *tmp, room->getOtherPlayers(player))
                 totalcard += tmp->getCardCount(true);
@@ -152,7 +152,7 @@ public:
                         room->broadcastInvoke("animate", "lightbox:$vqdp:3000");
                         room->broadcastInvoke("playAudio", "zombify-male");
                         room->getThread()->delay(1500);
-                        room->transfigure(player, "zhang2dong", true, true);
+                        room->transfigure(player, "zhang2dong", true, true, "zhang1dong");
 
                         QList<const Card *> tricks = player->getJudgingArea();
                         foreach(const Card *trick, tricks)
@@ -267,6 +267,67 @@ private:
     mutable jmp_buf env;
 };
 
+void DusongScenario::run(Room *room) const{
+    RoomThread *thread = room->getThread();
+    ServerPlayer *shenlvbu = room->getLord();
+    if(shenlvbu->getGeneralName() == "zhang1dong"){
+        QList<ServerPlayer *> league = room->getPlayers();
+        league.removeOne(shenlvbu);
+
+        forever{
+            foreach(ServerPlayer *player, league){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+            }
+
+            foreach(ServerPlayer *player, league){
+                room->setCurrent(player);
+                thread->trigger(TurnStart, room, room->getCurrent());
+
+                if(!player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "actioned");
+
+                if(shenlvbu->getGeneralName() == "zhang2dong")
+                    goto second_phase;
+
+                if(player->isAlive()){
+                    room->setCurrent(shenlvbu);
+                    thread->trigger(TurnStart, room, room->getCurrent());
+
+                    if(shenlvbu->getGeneralName() == "zhang2dong")
+                        goto second_phase;
+                }
+            }
+        }
+
+    }else{
+        second_phase:
+
+        foreach(ServerPlayer *player, room->getPlayers()){
+            if(player != shenlvbu){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+                if(player->getPhase() != Player::NotActive){
+                    PhaseChangeStruct phase;
+                    phase.from = player->getPhase();
+                    room->setPlayerProperty(player, "phase", "not_active");
+                    phase.to = player->getPhase();
+                    QVariant data = QVariant::fromValue(phase);
+                    thread->trigger(PhaseChange, room, player, data);
+                }
+            }
+        }
+
+        room->setCurrent(shenlvbu);
+
+        forever{
+            thread->trigger(TurnStart, room, room->getCurrent());
+            room->setCurrent(room->getCurrent()->getNext());
+        }
+    }
+}
+
 bool DusongScenario::exposeRoles() const{
     return true;
 }
@@ -298,18 +359,14 @@ bool DusongScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool DusongScenario::generalSelection() const{
-    return true;
-}
-
 bool DusongScenario::setCardPiles(const Card *card) const{
     if(card->getPackage() != "standard_cards" && card->getPackage() != "plough")
         return true;
     return card->inherits("Disaster");
 }
 
-void DusongScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
-    ServerPlayer *lord = players.first();
+void DusongScenario::generalSelection(Room *room) const{
+    ServerPlayer *lord = room->getPlayers().first();
     room->setPlayerProperty(lord, "general", "zhang1dong");
 
     const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
@@ -323,8 +380,8 @@ void DusongScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
         names << general->objectName();
     }
 
-    foreach(ServerPlayer *player, players){
-        if (player == lord)
+    foreach(ServerPlayer *player, room->getPlayers()){
+        if(player == lord)
             continue;
 
         qShuffle(names);

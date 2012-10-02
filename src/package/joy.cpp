@@ -83,7 +83,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
     room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
-    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), false, QVariant::fromValue((PlayerStar)source));
+    const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
 
@@ -242,7 +242,7 @@ void Poison::onEffect(const CardEffectStruct &card_effect) const{
 
     LogMessage log;
     log.from = card_effect.to;
-    if(card_effect.to->getMark("poison") == 0){
+    if(!card_effect.to->hasMark("poison")){
         room->setPlayerMark(card_effect.to, "poison", 1);
         room->setEmotion(card_effect.to, "bad");
 
@@ -610,7 +610,7 @@ public:
                 niriwomm.damage = 2;
                 room->damage(niriwomm);
             }
-            else if(word == "hsdcc" && miheng->getMark("hsdcc") == 0){
+            else if(word == "hsdcc" && !miheng->hasMark("hsdcc")){
                 room->sendLog(gitlog);
                 //worinimeimei:Limited-Skill, like GreatYeyan
                 ServerPlayer *target = room->askForPlayerChosen(miheng, room->getAlivePlayers(), objectName());
@@ -626,7 +626,7 @@ public:
                 room->loseHp(miheng, 2);
                 miheng->addMark("hsdcc");
             }
-            else if(word == "dcshc" && miheng->getMark("dcshc") == 0){
+            else if(word == "dcshc" && !miheng->hasMark("dcshc")){
                 room->sendLog(gitlog);
                 //worinimeimei:Limited-Skill, like Guixin
                 room->loseHp(miheng);
@@ -639,7 +639,7 @@ public:
                 miheng->turnOver();
                 miheng->addMark("dcshc");
             }
-            else if(word == "ssdcc" && miheng->getMark("ssdcc") == 0){
+            else if(word == "ssdcc" && !miheng->hasMark("ssdcc")){
                 room->sendLog(gitlog);
                 //ririnimeimei:lightning
                 QList<ServerPlayer *> players;
@@ -668,7 +668,7 @@ public:
                     miheng->addMark("ssdcc");
                 }
             }
-            else if(word == "ssscc" && miheng->getMark("ssscc") == 0){
+            else if(word == "ssscc" && !miheng->hasMark("ssscc")){
                 room->sendLog(gitlog);
                 //riririmeimei:let single player acquire fushang or dunwu
                 QList<ServerPlayer *> players;
@@ -710,7 +710,7 @@ public:
                     room->setPlayerProperty(miheng, "maxhp", miheng->getMaxHP() + 2);
                 }
             }
-            else if(word.length() == 5 && miheng->getMark("fivewd") == 0){
+            else if(word.length() == 5 && !miheng->hasMark("fivewd")){
                 gitlog.type = "#Numa_5wd";
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
@@ -727,7 +727,7 @@ public:
                         miheng->addMark("fivewd");
                 }
             }
-            else if(word.length() > 5 && miheng->getMark("othwd") == 0){
+            else if(word.length() > 5 && !miheng->hasMark("othwd")){
                 gitlog.type = "#Numa_wds";
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
@@ -1115,12 +1115,7 @@ public:
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
-/*
-    General *tiger = new General(this, "tiger", "god", 3, true, true);
-    tiger->addSkill(new Skill("pu"));
-    tiger->addSkill(new Skill("xian"));
-    tiger->addSkill(new Skill("jian"));
-*/
+
     General *miheng = new General(this, "miheng", "god", 3);
     miheng->addSkill(new Yulu);
     miheng->addSkill(new Numa);

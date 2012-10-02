@@ -229,7 +229,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
     layout->addWidget(scene_checkbox); //changjing
-    //layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox)); //hare package unlock
+    layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
     layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));

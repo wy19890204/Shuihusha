@@ -590,6 +590,7 @@ public:
 
 QiapaiCard::QiapaiCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -602,10 +603,7 @@ void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     card_ids.removeOne(card_id);
     room->takeAG(source, card_id);
     room->broadcastInvoke("clearAG");
-    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
-    //source->drawCards(1);
-    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
-    //room->throwCard(card_id);
+    room->playSkillEffect("qiapai");
 }
 
 class Qiapai: public ZeroCardViewAsSkill{

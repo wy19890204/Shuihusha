@@ -481,19 +481,19 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
         playSkillEffect("qinlong");
     if(effect.from->hasSkill("yinyu") && effect.slash->getSkillName() != "yuanpei"){
-        if(effect.from->getMark("@stones") > 0 && effect.from->getMark("SlashCount") > 1){
-            int index = effect.from->getMark("mengshi") > 0 ? qrand() % 2 + 9: qrand() % 2 + 3;
+        if(effect.from->hasMark("@stones") && effect.from->getMark("SlashCount") > 1){
+            int index = effect.from->hasMark("mengshi") ? qrand() % 2 + 9: qrand() % 2 + 3;
             playSkillEffect("yinyu", index);
         }
-        else if(effect.from->getMark("@stoneh") > 0){
+        else if(effect.from->hasMark("@stoneh")){
             if(effect.from->distanceTo(effect.to) > getAlivePlayers().count() / 4){
-                int index = effect.from->getMark("mengshi") > 0 ? 11: 5;
+                int index = effect.from->hasMark("mengshi") ? 11: 5;
                 playSkillEffect("yinyu", index);
             }
         }
-        else if(effect.from->getMark("@stonec") > 0){
+        else if(effect.from->hasMark("@stonec")){
             if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia"))){
-                int index = effect.from->getMark("mengshi") > 0 ? 12: 6;
+                int index = effect.from->hasMark("mengshi") ? 12: 6;
                 playSkillEffect("yinyu", index);
             }
         }
@@ -1079,6 +1079,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     return card;
 }
 
+const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
+                             const QVariant &data, TriggerEvent trigger_event){
+    return askForCard(player, pattern, prompt, false, data, trigger_event);
+}
+
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
@@ -1458,13 +1463,11 @@ QList<ServerPlayer *>Room::findPlayersBySkillName(const QString &skill_name, boo
 }
 
 ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool include_dead) const{
-    const QList<ServerPlayer *> &list = include_dead ? m_players : m_alivePlayers;
-    foreach(ServerPlayer *player, list){
-        if(player->hasSkill(skill_name))
-            return player;
-    }
-
-    return NULL;
+    QList<ServerPlayer *> list = findPlayersBySkillName(skill_name, include_dead);
+    if(list.isEmpty())
+        return NULL;
+    else
+        return list.first();
 }
 
 ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
@@ -1478,6 +1481,15 @@ ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
         }
     }
     return NULL;
+}
+
+QList<ServerPlayer *>Room::findOnlinePlayers() const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, m_alivePlayers){
+        if(player->getState() == "online")
+            list << player;
+    }
+    return list;
 }
 
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
@@ -1647,22 +1659,6 @@ void Room::prepareForStart(){
         int i;
         for(i=0; i<2; i++){
             broadcastProperty(m_players.at(i), "role");
-        }
-
-    }else if(mode == "changban"){
-        int x = qrand() % 5;
-        ServerPlayer *lord = m_players.at(x);
-        ServerPlayer *loyalist = m_players.at((x + qrand() % 4 + 1) % 5);
-        int i = 0;
-        for(i=0; i<5; i++){
-            ServerPlayer *player = m_players.at(i);
-            if(player == lord)
-                player->setRole("lord");
-            else if(player == loyalist)
-                player->setRole("loyalist");
-            else
-                player->setRole("rebel");
-            broadcastProperty(player, "role");
         }
     }else if(Config.value("FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
@@ -2170,6 +2166,8 @@ void Room::chooseGenerals(){
                 lord_list = Sanguosha->getLords();
         else
             lord_list = Sanguosha->getRandomLords();
+        if(Config.EnableSame && the_lord->getState() != "online")
+            the_lord = findOnlinePlayers().first(); // @todo: crash this!
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
         if (!Config.EnableBasara)
@@ -2180,8 +2178,15 @@ void Room::chooseGenerals(){
                 if(!p->isLord())
                     p->setGeneralName(general);
             }
-
-            Config.Enable2ndGeneral = false;
+            if(Config.Enable2ndGeneral){
+                QStringList bans;
+                bans << general;
+                QSet<QString> banset = bans.toSet();
+                lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt(), banset);
+                general = askForGeneral(the_lord, lord_list);
+                foreach(ServerPlayer *p, m_players)
+                    p->setGeneral2Name(general);
+            }
             return;
         }
     }
@@ -2259,10 +2264,7 @@ void Room::run(){
         broadcastInvoke("startInXs", "0");
 
     if(scenario){
-        if(scenario->generalSelection()){
-            scenario->Prerun(this, m_players);
-        }
-        //if(!scenario->generalSelection()) // fix generals' mode
+        scenario->generalSelection(this);
         startGame();
     }
     else if(mode == "06_3v3"){
@@ -2715,7 +2717,7 @@ bool Room::hasWelfare(const ServerPlayer *player) const{
         return scenario->lordWelfare(player);
     else if(mode == "06_3v3")
         return player->isLord() || player->getRole() == "renegade";
-    else if(Config.EnableHegemony)
+    else if(ServerInfo.EnableHegemony)
         return false;
     else if(ServerInfo.EnableAnzhan){
         return false;
@@ -2820,10 +2822,10 @@ void Room::startGame(){
         }
     }
 
-    if((Config.Enable2ndGeneral) && mode != "02_1v1" && mode != "06_3v3"
-       && mode != "dusong" && mode != "changban" && !Config.EnableBasara){
-        foreach(ServerPlayer *player, m_players)
-            broadcastProperty(player, "general2");
+    if(Config.Enable2ndGeneral)
+        if(mode != "02_1v1" && mode != "06_3v3" && !scenario && !Config.EnableBasara){
+            foreach(ServerPlayer *player, m_players)
+                broadcastProperty(player, "general2");
     }
 
     m_alivePlayers = m_players;
@@ -3099,7 +3101,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
         ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
         if(sour && sour != getCurrent()){
-            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", false, data, CardDiscarded);
+            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
             if(fight){
                 sour->playCardEffect("@jiangjieshi2");
                 LogMessage log;

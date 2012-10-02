@@ -127,7 +127,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && target->getMark("aoxiang") == 0
+                && !target->hasMark("aoxiang")
                 && target->getPhase() == Player::RoundStart
                 && target->getHp() <= 2;
     }
@@ -202,7 +202,7 @@ bool ZhengfaCard::targetFilter(const QList<const Player *> &targets, const Playe
         return targets.isEmpty() && to_select->getKingdom() != Self->getKingdom()
             && !to_select->isKongcheng() && to_select != Self;
     else if(Self->hasFlag("Zhengfa") && getSubcards().isEmpty())
-        return targets.length() < Self->getKingdoms() && to_select != Self && Self->canSlash(to_select, NULL, false);
+        return targets.length() < Self->getKingdoms() && to_select != Self && Self->canSlash(to_select, false);
     else
         return false;
 }
@@ -556,7 +556,7 @@ public:
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
         if(card){
             int index = qrand() % 2 + 1;
-            if(player->getMark("wudao") == 0)
+            if(!player->hasMark("wudao"))
                 room->playSkillEffect(objectName(), index);
             else
                 room->playSkillEffect(objectName(), index + 2);
@@ -616,7 +616,7 @@ public:
             if(judge.isGood()){
                 RecoverStruct rev;
                 rev.card = judge.card;
-                rev.recover = ren->getLostHp(false) - ren->getMaxHP() + 1;
+                rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
                 rev.who = ren;
                 room->recover(ren, rev);
                 if(ren->getHp() != 1)
@@ -912,9 +912,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_selec) const{
-        if(to_selec->getCard()->isRed())
-            return true;
-        return false;
+        return !to_selec->isEquipped() && selected.isEmpty() && to_selec->getCard()->isRed();
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
@@ -1002,7 +1000,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getMark("@rope") > 0 && player->isWounded();
+        return player->hasMark("@rope") && player->isWounded();
     }
 
     virtual const Card *viewAs() const{

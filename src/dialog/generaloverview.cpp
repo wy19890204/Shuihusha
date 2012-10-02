@@ -24,12 +24,12 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
     ui->skillTextEdit->setProperty("description", true);
-/* //hare package unlock
+
     if(ServerInfo.isPlay && Config.value("FreeChange", false).toBool()){
         ui->changeGeneralButton->show();
         connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
     }
-    else*/
+    else
         ui->changeGeneralButton->hide();
 }
 
@@ -220,7 +220,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
-/* //hare package unlock
+
     QString resume = Sanguosha->translate("resume:" + general->objectName());
     if(!resume.startsWith("resume:"))
         ui->generalPhoto->setToolTip(resume);
@@ -230,7 +230,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         ui->changeGeneralButton->setEnabled(false);
     else
         ui->changeGeneralButton->setEnabled(true);
-*/
+
     QList<const Skill *> skills = general->getVisibleSkillList();
 
     foreach(QString skill_name, general->getRelatedSkillNames()){

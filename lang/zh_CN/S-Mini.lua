@@ -22,6 +22,8 @@ return
 	["_mini_19"] = "枷打白秀英",
 	["_mini_20"] = "山穷水尽",
 
+	["#WelcomeToMiniScenario"] = "水浒杀小型场景第 %arg 关：%arg2",
+
 	["Player"] = "玩家",
 	["AI"] = "电脑⑩",
 	["AI1"] = "电脑①",

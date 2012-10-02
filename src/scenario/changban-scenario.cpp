@@ -117,7 +117,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
         if(event == SlashProceed){
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            if(player->getMark("CBLongNu")){
+            if(player->hasMark("CBLongNu")){
                 room->slashResult(effect, NULL);
                 player->removeMark("CBLongNu");
                 return true;
@@ -660,6 +660,87 @@ private:
     mutable jmp_buf env;
 };
 
+void ChangbanScenario::run(Room *room) const{
+    RoomThread *thread = room->getThread();
+    ServerPlayer *cbzhaoyun = room->getLord();
+    ServerPlayer *cbzhangfei = cbzhaoyun;
+    foreach(ServerPlayer *p, room->getPlayers()){
+        if(p->getRole() == "loyalist")
+            cbzhangfei = p;
+    }
+
+    if(cbzhaoyun->getGeneralName() == "cbzhaoyun1"){
+        QList<ServerPlayer *> league = room->getPlayers();
+        league.removeOne(cbzhaoyun);
+        league.removeOne(cbzhangfei);
+
+        forever{
+            foreach(ServerPlayer *player, league)
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+            int i = 0;
+            foreach(ServerPlayer *player, league){
+                room->setCurrent(player);
+                thread->trigger(TurnStart, room, room->getCurrent());
+
+                if(!player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "actioned");
+
+                if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                    goto cbsecond_phase;
+
+                if(player->isAlive()){
+                    if(i % 2 == 0){
+                        room->setCurrent(cbzhaoyun);
+                        thread->trigger(TurnStart, room, room->getCurrent());
+
+                        if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                            goto cbsecond_phase;
+                    }else{
+                        room->setCurrent(cbzhangfei);
+                        thread->trigger(TurnStart, room, room->getCurrent());
+
+                        if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                            goto cbsecond_phase;
+                    }
+                    i++;
+                }
+            }
+
+            if(i == 1){
+                room->setCurrent(cbzhangfei);
+                thread->trigger(TurnStart, room, room->getCurrent());
+
+                if(cbzhaoyun->getGeneralName() == "cbzhaoyun2")
+                    goto cbsecond_phase;
+            }
+        }
+    }else{
+        cbsecond_phase:
+        foreach(ServerPlayer *player, room->getPlayers()){
+            if(player != cbzhaoyun){
+                if(player->hasFlag("actioned"))
+                    room->setPlayerFlag(player, "-actioned");
+
+                if(player->getPhase() != Player::NotActive){
+                    PhaseChangeStruct phase;
+                    phase.from = player->getPhase();
+                    room->setPlayerProperty(player, "phase", "not_active");
+                    phase.to = player->getPhase();
+                    QVariant data = QVariant::fromValue(phase);
+                    thread->trigger(PhaseChange, room, player, data);
+                }
+            }
+        }
+        room->setCurrent(cbzhaoyun);
+        forever{
+            thread->trigger(TurnStart, room, room->getCurrent());
+            room->setCurrent(room->getCurrent()->getNext());
+        }
+    }
+}
+
 bool ChangbanScenario::exposeRoles() const{
     return true;
 }
@@ -691,11 +772,7 @@ bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool ChangbanScenario::generalSelection() const{
-    return true;
-}
-
-void ChangbanScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
+void ChangbanScenario::generalSelection(Room *room) const{
     QList<const General *> generals;
     QStringList packages;
     packages << "standard" << "rat" << "ox";
@@ -733,7 +810,7 @@ void ChangbanScenario::Prerun(Room *room, QList<ServerPlayer *> players) const{
     }
 
     QList<ServerPlayer *> rebels;
-    foreach(ServerPlayer *player, players){
+    foreach(ServerPlayer *player, room->getPlayers()){
         if(player->getRole() == "lord"){
             room->setPlayerProperty(player, "general", "cbzhaoyun1");
             continue;

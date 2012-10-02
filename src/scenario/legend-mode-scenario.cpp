@@ -37,10 +37,6 @@ void LegendScenario::onTagSet(Room *room, const QString &key) const{
     // dummy
 }
 
-bool LegendScenario::generalSelection() const{
-    return true;
-}
-
 int LegendScenario::getPlayerCount() const{
     return 8;
 }
@@ -72,7 +68,7 @@ ChuanqiDialog *ChuanqiDialog::GetInstance(){
 ChuanqiDialog::ChuanqiDialog()
 {
     setWindowTitle(Sanguosha->translate("ChuanqiSelect"));
-    //setStyleSheet("background-image: url(./image/system/state.png)");
+    //setStyleSheet("background-image: url(:system/state.png)");
     group = new QButtonGroup(this);
 
     QHBoxLayout *layout = new QHBoxLayout;

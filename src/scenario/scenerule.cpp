@@ -265,7 +265,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                                     askp = askp->getNextAlive();
                                     continue;
                                 }
-                                const Card *card2 = room->askForCard(askp, card1->objectName(), "Scene23", false);
+                                const Card *card2 = room->askForCard(askp, card1->objectName(), "Scene23");
                                 if(card2) {
                                     room->showCard(askp, card2->getId());
                                     cardShowed = true;
@@ -467,12 +467,12 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                 const Card *card;
                 foreach(ServerPlayer *p, room->getOtherPlayers(player)) {
                     while(!p->isKongcheng() &&
-                          (card = room->askForCard(p, "fire_slash", "scene_14_prompt_fs", false, QVariant(), CardDiscarded)) != NULL)
+                          (card = room->askForCard(p, "fire_slash", "scene_14_prompt_fs", QVariant(), CardDiscarded)) != NULL)
                         damage.damage++;
                 }
                 foreach(ServerPlayer *p, room->getOtherPlayers(player)) {
                     while(!p->isKongcheng() &&
-                          (card = room->askForCard(p, "fire_attack", "scene_14_prompt_fa", false, QVariant(), CardDiscarded)) != NULL)
+                          (card = room->askForCard(p, "fire_attack", "scene_14_prompt_fa", QVariant(), CardDiscarded)) != NULL)
                         damage.damage++;
                 }
             }

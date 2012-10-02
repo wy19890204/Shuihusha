@@ -190,6 +190,7 @@ public:
     ServerPlayer *findPlayer(const QString &general_name, bool include_dead = false) const;
     ServerPlayer *findPlayerBySkillName(const QString &skill_name, bool include_dead = false) const;
     ServerPlayer *findPlayerWhohasEventCard(const QString &event) const;
+    QList<ServerPlayer *> findOnlinePlayers() const;
     void installEquip(ServerPlayer *player, const QString &equip_name);
     void resetAI(ServerPlayer *player);
     void transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start = true, const QString &old_general = QString(""));
@@ -243,7 +244,8 @@ public:
     bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
     bool isCanceled(const CardEffectStruct &effect);
     int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason);
-    const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill = false, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
+    const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
+    const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
     bool askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill = false);
     int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const QString &reason);
     const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const QString &reason);

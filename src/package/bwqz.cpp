@@ -8,27 +8,6 @@
 #include "plough.h"
 #include "maneuvering.h"
 
-class Fushang: public MasochismSkill{
-public:
-    Fushang():MasochismSkill("fushang"){
-        frequency = Compulsory;
-    }
-
-    virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
-        if(hedgehog->getMaxHP() > 3){
-            LogMessage log;
-            Room *room = hedgehog->getRoom();
-            log.type = "#TriggerSkill";
-            log.from = hedgehog;
-            log.arg = objectName();
-            room->sendLog(log);
-            room->playSkillEffect(objectName());
-            room->loseMaxHp(hedgehog);
-            hedgehog->drawCards(3);
-        }
-    }
-};
-
 class Zaochuan: public OneCardViewAsSkill{
 public:
     Zaochuan():OneCardViewAsSkill("zaochuan"){
@@ -443,10 +422,6 @@ public:
 BWQZPackage::BWQZPackage()
     :Package("BWQZ")
 {
-    General *dingdesun = new General(this, "dingdesun", "jiang", 6);
-    dingdesun->addSkill(new Skill("beizhan"));
-    dingdesun->addSkill(new Fushang);
-
     General *houjian = new General(this, "houjian", "kou", 2);
     houjian->addSkill(new Yuanyin);
 

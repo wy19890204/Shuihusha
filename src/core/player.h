@@ -170,13 +170,15 @@ public:
 
     void addMark(const QString &mark);
     void removeMark(const QString &mark);
-    virtual void setMark(const QString &mark, int value);
+    virtual void setMark(const QString &mark, int value = 1);
     int getMark(const QString &mark) const;
+    bool hasMark(const QString &mark) const;
 
     void setChained(bool chained);
     bool isChained() const;
 
-    bool canSlash(const Player *other, const Card *slash = NULL, bool distance_limit = true) const;
+    bool canSlash(const Player *other, const Card *slash, bool distance_limit = true) const;
+    bool canSlash(const Player *other, bool distance_limit = true) const;
     int getCardCount(bool include_equip) const;
 
     QList<int> getPile(const QString &pile_name) const;

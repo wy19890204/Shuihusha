@@ -305,83 +305,6 @@ public:
     }
 };
 
-SheyanCard::SheyanCard(){
-    target_fixed = true;
-}
-
-void SheyanCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    room->throwCard(this);
-    int card_id = getSubcards().first();
-    Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
-    int num = Sanguosha->getCard(card_id)->getNumber();
-
-    CardUseStruct use;
-    use.from = card_use.from;
-    AmazingGrace *amazingGrace = new AmazingGrace(suit, num);
-    amazingGrace->addSubcard(card_id);
-    amazingGrace->setSkillName("sheyan");
-    use.card = amazingGrace;
-    room->useCard(use);
-}
-
-class Sheyan: public OneCardViewAsSkill{
-public:
-    Sheyan():OneCardViewAsSkill("sheyan"){
-
-    }
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("SheyanCard");
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        SheyanCard *card = new SheyanCard;
-        card->addSubcard(card_item->getFilteredCard());
-        return card;
-    }
-};
-
-class Jiayao:public TriggerSkill{
-public:
-    Jiayao():TriggerSkill("jiayao"){
-        events << CardEffect;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(!effect.card->inherits("AmazingGrace"))
-            return false;
-        ServerPlayer *sq = room->findPlayerBySkillName(objectName());
-        if(!sq || room->getTag("Jiayao").toInt() == 1 || !sq->askForSkillInvoke(objectName()))
-            return false;
-        room->setTag("Jiayao", 1);
-        sq->drawCards(1);
-        room->playSkillEffect(objectName());
-        QVariantList ag_list = room->getTag("AmazingGrace").toList();
-        int a = 0;
-        foreach(QVariant card_id, ag_list){
-            const Card *card = Sanguosha->getCard(card_id.toInt());
-            if(card->inherits("Peach") || card->inherits("Analeptic"))
-                a ++;
-        }
-        RecoverStruct rev;
-        rev.recover = a;
-        room->recover(sq, rev, true);
-        return false;
-    }
-};
-
 MaiyiCard::MaiyiCard(){
 
 }
@@ -696,10 +619,6 @@ YBYTPackage::YBYTPackage()
     General *yangchun = new General(this, "yangchun", "kou");
     yangchun->addSkill(new Shexin);
 
-    General *songqing = new General(this, "songqing", "min", 3);
-    songqing->addSkill(new Sheyan);
-    songqing->addSkill(new Jiayao);
-
     General *xueyong = new General(this, "xueyong", "min");
     xueyong->addSkill("#losthp_1");
     xueyong->addSkill(new Maiyi);
@@ -719,7 +638,6 @@ YBYTPackage::YBYTPackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<MaiyiCard>();
-    addMetaObject<SheyanCard>();
     addMetaObject<HunjiuCard>();
 }
 

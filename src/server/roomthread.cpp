@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "gamerule.h"
 #include "ai.h"
+#include "scenario.h"
 #include "jsonutils.h"
 #include "settings.h"
 
@@ -292,13 +293,9 @@ void RoomThread::run(){
         trigger(GameStart, room, player);
     }
 
-    /*if(room->getScenario()){
-        const Scenario *scenario = room->getScenario();
-        scenario->Threadrun(room);
-    }
-    else */if(room->mode == "06_3v3"){
-        run3v3();
-    }else if(room->getMode() == "dusong"){
+    //if(room->scenario){
+    //  room->scenario->run(room);
+    if(room->getMode() == "dusong"){
         ServerPlayer *shenlvbu = room->getLord();
         if(shenlvbu->getGeneralName() == "zhang1dong"){
             QList<ServerPlayer *> league = room->getPlayers();
@@ -439,18 +436,22 @@ void RoomThread::run(){
                 room->setCurrent(room->getCurrent()->getNext());
             }
         }
-
-
-    }else{
+    }
+    else if(room->mode == "06_3v3")
+        run3v3();
+    else{
         if(room->getMode() == "02_1v1")
             room->setCurrent(room->getPlayers().at(1));
-
         forever {
             trigger(TurnStart, room, room->getCurrent());
             if (room->isFinished()) break;
             room->setCurrent(room->getCurrent()->getNextAlive());
         }
     }
+}
+
+const QList<EventTriplet> *RoomThread::getEventStack() const{
+    return &event_stack;
 }
 
 static bool CompareByPriority(const TriggerSkill *a, const TriggerSkill *b){
@@ -484,10 +485,6 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, Q
     event_stack.pop_back();
 
     return broken;
-}
-
-const QList<EventTriplet> *RoomThread::getEventStack() const{
-    return &event_stack;
 }
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){

@@ -58,7 +58,7 @@ int Dashboard::getButtonWidgetWidth() const{
 void Dashboard::createMiddle(){
     middle = new QGraphicsRectItem(this);
 
-    QPixmap middle_pixmap("image/system/dashboard-hand.png");
+    QPixmap middle_pixmap(":system/dashboard-hand.png");
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
@@ -146,7 +146,7 @@ void Dashboard::createRight(){
 void Dashboard::setEcstState(){
     if(Self->hasFlag("ecst"))
         avatar_area->setVisible(true);
-    //else if(Self->getMark("poison") > 0)
+    //else if(Self->hasMark("poison"))
     //    setPoisonState();
     else
         avatar_area->setVisible(false);

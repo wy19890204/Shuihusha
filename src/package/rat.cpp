@@ -3,7 +3,6 @@
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
-#include "room.h"
 #include "maneuvering.h"
 
 class Kong1iang: public TriggerSkill{
@@ -84,9 +83,9 @@ public:
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
 
             const Card *first_jink = NULL, *second_jink = NULL;
-            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), false, QVariant(), JinkUsed);
+            first_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-1:" + dongping->objectName(), QVariant(), JinkUsed);
             if(first_jink)
-                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), false, QVariant(), JinkUsed);
+                second_jink = room->askForCard(effect.to, "jink", "@shuangzhan-jink-2:" + dongping->objectName(), QVariant(), JinkUsed);
 
             Card *jink = NULL;
             if(first_jink && second_jink){
@@ -119,10 +118,10 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
         if(event == SlashProceed){
-            if(qing->getMark("@stoned")){
+            if(qing->hasMark("@stoned")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 if(effect.slash->getSkillName() != "yuanpei"){
-                    int index = effect.from->getMark("mengshi") > 0 ? 13: 7;
+                    int index = effect.from->hasMark("mengshi") ? 13: 7;
                     room->playSkillEffect("yinyu", index);
                 }
                 room->slashResult(effect, NULL);
@@ -133,7 +132,7 @@ public:
         if(qing->getPhase() == Player::RoundStart){
             ClearMarks(room, qing);
             if(qing->askForSkillInvoke(objectName())){
-                int index = qing->getMark("mengshi") > 0 ? 8: qrand() % 2 + 1;
+                int index = qing->hasMark("mengshi") ? 8: qrand() % 2 + 1;
                 room->playSkillEffect(objectName(), index);
 
                 JudgeStruct judge;
@@ -190,7 +189,7 @@ public:
     }
 
     virtual int getAtkrg(const Player *from) const{
-        if(from->getMark("@stoneh") > 0)
+        if(from->hasMark("@stoneh"))
             return 1234;
         else
             return 0;
@@ -258,7 +257,7 @@ public:
                 if(card){
                     QList<ServerPlayer *> targets;
                     foreach(ServerPlayer *tmp, room->getAlivePlayers())
-                        if(zhangshun->canSlash(tmp, NULL, false))
+                        if(zhangshun->canSlash(tmp, false))
                             targets << tmp;
                     if(!targets.isEmpty()){
                         ServerPlayer *target = room->askForPlayerChosen(zhangshun, targets, objectName());
@@ -376,7 +375,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhuwu) const{
-        if(zhuwu->getMark("@embattle") > 0 && zhuwu->getPhase() == Player::NotActive){
+        if(zhuwu->hasMark("@embattle") && zhuwu->getPhase() == Player::NotActive){
             Room *room = zhuwu->getRoom();
             if(zhuwu->isNude())
                 return false;
@@ -762,7 +761,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     room->playSkillEffect("yuanpei", qrand() % 2 + 1);
-    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), false, QVariant::fromValue(effect), NonTrigger);
+    const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
         effect.from->drawCards(1);
@@ -836,7 +835,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && target->getMark("mengshi") == 0
+                && !target->hasMark("mengshi")
                 && target->getPhase() == Player::RoundStart
                 && target->getHandcardNum() < target->getAttackRange();
     }

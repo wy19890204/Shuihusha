@@ -10,15 +10,15 @@ class DusongScenario: public Scenario{
 public:
     DusongScenario();
 
+    virtual void run(Room *room) const;
     virtual bool exposeRoles() const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
-    virtual bool generalSelection() const;
+    virtual void generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
-    virtual void Prerun(Room *room, QList<ServerPlayer *> players) const;
 };
 
 #endif // DUSONGSCENARIO_H

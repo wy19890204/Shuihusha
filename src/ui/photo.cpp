@@ -208,7 +208,7 @@ void Photo::hideSkillName(){
 void Photo::setDrankState(){
     if(player->hasFlag("drank"))
         avatar_area->setBrush(QColor(0xFF, 0x00, 0x00, 255 * 0.45));
-    else if(player->getMark("poison") > 0)
+    else if(player->hasMark("poison"))
         setPoisonState();
     else
         avatar_area->setBrush(Qt::NoBrush);
@@ -217,14 +217,14 @@ void Photo::setDrankState(){
 void Photo::setEcstState(){
     if(player->hasFlag("ecst"))
         avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    else if(player->getMark("poison") > 0)
+    else if(player->hasMark("poison"))
         setPoisonState();
     else
         avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Photo::setPoisonState(){
-    if(player->getMark("poison") > 0)
+    if(player->hasMark("poison"))
         avatar_area->setBrush(QColor(0x00, 0xFF, 0x00, 255 * 0.3));
     else if(player->hasFlag("drank"))
         setDrankState();

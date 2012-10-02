@@ -11,6 +11,7 @@
 #include "recorder.h"
 #include "indicatoritem.h"
 #include "pixmapanimation.h"
+#include "scenario.h"
 #include "audio.h"
 
 #include <QPropertyAnimation>
@@ -3295,11 +3296,18 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = ServerInfo.GameMode != "dusong" && !ServerInfo.EnableBasara && !ServerInfo.EnableHegemony ?
-                               "audio/system/background.mp3" :
-                               "audio/system/dsgbackground.mp3";
+        const Scenario *scenario = Sanguosha->getScenario(ServerInfo.GameMode);
+        QString bgmusic_path = "audio/null.mp3";
+        if(scenario){
+            bgmusic_path = scenario->setBackgroundMusic();
+        }
+        else if(ServerInfo.EnableBasara || ServerInfo.EnableHegemony)
+            bgmusic_path = Sanguosha->getScenario("dusong")->setBackgroundMusic();
 
-        Audio::playBGM(Config.value("BackgroundMusic", bgmusic_path).toString());
+        if(!QFile::exists(bgmusic_path))
+            bgmusic_path = Config.value("BackgroundMusic", "audio/bgmusic/default.mp3").toString();
+
+        Audio::playBGM(bgmusic_path);
         Audio::setBGMVolume(Config.BGMVolume);
     }
 
