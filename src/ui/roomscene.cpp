@@ -1524,10 +1524,10 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     threeV3_mode["lord"] = threeV3_mode["renegade"] = tr("Marshal");
     threeV3_mode["loyalist"] = threeV3_mode["rebel"] = tr("Vanguard");
 
-    hegemony_mode["lord"] = Sanguosha->translate("guan");
-    hegemony_mode["loyalist"] = Sanguosha->translate("jiang");
-    hegemony_mode["rebel"] = Sanguosha->translate("min");
-    hegemony_mode["renegade"] = Sanguosha->translate("kou");
+    hegemony_mode["lord"] = Sanguosha->translate("di");
+    hegemony_mode["loyalist"] = Sanguosha->translate("xia");
+    hegemony_mode["rebel"] = Sanguosha->translate("wang");
+    hegemony_mode["renegade"] = Sanguosha->translate("free");
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
@@ -1540,10 +1540,10 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     if(ServerInfo.EnableHegemony){
         QMap<QString, QString> hegemony_roles;
 
-        hegemony_roles["lord"] = "guan";
-        hegemony_roles["loyalist"] = "jiang";
-        hegemony_roles["rebel"] = "min";
-        hegemony_roles["renegade"] = "kou";
+        hegemony_roles["lord"] = "di";
+        hegemony_roles["loyalist"] = "xia";
+        hegemony_roles["rebel"] = "wang";
+        hegemony_roles["renegade"] = "free";
 
         role_combobox->setItemText(1, map->value(new_role));
         role_combobox->setItemIcon(1, QIcon(QString("image/kingdom/icon/%1.png").arg(hegemony_roles[new_role])));

@@ -647,7 +647,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return player->getKingdom() == "jiang";
+        return player->getKingdom() == "xia";
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
@@ -1343,11 +1343,11 @@ public:
 TigerPackage::TigerPackage()
     :Package("tiger"){
 /*
-    General *hantao = new General(this, "hantao", "guan");
+    General *hantao = new General(this, "hantao", "di");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
 
-    General *oupeng = new General(this, "oupeng", "jiang", 5);
+    General *oupeng = new General(this, "oupeng", "xia", 5);
     oupeng->addSkill("#losthp_1");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
@@ -1356,71 +1356,71 @@ TigerPackage::TigerPackage()
     skills << new Tengfei << new TengfeiMain;
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
-    General *leiheng = new General(this, "leiheng", "guan");
+    General *leiheng = new General(this, "leiheng", "di");
     leiheng->addSkill(new Guzong);
     leiheng->addSkill(new GuzongGet);
     related_skills.insertMulti("guzong", "#guzong-get");
 
-    General *sunli = new General(this, "sunli", "guan");
+    General *sunli = new General(this, "sunli", "di");
     sunli->addSkill(new Neiying);
 
-    General *wuyanguang = new General(this, "wuyanguang", "guan");
+    General *wuyanguang = new General(this, "wuyanguang", "di");
     wuyanguang->addSkill(new Jintang);
 
-    General *shixiu = new General(this, "shixiu", "jiang", 6);
+    General *shixiu = new General(this, "shixiu", "xia", 6);
     shixiu->addSkill(new Losthp(2));
     shixiu->addSkill(new Pinming);
     shixiu->addSkill(new PinmingDie);
     related_skills.insertMulti("pinming", "#pinming-die");
 
-    General *lvfang = new General(this, "lvfang", "jiang");
+    General *lvfang = new General(this, "lvfang", "xia");
     lvfang->addSkill(new Lieji);
 
-    General *tianhu = new General(this, "tianhu$", "jiang");
+    General *tianhu = new General(this, "tianhu$", "xia");
     tianhu->addSkill(new Wuzhou);
     tianhu->addSkill(new Huwei);
     skills << new HuweiViewAsSkill;
 
-    General *zhangheng = new General(this, "zhangheng", "min", 3);
+    General *zhangheng = new General(this, "zhangheng", "wang", 3);
     zhangheng->addSkill(new Jielue);
     zhangheng->addSkill(new Fuhun);
 
-    General *xiebao = new General(this, "xiebao", "min");
+    General *xiebao = new General(this, "xiebao", "wang");
     xiebao->addSkill(new Liehuo);
 
-    General *shien = new General(this, "shien", "min", 3);
+    General *shien = new General(this, "shien", "wang", 3);
     shien->addSkill(new Longluo);
     shien->addSkill(new Xiaozai);
 
-    General *yanshun = new General(this, "yanshun", "kou");
+    General *yanshun = new General(this, "yanshun", "free");
     yanshun->addSkill(new Huxiao);
 
-    General *wangying = new General(this, "wangying", "kou", 3);
+    General *wangying = new General(this, "wangying", "free", 3);
     wangying->addSkill(new Tanse);
     wangying->addSkill(new Houfa);
     wangying->addSkill(new HoufaSlash);
     related_skills.insertMulti("houfa", "#houfa-slash");
 
-    General *lizhong = new General(this, "lizhong", "kou", 4);
+    General *lizhong = new General(this, "lizhong", "free", 4);
     lizhong->addSkill(new Losthp(1));
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");
 
 /*
-    General *yuehe = new General(this, "yuehe", "min", 3);
+    General *yuehe = new General(this, "yuehe", "wang", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
 
-    General *muhong = new General(this, "muhong", "jiang");
+    General *muhong = new General(this, "muhong", "xia");
     muhong->addSkill(new Wuzu);
     muhong->addSkill("huqi");
 
-    General *jiangjing = new General(this, "jiangjing", "jiang");
+    General *jiangjing = new General(this, "jiangjing", "xia");
     jiangjing->addSkill(new Tiansuan);
     jiangjing->addSkill(new Huazhu);
 
-    General *maling = new General(this, "maling", "jiang", 3);
+    General *maling = new General(this, "maling", "xia", 3);
     maling->addSkill(new Fengxing);
 
     addMetaObject<TaolueCard>();
@@ -1433,4 +1433,4 @@ TigerPackage::TigerPackage()
     addMetaObject<XiaozaiCard>();
 }
 
-ADD_PACKAGE(Tiger)
+//ADD_PACKAGE(Tiger)

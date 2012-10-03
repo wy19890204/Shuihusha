@@ -6,7 +6,7 @@ config = {
 	version = "20120931",
 	version_name = "终结版F2.5.1",
 	mod_name = "Shuihusha",
-	kingdoms = { "guan", "jiang", "min", "kou", "god"},
+	kingdoms = { "di", "xia", "wang", "free", "god"},
 	package_names = {
 
 	"StandardCard",

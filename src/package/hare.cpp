@@ -965,7 +965,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getKingdom() == "guan" && !target->hasLordSkill(objectName());
+        return target->getKingdom() == "di" && !target->hasLordSkill(objectName());
     }
 
     virtual bool onPhaseChange(ServerPlayer *otherguan) const{
@@ -973,7 +973,7 @@ public:
         if(otherguan->getPhase() != Player::Draw)
             return false;
         ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
+        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "di"
            && otherguan->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             room->setPlayerFlag(head, "NongQ");
@@ -988,51 +988,51 @@ public:
 HarePackage::HarePackage()
     :Package("hare")
 {
-    General *haosiwen = new General(this, "haosiwen", "guan");
+    General *haosiwen = new General(this, "haosiwen", "di");
     haosiwen->addSkill(new Sixiang);
 
-    General *weidingguo = new General(this, "weidingguo", "jiang", 3);
+    General *weidingguo = new General(this, "weidingguo", "xia", 3);
     weidingguo->addSkill(new Fenhui);
     weidingguo->addSkill(new Shenhuo);
 
-    General *xiaorang = new General(this, "xiaorang", "min", 3);
+    General *xiaorang = new General(this, "xiaorang", "wang", 3);
     xiaorang->addSkill(new Linmo);
     xiaorang->addSkill(new Zhaixing);
 
-    General *peixuan = new General(this, "peixuan", "guan", 3);
+    General *peixuan = new General(this, "peixuan", "di", 3);
     peixuan->addSkill(new Shenpan);
     peixuan->addSkill(new Binggong);
 
-    General *ligun = new General(this, "ligun", "jiang");
+    General *ligun = new General(this, "ligun", "xia");
     ligun->addSkill(new Hengchong);
 
-    General *tongwei = new General(this, "tongwei", "min", 3);
+    General *tongwei = new General(this, "tongwei", "wang", 3);
     tongwei->addSkill(new Dalang);
     tongwei->addSkill(new Qianshui);
 
-    General *songqing = new General(this, "songqing", "min", 3);
+    General *songqing = new General(this, "songqing", "wang", 3);
     songqing->addSkill(new Sheyan);
     songqing->addSkill(new Jiayao);
 
-    General *dingdesun = new General(this, "dingdesun", "jiang", 6);
+    General *dingdesun = new General(this, "dingdesun", "xia", 6);
     dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
 
-    General *songwan = new General(this, "songwan", "kou");
+    General *songwan = new General(this, "songwan", "free");
     songwan->addSkill(new Yijie);
 
-    General *zhoutong = new General(this, "zhoutong", "kou", 3);
+    General *zhoutong = new General(this, "zhoutong", "free", 3);
     zhoutong->addSkill(new Qiangqu);
     zhoutong->addSkill(new Huatian);
 
-    General *zhugui = new General(this, "zhugui", "kou");
+    General *zhugui = new General(this, "zhugui", "free");
     zhugui->addSkill("#losthp_1");
     zhugui->addSkill(new Shihao);
     zhugui->addSkill(new Shihaodo);
     related_skills.insertMulti("shihao", "#shihao-do");
     zhugui->addSkill(new Laolian);
 
-    General *zhaoji = new General(this, "zhaoji$", "guan", 3);
+    General *zhaoji = new General(this, "zhaoji$", "di", 3);
     zhaoji->addSkill(new Shemi);
     zhaoji->addSkill(new Lizheng);
     zhaoji->addSkill(new Nongquan);
@@ -1045,4 +1045,4 @@ HarePackage::HarePackage()
     addMetaObject<YijieCard>();
 }
 
-ADD_PACKAGE(Hare)
+//ADD_PACKAGE(Hare)

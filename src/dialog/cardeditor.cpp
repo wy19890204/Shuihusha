@@ -538,10 +538,10 @@ void CardScene::setFrame(const QString &kingdom, bool is_lord){
 
         static QMap<QString, QColor> color_map;
         if(color_map.isEmpty()){
-            color_map["guan"] = QColor(88, 101, 205);
-            color_map["jiang"] = QColor(234, 137, 72);
-            color_map["min"] = QColor(167, 221, 102);
-            color_map["kou"] = QColor(146, 146, 146);
+            color_map["di"] = QColor(88, 101, 205);
+            color_map["xia"] = QColor(234, 137, 72);
+            color_map["wang"] = QColor(167, 221, 102);
+            color_map["free"] = QColor(146, 146, 146);
             color_map["god"] = QColor(252, 219, 85);
         }
         title->setColor(color_map.value(kingdom));
@@ -943,7 +943,7 @@ QLayout *CardEditor::createGeneralLayout(){
     connect(hp_spinbox, SIGNAL(valueChanged(int)), card_scene, SLOT(setMaxHp(int)));
     connect(ratio_spinbox, SIGNAL(valueChanged(int)), card_scene, SLOT(setRatio(int)));
 
-    QString kingdom = Config.value("CardEditor/Kingdom", "guan").toString();
+    QString kingdom = Config.value("CardEditor/Kingdom", "di").toString();
     int is_lord = Config.value("CardEditor/IsLord", false).toBool();
     kingdom_combobox->setCurrentIndex(kingdom_names.indexOf(kingdom));
     lord_checkbox->setChecked(is_lord);

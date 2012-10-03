@@ -1071,11 +1071,11 @@ public:
 OxPackage::OxPackage()
     :Package("ox")
 {
-    General *gaolian = new General(this, "gaolian", "guan", 3);
+    General *gaolian = new General(this, "gaolian", "di", 3);
     gaolian->addSkill(new Guibing);
     gaolian->addSkill(new Heiwu);
 
-    General *tongguan = new General(this, "tongguan", "guan");
+    General *tongguan = new General(this, "tongguan", "di");
     tongguan->addSkill(new Aoxiang);
     //skills << new Wanghuan;
     //tongguan->addRelateSkill("wanghuan");
@@ -1085,41 +1085,41 @@ OxPackage::OxPackage()
     tongguan->addSkill(new Wanghuan);
     tongguan->addSkill("zhengfa");
 
-    General *huyanzhuo = new General(this, "huyanzhuo", "guan");
+    General *huyanzhuo = new General(this, "huyanzhuo", "di");
     huyanzhuo->addSkill(new Lianma);
     huyanzhuo->addSkill(new Zhongjia);
     huyanzhuo->addSkill(new ZhongjiaEffect);
     related_skills.insertMulti("zhongjia", "#zhongjia_effect");
 
-    General *dongchaoxueba = new General(this, "dongchaoxueba", "jiang");
+    General *dongchaoxueba = new General(this, "dongchaoxueba", "xia");
     dongchaoxueba->addSkill(new Sheru);
 
-    General *pangwanchun = new General(this, "pangwanchun", "jiang");
+    General *pangwanchun = new General(this, "pangwanchun", "xia");
     pangwanchun->addSkill(new Lianzhu);
 
-    General *huangxin = new General(this, "huangxin", "jiang");
+    General *huangxin = new General(this, "huangxin", "xia");
     huangxin->addSkill(new Tongxia);
 
-    General *luozhenren = new General(this, "luozhenren", "kou", 3);
+    General *luozhenren = new General(this, "luozhenren", "free", 3);
     luozhenren->addSkill(new Butian);
     luozhenren->addSkill(new Huaxian);
 
-    General *lili = new General(this, "lili", "kou", 3);
+    General *lili = new General(this, "lili", "free", 3);
     lili->addSkill(new Duoming);
     lili->addSkill(new Moucai);
 
-    General *shijin = new General(this, "shijin", "kou");
+    General *shijin = new General(this, "shijin", "free");
     shijin->addSkill(new Wubang);
     shijin->addSkill(new Xiagu);
 
-    General *lijun = new General(this, "lijun", "min");
+    General *lijun = new General(this, "lijun", "wang");
     lijun->addSkill(new Skill("nizhuan"));
     lijun->addSkill(new Dingce);
 
-    General *xiezhen = new General(this, "xiezhen", "min");
+    General *xiezhen = new General(this, "xiezhen", "wang");
     xiezhen->addSkill(new Xunlie);
 
-    General *linniangzi = new General(this, "linniangzi", "min", 3, false);
+    General *linniangzi = new General(this, "linniangzi", "wang", 3, false);
     linniangzi->addSkill(new Shouwang);
     linniangzi->addSkill(new Ziyi);
     linniangzi->addSkill(new MarkAssignSkill("@rope", 1));
@@ -1140,4 +1140,4 @@ OxPackage::OxPackage()
     addMetaObject<ShouwangCard>();
 }
 
-ADD_PACKAGE(Ox)
+//ADD_PACKAGE(Ox)

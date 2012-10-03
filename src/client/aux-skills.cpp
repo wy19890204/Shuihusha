@@ -3,7 +3,7 @@
 #include "carditem.h"
 #include "standard.h"
 #include "clientplayer.h"
-#include "common-skillcards.h"
+#include "standard-generals.h"
 #include "engine.h"
 
 DiscardSkill::DiscardSkill()
@@ -98,42 +98,12 @@ const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
     }else
         return NULL;
 }
-
 // -------------------------------------------
-RendeCard::RendeCard(){
-    will_throw = false;
-}
-
-void RendeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = NULL;
-    if(targets.isEmpty()){
-        foreach(ServerPlayer *player, room->getAlivePlayers()){
-            if(player != source){
-                target = player;
-                break;
-            }
-        }
-    }else
-        target = targets.first();
-
-    room->obtainCard(target, this, false);
-
-    int old_value = source->getMark("rende");
-    int new_value = old_value + subcards.length();
-    room->setPlayerMark(source, "rende", new_value);
-
-    if(old_value < 2 && new_value >= 2){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = source;
-        room->recover(source, recover);
-    }
-}
 
 YijiViewAsSkill::YijiViewAsSkill()
     :ViewAsSkill("yiji")
 {
-    card = new RendeCard;
+    card = new JianaiCard;
 }
 
 void YijiViewAsSkill::setCards(const QString &card_str){
