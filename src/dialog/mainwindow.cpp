@@ -675,7 +675,7 @@ MeleeDialog::MeleeDialog(QWidget *parent)
     layout->addWidget(server_log);
     setLayout(layout);
 
-    setGeneral(Config.value("MeleeGeneral", "wusong").toString());
+    setGeneral(Config.value("MeleeGeneral", "yingzheng").toString());
 }
 
 QGroupBox *MeleeDialog::createGeneralBox(){

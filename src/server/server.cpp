@@ -943,11 +943,10 @@ bool ServerDialog::config(){
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
-    Config.EnableReincarnation = reincarnation_checkbox->isChecked();
-    Config.EnableScene = scene_checkbox->isChecked();		//changjing
+    //Config.EnableReincarnation = reincarnation_checkbox->isChecked();
+    //Config.EnableScene = scene_checkbox->isChecked();		//changjing
     Config.EnableSame = same_checkbox->isChecked();
-    Config.EnableEndless = endless_checkbox->isChecked();
-    Config.EnableAnzhan = anzhan_checkbox->isChecked();
+    //Config.EnableAnzhan = anzhan_checkbox->isChecked();
     Config.EnableBasara= basara_checkbox->isChecked() && basara_checkbox->isEnabled();
     Config.EnableHegemony = hegemony_checkbox->isChecked() && hegemony_checkbox->isEnabled();
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
@@ -983,14 +982,12 @@ bool ServerDialog::config(){
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);
     Config.setValue("Enable2ndGeneral", Config.Enable2ndGeneral);
-    Config.setValue("EnableReincarnation", Config.EnableReincarnation);
-    Config.setValue("ReincaPersist", reinca_unchange_checkbox->isChecked());
-    Config.setValue("EnableScene", Config.EnableScene);	//changjing
+    //Config.setValue("EnableReincarnation", Config.EnableReincarnation);
+    //Config.setValue("ReincaPersist", reinca_unchange_checkbox->isChecked());
+    //Config.setValue("EnableScene", Config.EnableScene);	//changjing
     Config.setValue("EnableSame", Config.EnableSame);
-    Config.setValue("EnableEndless", Config.EnableEndless);
-    Config.setValue("EnableAnzhan", Config.EnableAnzhan);
-    Config.setValue("AnzhanEqual", anzhan_equal_checkbox->isChecked());
-    Config.setValue("EndlessTimes", endless_timebox->value());
+    //Config.setValue("EnableAnzhan", Config.EnableAnzhan);
+    //Config.setValue("AnzhanEqual", anzhan_equal_checkbox->isChecked());
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
