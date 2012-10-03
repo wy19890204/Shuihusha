@@ -3,7 +3,7 @@
 return {
 	["standard"] = "基础包",
 
-	["$jidan"] = "xia001",
+	["$jidan"] = "X01",
 	["#jidan"] = "墨家巨子", -- xia 4hp
 	["jidan"] = "姬丹",
 	["cv:jidan"] = "",
@@ -17,7 +17,7 @@ return {
 	["$feigong2"] = "墨门绝术，克而不攻。",
 	["~jidan"] = "唉，靠你们了。",
 
-	["$jingtianming"] = "xia002",
+	["$jingtianming"] = "X02",
 	["#jingtianming"] = "少年巨子", -- xia 4hp
 	["jingtianming"] = "荆天明",
 	["cv:jingtianming"] = "",
@@ -32,7 +32,7 @@ return {
 	["$tianzhi"] = "我有天志，譬若轮人之有规，匠人之有矩，轮匠执其规矩以度天下之方员。",
 	["~lujunyi"] = "月儿……",
 
-	["$jiru"] = "xia003",
+	["$jiru"] = "X03",
 	["#jiru"] = "高月公主", -- xia 3hp
 	["jiru"] = "姬如",
 	["cv:jiru"] = "",
@@ -51,7 +51,7 @@ return {
 	["$feiyue2"] = "极乐天韵，魔音万千",
 	["~jiru"] = "天明……",
 
-	["$genie"] = "xia004",
+	["$genie"] = "X04",
 	["#genie"] = "鬼谷传人", -- xia 4hp
 	["genie"] = "盖聂",
 	["cv:genie"] = "",
@@ -66,7 +66,7 @@ return {
 	["$jiansheng2"] = "阖之者，闭也，默也，阴也。",
 	["~genie"] = "遥不可及的，梦……",
 
-	["$duanmurong"] = "xia005",
+	["$duanmurong"] = "X05",
 	["#duanmurong"] = "镜湖医仙", -- xia 3hp
 	["duanmurong"] = "端木蓉",
 	["cv:duanmurong"] = "",
@@ -79,7 +79,7 @@ return {
 	["$feiming"] = "谁若来救，我便咬舌自尽。",
 	["~duanmurong"] = "医者难自医呀。",
 
-	["$daozhi"] = "xia006",
+	["$daozhi"] = "X06",
 	["#daozhi"] = "芳心难盗", -- xia 4hp
 	["daozhi"] = "盗跖",
 	["cv:daozhi"] = "",
@@ -92,7 +92,7 @@ return {
 	["$daowang3"] = "哼，不怕贼偷，就怕贼惦记。", -- 被抵消时
 	["~daozhi"] = "蓉姑娘说得，太对了……",
 
-	["$datiechui"] = "xia007",
+	["$datiechui"] = "X07",
 	["#datiechui"] = "燕人兄弟", -- xia 4hp
 	["datiechui"] = "大铁锤",
 	["cv:datiechui"] = "",
@@ -104,7 +104,7 @@ return {
 	["$leishen2"] = "雷神锤！",
 	["~datiechui"] = "兄弟们，接着上。",
 
-	["$bandashi"] = "xia008",
+	["$bandashi"] = "X08",
 	["#bandashi"] = "非攻机关师", -- xia 3hp
 	["bandashi"] = "班大师",
 	["cv:bandashi"] = "",
@@ -118,7 +118,7 @@ return {
 	["$jieyong2"] = "俭节则昌，淫佚则亡。",
 	["~bandashi"] = "啊，装不上了。",
 
-	["$xiangyu"] = "wang001",
+	["$xiangyu"] = "W01",
 	["#xiangyu"] = "西楚霸王", -- wang 4hp
 	["xiangyu"] = "项羽",
 	["cv:xiangyu"] = "",
@@ -131,7 +131,7 @@ return {
 	["$bieji2"] = "虞兮虞兮，奈若何。", -- 仅当石兰响应时
 	["~xiangyu"] = "天之亡我，我何渡为！",
 
-	["$shilan"] = "wang002",
+	["$shilan"] = "W02",
 	["#shilan"] = "蜀国公主", -- wang 3hp
 	["shilan"] = "石兰",
 	["cv:shilan"] = "",
@@ -143,7 +143,7 @@ return {
 	["$youlan"] = "兰当为王者香，今乃独茂。",
 	["~shilan"] = "故国何处……",
 
-	["$fanzeng"] = "wang003",
+	["$fanzeng"] = "W03",
 	["#fanzeng"] = "亚父", -- wang 3hp
 	["fanzeng"] = "范增",
 	["cv:fanzeng"] = "",
@@ -157,7 +157,7 @@ return {
 	["$podou2"] = "竖子不足与谋！", -- 当A存活时
 	["~fanzeng"] = "天下事大定矣，汝自为之。",
 
-	["$zhangliang"] = "wang005",
+	["$zhangliang"] = "W05",
 	["#zhangliang"] = "谋圣", -- wang 3hp
 	["zhangliang"] = "张良",
 	["cv:zhangliang"] = "",
@@ -169,7 +169,7 @@ return {
 	["$bigu"] = "功成身退也。",
 	["~zhangliang"] = "咳咳咳……",
 
-	["$weizhuang"] = "wang007",
+	["$weizhuang"] = "W07",
 	["#weizhuang"] = "鬼谷传人", -- wang 4hp
 	["weizhuang"] = "卫庄",
 	["cv:weizhuang"] = "",
@@ -183,7 +183,7 @@ return {
 	["$yaojian2"] = "捭之者，开也，言也，阳也。",
 	["~weizhuang"] = "我输了……",
 
-	["$chilian"] = "wang009",
+	["$chilian"] = "W09",
 	["#chilian"] = "红莲殿下", -- wang 3hp
 	["chilian"] = "赤练",
 	["cv:chilian"] = "",
@@ -195,7 +195,7 @@ return {
 	["$huomei"] = "他，才是你的仇人。",
 	["~chilian"] = "她是，女的？",
 
-	["$canglangwang"] = "wang010",
+	["$canglangwang"] = "W10",
 	["#canglangwang"] = "黑夜杀人魔", -- wang 4hp
 	["canglangwang"] = "苍狼王",
 	["cv:canglangwang"] = "",
@@ -205,7 +205,7 @@ return {
 	["$chenxu2"] = "你们都将是我们的美味晚餐，哈哈哈……",
 	["~chilian"] = "噔。", -- （青铜爪落地）
 
-	["$jiguanwushuang"] = "wang011",
+	["$jiguanwushuang"] = "W11",
 	["#jiguanwushuang"] = "天生怪力", -- wang 4hp
 	["jiguanwushuang"] = "机关无双",
 	["cv:jiguanwushuang"] = "",
@@ -217,7 +217,7 @@ return {
 	["$wushuang2"] = "啊！", -- （咆哮）
 	["~jiguanwushuang"] = "噌——", -- （百步飞剑划过的声音）
 
-	["$yingzheng"] = "di001",
+	["$yingzheng"] = "D01",
 	["#yingzheng"] = "千古一帝", -- di 4hp
 	["yingzheng"] = "嬴政",
 	["cv:yingzheng"] = "",
@@ -230,7 +230,7 @@ return {
 	["$hujia"] = "来人，护驾！",
 	["~gongshuchou"] = "呃，全散架了。",
 
-	["$fusu"] = "di002",
+	["$fusu"] = "D02",
 	["#fusu"] = "公子", -- di 4hp
 	["fusu"] = "扶苏",
 	["cv:fusu"] = "",
@@ -242,7 +242,7 @@ return {
 	["$dayi"] = "苍生何辜！",
 	["~fusu"] = "君要臣死，尚安复请！",
 
-	["$mengtian"] = "di003",
+	["$mengtian"] = "D03",
 	["#mengtian"] = "大将军", -- di 4hp
 	["mengtian"] = "蒙恬",
 	["cv:mengtian"] = "",
@@ -252,7 +252,7 @@ return {
 	["$shenwu2"] = "精修直道，以险制塞。", -- 仅跳出牌
 	["~mengtian"] = "筑长城，绝地脉，吾之罪矣。",
 
-	["$lisi"] = "di004",
+	["$lisi"] = "D04",
 	["#lisi"] = "丞相", -- di 3hp
 	["lisi"] = "李斯",
 	["cv:lisi"] = "",
@@ -266,7 +266,7 @@ return {
 	["$dusha2"] = "不留遗患，必诛之。",
 	["~lisi"] = "东门黄犬，岂可得乎！",
 
-	["$yueshen"] = "di005",
+	["$yueshen"] = "D05",
 	["#yueshen"] = "护国法师", -- di 3hp
 	["yueshen"] = "月神",
 	["cv:yueshen"] = "",
@@ -280,7 +280,7 @@ return {
 	["$yixing2"] = "仙子何年下太空，凌波微步笑芙蓉。",
 	["~yueshen"] = "天时有序，人力何为？",
 
-	["$dasiming"] = "di006",
+	["$dasiming"] = "D06",
 	["#dasiming"] = "死亡使者", -- di 3hp
 	["dasiming"] = "大司命",
 	["cv:dasiming"] = "",
@@ -293,7 +293,7 @@ return {
 	["$zheyao"] = "折疏麻兮瑶华，将以遗兮离居。",
 	["~dasiming"] = "老冉冉兮既极，不寖近兮愈疏。",
 
-	["$shaosiming"] = "di007",
+	["$shaosiming"] = "D07",
 	["#shaosiming"] = "生命使者", -- di 3hp
 	["shaosiming"] = "少司命",
 	["cv:shaosiming"] = "",
@@ -307,7 +307,7 @@ return {
 	["$lingyi2"] = "荷衣兮蕙带，倏而来兮忽而逝。",
 	["~shaosiming"] = "悲莫悲兮生别离……",
 
-	["$gongshuchou"] = "di008",
+	["$gongshuchou"] = "D08",
 	["#gongshuchou"] = "霸道机关师", -- di 3hp
 	["gongshuchou"] = "公输仇",
 	["cv:gongshuchou"] = "",
@@ -321,7 +321,7 @@ return {
 	["$enchou2"] = "赤练女侠，老夫有礼了。", -- （赤练专用）
 	["~gongshuchou"] = "呃，全散架了。",
 
-	["$xiaoyaozi"] = "free001",
+	["$xiaoyaozi"] = "F01",
 	["#xiaoyaozi"] = "关中豪侠", -- free 3hp
 	["xiaoyaozi"] = "逍遥子",
 	["cv:xiaoyaozi"] = "",
@@ -334,7 +334,7 @@ return {
 	["$yangsheng"] = "上善若水，医者仁心。",
 	["~xiaoyaozi"] = "天人合一啦。",
 
-	["$shengqi"] = "free002",
+	["$shengqi"] = "F02",
 	["#shengqi"] = "黑剑士", -- free 4hp
 	["shengqi"] = "胜七",
 	["cv:shengqi"] = "",
@@ -343,7 +343,7 @@ return {
 	["$zhumie"] = "挡我者，杀。",
 	["~shengqi"] = "我不服……",
 
-	["$gongsunlinglong"] = "free003",
+	["$gongsunlinglong"] = "F03",
 	["#gongsunlinglong"] = "白马非马", -- free 3hp
 	["gongsunlinglong"] = "公孙玲珑",
 	["cv:gongsunlinglong"] = "",
@@ -355,7 +355,7 @@ return {
 	["$guibian2"] = "兄台，你说呢？",
 	["~gongshuchou"] = "我的马呀！",
 
-	["$chunangong"] = "free004",
+	["$chunangong"] = "F04",
 	["#chunangong"] = "楚地第一贤者", -- free 3hp
 	["chunangong"] = "楚南公",
 	["cv:chunangong"] = "",
@@ -368,7 +368,7 @@ return {
 	["$zhiyan"] = "切莫辜负老夫厚望呀。",
 	["~chunangong"] = "亡秦，必楚……",
 
-	["$xiaoyaozi"] = "free005",
+	["$xiaoyaozi"] = "F05",
 	["#xiaoyaozi"] = "关中豪侠", -- free 3hp
 	["xiaoyaozi"] = "逍遥子",
 	["cv:xiangyu"] = "",

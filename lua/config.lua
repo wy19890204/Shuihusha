@@ -30,20 +30,18 @@ config = {
 	},
 
 	scene_names = {
---	"Dusong",
+	"Impasse",
 --	"Couple",
---	"Changban",
 --	"Contract",
 --[[	"Zombie",
-	"Legend",
-	"Impasse",]]
+	"Legend",]]
 	"Custom",
 	},
 
-	color_guan = "#547998",
-	color_jiang = "#D0796C",
-	color_min = "#4DB873",
-	color_kou = "#8A807A",
+	color_di = "#547998",
+	color_xia = "#D0796C",
+	color_wang = "#4DB873",
+	color_free = "#8A807A",
 	color_god = "#96943D",
 }
 
