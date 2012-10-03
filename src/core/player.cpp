@@ -152,7 +152,7 @@ int Player::getAttackRange() const{
 }
 
 bool Player::inMyAttackRange(const Player *other) const{
-    return distanceTo(other) <= getAttackRange();
+    return this != other && distanceTo(other) <= getAttackRange();
 }
 
 void Player::setFixedDistance(const Player *player, int distance){

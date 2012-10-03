@@ -245,7 +245,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     switch(event){
     case GameStart: {
-        if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
+        if(player->getGeneral()->getKingdom() == "free" && player->getGeneralName() != "anjiang"){
                 QString new_kingdom = room->askForKingdom(player);
                 room->setPlayerProperty(player, "kingdom", new_kingdom);
 
@@ -1153,7 +1153,7 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
                 QString transfigure_str = QString("%1:%2").arg(sp->getGeneralName()).arg("anjiang");
                 sp->invoke("transfigure", transfigure_str);
                 room->setPlayerProperty(sp,"general","anjiang");
-                room->setPlayerProperty(sp,"kingdom","god");
+                room->setPlayerProperty(sp,"kingdom","free");
 
                 LogMessage log;
                 log.type = "#BasaraGeneralChosen";

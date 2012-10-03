@@ -326,7 +326,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
             foreach(ServerPlayer *player, m_alivePlayers){
                 if(Config.EnableHegemony){
                     QString role = player->getKingdom();
-                    if(role == "god")
+                    if(role == "free")
                         role = Sanguosha->getGeneral(getTag(player->objectName()).toStringList().at(0))->getKingdom();
                     role = BasaraMode::getMappedRole(role);
                     broadcast(QString("#%1 role %2").arg(player->objectName()).arg(role));
@@ -3370,10 +3370,10 @@ QString Room::askForKingdom(ServerPlayer *player){
     if (success && clientReply.isString())
     {
         QString kingdom = toQString(clientReply.asCString());
-        if (kingdom == "di" || kingdom == "xia" || kingdom == "wang" || kingdom == "free")
+        if (kingdom == "di" || kingdom == "xia" || kingdom == "wang")
             return kingdom;
     }
-    return "god";
+    return "free";
 }
 
 bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discard_num, bool optional, bool include_equip){
