@@ -1022,7 +1022,6 @@ class BiguEffect: public TriggerSkill{
 public:
     BiguEffect():TriggerSkill("#bigu-effect"){
         frequency = Compulsory;
-
         events << CardLost;
     }
 
@@ -1037,7 +1036,31 @@ public:
     }
 };
 
-//yaojian
+class Yaojian: public TriggerSkill{
+public:
+    Yaojian():TriggerSkill("yaojian"){
+        events << Damage;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.card->inherits("Slash") && !damage.card->inherits("Duel"))
+            return false;
+        if(damage.to && !player->isKongcheng() && !damage.to->isKongcheng() &&
+           player->askForSkillInvoke(objectName())){
+            bool success = player->pindian(damage.to, objectName());
+            if(success){
+                int card_id = room->askForCardChosen(player, damage.to, "he", objectName());
+                room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
+            }
+        }
+        return false;
+    }
+};
 
 class Zhendu: public OneCardViewAsSkill{
 public:
@@ -1990,7 +2013,7 @@ StandardPackage::StandardPackage()
 
     General *weizhuang = new General(this, "weizhuang", "wang");
     weizhuang->addSkill("baihe");
-    //weizhuang->addSkill(new Yaojian); //@todo
+    weizhuang->addSkill(new Yaojian);
 
     General *chilian = new General(this, "chilian", "wang", 3, false);
     chilian->addSkill(new Zhendu);
