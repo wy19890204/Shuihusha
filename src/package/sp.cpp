@@ -176,6 +176,7 @@ public:
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
         if(player->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
             player->turnOver();
             LogMessage log;
             log.type = "#Lift";
