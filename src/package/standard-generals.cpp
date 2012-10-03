@@ -1906,14 +1906,10 @@ StandardPackage::StandardPackage()
     shaosiming->addSkill(new Luosheng);
     shaosiming->addSkill(new Lingyi);
     //shaosiming->addSkill(new SPConvertSkill("chujia", "shaosiming", "sp_shaosiming"));
-
-    General *gongshuchou = new General(this, "gongshuchou", "di", 3); //@todo
+//--------
+    General *gongshuchou = new General(this, "gongshuchou", "free", 3); //@todo
     //gongshuchou->addSkill(new Badao);
     //gongshuchou->addSkill(new Enchou);
-//--------
-    General *xiaoyaozi = new General(this, "xiaoyaozi", "free", 3, false);
-    xiaoyaozi->addSkill(new Guirou);
-    //xiaoyaozi->addSkill(new Yangsheng); //@todo
 
     General *shengqi = new General(this, "shengqi", "free");
     //shengqi->addSkill(new Zhumie); //@todo
@@ -1925,6 +1921,10 @@ StandardPackage::StandardPackage()
     General *chunangong = new General(this, "chunangong", "free", 3);
     chunangong->addSkill(new Bishi);
     //chunangong->addSkill(new Zhiyan); //@todo
+
+    General *xiaoyaozi = new General(this, "xiaoyaozi", "free", 3, false);
+    xiaoyaozi->addSkill(new Guirou);
+    //xiaoyaozi->addSkill(new Yangsheng); //@todo
 
     // for skill cards
     addMetaObject<PofuCard>();

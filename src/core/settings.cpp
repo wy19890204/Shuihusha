@@ -129,7 +129,7 @@ void Settings::init(){
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/qinsmoon.jpg").toString();
 
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
