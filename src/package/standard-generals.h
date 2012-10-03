@@ -40,6 +40,16 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class HuomeiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE HuomeiCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 class ShangtongCard: public SkillCard{
     Q_OBJECT
 
@@ -48,6 +58,14 @@ public:
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class PofuCard:public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE PofuCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class ShenwuCard: public SkillCard{
@@ -59,6 +77,35 @@ public:
     virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class LuoshengCard:public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LuoshengCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class ShouyaoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ShouyaoCard();
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class GuirouCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE GuirouCard();
+
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
