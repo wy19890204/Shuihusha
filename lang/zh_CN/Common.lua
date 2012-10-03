@@ -1,9 +1,8 @@
 -- The common
 return {
-	["Shuihusha"] = "水浒杀",
-	["DefaultDesigner"] = "烨子",
+	["QinsMoon"] = "秦时明月",
+	["DefaultDesigner"] = "秦盟",
 	["DefaultCV"] = "佚名",
-	["DefaultCoder"] = "宇文天启",
 	["UnknowNick"] = "",
 	["DefaultIllustrator"] = "麻苍满月",
 
