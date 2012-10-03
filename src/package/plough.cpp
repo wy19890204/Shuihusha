@@ -6,6 +6,21 @@
 #include "carditem.h"
 #include "standard.h"
 
+Burn::Burn(Suit suit, int number)
+    :SingleTargetTrick(suit, number, true) {
+    setObjectName("burn");
+}
+
+bool Burn::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select != Self;
+}
+
+void Burn::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.to->getRoom();
+}
+
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {
     setObjectName("ecstasy");

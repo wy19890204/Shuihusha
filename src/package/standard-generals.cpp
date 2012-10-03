@@ -1058,8 +1058,7 @@ public:
     }
 };
 
-HuomeiCard::HuomeiCard()
-{
+HuomeiCard::HuomeiCard(){
     owner_discarded = true;
 }
 
@@ -1117,7 +1116,6 @@ class Huomei: public TriggerSkill{
 public:
     Huomei():TriggerSkill("huomei"){
         view_as_skill = new HuomeiViewAsSkill;
-
         events << CardUsed;
     }
 
@@ -1161,12 +1159,41 @@ public:
                 }
             }
         }
-
         return false;
     }
 };
 
-// chenxu
+class Chenxu: public TriggerSkill{
+public:
+    Chenxu(): TriggerSkill("chenxu"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+
+        if(player->askForSkillInvoke(objectName(), data)){
+            player->turnOver();
+            LogMessage log;
+            log.type = "#Chenxu";
+            log.from = player;
+            log.to << effect.to;
+            log.arg = objectName();
+            room->sendLog(log);
+
+            if(effect.slash->getSkillName() == "strike")
+                player->addMark("tola");
+            room->slashResult(effect, NULL);
+            if(player->getMark("tola") >= 3){
+                log.type = "#Tigerhide";
+                room->sendLog(log);
+                room->acquireSkill(player, "tigerou");
+            }
+        }
+
+        return false;
+    }
+};
 
 class Wushuang: public TriggerSkill{
 public:
@@ -1779,7 +1806,44 @@ public:
         return false;
     }
 };
-//badao
+
+class Badao: public TriggerSkill{
+public:
+    Badao():TriggerSkill("badao"){
+        frequency = Frequent;
+        events << Damaged;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *other, QVariant &data) const{
+        QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *loli, lolita){
+            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
+                const Card *card = room->peek();
+                room->playSkillEffect(objectName());
+                room->setEmotion(loli, "draw-card");
+                room->getThread()->delay();
+
+                LogMessage log;
+                log.type = "$TakeAG";
+                log.from = loli;
+                log.card_str = card->getEffectIdString();
+                room->sendLog(log);
+
+                room->obtainCard(loli, card);
+            }
+        }
+        return false;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+};
+
 //enchou
 
 GuirouCard::GuirouCard(){
@@ -1847,7 +1911,26 @@ public:
 };
 
 //yangsheng
-//zhumie
+
+class Zhumie:public TriggerSkill{
+public:
+    Zhumie():TriggerSkill("zhumie"){
+        events << CardUsed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *weidingguo, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        CardStar card = use.card;
+        if(card->inherits("FireAttack")){
+            if(room->askForSkillInvoke(weidingguo, objectName())){
+                if(card->getSkillName() != "zhumie")
+                    room->playSkillEffect(objectName());
+                weidingguo->drawCards(2);
+            }
+        }
+        return false;
+    }
+};
 
 class Guibian:public TriggerSkill{
 public:
@@ -1996,8 +2079,8 @@ StandardPackage::StandardPackage()
     chilian->addSkill(new Zhendu);
     chilian->addSkill(new Huomei);
 
-    General *canglangwang = new General(this, "canglangwang", "wang"); //@todo
-    //canglangwang->addSkill(new Chenxu);
+    General *canglangwang = new General(this, "canglangwang", "wang");
+    canglangwang->addSkill(new Chenxu); //@todo
 
     General *jiguanwushuang = new General(this, "jiguanwushuang", "wang");
     jiguanwushuang->addSkill(new Wushuang);
@@ -2032,11 +2115,11 @@ StandardPackage::StandardPackage()
     //shaosiming->addSkill(new SPConvertSkill("chujia", "shaosiming", "sp_shaosiming"));
 //--------
     General *gongshuchou = new General(this, "gongshuchou", "free", 3); //@todo
-    //gongshuchou->addSkill(new Badao);
+    gongshuchou->addSkill(new Badao);
     //gongshuchou->addSkill(new Enchou);
 
     General *shengqi = new General(this, "shengqi", "free");
-    //shengqi->addSkill(new Zhumie); //@todo
+    shengqi->addSkill(new Zhumie); //@todo
 
     General *gongsunlinglong = new General(this, "gongsunlinglong", "free", 3, false);
     gongsunlinglong->addSkill(new Guibian);

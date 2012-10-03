@@ -5,7 +5,6 @@ TARGET = QinsMoon
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
-#CONFIG += crypto
 
 # If you want to enable joystick support, please uncomment the following line:
 # CONFIG += joystick
