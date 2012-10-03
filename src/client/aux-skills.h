@@ -53,28 +53,6 @@ private:
     DummyCard *card;
 };
 
-class RendeCard:public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE RendeCard();
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
-class YijiViewAsSkill : public ViewAsSkill{
-    Q_OBJECT
-
-public:
-    explicit YijiViewAsSkill();
-    void setCards(const QString &card_str);
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const;
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const;
-
-private:
-    Card *card;
-    QList<int> ids;
-};
 
 class ChoosePlayerCard;
 
