@@ -82,7 +82,7 @@ return {
 	["$daozhi"] = "xia006",
 	["#daozhi"] = "芳心难盗", -- xia 4hp
 	["daozhi"] = "盗跖",
-	["cv:linchong"] = "",
+	["cv:daozhi"] = "",
 	["daowang"] = "盗王",
 	[":daowang"] = "你可以将两张相同花色的牌当【盗王之王】使用。每阶段限一次",
 	["shenxing"] = "神行",
@@ -135,7 +135,7 @@ return {
 	["#shilan"] = "蜀国公主", -- wang 3hp
 	["shilan"] = "石兰",
 	["cv:shilan"] = "",
-	["yexing"] = "尚同",
+	["yexing"] = "夜行",
 	[":yexing"] = "<b>锁定技</b>，当你存活时，防止武将牌背面朝上的角色受到的非阴阳伤害",
 	["youlan"] = "幽兰",
 	[":youlan"] = "出牌阶段，你可以将所有手牌（至少一张）交给一名其他角色，然后将其武将牌翻面，此时该角色可以将一半（向上取整）的手牌交给你，然后将你的武将牌翻面。每阶段限一次",
@@ -267,8 +267,8 @@ return {
 	["~lisi"] = "东门黄犬，岂可得乎！",
 
 	["$yueshen"] = "di005",
-	["#yueshen"] = "丞相", -- di 3hp
-	["yueshen"] = "李斯",
+	["#yueshen"] = "护国法师", -- di 3hp
+	["yueshen"] = "月神",
 	["cv:yueshen"] = "",
 	["sixing"] = "司星",
 	[":sixing"] = "回合开始阶段开始时，你可以进行一次判定，若判定结果为黑色，则你获得之。你可以重复此流程，直到出现红色的判定结果为止",
@@ -307,9 +307,9 @@ return {
 	["$lingyi2"] = "荷衣兮蕙带，倏而来兮忽而逝。",
 	["~shaosiming"] = "悲莫悲兮生别离……",
 
-	["$gongshuchou"] = "free001",
-	["#gongshuchou"] = "霸道机关师", -- free 3hp
-	["gongshuchou"] = "逍遥子",
+	["$gongshuchou"] = "di008",
+	["#gongshuchou"] = "霸道机关师", -- di 3hp
+	["gongshuchou"] = "公输仇",
 	["cv:gongshuchou"] = "",
 	["badao"] = "霸道",
 	[":badao"] = "每当一名角色受到1点机关伤害后，你可以摸一张牌",
@@ -320,6 +320,15 @@ return {
 	["$enchou1"] = "老夫有大礼相送。",
 	["$enchou2"] = "赤练女侠，老夫有礼了。", -- （赤练专用）
 	["~gongshuchou"] = "呃，全散架了。",
+
+	["$xiaoyaozi"] = "free001",
+	["#xiaoyaozi"] = "关中豪侠", -- free 3hp
+	["xiaoyaozi"] = "逍遥子",
+	["cv:xiaoyaozi"] = "",
+	["guirou"] = "贵柔",
+	[":guirou"] = "每当你受到伤害时，你可以弃置一张♥手牌，将此伤害转移给一名其他角色，然后该角色摸X张牌（X为该角色已损失的体力值）",
+	["yangsheng"] = "养生",
+	[":yangsheng"] = "其他角色可以于其出牌阶段将一张♥手牌交给你，若其此时已受伤，你可以弃置一张手牌，令其回复1点体力。每阶段限一次",
 
 	["$shengqi"] = "free002",
 	["#shengqi"] = "黑剑士", -- free 4hp
