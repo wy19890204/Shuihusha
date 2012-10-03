@@ -61,8 +61,7 @@ void Settings::init(){
 
     if(!contains("BanPackages")){
         QStringList banlist;
-        banlist << "test" << "god" << "sp" << "gift"
-                << "customcards"
+        banlist << "test" << "god" << "sp"
                 //<< "joy" << "kuso" << "joyer"
                 ;
 
@@ -103,7 +102,7 @@ void Settings::init(){
     ServerName = value("ServerName", tr("%1's server").arg(UserName)).toString();
 
     HostAddress = value("HostAddress", "127.0.0.1").toString();
-    UserAvatar = value("UserAvatar", "anjiang").toString();
+    UserAvatar = value("UserAvatar", "yingzheng").toString();
     HistoryIPs = value("HistoryIPs").toStringList();
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
@@ -135,26 +134,19 @@ void Settings::init(){
 
     roles_ban << "ubuntenkei";
 
-    kof_ban << "andaoquan" << "shixiu"
-            /* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
+    kof_ban << "duanmurong";
 
-    //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
+    //basara_ban << "dingdesun";
 
     hegemony_ban.append(basara_ban);
-    hegemony_ban << "gongsunsheng";
+    hegemony_ban << "ubuntenkei";
     foreach(QString general, Sanguosha->getLimitedGeneralNames()){
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
     }
 
-    pairs_ban << "tongguan" << "tongguanf" << "caijing"
-              << "gaoqiu+luozhenren" << "wangying+zhangqing" << "wangying+qiongying"
-              << "tianhu+yanshun" << "zhangheng+shixiu"
-              //<< "shenwuyong"
-              //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
-              //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
-              //<< "oupeng+wangqing" << "jiashi+shenzhangqing"
-              //<< "husanniang+zhaoji" << "dingdesun+wangqing"
+    pairs_ban << "ubuntenkei"
+              << "ubuntenkei+weizhuang"
               ;
 
     QStringList banlist = value("Banlist/Roles").toStringList();
