@@ -798,9 +798,9 @@ void ChangbanScenario::generalSelection(Room *room) const{
     foreach(QString name, ban_list)
         generals.removeOne(Sanguosha->getGeneral(name));
 
-    QString kingdom = "guan";
+    QString kingdom = "di";
     QStringList kingdoms;
-    kingdoms << "guan" << "jiang" << "min" << "kou";
+    kingdoms << "di" << "xia" << "wang" << "free";
     kingdom = kingdoms.at(qrand() % 4);
 
     QStringList names;

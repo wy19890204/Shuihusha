@@ -421,7 +421,7 @@ public:
         if(target->hasLordSkill("shaxue")){
             QList<const Player *> players = target->getSiblings();
             foreach(const Player *player, players){
-                if(player->isDead() && player->getKingdom() == "kou")
+                if(player->isDead() && player->getKingdom() == "free")
                     shaxue += 2;
             }
         }
@@ -651,7 +651,7 @@ public:
 SPPackage::SPPackage()
     :Package("sp")
 {
-    General *luda = new General(this, "luda", "guan");
+    General *luda = new General(this, "luda", "di");
     luda->addSkill(new Baoquan);
 
     General *tora = new General(this, "tora", "god", 4, false);
@@ -663,20 +663,20 @@ SPPackage::SPPackage()
     skills << new Tigerou;
 
 /*
-    General *chaogai = new General(this, "chaogai", "kou");
+    General *chaogai = new General(this, "chaogai", "free");
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
     chaogai->addSkill(new Shaxue);
     chaogai->addSkill(new ShaxueMaxCard);
     related_skills.insertMulti("shaxue", "#shaxue-maxcard");
 
-    General *jiangsong = new General(this, "jiangsong", "guan");
+    General *jiangsong = new General(this, "jiangsong", "di");
     jiangsong->addSkill(new Yuzhong);
     jiangsong->addSkill(new Yuzhong2);
     related_skills.insertMulti("yuzhong", "#yuzh0ng");
     jiangsong->addSkill(new Shuntian);
 
-    General *wanglun = new General(this, "wanglun", "kou", 3);
+    General *wanglun = new General(this, "wanglun", "free", 3);
     wanglun->addSkill(new Chengfu);
     wanglun->addSkill(new Xiaduo);
 
@@ -686,4 +686,4 @@ SPPackage::SPPackage()
     addMetaObject<BaoquanCard>();
 }
 
-ADD_PACKAGE(SP)
+//ADD_PACKAGE(SP)

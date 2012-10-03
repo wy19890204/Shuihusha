@@ -1140,6 +1140,6 @@ JoyGeneralPackage::JoyGeneralPackage()
     type = GeneralPack;
 }
 
-ADD_PACKAGE(Kuso)
-ADD_PACKAGE(Joy)
-ADD_PACKAGE(JoyGeneral)
+//ADD_PACKAGE(Kuso)
+//ADD_PACKAGE(Joy)
+//ADD_PACKAGE(JoyGeneral)

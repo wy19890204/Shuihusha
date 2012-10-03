@@ -3,7 +3,7 @@
 #include "carditem.h"
 #include "standard.h"
 #include "clientplayer.h"
-#include "common-skillcards.h"
+#include "standard-generals.h"
 #include "engine.h"
 
 DiscardSkill::DiscardSkill()
@@ -97,6 +97,32 @@ const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
         return card;
     }else
         return NULL;
+}
+// -------------------------------------------
+
+YijiViewAsSkill::YijiViewAsSkill()
+    :ViewAsSkill("yiji")
+{
+    card = new JianaiCard;
+}
+
+void YijiViewAsSkill::setCards(const QString &card_str){
+    QStringList cards = card_str.split("+");
+    ids = Card::StringsToIds(cards);
+}
+
+bool YijiViewAsSkill::viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+    return ids.contains(to_select->getCard()->getId());
+}
+
+const Card *YijiViewAsSkill::viewAs(const QList<CardItem *> &cards) const{
+    if(cards.isEmpty())
+        return NULL;
+
+    card->clearSubcards();
+    card->addSubcards(cards);
+
+    return card;
 }
 
 // ------------------------------------------------

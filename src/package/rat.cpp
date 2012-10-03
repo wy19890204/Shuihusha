@@ -862,52 +862,52 @@ public:
 RatPackage::RatPackage()
     :Package("rat")
 {
-    General *liying = new General(this, "liying", "guan");
+    General *liying = new General(this, "liying", "di");
     liying->addSkill(new Kong1iang);
 
-    General *dongping = new General(this, "dongping", "guan");
+    General *dongping = new General(this, "dongping", "di");
     dongping->addSkill(new Shuangzhan);
 
-    General *zhangqing = new General(this, "zhangqing", "guan");
+    General *zhangqing = new General(this, "zhangqing", "di");
     zhangqing->addSkill(new Yinyu);
     skills << new YinyuRange;
 
-    General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
+    General *ruanxiaoer = new General(this, "ruanxiaoer", "wang");
     ruanxiaoer->addSkill(new Fuji);
 
-    General *zhangshun = new General(this, "zhangshun", "min", 3);
+    General *zhangshun = new General(this, "zhangshun", "wang", 3);
     zhangshun->addSkill(new Shunshui);
     zhangshun->addSkill(new Lihun);
 
-    General *zhuwu = new General(this, "zhuwu", "kou", 3);
+    General *zhuwu = new General(this, "zhuwu", "free", 3);
     zhuwu->addSkill(new Pozhen);
     zhuwu->addSkill(new Buzhen);
     zhuwu->addSkill(new MarkAssignSkill("@embattle", 1));
     related_skills.insertMulti("buzhen", "#@embattle-1");
     zhuwu->addSkill(new Fangzhen);
 
-    General *qingzhang = new General(this, "qingzhang", "kou", 3);
+    General *qingzhang = new General(this, "qingzhang", "free", 3);
     qingzhang->addSkill(new Shouge);
     qingzhang->addSkill(new Qiongtu);
 
-    General *baisheng = new General(this, "baisheng", "min", 3);
+    General *baisheng = new General(this, "baisheng", "wang", 3);
     baisheng->addSkill(new Xiayao);
     baisheng->addSkill(new Shudan);
     baisheng->addSkill(new ShudanClear);
     related_skills.insertMulti("shudan", "#shudan_clear");
 
-    General *shiqian = new General(this, "shiqian", "kou", 3);
+    General *shiqian = new General(this, "shiqian", "free", 3);
     shiqian->addSkill(new Feiyan);
     shiqian->addSkill(new Shentou);
 
-    General *shiwengong = new General(this, "shiwengong", "jiang");
+    General *shiwengong = new General(this, "shiwengong", "xia");
     shiwengong->addSkill(new Dujian);
 
-    General *qiaodaoqing = new General(this, "qiaodaoqing", "jiang", 3);
+    General *qiaodaoqing = new General(this, "qiaodaoqing", "xia", 3);
     qiaodaoqing->addSkill(new Huanshu);
     qiaodaoqing->addSkill(new Mozhang);
 
-    General *qiongying = new General(this, "qiongying", "jiang", 3, false);
+    General *qiongying = new General(this, "qiongying", "xia", 3, false);
     qiongying->addSkill(new Yuanpei);
     qiongying->addSkill(new Mengshi);
     related_skills.insertMulti("mengshi", "yinyu");
@@ -918,4 +918,4 @@ RatPackage::RatPackage()
     addMetaObject<YuanpeiCard>();
 }
 
-ADD_PACKAGE(Rat)
+//ADD_PACKAGE(Rat)

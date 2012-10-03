@@ -1059,10 +1059,10 @@ BasaraMode::BasaraMode(QObject *parent)
 QString BasaraMode::getMappedRole(const QString &role){
     static QMap<QString, QString> roles;
     if(roles.isEmpty()){
-        roles["guan"] = "lord";
-        roles["jiang"] = "loyalist";
-        roles["min"] = "rebel";
-        roles["kou"] = "renegade";
+        roles["di"] = "lord";
+        roles["xia"] = "loyalist";
+        roles["wang"] = "rebel";
+        roles["free"] = "renegade";
     }
     return roles[role];
 }

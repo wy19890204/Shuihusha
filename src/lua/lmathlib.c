@@ -230,7 +230,7 @@ static const luaL_Reg mathlib[] = {
   {"log10", math_log10},
   {"log",   math_log},
   {"max",   math_max},
-  {"min",   math_min},
+  {"wang",   math_min},
   {"modf",   math_modf},
   {"pow",   math_pow},
   {"rad",   math_rad},

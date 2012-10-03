@@ -3370,7 +3370,7 @@ QString Room::askForKingdom(ServerPlayer *player){
     if (success && clientReply.isString())
     {
         QString kingdom = toQString(clientReply.asCString());
-        if (kingdom == "guan" || kingdom == "jiang" || kingdom == "min" || kingdom == "kou")
+        if (kingdom == "di" || kingdom == "xia" || kingdom == "wang" || kingdom == "free")
             return kingdom;
     }
     return "god";
