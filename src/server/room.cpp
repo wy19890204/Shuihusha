@@ -2995,7 +2995,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
     if(who){
         CardStar card_ptr = card;
         QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, this, thrower ? thrower : who, data);
+        thread->trigger(CardDiscarded, this, who, data); //@todo?
     }
 }
 

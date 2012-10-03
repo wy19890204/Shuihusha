@@ -781,7 +781,7 @@ public:
                 return false;
         }
         if(target && !target->isKongcheng() &&
-           target->getHandcardNum() > bao->getHandcardNum() &&
+           target->getHandcardNum() >= bao->getHandcardNum() &&
            room->askForSkillInvoke(bao, objectName(), QVariant::fromValue(target))){
             room->playSkillEffect(objectName());
             bao->obtainCard(target->getRandomHandCard(), false);
@@ -981,8 +981,11 @@ public:
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
         if(cards.length() != 2)
             return NULL;
-        const Card *card = cards.first()->getCard();
-        Slash *slash = new Slash(card->getSuit(), 0);
+        const Card *card1 = cards.first()->getCard();
+        const Card *card2 = cards.last()->getCard();
+        Card::Suit suit = card1->getColor() == card2->getColor() ?
+                          card1->getSuit() : Card::NoSuit;
+        Slash *slash = new Slash(suit, 0);
         slash->addSubcards(cards);
         slash->setSkillName(objectName());
         return slash;
