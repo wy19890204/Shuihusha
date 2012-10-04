@@ -49,6 +49,7 @@ ServerDialog::ServerDialog(QWidget *parent)
     setLayout(layout);
 
     setMinimumWidth(300);
+    ok_button->setFocus();
 }
 
 QWidget *ServerDialog::createBasicTab(){
@@ -752,7 +753,7 @@ QLayout *ServerDialog::createButtonLayout(){
     QHBoxLayout *button_layout = new QHBoxLayout;
     button_layout->addStretch();
 
-    QPushButton *ok_button = new QPushButton(tr("OK"));
+    ok_button = new QPushButton(tr("OK"));
     QPushButton *cancel_button = new QPushButton(tr("Cancel"));
 
     button_layout->addWidget(ok_button);

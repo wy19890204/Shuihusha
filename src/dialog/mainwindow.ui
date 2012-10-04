@@ -20,12 +20,12 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
     <property name="title">
-     <string>Game</string>
+     <string>&amp;Game</string>
     </property>
     <addaction name="actionStart_Game"/>
     <addaction name="actionStart_Server"/>
@@ -35,7 +35,7 @@
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Tools</string>
+     <string>&amp;Tools</string>
     </property>
     <addaction name="actionConfigure"/>
     <addaction name="actionGeneral_Overview"/>
@@ -57,7 +57,7 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
@@ -69,7 +69,7 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="actionShow_Hide_Menu"/>
     <addaction name="actionFullscreen"/>
@@ -80,9 +80,10 @@
      <bool>false</bool>
     </property>
     <property name="title">
-     <string>Cheat</string>
+     <string>&amp;Cheat</string>
     </property>
     <addaction name="actionGet_card"/>
+    <addaction name="actionChange_general"/>
     <addaction name="actionDamage_maker"/>
     <addaction name="actionDeath_note"/>
     <addaction name="actionRevive_wand"/>
@@ -91,7 +92,7 @@
    </widget>
    <widget class="QMenu" name="menuDIY">
     <property name="title">
-     <string>DIY</string>
+     <string>&amp;DIY</string>
     </property>
     <addaction name="actionCard_editor"/>
     <addaction name="actionScript_editor"/>
@@ -106,7 +107,7 @@
   </widget>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="actionConfigure">
@@ -119,6 +120,9 @@
    </property>
    <property name="text">
     <string>Configure</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionStart_Server">
@@ -328,6 +332,9 @@
    <property name="text">
     <string>PC Console Start</string>
    </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
   </action>
   <action name="actionPackaging">
    <property name="text">
@@ -373,6 +380,11 @@
   <action name="actionExecute_script_at_server_side">
    <property name="text">
     <string>Execute script at server side ...</string>
+   </property>
+  </action>
+  <action name="actionChange_general">
+   <property name="text">
+    <string>Change general ...</string>
    </property>
   </action>
  </widget>
