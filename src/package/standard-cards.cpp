@@ -1167,12 +1167,12 @@ StandardCardPackage::StandardCardPackage()
                << new OffensiveHorse(Card::Spade, 13)
                << new OffensiveHorse(Card::Diamond, 13);
 
-        horses.at(0)->setObjectName("lhh");
-        horses.at(1)->setObjectName("kirin");
-        horses.at(2)->setObjectName("white");
-        horses.at(3)->setObjectName("chitu");
-        horses.at(4)->setObjectName("snow");
-        horses.at(5)->setObjectName("silver");
+        horses.at(0)->setObjectName("irondino");
+        horses.at(1)->setObjectName("thunderbird");
+        horses.at(2)->setObjectName("whitetiger");
+        horses.at(3)->setObjectName("windy");
+        horses.at(4)->setObjectName("snowy");
+        horses.at(5)->setObjectName("darky");
 
         cards << horses;
 

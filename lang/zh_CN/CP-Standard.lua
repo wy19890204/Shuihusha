@@ -91,15 +91,15 @@ local t = {
 
 	[":machine"] = "装备牌·机关\
 机关效果：其他角色计算与你的距离+1",
-	["black"] = "玄武",
-	["red"] = "朱雀",
-	["white"] = "白虎",
+	["irondino"] = "玄武",
+	["thunderbird"] = "朱雀",
+	["whitetiger"] = "白虎",
 
 	[":mount"] = "装备牌·坐骑\
 坐骑效果：你计算与其他角色的距离-1",
-	["wind"] = "大风",
-	["snow"] = "踏雪",
-	["dark"] = "乌骓",
+	["windy"] = "大风",
+	["snowy"] = "踏雪",
+	["darky"] = "乌骓",
 
 	["amazing_grace"] = "阳春白雪",
 	[":amazing_grace"] = "锦囊牌\
@@ -183,8 +183,8 @@ local t = {
 
 }
 
-local machines = {"black", "red", "white", "green", "mirage"}
-local mounts = {"wind", "snow", "dark", "weasel"}
+local machines = {"irondino", "thunderbird", "whitetiger", "blackdragon", "mirage"}
+local mounts = {"windy", "snowy", "darky"}
 
 for _, machine in ipairs(machines) do
 	t[":" .. machine] = t[":machine"] -- +1

@@ -1885,72 +1885,6 @@ public:
     }
 };
 
-GuirouCard::GuirouCard(){
-    owner_discarded = true;
-}
-
-void GuirouCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.to->getRoom();
-    DamageStruct damage = effect.from->tag["GuirouDamage"].value<DamageStruct>();
-    damage.to = effect.to;
-    room->damage(damage);
-
-    if(damage.to->isAlive())
-        damage.to->drawCards(damage.to->getLostHp());
-}
-
-class GuirouViewAsSkill: public OneCardViewAsSkill{
-public:
-    GuirouViewAsSkill():OneCardViewAsSkill("guirou"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@guirou";
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        GuirouCard *card = new GuirouCard;
-        card->addSubcard(card_item->getFilteredCard());
-
-        return card;
-    }
-};
-
-class Guirou: public TriggerSkill{
-public:
-    Guirou():TriggerSkill("guirou"){
-        events << Predamaged;
-        view_as_skill = new GuirouViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *xiaoyao, QVariant &data) const{
-        if(!xiaoyao->isKongcheng()){
-            DamageStruct damage = data.value<DamageStruct>();
-
-            xiaoyao->tag["GuirouDamage"] = QVariant::fromValue(damage);
-            if(room->askForUseCard(xiaoyao, "@@guirou", "@guirou-card"))
-                return true;
-        }
-
-        return false;
-    }
-};
-
-//yangsheng
-
 class Zhumie:public TriggerSkill{
 public:
     Zhumie():TriggerSkill("zhumie"){
@@ -2051,7 +1985,176 @@ public:
         return false;
     }
 };
-//zhiyan
+
+ZhiyanCard::ZhiyanCard(){
+    will_throw = false;
+    once = true;
+}
+
+void ZhiyanCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    Room *room = effect.from->getRoom();
+    int card_id = room->askForCardChosen(effect.from, effect.to, "he", "zhiyan");
+    room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
+    room->showCard(effect.from, card_id);
+    if(Sanguosha->getCard(card_id)->inherits("TrickCard") && effect.from->askForSkillInvoke("zhiyan")){
+        room->throwCard(card_id, effect.to, effect.from);
+        RecoverStruct tec;
+        room->recover(effect.from, tec, true);
+    }
+}
+
+class Zhiyan: public ViewAsSkill{
+public:
+    Zhiyan(): ViewAsSkill("zhiyan"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("ZhiyanCard");
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        ZhiyanCard *card = new ZhiyanCard;
+        card->addSubcards(cards);
+        return card;
+    }
+};
+
+GuirouCard::GuirouCard(){
+    owner_discarded = true;
+}
+
+void GuirouCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.to->getRoom();
+    DamageStruct damage = effect.from->tag["GuirouDamage"].value<DamageStruct>();
+    damage.to = effect.to;
+    room->damage(damage);
+
+    if(damage.to->isAlive())
+        damage.to->drawCards(damage.to->getLostHp());
+}
+
+class GuirouViewAsSkill: public OneCardViewAsSkill{
+public:
+    GuirouViewAsSkill():OneCardViewAsSkill("guirou"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@guirou";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        GuirouCard *card = new GuirouCard;
+        card->addSubcard(card_item->getFilteredCard());
+
+        return card;
+    }
+};
+
+class Guirou: public TriggerSkill{
+public:
+    Guirou():TriggerSkill("guirou"){
+        events << Predamaged;
+        view_as_skill = new GuirouViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *xiaoyao, QVariant &data) const{
+        if(!xiaoyao->isKongcheng()){
+            DamageStruct damage = data.value<DamageStruct>();
+
+            xiaoyao->tag["GuirouDamage"] = QVariant::fromValue(damage);
+            if(room->askForUseCard(xiaoyao, "@@guirou", "@guirou-card"))
+                return true;
+        }
+
+        return false;
+    }
+};
+
+YangshengCard::YangshengCard(){
+    will_throw = false;
+    once = true;
+}
+
+bool YangshengCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    return to_select->hasSkill("yangsheng");
+}
+
+void YangshengCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    Room *room = effect.from->getRoom();
+    if(effect.from->isWounded() && room->askForDiscard(effect.to, "yangsheng", 1, true)){
+        RecoverStruct rec;
+        rec.who = effect.to;
+        room->recover(effect.from, rec, true);
+    };
+}
+
+class YangshengViewAsSkill: public OneCardViewAsSkill{
+public:
+    YangshengViewAsSkill():OneCardViewAsSkill("baoyang"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("YangshengCard");
+    }
+
+    virtual bool viewFilter(const CardItem *watch) const{
+        return !watch->isEquipped() && watch->getCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        YangshengCard *card = new YangshengCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class Yangsheng: public GameStartSkill{
+public:
+    Yangsheng():GameStartSkill("yangsheng"){
+    }
+
+    virtual void onGameStart(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->attachSkillToPlayer(player, "baoyang");
+        }
+    }
+
+    virtual void onIdied(ServerPlayer *yangvi) const{
+        Room *room = yangvi->getRoom();
+        if(room->findPlayerBySkillName("yangsheng"))
+            return;
+        QList<ServerPlayer *> players = room->getAlivePlayers();
+        foreach(ServerPlayer *player, players){
+            room->detachSkillFromPlayer(player, "baoyang", false);
+        }
+    }
+};
 
 StandardPackage::StandardPackage()
     :Package("standard"){
@@ -2167,13 +2270,14 @@ StandardPackage::StandardPackage()
 
     General *chunangong = new General(this, "chunangong", "free", 3);
     chunangong->addSkill(new Bishi);
-    //chunangong->addSkill(new Zhiyan); //@todo
+    chunangong->addSkill(new Zhiyan);
 
     General *xiaoyaozi = new General(this, "xiaoyaozi", "free", 3);
     xiaoyaozi->addSkill(new Guirou);
-    //xiaoyaozi->addSkill(new Yangsheng); //@todo
+    xiaoyaozi->addSkill(new Yangsheng);
 
     // for skill cards
+    addMetaObject<FeigongCard>();
     addMetaObject<JianaiCard>();
     addMetaObject<PofuCard>();
     addMetaObject<YoulanCard>();
@@ -2181,10 +2285,11 @@ StandardPackage::StandardPackage()
     addMetaObject<LuoshengCard>();
     addMetaObject<ShouyaoCard>();
     addMetaObject<DushaCard>();
-    addMetaObject<QingnangCard>();
     addMetaObject<EnchouCard>();
     addMetaObject<HuomeiCard>();
-    addMetaObject<FeigongCard>();
+    addMetaObject<ZhiyanCard>();
+    addMetaObject<YangshengCard>();
+    //addMetaObject<QingnangCard>();
 }
 
 ADD_PACKAGE(Standard)

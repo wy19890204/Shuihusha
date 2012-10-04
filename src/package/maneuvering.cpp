@@ -463,10 +463,10 @@ ManeuveringPackage::ManeuveringPackage()
             << new Jink(Card::Diamond, 11)
             << new FireAttack(Card::Diamond, 12);
 
-    DefensiveHorse *momohana = new DefensiveHorse(Card::Diamond, 13);
-    momohana->setObjectName("momohana");
+    DefensiveHorse *blackdragon = new DefensiveHorse(Card::Diamond, 13);
+    blackdragon->setObjectName("blackdragon");
 
-    cards << momohana;
+    cards << blackdragon;
 
     foreach(Card *card, cards)
         card->setParent(this);
