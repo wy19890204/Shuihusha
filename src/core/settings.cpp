@@ -75,6 +75,7 @@ void Settings::init(){
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();
+    NoLordSkill = value("NoLordSkill", false).toBool();
     EnableReincarnation = value("EnableReincarnation", false).toBool();
     EnableScene = value("EnableScene", false).toBool();	//changjing
     EnableSame = value("EnableSame", false).toBool();

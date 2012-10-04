@@ -1102,7 +1102,6 @@ public:
 
                     room->setPlayerFlag(wusong, "drank");
                 }
-                room->throwCard(card, wusong);
                 room->useCard(use);
             }
         }

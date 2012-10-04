@@ -3442,6 +3442,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>双将模式</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="172"/>
+        <source>No lord skill</source>
+        <translation>无主公技</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="173"/>
         <source>Enable Reincarnation</source>
         <translation>启用转世规则</translation>

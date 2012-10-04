@@ -33,6 +33,7 @@ public:
     bool ForbidSIMC;
     bool DisableChat;
     bool Enable2ndGeneral;
+    bool NoLordSkill;
     bool EnableReincarnation;
     bool EnableScene;	//changjing
     bool EnableSame;
