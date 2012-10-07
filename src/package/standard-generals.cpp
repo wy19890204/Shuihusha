@@ -2020,7 +2020,6 @@ void CujuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
     room->throwCard(this, source);
     DamageStruct damage = source->tag["CujuDamage"].value<DamageStruct>();
     damage.to = targets.first();
-    //damage.chain = true;
     room->damage(damage);
 }
 
