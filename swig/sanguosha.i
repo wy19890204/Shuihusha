@@ -250,6 +250,7 @@ public:
 	void playCardEffect(const Card *card, bool mute = false) const;
 	void playCardEffect(const char *card_name) const;
 	void playCardEffect(const char *card_name, const char *equip);
+	void playSkillEffect(const char *skill_name, int index = -1);
 	int getRandomHandCardId() const;
 	const Card *getRandomHandCard() const;
 	void obtainCard(const Card *card, bool unhide = true);
@@ -835,6 +836,7 @@ public:
 	void useCard(const CardUseStruct &card_use, bool add_history = true);
 	void damage(const DamageStruct &data);
 	void sendDamageLog(const DamageStruct &data);
+	void addHpSlot(ServerPlayer *victim, int number = 1);
 	void loseHp(ServerPlayer *victim, int lose = 1);
 	void loseMaxHp(ServerPlayer *victim, int lose = 1);
 	void applyDamage(ServerPlayer *victim, const DamageStruct &damage);

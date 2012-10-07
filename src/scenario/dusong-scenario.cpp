@@ -79,7 +79,7 @@ public:
 
     virtual int getDrawNum(ServerPlayer *player, int n) const{
         if(player->hasEquip() && player->askForSkillInvoke(objectName())){
-            player->getRoom()->playSkillEffect(objectName());
+            player->playSkillEffect(objectName());
             return n + player->getEquips().count();
         }
         return n;

@@ -1116,7 +1116,7 @@ MaidaoCard::MaidaoCard(){
 }
 
 void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    source->getRoom()->playSkillEffect("maidao", qrand() % 2 + 1);
+    source->playSkillEffect("maidao", qrand() % 2 + 1);
     foreach(int x, getSubcards())
         source->addToPile("knife", x);
 }

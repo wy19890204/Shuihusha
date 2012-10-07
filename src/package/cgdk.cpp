@@ -218,7 +218,7 @@ public:
 
     virtual void onDamaged(ServerPlayer *malin, const DamageStruct &damage) const{
         if(damage.from && malin->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)damage.from))){
-            malin->getRoom()->playSkillEffect(objectName());
+            malin->playSkillEffect(objectName());
             damage.from->turnOver();
         }
     }

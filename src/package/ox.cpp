@@ -360,7 +360,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *hyz) const{
         if(hyz->getPhase() == Player::Discard &&
            hyz->getHandcardNum() > hyz->getHp() && hyz->getHandcardNum() <= hyz->getMaxCards())
-            hyz->getRoom()->playSkillEffect("zhongjia");
+            hyz->playSkillEffect("zhongjia");
         return false;
     }
 };

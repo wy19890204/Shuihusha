@@ -369,7 +369,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *dujian) const{
         if(dujian->getPhase() == Player::Discard &&
            dujian->askForSkillInvoke(objectName())){
-            dujian->getRoom()->playSkillEffect(objectName());
+            dujian->playSkillEffect(objectName());
             dujian->drawCards(dujian->getLostHp() + 1, false);
         }
         return false;

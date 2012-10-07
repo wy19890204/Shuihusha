@@ -584,10 +584,9 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *lvfang) const{
         if(lvfang->getPhase() == Player::Play){
-            Room *room = lvfang->getRoom();
             if(lvfang->isKongcheng())
                 return false;
-            if(room->askForUseCard(lvfang, "@@lieji", "@lieji", true))
+            if(lvfang->getRoom()->askForUseCard(lvfang, "@@lieji", "@lieji", true))
                 return true;
         }
         return false;
@@ -855,7 +854,7 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->getRoom()->obtainCard(effect.to, this, false);
+    effect.to->obtainCard(this, false);
     PlayerStar target = effect.to;
     effect.from->tag["Xiaozai"] = QVariant::fromValue(target);
 }
@@ -900,8 +899,9 @@ public:
         if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai", true)){
             ServerPlayer *cup = player->tag["Xiaozai"].value<PlayerStar>();
             if(cup){
-                damage.to = cup;
-                room->damage(damage);
+                DamageStruct damage2 = damage;
+                damage2.to = cup;
+                room->damage(damage2);
                 room->setPlayerFlag(damage.from, "-Xiaozai");
                 player->tag.remove("Xiaozai");
                 return true;
@@ -1086,7 +1086,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *lz) const{
         if(lz->getPhase() == Player::Discard &&
            lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
-            lz->getRoom()->playSkillEffect("linse");
+            lz->playSkillEffect("linse");
         return false;
     }
 };

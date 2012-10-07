@@ -25,8 +25,7 @@ bool Zongzi::isAvailable(const Player *quyuan) const{
 void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this);
     int n = ServerInfo.GameMode != "dusong" ? 1 : -1;
-    room->setPlayerProperty(source, "maxhp", source->getMaxHp() + n);
-    room->setPlayerProperty(source, "hp", source->getHp() + n);
+    room->addHpSlot(source, n);
     room->acquireSkill(source, "lisao");
     room->setPlayerMark(source, "HaveEaten", 1);
 
@@ -109,7 +108,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *lz) const{
         if(lz->getPhase() == Player::Discard &&
            lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
-            lz->getRoom()->playSkillEffect("yaoyue", lz->getGeneral()->isMale() ? 1 : 2);
+            lz->playSkillEffect("yaoyue", lz->getGeneral()->isMale() ? 1 : 2);
         return false;
     }
 };

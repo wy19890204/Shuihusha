@@ -274,7 +274,7 @@ public:
         if(zhugeliang->getPhase() == Player::Finish &&
            zhugeliang->getHp() > zhugeliang->getHandcardNum() &&
            zhugeliang->askForSkillInvoke(objectName())){
-            zhugeliang->getRoom()->playSkillEffect(objectName());
+            zhugeliang->playSkillEffect(objectName());
             zhugeliang->drawCards(zhugeliang->getHp() - zhugeliang->getHandcardNum());
         }
         return false;
