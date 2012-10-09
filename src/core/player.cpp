@@ -326,9 +326,11 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 }
 
 bool Player::hasLordSkill(const QString &skill_name) const{
-    if(property("scarecrow").toBool())
-        return false;
     if(!isLord())
+        return false;
+    if(Config.NoLordSkill)
+        return false;
+    if(property("scarecrow").toBool()) //qimen
         return false;
 
     if(acquired_skills.contains(skill_name))

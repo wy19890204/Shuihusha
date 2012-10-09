@@ -855,8 +855,11 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this, false);
-    PlayerStar target = effect.to;
-    effect.from->tag["Xiaozai"] = QVariant::fromValue(target);
+    DamageStruct damage = effect.from->tag["XiaozaiDamage"].value<DamageStruct>();
+    damage.to = effect.to;
+    Room *room = effect.from->getRoom();
+    room->damage(damage);
+    room->setPlayerFlag(damage.from, "-Xiaozai");
 }
 
 class XiaozaiViewAsSkill: public ViewAsSkill{
@@ -896,21 +899,14 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.from)
             room->setPlayerFlag(damage.from, "Xiaozai");
-        if(player->getHandcardNum() > 1 && room->askForUseCard(player, "@@xiaozai", "@xiaozai", true)){
-            ServerPlayer *cup = player->tag["Xiaozai"].value<PlayerStar>();
-            if(cup){
-                DamageStruct damage2 = damage;
-                damage2.to = cup;
-                room->damage(damage2);
-                room->setPlayerFlag(damage.from, "-Xiaozai");
-                player->tag.remove("Xiaozai");
+        if(player->getHandcardNum() > 1){
+            player->tag["XiaozaiDamage"] = data;
+            if(room->askForUseCard(player, "@@xiaozai", "@xiaozai", true))
                 return true;
-            }
+            player->tag.remove("XiaozaiDamage");
         }
-        if(damage.from){
+        if(damage.from)
             room->setPlayerFlag(damage.from, "-Xiaozai");
-            player->tag.remove("Xiaozai");
-        }
         return false;
     }
 };
