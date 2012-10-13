@@ -40,12 +40,12 @@ public:
         return false;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped();
-    }
-
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
         return pattern == "@@sixiang";
+    }
+
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -106,7 +106,7 @@ public:
 
         if(event == Predamage){
             DamageStruct damage = data.value<DamageStruct>();
-            if(damage.nature != DamageStruct::Fire){
+            if(damage.nature == DamageStruct::Normal){
                 damage.nature = DamageStruct::Fire;
 
                 log.type = "#FenhuiFire";
@@ -317,7 +317,7 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return  pattern == "@zhaixing";
+        return pattern == "@zhaixing";
     }
 
     virtual bool viewFilter(const CardItem *) const{
@@ -467,7 +467,7 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *pei) const{
         Room *room = pei->getRoom();
-        if(pei->getPhase() == Player::Start && pei->getHandcardNum() > pei->getHp()){
+        if(pei->getPhase() == Player::RoundStart && pei->getHandcardNum() > pei->getHp()){
             int num = pei->getHandcardNum() - pei->getHp();
             room->setPlayerMark(pei, "Bingo", num);
             room->askForUseCard(pei, "@@binggong", "@binggong", true);
@@ -483,6 +483,18 @@ public:
         events << SlashMissed;
     }
 
+    static QList<ServerPlayer *> getNextandPrevious(ServerPlayer *target){
+        QList<ServerPlayer *> targets;
+        targets << target->getNextAlive();
+        foreach(ServerPlayer *tmp, target->getRoom()->getOtherPlayers(target)){
+            if(tmp->getNextAlive() == target){
+                targets << tmp;
+                break;
+            }
+        }
+        return targets;
+    }
+
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->getWeapon())
             return false;
@@ -494,7 +506,7 @@ public:
         if(card){
             room->playSkillEffect(objectName());
             room->slashResult(effect, NULL);
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getNextandPrevious(effect.to), objectName());
+            ServerPlayer *target = room->askForPlayerChosen(player, getNextandPrevious(effect.to), objectName());
             DamageStruct damage;
             damage.from = player;
             damage.to = target;
@@ -653,8 +665,7 @@ public:
         if(!sq || room->getTag("Jiayao").toInt() == 1 || !sq->askForSkillInvoke(objectName()))
             return false;
         room->setTag("Jiayao", 1);
-        sq->drawCards(1);
-        room->playSkillEffect(objectName());
+
         QVariantList ag_list = room->getTag("AmazingGrace").toList();
         int a = 0;
         foreach(QVariant card_id, ag_list){
@@ -662,6 +673,9 @@ public:
             if(card->inherits("Peach") || card->inherits("Analeptic"))
                 a ++;
         }
+
+        room->playSkillEffect(objectName());
+        sq->drawCards(a + 1);
         RecoverStruct rev;
         rev.recover = a;
         room->recover(sq, rev, true);
@@ -676,7 +690,7 @@ public:
     }
 
     virtual void onDamaged(ServerPlayer *hedgehog, const DamageStruct &damage) const{
-        if(hedgehog->getMaxHP() > 3){
+        if(damage.card && damage.card->inherits("Slash") && hedgehog->getMaxHp() > 3){
             LogMessage log;
             Room *room = hedgehog->getRoom();
             log.type = "#TriggerSkill";
@@ -919,19 +933,51 @@ public:
     }
 };
 
+ShemiCard::ShemiCard(){
+    target_fixed = true;
+}
+
+void ShemiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this, source);
+    source->turnOver();
+}
+
+class ShemiViewAsSkill: public OneCardViewAsSkill{
+public:
+    ShemiViewAsSkill():OneCardViewAsSkill("shemi"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@shemi";
+    }
+
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ShemiCard *card = new ShemiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
 class Shemi: public TriggerSkill{
 public:
     Shemi():TriggerSkill("shemi"){
         events << PhaseChange << TurnedOver;
+        view_as_skill = new ShemiViewAsSkill;
     }
 
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
         if(e == PhaseChange){
-            if(emperor->getPhase() == Player::Discard &&
-               emperor->askForSkillInvoke(objectName(), data)){
-                emperor->turnOver();
-                return true;
-            }
+            return emperor->getPhase() == Player::Discard &&
+               room->askForUseCard(emperor, "@@shemi", "@shemi", true);
         }
         else{
             if(!emperor->hasFlag("NongQ")){
@@ -1015,7 +1061,6 @@ HarePackage::HarePackage()
     songqing->addSkill(new Jiayao);
 
     General *dingdesun = new General(this, "dingdesun", "jiang", 6);
-    dingdesun->addSkill(new Skill("beizhan"));
     dingdesun->addSkill(new Fushang);
 
     General *songwan = new General(this, "songwan", "kou");
@@ -1043,6 +1088,7 @@ HarePackage::HarePackage()
     addMetaObject<BinggongCard>();
     addMetaObject<SheyanCard>();
     addMetaObject<YijieCard>();
+    addMetaObject<ShemiCard>();
 }
 
 ADD_PACKAGE(Hare)
