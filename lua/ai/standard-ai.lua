@@ -1089,8 +1089,10 @@ sgs.ai_skill_use["@@cuju"] = function(self, prompt)
 	self:sort(self.enemies, "hp")
 	local target = self.enemies[1]
 	if not self.player:isKongcheng() then
-		local card = self.player:getRandomHandCard()
-		if target then return "@CujuCard=" .. card:getEffectiveId() .. "->" .. target:objectName() end
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		if target then return "@CujuCard=" .. card[1]:getEffectiveId() .. "->" .. target:objectName() end
 	else
 		return "."
 	end

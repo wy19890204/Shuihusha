@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>自定义模式</title>
+<title>佣兵天下</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -712,23 +712,25 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>自定义模式</h1>
+<h1>佣兵天下模式</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_说明">说明</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>本模式主要用来身份局的武将功能和平衡测试。在自定义模式下，玩家可以自定义武将、座次、身份，从而达到精准测试的目的，节省了构建特定环境的时间。</p></div>
+<div class="paragraph">
+  <p>原名魔法少女模式，取材于《樱战杀》的两个游戏机制。在游戏中充分体现了水浒传中义释良将，义结金兰的经典场景。玩家在游戏中体会到的不仅是杀戮和掠夺，更多的是宽恕、理解、帮助和团队精神。</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_配置文件">配置手册</h2>
+<h2 id="_配置文件">规则</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>＊游戏中使用自定义的信息，须提前在etc/Custom.txt里进行配置。</p></div>
-<div class="paragraph"><p>＊Custom.txt里从上往下每一行按座次顺序表示一个玩家的信息，如第一行为1号位，第二行为2号位。符合配置文件格式的行数即为游戏人数。（最多不能超过10行，即10人局）</p></div>
-<div class="paragraph"><p>＊每一行的配置，按空格隔开，分别为身份、主武将、副武将，其中副武将可以为空。可以参考现有文件的配置格式进行编辑。（身份表示：lord=主公，loyalist=忠臣，rebel=反贼，renegade=内奸）</p></div>
-<div class="paragraph"><p>＊如果你的配置文件编辑错误，可能会导致游戏崩溃。</p></div>
-<div class="paragraph"><p>＊由于技术原因，本模式还在测试中，如有意见和建议请直接@宇文天启。</p></div>
+<div class="paragraph"><p>＊游戏采用8人局模式，初始身份均为反贼。</p></div>
+<div class="paragraph"><p>＊当你杀死一名其他角色前，若你无战友，可以交给其一张牌，和其签订战友契约。同时战友解除死亡状态并回复至1点体力。</p></div>
+<div class="paragraph"><p>＊当你的战友阵亡后，你可以重新签订新的战友。杀死战友将会受到体力上限-1的惩罚。</p></div>
+<div class="paragraph"><p>＊援助合击：当你对一名角色使用【杀】时，若该角色也在你的战友的攻击范围内，你的战友可以出一张【杀】，令你的【杀】不可被闪避。</p></div>
+<div class="paragraph"><p>＊队友保护：当你的战友受到伤害时，若其在你的攻击范围内，你可以出一张【闪】，令此伤害-1</p></div>
+<div class="paragraph"><p>＊当你或你和你的队友消灭了所有的敌人时，游戏结束，你方取得胜利。</p></div>
 <div class="sect2">
 <h3 id="_design_and_code_by_hypercross">Design and code by Ubun Tenkei</h3>
 </div>
@@ -738,7 +740,7 @@ asciidoc.install();
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2012-01-10 13:37:11 北京时间（中华人民共和国国家授时中心）
+Last updated 2012-10-14 13:37:11 北京时间（中华人民共和国国家授时中心）
 </div>
 </div>
 </body>
