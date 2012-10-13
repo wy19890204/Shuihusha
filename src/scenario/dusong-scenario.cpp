@@ -365,7 +365,7 @@ bool DusongScenario::setCardPiles(const Card *card) const{
     return card->inherits("Disaster");
 }
 
-void DusongScenario::generalSelection(Room *room) const{
+bool DusongScenario::generalSelection(Room *room) const{
     ServerPlayer *lord = room->getPlayers().first();
     room->setPlayerProperty(lord, "general", "zhang1dong");
 
@@ -391,6 +391,7 @@ void DusongScenario::generalSelection(Room *room) const{
         room->setPlayerProperty(player, "general", name);
         names.removeOne(name);
     }
+    return false;
 }
 
 DusongScenario::DusongScenario()

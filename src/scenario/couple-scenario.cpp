@@ -246,6 +246,10 @@ void CoupleScenario::getRoles(char *roles) const{
     strcpy(roles, "ZNNNNNNNN");
 }
 
+bool CoupleScenario::generalSelection(Room *) const{
+    return false;
+}
+
 void CoupleScenario::onTagSet(Room *room, const QString &key) const{
 
 }

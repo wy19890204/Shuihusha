@@ -2264,7 +2264,8 @@ void Room::run(){
         broadcastInvoke("startInXs", "0");
 
     if(scenario){
-        scenario->generalSelection(this);
+        if(scenario->generalSelection(this))
+            chooseGenerals();
         startGame();
     }
     else if(mode == "06_3v3"){
