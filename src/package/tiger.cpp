@@ -201,20 +201,13 @@ public:
     }
 };
 */
-class Jiada: public TriggerSkill{
+class Jiada: public MasochismSkill{
 public:
-    Jiada():TriggerSkill("jiada"){
-        events << CardLostDone << Damaged;
+    Jiada():MasochismSkill("jiada"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *leiheng, QVariant &data) const{
-        if(event == CardLostDone){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place != Player::Hand || room->getCurrent() == leiheng)
-                return false;
-        }
-        room->askForUseCard(leiheng, "slash", "@askforslash", true);
-        return false;
+    virtual void onDamaged(ServerPlayer *leiheng, const DamageStruct &) const{
+        leiheng->getRoom()->askForUseCard(leiheng, "slash", "@askforslash", true);
     }
 };
 
