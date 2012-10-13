@@ -14,7 +14,7 @@ sacrifice_skill.getTurnUseCard = function(self)
 			local target = self.room:findPlayer(name, true)
 			if self:isFriend(target) then
 				local renegade = true
-				if not self.room:getScenario() and not self.room:getMode() == "06_3v3" and self.player:getRole() == "renegade" then
+				if not self.room:getScenario() and not self.room:getMode() == "06_3v3" and target:getRole() == "renegade" then
 					renegade = false
 				end
 				if renegade then
