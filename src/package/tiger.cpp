@@ -683,6 +683,7 @@ public:
         foreach(ServerPlayer *zhang, zhangs){
             if(zhang == player || zhang->hasMark("fuhun_wake"))
                 continue;
+            /*
             LogMessage log;
             log.type = "#WakeUp";
             log.from = zhang;
@@ -691,6 +692,8 @@ public:
             room->playSkillEffect(objectName());
             room->broadcastInvoke("animate", "lightbox:$fuhun:1500");
             room->getThread()->delay(1500);
+            */
+            room->awake(zhang, objectName(), "1500", 1500);
 
             room->detachSkillFromPlayer(zhang, "jielue");
             room->acquireSkill(zhang, "lihun");
@@ -706,7 +709,7 @@ public:
             }
             if(count > 1)
                 room->loseMaxHp(zhang);
-            room->setPlayerMark(zhang, "fuhun_wake", 1);
+            //room->setPlayerMark(zhang, "fuhun_wake", 1);
         }
         return false;
     }

@@ -2157,8 +2157,11 @@ void Room::chooseGenerals(){
     {
         QStringList lord_list;
         ServerPlayer *the_lord = getLord();
-        if(Config.EnableSame)
+        if(Config.EnableSame){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
+            if(the_lord->getState() != "online")
+                the_lord = findOnlinePlayers().first(); // @todo: crash this!
+        }
         else if(the_lord->getState() == "robot")
             if(qrand()%100 < nonlord_prob)
                 lord_list = Sanguosha->getRandomGenerals(1);
@@ -2168,8 +2171,6 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomLords();
         if(Config.EnableAnzhan)
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
-        if(Config.EnableSame && the_lord->getState() != "online")
-            the_lord = findOnlinePlayers().first(); // @todo: crash this!
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
         if (!Config.EnableBasara)
@@ -2177,7 +2178,7 @@ void Room::chooseGenerals(){
 
         if(Config.EnableSame){
             foreach(ServerPlayer *p, m_players){
-                if(!p->isLord())
+                if(p->getState() != "online")
                     p->setGeneralName(general);
             }
             if(Config.Enable2ndGeneral){
@@ -3566,6 +3567,18 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
         throwCard(card_id, target);
     else
         moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile, true);
+}
+
+void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
+    LogMessage log;
+    log.type = "#WakeUp";
+    log.from = player;
+    log.arg = skill_name;
+    sendLog(log);
+    playSkillEffect(skill_name);
+    broadcastInvoke("animate", "lightbox:$" + skill_name + ":" + broad);
+    thread->delay(delay);
+    setPlayerMark(player, skill_name + "_wake", 1);
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)

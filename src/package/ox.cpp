@@ -135,16 +135,19 @@ public:
     virtual bool onPhaseChange(ServerPlayer *tg) const{
         Room *room = tg->getRoom();
 
+        /*
         LogMessage log;
         log.type = "#WakeUp";
         log.from = tg;
         log.arg = objectName();
         room->sendLog(log);
+        */
 
         room->loseMaxHp(tg, 1);
-        room->playSkillEffect(objectName());
-        room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
-        room->getThread()->delay(2500);
+        room->awake(tg, objectName(), "5000", 2500);
+        //room->playSkillEffect(objectName());
+        //room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
+        //room->getThread()->delay(2500);
         room->acquireSkill(tg, "wanghuan");
 
         if(tg->getGeneralName() == "tongguan")
@@ -153,7 +156,7 @@ public:
             room->setPlayerProperty(tg, "general2", "tongguanf");
 
         room->getThread()->delay(2500);
-        room->setPlayerMark(tg, "aoxiang_wake", 1);
+        //room->setPlayerMark(tg, "aoxiang_wake", 1);
         return false;
     }
 };

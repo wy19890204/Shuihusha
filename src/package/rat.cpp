@@ -843,18 +843,19 @@ public:
     virtual bool onPhaseChange(ServerPlayer *qyyy) const{
         Room *room = qyyy->getRoom();
 
-        LogMessage log;
+        /*LogMessage log;
         log.type = "#WakeUp";
         log.from = qyyy;
         log.arg = objectName();
         room->sendLog(log);
         room->playSkillEffect(objectName());
         room->broadcastInvoke("animate", "lightbox:$mengshi:1500");
-        room->getThread()->delay(1500);
+        room->getThread()->delay(1500);*/
+        room->awake(qyyy, objectName(), "1500", 1500);
 
         qyyy->drawCards(3);
         room->acquireSkill(qyyy, "yinyu");
-        room->setPlayerMark(qyyy, "mengshi_wake", 1);
+        //room->setPlayerMark(qyyy, "mengshi_wake", 1);
         return false;
     }
 };

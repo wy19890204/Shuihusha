@@ -792,6 +792,8 @@ QStringList Player::getWakeSkills() const{
         if(skil->getFrequency() == Skill::Wake)
             list << skil->objectName();
     }
+    if(hasSkill("wanghuan"))
+        list << "aoxiang";
     return list;
 }
 
