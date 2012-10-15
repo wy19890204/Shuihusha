@@ -162,6 +162,8 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     if(mark.endsWith("poison"))
         emit poison_changed();
+    if(mark.endsWith("_wake"))
+        emit waked();
     if(!mark.startsWith("@"))
         return;
 
