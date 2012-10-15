@@ -2166,6 +2166,8 @@ void Room::chooseGenerals(){
                 lord_list = Sanguosha->getLords();
         else
             lord_list = Sanguosha->getRandomLords();
+        if(Config.EnableAnzhan)
+            lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
         if(Config.EnableSame && the_lord->getState() != "online")
             the_lord = findOnlinePlayers().first(); // @todo: crash this!
         QString general = askForGeneral(the_lord, lord_list);

@@ -618,6 +618,8 @@ public:
     virtual void onGameStart(ServerPlayer *tigger) const{
         if(!tigger->isLord())
             return;
+        if(ServerInfo.EnableAnzhan)
+            return;
         Room *room = tigger->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){

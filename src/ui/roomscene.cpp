@@ -1500,7 +1500,7 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 void RoomScene::updateSkillButtons(){
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
-            if(Config.NoLordSkill)
+            if(Config.NoLordSkill || Config.EnableAnzhan)
                 continue;
             if(Self->getRole() != "lord" || ServerInfo.GameMode == "06_3v3")
                 continue;

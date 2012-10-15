@@ -45,7 +45,7 @@ Photo::Photo()
 
     wake_icon = new Pixmap("image/system/sleep.png");
     wake_icon->setParentItem(this);
-    wake_icon->setPos(103, 6);
+    wake_icon->setPos(50, 8);
     //wake_icon->hide();
     wake_icon->setZValue(0.4);
 
@@ -213,7 +213,7 @@ void Photo::hideSkillName(){
 void Photo::setWakeState(){
     if(player->getWakeSkills().isEmpty())
         return;
-    if(player->getMark("_wake"))
+    if(player->getMark("_wake") > 0)
         wake_icon->setPixmap(QPixmap("image/system/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/system/sleep.png"));

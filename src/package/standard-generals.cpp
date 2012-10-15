@@ -126,6 +126,8 @@ public:
     virtual void onGameStart(ServerPlayer *player) const{
         if(!player->isLord())
             return;
+        if(ServerInfo.EnableAnzhan)
+            return;
         Room *room = player->getRoom();
         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
             room->attachSkillToPlayer(tmp, "jui");
