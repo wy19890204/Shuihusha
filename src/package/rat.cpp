@@ -121,7 +121,7 @@ public:
             if(qing->hasMark("@stoned")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 if(effect.slash->getSkillName() != "yuanpei"){
-                    int index = effect.from->hasMark("mengshi") ? 13: 7;
+                    int index = effect.from->hasMark("mengshi_wake") ? 13: 7;
                     room->playSkillEffect("yinyu", index);
                 }
                 room->slashResult(effect, NULL);
@@ -132,7 +132,7 @@ public:
         if(qing->getPhase() == Player::RoundStart){
             ClearMarks(room, qing);
             if(qing->askForSkillInvoke(objectName())){
-                int index = qing->hasMark("mengshi") ? 8: qrand() % 2 + 1;
+                int index = qing->hasMark("mengshi_wake") ? 8: qrand() % 2 + 1;
                 room->playSkillEffect(objectName(), index);
 
                 JudgeStruct judge;
@@ -835,7 +835,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && !target->hasMark("mengshi")
+                && !target->hasMark("mengshi_wake")
                 && target->getPhase() == Player::RoundStart
                 && target->getHandcardNum() < target->getAttackRange();
     }
@@ -854,7 +854,7 @@ public:
 
         qyyy->drawCards(3);
         room->acquireSkill(qyyy, "yinyu");
-        room->setPlayerMark(qyyy, "mengshi", 1);
+        room->setPlayerMark(qyyy, "mengshi_wake", 1);
         return false;
     }
 };

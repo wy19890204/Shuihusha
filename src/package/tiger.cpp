@@ -700,7 +700,7 @@ public:
         //JudgeStar judge = data.value<JudgeStar>();
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhah, zhangs){
-            if(zhah == player || zhah->hasMark("fuhun") || player->isKongcheng())
+            if(zhah == player || zhah->hasMark("fuhun_wake") || player->isKongcheng())
                 continue;
             if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
@@ -729,7 +729,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhang, zhangs){
-            if(zhang == player || zhang->hasMark("fuhun"))
+            if(zhang == player || zhang->hasMark("fuhun_wake"))
                 continue;
             LogMessage log;
             log.type = "#WakeUp";
@@ -754,7 +754,7 @@ public:
             }
             if(count > 1)
                 room->loseMaxHp(zhang);
-            room->setPlayerMark(zhang, "fuhun", 1);
+            room->setPlayerMark(zhang, "fuhun_wake", 1);
         }
         return false;
     }
