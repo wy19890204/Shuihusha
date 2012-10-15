@@ -141,6 +141,21 @@ void Dashboard::createRight(){
     avatar_area->setZValue(0.3);
     avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
     avatar_area->setVisible(false);
+
+    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon->setParentItem(right);
+    wake_icon->setPos(18, 127);
+    wake_icon->hide();
+    wake_icon->setZValue(0.4);
+}
+
+void Dashboard::setWakeState(){
+    if(Self->getWakeSkills().isEmpty())
+        return;
+    if(Self->getMark("_wake") > 0)
+        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+    else
+        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
 }
 
 void Dashboard::setEcstState(){
@@ -215,6 +230,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
+    connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
     connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
@@ -536,6 +552,7 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
+    wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){

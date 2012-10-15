@@ -46,7 +46,7 @@ Photo::Photo()
     wake_icon = new Pixmap("image/system/sleep.png");
     wake_icon->setParentItem(this);
     wake_icon->setPos(50, 8);
-    //wake_icon->hide();
+    wake_icon->hide();
     wake_icon->setZValue(0.4);
 
     progress_bar = new QProgressBar;

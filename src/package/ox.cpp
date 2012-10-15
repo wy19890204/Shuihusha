@@ -143,12 +143,12 @@ public:
         room->sendLog(log);
         */
 
-        room->loseMaxHp(tg, 1);
         room->awake(tg, objectName(), "5000", 2500);
         //room->playSkillEffect(objectName());
         //room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
         //room->getThread()->delay(2500);
         room->acquireSkill(tg, "wanghuan");
+        room->loseMaxHp(tg, 1);
 
         if(tg->getGeneralName() == "tongguan")
             room->setPlayerProperty(tg, "general", "tongguanf");

@@ -3569,7 +3569,7 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
         moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile, true);
 }
 
-void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
+void Room::awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
     LogMessage log;
     log.type = "#WakeUp";
     log.from = player;
