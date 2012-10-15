@@ -44,11 +44,10 @@ Photo::Photo()
     chain_icon->setPos(boundingRect().width() - 22, 5);
     chain_icon->hide();
 
-    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon = new Pixmap();
     wake_icon->setParentItem(this);
     wake_icon->setPos(3, 13);
-    if(player->getWakeSkills().isEmpty())
-        wake_icon->hide();
+    //wake_icon->hide();
     wake_icon->setZValue(0.25);
 
     progress_bar = new QProgressBar;
@@ -718,6 +717,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     chain_icon->setVisible(player->isChained());
     back_icon->setVisible(! player->faceUp());
+    wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 }
 
 void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){

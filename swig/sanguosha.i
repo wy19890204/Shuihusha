@@ -203,7 +203,9 @@ public:
 	QSet<const TriggerSkill *> getTriggerSkills() const;
 	QSet<const Skill *> getVisibleSkills() const;
 	QList<const Skill *> getVisibleSkillList() const;
+	QStringList getVisibleSkillList(const char *exclude) const;
 	QSet<QString> getAcquiredSkills() const;
+	int getKingdoms() const;
 
 	virtual bool isProhibited(const Player *to, const Card *card) const;
 	bool canSlashWithoutCrossbow() const;

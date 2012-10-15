@@ -127,21 +127,6 @@ QSet<const TriggerSkill *> General::getTriggerSkills() const{
     return skills;
 }
 
-QList<const Skill *> General::getWakeSkillList() const{
-    QList<const Skill *> skills;
-    foreach(const Skill *skill, findChildren<const Skill *>()){
-        if(skill->Frequent == Skill::Wake)
-            skills << skill;
-    }
-
-    foreach(QString skill_name, extra_set){
-        const Skill *skill = Sanguosha->getSkill(skill_name);
-        if(skill->Frequent == Skill::Wake)
-            skills << skill;
-    }
-    return skills;
-}
-
 void General::addRelateSkill(const QString &skill_name){
     related_skills << skill_name;
 }

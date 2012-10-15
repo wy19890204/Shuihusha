@@ -46,7 +46,6 @@ public:
     QList<const Skill *> getVisibleSkillList() const;
     QSet<const Skill *> getVisibleSkills() const;
     QSet<const TriggerSkill *> getTriggerSkills() const;
-    QList<const Skill *> getWakeSkillList() const;
 
     void addRelateSkill(const QString &skill_name);
     QStringList getRelatedSkillNames() const;

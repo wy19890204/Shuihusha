@@ -346,14 +346,6 @@ bool Player::hasLordSkill(const QString &skill_name) const{
     return false;
 }
 
-QStringList Player::getWakeSkills() const{
-    QStringList list;
-    foreach(const Skill *skill, getGeneral()->getWakeSkillList()){
-        list << skill->objectName();
-    }
-    return list;
-}
-
 void Player::acquireSkill(const QString &skill_name){
     acquired_skills.insert(skill_name);
 }
@@ -769,7 +761,7 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     return skills;
 }
 
-QStringList Player::getVisSkist(const QString &exclude) const{
+QStringList Player::getVisibleSkillList(const QString &exclude) const{
     QList<const Skill *> skills;
     if(general)
         skills << general->getVisibleSkillList();
@@ -790,6 +782,15 @@ QStringList Player::getVisSkist(const QString &exclude) const{
     }
 
     return skis;
+}
+
+QStringList Player::getWakeSkills() const{
+    QStringList list;
+    foreach(const Skill *skil, getVisibleSkillList()){
+        if(skil->getFrequency() == Skill::Wake)
+            list << skil->objectName();
+    }
+    return list;
 }
 
 int Player::getKingdoms() const{
