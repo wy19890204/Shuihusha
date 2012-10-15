@@ -769,6 +769,7 @@ public:
                     room->sendLog(lolo);
                     room->throwCard(card);
                 }else{
+                    room->showCard(shien, card->getEffectiveId());
                     if(!xoxo){
                         room->playSkillEffect(objectName());
                         xoxo = true;

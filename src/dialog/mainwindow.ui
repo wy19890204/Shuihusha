@@ -122,7 +122,7 @@
     <string>Configure</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+C</string>
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionStart_Server">
@@ -339,9 +339,6 @@
   <action name="actionPackaging">
    <property name="text">
     <string>Package manager ...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionAI_Melee">

@@ -34,7 +34,6 @@ Photo::Photo()
 
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
-    //back_icon->setPos(105, 67);
     back_icon->setPos(3, 13);
     back_icon->hide();
     back_icon->setZValue(0.2);
@@ -46,7 +45,7 @@ Photo::Photo()
 
     wake_icon = new Pixmap("image/system/sleep.png");
     wake_icon->setParentItem(this);
-    wake_icon->setPos(3, 13);
+    wake_icon->setPos(103, 6);
     //wake_icon->hide();
     wake_icon->setZValue(0.4);
 
