@@ -2264,7 +2264,8 @@ void Room::run(){
         broadcastInvoke("startInXs", "0");
 
     if(scenario){
-        scenario->generalSelection(this);
+        if(scenario->generalSelection(this))
+            chooseGenerals();
         startGame();
     }
     else if(mode == "06_3v3"){
@@ -3855,20 +3856,6 @@ QList<ServerPlayer *> Room::getMenorWomen(const QString &gender, ServerPlayer *e
         if((player->getGeneral()->isMale() && gender == "male") ||
            (player->getGeneral()->isFemale() && gender == "female"))
             targets << player;
-    }
-    return targets;
-}
-
-QList<ServerPlayer *> Room::getNextandPrevious(ServerPlayer *self, bool includeme) const{
-    QList<ServerPlayer *> targets;
-    targets << self->getNextAlive();
-    if(includeme)
-        targets << self;
-    foreach(ServerPlayer *tmp, getOtherPlayers(self)){
-        if(tmp->getNextAlive() == self){
-            targets << tmp;
-            break;
-        }
     }
     return targets;
 }

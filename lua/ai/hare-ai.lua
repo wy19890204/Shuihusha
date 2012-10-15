@@ -215,8 +215,12 @@ end
 
 -- zhaoji
 -- shemi
-sgs.ai_skill_invoke["shemi"] = function(self, data)
-	return self.player:getHandcardNum() >= self.player:getHp()
+sgs.ai_skill_use["@@shemi"] = function(self, prompt)
+	if self.player:getHandcardNum() < self.player:getHp() then return "." end
+	local cards = self.player:getCards("he")
+	cards = sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	return "@ShemiCard=" .. cards[1]:getEffectiveId()
 end
 
 -- nongquan

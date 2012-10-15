@@ -295,8 +295,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             }
 
             room->setTag("FirstRound", true);
-            int init = player->hasSkill("beizhan") ? 6 : 4;
-            player->drawCards(init, false);
+            player->drawCards(4, false);
 
             break;
         }

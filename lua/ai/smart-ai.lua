@@ -3463,8 +3463,6 @@ dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/chat-ai.lua"
-dofile "lua/ai/basara-ai.lua"
-dofile "lua/ai/hegemony-ai.lua"
 
 local loaded = "standard|standard_cards|maneuvering|plough|events"
 
@@ -3480,4 +3478,14 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 	if not loaded:match(ascenario) and files:match(string.lower(ascenario)) then
 		dofile("lua/ai/" .. string.lower(ascenario) .. "-ai.lua")
 	end
+end
+
+if sgs.GetConfig("EnableReincarnation", false) then
+	dofile "lua/ai/reincarnation-ai.lua"
+end
+if sgs.GetConfig("EnableBasara", false) then
+	dofile "lua/ai/basara-ai.lua"
+end
+if sgs.GetConfig("EnableHegemony", false) then
+	dofile "lua/ai/hegemony-ai.lua"
 end

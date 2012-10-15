@@ -66,4 +66,12 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class ShemiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ShemiCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 #endif // HAREPACKAGE_H

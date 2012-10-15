@@ -772,7 +772,7 @@ bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-void ChangbanScenario::generalSelection(Room *room) const{
+bool ChangbanScenario::generalSelection(Room *room) const{
     QList<const General *> generals;
     QStringList packages;
     packages << "standard" << "rat" << "ox";
@@ -836,6 +836,7 @@ void ChangbanScenario::generalSelection(Room *room) const{
         room->setPlayerProperty(rebel, "general", generals.takeFirst());
         room->setTag(rebel->objectName(), QVariant(generals));
     }
+    return false;
 }
 
 ChangbanScenario::ChangbanScenario()

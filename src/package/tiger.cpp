@@ -201,93 +201,43 @@ public:
     }
 };
 */
-class Guzong: public TriggerSkill{
+class Jiada: public MasochismSkill{
 public:
-    Guzong():TriggerSkill("guzong"){
-        events << CardLost;
+    Jiada():MasochismSkill("jiada"){
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target != NULL;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        ServerPlayer *leiheng = room->findPlayerBySkillName(objectName());
-        ServerPlayer *current = room->getCurrent();
-
-        if(!leiheng || leiheng == current)
-            return false;
-        if(current->getPhase() == Player::Discard){
-            QVariantList guzong = leiheng->tag["Guzong"].toList();
-
-            CardMoveStar move = data.value<CardMoveStar>();
-                guzong << move->card_id;
-
-            leiheng->tag["Guzong"] = guzong;
-        }
-
-        return false;
+    virtual void onDamaged(ServerPlayer *leiheng, const DamageStruct &) const{
+        leiheng->getRoom()->askForUseCard(leiheng, "slash", "@askforslash", true);
     }
 };
 
-class GuzongGet: public PhaseChangeSkill{
+class Zhechi: public TriggerSkill{
 public:
-    GuzongGet():PhaseChangeSkill("#guzong-get"){
-
+    Zhechi():TriggerSkill("zhechi"){
+        events << SlashProceed;
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target != NULL && !target->hasSkill("guzong");
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->isDead() || !player->isWounded() || player->getPhase() != Player::Finish)
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *lh, QVariant &data) const{
+        if(room->getCurrent() == lh)
             return false;
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(lh->askForSkillInvoke(objectName())){
+            JudgeStruct judge;
+            judge.pattern = QRegExp("(.*):(heart|spade):(.*)");
+            judge.good = true;
+            judge.reason = objectName();
+            judge.who = lh;
 
-        Room *room = player->getRoom();
-        ServerPlayer *leiheng = room->findPlayerBySkillName("guzong");
-        if(!leiheng)
-            return false;
-
-        QVariantList guzong_cards = leiheng->tag["Guzong"].toList();
-
-        QList<int> cards;
-        foreach(QVariant card_data, guzong_cards){
-            int card_id = card_data.toInt();
-            if(room->getCardPlace(card_id) == Player::DiscardedPile)
-                cards << card_id;
-        }
-
-        if(cards.isEmpty())
-            return false;
-
-        if(!leiheng->isNude() && leiheng->askForSkillInvoke("guzong", QVariant::fromValue((PlayerStar)player))){
-            room->fillAG(cards, leiheng);
-            room->playSkillEffect("guzong");
-
-            while(!leiheng->isNude() && !cards.isEmpty()){
-                int to_back = room->askForAG(leiheng, cards, true, "guzong");
-                if(to_back < 0)
-                    break;
-                room->askForDiscard(leiheng, "guzong", 1, false, true);
-                player->obtainCard(Sanguosha->getCard(to_back));
-                room->throwCard(room->askForCardChosen(leiheng, player, "he", "guzong"), player, leiheng);
-                cards.removeOne(to_back);
-                room->broadcastInvoke("clearAG");
-                room->fillAG(cards, leiheng);
+            room->judge(judge);
+            if(judge.isGood()){
+                if(judge.card->getSuit() == Card::Heart){
+                    room->slashResult(effect, NULL);
+                    return true;
+                }
+                else
+                    effect.drank = true;
             }
-
-            leiheng->invoke("clearAG");
-
-            foreach(int card_id, cards)
-                room->throwCard(card_id);
         }
-
-        leiheng->tag.remove("Guzong");
         return false;
     }
 };
@@ -1356,9 +1306,8 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
     General *leiheng = new General(this, "leiheng", "guan");
-    leiheng->addSkill(new Guzong);
-    leiheng->addSkill(new GuzongGet);
-    related_skills.insertMulti("guzong", "#guzong-get");
+    leiheng->addSkill(new Jiada);
+    leiheng->addSkill(new Zhechi);
 
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);

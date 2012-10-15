@@ -127,7 +127,7 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && !target->hasMark("aoxiang")
+                && !target->hasMark("aoxiang_wake")
                 && target->getPhase() == Player::RoundStart
                 && target->getHp() <= 2;
     }
@@ -153,7 +153,7 @@ public:
             room->setPlayerProperty(tg, "general2", "tongguanf");
 
         room->getThread()->delay(2500);
-        room->setPlayerMark(tg, "aoxiang", 1);
+        room->setPlayerMark(tg, "aoxiang_wake", 1);
         return false;
     }
 };

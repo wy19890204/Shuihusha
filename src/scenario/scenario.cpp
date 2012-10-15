@@ -59,8 +59,8 @@ bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp
     return player->isLord() && player->getRoom()->getPlayerCount() > 4;
 }
 
-void Scenario::generalSelection(Room *) const{ // if need choose general freely, write code in this eara
-    return; // fix generals' mode
+bool Scenario::generalSelection(Room *) const{ // if need choose general freely, return true
+    return true; // fix generals' mode
 }
 
 bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
