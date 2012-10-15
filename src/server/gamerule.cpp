@@ -245,6 +245,10 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     switch(event){
     case GameStart: {
+        if(!player->getWakeSkills().isEmpty()){
+            player->setFlags("init_wake");
+            player->setFlags("-init_wake");
+        }
         if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
                 QString new_kingdom = room->askForKingdom(player);
                 room->setPlayerProperty(player, "kingdom", new_kingdom);
