@@ -201,20 +201,13 @@ public:
     }
 };
 */
-class Jiada: public TriggerSkill{
+class Jiada: public MasochismSkill{
 public:
-    Jiada():TriggerSkill("jiada"){
-        events << CardLostDone << Damaged;
+    Jiada():MasochismSkill("jiada"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *leiheng, QVariant &data) const{
-        if(event == CardLostDone){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(move->from_place != Player::Hand || room->getCurrent() == leiheng)
-                return false;
-        }
-        room->askForUseCard(leiheng, "slash", "@askforslash", true);
-        return false;
+    virtual void onDamaged(ServerPlayer *leiheng, const DamageStruct &) const{
+        leiheng->getRoom()->askForUseCard(leiheng, "slash", "@askforslash", true);
     }
 };
 
@@ -657,7 +650,7 @@ public:
         //JudgeStar judge = data.value<JudgeStar>();
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhah, zhangs){
-            if(zhah == player || zhah->hasMark("fuhun") || player->isKongcheng())
+            if(zhah == player || zhah->hasMark("fuhun_wake") || player->isKongcheng())
                 continue;
             if(zhah->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName());
@@ -686,7 +679,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> zhangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *zhang, zhangs){
-            if(zhang == player || zhang->hasMark("fuhun"))
+            if(zhang == player || zhang->hasMark("fuhun_wake"))
                 continue;
             LogMessage log;
             log.type = "#WakeUp";
@@ -711,7 +704,7 @@ public:
             }
             if(count > 1)
                 room->loseMaxHp(zhang);
-            room->setPlayerMark(zhang, "fuhun", 1);
+            room->setPlayerMark(zhang, "fuhun_wake", 1);
         }
         return false;
     }

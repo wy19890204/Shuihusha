@@ -328,7 +328,7 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 bool Player::hasLordSkill(const QString &skill_name) const{
     if(!isLord())
         return false;
-    if(Config.NoLordSkill)
+    if(Config.NoLordSkill || Config.EnableAnzhan)
         return false;
     if(property("scarecrow").toBool()) //qimen
         return false;
@@ -620,7 +620,15 @@ void Player::setMark(const QString &mark, int value){
 }
 
 int Player::getMark(const QString &mark) const{
-    return marks.value(mark, 0);
+     //@todo
+    QMap<QString, int>::const_iterator i = marks.constBegin();
+    int n = marks.value(mark, 0);
+    while (i != marks.constEnd()) {
+        QString key = i.key();
+        if(key.endsWith(mark))
+            n = n + marks.value(key, 0);
+    }
+    return n;
 }
 
 bool Player::hasMark(const QString &mark) const{
@@ -754,7 +762,7 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     return skills;
 }
 
-QStringList Player::getVisSkist(const QString &exclude) const{
+QStringList Player::getVisibleSkillList(const QString &exclude) const{
     QList<const Skill *> skills;
     if(general)
         skills << general->getVisibleSkillList();
@@ -775,6 +783,15 @@ QStringList Player::getVisSkist(const QString &exclude) const{
     }
 
     return skis;
+}
+
+QStringList Player::getWakeSkills() const{
+    QStringList list;
+    foreach(const Skill *skil, getVisibleSkillList()){
+        if(skil->getFrequency() == Skill::Wake)
+            list << skil->objectName();
+    }
+    return list;
 }
 
 int Player::getKingdoms() const{

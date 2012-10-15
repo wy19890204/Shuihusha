@@ -105,7 +105,7 @@ bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Play
 
 void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.isEmpty()){
-        QStringList skills = source->getVisSkist("ubun");
+        QStringList skills = source->getVisibleSkillList("ubun");
         if(skills.isEmpty())
             return;
         QString ski = room->askForChoice(source, "ubund", skills.join("+"));
@@ -113,7 +113,7 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     }
     else{
         ServerPlayer *target = targets.first();
-        QStringList skills = target->getVisSkist("ubun");
+        QStringList skills = target->getVisibleSkillList("ubun");
         if(!skills.isEmpty()){
             QString ski = room->askForChoice(source, "ubund", skills.join("+"));
             room->acquireSkill(source, ski);

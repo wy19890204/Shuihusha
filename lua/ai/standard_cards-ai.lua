@@ -66,7 +66,9 @@ function SmartAI:slashIsEffective(slash, to)
 	}
 
 	local nature = natures[slash:className()]
-	if self.player:hasSkill("fenhui") then nature = sgs.DamageStruct_Fire end
+	if self.player:hasSkill("fenhui") and nature ~= sgs.DamageStruct_Thunder then
+		nature = sgs.DamageStruct_Fire
+	end
 	if not self:damageIsEffective(to, nature) then return false end
 
 	if self.player:hasWeapon("qinggang_sword") or self.player:hasSkill("wuzu") or (self.player:hasSkill("yinyu") and self.player:getMark("qinggang") > 0) then

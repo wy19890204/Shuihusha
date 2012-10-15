@@ -135,6 +135,7 @@ public:
     bool hasSkill(const QString &skill_name) const;
     bool hasInnateSkill(const QString &skill_name) const;
     bool hasLordSkill(const QString &skill_name) const;
+    QStringList getWakeSkills() const;
     virtual QString getGameMode() const = 0;
 
     void setEquip(const EquipCard *card);
@@ -194,9 +195,9 @@ public:
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
-    QStringList getVisSkist(const QString &exclude) const;
-    int getKingdoms() const;
+    QStringList getVisibleSkillList(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
+    int getKingdoms() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
     bool canSlashWithoutCrossbow() const;
