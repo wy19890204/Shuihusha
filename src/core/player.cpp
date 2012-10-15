@@ -328,7 +328,7 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 bool Player::hasLordSkill(const QString &skill_name) const{
     if(!isLord())
         return false;
-    if(Config.NoLordSkill)
+    if(Config.NoLordSkill || Config.EnableAnzhan)
         return false;
     if(property("scarecrow").toBool()) //qimen
         return false;
@@ -344,6 +344,14 @@ bool Player::hasLordSkill(const QString &skill_name) const{
         return hasInnateSkill(skill_name);
 
     return false;
+}
+
+QStringList Player::getWakeSkills() const{
+    QStringList list;
+    foreach(const Skill *skill, getGeneral()->getWakeSkillList()){
+        list << skill->objectName();
+    }
+    return list;
 }
 
 void Player::acquireSkill(const QString &skill_name){
@@ -620,7 +628,14 @@ void Player::setMark(const QString &mark, int value){
 }
 
 int Player::getMark(const QString &mark) const{
-    return marks.value(mark, 0);
+    QMap<QString, int>::const_iterator i = marks.constBegin();
+    int n = marks.value(mark, 0);
+    while (i != marks.constEnd()) {
+        QString key = i.key();
+        if(key.endsWith(mark))
+            n = n + marks.value(key, 0);
+    }
+    return n;
 }
 
 bool Player::hasMark(const QString &mark) const{
