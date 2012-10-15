@@ -44,11 +44,11 @@ Photo::Photo()
     chain_icon->setPos(boundingRect().width() - 22, 5);
     chain_icon->hide();
 
-    wake_icon = new Pixmap();
+    wake_icon = new Pixmap("image/system/sleep.png");
     wake_icon->setParentItem(this);
     wake_icon->setPos(3, 13);
     //wake_icon->hide();
-    wake_icon->setZValue(0.25);
+    wake_icon->setZValue(0.4);
 
     progress_bar = new QProgressBar;
     progress_bar->setMinimum(0);

@@ -620,6 +620,7 @@ void Player::setMark(const QString &mark, int value){
 }
 
 int Player::getMark(const QString &mark) const{
+     //@todo
     QMap<QString, int>::const_iterator i = marks.constBegin();
     int n = marks.value(mark, 0);
     while (i != marks.constEnd()) {
