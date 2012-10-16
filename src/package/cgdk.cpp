@@ -314,8 +314,8 @@ bool FeiqiangCard::targetFilter(const QList<const Player *> &targets, const Play
 void FeiqiangCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     if(!room->askForCard(effect.to, "Jink", "@feiqiang:" + effect.from->objectName(), QVariant::fromValue(effect), CardDiscarded)){
-        QString choice = effect.to->getCards("e").isEmpty() ? "gong"
-            : room->askForChoice(effect.from, "feiqiang", "gong+wang");
+        QString choice = effect.to->getCards("e").isEmpty() ?
+                    "gong" : room->askForChoice(effect.from, "feiqiang", "gong+wang", QVariant::fromValue(effect));
         if(choice == "gong")
             room->loseHp(effect.to);
         else

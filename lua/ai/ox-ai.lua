@@ -421,6 +421,16 @@ sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
 		end
 	end
 end
+sgs.ai_skill_choice["shouwang"] = function(self, choice, data)
+	local effect = data:toCardEffect()
+	if self:isEnemy(effect.to) then
+		return "zi"
+	elseif effect.from:getHandcardNum() > effect.to:getHandcardNum() then
+		return "tian"
+	else
+		return "zi"
+	end
+end
 
 -- zhongzhen
 sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
@@ -439,3 +449,16 @@ sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
 		return false
 	end
 end
+sgs.ai_skill_pindian["zhongzhen"] = function(minusecard, self, requestor, maxcard)
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	local compare_func = function(a, b)
+		return a:getNumber() > b:getNumber()
+	end
+	table.sort(cards, compare_func)
+	for _, card in ipairs(cards) do
+		if not card:inherits("Analeptic") and not card:inherits("Peach") then
+			return card
+		end
+	end
+end
+

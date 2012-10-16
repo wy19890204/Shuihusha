@@ -76,7 +76,7 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         return;
     if(song->isKongcheng() && source->isKongcheng())
         return;
-    if(room->askForChoice(song, "jui", "agree+deny") == "agree"){
+    if(room->askForChoice(song, "jui", "agree+deny", QVariant::fromValue((PlayerStar)source)) == "agree"){
         room->playSkillEffect("juyi", qrand() % 2 + 1);
         DummyCard *card1 = source->wholeHandCards();
         DummyCard *card2 = song->wholeHandCards();
@@ -1680,10 +1680,8 @@ public:
     virtual void onDamaged(ServerPlayer *yan, const DamageStruct &damage) const{
         Room *room = yan->getRoom();
         int lstn = yan->getLostHp();
-        if(damage.from)
-            yan->tag["FuqinSource"] = QVariant::fromValue((PlayerStar)damage.from);
         QString choice = damage.from ?
-                         room->askForChoice(yan, objectName(), "yan+qing+nil"):
+                         room->askForChoice(yan, objectName(), "yan+qing+nil", QVariant::fromValue(damage)):
                          room->askForChoice(yan, objectName(), "qing+nil");
         if(choice == "nil")
             return;
@@ -1704,17 +1702,17 @@ public:
             log.to << damage.from;
             log.arg2 = QString::number(i);
             log.type = "#FuqinYan";
+            room->sendLog(log);
         }
         else{
             room->playSkillEffect(objectName(), qrand() % 2 + 3);
             ServerPlayer *target = room->askForPlayerChosen(yan, room->getAllPlayers(), objectName());
-            target->drawCards(lstn);
             log.to << target;
             log.arg2 = QString::number(lstn);
             log.type = "#FuqinQin";
+            room->sendLog(log);
+            target->drawCards(lstn);
         }
-        room->sendLog(log);
-        yan->tag.remove("FuqinSource");
     }
 };
 
@@ -1849,9 +1847,8 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.to->getGeneral()->isMale()){
-            hu3niang->tag["HongjinTarget"] = QVariant::fromValue((PlayerStar)damage.to);
             QString voly = damage.to->isDead() || damage.to->isNude() ? "draw1card+cancel" : "draw1card+throw+cancel";
-            QString ball = room->askForChoice(hu3niang, objectName(), voly);
+            QString ball = room->askForChoice(hu3niang, objectName(), voly, data);
             if(ball == "cancel")
                 return false;
             LogMessage log;
@@ -1870,7 +1867,6 @@ public:
                 hu3niang->drawCards(1);
             }
         }
-        hu3niang->tag.remove("HongjinTarget");
         return false;
     }
 };

@@ -1045,7 +1045,7 @@ bool ShouwangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void ShouwangCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this);
-    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi") == "tian")
+    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi", QVariant::fromValue(effect)) == "tian")
         effect.to->drawCards(1);
     else
         effect.from->drawCards(1);
