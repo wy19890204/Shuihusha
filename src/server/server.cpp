@@ -342,6 +342,9 @@ QWidget *ServerDialog::createAITab(){
     role_predictable_checkbox = new QCheckBox(tr("Role predictable"));
     role_predictable_checkbox->setChecked(Config.value("RolePredictable", false).toBool());
 
+    ai_nickname_checkbox = new QCheckBox(tr("AI Nick Names"));
+    ai_nickname_checkbox->setChecked(Config.value("AINames", false).toBool());
+
     ai_chat_checkbox = new QCheckBox(tr("AI Chat"));
     ai_chat_checkbox->setChecked(Config.value("AIChat", true).toBool());
 
@@ -353,6 +356,7 @@ QWidget *ServerDialog::createAITab(){
 
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
+    layout->addWidget(ai_nickname_checkbox);
     layout->addWidget(ai_chat_checkbox);
     layout->addLayout(HLay(new QLabel(tr("AI delay")), ai_delay_spinbox));
     layout->addStretch();
@@ -1010,6 +1014,7 @@ bool ServerDialog::config(){
     Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
+    Config.setValue("AINames", ai_nickname_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
     Config.setValue("ServerPort", Config.ServerPort);

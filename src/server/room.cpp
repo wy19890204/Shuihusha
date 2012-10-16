@@ -1967,10 +1967,12 @@ void Room::addRobotCommand(ServerPlayer *player, const QString &){
     if(isFull())
         return;
 
-    int n = 0;
-    foreach(ServerPlayer *player, m_players){
-        if(player->getState() == "robot")
-            n++;
+    if(!Config.value("AINames", false).toBool()){
+        int n = 0;
+        foreach(ServerPlayer *player, m_players){
+            if(player->getState() == "robot")
+                n++;
+        }
     }
 
     ServerPlayer *robot = new ServerPlayer(this);
@@ -1978,7 +1980,18 @@ void Room::addRobotCommand(ServerPlayer *player, const QString &){
 
     m_players << robot;
 
-    const QString robot_name = tr("Computer %1").arg(QChar('A' + n));
+    const QString robot_name;
+    if(Config.value("AINames", false).toBool()){
+        QStringList robot_names = GetConfigFromLuaState(Sanguosha->getLuaState(), "ai_names").toStringList();
+        foreach(ServerPlayer *p, m_players){
+            if(robot_names.contains(p->screenName()))
+                robot_names.removeOne(p->screenName());
+        }
+
+        robot_name = robot_names.at(qrand() % robot_names.length());
+    }
+    else
+        robot_name = tr("Computer %1").arg(QChar('A' + n));
     const QString robot_avatar = Sanguosha->getRandomGeneralName();
     signup(robot, robot_name, robot_avatar, true);
 
@@ -3966,6 +3979,10 @@ bool Room::askForYiji(ServerPlayer *guojia, QList<int> &cards){
         return true;
 
     }
+}
+
+bool Room::isNoLordSkill(){
+    return Config.NoLordSkill;
 }
 
 QString Room::generatePlayerName(){

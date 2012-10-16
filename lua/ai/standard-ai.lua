@@ -1092,7 +1092,7 @@ sgs.ai_skill_use["@@cuju"] = function(self, prompt)
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
-		if target then return "@CujuCard=" .. card[1]:getEffectiveId() .. "->" .. target:objectName() end
+		if target then return "@CujuCard=" .. cards[1]:getEffectiveId() .. "->" .. target:objectName() end
 	else
 		return "."
 	end

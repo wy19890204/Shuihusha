@@ -618,9 +618,9 @@ public:
     virtual void onGameStart(ServerPlayer *tigger) const{
         if(!tigger->isLord())
             return;
-        if(ServerInfo.EnableAnzhan)
-            return;
         Room *room = tigger->getRoom();
+        if(ServerInfo.EnableAnzhan || room->isNoLordSkill())
+            return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
         foreach(ServerPlayer *player, players){
             room->attachSkillToPlayer(player, "huweiv");

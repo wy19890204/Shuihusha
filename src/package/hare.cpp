@@ -281,6 +281,8 @@ public:
         const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
         if(use.to.contains(writer) && (word->inherits("BasicCard") || word->isNDTrick())
             && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
+            if(use.to.last() == writer && word->inherits("Collateral"))
+                return false;
             bool hassamezi = false;
             foreach(int x, writer->getPile("zi")){
                 if(Sanguosha->getCard(x)->objectName() == word->objectName()){
