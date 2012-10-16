@@ -650,10 +650,7 @@ void Engine::playAudio(const QString &name) const{
 
 void Engine::playEffect(const QString &filename) const{
 #ifdef AUDIO_SUPPORT
-/*
-    if(!Config.EnableEffects)
-        return;
-*/
+
     if(filename.isNull())
         return;
 

@@ -8,8 +8,8 @@ if [ $1 == "-help" -o $1 == "-h" ]; then
     echo "If you provide the parameter '-dmg' is provided, then this script will also create a disk image"
 fi
 
-SRC_DIR="$HOME/Projects/QSanguosha"
-BUILD_DIR="$HOME/Projects/QSanguosha-build-desktop"
+SRC_DIR="$HOME/Projects/Shuihusha"
+BUILD_DIR="$HOME/Projects/Shuihusha-build-desktop"
 
 cd $BUILD_DIR
 
@@ -32,9 +32,8 @@ image
 lang 
 lua 
 qt_zh_CN.qm 
-sanguosha.lua 
-sanguosha.qm 
-sanguosha.qss 
+shuihusha.qm 
+shuihusha.qss 
 scenarios
 EOF`
 
@@ -57,7 +56,7 @@ install_name_tool  -change ./libfmodex.dylib @executable_path/../Frameworks/libf
 
 if [ $1 == "-dmg" ]; then
     echo "Create disk image file"
-    hdiutil create -srcfolder QSanguosha.app -format UDBZ -volname "太阳神三国杀" $OLDPWD/QSanguosha.dmg
+    hdiutil create -srcfolder QSanguosha.app -format UDBZ -volname "太阳神水浒杀" $OLDPWD/QSanguosha.dmg
 fi
 
 echo "Finished"
