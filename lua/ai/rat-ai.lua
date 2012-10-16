@@ -132,10 +132,17 @@ shouge_skill.name = "shouge"
 table.insert(sgs.ai_skills, shouge_skill)
 shouge_skill.getTurnUseCard = function(self)
 	if not self.player:isWounded() then
+		local keeppork = false
+		for _, player in ipairs(self.friends_noself) do
+			if self:isWeak(player) then
+				keeppork = true
+				break
+			end
+		end
 		local cards = self.player:getCards("h")
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards) do
-			if acard:inherits("Peach") or acard:inherits("Analeptic") then
+			if (acard:inherits("Peach") and not keeppork) or acard:inherits("Analeptic") then
 				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
 			end
 		end

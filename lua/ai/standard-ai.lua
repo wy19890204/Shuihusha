@@ -23,6 +23,13 @@ ganlin_skill.name = "ganlin"
 table.insert(sgs.ai_skills, ganlin_skill)
 ganlin_skill.getTurnUseCard = function(self)
 	if self.player:hasFlag("Ganlin") or self.player:isKongcheng() then return end
+	if self.player:getHandcardNum() == 1 then
+		if self.player:isWounded() and not self:getSun2niang() then
+			return sgs.Card_Parse("@GanlinCard=.")
+		else
+			return
+		end
+	end
 	if self:slashIsAvailable() and self:getCardsNum("Slash") > 0 then return end
 	for _, player in ipairs(self.friends_noself) do
 		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage"))
@@ -154,7 +161,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 
 	if #self.friends == 1 then return end
 
-	if (self:getOverflow()>0 or (self.player:isWounded() and self.player:usedTimes("GanlinCard") < 2))
+	if (self:getOverflow()>0 or (self.player:isWounded() and self.player:usedTimes("GanlinCard") > 2))
 		then
 		self:sort(self.friends_noself, "handcard")
 		local friend
@@ -166,7 +173,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 		end
 	end
 
-	if self.player:getHandcardNum()==1 then
+	if self.player:getHandcardNum() == 1 and not self.player:isWounded() then
 		for _, enemy in ipairs(self.enemies) do
 			if self:isEquip("GudingBlade", enemy) and enemy:canSlash(self.player, true) then return end
 		end

@@ -395,10 +395,10 @@ function SmartAI:getDynamicUsePriority(card)
 				dynamic_value = 7.85
 			elseif use_card:inherits("JishiCard") and good_null >= bad_null then
 				dynamic_value = 6.55
-			elseif use_card:inherits("GanlinCard") and self.player:usedTimes("GanlinCard") < 2 then
-				if not self.player:isWounded() then dynamic_value = 6.57
-				elseif self:isWeak() then dynamic_value = 3
-				else dynamic_value = 6
+			elseif use_card:inherits("GanlinCard") then
+				if not self.player:isWounded() then dynamic_value = 3
+				elseif self:isWeak() then dynamic_value = 6.57
+				else dynamic_value = 5
 				end
 			elseif use_card:inherits("HaoshenCard") then
 				if not self.player:isWounded() then dynamic_value = 0
