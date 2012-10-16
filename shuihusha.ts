@@ -3115,6 +3115,11 @@
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2806"/>
+        <source>Reincarn</source>
+        <translation>转世</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="2806"/>
         <location filename="src/ui/roomscene.cpp" line="2836"/>
         <source>Alive</source>
         <translation>存活</translation>
