@@ -343,7 +343,7 @@ QWidget *ServerDialog::createAITab(){
     role_predictable_checkbox->setChecked(Config.value("RolePredictable", false).toBool());
 
     ai_nickname_checkbox = new QCheckBox(tr("AI Nick Names"));
-    ai_nickname_checkbox->setChecked(Config.value("AINames", false).toBool());
+    ai_nickname_checkbox->setChecked(Config.value("AINames", true).toBool());
 
     ai_chat_checkbox = new QCheckBox(tr("AI Chat"));
     ai_chat_checkbox->setChecked(Config.value("AIChat", true).toBool());

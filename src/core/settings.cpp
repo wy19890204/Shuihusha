@@ -129,6 +129,7 @@ void Settings::init(){
     BGMVolume = value("BGMVolume", 0.75f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
+    setValue("AINames", true);
 
     BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
 
