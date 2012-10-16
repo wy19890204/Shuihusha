@@ -798,16 +798,16 @@ bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, co
     return invoked;
 }
 
-QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices){
+QString Room::askForChoice(ServerPlayer *player, const QString &skill_name, const QString &choices, const QVariant &data){
     AI *ai = player->getAI();
     QString answer;
     if(ai)
     {
-        answer = ai->askForChoice(skill_name, choices);
+        answer = ai->askForChoice(skill_name, choices, data);
         thread->delay(Config.AIDelay);
     }
     else{
-        bool success = doRequest(player, S_COMMAND_MULTIPLE_CHOICE, toJsonArray(skill_name, choices));
+        bool success = doRequest(player, S_COMMAND_MULTIPLE_CHOICE, toJsonArray(skill_name, choices), true);
         Json::Value clientReply = player->getClientReply();
         if (!success || !clientReply.isString())
         {
@@ -828,9 +828,8 @@ void Room::obtainCard(ServerPlayer *target, const Card *card, bool unhide){
         return;
 
     if(card->isVirtualCard()){
-        QList<int> subcards = card->getSubcards();
-        foreach(int card_id, subcards)
-            obtainCard(target, card_id, unhide);
+        moveCardTo(card, target, Player::Hand, unhide);
+
     }else
         obtainCard(target, card->getId(), unhide);
 }
