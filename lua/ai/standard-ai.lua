@@ -229,8 +229,8 @@ end
 sgs.ai_skill_use_func["JuyiCard"]=function(card,use,self)
 	use.card = card
 end
-sgs.ai_skill_choice["jui"] = function(self, choice)
-	local source = self.room:getCurrent()
+sgs.ai_skill_choice["jui"] = function(self, choice, data)
+	local source = data:toPlayer()
 	if self:isFriend(source) then
 		return "agree"
 	else
@@ -899,9 +899,9 @@ sgs.ai_skill_playerchosen["dalei"] = function(self, targets)
 end
 
 -- fuqin
-sgs.ai_skill_choice["fuqin"] = function(self, choice)
+sgs.ai_skill_choice["fuqin"] = function(self, choice, data)
 	if choice == "qing+nil" then return "qing" end
-	local source = self.player:getTag("FuqinSource"):toPlayer()
+	local source = data:toDamage().from
 	if self:isFriend(source) then
 		return "qing"
 	else
@@ -994,8 +994,8 @@ end
 
 -- hu3niang
 -- hongjin
-sgs.ai_skill_choice["hongjin"] = function(self, choices)
-	local who = self.player:getTag("HongjinTarget"):toPlayer()
+sgs.ai_skill_choice["hongjin"] = function(self, choices, data)
+	local who = data:toDamage().to
 	if self:isFriend(who) then
 		return "draw1card"
 	else

@@ -113,27 +113,27 @@ bool LuaAI::askForSkillInvoke(const QString &skill_name, const QVariant &data) {
 	return false;
 }
 
-QString LuaAI::askForChoice(const QString &skill_name, const QString &choices){
+QString LuaAI::askForChoice(const QString &skill_name, const QString &choices, const QVariant &data){
+	if(callback == 0)
+		return TrustAI::askForChoice(skill_name, choices, data);
 
-    lua_State *L = room->getLuaState();
-
-    pushCallback(L, __FUNCTION__);
-    lua_pushstring(L, skill_name.toAscii());
-    lua_pushstring(L, choices.toAscii());
-
-    int error = lua_pcall(L, 3, 1, 0);
-    const char *result = lua_tostring(L, -1);
-    lua_pop(L, 1);
-    if(error){
-        room->output(result);
-        return TrustAI::askForChoice(skill_name, choices);
-    }
-
-    return result;
+	lua_State *L = room->getLuaState();
+	pushCallback(L, __FUNCTION__);
+	lua_pushstring(L, skill_name.toAscii());
+	lua_pushstring(L, choices.toAscii());
+	SWIG_NewPointerObj(L, &data, SWIGTYPE_p_QVariant, 0);
+	int error = lua_pcall(L, 4, 1, 0);
+	const char *result = lua_tostring(L, -1);
+	lua_pop(L, 1);
+	if(error){
+		room->output(result);
+		return TrustAI::askForChoice(skill_name, choices, data);
+	}
+	return result;
 }
 
 void LuaAI::activate(CardUseStruct &card_use) {
-	Q_ASSERT(callback);
+    Q_ASSERT(callback);
 
 	lua_State *L = room->getLuaState();
 

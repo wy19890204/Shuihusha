@@ -383,7 +383,7 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this, source);
     PlayerStar target = targets.first();
-    QString choice = room->askForChoice(source, "sheru", "she+ru", QVariant::fromValue(target));
+    QString choice = room->askForChoice(source, "sheru", "she+ru");
     int x = target->getLostHp();
     if(choice == "she"){
         room->playSkillEffect("sheru", qrand() % 2 + 1);
@@ -1045,7 +1045,7 @@ bool ShouwangCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void ShouwangCard::onEffect(const CardEffectStruct &effect) const{
     effect.to->obtainCard(this);
-    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi") == "tian")
+    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi", QVariant::fromValue(effect)) == "tian")
         effect.to->drawCards(1);
     else
         effect.from->drawCards(1);
