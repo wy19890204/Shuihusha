@@ -383,7 +383,7 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this, source);
     PlayerStar target = targets.first();
-    QString choice = room->askForChoice(source, "sheru", "she+ru");
+    QString choice = room->askForChoice(source, "sheru", "she+ru", QVariant::fromValue(target));
     int x = target->getLostHp();
     if(choice == "she"){
         room->playSkillEffect("sheru", qrand() % 2 + 1);

@@ -280,7 +280,7 @@ public:
             if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName(), true)){
                 int delta = duan3niang->tag.value("ZiShi", 0).toInt();
                 if(delta > 0){
-                    QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao");
+                    QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao", QVariant::fromValue((PlayerStar)player));
                     LogMessage log;
                     log.type = "#Zishi";
                     log.from = duan3niang;

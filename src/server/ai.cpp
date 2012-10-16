@@ -459,7 +459,6 @@ bool LuaAI::getTable(lua_State *L, QList<int> &table){
     return true;
 }
 
-
 int LuaAI::askForAG(const QList<int> &card_ids, bool refusable, const QString &reason){
     lua_State *L = room->getLuaState();
 

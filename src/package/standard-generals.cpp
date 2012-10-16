@@ -76,7 +76,7 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         return;
     if(song->isKongcheng() && source->isKongcheng())
         return;
-    if(room->askForChoice(song, "jui", "agree+deny") == "agree"){
+    if(room->askForChoice(song, "jui", "agree+deny", QVariant::fromValue((PlayerStar)source)) == "agree"){
         room->playSkillEffect("juyi", qrand() % 2 + 1);
         DummyCard *card1 = source->wholeHandCards();
         DummyCard *card2 = song->wholeHandCards();

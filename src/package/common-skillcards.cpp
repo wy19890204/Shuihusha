@@ -51,7 +51,7 @@ void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlay
     if(deathnote.isEmpty())
         return;
     QString choice = deathnote.length() == 1 ? deathnote.first() :
-                     room->askForChoice(source, "sacrifice", deathnote.join("+"));
+                     room->askForChoice(source, "sacrifice", deathnote.join("+"), room->getTag("DeadPerson"));
     ServerPlayer *target = room->findPlayer(choice, true);
     const Card *card = room->askForCardShow(source, target, "sacrifice");
     target->obtainCard(card, false);
