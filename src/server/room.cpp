@@ -2147,8 +2147,7 @@ void Room::chooseGenerals(){
         ServerPlayer *the_lord = getLord();
         if(Config.EnableSame){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
-            if(the_lord->getState() != "online")
-                the_lord = getOwner(); // @todo: crash this!
+            the_lord = getOwner();
         }
         else if(the_lord->getState() == "robot")
             if(qrand()%100 < nonlord_prob)
@@ -2161,14 +2160,12 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
+
         if (!Config.EnableBasara)
             broadcastProperty(the_lord, "general", general);
-
-        if(Config.EnableSame){
-            foreach(ServerPlayer *p, m_players){
-                if(p->getState() != "online")
-                    p->setGeneralName(general);
-            }
+        if(Config.EnableSame){ //@todo: crash and the lord different
+            foreach(ServerPlayer *p, m_players)
+                if(p != the_lord) p->setGeneralName(general);
             if(Config.Enable2ndGeneral){
                 QStringList bans;
                 bans << general;
@@ -2178,6 +2175,7 @@ void Room::chooseGenerals(){
                 foreach(ServerPlayer *p, m_players)
                     p->setGeneral2Name(general);
             }
+            //getLord()->setGeneralName(getOwner()->getGeneralName());
             return;
         }
     }

@@ -7,6 +7,7 @@ fenyong=sgs.CreateTriggerSkill{
 	name="fenyong",
 	frequency = sgs.Skill_Compulsory,
 	events={sgs.GameStart},
+	priority = -3,
 
 	on_trigger = function(self,event,player,data)
 		local room = player:getRoom()
@@ -18,7 +19,7 @@ fenyong=sgs.CreateTriggerSkill{
 
 		local damage=sgs.DamageStruct()
 		damage.from = player
-		damage.to = damage.from
+		damage.to = player
 		room:damage(damage)
 		return false
 	end
@@ -39,13 +40,15 @@ xuehen=sgs.CreateTriggerSkill{
 			log.to:append(damage.from)
 			log.arg = self:objectName()
 			room:sendLog(log)
-			if not room:askForDiscard(target, "xuehen", 5, true) then
+			if not room:askForDiscard(damage.from, "xuehen", 5, true) then
 				local dama=sgs.DamageStruct()
 				dama.from = player
 				dama.to = damage.from
-				room:damage(damage)
+				room:damage(dama)
+				return true
 			end
 		end
+		return false
 	end
 }
 
