@@ -364,8 +364,7 @@ void Room::sendJudgeResult(const JudgeStar judge){
 
 QList<int> Room::getNCards(int n, bool update_pile_number){
     QList<int> card_ids;
-    int i;
-    for(i=0; i<n; i++){
+    for(int i = 0; i < n; i++){
         card_ids << drawCard();
     }
 
@@ -523,7 +522,8 @@ void Room::slashResult(const SlashEffectStruct &effect, const Card *jink){
     if(jink == NULL)
         thread->trigger(SlashHit, this, effect.from, data);
     else{
-        setEmotion(effect.to, "jink");
+        //if (!(jink->getSkillName() == "eight_diagram")
+            setEmotion(effect.to, "jink");
         thread->trigger(SlashMissed, this, effect.from, data);
     }
 }
@@ -760,7 +760,8 @@ bool Room::getResult(ServerPlayer* player, time_t timeOut){
 
 bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data){
     bool invoked = false;
-    if(player->property("scarecrow").toBool())
+    const Skill *skill = Sanguosha->getSkill(skill_name);
+    if(player->property("scarecrow").toBool() && skill->getFrequency() != Skill::NotSkill)
         return false;
     AI *ai = player->getAI();
     if(ai){

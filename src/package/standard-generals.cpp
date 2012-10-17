@@ -481,6 +481,7 @@ QimenCard::QimenCard(){
 }
 
 void QimenCard::willCry(Room *room, ServerPlayer *target) const{
+    /*
     QStringList skills;
     foreach(const SkillClass *skill, target->getVisibleSkillList()){
         if(skill->getLocation() != Skill::Right)
@@ -494,7 +495,7 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
 
     QVariant data = QVariant::fromValue(skills.join("+"));
     target->tag["QimenStore"] = data;
-
+    */
     room->setPlayerProperty(target, "scarecrow", true);
     target->gainMark("@shut");
 }
@@ -555,6 +556,7 @@ public:
 
     static void stopCry(Room *room, ServerPlayer *player){
         player->loseMark("@shut");
+        /*
         QString data = player->tag.value("QimenStore").toString();
 
         QStringList Qimen_data = data.split("+");
@@ -562,6 +564,7 @@ public:
             room->acquireSkill(player, skill_name);
 
         player->tag.remove("QimenStore");
+        */
         room->setPlayerProperty(player, "scarecrow", false);
     }
 
