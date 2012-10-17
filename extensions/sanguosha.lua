@@ -55,6 +55,7 @@ xiahoudun:addSkill(xuehen)
 sgs.LoadTranslationTable{
 	["sanguosha"] = "伞国沙",
 
+	["$xiahoudun"] = "SP04",
 	["#xiahoudun"] = "我勒个去",
 	["xiahoudun"] = "夏侯惇",
 	["designer:xiahoudun"] = "舟亢",

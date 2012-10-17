@@ -112,7 +112,7 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "caijing";
+    lord = "zhoutong";
     renegades << "fangla" << "wangqing";
     rule = new CoupleScenarioRule(this);
 
@@ -231,7 +231,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "caijing")
+        if(generals.at(i) == "zhoutong")
             roles << "lord";
         else
             roles << "renegade";
