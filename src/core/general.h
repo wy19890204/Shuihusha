@@ -35,6 +35,7 @@ public:
     bool isLord() const;
     bool isHidden() const;
     bool isTotallyHidden() const;
+    bool isLuaGeneral() const;
 
     enum Gender {Male, Female, Neuter};
     Gender getGender() const;

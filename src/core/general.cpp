@@ -62,12 +62,19 @@ bool General::isTotallyHidden() const{
     return never_shown;
 }
 
+bool General::isLuaGeneral() const{
+    QString package = getPackage();
+    QStringList localpackages = GetConfigFromLuaState(Sanguosha->getLuaState(), "package_names").toStringList();
+    return !localpackages.contains(package);
+}
+
 QString General::getPixmapPath(const QString &category) const{
     QString suffix = "png";
     if(category == "card")
         suffix = "jpg";
 
-    return QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
+    QString path = !isLuaGeneral() ? "image" : "extensions";
+    return QString("%1/generals/%2/%3.%4").arg(path).arg(category).arg(objectName()).arg(suffix);
 }
 
 void General::addSkill(Skill *skill){
