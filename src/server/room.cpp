@@ -91,41 +91,11 @@ int Room::alivePlayerCount() const{
     return m_alivePlayers.count();
 }
 
-QList<ServerPlayer *> Room::getOtherPlayers(ServerPlayer *except) const{
-    int index = m_alivePlayers.indexOf(except);
-    QList<ServerPlayer *> other_players;
-    int i;
-
-    if(index == -1){
-        // the "except" is dead
-        index = m_players.indexOf(except);
-        for(i = index+1; i < m_players.length(); i++){
-            if(m_players.at(i)->isAlive())
-                other_players << m_players.at(i);
-        }
-
-        for(i=0; i<index; i++){
-            if(m_players.at(i)->isAlive())
-                other_players << m_players.at(i);
-        }
-
-        return other_players;
-    }
-
-    for(i = index + 1; i < m_alivePlayers.length(); i++)
-        other_players << m_alivePlayers.at(i);
-
-    for(i = 0; i < index; i++)
-        other_players << m_alivePlayers.at(i);
-
-    return other_players;
-}
-
 QList<ServerPlayer *> Room::getPlayers() const{
     return m_players;
 }
 
-QList<ServerPlayer *> Room::getAllPlayers() const{
+QList<ServerPlayer *> Room::getAllPlayers() const{ //current is start
     if(current == NULL)
         return m_alivePlayers;
 
@@ -135,15 +105,22 @@ QList<ServerPlayer *> Room::getAllPlayers() const{
         return m_alivePlayers;
 
     QList<ServerPlayer *> all_players;
-    int i;
-    for(i=index; i<m_alivePlayers.length(); i++)
+    for (int i = index; i < m_alivePlayers.length(); i++)
         all_players << m_alivePlayers.at(i);
 
-    for(i=0; i<index; i++)
+    for (int i = 0; i < index; i++)
         all_players << m_alivePlayers.at(i);
 
     return all_players;
 }
+
+QList<ServerPlayer *> Room::getOtherPlayers(ServerPlayer *except) const{
+    QList<ServerPlayer *> other_players = getAllPlayers();
+    if (except && except->isAlive())
+        other_players.removeOne(except);
+    return other_players;
+}
+
 
 QList<ServerPlayer *> Room::getAlivePlayers() const{
     return m_alivePlayers;
@@ -364,8 +341,7 @@ void Room::sendJudgeResult(const JudgeStar judge){
 
 QList<int> Room::getNCards(int n, bool update_pile_number){
     QList<int> card_ids;
-    int i;
-    for(i=0; i<n; i++){
+    for(int i = 0; i < n; i++){
         card_ids << drawCard();
     }
 
@@ -523,7 +499,8 @@ void Room::slashResult(const SlashEffectStruct &effect, const Card *jink){
     if(jink == NULL)
         thread->trigger(SlashHit, this, effect.from, data);
     else{
-        setEmotion(effect.to, "jink");
+        //if (!(jink->getSkillName() == "eight_diagram")
+            setEmotion(effect.to, "jink");
         thread->trigger(SlashMissed, this, effect.from, data);
     }
 }
@@ -760,7 +737,8 @@ bool Room::getResult(ServerPlayer* player, time_t timeOut){
 
 bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, const QVariant &data){
     bool invoked = false;
-    if(player->property("scarecrow").toBool())
+    const Skill *skill = Sanguosha->getSkill(skill_name);
+    if(player->property("scarecrow").toBool() && skill->getFrequency() != Skill::NotSkill)
         return false;
     AI *ai = player->getAI();
     if(ai){
@@ -2170,7 +2148,7 @@ void Room::chooseGenerals(){
         if(Config.EnableSame){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
             if(the_lord->getState() != "online")
-                the_lord = findOnlinePlayers().first(); // @todo: crash this!
+                the_lord = getOwner(); // @todo: crash this!
         }
         else if(the_lord->getState() == "robot")
             if(qrand()%100 < nonlord_prob)
