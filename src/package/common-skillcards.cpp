@@ -44,7 +44,7 @@ FreeRegulateCard::FreeRegulateCard(){
 }
 
 bool FreeRegulateCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.length() <= 1 && to_select != Self;
+    return targets.isEmpty() && to_select != Self;
 }
 
 bool FreeRegulateCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
@@ -54,8 +54,10 @@ bool FreeRegulateCard::targetsFeasible(const QList<const Player *> &targets, con
 void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.isEmpty()){
         if(getSubcards().isEmpty()){
-            int card_id = room->getDiscardPile().last();
-            room->obtainCard(source, card_id);
+            if(!room->getDiscardPile().isEmpty()){
+                int card_id = room->getDiscardPile().first();
+                room->obtainCard(source, card_id);
+            }
         }
         else
             room->throwCard(this, source);

@@ -3176,8 +3176,8 @@
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="3258"/>
-        <source>Discard cards freely</source>
-        <translation>自由扔掉任意手牌和装备</translation>
+        <source>Regulate cards freely&lt;br&gt;1.&lt;/br&gt;2.&lt;/br&gt;3.&lt;/br&gt;4.&lt;/br&gt;5.&lt;/br&gt;6.</source>
+        <translation>超级操控功能&lt;/br&gt;1.&lt;/br&gt;2.&lt;/br&gt;3.</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="3708"/>
@@ -3563,8 +3563,8 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="289"/>
-        <source>Discard freely</source>
-        <translation>显示自由弃牌按钮</translation>
+        <source>Regulate freely</source>
+        <translation>显示自由调控按钮</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="292"/>
