@@ -342,6 +342,10 @@ void MiniScene::setupCustom(QString name) const
 
 }
 
+bool MiniScene::generalSelection(Room *) const{
+    return false;
+}
+
 void MiniScene::onTagSet(Room *room, const QString &key) const
 {
 

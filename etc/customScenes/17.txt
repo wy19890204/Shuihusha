@@ -1,4 +1,4 @@
-general:select|general2:select|role:lord|draw:5|acquireSkills:chiyuan|starter:true
+general:select|general2:select|role:lord|draw:5|acquireSkills:sheru|starter:true
 general:dingdesun|role:rebel|acquireSkills:tongxia
 general:dingdesun|role:rebel|turned:true|acquireSkills:jishi
-general:dingdesun|role:rebel|acquireSkills:paohong
+general:dingdesun|role:rebel|acquireSkills:dingce

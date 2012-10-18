@@ -1,5 +1,5 @@
 general:select|role:renegade|equip:sun_bow
 general:yangxiong|role:rebel
-general:dongchaoxueba|role:lord|maxhp:5|hp:4|starter:true
+general:panqiaoyun|role:lord|maxhp:5|hp:4|starter:true
 general:shiqian|role:rebel|equip:snow
 general:shixiu|role:rebel|maxhp:5|hp:4
