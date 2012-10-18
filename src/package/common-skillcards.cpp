@@ -44,7 +44,7 @@ FreeRegulateCard::FreeRegulateCard(){
 }
 
 bool FreeRegulateCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select != Self;
+    return targets.isEmpty();
 }
 
 bool FreeRegulateCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
@@ -65,11 +65,40 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
     else{
         PlayerStar target = targets.first();
         if(getSubcards().isEmpty()){
-            int card_id = room->askForCardChosen(source, target, "hej", "free-regulate");
-            room->obtainCard(source, card_id);
+            if(target != source){
+                int card_id = room->askForCardChosen(source, target, "hej", "free-regulate");
+                room->obtainCard(source, card_id);
+            }
+            else
+                room->gameOver(source->objectName());
         }
-        else
-            room->obtainCard(target, this, false);
+        else{
+            if(target == source){
+                foreach(int i, getSubcards()){
+                    const Card *card = Sanguosha->getCard(i);
+                    if(card->isEquipped())
+                        room->obtainCard(source, card);
+                }
+                if(getSubcards().length() == 1){
+                    const Card *card = Sanguosha->getCard(getSubcards().first());
+                    for(int i = 0; ;i++){
+                        const Card *c = Sanguosha->getCard(i);
+                        if(!c)
+                            break;
+                        if(c != card){
+                            if(c->objectName() == card->objectName() ||
+                                    (c->getSubtype() == "offensive_horse" && card->getSubtype() == "offensive_horse") ||
+                                    (c->getSubtype() == "defensive_horse" && card->getSubtype() == "defensive_horse")){
+                                room->obtainCard(source, c);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+                room->obtainCard(target, this, false);
+        }
     }
 }
 
