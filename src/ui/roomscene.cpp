@@ -3253,10 +3253,10 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(Config.value("FreeDiscard", false).toBool() && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-discard", 10, true);
+    if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
+        free_discard = dashboard->addButton("free-regulate", 10, true);
         free_discard->setToolTip(tr("Discard cards freely"));
-        FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);
+        FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);
         connect(free_discard, SIGNAL(clicked()), this, SLOT(doSkillButton()));
 

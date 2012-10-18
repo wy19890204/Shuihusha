@@ -38,11 +38,21 @@ private:
     const CardPattern *pattern;
 };
 
-class FreeDiscardSkill: public ViewAsSkill{
+class FreeRegulateCard:public SkillCard{
     Q_OBJECT
 
 public:
-    explicit FreeDiscardSkill(QObject *parent);
+    Q_INVOKABLE FreeRegulateCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class FreeRegulateSkill: public ViewAsSkill{
+    Q_OBJECT
+
+public:
+    explicit FreeRegulateSkill(QObject *parent);
 
     virtual bool isEnabledAtPlay(const Player *) const;
 

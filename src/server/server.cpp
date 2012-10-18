@@ -287,7 +287,7 @@ QWidget *ServerDialog::createCheatTab(){
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
     free_discard_checkbox = new QCheckBox(tr("Discard freely"));
-    free_discard_checkbox->setChecked(Config.value("FreeDiscard").toBool());
+    free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
 
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
     free_change_general_checkbox->setChecked(Config.value("FreeChange").toBool());
@@ -1008,7 +1008,7 @@ bool ServerDialog::config(){
     Config.setValue("FreeChooseCards", Config.FreeChooseCards);
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
-    Config.setValue("FreeDiscard", free_discard_checkbox->isChecked());
+    Config.setValue("FreeRegulate", free_discard_checkbox->isChecked());
     Config.setValue("FreeChange", free_change_general_checkbox->isChecked());
     Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
     Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
