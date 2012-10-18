@@ -677,6 +677,7 @@ TestPackage::TestPackage()
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);
+    addMetaObject<FreeRegulateCard>();
 
     patterns["."] = new ExpPattern(".|.|.|hand");
     patterns[".S"] = new ExpPattern(".|spade|.|hand");

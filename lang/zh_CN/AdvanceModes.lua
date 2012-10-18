@@ -40,6 +40,7 @@ return{
 	["endlessmode"] = "无尽模式",
 	["@endless"] = "铜板",
 	["#Undead"] = "%from 开启了不死之身，本次死亡无效",
+	["cheat"] = "作弊",
 	["cheat0"] = "作弊菜单开启",
 	["cheat1"] = "自由选择武将",
 	["cheat2"] = "自由选择卡牌",
@@ -48,6 +49,9 @@ return{
 	["cheat5"] = "可自我变身",
 	["cheat6"] = "开启身份宣布",
 	["cheat7"] = "开启不死之身",
+	["change"] = "变身",
+	["free-regulate"] = "自由调控",
+	["freeregulate"] = "超级操控",
 
 -- custom
 	["custom"] = "自定义模式",
