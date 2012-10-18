@@ -4,47 +4,45 @@
 
 config = {
 	version = "20120931",
-	version_name = "终结版F2.5.1",
+	version_name = "终结版F2.7",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
+		"StandardCard",
+		"Plough",
+		"Maneuvering",
+		"ExCard",
+		"Events",
+		"Gift",
+--		"Kuso",
+--		"Joy",
 
-	"StandardCard",
-	"Plough",
-	"Maneuvering",
-	"ExCard",
-	"Events",
-	"Gift",
---	"Kuso",
---	"Joy",
-
-	"Standard",
-	"Rat",
-	"Ox",
-	"Tiger",
-	"Hare",
---[["BWQZ",
-	"QLFD",
-	"ZCYN",
-	"YBYT",
-	"God",
-	"Stanley",
-	"InterChange",]]
-	"SP",
-	"Test",
-
---	"JoyGeneral",
+		"Standard",
+		"Rat",
+		"Ox",
+		"Tiger",
+		"Hare",
+--[[	"BWQZ",
+		"QLFD",
+		"ZCYN",
+		"YBYT",
+		"God",
+		"Stanley",
+		"InterChange",]]
+		"SP",
+		"Test",
+--		"JoyGeneral",
 	},
 
 	scene_names = {
-	"Dusong",
-	"Couple",
-	"Changban",
-	"Contract",
+		"Dusong",
+		"Couple",
+--		"Changban",
+--		"Contract",
 --[[	"Zombie",
-	"Legend",
-	"Impasse",]]
-	"Custom",
+		"Legend",
+		"Impasse",]]
+		"Custom",
 	},
 
 	ai_names = {

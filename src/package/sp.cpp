@@ -84,8 +84,9 @@ public:
                     case 2:{
                         room->playSkillEffect(objectName(), qrand() % 2 + 3);
                         PlayerStar target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
-                        QString choice = !target->isWounded() ? "draw2card" :
-                                                                room->askForChoice(lusashi, objectName(), "draw2card+recover1hp", QVariant::fromValue(target));
+                        QString choice = target->isWounded() ?
+                                         room->askForChoice(lusashi, objectName(), "draw2card+recover1hp", QVariant::fromValue(target)) :
+                                         "draw2card";
                         if(choice == "draw2card")
                             target->drawCards(2);
                         else{
