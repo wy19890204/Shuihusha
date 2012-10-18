@@ -1,5 +1,5 @@
-general:select role:loyalist
-general:wuyong role:rebel maxhp:3 hp:3
-general:gongsunsheng role:rebel starter:true maxhp:3 hp:2 equip:208
-general:baisheng role:rebel maxhp:3 hp:3
-general:yangzhi role:lord maxhp:4 hp:4 equip:106,138 hand:55,60 judge:124
+general:select|role:loyalist
+general:wuyong|role:rebel|maxhp:3|hp:3
+general:gongsunsheng|role:rebel|starter:true|maxhp:3|hp:2|equip:ice_sword
+general:baisheng|role:rebel|maxhp:3|hp:3
+general:yangzhi|role:lord|maxhp:4|hp:4|equip:meteor_sword,gold_armor|hand:55,60|judge:124

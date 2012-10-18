@@ -40,7 +40,7 @@ xuehen=sgs.CreateTriggerSkill{
 			log.to:append(damage.from)
 			log.arg = self:objectName()
 			room:sendLog(log)
-			if not room:askForDiscard(damage.from, "xuehen", 5, true) then
+			if not room:askForDiscard(damage.from, "xuehen", 5, 5, true) then
 				local dama=sgs.DamageStruct()
 				dama.from = player
 				dama.to = damage.from

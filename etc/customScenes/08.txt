@@ -1,6 +1,6 @@
 general:select|role:lord|maxhp:3|hp:3|equip:eight_diagram,kirin|draw:6|starter:true
 general:zhangshun|role:renegade|maxhp:4|hp:3|equip:qinggang_sword
 general:ruanxiaoer|role:renegade
-general:tongwei|role:renegade|maxhp:4|hp:3|judge:121
+general:tongwei|role:renegade|maxhp:4|hp:3|judge:105
 general:ruanxiaoqi|role:renegade|maxhp:4|hp:3
-general:tongmeng|role:renegade|maxhp:4|hp:3|judge:212
+general:lijun|role:renegade|maxhp:4|hp:3|judge:212

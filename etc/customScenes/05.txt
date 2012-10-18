@@ -1,4 +1,4 @@
 general:select|role:loyalist|equip:guding_blade
-general:wusong|role:rebel|maxhp:4|hp:4|starter:true
 general:panjinlian|role:lord|maxhp:3|hp:3
+general:wusong|role:rebel|maxhp:4|hp:4|starter:true
 general:tora|role:rebel|maxhp:4|hp:4
