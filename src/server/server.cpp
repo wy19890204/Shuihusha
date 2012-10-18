@@ -286,7 +286,7 @@ QWidget *ServerDialog::createCheatTab(){
     free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
-    free_discard_checkbox = new QCheckBox(tr("Discard freely"));
+    free_discard_checkbox = new QCheckBox(tr("Regulate freely"));
     free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
 
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));

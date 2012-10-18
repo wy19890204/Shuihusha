@@ -3411,6 +3411,10 @@ bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discar
     return true;
 }
 
+bool Room::askForDiscard(ServerPlayer *player, const QString &reason, int discard_num, int min_num, bool optional, bool include_equip){
+    return askForDiscard(player, reason, (discard_num + min_num) / 2, optional, include_equip);
+}
+
 const Card *Room::askForExchange(ServerPlayer *player, const QString &reason, int discard_num){
     AI *ai = player->getAI();
     QList<int> to_exchange;

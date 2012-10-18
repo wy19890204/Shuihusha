@@ -3255,7 +3255,7 @@ void RoomScene::onGameStart(){
     // add free discard button
     if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-regulate", 10, true);
-        free_discard->setToolTip(tr("Discard cards freely"));
+        free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);
         connect(free_discard, SIGNAL(clicked()), this, SLOT(doSkillButton()));
