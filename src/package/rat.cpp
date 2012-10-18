@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "carditem.h"
 #include "maneuvering.h"
+#include "plough.h"
 
 class Kong1iang: public TriggerSkill{
 public:
@@ -196,7 +197,6 @@ public:
     }
 };
 
-#include "plough.h"
 class Fuji:public PhaseChangeSkill{
 public:
     Fuji():PhaseChangeSkill("fuji"){

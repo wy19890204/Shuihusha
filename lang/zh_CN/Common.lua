@@ -28,7 +28,7 @@ return {
 	["trust"] = "托管",
 	["cheat"] = "作弊",
 	["change"] = "变身",
-	["free-discard"] = "自由弃牌",
+	["free-regulate"] = "自由调控",
 	["yes"] = "是",
 	["no"] = "否",
 	["male"] = "男性",

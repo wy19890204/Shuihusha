@@ -73,30 +73,57 @@ const Card *ResponseSkill::viewAs(CardItem *card_item) const{
 
 // -------------------------------------------
 
-FreeDiscardSkill::FreeDiscardSkill(QObject *parent)
-    :ViewAsSkill("free-discard")
+FreeRegulateCard::FreeRegulateCard(){
+    will_throw = false;
+}
+
+bool FreeRegulateCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self;
+}
+
+bool FreeRegulateCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() <= 1;
+}
+
+void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(targets.isEmpty()){
+        if(getSubcards().isEmpty()){
+            int card_id = room->getDiscardPile().last();
+            room->obtainCard(source, card_id);
+        }
+        else
+            room->throwCard(this, source);
+    }
+    else{
+        PlayerStar target = targets.first();
+        if(getSubcards().isEmpty()){
+            int card_id = room->askForCardChosen(source, target, "hej", "free-regulate");
+            room->obtainCard(source, card_id);
+        }
+        else
+            room->obtainCard(target, this, false);
+    }
+}
+
+FreeRegulateSkill::FreeRegulateSkill(QObject *parent)
+    :ViewAsSkill("free-regulate")
 {
     setParent(parent);
     card = new DummyCard;
 }
 
-bool FreeDiscardSkill::isEnabledAtPlay(const Player *) const{
+bool FreeRegulateSkill::isEnabledAtPlay(const Player *) const{
     return true;
 }
 
-bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
+bool FreeRegulateSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
     return true;
 }
 
-const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
-    if(!cards.isEmpty()){
-
-        card->clearSubcards();
-        card->addSubcards(cards);
-
-        return card;
-    }else
-        return NULL;
+const Card *FreeRegulateSkill::viewAs(const QList<CardItem *> &cards) const{
+    FreeRegulateCard *card = new FreeRegulateCard;
+    card->addSubcards(cards);
+    return card;
 }
 
 // -------------------------------------------
