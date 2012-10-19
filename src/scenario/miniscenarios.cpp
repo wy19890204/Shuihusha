@@ -342,6 +342,10 @@ void MiniScene::setupCustom(QString name) const
 
 }
 
+QString MiniScene::setBackgroundMusic() const{
+    return "audio/bgmusic/miniscene.mp3";
+}
+
 void MiniScene::onTagSet(Room *room, const QString &key) const
 {
 

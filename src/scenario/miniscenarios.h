@@ -35,6 +35,7 @@ class MiniScene : public Scenario
 public:
     MiniScene(const QString &name);
     void setupCustom(QString name) const;
+    virtual QString setBackgroundMusic() const;
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual void assign(QStringList &generals, QStringList &roles) const
     {
