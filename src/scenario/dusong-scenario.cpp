@@ -149,8 +149,8 @@ public:
                     if(setjmp(env) == Transfiguration){
                         player = room->getLord();
 
-                        room->broadcastInvoke("animate", "lightbox:$vqdp:3000");
-                        room->broadcastInvoke("playAudio", "zombify-male");
+                        room->broadcastInvoke("animate", "lightbox:$shapeshift:3000");
+                        room->broadcastInvoke("playAudio", "shapeshift");
                         room->getThread()->delay(1500);
                         room->transfigure(player, "zhang2dong", true, true, "zhang1dong");
 

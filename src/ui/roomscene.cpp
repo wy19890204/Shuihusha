@@ -3586,7 +3586,7 @@ void RoomScene::doLightboxAnimation(const QString &, const QStringList &args){
     }
 
     QString word = args.first();
-    const QBrush colorset = word != "$vqdp" ? QColor(0x20, 0x20, 0x20) : QColor(0xDE, 0x20, 0x20);
+    const QBrush colorset = word != "$shapeshift" ? QColor(0x20, 0x20, 0x20) : QColor(0xDE, 0x20, 0x20);
     word = Sanguosha->translate(word);
 
     QGraphicsRectItem *lightbox = addRect(main_window->rect());

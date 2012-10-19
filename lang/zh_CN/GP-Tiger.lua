@@ -179,7 +179,7 @@ return {
 	["$lizhong"] = "086",
 	["#lizhong"] = "打虎将", -- kou 3/4hp (xzdd)
 	["lizhong"] = "李忠",
-	["illustrator:lizhong"] = "冯威",
+	["illustrator:lizhong"] = "fengfei",
 	["cv:lizhong"] = "刺客【怀旧配音联盟】",
 	["coder:lizhong"] = "凌天翼",
 	["linse"] = "吝啬",
