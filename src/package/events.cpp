@@ -224,6 +224,20 @@ bool NanaStars::isAvailable(const Player *) const{
     return false;
 }
 
+Xiaobawang::Xiaobawang(Suit suit, int number):EventsCard(suit, number){
+    setObjectName("xiaobawang");
+    target_fixed = true;
+}
+
+void Xiaobawang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->throwCard(this);
+    PlayerStar target;
+    if(target->isKongcheng())
+        return;
+    source->playCardEffect("@xiaobawang1");
+    room->askForDiscard(target, "xiaobawang", qMin(target->getHandcardNum(), 2));
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {
@@ -235,7 +249,8 @@ EventsPackage::EventsPackage()
             << new NinedayGirl(Card::Heart, 2)
             << new FuckGaolian(Card::Heart, 8)
             << new Jiangjieshi(Card::Club, 9)
-            << new NanaStars(Card::Diamond, 10);
+            << new NanaStars(Card::Diamond, 10)
+            << new Xiaobawang(Card::Spade, 4);
 
     foreach(Card *card, cards)
         card->setParent(this);

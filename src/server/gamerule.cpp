@@ -21,7 +21,7 @@ GameRule::GameRule(QObject *)
             << AskForPeaches << Death << Dying << GameOverJudge
             << PreDeath << AskForRetrial << RewardAndPunish
             << SlashHit << SlashMissed << SlashEffected << SlashProceed
-            << DamageDone << DamageComplete << Predamaged
+            << DamageDone << DamageComplete << Predamaged << DamageProceed << Damaged
             << StartJudge << FinishJudge << Pindian;
 }
 
@@ -635,6 +635,42 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                             log.arg = QString::number(damage.damage);
                             room->sendLog(log);
                             return true;
+                        }
+                    }
+                }
+            }
+        }
+    case DamageProceed:{
+            //xiaobawang
+            if(!Config.BanPackages.contains("events")){
+                DamageStruct damage = data.value<DamageStruct>();
+                ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
+                if(source && source != player && player->getGender() != damage.to->getGender()){
+                    QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from).arg(damage.to);
+                    room->askForUseCard(source, "Xiaobawang", prompt);
+                }
+            }
+        }
+    case Damaged:{
+            //xiaobawang
+            if(!Config.BanPackages.contains("events")){
+                DamageStruct damage = data.value<DamageStruct>();
+                ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
+                if(source == damage.from){
+                    if(damage.from->getGender() == damage.to->getGender()){
+                        const Card *e = room->askForCard(sour, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
+                        if(e){
+                            source->playCardEffect("@xiaobawang2");
+                            int card_id = room->askForCardChosen(source, damage.to, "he", "xiaobawang");
+                            room->throwCard(card_id, damage.to, source);
+                        }
+                    }
+                    else{
+                        QString prompt = QString("@xiaobawang3:::%1").arg(damage.damage);
+                        const Card *e = room->askForCard(sour, "Xiaobawang", prompt, data, CardDiscarded);
+                        if(e){
+                            source->playCardEffect("@xiaobawang2");
+                            source->drawCards(damage.damage);
                         }
                     }
                 }
