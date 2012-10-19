@@ -555,13 +555,13 @@ public:
 
     static void stopCry(Room *room, ServerPlayer *player){
         player->loseMark("@shut");
-        QString data = player->tag.value("QimenStore").toString();
 
+        QString data = player->tag.value("QimenStore").toString();
         QStringList Qimen_data = data.split("+");
         foreach(QString skill_name, Qimen_data)
             room->acquireSkill(player, skill_name);
-
         player->tag.remove("QimenStore");
+
         room->setPlayerProperty(player, "scarecrow", false);
     }
 

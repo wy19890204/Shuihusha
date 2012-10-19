@@ -1,5 +1,5 @@
 general:select|general2:peixuan|general3:ruanxiaoer|role:loyalist
-general:gongsunsheng|role:rebel|hand:217
+general:gongsunsheng|role:rebel|hand:219
 general:gaolian|role:lord|maxhp:4|hp:4|equip:crossbow|starter:true
-general:fanrui|role:rebel
+general:zhangheng|role:rebel
 general:luozhenren|role:rebel

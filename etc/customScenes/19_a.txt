@@ -1,0 +1,3 @@
+general:select|general2:zhutong|role:lord|starter:true|singleTurn:rebel
+general:baixiuying|role:rebel
+general:huarong|role:loyalist

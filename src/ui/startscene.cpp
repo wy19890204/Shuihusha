@@ -136,7 +136,7 @@ void StartScene::printServerInfo(){
         cheats << Sanguosha->translate("cheat2");
     if(Config.value("FreeAssign", false).toBool())
         cheats << Sanguosha->translate("cheat3");
-    if(Config.value("FreeDiscard", false).toBool())
+    if(Config.value("FreeRegulate", false).toBool())
         cheats << Sanguosha->translate("cheat4");
     if(Config.value("FreeChange", false).toBool())
         cheats << Sanguosha->translate("cheat5");

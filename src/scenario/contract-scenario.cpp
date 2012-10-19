@@ -54,7 +54,7 @@ public:
                 if(damage && damage->from){
                     if(scenario->getComrade(damage->from) || scenario->getComrade(player))
                         break;
-                    const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), data, NonTrigger);
+                    const Card *card = room->askForCard(damage->from, "..", "@contract:" + player->objectName(), false, data, NonTrigger);
                     if(card){
                         player->obtainCard(card);
                         scenario->annex(damage->from, damage->to);
@@ -211,7 +211,7 @@ public:
         //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(effect.to) &&
-           room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), data)){
+           room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), false, data)){
             LogMessage log;
             log.type = "#Attack";
             log.from = effect.to;
@@ -241,7 +241,7 @@ public:
         //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(player) &&
-           room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), data)){
+           room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), false, data)){
             LogMessage log;
             log.type = "#Protect";
             log.from = jiyou;

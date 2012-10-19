@@ -112,12 +112,12 @@ QPushButton[game_control="true"]{
 	padding: 6px 12px 6px 12px;
 }
 
-QPushButton#free-discard{
-	background-image: url(image/system/button/free-discard.png);
+QPushButton#free-regulate{
+	background-image: url(image/system/button/free-regulate.png);
 }
 
-QPushButton#free-discard:disabled{
-	background-image: url(image/system/button/free-discard-disabled.png);
+QPushButton#free-regulate:disabled{
+	background-image: url(image/system/button/free-regulate-disabled.png);
 }
 
 QPushButton#reverse-select{

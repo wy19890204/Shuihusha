@@ -2662,7 +2662,7 @@
 <context>
     <name>Photo</name>
     <message>
-        <location filename="src/ui/photo.cpp" line="630"/>
+        <location filename="src/ui/photo.cpp" line="631"/>
         <source>Multiple</source>
         <translation>多个牌堆</translation>
     </message>
@@ -2821,71 +2821,71 @@
 <context>
     <name>Room</name>
     <message>
-        <location filename="src/server/room.cpp" line="1722"/>
+        <location filename="src/server/room.cpp" line="1699"/>
         <source>disconnected</source>
         <translation>断开</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1976"/>
+        <location filename="src/server/room.cpp" line="1953"/>
         <source>Computer %1</source>
         <translation>电脑 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1744"/>
-        <location filename="src/server/room.cpp" line="2064"/>
-        <location filename="src/server/room.cpp" line="4037"/>
+        <location filename="src/server/room.cpp" line="1721"/>
+        <location filename="src/server/room.cpp" line="2041"/>
+        <location filename="src/server/room.cpp" line="4012"/>
         <source>Contestant</source>
         <translation>选手</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1745"/>
+        <location filename="src/server/room.cpp" line="1722"/>
         <source>&lt;font color=#000000&gt;Player &lt;b&gt;%1&lt;/b&gt; left the game&lt;/font&gt;</source>
         <translation>&lt;font color=#000000&gt;玩家 %1 离开了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1958"/>
+        <location filename="src/server/room.cpp" line="1935"/>
         <source>%1: %2 is not invokable</source>
         <translation>%1: 不可调用的方法名 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1995"/>
+        <location filename="src/server/room.cpp" line="1972"/>
         <source>Hello, I&apos;m a robot</source>
         <translation>大家好，我是一个机器人</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2063"/>
+        <location filename="src/server/room.cpp" line="2040"/>
         <source>&lt;font color=#EEB422&gt;Player &lt;b&gt;%1&lt;/b&gt; joined the game&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 加入了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2466"/>
+        <location filename="src/server/room.cpp" line="2441"/>
         <source>Unable to parse player</source>
         <translation>不可分析的玩家</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2470"/>
+        <location filename="src/server/room.cpp" line="2445"/>
         <source>Server is not waiting for reply from %1</source>
         <translation>服务正在等待 %1 的响应</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2474"/>
+        <location filename="src/server/room.cpp" line="2449"/>
         <source>Reply command should be %1 instead of %2</source>
         <translation>应答指令应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2479"/>
+        <location filename="src/server/room.cpp" line="2454"/>
         <source>Reply serial should be %1 instead of %2</source>
         <translation>玩家序号应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="3345"/>
+        <location filename="src/server/room.cpp" line="3320"/>
         <source>Card can not parse:
  %1</source>
         <translation>卡牌字符串无法解析:
 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="4036"/>
+        <location filename="src/server/room.cpp" line="4011"/>
         <source>&lt;font color=#EEB422&gt;The network delay of player &lt;b&gt;%1&lt;/b&gt; is %2 milliseconds.&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 的网络延迟为 %2 毫秒&lt;/font&gt;</translation>
     </message>
@@ -3173,11 +3173,6 @@
         <location filename="src/ui/roomscene.cpp" line="3253"/>
         <source>&lt;font color=&apos;white&apos;&gt;------- Game Start --------&lt;/font&gt;</source>
         <translation>&lt;font color=&apos;white&apos;&gt;------- 游戏开始 --------&lt;/font&gt;</translation>
-    </message>
-    <message>
-        <location filename="src/ui/roomscene.cpp" line="3258"/>
-        <source>Discard cards freely</source>
-        <translation>自由扔掉任意手牌和装备</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="3708"/>
@@ -3563,8 +3558,8 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="289"/>
-        <source>Discard freely</source>
-        <translation>显示自由弃牌按钮</translation>
+        <source>Regulate freely</source>
+        <translation>显示自由调控按钮</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="292"/>

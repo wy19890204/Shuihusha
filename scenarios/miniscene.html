@@ -544,6 +544,7 @@ footnotes: function () {
 <div class="sect1">
 <h2 id="_自定义模式说明">自定义模式说明</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>本模式主要用来身份局的武将功能和平衡测试。在自定义模式下，玩家可以自定义武将、座次、身份等，从而达到精准测试的目的，节省了构建特定环境的时间。</p></div>
 <div class="paragraph"><p>开局状态由玩家自行设定，可设定所有角色的手牌，装备牌，判定牌和接下来的摸牌堆。
 角色状态可设置是否横置，翻面，体力上限和体力值。可以设定开局的出牌者是谁。
 所有角色必须分配主将人物或设定为开局自选，副将人物可以为空。游戏中可以设定重复武将以及单双将混合开局。</p></div>
@@ -628,7 +629,7 @@ footnotes: function () {
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
-敌军：宋万（暂时朱富）[4HP]（忠臣），杜迁（暂时杜微）[4HP]（忠臣），王伦[4HP]（主公）
+敌军：宋万[4HP]（忠臣），杜迁（暂时朱贵）[4HP]（忠臣），王伦（暂时兀颜光）[4HP]（主公）
 友军：林冲[4HP]（反贼）
 玩家以3体力5张手牌开始游戏
 王伦以6手牌开始游戏
@@ -638,13 +639,13 @@ footnotes: function () {
 </div>
 <div class="sect2">
 <h3 id="_7_武松打虎">7、武松打虎</h3>
-<div class="paragraph"><p>你是忠臣，使用双将，协助武松等打虎英雄击杀所有“老虎”。</p></div>
+<div class="paragraph"><p>你是忠臣，使用双将，协助武松等打虎英雄击杀所有老虎。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
-敌军：锦毛虎燕顺[4HP]，花项虎龚旺[4HP]，中箭虎丁得孙[7HP]，笑面虎朱富[3HP]，母大虫顾大嫂[4HP]（均为反贼）
-友军：行者武松[5HP]（主公），打虎将李忠[3/4HP]（忠臣），病大虫薛永[3/4HP]（忠臣）
-游戏开始时，燕顺获得装备雪豹，丁得孙获得装备麒麟黄金盾，武松获得装备青龙偃月刀
+敌军：锦毛虎燕顺[4HP]，花斑太岁[4HP] × 3（均为反贼）
+友军：行者武松[5HP]（主公），打虎将李忠[3/4HP]（忠臣）
+游戏开始时，燕顺获得装备雪豹，武松获得装备青龙偃月刀
 李忠首先开始行动</tt></pre>
 </div></div>
 </div>
@@ -654,8 +655,8 @@ footnotes: function () {
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
-敌军：张顺[3/4HP]、阮小二[4HP]、阮小七[3/4HP]、童威[3/4HP]、童猛[3/4HP]（均为内奸）
-游戏开始时玩家获得装备甲马、麒麟兽，张顺获得装备鱼肠剑，童威和童猛判定区添加海啸
+敌军：张顺[3/4HP]、阮小二[4HP]、阮小七[3/4HP]、童威[3/4HP]、李俊[3/4HP]（均为内奸）
+游戏开始时玩家获得装备甲马、麒麟兽，张顺获得装备鱼肠剑，童威和李俊判定区添加海啸
 玩家以6张牌开始游戏，首先开始行动</tt></pre>
 </div></div>
 </div>
@@ -665,7 +666,7 @@ footnotes: function () {
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
-敌军：公孙胜[3HP]、樊瑞[3HP]、罗真人[3HP]（均为反贼）
+敌军：公孙胜[3HP]、樊瑞（暂时张横）[3HP]、罗真人[3HP]（均为反贼）
 友军：高廉[4HP]（主公）
 游戏开始时高廉获得装备飞燕弩，公孙胜获得手牌“斗法破高廉”。
 玩家抽选武将后获得副将裴宣（如果玩家已选择了裴宣则获得阮小二）
@@ -686,13 +687,13 @@ footnotes: function () {
 </div>
 <div class="sect2">
 <h3 id="_11_轮奸阎婆惜">11、轮奸阎婆惜</h3>
-<div class="paragraph"><p>你是反贼，使用单将，帮助呼保义宋江击败阎惜娇/段三娘</p></div>
+<div class="paragraph"><p>你是反贼，使用单将，帮助宋江击败阎惜娇</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：阎惜娇/段三娘[5HP]（主公）
-友军：呼保义宋江[4HP]（反贼）
-游戏开始时，阎惜娇/段三娘获得装备雪豹，手牌128号，宋江获得装备桃花
+敌军：阎惜娇[5HP]（主公）
+友军：宋江[4HP]（反贼）
+游戏开始时，阎惜娇获得装备雪豹，技能“拼命”，宋江获得装备胭脂
 玩家和宋江处于横置状态
 宋江首先开始行动</tt></pre>
 </div></div>
@@ -703,9 +704,9 @@ footnotes: function () {
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：朱武[3/4HP]（主公）、杨春[4HP]（忠臣）
+敌军：朱武[3/4HP]（主公）、杨春（暂时雷横）[4HP]（忠臣）
 友军：史进[4HP]（反贼）
-游戏开始时，史进获得装备甲马，杨春获得装备诸葛白羽扇
+游戏开始时，史进获得装备甲马
 史进首先开始行动</tt></pre>
 </div></div>
 </div>
@@ -717,7 +718,7 @@ footnotes: function () {
 <pre><tt>配置
 敌军：乔道清[3/4HP]（主公）、琼英[3HP]（内奸）
 友军：张清[4HP]（反贼）
-游戏开始时，张清获得装备战神斧，琼英获得装备雁翎圈金甲
+游戏开始时，张清获得装备战神斧，琼英获得装备赛唐猊，乔道清获得装备千里嘶风
 琼英和乔道清处于横置状态
 玩家首先开始行动
 若琼英阵亡，则游戏结束，反贼和内奸失败</tt></pre>
@@ -725,18 +726,18 @@ footnotes: function () {
 </div>
 <div class="sect2">
 <h3 id="_14_郑屠是俺兄弟">14、郑屠是俺兄弟</h3>
-<div class="paragraph"><p>你是反贼，使用双将，突破金翠莲，击败鲁智深。</p></div>
+<div class="paragraph"><p>你是反贼，使用双将，击败鲁达和鲁智深。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：鲁智深[4HP]（主公）、金翠莲[3HP]（忠臣）
+敌军：鲁智深[4HP]（主公）、鲁达[4HP]（忠臣）
 游戏开始时，鲁智深获得装备水磨禅杖
-鲁智深获得技能“花佛”
+鲁达获得技能“杀戮”
 鲁智深首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_15_蔷薇之殇">15、蔷薇之殇</h3>
+<h3 id="_15_蔷薇之殇">15、蔷薇之殇【封印】</h3>
 <div class="paragraph"><p>使用罗真人/单将，阻止贾氏/李巧奴的爆发并将其击败。</p></div>
 <div class="listingblock">
 <div class="content">
@@ -749,12 +750,12 @@ footnotes: function () {
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_16_智取潘巧云">16、智取潘巧云</h3>
+<h3 id="_16_智取潘巧云">16、智取潘巧云【封印】</h3>
 <div class="paragraph"><p>你是内奸，使用单将，帮助潘巧云击败杨雄石秀和时迁，然后单挑潘巧云</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：杨雄[4HP]、石秀（暂时宋清）[3HP]、时迁[3HP]（均为反贼）
+敌军：杨雄[4HP]、石秀[4/5HP]、时迁[3HP]（均为反贼）
 友军：潘巧云[4/5HP]（主公）
 游戏开始时，玩家获得装备天地日月弓，时迁获得装备雪豹
 潘巧云首先开始行动</tt></pre>
@@ -767,23 +768,23 @@ footnotes: function () {
 <div class="content">
 <pre><tt>配置
 敌军：丁得孙[6HP] × 3
-游戏开始时，丁得孙1获得技能“统辖”；丁得孙2获得技能“济世”并处于翻面状态；丁得孙3获得技能“炮轰”
-玩家获得技能“痴怨”，以5手牌首先开始行动</tt></pre>
+游戏开始时，丁得孙1获得技能“统辖”；丁得孙2获得技能“济世”并处于翻面状态；丁得孙3获得技能“定策”
+玩家获得技能“折辱”，以5手牌首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="_18_传家宝">18、传家宝</h3>
-<div class="paragraph"><p>使用单将，在一回合内击败徐宁夺得雁翎圈金甲</p></div>
+<div class="paragraph"><p>使用单将，在一回合内击败徐宁夺得赛唐猊</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
 敌军：徐宁[4HP]
-游戏开始时，玩家获得天地日月弓，徐宁获得装备雁翎圈金甲
+游戏开始时，玩家获得天地日月弓，徐宁获得装备赛唐猊
 玩家以6手牌首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_19_枷打白秀英">19、枷打白秀英</h3>
+<h3 id="_19_枷打白秀英">19、枷打白秀英【封印】</h3>
 <div class="paragraph"><p>使用双将/朱仝，一回合内协同花荣打死白秀英</p></div>
 <div class="listingblock">
 <div class="content">
