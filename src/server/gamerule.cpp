@@ -639,6 +639,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     }
                 }
             }
+            break;
         }
     case DamageProceed:{
             //xiaobawang
@@ -650,6 +651,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     room->askForUseCard(source, "Xiaobawang", prompt);
                 }
             }
+            break;
         }
     case Damaged:{
             //xiaobawang
@@ -675,6 +677,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     }
                 }
             }
+            break;
         }
     case CardEffected:{
             if(data.canConvert<CardEffectStruct>()){
