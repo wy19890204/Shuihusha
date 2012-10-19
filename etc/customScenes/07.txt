@@ -1,9 +1,7 @@
 general:select|general2:select|role:loyalist
-general:yanshun|role:rebel|equip:snow
-general:gongwang|role:rebel
 general:wusong|role:lord|maxhp:5|hp:5|equip:blade
-general:dingdesun|role:rebel|maxhp:7|hp:7|equip:silver_lion
+general:tora|role:rebel|hp:4
+general:tora|role:rebel|hp:4
+general:yanshun|role:rebel|hp:4|equip:snow
+general:tora|role:rebel|hp:4
 general:lizhong|role:loyalist|starter:true
-general:zhufu|role:rebel
-general:xueyong|role:loyalist
-general:gudasao|role:rebel

@@ -38,11 +38,11 @@ private:
     const CardPattern *pattern;
 };
 
-class FreeDiscardSkill: public ViewAsSkill{
+class FreeRegulateSkill: public ViewAsSkill{
     Q_OBJECT
 
 public:
-    explicit FreeDiscardSkill(QObject *parent);
+    explicit FreeRegulateSkill(QObject *parent);
 
     virtual bool isEnabledAtPlay(const Player *) const;
 

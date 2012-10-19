@@ -1,2 +1,2 @@
-general:select role:lord starter:true singleTurn:rebel draw:6 equip:126 
-general:xuning role:rebel equip:112 
+general:select|role:lord|starter:true|singleTurn:rebel|draw:6|equip:sun_bow
+general:xuning|role:rebel|equip:gold_armor

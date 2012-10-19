@@ -1,0 +1,2 @@
+general:luozhenren|general2:select|role:renegade|draw:5
+general:jiashi|general2:liqiaonu|role:lord|maxhp:4|hp:4|equip:169|acquireSkills:foyuan|starter:true

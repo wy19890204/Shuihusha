@@ -63,9 +63,14 @@ bool General::isTotallyHidden() const{
 }
 
 bool General::isLuaGeneral() const{
-    QString package = getPackage();
+    QString package = getPackage();  //for example: rat
     QStringList localpackages = GetConfigFromLuaState(Sanguosha->getLuaState(), "package_names").toStringList();
-    return !localpackages.contains(package);
+    foreach(QString luaname, localpackages){  //for example: Rat
+        Package *pack = PackageAdder::packages()[luaname];  //make rat to Rat
+        if(pack && pack->objectName() == package)
+            return false;
+    }
+    return true;
 }
 
 QString General::getPixmapPath(const QString &category) const{

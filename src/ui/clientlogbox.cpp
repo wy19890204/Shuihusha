@@ -92,7 +92,7 @@ void ClientLogBox::appendLog(
                     log = tr("%from use skill [%1]").arg(skill_name);
                 else{
                     if(card->inherits("DummyCard"))
-                        skill_name = bold(Sanguosha->translate("free-discard"), Qt::yellow);
+                        skill_name = bold(Sanguosha->translate("free-regulate"), Qt::yellow);
                     log = tr("%from use skill [%1], and the cost is %2").arg(skill_name).arg(subcard_str);
                 }
             }else{
