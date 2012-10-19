@@ -475,14 +475,9 @@ toc: function (toclevels) {
     toc.parentNode.removeChild(toc);
 },
 
-
 /////////////////////////////////////////////////////////////////////
 // Footnotes generator
 /////////////////////////////////////////////////////////////////////
-
-/* Based on footnote generation code from:
- * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
- */
 
 footnotes: function () {
   var cont = document.getElementById("content");
@@ -611,33 +606,39 @@ footnotes: function () {
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_5_英雄救美">5、英雄救美</h3>
-<div class="paragraph"><p>你是忠臣，使用单将，保护潘金莲并杀死武松、花斑太岁。</p></div>
+<h3 id="_5_林冲救妻">5、林冲救妻</h3>
+<div class="paragraph"><p>你是主公，使用林冲，保护林娘子并杀死高俅、董超薛霸。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
-敌军：武松[4HP]，花斑太岁[4HP]（均为反贼）
-友军：潘金莲[3HP]（主公）
-潘金莲以2张手牌开始游戏
-游戏开始时玩家获得装备劈风刀
+敌军：高俅[2/3HP]，董超薛霸[4HP]（均为反贼）
+友军：林娘子[2/3HP]（主公）
+董超薛霸为官势力
+游戏开始时林娘子获得装备战神斧，高俅获得装备甲马
 武松首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="_6_火并王伦">6、火并王伦</h3>
-<div class="paragraph"><p>你是反贼，使用单将，和林冲配合，突破宋万、杜迁，杀死王伦。</p></div>
+<div class="paragraph"><p>你是反贼，使用单将，和林冲/吴用配合，突破宋万、杜迁，杀死王伦。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
+<<<<<<< HEAD
 敌军：宋万[4HP]（忠臣），杜迁（暂时朱贵）[4HP]（忠臣），王伦（暂时兀颜光）[4HP]（主公）
 友军：林冲[4HP]（反贼）
+=======
+敌军：宋万[4HP]（忠臣），朱贵[4HP]（忠臣），王伦[4HP]（主公）
+友军：林冲/吴用[4HP]（反贼）
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 玩家以3体力5张手牌开始游戏
 王伦以6手牌开始游戏
-游戏开始时，王伦获得装备甲马、拳色银花；林冲获得装备鱼肠剑
-林冲首先开始行动</tt></pre>
+游戏开始时，王伦获得装备甲马、拳色银花；林冲/吴用获得装备鱼肠剑
+林冲/吴用首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
+<<<<<<< HEAD
 <h3 id="_7_武松打虎">7、武松打虎</h3>
 <div class="paragraph"><p>你是忠臣，使用双将，协助武松等打虎英雄击杀所有老虎。</p></div>
 <div class="listingblock">
@@ -647,46 +648,75 @@ footnotes: function () {
 友军：行者武松[5HP]（主公），打虎将李忠[3/4HP]（忠臣）
 游戏开始时，燕顺获得装备雪豹，武松获得装备青龙偃月刀
 李忠首先开始行动</tt></pre>
-</div></div>
-</div>
-<div class="sect2">
-<h3 id="_8_水军操演">8、水军操演</h3>
-<div class="paragraph"><p>你是主公，使用单将[3HP]，迎战所有水军。</p></div>
+=======
+<h3 id="_7_打虎英雄">7、打虎英雄</h3>
+<div class="paragraph"><p>你是忠臣，使用双将，协助打虎英雄击杀所有老虎。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
+敌军：六只花瓣太岁[4/5HP]（反贼）
+友军：武松[5HP]（主公），李逵[3/4HP]（忠臣），解珍/解宝[3/4HP]（忠臣）
+游戏开始时，李逵获得装备雪豹，解珍解宝获得装备麒麟黄金盾，武松获得装备青龙偃月刀
+六只花瓣太岁处于连环状态且游戏开始只摸三张牌
+武松首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_8_恐怖的浔阳江">8、恐怖的浔阳江</h3>
+<div class="paragraph"><p>你是主公，使用单将[4HP]，和戴宗一起迎战浔阳江三霸，逃出是非之地。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置：
+<<<<<<< HEAD
 敌军：张顺[3/4HP]、阮小二[4HP]、阮小七[3/4HP]、童威[3/4HP]、李俊[3/4HP]（均为内奸）
 游戏开始时玩家获得装备甲马、麒麟兽，张顺获得装备鱼肠剑，童威和李俊判定区添加海啸
 玩家以6张牌开始游戏，首先开始行动</tt></pre>
+=======
+友军：戴宗[3HP]
+敌军：张顺[2HP]、李立[2/3HP]、李俊[3/4HP]、童威[3HP]（均为反贼）
+游戏开始时玩家获得装备麒麟兽，张顺获得装备鱼肠剑，童威和李俊判定区添加海啸，戴宗获得探听
+张顺获得技能“劫掠”
+所有反贼全部横置
+玩家以5张牌开始游戏，首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_9_斗法高唐州">9、斗法高唐州</h3>
-<div class="paragraph"><p>你是忠臣，使用单将/裴宣，协助高廉击败公孙胜、樊瑞、罗真人。</p></div>
+<h3 id="_9_逃出监狱">9、逃出监狱</h3>
+<div class="paragraph"><p>你是忠臣，使用孙立/单将，协助被关押的人在一回合内击败李应，不然就要被祝家庄的人发现了。</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置：
+<<<<<<< HEAD
 敌军：公孙胜[3HP]、樊瑞（暂时张横）[3HP]、罗真人[3HP]（均为反贼）
 友军：高廉[4HP]（主公）
 游戏开始时高廉获得装备飞燕弩，公孙胜获得手牌“斗法破高廉”。
 玩家抽选武将后获得副将裴宣（如果玩家已选择了裴宣则获得阮小二）
 高廉首先开始行动</tt></pre>
+=======
+友军：王英[3HP]，黄信[3HP]，时迁[3HP]，石秀[3/4HP]
+敌军：李应[8HP]（主公）
+游戏开始时石秀获得装备飞燕弩
+你首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="_10_人肉叉烧包">10、人肉叉烧包</h3>
-<div class="paragraph"><p>你是主公，使用单将，在4血素将的帮助下击败张青、孙二娘</p></div>
+<div class="paragraph"><p>你是主公，使用单将，在武松的帮助下击败张青、孙二娘</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：张青[3HP]、孙二娘[3HP]（均为反贼）
-友军：稻草男[4/6HP]（忠臣）
+敌军：张青[3HP]，孙二娘[3HP]（均为反贼）
+友军：武松[4HP]
 游戏开始时，玩家获得装备飞燕弩，手牌220号
 张青首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="_11_轮奸阎婆惜">11、轮奸阎婆惜</h3>
+<<<<<<< HEAD
 <div class="paragraph"><p>你是反贼，使用单将，帮助宋江击败阎惜娇</p></div>
 <div class="listingblock">
 <div class="content">
@@ -694,28 +724,45 @@ footnotes: function () {
 敌军：阎惜娇[5HP]（主公）
 友军：宋江[4HP]（反贼）
 游戏开始时，阎惜娇获得装备雪豹，技能“拼命”，宋江获得装备胭脂
+=======
+<div class="paragraph"><p>你是反贼，使用单将，帮助宋江击败阎婆惜/张文远（暂时由王英代替）</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：阎婆惜/王英[5HP]（主公）
+友军：宋江[4HP]（反贼）
+游戏开始时，阎婆惜/王英获得装备雪豹，手牌128号，宋江获得装备桃花
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 玩家和宋江处于横置状态
 宋江首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_12_围剿少华山">12、围剿少华山</h3>
-<div class="paragraph"><p>你是内奸，使用单将，在史进夺取少华山的战役中伺机击败所有人，夺得少华山</p></div>
+<h3 id="_12_围剿桃花山">12、围剿桃花山</h3>
+<div class="paragraph"><p>你是内奸，使用单将，在鲁智深夺取桃花山的战役中伺机击败所有人，夺得桃花山</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
+<<<<<<< HEAD
 敌军：朱武[3/4HP]（主公）、杨春（暂时雷横）[4HP]（忠臣）
 友军：史进[4HP]（反贼）
 游戏开始时，史进获得装备甲马
 史进首先开始行动</tt></pre>
+=======
+敌军：李忠[3/4HP]（主公）、周通[3HP]（忠臣）
+友军：鲁智深[4HP]（反贼）
+游戏开始时，鲁智深获得装备甲马，周通获得装备诸葛白羽扇
+鲁智深首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 </div></div>
 </div>
 <div class="sect2">
-<h3 id="_13_无君主的太原城">13、寂静的太原城</h3>
-<div class="paragraph"><p>你是反贼，使用单将，帮助张清击败乔道清并保证琼英存活</p></div>
+<h3 id="_13_捉田虎喽">13、捉田虎喽！</h3>
+<div class="paragraph"><p>你是反贼，使用单将，帮助张清/琼英击败田虎军</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
+<<<<<<< HEAD
 敌军：乔道清[3/4HP]（主公）、琼英[3HP]（内奸）
 友军：张清[4HP]（反贼）
 游戏开始时，张清获得装备战神斧，琼英获得装备赛唐猊，乔道清获得装备千里嘶风
@@ -739,17 +786,42 @@ footnotes: function () {
 <div class="sect2">
 <h3 id="_15_蔷薇之殇">15、蔷薇之殇【封印】</h3>
 <div class="paragraph"><p>使用罗真人/单将，阻止贾氏/李巧奴的爆发并将其击败。</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><tt>配置
-敌军：贾氏/李巧奴[4HP]
-游戏开始时，贾氏/李巧奴获得装备麒麟黄金盾
-贾氏/李巧奴获得技能“佛缘”
-玩家抽选武将后获得主将罗真人，初始5张手牌
-贾氏/李巧奴首先开始行动</tt></pre>
+=======
+敌军：田虎[4/5HP]（主公）、乔道清[3HP]（忠臣）
+友军：张清/琼英[4HP]（反贼）
+游戏开始时，张清/琼英获得装备战神斧，你获得装备赛唐猊
+田虎和乔道清处于横置状态
+玩家首先开始行动</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
+<h3 id="_14_倾巢而出">14、倾巢而出</h3>
+<div class="paragraph"><p>你是主公，使用双将，攻下二龙山。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：鲁智深[4HP]（反贼）、武松[3/4HP]（反贼）、张青[3HP]（反贼）、孙二娘[3HP]（反贼）、施恩[3HP]（反贼）、杨志[3/4HP]（反贼）
+友军：黄信[2HP]（反贼）、呼延灼[2/3HP]（反贼）
+游戏开始时，鲁智深获得装备水磨禅杖，武松获得战神斧，敌军每人都获得一匹马
+呼延灼首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_15_蔷薇之殇">15、蔷薇之殇</h3>
+<div class="paragraph"><p>使用张顺/单将，阻止安道全/李巧奴[暂时嫦娥（素将+射日+遨月）]的爆发并将其击败。</p></div>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：安道全/嫦娥[4HP]
+游戏开始时，安道全/嫦娥获得装备麒麟黄金盾
+安道全/嫦娥获得技能“忠贞”
+玩家抽选武将后获得主将张顺，初始5张手牌
+安道全/嫦娥首先开始行动</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<<<<<<< HEAD
 <h3 id="_16_智取潘巧云">16、智取潘巧云【封印】</h3>
 <div class="paragraph"><p>你是内奸，使用单将，帮助潘巧云击败杨雄石秀和时迁，然后单挑潘巧云</p></div>
 <div class="listingblock">
@@ -759,17 +831,34 @@ footnotes: function () {
 友军：潘巧云[4/5HP]（主公）
 游戏开始时，玩家获得装备天地日月弓，时迁获得装备雪豹
 潘巧云首先开始行动</tt></pre>
-</div></div>
-</div>
-<div class="sect2">
-<h3 id="_17_战神一拖三">17、战神一拖三</h3>
-<div class="paragraph"><p>使用双将，挑战3名丁得孙。</p></div>
+=======
+<h3 id="_16_此路是我开">16、此路是我开</h3>
+<div class="paragraph"><p>你是忠臣，使用单将，帮助黄信击败燕顺和王英（将来考虑郑天寿）</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
+敌军：燕顺[4HP]、王英[3HP]（均为反贼）
+友军：黄信[3/4HP]（主公）
+游戏开始时，玩家获得装备天地日月弓，燕顺获得装备雪豹
+黄信首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_17_三重宝甲">17、三重宝甲</h3>
+<div class="paragraph"><p>使用双将，挑战3名兀颜光。</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+<<<<<<< HEAD
 敌军：丁得孙[6HP] × 3
 游戏开始时，丁得孙1获得技能“统辖”；丁得孙2获得技能“济世”并处于翻面状态；丁得孙3获得技能“定策”
 玩家获得技能“折辱”，以5手牌首先开始行动</tt></pre>
+=======
+敌军：兀颜光[3/4HP] × 3
+游戏开始时，兀颜光1获得技能“统辖”；兀颜光2获得处于翻面状态；兀颜光3获得三重铠
+玩家获得技能“方阵”，以5手牌首先开始行动</tt></pre>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 </div></div>
 </div>
 <div class="sect2">
@@ -784,13 +873,18 @@ footnotes: function () {
 </div></div>
 </div>
 <div class="sect2">
+<<<<<<< HEAD
 <h3 id="_19_枷打白秀英">19、枷打白秀英【封印】</h3>
 <div class="paragraph"><p>使用双将/朱仝，一回合内协同花荣打死白秀英</p></div>
+=======
+<h3 id="_19_斧劈罗真人">19、斧劈罗真人</h3>
+<div class="paragraph"><p>使用李逵，一回合内和戴宗杀死罗真人</p></div>
+>>>>>>> ea88f0078bf9a229df5855a90635902f5754f79b
 <div class="listingblock">
 <div class="content">
 <pre><tt>配置
-敌军：白秀英[4HP]
-友军：花荣[4HP]
+敌军：罗真人[4HP]
+友军：戴宗[4HP]
 玩家首先开始行动</tt></pre>
 </div></div>
 <div class="sect2">
@@ -819,32 +913,20 @@ footnotes: function () {
 玩家首先行动；玩家的回合结束时玩家失败。</tt></pre>
 </div></div>
 </div>
+<div class="sect2">
+<h3 id="_21_脆弱的小衙内">21、脆弱的小衙内</h3>
+<div class="paragraph"><p>你是主公，使用朱仝/单将，保护小衙内击败吴用、柴进、李逵</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>配置
+敌军：吴用、柴进、李逵（均为[2/3HP]且为反贼）
+友军：小衙内[6HP]
+游戏开始时，小衙内获得三重铠，李逵获得装备战神斧
+吴用、柴进、李逵均为横置状态，李逵获得技能“力拔”
+玩家首先开始行动</tt></pre>
+</div></div>
+</div>
 <!--<div class="sect2">
-<h3 id="_16_英雄豪迈">16、英雄豪迈</h3>
-<div class="paragraph"><p>使用双将，在神关羽/神吕蒙的帮助下击败神司马懿/袁术和太史慈/二张，然后将其击败</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><tt>配置：
-敌军：神司马懿/袁术 4勾玉 太史慈/二张 4勾玉
-友军：神关羽/神吕蒙 5勾玉（内奸）
-玩家首先开始行动</tt></pre>
-</div></div>
-</div>
-<div class="sect2">
-<h3 id="_17_天命之子">17、天命之子</h3>
-<div class="paragraph"><p>使用单将/五星诸葛，在姜维的帮助下击败张角与司马懿/郭嘉</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><tt>配置：
-敌军：张角 3勾玉 司马懿/郭嘉 3勾玉
-友军：姜维 4勾玉
-游戏开始时，玩家获得副将五星诸葛（若已经选择了五星诸葛则为卧龙）
-张角获得装备八卦阵
-司马懿/郭嘉获得手牌“闪电”
-玩家首先开始行动</tt></pre>
-</div></div>
-</div>
-<div class="sect2">
 <h3 id="_18_高帅富">18、高帅富</h3>
 <div class="paragraph"><p>在争取貂蝉/小乔的竞争中胜出。</p></div>
 <div class="listingblock">
@@ -917,8 +999,9 @@ footnotes: function () {
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2012-02-07 21:40:04 庆历四年春
+Last updated 2012-10-07 21:40:04 庆历四年秋
 </div>
 </div>
 </body>
 </html>
+
