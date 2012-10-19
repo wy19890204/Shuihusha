@@ -201,41 +201,29 @@ public:
     }
 };
 */
-class Jiada: public MasochismSkill{
+class Guzong:public TriggerSkill{
 public:
-    Jiada():MasochismSkill("jiada"){
+    Guzong():TriggerSkill("guzong"){
+        events << CardAsked;
     }
 
-    virtual void onDamaged(ServerPlayer *leiheng, const DamageStruct &) const{
-        leiheng->getRoom()->askForUseCard(leiheng, "slash", "@askforslash", true);
-    }
-};
-
-class Zhechi: public TriggerSkill{
-public:
-    Zhechi():TriggerSkill("zhechi"){
-        events << SlashProceed;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *lh, QVariant &data) const{
-        if(room->getCurrent() == lh)
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        QString pattern = data.toString();
+        if(pattern != "jink")
             return false;
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(lh->askForSkillInvoke(objectName())){
-            JudgeStruct judge;
-            judge.pattern = QRegExp("(.*):(heart|spade):(.*)");
-            judge.good = true;
-            judge.reason = objectName();
-            judge.who = lh;
 
-            room->judge(judge);
-            if(judge.isGood()){
-                if(judge.card->getSuit() == Card::Heart){
-                    room->slashResult(effect, NULL);
-                    return true;
-                }
-                else
-                    effect.drank = true;
+        QList<ServerPlayer *> nein = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *neinhg, nein){
+            QVariant tohelp = QVariant::fromValue((PlayerStar)neinhg);
+            const Card *jink = room->askForCard(neinhg, "jink", "@guzong:" + player->objectName(), tohelp);
+            if(jink){
+                jink->setSkillName("guzong");
+                room->provide(jink);
+                return true;
             }
         }
         return false;
@@ -1312,8 +1300,7 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("tengfei", "#tengfei_main");
 */
     General *leiheng = new General(this, "leiheng", "guan");
-    leiheng->addSkill(new Jiada);
-    leiheng->addSkill(new Zhechi);
+    leiheng->addSkill(new Guzong);
 
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
