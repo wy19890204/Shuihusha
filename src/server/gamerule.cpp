@@ -646,7 +646,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
                 if(source && source != player && player->getGender() != damage.to->getGender()){
-                    QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from).arg(damage.to);
+                    QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName());
                     room->askForUseCard(source, "Xiaobawang", prompt);
                 }
             }
@@ -658,7 +658,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
                 if(source == damage.from){
                     if(damage.from->getGender() == damage.to->getGender()){
-                        const Card *e = room->askForCard(sour, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
+                        const Card *e = room->askForCard(source, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
                         if(e){
                             source->playCardEffect("@xiaobawang2");
                             int card_id = room->askForCardChosen(source, damage.to, "he", "xiaobawang");
@@ -667,7 +667,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     }
                     else{
                         QString prompt = QString("@xiaobawang3:::%1").arg(damage.damage);
-                        const Card *e = room->askForCard(sour, "Xiaobawang", prompt, data, CardDiscarded);
+                        const Card *e = room->askForCard(source, "Xiaobawang", prompt, data, CardDiscarded);
                         if(e){
                             source->playCardEffect("@xiaobawang2");
                             source->drawCards(damage.damage);
