@@ -273,7 +273,7 @@ yijie_skill.name = "yijie"
 table.insert(sgs.ai_skills, yijie_skill)
 yijie_skill.getTurnUseCard = function(self)
 	if self.player:hasUsed("YijieCard") then return end
-	if self:getHp() > 2 then
+	if self.player:getHp() > 2 then
 		return sgs.Card_Parse("@YijieCard=.")
 	end
 end

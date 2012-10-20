@@ -595,7 +595,7 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
         general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
 
     if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd"))
-        general_set = general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
+        general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
 

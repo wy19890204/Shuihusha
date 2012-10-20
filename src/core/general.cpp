@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "skill.h"
 #include "package.h"
+#include "scenario.h"
 #include "client.h"
 
 #include <QSize>
@@ -68,6 +69,12 @@ bool General::isLuaGeneral() const{
     foreach(QString luaname, localpackages){  //for example: Rat
         Package *pack = PackageAdder::packages()[luaname];  //make rat to Rat
         if(pack && pack->objectName() == package)
+            return false;
+    }
+    localpackages = GetConfigFromLuaState(Sanguosha->getLuaState(), "scene_names").toStringList();
+    foreach(QString luaname, localpackages){
+        Scenario *scenario = ScenarioAdder::scenarios()[luaname];
+        if(scenario && scenario->objectName() == package)
             return false;
     }
     return true;

@@ -2,7 +2,7 @@
 -- Fourth of the twelve
 
 return {
-	["hare"] = "秃纸",
+	["hare"] = "卯兔",
 
 	["$haosiwen"] = "041",
 	["#haosiwen"] = "井木犴", -- guan 4hp (zcyn)
