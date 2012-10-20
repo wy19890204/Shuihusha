@@ -2,32 +2,23 @@
 
 -- leiheng
 -- guzong
+sgs.ai_skill_cardask["@guzong"] = function(self, data)
+	local player = data:toPlayer()
+	if self:isFriend(player) then
+		local cards = self.player:getCards("he")
+		cards=sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		for _, scard in ipairs(cards) do
+			if scard:inherits("TrickCard") or scard:inherits("EquipCard") then
+				return scard:getEffectiveId()
+			end
+		end
+	end
+	return "."
+end
 sgs.ai_skill_invoke["guzong"] = function(self, data)
 	local player = data:toPlayer()
-	self.guzongtarget = player
---	local cards = self.player:getTag("Guzong")
-	if self:isEnemy(player) then
-		return math.random(1, 3) == 2
-	else
-		return math.random(2, 3) == 2
-	end
---[[for _, card_id in sgs.qlist(cards) do
-		local card = sgs.Sanguosha:getCard(card_id:toInt())
-		if card:inherits("Peach") or card:inherits("Analeptic") then
-			return true
-		end
-	end]]
-end
-sgs.ai_skill_askforag["guzong"] = function(self, card_ids)
-	if self.player:getHandcardNum() < 2 then return -1 end
-	if self:isEnemy(self.guzongtarget) then return 9999 end
-	for _, card_id in ipairs(card_ids) do
-		local card = sgs.Sanguosha:getCard(card_id)
-		if card:inherits("Peach") or card:inherits("Analeptic") then
-			return card_id
-		end
-	end
-	return -1
+	return self:isEnemy(player)
 end
 sgs.ai_skill_cardchosen["guzong"] = function(self, who)
 	local cards = sgs.QList2Table(who:getCards("he"))

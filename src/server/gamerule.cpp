@@ -648,7 +648,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
                 if(source && source != player && player->getGender() != damage.to->getGender()){
                     QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName());
+                    source->tag["Xiaob"] = QVariant::fromValue((PlayerStar)damage.from);
                     room->askForUseCard(source, "Xiaobawang", prompt);
+                    source->tag.remove("Xiaob");
                 }
             }
             break;

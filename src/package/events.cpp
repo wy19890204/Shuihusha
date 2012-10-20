@@ -229,9 +229,9 @@ Xiaobawang::Xiaobawang(Suit suit, int number):EventsCard(suit, number){
     target_fixed = true;
 }
 
-void Xiaobawang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void Xiaobawang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     room->throwCard(this);
-    PlayerStar target;
+    PlayerStar target = source->tag["Xiaob"].value<PlayerStar>();;
     if(target->isKongcheng())
         return;
     source->playCardEffect("@xiaobawang1");

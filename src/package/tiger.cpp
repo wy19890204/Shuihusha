@@ -219,13 +219,15 @@ public:
         QList<ServerPlayer *> nein = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *neinhg, nein){
             QVariant tohelp = QVariant::fromValue((PlayerStar)player);
-            const Card *jink = room->askForCard(neinhg, "jink", "@guzong:" + player->objectName(), tohelp);
-            if(jink){
+            const Card *yjk = room->askForCard(neinhg, "TrickCard,EquipCard", "@guzong:" + player->objectName(), true, tohelp, CardDiscarded);
+            if(yjk){
+                Jink *jink = new Jink(Card::NoSuit, 0);
+                jink->setSkillName(objectName());
                 room->provide(jink);
-                if(!player->isNude() && neinhg->askForSkillInvoke(objectName())){
+                if(!player->isNude() && neinhg->askForSkillInvoke(objectName(), tohelp)){
                     int first = room->askForCardChosen(neinhg, player, "he", objectName());
                     room->throwCard(first, player, neinhg);
-                    if(!player->isNude() && neinhg->askForSkillInvoke(objectName())){
+                    if(!player->isNude() && neinhg->askForSkillInvoke(objectName(), tohelp)){
                         first = room->askForCardChosen(neinhg, player, "he", objectName());
                         room->throwCard(first, player, neinhg);
                     }
