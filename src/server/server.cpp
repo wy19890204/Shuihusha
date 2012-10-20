@@ -354,11 +354,15 @@ QWidget *ServerDialog::createAITab(){
     ai_delay_spinbox->setValue(Config.AIDelay);
     ai_delay_spinbox->setSuffix(tr(" millisecond"));
 
+    disable_gongsunsheng = new QCheckBox(tr("Disable Gongsunsheng"));
+    disable_gongsunsheng->setChecked(Config.value("DisableQimen", false).toBool());
+
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
+    layout->addLayout(HLay(new QLabel(tr("AI delay")), ai_delay_spinbox));
     layout->addWidget(ai_nickname_checkbox);
     layout->addWidget(ai_chat_checkbox);
-    layout->addLayout(HLay(new QLabel(tr("AI delay")), ai_delay_spinbox));
+    layout->addWidget(disable_gongsunsheng);
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -1017,6 +1021,7 @@ bool ServerDialog::config(){
     Config.setValue("AINames", ai_nickname_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
+    Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);
     Config.setValue("Address", Config.Address);

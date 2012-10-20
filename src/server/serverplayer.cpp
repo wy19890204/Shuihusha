@@ -292,6 +292,8 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
             if(ban_list.contains(name))continue;
         }
+        if(Config.value("DisableQimen", false).toBool())
+            if(name == "gongsunsheng")continue;
         if((Config.GameMode.endsWith("p") ||
             Config.GameMode.endsWith("pd")))
         {

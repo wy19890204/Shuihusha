@@ -128,6 +128,7 @@ private:
     QCheckBox *role_predictable_checkbox;
     QCheckBox *ai_nickname_checkbox, *ai_chat_checkbox;
     QSpinBox *ai_delay_spinbox;
+    QCheckBox *disable_gongsunsheng;
     QRadioButton *standard_3v3_radiobutton;
     QRadioButton *new_3v3_radiobutton;
     QComboBox *role_choose_combobox;

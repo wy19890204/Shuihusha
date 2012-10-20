@@ -583,6 +583,8 @@ QStringList Engine::getLimitedGeneralNames() const{
 
 QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) const{
     QStringList all_generals = getLimitedGeneralNames();
+    if(Config.value("DisableQimen", false).toBool())
+        all_generals.removeOne("gongsunsheng");
     QSet<QString> general_set = all_generals.toSet();
 
     Q_ASSERT(all_generals.count() >= count);
@@ -593,7 +595,7 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
         general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
 
     if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd"))
-        general_set.subtract(Config.value("Banlist/Roles","").toStringList().toSet());
+        general_set = general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
 
