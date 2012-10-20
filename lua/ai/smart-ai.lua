@@ -3199,6 +3199,9 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:inherits("Duel") or card:inherits("Assassinate") then
 			return false
 		end
+		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:inherits("Assassinate") then
+			return false
+		end
 	end
 	return true
 end

@@ -85,15 +85,22 @@ sgs.ai_use_value =
 --	XiaozaiCard = 7.7,
 	SacrificeCard = 2.2,
 
-	-- xzdd
+	-- hare
+--	SixiangCard = 1.5,
+	LinmoCard = 4,
+--	ZhaixingCard = 5
 --	BinggongCard = 2.1,
-	FeiqiangCard = 9.2,
-	TaolueCard = 7.5,
+	SheyanCard = 8.7,
+	YijieCard = 5.3,
+--	HuatianCard = 8.2,
+--	ShemiCard = 4.4,
 
 	-- bwqz
 	YuanyinCard = 4.3,
 	NushaCard = 6.1,
 	QiaogongCard = 2.3,
+	FeiqiangCard = 9.2,
+	TaolueCard = 7.5,
 
 	-- qlfd
 --	FanwuCard = 2,
@@ -206,15 +213,22 @@ sgs.ai_use_priority = {
 --	XiaozaiCard = 3,
 	SacrificeCard = 1,
 
-	-- xzdd
+	-- hare
+--	SixiangCard = 1.5,
+	LinmoCard = 5,
+--	ZhaixingCard = 5
 --	BinggongCard = 2.1,
-	FeiqiangCard = 5.4,
-	TaolueCard = 5,
+	SheyanCard = 5.1,
+	YijieCard = 2.3,
+--	HuatianCard = 8.2,
+--	ShemiCard = 4.4,
 
 	-- bwqz
 	YuanyinCard = 8.3,
 	NushaCard = 7.1,
 	QiaogongCard = 3.3,
+	FeiqiangCard = 5.4,
+	TaolueCard = 5,
 
 	-- qlfd
 --	FanwuCard = 2,
@@ -314,6 +328,7 @@ sgs.ai_chaofeng = {
 	lili = 7,
 	gongsunsheng = 7,
 	zhangheng = 7,
+	dingdesun = 7,
 	songjiang = 6,
 	wangqing = 6,
 	sunerniang = 6,
@@ -325,6 +340,7 @@ sgs.ai_chaofeng = {
 	tianhu = 6,
 	yanshun = 6,
 	wangying = 6,
+	peixuan = 6,
 	fangla = 5,
 	wuyong = 5,
 	yanxijiao = 5,
@@ -332,6 +348,7 @@ sgs.ai_chaofeng = {
 	dongping = 5,
 	pangwanchun = 5,
 	shixiu = 5,
+	haosiwen = 5,
 	lvfang = 5,
 	husanniang = 4,
 	panjinlian = 4,
@@ -348,6 +365,8 @@ sgs.ai_chaofeng = {
 	baisheng = 3,
 	gaolian = 3,
 	luda = 3,
+	ligun = 3,
+	zhoutong = 3,
 	luzhishen = 2,
 	wusong = 2,
 	liying = 2,
@@ -356,19 +375,26 @@ sgs.ai_chaofeng = {
 	zhangqing = 2,
 	leiheng = 2,
 	xiebao = 2,
+	xiaorang = 2,
+	tongwei = 2,
 	lujunyi = 1,
 	gaoqiu = 1,
 	shijin = 1,
 	lijun = 1,
+	weidingguo = 1,
+	zhugui = 1,
+	zhaoji = 1,
 	huarong = -1,
 	zhuwu = -1,
 	ruanxiaoer = -1,
 	linniangzi = -1,
 	lizhong = -1,
+	songwan = -1,
 	guansheng = -2,
 	yanqing = -2,
 	linchong = -2,
 	shien = -2,
+	songqing = -2,
 	chaijing = -3,
 	ruanxiaoqi = -3,
 	xuning = -3,

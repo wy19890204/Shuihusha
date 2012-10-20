@@ -1,7 +1,18 @@
 -- AI for hare package
 
 -- haosiwen
+
 -- sixiang
+sgs.ai_card_intention.SixiangCard = function(card, from, tos)
+	for _, to in ipairs(tos) do
+		if to:getHandcardNum() > from:getRoom():getKingdoms() then
+			sgs.updateIntention(from, to, 50, card)
+		else
+			sgs.updateIntention(from, to, -50, card)
+		end
+	end
+end
+
 sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 	local king = self.room:getKingdoms()
 	local cards = self.player:getCards("he")
@@ -35,6 +46,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 end
 
 -- weidingguo
+
 -- shenhuo
 sgs.ai_skill_invoke["shenhuo"] = true
 local shenhuo_skill={}
@@ -66,6 +78,7 @@ function sgs.ai_cardneed.shenhuo(to, card, self)
 end
 
 -- xiaorang
+
 -- linmo
 sgs.ai_skill_invoke["linmo"] = true
 
@@ -90,6 +103,9 @@ linmo_skill.getTurnUseCard = function(self)
 			hasexn = true
 		elseif card:objectName() == "god_salvation" then
 			hasgodsa = true
+		elseif card:objectName() == "peach" and self.player:isWounded() then
+			local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "peach")
+			return parsed_card
 		end
 	end
 	local cards = sgs.QList2Table(self.player:getHandcards())
@@ -190,6 +206,8 @@ sgs.ai_skill_invoke["shenpan"] = function(self, data)
 end
 
 -- binggong
+sgs.ai_card_intention.BinggongCard = -50
+
 sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 	local num = self.player:getMark("Bingo")
 	if num < 3 and self.player:isWounded() then return "." end
@@ -207,10 +225,12 @@ sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 end
 
 -- ligun
+
 -- hengchong
 sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- tongwei
+
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)
 	if self.player:getHandcardNum() < 2 then return false end
@@ -233,6 +253,7 @@ end
 sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- songqing
+
 -- jiayao
 sgs.ai_skill_invoke["jiayao"] = true
 
@@ -267,7 +288,10 @@ sgs.dingdesun_keep_value =
 }
 
 -- songwan
+
 -- yijie
+sgs.ai_card_intention.YijieCard = -50
+
 local yijie_skill = {}
 yijie_skill.name = "yijie"
 table.insert(sgs.ai_skills, yijie_skill)
@@ -307,26 +331,29 @@ sgs.ai_skill_invoke["qiangqu"] = function(self, data)
 end
 
 -- huatian
-sgs.ai_skill_invoke["huatian"] = function(self, data)
-	if not self.friends_noself[1] then return false end
-	self:sort(self.friends_noself, "hp")
-	if self.player:getMark("HBTJ") == 1 then
-		return self.friends_noself[1]:isWounded()
+sgs.ai_card_intention.HuatianCard = function(card, from, tos)
+	if from:getMark("Huatian") == 1 then
+		sgs.updateIntentions(from, tos, -60)
+	elseif from:getMark("Huatian") == 2 then
+		sgs.updateIntentions(from, tos, 60)
+	else
+		sgs.updateIntentions(from, tos, 0)
 	end
-	return true
 end
-sgs.ai_skill_playerchosen["huatian"] = function(self, targets)
-	local mark = self.player:getMark("HBTJ")
-	if mark == 1 then
+
+sgs.ai_skill_use["@@huatian"] = function(self, prompt)
+	local flag = self.player:getMark("Huatian")
+	if flag == 1 then -- ai
+		if not self.friends_noself[1] then return "." end
 		self:sort(self.friends_noself, "hp")
-		for _, friend in ipairs(self.friends_noself) do
-			if friend:isWounded() then
-				return friend
-			end
+		if self.friends_noself[1]:isWounded() then
+			return "@HuatianCard=.->" .. self.friends_noself[1]:objectName()
 		end
-	elseif mark == 2 then
-		self:sort(self.enemies, "hp")
-		return self.enemies[1]
+	elseif flag == 2 then -- cuo
+		self:sort(self.enemies)
+		if #self.enemies > 0 then
+			return "@HuatianCard=.->" .. self.enemies[1]:objectName()
+		end
 	end
 end
 
@@ -362,9 +389,14 @@ end
 -- nongquan
 sgs.ai_skill_invoke["nongquan"] = function(self, data)
 	local lord = self.room:getLord()
-	if lord:hasLordSkill("nongquan") and not lord:faceUp() and self.player:getHandcardNum() > 2 then
-		return self:isFriend(lord)
+	if lord:hasLordSkill("nongquan") then
+		if self:isFriend(lord) and not lord:faceUp() then
+			return self.player:getHandcardNum() > 1
+		elseif self:isEnemy(lord) and lord:faceUp() then
+			return self.player:getHandcardNum() > 2
+		end
 	end
+	return false
 end
 
 ------------
