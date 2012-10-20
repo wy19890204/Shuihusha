@@ -83,7 +83,7 @@ linmo_skill.getTurnUseCard = function(self)
 	for _, word in ipairs(zis) do
 		local card = sgs.Sanguosha:getCard(word)
 		table.insert(words, card:objectName())
-		if card:getSubtype() == "aoe"
+		if card:getSubtype() == "aoe" then
 			table.insert(aoenames, card:objectName())
 		end
 		if card:objectName() == "ex_nihilo" then
@@ -261,8 +261,30 @@ sgs.ai_skill_use_func["SheyanCard"] = function(card,use,self)
 end
 
 -- dingdesun
+sgs.dingdesun_keep_value =
+{
+	Jink = 6,
+}
+
 -- songwan
 -- yijie
+local yijie_skill = {}
+yijie_skill.name = "yijie"
+table.insert(sgs.ai_skills, yijie_skill)
+yijie_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("YijieCard") then return end
+	if self:getHp() > 2 then
+		return sgs.Card_Parse("@YijieCard=.")
+	end
+end
+sgs.ai_skill_use_func["YijieCard"] = function(card,use,self)
+	use.card = card
+	if use.to then
+		self:sort(self.friends_noself, "handcard")
+		use.to:append(self.friends_noself[1])
+	end
+end
+
 sgs.ai_skill_invoke["yijie"] = function(self, data)
 	self:sort(self.friends_noself, "hp")
 	for _, friend in ipairs(self.friends_noself) do

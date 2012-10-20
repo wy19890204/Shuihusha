@@ -574,7 +574,9 @@ QStringList Engine::getLimitedGeneralNames() const{
     while(itor.hasNext()){
         itor.next();
         if(!ban_package.contains(itor.value()->getPackage())){
-            general_names << itor.key();
+            if(!Config.value("DisableQimen", false).toBool() ||
+               itor.key() != "gongsunsheng")
+                general_names << itor.key();
         }
     }
 
@@ -583,8 +585,6 @@ QStringList Engine::getLimitedGeneralNames() const{
 
 QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) const{
     QStringList all_generals = getLimitedGeneralNames();
-    if(Config.value("DisableQimen", false).toBool())
-        all_generals.removeOne("gongsunsheng");
     QSet<QString> general_set = all_generals.toSet();
 
     Q_ASSERT(all_generals.count() >= count);
