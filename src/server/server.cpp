@@ -356,6 +356,7 @@ QWidget *ServerDialog::createAITab(){
 
     disable_gongsunsheng = new QCheckBox(tr("Disable Gongsunsheng"));
     disable_gongsunsheng->setChecked(Config.value("DisableQimen", false).toBool());
+    disable_gongsunsheng->setEnabled(false);
 
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);

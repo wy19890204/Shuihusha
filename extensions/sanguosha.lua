@@ -59,7 +59,7 @@ sgs.LoadTranslationTable{
 	["sanguosha"] = "伞国沙",
 
 	["$xiahoudun"] = "SP04",
-	["#xiahoudun"] = "我勒个去",
+	["#xiahoudun"] = "狼奔豕突",
 	["xiahoudun"] = "夏侯惇",
 	["designer:xiahoudun"] = "舟亢",
 	["cv:xiahoudun"] = "",
