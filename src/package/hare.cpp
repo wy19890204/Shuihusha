@@ -63,7 +63,7 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *jingmuan) const{
         Room *room = jingmuan->getRoom();
-        if(jingmuan->getPhase() == Player::Start && !jingmuan->isKongcheng()){
+        if(jingmuan->getPhase() == Player::Start && !jingmuan->isNude()){
             room->setPlayerMark(jingmuan, "Sixh", room->getKingdoms());
             if(room->askForUseCard(jingmuan, "@@sixiang", "@sixiang", true))
                 jingmuan->setFlags("elephant");
@@ -167,11 +167,15 @@ public:
         if(card->inherits("FireAttack")){
             if(room->askForSkillInvoke(weidingguo, objectName())){
                 if(card->getSkillName() != "shenhuo")
-                    room->playSkillEffect(objectName());
+                    room->playSkillEffect(objectName(), 3);
                 weidingguo->drawCards(2);
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 1;
     }
 };
 
@@ -268,8 +272,11 @@ public:
                 if(player->getPhase() != Player::NotActive)
                     return false;
                 player->property("linmostore") = "";
-                foreach(int a, player->getPile("zi"))
-                    room->throwCard(a);
+                if(!player->getPile("zi").isEmpty()){
+                    room->playSkillEffect(objectName(), 5);
+                    foreach(int a, player->getPile("zi"))
+                        room->throwCard(a);
+                }
             }
             return false;
         }
@@ -291,11 +298,15 @@ public:
                 }
             }
             if(!hassamezi && writer->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 writer->addToPile("zi", use.card->getEffectiveId());
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 3;
     }
 };
 
@@ -762,7 +773,7 @@ public:
 
         ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
 
-        room->playSkillEffect(objectName(), 2);
+        room->playSkillEffect(objectName(), qrand() % 2 + 3);
         if(!player->isNude()){
             DummyCard *dummy = player->wholeHandCards();
             foreach(const Card *ard, player->getEquips())
@@ -776,6 +787,10 @@ public:
         }
         return false;
     }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 1;
+    }
 };
 
 class Qiangqu:public TriggerSkill{
@@ -788,6 +803,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.card && damage.card->inherits("Slash") && damage.to->getGeneral()->isFemale()
             && damage.to->isWounded() && !damage.to->isNude() && player->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
             int card_id = room->askForCardChosen(damage.from, damage.to, "he", objectName());
             RecoverStruct re;
             re.card = Sanguosha->getCard(card_id);
@@ -800,8 +816,10 @@ public:
             log.to << damage.to;
             room->sendLog(log);
             room->recover(damage.to, re, true);
-            room->playSkillEffect(objectName());
-            room->recover(damage.from, re, true);
+            if(player->isWounded()){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                room->recover(damage.from, re, true);
+            }
             return true;
         }
         return false;
@@ -865,12 +883,16 @@ public:
     virtual int getDrawNum(ServerPlayer *x, int n) const{
         Room *room = x->getRoom();
         if(room->askForSkillInvoke(x, objectName())){
-            room->playSkillEffect(objectName());
+            //room->playSkillEffect(objectName(), qrand() % 2 + 1);
 
             x->setFlags(objectName());
             return n - 1;
         }else
             return n;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 1;
     }
 };
 
@@ -902,6 +924,7 @@ public:
         }
         else if(zhugui->getPhase() == Player::Finish){
             zhugui->drawCards(1);
+            room->playSkillEffect(objectName(), 3);
             QList<int> yiji_cards = zhugui->handCards().mid(zhugui->getHandcardNum() - 1);
             room->askForYiji(zhugui, yiji_cards);
         }

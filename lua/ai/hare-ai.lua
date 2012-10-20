@@ -1,6 +1,39 @@
 -- AI for hare package
 
 -- haosiwen
+-- sixiang
+sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
+	local king = self.room:getKingdoms()
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	local targets = {}
+	local delta = 0
+	if king >= 3 then
+		self:sort(self.friends, "handcard")
+		for _, friend in ipairs(self.friends) do
+			if friend:getHandcardNum() < king then
+				table.insert(targets, friend:objectName())
+				delta = delta + (king - friend:getHandcardNum())
+			end
+		end
+		if delta > king then
+			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
+		end
+	else
+		self:sort(self.enemies, "handcard2")
+		for _, enemy in ipairs(self.enemies) do
+			if enemies:getHandcardNum() > king then
+				table.insert(targets, enemy:objectName())
+				delta = delta + (enemy:getHandcardNum() - king)
+			end
+		end
+		if delta >= king then
+			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
+		end
+	end
+end
+
 -- weidingguo
 -- shenhuo
 sgs.ai_skill_invoke["shenhuo"] = true
@@ -35,6 +68,80 @@ end
 -- xiaorang
 -- linmo
 sgs.ai_skill_invoke["linmo"] = true
+
+local linmo_skill={}
+linmo_skill.name = "linmo"
+table.insert(sgs.ai_skills, linmo_skill)
+linmo_skill.getTurnUseCard = function(self)
+	if self.player:hasUsed("LinmoCard") or self.player:isKongcheng() then return end
+	local zis = self.player:getPile("zi")
+	zis = sgs.QList2Table(zis)
+	local words = {} -- all zi not used
+	local aoenames = {}
+	local hasexn = false
+	local hasgodsa = false
+	for _, word in ipairs(zis) do
+		local card = sgs.Sanguosha:getCard(word)
+		table.insert(words, card:objectName())
+		if card:getSubtype() == "aoe"
+			table.insert(aoenames, card:objectName())
+		end
+		if card:objectName() == "ex_nihilo" then
+			hasexn = true
+		elseif card:objectName() == "god_salvation" then
+			hasgodsa = true
+		end
+	end
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	local good, bad = 0, 0
+	for _, friend in ipairs(self.friends) do
+		if friend:isWounded() then
+			good = good + 10/(friend:getHp())
+			if friend:isLord() then good = good + 10/(friend:getHp()) end
+		end
+	end
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:isWounded() then
+			bad = bad + 10/(enemy:getHp())
+			if enemy:isLord() then
+				bad = bad + 10/(enemy:getHp())
+			end
+		end
+	end
+	local card = -1
+	self:sortByUseValue(cards, true)
+	for _, acard in ipairs(cards)  do
+		if acard:inherits("TrickCard") then
+			card = acard:getEffectiveId()
+			break
+		end
+	end
+	if card < 0 then return end
+	for i=1, #aoenames do
+		local newlinmo = aoenames[i]
+		local aoe = sgs.Sanguosha:cloneCard(newlinmo, sgs.Card_NoSuit, 0)
+		if self:getAoeValue(aoe) > -5 then
+			local parsed_card=sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. newlinmo)
+			return parsed_card
+		end
+	end
+	if good > bad and hasgodsa then
+		local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "god_salvation")
+		return parsed_card
+	end
+	if hasexn and self:getCardsNum("Jink") == 0 and self:getCardsNum("Peach") == 0 then
+		local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "ex_nihilo")
+		return parsed_card
+	end
+end
+sgs.ai_skill_use_func["LinmoCard"] = function(card, use, self)
+	local userstring = card:toString()
+	userstring = (userstring:split(":"))[3]
+	local linmocard = sgs.Sanguosha:cloneCard(userstring, card:getSuit(), card:getNumber())
+	self:useTrickCard(linmocard,use)
+	if not use.card then return end
+	use.card = card
+end
 
 -- zhaixing
 sgs.ai_skill_invoke["@zhaixing"] = function(self,prompt)
@@ -123,7 +230,7 @@ end
 sgs.ai_skill_askforag["dalang"] = function(self, card_ids)
 	return card_ids[1]
 end
-sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["hengchong"]
+sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- songqing
 -- jiayao

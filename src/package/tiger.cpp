@@ -218,6 +218,15 @@ public:
 
         QList<ServerPlayer *> nein = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *neinhg, nein){
+            bool canivk = false;
+            foreach(const Card *card, neinhg->getCards("he")){
+                if(card->inherits("TrickCard") || card->inherits("EquipCard")){
+                    canivk = true;
+                    break;
+                }
+            }
+            if(!canivk)
+                continue;
             QVariant tohelp = QVariant::fromValue((PlayerStar)player);
             const Card *yjk = room->askForCard(neinhg, "TrickCard,EquipCard", "@guzong:" + player->objectName(), true, tohelp, CardDiscarded);
             if(yjk){
