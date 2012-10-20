@@ -340,7 +340,7 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 			self:sort(self.enemies, "handcard")
 			target = self.enemies[1]
 		else
-			local players = sgs.QList2Table(self.room:getAlivePlayers())
+			local players = sgs.QList2Table(self.room:getOtherPlayers(self.player))
 			self:sort(players, "handcard")
 			target = players[1]
 		end
@@ -349,7 +349,7 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 		return
 	else
 		use.card = card
-		if use.to then use.to:append(self.friends_noself[1]) end
+		if use.to and #self.friends_noself ~= 0 then use.to:append(self.friends_noself[1]) end
 	end
 end
 sgs.ai_skill_invoke["dingce"] = function(self, data)

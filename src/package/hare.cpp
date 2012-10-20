@@ -960,6 +960,7 @@ public:
 
 ShemiCard::ShemiCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void ShemiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{

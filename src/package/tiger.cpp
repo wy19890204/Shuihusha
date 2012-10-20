@@ -230,6 +230,13 @@ public:
             QVariant tohelp = QVariant::fromValue((PlayerStar)player);
             const Card *yjk = room->askForCard(neinhg, "TrickCard,EquipCard", "@guzong:" + player->objectName(), true, tohelp, CardDiscarded);
             if(yjk){
+                LogMessage log;
+                log.type = "$Guzong";
+                log.card_str = yjk->getEffectIdString();
+                log.from = neinhg;
+                log.arg = objectName();
+                log.to << player;
+                room->sendLog(log);
                 Jink *jink = new Jink(Card::NoSuit, 0);
                 jink->setSkillName(objectName());
                 room->provide(jink);
@@ -444,7 +451,7 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         QList<ServerPlayer *> sanlangs = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *sanlang, sanlangs){
-            if(damage.to->isAlive() && player != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
+            if(damage.from->isAlive() && player != sanlang && sanlang->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName(), qrand() % 3 + 1);
                 room->loseMaxHp(sanlang);
                 DamageStruct dag = damage;

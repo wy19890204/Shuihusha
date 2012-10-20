@@ -335,6 +335,13 @@ end
 sgs.ai_skill_invoke["shihao"] = function(self, data)
 	return self.player:getHandcardNum() >= 3
 end
+sgs.ai_skill_playerchosen["shihao"] = function(self, targets)
+	local wiretap = sgs.Sanguosha:cloneCard("wiretap", sgs.Card_NoSuit, 0)
+	local use = sgs.CardUseStruct()
+	self:useCardWiretap(wiretap, use)
+	return use.to:first()
+end
+
 -- laolian
 sgs.ai_skill_invoke["laolian"] = true
 sgs.ai_skill_playerchosen["laolian"] = function(self, targets)

@@ -806,6 +806,7 @@ public:
                         LogMessage log;
                         log.type = "$Xiagu";
                         log.from = jiuwenlong;
+                        log.arg = objectName();
                         log.to << damage.to;
                         log.card_str = card->getEffectIdString();
                         room->sendLog(log);
