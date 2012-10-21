@@ -1,4 +1,4 @@
---Çà¸Ö
+--é’é’¢
 sgs.ai_skill_invoke.cbqinggang = function(self, data)
 	local damage = data:toDamage()
 	if self:isFriend(damage.to) then
@@ -8,7 +8,7 @@ sgs.ai_skill_invoke.cbqinggang = function(self, data)
 	end
 end
 
---ÁúÅ­
+--é¾™æ€’
 local cblongnu_skill = {}
 cblongnu_skill.name = "cblongnu"
 table.insert(sgs.ai_skills, cblongnu_skill)
@@ -54,7 +54,7 @@ end
 sgs.ai_use_value.CBLongNuCard = 5.98
 sgs.ai_use_priority.CBLongNuCard = 2.7
 
---Ô¡Ñª
+--æµ´è¡€
 local cbyuxue_skill = {}
 cbyuxue_skill.name = "cbyuxue"
 table.insert(sgs.ai_skills, cbyuxue_skill)
@@ -98,7 +98,7 @@ sgs.ai_view_as.cbyuxue = function(card, player, card_place)
 	return ("peach:cbyuxue[%s:%s]=%d"):format(suit, number, card_id)
 end
 
---ÁúÒ÷
+--é¾™åŸ
 sgs.ai_skill_invoke.cblongyin = true
 
 sgs.ai_skill_askforag.cblongyin = function(self, card_ids)
@@ -130,7 +130,7 @@ sgs.ai_skill_askforag.cblongyin = function(self, card_ids)
 	return self.cblongyin
 end
 
---±¸Á¸
+--å¤‡ç²®
 sgs.ai_skill_invoke.cbbeiliang = function(self, data)
 	if self.player:getCards("h"):length() <= 2 then
 		self:speak("cbbeiliang")
@@ -139,7 +139,7 @@ sgs.ai_skill_invoke.cbbeiliang = function(self, data)
 	return false
 end
 
---¾ÛÎä
+--èšæ­¦
 local cbjuwu_skill = {}
 cbjuwu_skill.name = "cbjuwu"
 table.insert(sgs.ai_skills, cbjuwu_skill)
@@ -190,7 +190,7 @@ sgs.ai_card_intention.CBJuWuCard = -70
 
 sgs.dynamic_value.benefit.CBJuWuCard = true
 
---ß±Éñ
+--å¼‘ç¥
 local cbshishen_skill = {}
 cbshishen_skill.name = "cbshishen"
 table.insert(sgs.ai_skills, cbshishen_skill)
@@ -237,7 +237,7 @@ sgs.ai_skill_use_func.CBShiShenCard = function(card, use, self)
 	end
 end
 
---²øÉß
+--ç¼ è›‡
 local cbchanshe_skill = {}
 cbchanshe_skill.name = "cbchanshe"
 table.insert(sgs.ai_skills, cbchanshe_skill)
