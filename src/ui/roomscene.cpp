@@ -2558,14 +2558,15 @@ void RoomScene::addRestartButton(QDialog *dialog){
     {
         QString id = Config.GameMode;
         id.replace("_mini_","");
-        int stage = Config.value("MiniSceneStage",1).toInt();
+        //int stage = Config.value("MiniSceneStage", 1).toInt();
         int current = id.toInt();
-        if((stage == current) && stage<20)
+        //if(stage == current && stage < 20)
+        if(current < 20)
             goto_next = true;
     }
 
     QPushButton *restart_button;
-      restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
+    restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
     QPushButton *return_button = new QPushButton(tr("Return to main menu"));
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();

@@ -418,19 +418,22 @@ void Room::gameOver(const QString &winner){
             }
         }
 
-        if(playerWinner)
-        {
-
+        if(playerWinner){
             QString id = Config.GameMode;
             id.replace("_mini_","");
             int stage = Config.value("MiniSceneStage",1).toInt();
             int current = id.toInt();
-            if((stage == current) && stage<20)
-            {
+            if(stage == current && stage < 20){
                 Config.setValue("MiniSceneStage",current+1);
                 id = QString::number(stage+1).rightJustified(2,'0');
                 id.prepend("_mini_");
                 Config.setValue("GameMode",id);
+                Config.GameMode = id;
+            }
+            else if(current < 20){
+                id = QString::number(current + 1).rightJustified(2, '0');
+                id.prepend("_mini_");
+                Config.setValue("GameMode", id);
                 Config.GameMode = id;
             }
         }
