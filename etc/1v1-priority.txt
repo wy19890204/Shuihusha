@@ -54,7 +54,7 @@ pangwanchun 4
 huyanzhuo 4
 lijun 4
 
-leiheng 2
+leiheng 6
 sunli 3
 wuyanguang 7
 shixiu 8
@@ -67,3 +67,16 @@ yanshun 7
 wangying 7
 lizhong 6
 tora 2
+
+haosiwen 2
+weidingguo 6
+xiaorang 3
+peixuan 5
+ligun 2
+tongwei 4
+songqing 6
+dingdesun 7
+songwan 4
+zhoutong 6
+zhugui 5
+zhaoji 8
