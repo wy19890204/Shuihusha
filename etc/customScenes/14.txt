@@ -1,3 +1,6 @@
-general:select|general2:select|role:rebel
-general:luzhishen|role:lord|maxhp:4|hp:4|equip:halberd|starter:true
-general:luda|role:loyalist|maxhp:4|hp:4|acquireSkills:shalu
+
+general:select role:loyalist 
+general:lili role:rebel 
+general:lijun role:loyalist judge:100 
+general:songjiang role:lord starter:true maxhp:2 hp:2 judge:105 
+general:zhangheng role:rebel judge:212 

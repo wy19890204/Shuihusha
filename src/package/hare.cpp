@@ -1075,7 +1075,7 @@ public:
         ServerPlayer *head = room->getLord();
         if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
            && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), head->faceUp() ? 2 : 1);
             room->setPlayerFlag(head, "NongQ");
             head->turnOver();
             room->setPlayerFlag(head, "-NongQ");

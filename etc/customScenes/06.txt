@@ -1,5 +1,7 @@
-general:select|role:rebel|hp:3|draw:5
-general:linchong|role:rebel|equip:qinggang_sword|starter:true
-general:songwan|role:loyalist|hp:4
-general:wuyanguang|role:lord|maxhp:4|hp:4|draw:6|equip:eight_diagram,silver
-general:zhugui|role:loyalist|hp:4
+
+general:qiongying role:loyalist 
+general:zhangqing role:lord starter:true maxhp:4 hp:4 
+general:sujiang role:rebel maxhp:4 hp:4 
+general:sujiang role:rebel maxhp:4 hp:4 
+general:sujiangf role:rebel maxhp:4 hp:4 
+general:sujiangf role:rebel maxhp:4 hp:4 
