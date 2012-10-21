@@ -134,10 +134,10 @@ void Settings::init(){
 
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
-    roles_ban << "ubuntenkei";
+    roles_ban << "gongsunsheng" << "xiaorang" << "ubuntenkei";
 
-    kof_ban << "andaoquan" << "shixiu"
-            /* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
+    kof_ban << "andaoquan" << "shixiu" << "zhaoji"
+            /* << "shenwuyong" << "wangdingliu"*/;
 
     //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
 
@@ -148,11 +148,10 @@ void Settings::init(){
             hegemony_ban << general;
     }
 
-    pairs_ban << "tongguan" << "tongguanf" << "caijing"
+    pairs_ban << "tongguan" << "tongguanf" << "caijing" << "zhangheng"
               << "gaoqiu+luozhenren" << "wangying+zhangqing" << "wangying+qiongying"
-              << "tianhu+yanshun" << "zhangheng+shixiu" << "husanniang+yanshun"
-              << "shien+andaoquan" << "yanxijiao+guansheng" << "qingzhang+sunerniang"
-              << "lujunyi+shien"
+              << "tianhu+yanshun" << "husanniang+yanshun" << "qingzhang+sunerniang"
+              << "shien+andaoquan" << "yanxijiao+guansheng" << "lujunyi+shien"
               //<< "shenwuyong"
               //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
               //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"

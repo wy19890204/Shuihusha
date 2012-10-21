@@ -1,7 +1,6 @@
 -- AI for hare package
 
 -- haosiwen
-
 -- sixiang
 sgs.ai_card_intention.SixiangCard = function(card, from, tos)
 	for _, to in ipairs(tos) do
@@ -46,7 +45,6 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 end
 
 -- weidingguo
-
 -- shenhuo
 sgs.ai_skill_invoke["shenhuo"] = true
 local shenhuo_skill={}
@@ -78,7 +76,6 @@ function sgs.ai_cardneed.shenhuo(to, card, self)
 end
 
 -- xiaorang
-
 -- linmo
 sgs.ai_skill_invoke["linmo"] = true
 
@@ -225,12 +222,10 @@ sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 end
 
 -- ligun
-
 -- hengchong
 sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- tongwei
-
 -- dalang
 sgs.ai_skill_invoke["dalang"] = function(self, data)
 	if self.player:getHandcardNum() < 2 then return false end
@@ -253,7 +248,6 @@ end
 sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- songqing
-
 -- jiayao
 sgs.ai_skill_invoke["jiayao"] = true
 
@@ -288,7 +282,6 @@ sgs.dingdesun_keep_value =
 }
 
 -- songwan
-
 -- yijie
 sgs.ai_card_intention.YijieCard = -50
 

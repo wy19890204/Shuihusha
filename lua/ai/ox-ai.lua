@@ -82,7 +82,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	self:sort(self.friends_noself, "handcard")
 	for i = #self.friends_noself, 1, -1 do
 		if not self.friends_noself[i]:isKongcheng() and self.player:getKingdom() ~= self.friends_noself[i]:getKingdom() then
-			if max_card then
+			if max_card and max_card:getNumber() > 7 then
 				return "@ZhengfaCard=" .. max_card:getEffectiveId() .. "->" .. self.friends_noself[i]:objectName()
 			end
 		end

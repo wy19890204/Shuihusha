@@ -147,7 +147,9 @@ bool Provistore::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 bool Provistore::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() <= 1;
+    if(targets.isEmpty() && !Self->containsTrick(objectName()))
+        return true;
+    return targets.length() == 1;
 }
 
 void Provistore::takeEffect(ServerPlayer *target, bool good) const{
