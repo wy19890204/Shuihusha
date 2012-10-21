@@ -1969,8 +1969,10 @@ void Room::addRobotCommand(ServerPlayer *player, const QString &){
     const QString robot_avatar = Sanguosha->getRandomGeneralName();
     signup(robot, robot_name, robot_avatar, true);
 
-    QString greeting = tr("Hello, I'm a robot").toUtf8().toBase64();
-    speakCommand(robot, greeting);
+    if(!mode.contains("_mini_")){
+        QString greeting = tr("Hello, I'm a robot").toUtf8().toBase64();
+        speakCommand(robot, greeting);
+    }
 
     broadcastProperty(robot, "state");
 }
