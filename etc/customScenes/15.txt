@@ -1,2 +1,4 @@
-general:luozhenren|general2:select|role:renegade|draw:5
-general:husanniang|general2:wangying|role:lord|maxhp:4|hp:4|equip:169|acquireSkills:shengui|starter:true
+
+general:luzhishen role:loyalist starter:true 
+general:linchong role:lord maxhp:2 hp:1 
+general:dongchaoxueba role:rebel 

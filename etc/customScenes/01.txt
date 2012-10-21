@@ -1,2 +1,4 @@
-﻿general:select|role:rebel|starter:true
-general:gongsunsheng|general2:qiaodaoqing|maxhp:4|hp:3|role:lord|draw:4|equip:ice_sword
+
+general:husanniang role:lord equip:55 
+general:songjiang role:renegade 
+general:wangying role:rebel starter:true 

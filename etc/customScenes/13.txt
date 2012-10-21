@@ -1,4 +1,9 @@
-general:select|role:rebel|starter:true
-general:zhangqing|role:rebel|equip:axe
-general:qiaodaoqing|role:lord|maxhp:4|hp:3|chained:true|equip:lhh
-general:qiongying|role:renegade|maxhp:3|hp:3|chained:true|equip:gold_armor|win:lord
+
+general:songjiang role:rebel maxhp:4 hp:3 
+general:fangla role:rebel maxhp:4 hp:3 
+general:tianhu role:rebel maxhp:4 hp:3 
+general:wangqing role:rebel maxhp:4 hp:3 
+general:tongguan role:loyalist maxhp:4 hp:3 
+general:zhaoji role:lord starter:true maxhp:4 hp:4 
+general:gaoqiu role:loyalist maxhp:3 hp:3 
+general:caijing role:loyalist 

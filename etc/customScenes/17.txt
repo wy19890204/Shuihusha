@@ -1,4 +1,11 @@
-general:select|general2:select|role:lord|draw:5|acquireSkills:sheru|starter:true
-general:dingdesun|role:rebel|acquireSkills:tongxia
-general:dingdesun|role:rebel|turned:true|acquireSkills:jishi
-general:dingdesun|role:rebel|acquireSkills:dingce
+
+general:leiheng role:rebel 
+general:gaolian general2:select role:loyalist maxhp:3 hp:3 
+general:gaolian general2:select role:lord maxhp:4 hp:4 
+general:gaolian general2:select role:loyalist maxhp:3 hp:3 
+general:gaolian general2:select role:loyalist maxhp:3 hp:3 
+general:zhutong role:rebel maxhp:4 hp:3 
+general:daizong role:rebel maxhp:3 hp:2 
+general:gongsunsheng role:rebel starter:true draw:3 equip:208 hand:219 
+general:wuyong role:rebel maxhp:3 hp:2 
+general:sunli role:rebel maxhp:4 hp:3 
