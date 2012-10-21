@@ -1688,6 +1688,11 @@ void Client::speak(const QString &speak_data){
         emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
         return;
     }
+    else if(who == "mini"){
+        QString line = tr("<font color='blue'>Mini</font>: <font color='white'><b>%1</b></font>").arg(text);
+        emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
+        return;
+    }
 
     const ClientPlayer *from = getPlayer(who);
 
