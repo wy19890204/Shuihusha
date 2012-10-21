@@ -89,7 +89,9 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             log.arg2 = objectName();
             room->sendLog(log);
 
-            room->broadcastInvoke("speak", ".:" + objectName());
+            QString mini = Sanguosha->translate("#Mini" + log.arg);
+            room->broadcastInvoke("speak", "mini:" + mini.toUtf8().toBase64());
+            room->broadcastInvoke("speak", "-:");
         }
     }
     QList<ServerPlayer*> players = room->getAllPlayers();

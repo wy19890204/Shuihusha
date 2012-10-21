@@ -2039,10 +2039,12 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
     player->introduceTo(NULL);
 
     if(!is_robot){
-        QString greetingStr = tr("<font color=#EEB422>Player <b>%1</b> joined the game</font>")
-            .arg(Config.ContestMode ? tr("Contestant") : screen_name);
-        speakCommand(player, greetingStr.toUtf8().toBase64());
-        player->startNetworkDelayTest();
+        if(!mode.contains("_mini_")){
+            QString greetingStr = tr("<font color=#EEB422>Player <b>%1</b> joined the game</font>")
+                .arg(Config.ContestMode ? tr("Contestant") : screen_name);
+            speakCommand(player, greetingStr.toUtf8().toBase64());
+            player->startNetworkDelayTest();
+        }
 
         // introduce all existing player to the new joined
         foreach(ServerPlayer *p, m_players){
