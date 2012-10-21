@@ -1689,12 +1689,12 @@ void Client::speak(const QString &speak_data){
         return;
     }
     else if(who == "mini"){
-        QString line = tr("<font color='blue'>Mini</font>: <font color='white'><b>%1</b></font>").arg(text);
+        QString line = tr("<font color='blue'><b>Mini<b></font><font color='white'>: %1</font>").arg(text);
         emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
         return;
     }
     else if(who == "-"){
-        QString line = tr("<font color='red'>--------------------</font>");
+        QString line = tr("<font color='green'>--------------------</font>");
         emit line_spoken(QString("<p style=\"margin:3px 2px;\">%1</p>").arg(line));
         return;
     }
