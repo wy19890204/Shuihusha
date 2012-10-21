@@ -1,2 +1,8 @@
-general:select|role:lord|starter:true|singleTurn:rebel|draw:6|equip:sun_bow
-general:xuning|role:rebel|equip:gold_armor
+
+general:shixiu role:loyalist 
+general:lujunyi role:lord starter:true maxhp:5 hp:1 equip:65 
+general:yanqing role:loyalist 
+general:sujiang role:rebel 
+general:sujiang role:rebel 
+general:sujiang role:rebel 
+general:sujiang role:rebel 

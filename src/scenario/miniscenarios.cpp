@@ -88,6 +88,8 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             log.arg = objectName().mid(6);
             log.arg2 = objectName();
             room->sendLog(log);
+
+            room->broadcastInvoke("speak", objectName());
         }
     }
     QList<ServerPlayer*> players = room->getAllPlayers();

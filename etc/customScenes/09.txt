@@ -1,5 +1,5 @@
-general:select|general2:peixuan|general3:ruanxiaoer|role:loyalist
-general:gongsunsheng|role:rebel|hand:219
-general:gaolian|role:lord|maxhp:4|hp:4|equip:crossbow|starter:true
-general:zhangheng|role:rebel
-general:luozhenren|role:rebel
+
+general:huarong role:rebel maxhp:4 hp:2 
+general:wuyanguang role:lord starter:true maxhp:5 hp:5 equip:209 
+general:guansheng role:rebel maxhp:4 hp:2 
+general:zhangqing role:rebel maxhp:4 hp:2 
