@@ -34,7 +34,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 	else
 		self:sort(self.enemies, "handcard2")
 		for _, enemy in ipairs(self.enemies) do
-			if enemies:getHandcardNum() > king then
+			if enemy:getHandcardNum() > king then
 				table.insert(targets, enemy:objectName())
 				delta = delta + (enemy:getHandcardNum() - king)
 			end
@@ -392,7 +392,7 @@ sgs.ai_skill_invoke["nongquan"] = function(self, data)
 	if lord:hasLordSkill("nongquan") then
 		if self:isFriend(lord) and not lord:faceUp() then
 			return self.player:getHandcardNum() > 1
-		elseif self:isEnemy(lord) and lord:faceUp() then
+		elseif self:isEnemy(lord) and lord:faceUp() and lord:getHandcardNum() < 3 then
 			return self.player:getHandcardNum() > 2
 		end
 	end
