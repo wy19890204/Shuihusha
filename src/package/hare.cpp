@@ -744,10 +744,10 @@ public:
     virtual const Card *viewAs() const{
         return new YijieCard;
     }
-/*
+
     virtual bool isEnabledAtPlay(const Player *player) const{
         return !player->hasUsed("YijieCard");
-    }*/
+    }
 };
 
 class Yijie: public TriggerSkill{
@@ -826,50 +826,78 @@ public:
     }
 };
 
+HuatianCard::HuatianCard(){
+    mute = true;
+}
+
+bool HuatianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(Self->getMark("Huatian") == 1)
+        return to_select != Self && to_select->isWounded();
+    else if(Self->getMark("Huatian") == 2)
+        return to_select != Self;
+    return false;
+}
+
+void HuatianCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    if(effect.from->getMark("Huatian") == 1){
+        RecoverStruct recovvv;
+        recovvv.who = effect.from;
+        room->playSkillEffect("huatian", qrand() % 2 + 1);
+        room->recover(effect.to, recovvv, true);
+    }
+    else if(effect.from->getMark("Huatian") == 2){
+        room->playSkillEffect("huatian", qrand() % 2 + 3);
+        DamageStruct damage;
+        damage.from = effect.from;
+        damage.to = effect.to;
+        room->damage(damage);
+    }
+}
+
+class HuatianViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    HuatianViewAsSkill():ZeroCardViewAsSkill("huatian"){
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@huatian";
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual const Card *viewAs() const{
+        return new HuatianCard;
+    }
+};
+
 class Huatian:public TriggerSkill{
 public:
     Huatian():TriggerSkill("huatian"){
         events << Damaged << HpRecovered;
+        view_as_skill = new HuatianViewAsSkill;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
             for(int i = 0; i < damage.damage; i++){
-                QList<ServerPlayer *> wounders;
-                foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to)){
-                    if(tmp->isWounded())
-                        wounders << tmp;
-                }
-                if(!wounders.isEmpty()){
-                    room->setPlayerMark(player, "HBTJ", 1);
-                    if(!damage.to->askForSkillInvoke(objectName())){
-                        room->setPlayerMark(player, "HBTJ", 0);
-                        break;
-                    }
-                    ServerPlayer *target = room->askForPlayerChosen(player, wounders, objectName());
-                    room->setPlayerMark(player, "HBTJ", 0);
-                    RecoverStruct recovvv;
-                    recovvv.who = player;
-                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                    room->recover(target, recovvv, true);
-                }
+                room->setPlayerMark(player, "Huatian", 1);
+                room->askForUseCard(player, "@@huatian", "@huatianai", true);
+                room->setPlayerMark(player, "Huatian", 0);
             }
-            return false;
         }
-        RecoverStruct rec = data.value<RecoverStruct>();
-        for(int i = rec.recover; i > 0; i--){
-            if(!player->askForSkillInvoke(objectName()))
-                break;
-            room->setPlayerMark(player, "HBTJ", 2);
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
-            room->setPlayerMark(player, "HBTJ", 0);
-
-            room->playSkillEffect(objectName(), qrand() % 2 + 3);
-            DamageStruct damage;
-            damage.from = player;
-            damage.to = target;
-            room->damage(damage);
+        else{
+            RecoverStruct rec = data.value<RecoverStruct>();
+            for(int i = rec.recover; i > 0; i--){
+                room->setPlayerMark(player, "Huatian", 2);
+                room->askForUseCard(player, "@@huatian", "@huatiancuo", true);
+                room->setPlayerMark(player, "Huatian", 0);
+            }
         }
         return false;
     }
@@ -1047,7 +1075,7 @@ public:
         ServerPlayer *head = room->getLord();
         if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
            && otherguan->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), head->faceUp() ? 2 : 1);
             room->setPlayerFlag(head, "NongQ");
             head->turnOver();
             room->setPlayerFlag(head, "-NongQ");
@@ -1114,6 +1142,7 @@ HarePackage::HarePackage()
     addMetaObject<BinggongCard>();
     addMetaObject<SheyanCard>();
     addMetaObject<YijieCard>();
+    addMetaObject<HuatianCard>();
     addMetaObject<ShemiCard>();
 }
 

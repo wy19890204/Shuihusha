@@ -894,7 +894,7 @@ end
 function sgs.isRolePredictable()
 	if sgs.GetConfig("RolePredictable", true) then return true end
 	local mode = string.lower(global_room:getMode())
-	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("04_1v3") or mode == "06_3v3" or mode:find("mini") then return true end
+	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("dusong") or mode == "06_3v3" or mode:find("mini") then return true end
 	return false
 end
 
@@ -3197,6 +3197,9 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 			return false
 		end
 		if player:hasSkill("jueming") and player ~= self.room:getCurrent() and card:inherits("Duel") or card:inherits("Assassinate") then
+			return false
+		end
+		if player:hasSkill("qianshui") and not self.player:getWeapon() and card:inherits("Assassinate") then
 			return false
 		end
 	end

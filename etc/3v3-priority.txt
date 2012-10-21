@@ -54,7 +54,7 @@ luozhenren 5
 linniangzi 5
 gaolian 4
 
-leiheng 5
+leiheng 8
 sunli 5
 wuyanguang 1
 shixiu 9
@@ -67,3 +67,16 @@ yanshun 3
 wangying 5
 lizhong 4
 tora 5
+
+haosiwen 7
+weidingguo 7
+xiaorang 3
+peixuan 6
+ligun 6
+tongwei 4
+songqing 3
+dingdesun 8
+songwan 6
+zhoutong 7
+zhugui 5
+zhaoji 3

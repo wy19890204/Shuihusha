@@ -7,6 +7,7 @@
 #include "engine.h"
 
 GuibingCard::GuibingCard(){
+    mute = true;
 }
 
 bool GuibingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -22,6 +23,7 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
     judge.reason = objectName();
     judge.who = gaolian;
 
+    room->playSkillEffect("guibing", 2);
     room->judge(judge);
 
     if(judge.isGood()){
@@ -70,7 +72,7 @@ public:
             judge.reason = objectName();
             judge.who = gaolian;
 
-            room->playSkillEffect(objectName());
+            room->playSkillEffect(objectName(), 2);
             room->judge(judge);
 
             if(judge.isGood()){
@@ -83,6 +85,10 @@ public:
                 room->setPlayerFlag(gaolian, "Guibing");
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return 1;
     }
 };
 
