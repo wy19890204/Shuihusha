@@ -78,6 +78,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             int n = num.toInt();
             if(n > 0)
                 player->drawCards(n, false);
+            room->getThread()->trigger(DrawNCardsDone, room, player, num);
             break;
         }
 

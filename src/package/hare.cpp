@@ -911,12 +911,31 @@ public:
     virtual int getDrawNum(ServerPlayer *x, int n) const{
         Room *room = x->getRoom();
         if(room->askForSkillInvoke(x, objectName())){
-            //room->playSkillEffect(objectName(), qrand() % 2 + 1);
-
             x->setFlags(objectName());
             return n - 1;
         }else
             return n;
+    }
+
+    virtual void drawDone(ServerPlayer *zhugui, int) const{
+        if(!zhugui->hasFlag(objectName()))
+            return;
+        Room *room = zhugui->getRoom();
+        Wiretap *wp = new Wiretap(Card::NoSuit, 0);
+        wp->setSkillName(objectName());
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *target, room->getOtherPlayers(zhugui)){
+            if(!target->isProhibited(target, wp))
+                targets << target;
+        }
+        if(!targets.isEmpty()){
+            PlayerStar target = room->askForPlayerChosen(zhugui, targets, objectName());
+            CardUseStruct use;
+            use.card = wp;
+            use.from = zhugui;
+            use.to << target;
+            room->useCard(use);
+        }
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
@@ -930,33 +949,13 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *zhugui) const{
-        if(!zhugui->hasFlag("shihao"))
-            return false;
-        Room *room = zhugui->getRoom();
-        if(zhugui->getPhase() == Player::Play){
-            Wiretap *wp = new Wiretap(Card::NoSuit, 0);
-            wp->setSkillName("shihao");
-            QList<ServerPlayer *> targets;
-            foreach(ServerPlayer *target, room->getOtherPlayers(zhugui)){
-                if(!target->isProhibited(target, wp))
-                    targets << target;
-            }
-            if(targets.isEmpty())
-                return false;
-            PlayerStar target = room->askForPlayerChosen(zhugui, targets, "shihao");
-            CardUseStruct use;
-            use.card = wp;
-            use.from = zhugui;
-            use.to << target;
-            room->useCard(use);
-        }
-        else if(zhugui->getPhase() == Player::Finish){
+        if(zhugui->hasFlag("shihao") && zhugui->getPhase() == Player::Finish){
             zhugui->drawCards(1);
-            room->playSkillEffect(objectName(), 3);
+            Room *room = zhugui->getRoom();
+            room->playSkillEffect("shihao", 3);
             QList<int> yiji_cards = zhugui->handCards().mid(zhugui->getHandcardNum() - 1);
             room->askForYiji(zhugui, yiji_cards);
         }
-
         return false;
     }
 };

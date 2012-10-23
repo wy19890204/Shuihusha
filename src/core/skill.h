@@ -164,6 +164,7 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual int getDrawNum(ServerPlayer *player, int n) const = 0;
+    virtual void drawDone(ServerPlayer *player, int n) const = 0;
 };
 
 class SlashBuffSkill: public TriggerSkill{

@@ -262,12 +262,15 @@ bool PhaseChangeSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVaria
 DrawCardsSkill::DrawCardsSkill(const QString &name)
     :TriggerSkill(name)
 {
-    events << DrawNCards;
+    events << DrawNCards << DrawNCardsDone;
 }
 
-bool DrawCardsSkill::trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
+bool DrawCardsSkill::trigger(TriggerEvent event, Room*, ServerPlayer *player, QVariant &data) const{
     int n = data.toInt();
-    data = getDrawNum(player, n);
+    if(event == DrawNCards)
+        data = getDrawNum(player, n);
+    else
+        drawDone(player, n);
     return false;
 }
 

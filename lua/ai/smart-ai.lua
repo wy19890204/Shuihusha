@@ -1578,6 +1578,7 @@ function SmartAI:filterEvent(event, player, data)
 		local card = struct.card
 		local from = struct.from
 		local to = struct.to
+	--	if not card then return end
 		if card:inherits("Collateral") then sgs.ai_collateral = true end
 		if card:inherits("Dismantlement") or card:inherits("Snatch") or card:getSkillName() == "shentou" then
 			sgs.ai_snat_disma_effect = true
