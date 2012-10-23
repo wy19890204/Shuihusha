@@ -105,10 +105,6 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
         layout->addRow(tr("Max HP scheme"), max_hp_label);
     if(ServerInfo.EnableReincarnation)
         layout->addRow(tr("Reincarnation Rule"), reincarnation_label);
-    if(ServerInfo.EnableScene)
-        layout->addRow(tr("Scene Mode"), scene_label);
-    if(ServerInfo.EnableSame)
-        layout->addRow(tr("Same Mode"), same_label);
     if(ServerInfo.EnableEndless)
         layout->addRow(tr("Endless Mode"), endless_label);
     if(ServerInfo.EnableAnzhan)
@@ -118,6 +114,10 @@ ServerInfoWidget::ServerInfoWidget(bool show_lack)
     if(ServerInfo.EnableHegemony)
         layout->addRow(tr("Hegemony Mode"), hegemony_label);
     layout->addRow(tr("Free choose"), free_choose_label);
+    if(ServerInfo.EnableScene)
+        layout->addRow(tr("Scene Mode"), scene_label);
+    if(ServerInfo.EnableSame)
+        layout->addRow(tr("Same Mode"), same_label);
     layout->addRow(tr("Enable AI"), enable_ai_label);
     layout->addRow(tr("Operation time"), time_limit_label);
     layout->addRow(tr("Extension packages"), list_widget);

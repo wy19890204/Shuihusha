@@ -76,16 +76,16 @@ public:
             log.from = jingmuan;
             log.arg2 = objectName();
             if(total <= x){
-                jingmuan->throwAllHandCards();
-                jingmuan->throwAllEquips();
                 log.type = "#SixiangWorst";
                 log.arg = QString::number(total);
                 room->sendLog(log);
+                jingmuan->throwAllHandCards();
+                jingmuan->throwAllEquips();
             }else{
-                room->askForDiscard(jingmuan, objectName(), x, false, true);
                 log.type = "#SixiangBad";
                 log.arg = QString::number(x);
                 room->sendLog(log);
+                room->askForDiscard(jingmuan, objectName(), x, false, true);
             }
         }
         return false;

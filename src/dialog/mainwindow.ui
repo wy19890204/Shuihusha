@@ -332,9 +332,6 @@
    <property name="text">
     <string>PC Console Start</string>
    </property>
-   <property name="shortcut">
-    <string>Return</string>
-   </property>
   </action>
   <action name="actionPackaging">
    <property name="text">

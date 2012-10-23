@@ -863,12 +863,12 @@ sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
 			end
 		end
 		local max_card = self:getMaxCard()
-		if target and max_card then
+		if target and max_card and max_card > 10 then
 			use.card = sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
 			if use.to then use.to:append(target) end
 		else
 			for _, friend in ipairs(self.friends_noself) do
-				if friend:getHandcardNum() > 3 and not friend:isWounded()
+				if friend:getHandcardNum() > 5 and not friend:isWounded()
 					and friend:getGeneral():isMale() then
 					target = friend
 					break
@@ -1240,7 +1240,7 @@ meihuo_skill={}
 meihuo_skill.name = "meihuo"
 table.insert(sgs.ai_skills, meihuo_skill)
 meihuo_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("MeihuoCard") or not self.player:isWounded() then return end
+	if self.player:hasUsed("MeihuoCard") then return end
 	local cards = self.player:getCards("h")
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
@@ -1252,8 +1252,16 @@ meihuo_skill.getTurnUseCard = function(self)
 	return
 end
 sgs.ai_skill_use_func["MeihuoCard"] = function(card, use, self)
+	self:sort(self.friends, "hp")
 	for _, friend in ipairs(self.friends) do
-		if friend:isWounded() and friend:getGeneral():isMale() then
+		if friend:getGeneral():isMale() and self:isWeak(friend) then
+			use.card = card
+			if use.to then use.to:append(friend) end
+			return
+		end
+	end
+	for _, friend in ipairs(self.friends_noself) do
+		if friend:getGeneral():isMale() and friend:isWounded() then
 			use.card = card
 			if use.to then use.to:append(friend) end
 			return

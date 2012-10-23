@@ -74,6 +74,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         if(!player->property("win").isNull()){
             room->gameOver(player->property("win").toString());
         }
+        return false;
     }
     if(player->getRoom()->getTag("WaitForPlayer").toBool())
         return true;
