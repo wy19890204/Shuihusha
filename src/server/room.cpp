@@ -1493,7 +1493,7 @@ void Room::resetAI(ServerPlayer *player){
     }
 }
 
-void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, const QString &old_general){
+void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, bool general2){
     LogMessage log;
     log.type = "#Transfigure";
     log.from = player;
@@ -1503,7 +1503,7 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(new_general);
     player->invoke("transfigure", transfigure_str);
 
-    if(Config.Enable2ndGeneral && !old_general.isEmpty() && player->getGeneral2Name() == old_general){
+    if(general2){
         setPlayerProperty(player, "general2", new_general);
         broadcastProperty(player, "general2");
     }
@@ -1521,6 +1521,15 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     broadcastProperty(player, "hp");
 
     resetAI(player);
+}
+
+void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, const QString &old_general){
+    bool general2 = Config.Enable2ndGeneral && !old_general.isEmpty() && player->getGeneral2Name() == old_general;
+    return transfigure(player, new_general, full_state, invoke_start, general2);
+}
+
+void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start){
+    return transfigure(player, new_general, full_state, invoke_start, false);
 }
 
 lua_State *Room::getLuaState() const{

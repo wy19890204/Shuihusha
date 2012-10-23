@@ -875,6 +875,8 @@ public:
 	QList<ServerPlayer *> findPlayersBySkillName(const char *skill_name, bool include_dead = false) const;
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
+	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start, bool general2);
+	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start, const char *old_general);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
 	void swapSeat(ServerPlayer *a, ServerPlayer *b);
 	lua_State *getLuaState() const;
