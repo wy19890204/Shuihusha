@@ -1474,8 +1474,10 @@ public:
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 likui->obtainCard(judge.card);
                 QString key = damage.card->metaObject()->className();
-                room->askForChoice(likui, key, "d+2");
                 likui->addHistory(key, -1);
+                Self->addHistory(key, -1);
+                //likui->invoke("addHistory", key);
+                //room->broadcastInvoke("addHistory", "pushPile");
             }
             else
                 room->playSkillEffect(objectName(), 3);

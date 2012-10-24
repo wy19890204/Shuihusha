@@ -646,8 +646,10 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             //xiaobawang
             if(!Config.BanPackages.contains("events")){
                 DamageStruct damage = data.value<DamageStruct>();
+                if(!damage.from || !damage.to)
+                    break;
                 ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
-                if(damage.from && source && source != player && player->getGender() != damage.to->getGender()){
+                if(source && source != player && player->getGender() != damage.to->getGender()){
                     QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName());
                     source->tag["Xiaob"] = QVariant::fromValue((PlayerStar)damage.from);
                     room->askForUseCard(source, "Xiaobawang", prompt);
@@ -662,7 +664,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 DamageStruct damage = data.value<DamageStruct>();
                 ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
                 if(damage.from && damage.from == source){
-                    if(damage.from->getGender() == damage.to->getGender()){
+                    if(damage.to && damage.from->getGender() == damage.to->getGender()){
                         const Card *e = room->askForCard(source, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
                         if(e){
                             source->playCardEffect("@xiaobawang2");

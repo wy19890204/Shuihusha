@@ -563,10 +563,6 @@ public:
         frequency = Frequent;
     }
 
-    virtual int getPriority() const{
-        return -1;
-    }
-
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         if(room->getCurrent() == player && player->getPhase() == Player::Play){
             if(!player->hasEquip())
