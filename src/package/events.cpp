@@ -238,6 +238,10 @@ void Xiaobawang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     room->askForDiscard(target, "xiaobawang", qMin(target->getHandcardNum(), 2));
 }
 
+bool Xiaobawang::isAvailable(const Player *) const{
+    return false;
+}
+
 EventsPackage::EventsPackage()
     :Package("events_package")
 {

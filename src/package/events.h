@@ -104,6 +104,7 @@ class Xiaobawang:public EventsCard{
 public:
     Q_INVOKABLE Xiaobawang(Card::Suit suit, int number);
 
+    virtual bool isAvailable(const Player *p) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 

@@ -863,7 +863,7 @@ sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
 			end
 		end
 		local max_card = self:getMaxCard()
-		if target and max_card and max_card > 10 then
+		if target and max_card and max_card:getNumber() > 10 then
 			use.card = sgs.Card_Parse("@DaleiCard=" .. max_card:getEffectiveId())
 			if use.to then use.to:append(target) end
 		else

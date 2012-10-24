@@ -3,6 +3,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "standard-generals.h"
+#include "plough.h"
 
 GanlinCard::GanlinCard(){
     will_throw = false;
@@ -1396,7 +1397,6 @@ public:
     }
 };
 
-#include "plough.h"
 class Mitan: public OneCardViewAsSkill{
 public:
     Mitan():OneCardViewAsSkill("mitan"){
@@ -1451,29 +1451,18 @@ public:
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
-        events << Damage << PhaseChange;
+        events << Damage;
     }
 
     virtual int getPriority() const{
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *likui, QVariant &data) const{
-        if(e == PhaseChange){
-            if(likui->getPhase() == Player::NotActive)
-                room->setPlayerMark(likui, "shalu", 0);
-            return false;
-        }
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *likui, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.card || damage.from != likui)
+        if(likui->getPhase() != Player::Play || !damage.card || !damage.card->inherits("Slash"))
             return false;
-        if(likui->getPhase() == Player::Play && damage.card->inherits("Slash")){
-            if(likui->hasMark("shalu") && !likui->hasWeapon("crossbow")
-                && !likui->hasSkill("paoxiao") && !likui->hasSkill("qinlong")
-                && !(likui->hasSkill("yinyu") && likui->hasMark("@stones")))
-                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") - 1);
-            if(!room->askForSkillInvoke(likui, objectName(), data))
-                return false;
+        if(room->askForSkillInvoke(likui, objectName(), data)){
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(spade|club):(.*)");
             judge.good = true;
@@ -1484,7 +1473,9 @@ public:
             if(judge.isGood()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 likui->obtainCard(judge.card);
-                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
+                QString key = damage.card->metaObject()->className();
+                room->askForChoice(likui, key, "d+2");
+                likui->addHistory(key, -1);
             }
             else
                 room->playSkillEffect(objectName(), 3);

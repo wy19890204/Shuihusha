@@ -1,6 +1,6 @@
 
-general:likui role:lord starter:true maxhp:5 hp:5 
-general:tora role:rebel maxhp:3 hp:3 
-general:tora role:rebel maxhp:2 hp:2 
-general:tora role:rebel maxhp:2 hp:2 
-general:tora role:rebel maxhp:3 hp:3 
+general:likui role:lord starter:true maxhp:5 hp:5
+general:tora role:rebel maxhp:2 hp:2 draw:2
+general:tora role:rebel maxhp:2 hp:2 draw:2
+general:tora role:rebel maxhp:2 hp:2 draw:2
+general:tora role:rebel maxhp:2 hp:2 draw:2

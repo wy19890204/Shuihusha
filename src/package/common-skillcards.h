@@ -54,6 +54,7 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+typedef Skill SkillClass;
 class UbundCard: public SkillCard{
     Q_OBJECT
 

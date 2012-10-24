@@ -705,10 +705,12 @@ void Player::addHistory(const QString &name, int times){
     history[name] += times;
 }
 
+int Player::usedTimes(const QString &card_class, int init) const{
+    return history.value(card_class, init);
+}
+
 int Player::getSlashCount() const{
-    return history.value("Slash", 0)
-            + history.value("ThunderSlash", 0)
-            + history.value("FireSlash", 0);
+    return usedTimes("Slash") + usedTimes("ThunderSlash") + usedTimes("FireSlash");
 }
 
 void Player::clearHistory(){
@@ -717,10 +719,6 @@ void Player::clearHistory(){
 
 bool Player::hasUsed(const QString &card_class) const{
     return history.value(card_class, 0) > 0;
-}
-
-int Player::usedTimes(const QString &card_class) const{
-    return history.value(card_class, 0);
 }
 
 QSet<const TriggerSkill *> Player::getTriggerSkills() const{

@@ -265,6 +265,10 @@ DrawCardsSkill::DrawCardsSkill(const QString &name)
     events << DrawNCards << DrawNCardsDone;
 }
 
+void DrawCardsSkill::drawDone(ServerPlayer *, int) const{
+    return;
+}
+
 bool DrawCardsSkill::trigger(TriggerEvent event, Room*, ServerPlayer *player, QVariant &data) const{
     int n = data.toInt();
     if(event == DrawNCards)

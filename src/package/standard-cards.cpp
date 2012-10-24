@@ -24,8 +24,7 @@ bool Slash::IsAvailable(const Player *player){
     if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
         return false;
 
-    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
-        || (player->hasSkill("shalu") && player->hasMark("shalu"));
+    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow();
 }
 
 bool Slash::isAvailable(const Player *player) const{

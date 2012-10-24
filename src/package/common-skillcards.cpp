@@ -160,7 +160,7 @@ UbundCard::UbundCard(){
 }
 
 bool UbundCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select != Self;
+    return true;
 }
 
 bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
@@ -169,18 +169,33 @@ bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Play
 
 void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.isEmpty()){
-        QStringList skills = source->getVisibleSkillList("ubun");
-        if(skills.isEmpty())
-            return;
-        QString ski = room->askForChoice(source, "ubund", skills.join("+"));
-        room->detachSkillFromPlayer(source, ski);
+        QStringList genlist = Sanguosha->getLimitedGeneralNames();
+        qShuffle(genlist);
+        genlist = genlist.mid(0, 4);
+        QString general = room->askForGeneral(source, genlist);
+        QStringList choices;
+        foreach(const SkillClass *skill, Sanguosha->getGeneral(general)->getVisibleSkillList())
+            choices << skill->objectName();
+        if(!choices.isEmpty()){
+            QString ski = room->askForChoice(source, "ubund", choices.join("+"));
+            room->acquireSkill(source, ski);
+        }
     }
     else{
         ServerPlayer *target = targets.first();
-        QStringList skills = target->getVisibleSkillList("ubun");
-        if(!skills.isEmpty()){
-            QString ski = room->askForChoice(source, "ubund", skills.join("+"));
-            room->acquireSkill(source, ski);
+        if(target == source){
+            QStringList skills = source->getVisibleSkillList("ubun");
+            if(!skills.isEmpty()){
+                QString ski = room->askForChoice(source, "ubund", skills.join("+"));
+                room->detachSkillFromPlayer(source, ski);
+            }
+        }
+        else{
+            QStringList skills = target->getVisibleSkillList("ubun");
+            if(!skills.isEmpty()){
+                QString ski = room->askForChoice(source, "ubund", skills.join("+"));
+                room->acquireSkill(source, ski);
+            }
         }
     }
 }

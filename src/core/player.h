@@ -189,7 +189,7 @@ public:
     void addHistory(const QString &name, int times = 1);
     void clearHistory();
     bool hasUsed(const QString &card_class) const;
-    int usedTimes(const QString &card_class) const;
+    int usedTimes(const QString &card_class, int init = 0) const;
     int getSlashCount() const;
 
     QSet<const TriggerSkill *> getTriggerSkills() const;
