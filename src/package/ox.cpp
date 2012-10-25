@@ -79,10 +79,11 @@ public:
                 Slash *slash = new Slash(Card::NoSuit, 0);
                 slash->setSkillName(objectName());
                 room->provide(slash);
+            }
+            else{
+                room->setPlayerFlag(gaolian, "Guibing");
                 return true;
             }
-            else
-                room->setPlayerFlag(gaolian, "Guibing");
         }
         return false;
     }

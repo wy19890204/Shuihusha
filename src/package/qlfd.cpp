@@ -455,10 +455,8 @@ public:
             if(man == white)
                 continue;
             const Card *slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
-            if(slash){
+            if(slash)
                 room->provide(slash);
-                return true;
-            }
         }
         return false;
     }

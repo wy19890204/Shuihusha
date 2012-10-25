@@ -509,8 +509,6 @@ public:
                     room->provide(jink);
                     room->setEmotion(player, "good");
                     player->playCardEffect("Eeight_diagram1");
-
-                    return true;
                 }else{
                     player->playCardEffect("Eeight_diagram2");
                     room->setEmotion(player, "bad");

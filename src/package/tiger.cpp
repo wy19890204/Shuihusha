@@ -248,7 +248,6 @@ public:
                         room->throwCard(first, player, neinhg);
                     }
                 }
-                return true;
             }
         }
         return false;
