@@ -972,8 +972,15 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         QList<const Skill *> skills;
         foreach(QString skill_name, skill_names){
             const Skill *skill = Sanguosha->getSkill(skill_name);
-            if(skill && !skill->inherits("WeaponSkill") && !skill->inherits("ArmorSkill"))
-                skills << skill;
+            if(skill){
+                if(skill->getFrequency() == Skill::NotSkill)
+                    continue;
+                if(player->getGeneral()->hasSkill(skill_name) ||
+                   (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
+                    continue;
+                if(skill->getLocation() == Skill::Right)
+                    skills << skill;
+            }
         }
 
         if(!skills.isEmpty()){

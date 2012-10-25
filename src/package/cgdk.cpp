@@ -136,7 +136,7 @@ public:
         QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
         if(!fanruis.isEmpty()){
             foreach(ServerPlayer *fanrui, fanruis){
-                if(!fanrui->hasMark("wudao") && fanrui->isKongcheng())
+                if(!fanrui->hasMark("wudao_wake") && fanrui->isKongcheng())
                     return true;
             }
         }
@@ -160,7 +160,7 @@ public:
             room->getThread()->delay(2500);
 
             room->drawCards(fanrui, 2);
-            room->setPlayerMark(fanrui, objectName(), 1);
+            room->setPlayerMark(fanrui, "wudao_wake", 1);
             room->loseMaxHp(fanrui);
             room->acquireSkill(fanrui, "butian");
             room->acquireSkill(fanrui, "qimen");
