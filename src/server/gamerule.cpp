@@ -250,6 +250,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             player->setFlags("init_wake");
             player->setFlags("-init_wake");
         }
+
         if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
                 QString new_kingdom = room->askForKingdom(player);
                 room->setPlayerProperty(player, "kingdom", new_kingdom);
@@ -260,9 +261,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 log.arg = new_kingdom;
                 room->sendLog(log);
             }
-
-            if(player->isLord())
-                setGameProcess(room);
 
             if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
                 LogMessage log;
@@ -292,6 +290,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
                 room->setTag("AnzhanInit", true);
             }
+
+            if(player->isLord())
+                setGameProcess(room);
 
             if(Config.EnableReincarnation){
                 int count = Sanguosha->getPlayerCount(room->getMode());
@@ -755,6 +756,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
             effect.to->removeMark("qinggang");
 
+            room->getThread()->trigger(SlashHitDone, room, player, data);
             break;
         }
 

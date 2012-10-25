@@ -224,6 +224,20 @@ end
 -- ligun
 -- hengchong
 sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
+sgs.ai_skill_cardask["@hengchong"] = function(self, data)
+	if self.room:getAlivePlayers():length() == 2 then return "." end
+	local effect = data:toSlashEffect()
+	local suit = effect.slash:getSuitString()
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuitString() == suit then
+			return card:getEffectiveId()
+		end
+	end
+	return "."
+end
 
 -- tongwei
 -- dalang

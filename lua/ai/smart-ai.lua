@@ -2776,19 +2776,33 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 
 	if selfonly then return n end
 	if class_name == "Jink" then
-		if player:hasSkill("yuanyin") then
-			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
-				local equips = target:getEquips()
-				for _, equip in sgs.qlist(equips) do
-					if not equip:inherits("Weapon") then
+		for _, target in sgs.qlist(self.room:getAlivePlayers()) do
+			if target:hasSkill("guzong") and self:isFriend(target) then
+				local cards = self.player:getCards("he")
+				cards=sgs.QList2Table(cards)
+				for _, card in ipairs(cards) do
+					if card:inherits("EquipCard") or card:inherits("TrickCard") then
 						n = n + 1
 					end
 				end
 			end
 		end
+		if player:hasSkill("yuanyin") then
+			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
+				if target:getArmor() then
+					n = n + 1
+				end
+				if target:getDefensiveHorse() then
+					n = n + 1
+				end
+				if target:getOffensiveHorse() then
+					n = n + 1
+				end
+			end
+		end
 	elseif class_name == "Slash" then
 		if player:hasSkill("guibing") then
-			n = 100
+			n = n + 4
 		end
 		if player:hasSkill("yuanyin") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do

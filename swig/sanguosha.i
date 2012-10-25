@@ -498,6 +498,7 @@ enum TriggerEvent{
 	SlashProceed,
 	SlashHit,
 	SlashMissed,
+	SlashHitDone,
 
 	JinkUsed,
 

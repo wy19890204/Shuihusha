@@ -493,22 +493,42 @@ public:
 class Hengchong: public TriggerSkill{
 public:
     Hengchong():TriggerSkill("hengchong"){
-        events << SlashMissed;
+        events << SlashMissed << SlashHitDone;
     }
 
     static QList<ServerPlayer *> getNextandPrevious(ServerPlayer *target){
         QList<ServerPlayer *> targets;
         targets << target->getNextAlive();
-        foreach(ServerPlayer *tmp, target->getRoom()->getOtherPlayers(target)){
-            if(tmp->getNextAlive() == target){
-                targets << tmp;
-                break;
+        if(target->getRoom()->getAlivePlayers().count() > 2){
+            foreach(ServerPlayer *tmp, target->getRoom()->getOtherPlayers(target)){
+                if(tmp->getNextAlive() == target){
+                    targets << tmp;
+                    break;
+                }
             }
         }
         return targets;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == SlashHitDone){
+            if(player->hasFlag("Hengchong")){
+                SlashEffectStruct effect = data.value<SlashEffectStruct>();
+                ServerPlayer *target = room->askForPlayerChosen(player, getNextandPrevious(effect.to), objectName());
+                DamageStruct damage;
+                damage.from = player;
+                damage.to = target;
+
+                LogMessage log;
+                log.type = "#Hengchong";
+                log.from = player;
+                log.arg = objectName();
+                room->sendLog(log);
+                room->damage(damage);
+            }
+            room->setPlayerFlag(player, "-Hengchong");
+            return false;
+        }
         if(player->getWeapon())
             return false;
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
@@ -518,21 +538,15 @@ public:
         CardStar card = room->askForCard(player, pattern, prompt, true, data, CardDiscarded);
         if(card){
             room->playSkillEffect(objectName());
-            room->slashResult(effect, NULL);
-            ServerPlayer *target = room->askForPlayerChosen(player, getNextandPrevious(effect.to), objectName());
-            DamageStruct damage;
-            damage.from = player;
-            damage.to = target;
-            room->damage(damage);
-
+            room->setPlayerFlag(player, "Hengchong");
             LogMessage log;
-            log.type = "#Hengchong";
+            log.type = "$Hengchong";
             log.from = player;
-            log.to << effect.to << target;
+            log.card_str = card->getEffectIdString();
             log.arg = objectName();
-            log.arg2 = card->objectName();
             room->sendLog(log);
 
+            room->slashResult(effect, NULL);
             return true;
         }
         return false;

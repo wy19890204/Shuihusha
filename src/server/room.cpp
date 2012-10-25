@@ -862,11 +862,9 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     arg[1] = from ? toJsonString(from->objectName()) : Json::Value::null;
     arg[2] = to ? toJsonString(to->objectName()) : Json::Value::null;
 
-    foreach (ServerPlayer *player, m_players){
-        if(player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick()))
-        {
-            if (player->isOnline())
-            {
+    foreach (ServerPlayer *player, m_alivePlayers){
+        if(player->hasNullification(trick->inherits("SingleTargetTrick") && trick->isNDTrick())){
+            if (player->isOnline()){
                 player->m_commandArgs = arg;
                 validHumanPlayers << player;
             }

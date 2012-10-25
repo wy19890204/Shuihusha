@@ -199,8 +199,7 @@ function SmartAI:useCardAssassinate(ass, use)
 		if target then
 			use.to:append(target)
 		else
-			local r = math.random(1, #self.enemies)
-			use.to:append(self.enemies[r])
+			use.to:append(self.enemies[1])
 		end
 	end
 end
