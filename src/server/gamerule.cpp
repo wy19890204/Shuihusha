@@ -759,8 +759,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->damage(damage);
 
             effect.to->removeMark("qinggang");
-
-            room->getThread()->trigger(SlashHitDone, room, player, data);
             break;
         }
 

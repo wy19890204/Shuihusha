@@ -64,6 +64,7 @@ PlayerCardDialog::PlayerCardDialog(const ClientPlayer *player, const QString &fl
     static QChar handcard_flag('h');
     static QChar equip_flag('e');
     static QChar judging_flag('j');
+    static QChar piles_flag('p');
 
     layout->addWidget(createAvatar());
 
@@ -75,6 +76,9 @@ PlayerCardDialog::PlayerCardDialog(const ClientPlayer *player, const QString &fl
 
     if(flags.contains(judging_flag))
         vlayout->addWidget(createJudgingArea());
+
+    if(flags.contains(piles_flag))
+        vlayout->addWidget(createPilesArea());
 
     layout->addLayout(vlayout);
 
@@ -214,4 +218,36 @@ void PlayerCardDialog::emitId(){
     int id = mapper.value(sender(), -2);
     if(id != -2)
         emit card_id_chosen(id);
+}
+
+QWidget *PlayerCardDialog::createPilesArea(){
+    QGroupBox *area = new QGroupBox(tr("Piles Area"));
+    QVBoxLayout *layout = new QVBoxLayout;
+    foreach(QString pile_name, player->getPileNames()){
+        if(!player->getPile(pile_name).isEmpty()){
+            QGroupBox *pilesarea = new QGroupBox(pile_name);
+            QVBoxLayout *layout2 = new QVBoxLayout;
+            foreach(int card_id, player->getPile(pile_name)){
+                const Card *card = Sanguosha->getCard(card_id);
+                QCommandLinkButton *button = new QCommandLinkButton(card->getFullName());
+                button->setIcon(card->getSuitIcon());
+                layout2->addWidget(button);
+
+                mapper.insert(button, card->getId());
+                connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
+                pilesarea->setLayout(layout2);
+            }
+            layout->addWidget(pilesarea);
+            area->setLayout(layout);
+        }
+    }
+
+    /*if(layout->count() == 0){
+        QCommandLinkButton *button = new QCommandLinkButton(tr("No judging cards"));
+        button->setEnabled(false);
+        button->setObjectName("nojuding_button");
+        return button;
+    }else{*/
+        return area;
+    //}
 }

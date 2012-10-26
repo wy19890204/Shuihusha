@@ -493,7 +493,11 @@ public:
 class Hengchong: public TriggerSkill{
 public:
     Hengchong():TriggerSkill("hengchong"){
-        events << SlashMissed << SlashHitDone;
+        events << SlashMissed << SlashHit;
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     static QList<ServerPlayer *> getNextandPrevious(ServerPlayer *target){
@@ -511,7 +515,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == SlashHitDone){
+        if(event == SlashHit){
             if(player->hasFlag("Hengchong")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 ServerPlayer *target = room->askForPlayerChosen(player, getNextandPrevious(effect.to), objectName());
