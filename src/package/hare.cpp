@@ -274,8 +274,7 @@ public:
                 player->property("linmostore") = "";
                 if(!player->getPile("zi").isEmpty()){
                     room->playSkillEffect(objectName(), 5);
-                    foreach(int a, player->getPile("zi"))
-                        room->throwCard(a);
+                    player->clearPile("zi");
                 }
             }
             return false;

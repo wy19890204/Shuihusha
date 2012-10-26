@@ -593,8 +593,7 @@ public:
                 log.arg2 = QString::number(4);
                 room->sendLog(log);
 
-                foreach(int i, player->getPile("jiyan"))
-                    room->throwCard(i);
+                player->clearPile("jiyan");
                 room->loseMaxHp(player);
             }
         }

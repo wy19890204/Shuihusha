@@ -77,8 +77,17 @@ PlayerCardDialog::PlayerCardDialog(const ClientPlayer *player, const QString &fl
     if(flags.contains(judging_flag))
         vlayout->addWidget(createJudgingArea());
 
-    if(flags.contains(piles_flag))
-        vlayout->addWidget(createPilesArea());
+    if(flags.contains(piles_flag)){
+        bool show = false;
+        foreach(QString pile_name, player->getPileNames()){
+            if(!player->getPile(pile_name).isEmpty()){
+                show = true;
+                break;
+            }
+        }
+        if(show)
+            vlayout->addWidget(createPilesArea());
+    }
 
     layout->addLayout(vlayout);
 
@@ -225,7 +234,7 @@ QWidget *PlayerCardDialog::createPilesArea(){
     QVBoxLayout *layout = new QVBoxLayout;
     foreach(QString pile_name, player->getPileNames()){
         if(!player->getPile(pile_name).isEmpty()){
-            QGroupBox *pilesarea = new QGroupBox(pile_name);
+            QGroupBox *pilesarea = new QGroupBox(Sanguosha->translate(pile_name));
             QVBoxLayout *layout2 = new QVBoxLayout;
             foreach(int card_id, player->getPile(pile_name)){
                 const Card *card = Sanguosha->getCard(card_id);
@@ -242,12 +251,5 @@ QWidget *PlayerCardDialog::createPilesArea(){
         }
     }
 
-    /*if(layout->count() == 0){
-        QCommandLinkButton *button = new QCommandLinkButton(tr("No judging cards"));
-        button->setEnabled(false);
-        button->setObjectName("nojuding_button");
-        return button;
-    }else{*/
-        return area;
-    //}
+    return area;
 }

@@ -67,7 +67,7 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
         PlayerStar target = targets.first();
         if(getSubcards().isEmpty()){
             if(target != source){
-                int card_id = room->askForCardChosen(source, target, "hej", "free-regulate");
+                int card_id = room->askForCardChosen(source, target, "hejp", "free-regulate");
                 room->obtainCard(source, card_id);
             }
             else
