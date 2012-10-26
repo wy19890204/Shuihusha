@@ -559,7 +559,6 @@ public:
                 jink->setSkillName(objectName());
                 room->provide(jink);
                 room->setEmotion(shibao, "good");
-                return true;
             }
         }
         return false;

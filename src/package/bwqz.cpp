@@ -161,7 +161,6 @@ public:
                 room->provide(yuanyin_card);
             }
             room->setEmotion(player, "good");
-            return true;
         }
         return false;
     }
