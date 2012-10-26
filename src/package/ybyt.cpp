@@ -620,7 +620,7 @@ YBYTPackage::YBYTPackage()
     yangchun->addSkill(new Shexin);
 
     General *xueyong = new General(this, "xueyong", "min");
-    xueyong->addSkill("#losthp_1");
+    xueyong->addSkill("#hp-1");
     xueyong->addSkill(new Maiyi);
 
     General *tanglong = new General(this, "tanglong", "jiang", 3);

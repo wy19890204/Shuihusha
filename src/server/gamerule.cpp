@@ -278,6 +278,10 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     plr->setRole(roles.first());
                     roles.removeFirst();
                 }
+                if(player->isLord()){
+                    player->setRole(player->getNextAlive()->getRole());
+                    player->getNextAlive()->setRole("lord");
+                }
                 room->updateStateItem();
                 room->broadcastProperty(player, "role");
                 log.type = "#AnzhanShow";

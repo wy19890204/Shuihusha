@@ -418,25 +418,6 @@ public:
     }
 };
 
-class Losthp: public TriggerSkill{
-public:
-    Losthp(int n): TriggerSkill("#losthp_" + QString::number(n)), n(n){
-        events << GameStart;
-    }
-
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        room->setPlayerProperty(player, "hp", player->getHp() - n);
-        return false;
-    }
-
-private:
-    int n;
-};
-
 class Pinming: public TriggerSkill{
 public:
     Pinming():TriggerSkill("pinming"){
@@ -1312,7 +1293,7 @@ TigerPackage::TigerPackage()
     hantao->addSkill(new Changsheng);
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
-    oupeng->addSkill("#losthp_1");
+    oupeng->addSkill("#hp-1");
     oupeng->addSkill(new Zhanchi);
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
@@ -1330,7 +1311,7 @@ TigerPackage::TigerPackage()
     wuyanguang->addSkill(new Jintang);
 
     General *shixiu = new General(this, "shixiu", "jiang", 6);
-    shixiu->addSkill(new Losthp(2));
+    shixiu->addSkill(new CutHpSkill(2));
     shixiu->addSkill(new Pinming);
     shixiu->addSkill(new PinmingDie);
     related_skills.insertMulti("pinming", "#pinming-die");
@@ -1364,7 +1345,7 @@ TigerPackage::TigerPackage()
     related_skills.insertMulti("houfa", "#houfa-slash");
 
     General *lizhong = new General(this, "lizhong", "kou", 4);
-    lizhong->addSkill(new Losthp(1));
+    lizhong->addSkill(new CutHpSkill(1));
     lizhong->addSkill(new Linse);
     lizhong->addSkill(new LinseEffect);
     related_skills.insertMulti("linse", "#linse-effect");

@@ -225,10 +225,24 @@ class MarkAssignSkill: public GameStartSkill{
 public:
     MarkAssignSkill(const QString &mark, int n);
 
+    virtual int getPriority() const;
     virtual void onGameStart(ServerPlayer *player) const;
 
 private:
     QString mark_name;
+    int n;
+};
+
+class CutHpSkill: public GameStartSkill{
+    Q_OBJECT
+
+public:
+    CutHpSkill(int n);
+
+    virtual int getPriority() const;
+    virtual void onGameStart(ServerPlayer *player) const;
+
+private:
     int n;
 };
 
