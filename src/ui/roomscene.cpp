@@ -1509,6 +1509,8 @@ void RoomScene::updateSkillButtons(){
         if(skill->isLordSkill()){
             if(Config.NoLordSkill || Config.EnableAnzhan)
                 continue;
+            if(ServerInfo.GameMode == "landlord")
+                continue;
             if(Self->getRole() != "lord" || ServerInfo.GameMode == "06_3v3")
                 continue;
         }

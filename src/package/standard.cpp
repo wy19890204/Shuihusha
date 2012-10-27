@@ -652,13 +652,7 @@ TestPackage::TestPackage()
 {
     skills << new Sacrifice;
     addMetaObject<SacrificeCard>();
-/*
-    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
-    zhuanjia->addSkill(new Zhichi);
-    addMetaObject<ZhichiCard>();
-    zhuanjia->addSkill(new Fandui);
-    addMetaObject<FanduiCard>();
-*/
+
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
@@ -673,7 +667,13 @@ TestPackage::TestPackage()
     ubuntenkei->addSkill(new Ubund);
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubunf);
-
+/*
+    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
+    zhuanjia->addSkill(new Zhichi);
+    addMetaObject<ZhichiCard>();
+    zhuanjia->addSkill(new Fandui);
+    addMetaObject<FanduiCard>();
+*/
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);
