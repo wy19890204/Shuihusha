@@ -274,8 +274,7 @@ public:
                 player->property("linmostore") = "";
                 if(!player->getPile("zi").isEmpty()){
                     room->playSkillEffect(objectName(), 5);
-                    foreach(int a, player->getPile("zi"))
-                        room->throwCard(a);
+                    player->clearPile("zi");
                 }
             }
             return false;
@@ -493,7 +492,11 @@ public:
 class Hengchong: public TriggerSkill{
 public:
     Hengchong():TriggerSkill("hengchong"){
-        events << SlashMissed << SlashHitDone;
+        events << SlashMissed << SlashHit;
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     static QList<ServerPlayer *> getNextandPrevious(ServerPlayer *target){
@@ -511,7 +514,7 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == SlashHitDone){
+        if(event == SlashHit){
             if(player->hasFlag("Hengchong")){
                 SlashEffectStruct effect = data.value<SlashEffectStruct>();
                 ServerPlayer *target = room->askForPlayerChosen(player, getNextandPrevious(effect.to), objectName());
@@ -705,7 +708,7 @@ public:
         sq->drawCards(a + 1);
         RecoverStruct rev;
         rev.recover = a;
-        room->recover(sq, rev, true);
+        room->recover(sq, rev, a > 0);
         return false;
     }
 };
@@ -1138,7 +1141,7 @@ HarePackage::HarePackage()
     zhoutong->addSkill(new Huatian);
 
     General *zhugui = new General(this, "zhugui", "kou");
-    zhugui->addSkill("#losthp_1");
+    zhugui->addSkill("#hp-1");
     zhugui->addSkill(new Shihao);
     zhugui->addSkill(new Shihaodo);
     related_skills.insertMulti("shihao", "#shihao-do");

@@ -365,6 +365,23 @@ MarkAssignSkill::MarkAssignSkill(const QString &mark, int n)
 {
 }
 
+int MarkAssignSkill::getPriority() const{
+    return -1;
+}
+
 void MarkAssignSkill::onGameStart(ServerPlayer *player) const{
     player->gainMark(mark_name, n);
+}
+
+CutHpSkill::CutHpSkill(int n)
+    :GameStartSkill(QString("#hp-%1").arg(n)), n(n)
+{
+}
+
+int CutHpSkill::getPriority() const{
+    return -1;
+}
+
+void CutHpSkill::onGameStart(ServerPlayer *player) const{
+    player->getRoom()->setPlayerProperty(player, "hp", player->getHp() - n);
 }

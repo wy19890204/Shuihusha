@@ -741,8 +741,7 @@ public:
                 gitlog.from = miheng;
                 room->sendLog(gitlog);
             }
-            foreach(int i, miheng->getPile("word"))
-                room->throwCard(i);
+            miheng->clearPile("word");
         }
         return false;
     }

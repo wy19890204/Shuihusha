@@ -622,6 +622,7 @@ void Player::setMark(const QString &mark, int value){
 int Player::getMark(const QString &mark) const{
     int n = marks.value(mark, 0);
     if(mark.startsWith("_")){
+        // wake mark "skill_wake", getMark("_wake") to get all mark endswith "wake"
         QMap<QString, int>::const_iterator i;
         for(i = marks.constBegin(); i != marks.constEnd(); ++i){
             QString key = i.key();
@@ -634,6 +635,29 @@ int Player::getMark(const QString &mark) const{
 
 bool Player::hasMark(const QString &mark) const{
     return marks.value(mark, 0) > 0;
+}
+
+QStringList Player::getAllMarkName(int flag, const QString &part) const{
+    //flag = 1 : startwith; flag = 2 : all; flag = 3 : endwith
+    QStringList marknames;
+    QMap<QString, int>::const_iterator i;
+    for(i = marks.constBegin(); i != marks.constEnd(); ++i){
+        QString key = i.key();
+        switch(flag){
+        case 1:
+            if(key.startsWith(part)) //like "@skull"
+                marknames << key;
+            break;
+        case 3:
+            if(key.endsWith(part)) //like "aoxiang_wake"
+                marknames << key;
+            break;
+        case 2:
+        default:
+            marknames << key;
+        }
+    }
+    return marknames;
 }
 
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{

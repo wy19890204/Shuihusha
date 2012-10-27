@@ -101,7 +101,7 @@ linmo_skill.getTurnUseCard = function(self)
 		elseif card:objectName() == "god_salvation" then
 			hasgodsa = true
 		elseif card:objectName() == "peach" and self.player:isWounded() then
-			local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "peach")
+			local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card:getEffectiveId() .. ":" .. "peach")
 			return parsed_card
 		end
 	end

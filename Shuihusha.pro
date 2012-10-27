@@ -61,7 +61,7 @@ SOURCES += \
 	src/package/ox.cpp \
 	src/package/tiger.cpp \
 	src/package/hare.cpp \
-	src/package/bwqz.cpp \
+	src/package/dragon.cpp \
 	src/package/qlfd.cpp \
 	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
@@ -71,17 +71,17 @@ SOURCES += \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
 	src/package/guben.cpp \
-	src/package/stanley.cpp \
-	src/scenario/boss-mode-scenario.cpp \
-	src/scenario/contract-scenario.cpp \
-	src/scenario/couple-scenario.cpp \
-	src/scenario/dusong-scenario.cpp \
-	src/scenario/changban-scenario.cpp \
+	src/scenario/boss.cpp \
+	src/scenario/contract.cpp \
+	src/scenario/couple.cpp \
+	src/scenario/dusong.cpp \
+	src/scenario/changban.cpp \
 	src/scenario/miniscenarios.cpp \
-	src/scenario/legend-mode-scenario.cpp \
+	src/scenario/landlord.cpp \
+	src/scenario/legend.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
-	src/scenario/zombie-mode-scenario.cpp \
+	src/scenario/zombie.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
 	src/server/gamerule.cpp \
@@ -195,7 +195,7 @@ HEADERS += \
 	src/package/ox.h \
 	src/package/tiger.h \
 	src/package/hare.h \
-	src/package/bwqz.h \
+	src/package/dragon.h \
 	src/package/qlfd.h \
 	src/package/zcyn.h \
 	src/package/cgdk.h \
@@ -205,17 +205,17 @@ HEADERS += \
 	src/package/joy.h \
 	src/package/interchange.h \
 	src/package/guben.h \
-	src/package/stanley.h \
-	src/scenario/boss-mode-scenario.h \
-	src/scenario/contract-scenario.h \
-	src/scenario/couple-scenario.h \
-	src/scenario/dusong-scenario.h \
-	src/scenario/changban-scenario.h \
+	src/scenario/boss.h \
+	src/scenario/contract.h \
+	src/scenario/couple.h \
+	src/scenario/dusong.h \
+	src/scenario/changban.h \
 	src/scenario/miniscenarios.h \
-	src/scenario/legend-mode-scenario.h \
+	src/scenario/landlord.h \
+	src/scenario/legend.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
-	src/scenario/zombie-mode-scenario.h \
+	src/scenario/zombie.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
 	src/server/gamerule.h \

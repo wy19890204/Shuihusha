@@ -252,372 +252,377 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         }
 
         if(player->getGeneral()->getKingdom() == "god" && player->getGeneralName() != "anjiang"){
-                QString new_kingdom = room->askForKingdom(player);
-                room->setPlayerProperty(player, "kingdom", new_kingdom);
+            QString new_kingdom = room->askForKingdom(player);
+            room->setPlayerProperty(player, "kingdom", new_kingdom);
 
-                LogMessage log;
-                log.type = "#ChooseKingdom";
-                log.from = player;
-                log.arg = new_kingdom;
-                room->sendLog(log);
-            }
-
-            if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
-                LogMessage log;
-                log.type = "#AnzhanShuffle";
-                log.from = player;
-                log.arg = "anzhan";
-                room->sendLog(log);
-
-                QStringList roles;
-                foreach(ServerPlayer *plr, room->getAllPlayers()){
-                    roles << plr->getRole();
-                }
-                qShuffle(roles);
-                foreach(ServerPlayer *plr, room->getAllPlayers()){
-                    plr->setRole(roles.first());
-                    roles.removeFirst();
-                }
-                room->updateStateItem();
-                room->broadcastProperty(player, "role");
-                log.type = "#AnzhanShow";
-                if(room->getPlayerCount() > 4 && !Config.value("AnzhanEqual", false).toBool()){
-                    room->setPlayerProperty(player, "maxhp", player->getMaxHp() + 1);
-                    log.type = "#AnzhanShow2";
-                }
-                log.arg = player->getRole();
-                room->sendLog(log);
-
-                room->setTag("AnzhanInit", true);
-            }
-
-            if(player->isLord())
-                setGameProcess(room);
-
-            if(Config.EnableReincarnation){
-                int count = Sanguosha->getPlayerCount(room->getMode());
-                if(count > 3)
-                    room->attachSkillToPlayer(player, "sacrifice");
-            }
-
-            room->setTag("FirstRound", true);
-            player->drawCards(4, false);
-
-            break;
+            LogMessage log;
+            log.type = "#ChooseKingdom";
+            log.from = player;
+            log.arg = new_kingdom;
+            room->sendLog(log);
         }
+
+        if(player->isLord() && Config.EnableAnzhan && !room->getTag("AnzhanInit").toBool()){
+            LogMessage log;
+            log.type = "#AnzhanShuffle";
+            log.from = player;
+            log.arg = "anzhan";
+            room->sendLog(log);
+
+            QStringList roles;
+            foreach(ServerPlayer *plr, room->getAllPlayers()){
+                roles << plr->getRole();
+            }
+            qShuffle(roles);
+            foreach(ServerPlayer *plr, room->getAllPlayers()){
+                plr->setRole(roles.first());
+                roles.removeFirst();
+            }
+            if(player->isLord()){
+                player->setRole(player->getNextAlive()->getRole());
+                player->getNextAlive()->setRole("lord");
+            }
+            room->updateStateItem();
+            room->broadcastProperty(player, "role");
+            log.type = "#AnzhanShow";
+            if(room->getPlayerCount() > 4 && !Config.value("AnzhanEqual", false).toBool()){
+                room->setPlayerProperty(player, "maxhp", player->getMaxHp() + 1);
+                log.type = "#AnzhanShow2";
+            }
+            log.arg = player->getRole();
+            room->sendLog(log);
+
+            room->setTag("AnzhanInit", true);
+        }
+
+        if(player->isLord())
+            setGameProcess(room);
+
+        if(Config.EnableReincarnation){
+            int count = Sanguosha->getPlayerCount(room->getMode());
+            if(count > 3)
+                room->attachSkillToPlayer(player, "sacrifice");
+        }
+
+        room->setTag("FirstRound", true);
+        player->drawCards(4, false);
+
+        break;
+    }
 
     case TurnStart:{
-            player = room->getCurrent();
-            if(Config.value("FreeShowRole", false).toBool()){
-                LogMessage log;
-                log.type = "#ShowRole";
-                log.from = player;
-                log.arg = player->getRole();
-                room->sendLog(log);
-            }
-            if(!player->faceUp())
-                player->turnOver();
-            else if(player->isAlive())
-                player->play();
-
-            break;
+        player = room->getCurrent();
+        if(Config.value("FreeShowRole", false).toBool()){
+            LogMessage log;
+            log.type = "#ShowRole";
+            log.from = player;
+            log.arg = player->getRole();
+            room->sendLog(log);
         }
+        if(!player->faceUp())
+            player->turnOver();
+        else if(player->isAlive())
+            player->play();
+
+        break;
+    }
 
     case PhaseChange: onPhaseChange(player); break;
     case CardUsed: {
-            if(data.canConvert<CardUseStruct>()){
-                CardUseStruct card_use = data.value<CardUseStruct>();
-                const Card *card = card_use.card;
+        if(data.canConvert<CardUseStruct>()){
+            CardUseStruct card_use = data.value<CardUseStruct>();
+            const Card *card = card_use.card;
 
-                bool mute = card_use.mute;
-                if(card->inherits("Slash") && Config.EnableEquipEffects){
-                    if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
-                        room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
-                        mute = true;
-                    }
-                    if(player->hasSkill("douzhan") && card_use.to.count() == 2){
-                        room->playSkillEffect("douzhan");
-                        mute = true;
-                    }
-                    if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
-                        mute = true;
-                    if(card->getSkillName() == "spear"){
-                        player->playCardEffect("Espear", "weapon");
-                        mute = true;
-                    }
-                    else if(player->hasWeapon("halberd") &&
-                            player->isLastHandCard(card) && card_use.to.count() > 1){
-                        player->playCardEffect("Ehalberd", "weapon");
-                        mute = true;
-                    }
-                    else if(player->hasWeapon("sun_bow") && card->objectName() == "slash" && card_use.to.count() > 1){
-                        player->playCardEffect("Esun_bow", "weapon");
-                        mute = true;
-                    }
+            bool mute = card_use.mute;
+            if(card->inherits("Slash") && Config.EnableEquipEffects){
+                if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
+                    room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
+                    mute = true;
                 }
-
-                card_use.from->playCardEffect(card, mute);
-                card->use(room, card_use.from, card_use.to);
+                if(player->hasSkill("douzhan") && card_use.to.count() == 2){
+                    room->playSkillEffect("douzhan");
+                    mute = true;
+                }
+                if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
+                    mute = true;
+                if(card->getSkillName() == "spear"){
+                    player->playCardEffect("Espear", "weapon");
+                    mute = true;
+                }
+                else if(player->hasWeapon("halberd") &&
+                        player->isLastHandCard(card) && card_use.to.count() > 1){
+                    player->playCardEffect("Ehalberd", "weapon");
+                    mute = true;
+                }
+                else if(player->hasWeapon("sun_bow") && card->objectName() == "slash" && card_use.to.count() > 1){
+                    player->playCardEffect("Esun_bow", "weapon");
+                    mute = true;
+                }
             }
 
-            break;
+            card_use.from->playCardEffect(card, mute);
+            card->use(room, card_use.from, card_use.to);
         }
+
+        break;
+    }
     case CardAsk :
     case CardUseAsk: {
-            if(player->hasFlag("ecst") && (data.toString() == "slash" || data.toString() == "jink")){
-                LogMessage log;
-                log.type = "#EcstasyEffect";
-                log.from = player;
-                log.arg = data.toString();
-                room->sendLog(log);
-                return true;
-            }
-            if(player->hasFlag("Guibing") && data.toString() == "slash")
-                return true;
-            break;
+        if(player->hasFlag("ecst") && (data.toString() == "slash" || data.toString() == "jink")){
+            LogMessage log;
+            log.type = "#EcstasyEffect";
+            log.from = player;
+            log.arg = data.toString();
+            room->sendLog(log);
+            return true;
         }
+        if(player->hasFlag("Guibing") && data.toString() == "slash")
+            return true;
+        break;
+    }
     case CardFinished: {
-            CardUseStruct use = data.value<CardUseStruct>();
-            if(data.canConvert<CardUseStruct>() && !Config.BanPackages.contains("events")){
-                if(use.card->inherits("Snatch")){
-                    ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
-                    if(source){
-                        room->setPlayerFlag(source, "Daojia");
-                        room->askForUseCard(source, "Daojia", "@daojia");
-                        room->setPlayerFlag(source, "-Daojia");
-                    }
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(data.canConvert<CardUseStruct>() && !Config.BanPackages.contains("events")){
+            if(use.card->inherits("Snatch")){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
+                if(source){
+                    room->setPlayerFlag(source, "Daojia");
+                    room->askForUseCard(source, "Daojia", "@daojia");
+                    room->setPlayerFlag(source, "-Daojia");
                 }
-                if(use.card->inherits("Analeptic")){
-                    ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
-                    if(source && source == use.from){
-                        room->setPlayerFlag(source, "Tifanshi");
-                        room->askForUseCard(source, "Tifanshi", "@tifanshi");
-                        room->setPlayerFlag(source, "-Tifanshi");
-                    }
+            }
+            if(use.card->inherits("Analeptic")){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
+                if(source && source == use.from){
+                    room->setPlayerFlag(source, "Tifanshi");
+                    room->askForUseCard(source, "Tifanshi", "@tifanshi");
+                    room->setPlayerFlag(source, "-Tifanshi");
                 }
-                if(use.card->inherits("Ecstasy")){
-                    ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
-                    if(source){
-                        bool invoke = false;
-                        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-                            if(tmp->containsTrick("treasury", false)){
-                                invoke = true;
-                                break;
-                            }
+            }
+            if(use.card->inherits("Ecstasy")){
+                ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
+                if(source){
+                    bool invoke = false;
+                    foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                        if(tmp->containsTrick("treasury", false)){
+                            invoke = true;
+                            break;
                         }
-                        if(invoke)
-                            room->askForUseCard(source, "NanaStars", "@nanastars");
                     }
+                    if(invoke)
+                        room->askForUseCard(source, "NanaStars", "@nanastars");
                 }
             }
-
-            room->clearCardFlag(use.card);
-            break;
         }
+
+        room->clearCardFlag(use.card);
+        break;
+    }
+
     case HpRecover:{
-            RecoverStruct recover_struct = data.value<RecoverStruct>();
-            int recover = recover_struct.recover;
+        RecoverStruct recover_struct = data.value<RecoverStruct>();
+        int recover = recover_struct.recover;
 
-            room->setPlayerStatistics(player, "recover", recover);
+        room->setPlayerStatistics(player, "recover", recover);
 
-            int new_hp = qMin(player->getHp() + recover, player->getMaxHP());
-            room->setPlayerProperty(player, "hp", new_hp);
-            room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(recover));
+        int new_hp = qMin(player->getHp() + recover, player->getMaxHP());
+        room->setPlayerProperty(player, "hp", new_hp);
+        room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(recover));
 
-            if(player->hasMark("poison")){
-                int index = qrand() % 5;
-                if(index == 4){
-                    room->setPlayerMark(player, "poison", 0);
-                    room->setEmotion(player, "good");
-                    LogMessage log;
-                    log.type = "#Poison_out";
-                    log.from = player;
-                    room->sendLog(log);
-                }
+        if(player->hasMark("poison")){
+            int index = qrand() % 5;
+            if(index == 4){
+                room->setPlayerMark(player, "poison", 0);
+                room->setEmotion(player, "good");
+                LogMessage log;
+                log.type = "#Poison_out";
+                log.from = player;
+                room->sendLog(log);
             }
-            break;
         }
+        break;
+    }
 
     case HpLost:{
-            int lose = data.toInt();
+        int lose = data.toInt();
 
-            if(room->getCurrent()->hasSkill("jueqing"))
-                return true;
+        if(room->getCurrent()->hasSkill("jueqing"))
+            return true;
 
-            LogMessage log;
-            log.type = "#LoseHp";
-            log.from = player;
-            log.arg = QString::number(lose);
-            room->sendLog(log);
+        LogMessage log;
+        log.type = "#LoseHp";
+        log.from = player;
+        log.arg = QString::number(lose);
+        room->sendLog(log);
 
-            room->setPlayerProperty(player, "hp", player->getHp() - lose);
-            QString str = QString("%1:%2L").arg(player->objectName()).arg(-lose);
-            room->broadcastInvoke("hpChange", str);
+        room->setPlayerProperty(player, "hp", player->getHp() - lose);
+        QString str = QString("%1:%2L").arg(player->objectName()).arg(-lose);
+        room->broadcastInvoke("hpChange", str);
 
-            if(player->getHp() <= 0)
-                room->enterDying(player, NULL);
+        if(player->getHp() <= 0)
+            room->enterDying(player, NULL);
 
-            if(Config.EnableEndless){
-                player->gainMark("@endless", lose);
-            }
-            break;
+        if(Config.EnableEndless){
+            player->gainMark("@endless", lose);
+        }
+        break;
     }
 
     case Dying:{
-            if(player->getHp() > 0){
-                player->setFlags("-dying");
-                break;
-            }
-
-            DyingStruct dying = data.value<DyingStruct>();
-
-            LogMessage log;
-            log.type = "#AskForPeaches";
-            log.from = player;
-            log.to = dying.savers;
-            log.arg = QString::number(1 - player->getHp());
-            room->sendLog(log);
-
-            RoomThread *thread = room->getThread();
-            foreach(ServerPlayer *saver, dying.savers){
-                if(player->getHp() > 0)
-                    break;
-
-                thread->trigger(AskForPeaches, room, saver, data);
-            }
-
+        if(player->getHp() > 0){
             player->setFlags("-dying");
-            thread->trigger(AskForPeachesDone, room, player, data);
-
             break;
         }
+
+        DyingStruct dying = data.value<DyingStruct>();
+
+        LogMessage log;
+        log.type = "#AskForPeaches";
+        log.from = player;
+        log.to = dying.savers;
+        log.arg = QString::number(1 - player->getHp());
+        room->sendLog(log);
+
+        RoomThread *thread = room->getThread();
+        foreach(ServerPlayer *saver, dying.savers){
+            if(player->getHp() > 0)
+                break;
+
+            thread->trigger(AskForPeaches, room, saver, data);
+        }
+
+        player->setFlags("-dying");
+        thread->trigger(AskForPeachesDone, room, player, data);
+
+        break;
+    }
 
     case AskForPeaches:{
-            DyingStruct dying = data.value<DyingStruct>();
+        DyingStruct dying = data.value<DyingStruct>();
 
-            while(dying.who->getHp() <= 0){
-                if(dying.who->isDead())
-                    break;
-                const Card *peach = room->askForSinglePeach(player, dying.who);
-                if(!peach)
-                    break;
-
-                CardUseStruct use;
-                use.card = peach;
-                use.from = player;
-                if(player != dying.who)
-                    use.to << dying.who;
-
-                room->useCard(use, false);
-
-                if(player != dying.who && dying.who->getHp() > 0)
-                    room->setPlayerStatistics(player, "save", 1);
-            }
-
-            break;
-        }
-
-    case AskForPeachesDone:{
-            if(player->getHp() <= 0 && player->isAlive()){
-                DyingStruct dying = data.value<DyingStruct>();
-                room->killPlayer(player, dying.damage);
-            }
-
-            break;
-        }
-
-    case DamageDone:{
-            DamageStruct damage = data.value<DamageStruct>();
-            room->sendDamageLog(damage);
-
-            if(damage.to->hasFlag("ecst")){
-                LogMessage log;
-                log.type = "#UnsetEcst";
-                log.from = damage.to;
-                room->sendLog(log);
-
-                room->setPlayerFlag(damage.to, "-ecst");
-            }
-            if(damage.from)
-                room->setPlayerStatistics(damage.from, "damage", damage.damage);
-
-            room->applyDamage(player, damage);
-            if(player->getHp() <= 0){
-                room->enterDying(player, &damage);
-            }
-
-            break;
-        }
-
-    case DamageComplete:{
-            if(room->getMode() == "02_1v1" && player->isDead()){
-                QString new_general = player->tag["1v1ChangeGeneral"].toString();
-                if(!new_general.isEmpty())
-                    changeGeneral1v1(player);
-            }
-            DamageStruct damage = data.value<DamageStruct>();
-            //nanastars
-            if(!Config.BanPackages.contains("events")){
-                ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
-                if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
-                    if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
-                        int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
-                        source->playCardEffect("@nanastars2");
-
-                        LogMessage log;
-                        log.type = "#NanaStars";
-                        log.from = source;
-                        log.to << damage.from;
-                        log.arg = "nanastars";
-                        room->sendLog(log);
-                        while(!damage.from->isNude()){
-                            int card_id = room->askForCardChosen(source, damage.from, "he", "nanastars");
-                            room->obtainCard(source, card_id, room->getCardPlace(card_id) != Player::Hand);
-                            x --;
-                            if(x == 0)
-                                break;
-                        }
-                    }
-                }
-            }
-
-            if(Config.EnableEndless){
-                if(damage.from)
-                    damage.from->gainMark("@endless", damage.damage);
-                else
-                    damage.to->gainMark("@endless", damage.damage);
-            }
-
-            bool chained = player->isChained();
-            if(!chained)
+        while(dying.who->getHp() <= 0){
+            if(dying.who->isDead())
+                break;
+            const Card *peach = room->askForSinglePeach(player, dying.who);
+            if(!peach)
                 break;
 
-            if(damage.nature != DamageStruct::Normal){
-                room->setPlayerProperty(player, "chained", false);
+            CardUseStruct use;
+            use.card = peach;
+            use.from = player;
+            if(player != dying.who)
+                use.to << dying.who;
 
-                // iron chain effect
-                QList<ServerPlayer *> chained_players = room->getOtherPlayers(player);
-                foreach(ServerPlayer *chained_player, chained_players){
-                    if(chained_player->isChained()){
-                        room->getThread()->delay();
-                        room->setPlayerProperty(chained_player, "chained", false);
+            room->useCard(use, false);
 
-                        LogMessage log;
-                        log.type = "#IronChainDamage";
-                        log.from = chained_player;
-                        room->sendLog(log);
+            if(player != dying.who && dying.who->getHp() > 0)
+                room->setPlayerStatistics(player, "save", 1);
+        }
 
-                        DamageStruct chain_damage = damage;
-                        chain_damage.to = chained_player;
-                        chain_damage.chain = true;
+        break;
+    }
 
-                        room->damage(chain_damage);
+    case AskForPeachesDone:{
+        if(player->getHp() <= 0 && player->isAlive()){
+            DyingStruct dying = data.value<DyingStruct>();
+            room->killPlayer(player, dying.damage);
+        }
+
+        break;
+    }
+
+    case DamageDone:{
+        DamageStruct damage = data.value<DamageStruct>();
+        room->sendDamageLog(damage);
+
+        if(damage.to->hasFlag("ecst")){
+            LogMessage log;
+            log.type = "#UnsetEcst";
+            log.from = damage.to;
+            room->sendLog(log);
+
+            room->setPlayerFlag(damage.to, "-ecst");
+        }
+        if(damage.from)
+            room->setPlayerStatistics(damage.from, "damage", damage.damage);
+
+        room->applyDamage(player, damage);
+        if(player->getHp() <= 0){
+            room->enterDying(player, &damage);
+        }
+
+        break;
+    }
+
+    case DamageComplete:{
+        if(room->getMode() == "02_1v1" && player->isDead()){
+            QString new_general = player->tag["1v1ChangeGeneral"].toString();
+            if(!new_general.isEmpty())
+                changeGeneral1v1(player);
+        }
+        DamageStruct damage = data.value<DamageStruct>();
+        //nanastars
+        if(!Config.BanPackages.contains("events")){
+            ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
+            if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
+                if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
+                    int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
+                    source->playCardEffect("@nanastars2");
+
+                    LogMessage log;
+                    log.type = "#NanaStars";
+                    log.from = source;
+                    log.to << damage.from;
+                    log.arg = "nanastars";
+                    room->sendLog(log);
+                    while(!damage.from->isNude()){
+                        int card_id = room->askForCardChosen(source, damage.from, "he", "nanastars");
+                        room->obtainCard(source, card_id, room->getCardPlace(card_id) != Player::Hand);
+                        x --;
+                        if(x == 0)
+                            break;
                     }
                 }
             }
-
-            break;
         }
+
+        if(Config.EnableEndless){
+            if(damage.from)
+                damage.from->gainMark("@endless", damage.damage);
+            else
+                damage.to->gainMark("@endless", damage.damage);
+        }
+
+        bool chained = player->isChained();
+        if(!chained)
+            break;
+
+        if(damage.nature != DamageStruct::Normal){
+            room->setPlayerProperty(player, "chained", false);
+
+            // iron chain effect
+            QList<ServerPlayer *> chained_players = room->getOtherPlayers(player);
+            foreach(ServerPlayer *chained_player, chained_players){
+                if(chained_player->isChained()){
+                    room->getThread()->delay();
+                    room->setPlayerProperty(chained_player, "chained", false);
+
+                    LogMessage log;
+                    log.type = "#IronChainDamage";
+                    log.from = chained_player;
+                    room->sendLog(log);
+
+                    DamageStruct chain_damage = damage;
+                    chain_damage.to = chained_player;
+                    chain_damage.chain = true;
+
+                    room->damage(chain_damage);
+                }
+            }
+        }
+
+        break;
+    }
 
     case Predamaged:{
             //ninegirl
@@ -755,8 +760,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->damage(damage);
 
             effect.to->removeMark("qinggang");
-
-            room->getThread()->trigger(SlashHitDone, room, player, data);
             break;
         }
 

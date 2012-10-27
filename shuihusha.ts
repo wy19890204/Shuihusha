@@ -2742,6 +2742,11 @@
         <source>No judging cards</source>
         <translation>没有判定牌</translation>
     </message>
+    <message>
+        <location filename="src/dialog/playercarddialog.cpp" line="233"/>
+        <source>Piles Area</source>
+        <translation>红灯区</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

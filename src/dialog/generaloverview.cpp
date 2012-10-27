@@ -57,7 +57,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         gender = general->isMale() ? tr("Male") : tr("Female");
         max_hp = QString::number(general->getMaxHp());
         for(int n = 1; n <= 3; n++){
-            if(general->hasSkill("#losthp_" + QString::number(n))){
+            if(general->hasSkill("#hp-" + QString::number(n))){
                 max_hp = QString::number(general->getMaxHp() - n) + "/" + QString::number(general->getMaxHp());
                 break;
             }
