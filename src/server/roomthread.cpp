@@ -290,6 +290,10 @@ void RoomThread::run(){
 
     // start game, draw initial 4 cards
     foreach(ServerPlayer *player, room->getPlayers()){
+        if(!player->getWakeSkills().isEmpty()){ //init the wake icon
+            player->setFlags("init_wake");
+            player->setFlags("-init_wake");
+        }
         trigger(GameStart, room, player);
     }
 

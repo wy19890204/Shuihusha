@@ -2,6 +2,10 @@
 
 return {
 	["landlord"] = "斗地主",
+	["#LandLord1"] = "%from 叫了 %arg 分",
+	["#LandLord2"] = "%from 不叫",
+	["landlord:pass"] = "不叫",
+	["#LandLordDone"] = "%from 为本局地主",
 	["exploit"] = "剥削",
 	[":exploit"] = "摸牌阶段，可额外摸一张牌；出牌阶段，你使用【杀】可额外指定一个目标。",
 	
