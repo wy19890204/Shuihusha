@@ -1,5 +1,4 @@
-
-#include "legend-mode-scenario.h"
+#include "legend.h"
 #include "engine.h"
 #include "clientplayer.h"
 #include "client.h"

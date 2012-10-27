@@ -1,4 +1,4 @@
-#include "zombie-mode-scenario.h"
+#include "zombie.h"
 #include "engine.h"
 #include "common-skillcards.h"
 #include "clientplayer.h"

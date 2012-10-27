@@ -1,5 +1,5 @@
-#ifndef BWQZPACKAGE_H
-#define BWQZPACKAGE_H
+#ifndef DRAGONPACKAGE_H
+#define DRAGONPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -37,11 +37,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class BWQZPackage: public Package{
+class DragonPackage: public Package{
     Q_OBJECT
 
 public:
-    BWQZPackage();
+    DragonPackage();
 };
 
-#endif // BWQZPACKAGE_H
+#endif // DRAGONPACKAGE_H

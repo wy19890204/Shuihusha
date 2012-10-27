@@ -1,4 +1,4 @@
-#include "dusong-scenario.h"
+#include "dusong.h"
 #include "skill.h"
 #include "engine.h"
 #include "standard.h"
