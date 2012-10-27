@@ -2,6 +2,7 @@
 #include "skill.h"
 #include "engine.h"
 #include "room.h"
+#include "carditem.h"
 #include "settings.h"
 
 class LandlordScenarioRule: public ScenarioRule{
@@ -75,7 +76,11 @@ public:
 
                 room->setPlayerProperty(lord, "maxhp", qMin(lord->getGeneral()->getMaxHp(), lord->getGeneral2()->getMaxHp()) + 1);
                 room->setPlayerProperty(lord, "hp", lord->getMaxHp());
-                room->acquireSkill(lord, "linse");
+                QStringList landskills;
+                landskills << "linse" << "suocai" << "duoming" << "shemi";
+                landskills << "bizhai" << "boxue" << "fangdai";
+                qShuffle(landskills);
+                room->acquireSkill(lord, landskills.first());
 
                 room->updateStateItem();
                 foreach(ServerPlayer *p, players)
@@ -139,17 +144,51 @@ bool LandlordScenario::generalSelection(Room *room) const{
     return false;
 }
 
-class Exploit: public DrawCardsSkill{
+class Boxue: public PhaseChangeSkill{
 public:
-    Exploit():DrawCardsSkill("exploit"){
+    Boxue():PhaseChangeSkill("boxue"){
+        frequency = Frequent;
     }
 
-    virtual int getDrawNum(ServerPlayer *x, int n) const{
+    virtual bool onPhaseChange(ServerPlayer *x) const{
         Room *room = x->getRoom();
-        if(room->askForSkillInvoke(x, objectName())){
-            return n + 1;
-        }else
-            return n;
+        if(x->getPhase() == Player::Start || x->getPhase() == Player::Finish){
+            if(room->askForSkillInvoke(x, objectName()))
+                x->drawCards(1);
+        }
+    }
+};
+
+FangdaiCard::FangdaiCard(){
+    target_fixed = true;
+    once = true;
+}
+
+void FangdaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
+    room->throwCard(this, source);
+    if(source->isAlive())
+        room->drawCards(source, subcards.length() + 1);
+}
+
+class Fangdai:public ViewAsSkill{
+public:
+    Fangdai():ViewAsSkill("fangdai"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        FangdaiCard *fangdai_card = new FangdaiCard;
+        fangdai_card->addSubcards(cards);
+        return fangdai_card;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("FangdaiCard");
     }
 };
 
@@ -183,7 +222,8 @@ LandlordScenario::LandlordScenario()
     :Scenario("landlord")
 {
     rule = new LandlordScenarioRule(this);
-    skills << new Exploit;
+    skills << new Skill("bizhai") << new Boxue << new Fangdai;
+    addMetaObject<FangdaiCard>();
 }
 
 ADD_SCENARIO(Landlord)

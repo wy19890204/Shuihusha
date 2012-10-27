@@ -16,7 +16,14 @@ public:
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection(Room *room) const;
+};
 
+class FangdaiCard:public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE FangdaiCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 #endif // LANDLORDSCENARIO_H

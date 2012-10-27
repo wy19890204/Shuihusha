@@ -6,9 +6,13 @@ return {
 	["#LandLord2"] = "%from 不叫",
 	["landlord:pass"] = "不叫",
 	["#LandLordDone"] = "%from 为本局地主",
-	["exploit"] = "剥削",
-	[":exploit"] = "摸牌阶段，可额外摸一张牌；出牌阶段，你使用【杀】可额外指定一个目标。",
-	
+	["bizhai"] = "逼债",
+	[":bizhai"] = "出牌阶段，你使用的【杀】可额外指定一个目标。",
+	["boxue"] = "剥削",
+	[":boxue"] = "回合开始阶段和结束阶段，你可以额外摸1张牌。",
+	["fangdai"] = "放贷",
+	[":fangdai"] = "出牌阶段，你可以弃置X张手牌，然后摸X+1张牌。",
+
 
 	["#ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
