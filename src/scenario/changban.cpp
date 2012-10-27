@@ -1,4 +1,4 @@
-#include "changban-scenario.h"
+#include "changban.h"
 #include "skill.h"
 #include "maneuvering.h"
 #include "clientplayer.h"

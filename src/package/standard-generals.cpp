@@ -1246,6 +1246,10 @@ public:
         return x;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *yang) const{
         Room *room = yang->getRoom();
         if(yang->getPhase() != Player::Start)

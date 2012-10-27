@@ -98,8 +98,8 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(getSkillName() == "douzhan")
         slash_targets ++;
 
-    if(Self->hasSkill("xianxi"))
-        slash_targets = 100;
+    if(Self->hasSkill("bizhai"))
+        slash_targets ++;
 
     if(targets.length() >= slash_targets)
         return false;

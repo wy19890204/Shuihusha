@@ -1,4 +1,4 @@
-#include "couple-scenario.h"
+#include "couple.h"
 #include "skill.h"
 #include "engine.h"
 #include "room.h"

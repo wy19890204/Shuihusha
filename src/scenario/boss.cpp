@@ -1,4 +1,4 @@
-#include "boss-mode-scenario.h"
+#include "boss.h"
 #include "engine.h"
 #include "common-skillcards.h"
 #include "clientplayer.h"

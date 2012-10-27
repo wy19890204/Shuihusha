@@ -1,4 +1,4 @@
-#include "bwqz.h"
+#include "dragon.h"
 #include "general.h"
 #include "skill.h"
 #include "carditem.h"
@@ -418,8 +418,8 @@ public:
     }
 };
 
-BWQZPackage::BWQZPackage()
-    :Package("BWQZ")
+DragonPackage::DragonPackage()
+    :Package("dragon")
 {
     General *houjian = new General(this, "houjian", "kou", 2);
     houjian->addSkill(new Yuanyin);
@@ -451,4 +451,4 @@ BWQZPackage::BWQZPackage()
     addMetaObject<QiaogongCard>();
 }
 
-ADD_PACKAGE(BWQZ);
+ADD_PACKAGE(Dragon);

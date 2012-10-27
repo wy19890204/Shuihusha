@@ -1,4 +1,4 @@
-#include "contract-scenario.h"
+#include "contract.h"
 #include "skill.h"
 #include "engine.h"
 #include "room.h"

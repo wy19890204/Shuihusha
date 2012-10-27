@@ -3,7 +3,7 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20121020",
+	version = "20121023",
 	version_name = "终结版F3.0",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
@@ -22,8 +22,8 @@ config = {
 		"Ox",
 		"Tiger",
 		"Hare",
---[[	"BWQZ",
-		"QLFD",
+		"Dragon",
+--[[	"QLFD",
 		"ZCYN",
 		"YBYT",
 		"God",
@@ -37,6 +37,7 @@ config = {
 	scene_names = {
 		"Dusong",
 		"Couple",
+		"Landlord",
 --		"Changban",
 --		"Contract",
 --[[	"Zombie",

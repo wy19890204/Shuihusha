@@ -708,7 +708,7 @@ public:
         sq->drawCards(a + 1);
         RecoverStruct rev;
         rev.recover = a;
-        room->recover(sq, rev, true);
+        room->recover(sq, rev, a > 0);
         return false;
     }
 };
