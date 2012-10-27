@@ -94,7 +94,7 @@ class GodSalvation:public GlobalEffect{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE GodSalvation(Card::Suit suit = Heart, int number = 1);
+    Q_INVOKABLE GodSalvation(Card::Suit suit, int number);
     virtual bool isCancelable(const CardEffectStruct &effect) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
@@ -112,7 +112,7 @@ class AOE:public TrickCard{
     Q_OBJECT
 
 public:
-    AOE(Suit suit, int number):TrickCard(suit, number, true){ target_fixed = true;}
+    AOE(Suit suit, int number, bool aggressive = true):TrickCard(suit, number, aggressive){ target_fixed = true;}
     virtual QString getSubtype() const;
     virtual bool isAvailable(const Player *player) const;
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
@@ -130,7 +130,7 @@ class ArcheryAttack:public AOE{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE ArcheryAttack(Card::Suit suit = Heart, int number = 1);
+    Q_INVOKABLE ArcheryAttack(Card::Suit suit, int number);
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
