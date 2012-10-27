@@ -116,9 +116,9 @@ function SmartAI:useCardSlash(card, use)
 	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
 		self.slash_targets = self.slash_targets + 1
 	end
---	if card:getSkillName() == "douzhan" then
---		self.slash_targets = self.slash_targets + 1
---	end
+	if self.player:hasSkill("bizhai") then
+		self.slash_targets = self.slash_targets + 1
+	end
 	if self.player:hasSkill("guibing") then return end
 
 	if (self.player:getHandcardNum() == 1

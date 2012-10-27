@@ -13,6 +13,25 @@ public:
         events << GameStart << Death;
     }
 
+    static QStringList getLandSkills(Room *room){
+        QStringList landskills;
+        landskills << "linse" << "suocai" << "duoming" << "shemi";
+        QStringList sameskills;
+        foreach(QString skill, landskills){
+            foreach(ServerPlayer *p, room->getAllPlayers()){
+                if(p->hasSkill(skill))
+                    sameskills << skill;
+            }
+        }
+        foreach(QString skill, sameskills){
+            landskills.removeOne(skill);
+        }
+        landskills << "bizhai" << "boxue" << "fangdai";
+
+        qShuffle(landskills);
+        return landskills;
+    }
+
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         //const LandlordScenario *scenario = qobject_cast<const LandlordScenario *>(parent());
         switch(event){
@@ -83,10 +102,7 @@ public:
                     room->broadcastProperty(p, "role");
 
                 room->getThread()->addPlayerSkills(lord, true);
-                QStringList landskills;
-                landskills << "linse" << "suocai" << "duoming" << "shemi";
-                landskills << "bizhai" << "boxue" << "fangdai";
-                qShuffle(landskills);
+                QStringList landskills = getLandSkills(room);
                 room->acquireSkill(lord, landskills.first());
 
                 log.type = "#LLEnd";
