@@ -48,7 +48,7 @@ public:
     void output(const QString &message);
     void outputEventStack();
     void enterDying(ServerPlayer *player, DamageStruct *reason);
-    void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL);
+    void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
     void revivePlayer(ServerPlayer *player);
     QStringList aliveRoles(ServerPlayer *except = NULL) const;
     void gameOver(const QString &winner);
@@ -347,7 +347,7 @@ private:
     bool makeSurrender(ServerPlayer* player);
     bool makeCheat(ServerPlayer* player);
     void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point);
-    void makeKilling(const QString& killer, const QString& victim);
+    void makeKilling(const QString& killer, const QString& victim, bool force = false);
     void makeReviving(const QString &name);
     void doScript(const QString &script);
 

@@ -817,7 +817,7 @@ public:
 	QList<ServerPlayer *> getAllPlayers() const;
 	QList<ServerPlayer *> getAlivePlayers() const;
 	void enterDying(ServerPlayer *player, DamageStruct *reason);
-	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL);
+	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
 	void revivePlayer(ServerPlayer *player);
 	QStringList aliveRoles(ServerPlayer *except = NULL) const;
 	void gameOver(const char *winner);

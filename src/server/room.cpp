@@ -236,9 +236,9 @@ void Room::updateStateItem(){
     broadcastInvoke("updateStateItem", roles);
 }
 
-void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason){
+void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
     QVariant data = QVariant::fromValue(reason);
-    if(thread->trigger(PreDeath, this, victim, data))
+    if(!force && thread->trigger(PreDeath, this, victim, data))
         return;
     ServerPlayer *killer = reason ? reason->from : NULL;
     if(Config.ContestMode && killer){
@@ -3691,7 +3691,7 @@ bool Room::makeCheat(ServerPlayer* player){
     if (code == S_CHEAT_KILL_PLAYER)
     {
         if (!isStringArray(arg[1], 0, 1)) return false;
-        makeKilling(toQString(arg[1][0]), toQString(arg[1][1]));
+        makeKilling(toQString(arg[1][0]), toQString(arg[1][1]), true);
     }
     else if (code == S_CHEAT_MAKE_DAMAGE)
     {
@@ -3777,7 +3777,7 @@ void Room::makeDamage(const QString& source, const QString& target, QSanProtocol
     this->damage(damage);
 }
 
-void Room::makeKilling(const QString& killerName, const QString& victimName){
+void Room::makeKilling(const QString& killerName, const QString& victimName, bool force){
     ServerPlayer *killer = NULL, *victim = NULL;
 
     killer = findChild<ServerPlayer *>(killerName);
@@ -3786,12 +3786,12 @@ void Room::makeKilling(const QString& killerName, const QString& victimName){
     if (victim == NULL) return;
 
     if (killer == NULL)
-        return killPlayer(victim);
+        return killPlayer(victim, NULL, force);
 
     DamageStruct damage;
     damage.from = killer;
     damage.to = victim;
-    killPlayer(victim, &damage);
+    killPlayer(victim, &damage, force);
 }
 
 void Room::makeReviving(const QString &name){

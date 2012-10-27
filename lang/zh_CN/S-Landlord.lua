@@ -2,10 +2,12 @@
 
 return {
 	["landlord"] = "斗地主",
+	["#LLBegin"] = "------ <font color=green>叫地主开始</font> ------",
 	["#LandLord1"] = "%from 叫了 %arg 分",
 	["#LandLord2"] = "%from 不叫",
 	["landlord:pass"] = "不叫",
 	["#LandLordDone"] = "%from 为本局地主",
+	["#LLEnd"] = "------ <font color=green>抢地主结束</font> ------",
 	["bizhai"] = "逼债",
 	[":bizhai"] = "出牌阶段，你使用的【杀】可额外指定一个目标。",
 	["boxue"] = "剥削",

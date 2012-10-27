@@ -27,12 +27,15 @@ public:
                 foreach(ServerPlayer *fmr, players)
                     fmr->drawCards(4, false);
 
+                LogMessage log;
+                log.type = "#LLBegin";
+                room->sendLog(log);
+
                 QStringList choices;
                 choices << "2" << "3" << "pass";
                 QString choice = "pass";
                 foreach(ServerPlayer *fmr, players){
                     choice = room->askForChoice(fmr, "landlord", choices.join("+"));
-                    LogMessage log;
                     log.type = choice != "pass" ? "#LandLord1" : "#LandLord2";
                     log.from = fmr;
                     log.arg = choice;
@@ -60,7 +63,6 @@ public:
                     }
                 }
 
-                LogMessage log;
                 log.type = "#LandLordDone";
                 log.from = lord;
                 room->sendLog(log);
@@ -70,21 +72,25 @@ public:
                 QStringList lord_list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
                 QString general = room->askForGeneral(lord, lord_list);
 
-                QString trans = QString("%1:%2").arg("anjiang").arg(general);
-                lord->invoke("transfigure", trans);
+                lord->invoke("transfigure", "anjiang:" + general);
                 room->setPlayerProperty(lord, "general2", general);
 
                 room->setPlayerProperty(lord, "maxhp", qMin(lord->getGeneral()->getMaxHp(), lord->getGeneral2()->getMaxHp()) + 1);
                 room->setPlayerProperty(lord, "hp", lord->getMaxHp());
+
+                room->updateStateItem();
+                foreach(ServerPlayer *p, players)
+                    room->broadcastProperty(p, "role");
+
+                room->getThread()->addPlayerSkills(lord, true);
                 QStringList landskills;
                 landskills << "linse" << "suocai" << "duoming" << "shemi";
                 landskills << "bizhai" << "boxue" << "fangdai";
                 qShuffle(landskills);
                 room->acquireSkill(lord, landskills.first());
 
-                room->updateStateItem();
-                foreach(ServerPlayer *p, players)
-                    room->broadcastProperty(p, "role");
+                log.type = "#LLEnd";
+                room->sendLog(log);
             }
 
             return true;
@@ -104,8 +110,8 @@ public:
 
 void LandlordScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
-
     roles << "lord" << "rebel" << "rebel";
+    qShuffle(roles);
 }
 
 int LandlordScenario::getPlayerCount() const{
@@ -156,6 +162,7 @@ public:
             if(room->askForSkillInvoke(x, objectName()))
                 x->drawCards(1);
         }
+        return false;
     }
 };
 
