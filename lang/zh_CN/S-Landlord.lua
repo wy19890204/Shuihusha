@@ -1,7 +1,10 @@
--- translation for Stanley Package
+-- translation for LandlordScenario
 
 return {
-	["stanley"] = "后传+荡寇志",
+	["landlord"] = "斗地主",
+	["exploit"] = "剥削",
+	[":exploit"] = "摸牌阶段，可额外摸一张牌；出牌阶段，你使用【杀】可额外指定一个目标。",
+	
 
 	["#ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
@@ -9,10 +12,4 @@ return {
 	["youxia"] = "游侠",
 	[":youxia"] = "当一名其他角色失去最后一张手牌时，你可立即交给其一张手牌并回复一点体力。",
 	["~ximenjinge"] = "日暮江山山无数，放眼流光光飞渡！",
-
-	["#chenliqing"] = "女飞卫",
-	["chenliqing"] = "陈丽卿",
-	["designer:chenliqing"] = "不详",
-	["dangkou"] = "荡寇",
-	[":dangkou"] = "绝密技能，效果不详。",
 }
