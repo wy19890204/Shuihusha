@@ -264,17 +264,15 @@ void Client::processServerPacket(const QString &cmd){
 void Client::processServerPacket(char *cmd){
 
     QSanGeneralPacket packet;
-    if (packet.parse(cmd))
-    {
-        if (packet.getPacketType() == S_SERVER_NOTIFICATION)
-        {
+    if (packet.parse(cmd)){
+        if (packet.getPacketType() == S_SERVER_NOTIFICATION){
             CallBack callback = m_callbacks[packet.getCommandType()];
-            if (callback) {
+            if (callback)
                 (this->*callback)(packet.getMessageBody());
-            }
         }
         else if (packet.getPacketType() == S_SERVER_REQUEST)
-            processServerRequest(packet);
+            if (!replayer)
+                processServerRequest(packet);
     }
     else processReply(cmd);
 }
