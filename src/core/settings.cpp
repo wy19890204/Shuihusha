@@ -109,6 +109,7 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
+    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
     CircularView = value("CircularView", true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
@@ -130,35 +131,19 @@ void Settings::init(){
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
-
+//banlist
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
-    roles_ban << "gongsunsheng" << "xiaorang" << "ubuntenkei";
-
-    kof_ban << "andaoquan" << "shixiu" << "zhaoji"
-            /* << "shenwuyong" << "wangdingliu"*/;
-
-    //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
-
-    hegemony_ban.append(basara_ban);
-    hegemony_ban << "gongsunsheng";
-    foreach(QString general, Sanguosha->getLimitedGeneralNames()){
+    lua_State *lua = Sanguosha->getLuaState();
+    roles_ban = GetConfigFromLuaState(lua, "roles_ban", "ban_list").toStringList();
+    kof_ban = GetConfigFromLuaState(lua, "kof_ban", "ban_list").toStringList();
+    basara_ban = GetConfigFromLuaState(lua, "basara_ban", "ban_list").toStringList();
+    hegemony_ban = GetConfigFromLuaState(lua, "hegemony_ban", "ban_list").toStringList();
+    foreach(QString general, Sanguosha->getLimitedGeneralNames())
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
-    }
 
-    pairs_ban << "tongguan" << "caijing" << "zhangheng"
-              << "+tongguan" << "+tora"
-              << "gaoqiu+luozhenren" << "wangying+zhangqing" << "wangying+qiongying"
-              << "tianhu+yanshun" << "husanniang+yanshun" << "qingzhang+sunerniang"
-              << "shien+andaoquan" << "yanxijiao+guansheng" << "lujunyi+shien"
-              //<< "shenwuyong"
-              //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
-              //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
-              //<< "oupeng+wangqing" << "jiashi+shenzhangqing"
-              //<< "husanniang+zhaoji" << "dingdesun+wangqing"
-              ;
+    pairs_ban = GetConfigFromLuaState(lua, "pairs_ban", "ban_list").toStringList();
 
     QStringList banlist = value("Banlist/Roles").toStringList();
     foreach(QString ban_general, roles_ban){
@@ -195,8 +180,7 @@ void Settings::init(){
     }
     setValue("Banlist/Pairs", banlist);
 
-    QStringList forbid_packages;
-    forbid_packages << "test";
+    QStringList forbid_packages = GetConfigFromLuaState(lua, "forbid_packages", "ban_list").toStringList();
     setValue("ForbidPackages", forbid_packages.join("+"));
 
 //ui

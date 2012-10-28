@@ -84,6 +84,64 @@ config = {
 	color_god = "#96943D",
 }
 
+ban_list = {
+	roles_ban = {
+		"gongsunsheng",
+		"xiaorang",
+	},
+	kof_ban = {
+		"andaoquan",
+		"shixiu",
+		"zhaoji",
+--		"shenwuyong",
+--		"wangdingliu",
+	},
+	basara_ban = {
+		"dingdesun",
+--		"houjian",
+--		"shenwusong",
+--		"shenwuyong",
+--		"shenzhangqing",
+		"lili",
+	},
+	hegemony_ban = {
+		"dingdesun",
+--		"houjian",
+		"lili",
+		"gongsunsheng";
+	},
+	pairs_ban = {
+		"caijing",
+		"zhangheng",
+		"+tongguan",
+		"+tora",
+		"gaoqiu+luozhenren",
+		"wangying+zhangqing",
+		"wangying+qiongying",
+		"tianhu+yanshun",
+		"husanniang+yanshun",
+		"husanniang+zhaoji",
+		"qingzhang+sunerniang",
+		"shien+andaoquan",
+		"yanxijiao+guansheng",
+		"lujunyi+shien",
+		"likui+luozhenren",
+		"dingdesun+wangqing",
+		"shijin+yanshun",
+		"shijin+leiheng",
+--		"shenwuyong",
+--		"liruilan+shijin",
+--		"lujunyi+shenzhangqing",
+--		"luozhenren+yuehe",
+--		"husanniang+jiashi",
+--		"oupeng+wangqing",
+--		"jiashi+shenzhangqing"
+	},
+	forbid_packages = {
+		"test",
+	},
+}
+
 for i=1, 20 do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
