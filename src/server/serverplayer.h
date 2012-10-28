@@ -85,6 +85,7 @@ public:
     void setNext(ServerPlayer *next);
     ServerPlayer *getNext() const;
     ServerPlayer *getNextAlive() const;
+    void swapViewPlus(ServerPlayer *target);
 
     // 3v3 methods
     void addToSelected(const QString &general);
