@@ -56,6 +56,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QLineEdit" name="bgMusicPathLineEdit">
+         <property name="whatsThis">
+          <string>设置默认背景音乐。剧情模式的音乐另有指定，不受此设置影响</string>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -278,6 +281,9 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QLineEdit" name="bgPathLineEdit">
+           <property name="whatsThis">
+            <string>设置背景图片</string>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -340,6 +346,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="circularViewCheckBox">
+         <property name="whatsThis">
+          <string>仿OL的环状视图。聊天框和信息框靠右。适合大分辨率用户</string>
+         </property>
          <property name="text">
           <string>Circular view</string>
          </property>
@@ -577,6 +586,9 @@
        <height>16</height>
       </rect>
      </property>
+     <property name="whatsThis">
+      <string>不勾选此项，SP武将无法被自由选将。</string>
+     </property>
      <property name="text">
       <string>Open the SP package</string>
      </property>
@@ -592,6 +604,9 @@
        <width>239</width>
        <height>16</height>
       </rect>
+     </property>
+     <property name="whatsThis">
+      <string>不勾选此项，LUA扩展将不可用。</string>
      </property>
      <property name="text">
       <string>Enable Lua Generals</string>
@@ -621,6 +636,9 @@
        <width>121</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="whatsThis">
+      <string>切换界面语言。默认为简体中文</string>
      </property>
      <property name="editable">
       <bool>true</bool>

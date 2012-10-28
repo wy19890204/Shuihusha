@@ -83,7 +83,6 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         if(general->isHidden()){
             nickname_item->setBackgroundColor(Qt::gray);
             nickname_item->setTextColor(Qt::white);
-            //nickname_item->setToolTip("hidden");
             name_item->setBackgroundColor(Qt::gray);
             name_item->setTextColor(Qt::white);
         }
@@ -226,6 +225,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         ui->generalPhoto->setToolTip(resume);
     else
         ui->generalPhoto->setToolTip(Sanguosha->translate("DefaultResume"));
+    ui->generalPhoto->setWhatsThis("FAQ:"); //@todo
     if(Self && general->objectName() == Self->getGeneralName())
         ui->changeGeneralButton->setEnabled(false);
     else
