@@ -87,7 +87,11 @@ config = {
 
 scenario = {
 	couple_lord = "zhoutong",
---	couple_spouse = {"xiezhen+xiebao",},
+	couple_spouse = {
+		"xiezhen+xiebao",
+		"zhangheng+zhangshun",
+		"lijun+lili",
+	},
 }
 
 ban_list = {

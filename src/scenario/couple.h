@@ -20,6 +20,7 @@ public:
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
+    QMap<QString, QString> mappy(QMap<QString, QString> mapr) const;
     void marryAll(Room *room) const;
     void setSpouse(ServerPlayer *player, ServerPlayer *spouse) const;
     ServerPlayer *getSpouse(const ServerPlayer *player) const;

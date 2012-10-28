@@ -132,14 +132,7 @@ CoupleScenario::CoupleScenario()
     //map["wusong"] = "yulan";
     //map["chaijin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
-/*
-    lua_State *lua = Sanguosha->getLuaState();
-    QStringList spouses = GetConfigFromLuaState(lua, "couple_spouse", "scenario").toStringList();
-    foreach(QString spouse, spouses){
-        QStringList couple = spouse.split("+");
-        map[couple.first()] = couple.last();
-    }
-*/
+
     full_map = map;
     full_map["wuda"] = "panjinlian";
     full_map["gaoyanei"] = "linniangzi";
@@ -149,13 +142,27 @@ CoupleScenario::CoupleScenario()
     full_map["zhangsan"] = "lisi";
 }
 
+QMap<QString, QString> CoupleScenario::mappy(QMap<QString, QString> mapr) const{
+    lua_State *lua = Sanguosha->getLuaState();
+    QStringList spouses = GetConfigFromLuaState(lua, "couple_spouse", "scenario").toStringList();
+    QMap<QString, QString> mapper = mapr;
+    foreach(QString spouse, spouses){
+        QStringList couple = spouse.split("+");
+        mapper.insert(couple.first(), couple.last());
+    }
+    return mapper;
+}
+
 void CoupleScenario::marryAll(Room *room) const{
-    foreach(QString husband_name, full_map.keys()){
+    QMap<QString, QString> mapper = mappy(map);
+    QMap<QString, QString> full_mapper = mappy(full_map);
+
+    foreach(QString husband_name, full_mapper.keys()){
         ServerPlayer *husband = room->findPlayer(husband_name, true);
         if(husband == NULL)
             continue;
 
-        QString wife_name = map.value(husband_name, QString());
+        QString wife_name = mapper.value(husband_name, QString());
         if(!wife_name.isNull()){
             ServerPlayer *wife = room->findPlayer(wife_name, true);
             marry(husband, wife);
@@ -226,14 +233,14 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     QString zhoutong = GetConfigFromLuaState(lua, "couple_lord", "scenario").toString();
     generals << zhoutong;
 
-    //map.insert("tianhu", "wangqing");
-    QStringList husbands = map.keys();
+    QMap<QString, QString> mapper = mappy(map);
+    QStringList husbands = mapper.keys();
     qShuffle(husbands);
     husbands = husbands.mid(0, 4);
 
     QStringList others;
     foreach(QString husband, husbands)
-        others << husband << map.value(husband);
+        others << husband << mapper.value(husband);
 
     generals << others;
     qShuffle(generals);
