@@ -197,8 +197,6 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     basara_checkbox = new QCheckBox(tr("Enable Basara"));
     basara_checkbox->setChecked(Config.EnableBasara);
-    updateButtonEnablility(mode_group->checkedButton());
-    connect(mode_group,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(updateButtonEnablility(QAbstractButton*)));
 
     hegemony_checkbox = new QCheckBox(tr("Enable Hegemony"));
     hegemony_checkbox->setChecked(Config.EnableHegemony);
@@ -356,7 +354,10 @@ QWidget *ServerDialog::createAITab(){
 
     disable_gongsunsheng = new QCheckBox(tr("Disable Gongsunsheng"));
     disable_gongsunsheng->setChecked(Config.value("DisableQimen", false).toBool());
-    disable_gongsunsheng->setEnabled(false);
+    //disable_gongsunsheng->setEnabled(false);
+
+    updateButtonEnablility(mode_group->checkedButton());
+    connect(mode_group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(updateButtonEnablility(QAbstractButton*)));
 
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
@@ -380,31 +381,31 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
     if(!button)return;
     if(button->objectName().contains("scenario")
             || button->objectName().contains("mini")
-            || button->objectName().contains("1v1")
-            || button->objectName().contains("1v3"))
-    {
+            || button->objectName().contains("1v1")){
         basara_checkbox->setChecked(false);
         basara_checkbox->setEnabled(false);
     }
     else
-    {
         basara_checkbox->setEnabled(true);
-    }
 
     if(button->objectName().contains("mini")){
         mini_scene_button->setEnabled(true);
         second_general_checkbox->setChecked(false);
         second_general_checkbox->setEnabled(false);
+        anzhan_checkbox->setChecked(false);
+        anzhan_checkbox->setEnabled(false);
+        endless_checkbox->setChecked(false);
+        endless_checkbox->setEnabled(false);
     }
-    else
-    {
-        second_general_checkbox->setEnabled(true);
+    else{
         mini_scene_button->setEnabled(false);
+        second_general_checkbox->setEnabled(true);
+        anzhan_checkbox->setEnabled(true);
+        endless_checkbox->setEnabled(true); //@todo:crash
     }
 }
 
-void BanlistDialog::switchTo(int item)
-{
+void BanlistDialog::switchTo(int item){
     this->item = item;
     list = lists.at(item);
     if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));

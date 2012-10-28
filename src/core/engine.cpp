@@ -573,11 +573,10 @@ QStringList Engine::getLimitedGeneralNames() const{
     QHashIterator<QString, const General *> itor(generals);
     while(itor.hasNext()){
         itor.next();
-        if(!ban_package.contains(itor.value()->getPackage())){
-            if(!Config.value("DisableQimen", false).toBool() ||
-               itor.key() != "gongsunsheng")
-                general_names << itor.key();
-        }
+        if(Config.value("DisableQimen", false).toBool() && itor.key() == "gongsunsheng")
+            continue;
+        if(!ban_package.contains(itor.value()->getPackage()))
+            general_names << itor.key();
     }
 
     return general_names;

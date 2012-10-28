@@ -199,8 +199,7 @@ void Client::networkDelayTest(const QString &){
 }
 
 void Client::replyToServer(CommandType command, const Json::Value &arg){
-    if(socket)
-    {
+    if(socket){
         QSanGeneralPacket packet(S_CLIENT_REPLY, command);
         packet.m_localSerial = _m_lastServerSerial;
         packet.setMessageBody(arg);
@@ -209,8 +208,7 @@ void Client::replyToServer(CommandType command, const Json::Value &arg){
 }
 
 void Client::requestToServer(CommandType command, const Json::Value &arg){
-    if(socket)
-    {
+    if(socket){
         QSanGeneralPacket packet(S_CLIENT_REQUEST, command);
         packet.setMessageBody(arg);
         socket->send(toQString(packet.toString()));
@@ -264,23 +262,20 @@ void Client::processServerPacket(const QString &cmd){
 void Client::processServerPacket(char *cmd){
 
     QSanGeneralPacket packet;
-    if (packet.parse(cmd))
-    {
-        if (packet.getPacketType() == S_SERVER_NOTIFICATION)
-        {
+    if (packet.parse(cmd)){
+        if (packet.getPacketType() == S_SERVER_NOTIFICATION){
             CallBack callback = m_callbacks[packet.getCommandType()];
-            if (callback) {
+            if (callback)
                 (this->*callback)(packet.getMessageBody());
-            }
         }
         else if (packet.getPacketType() == S_SERVER_REQUEST)
-            processServerRequest(packet);
+            if (!replayer)
+            	processServerRequest(packet);
     }
     else processReply(cmd);
 }
 
-bool Client::processServerRequest(const QSanGeneralPacket& packet)
-{
+bool Client::processServerRequest(const QSanGeneralPacket& packet){
     setStatus(Client::NotActive);
     _m_lastServerSerial = packet.m_globalSerial;
     CommandType command = packet.getCommandType();
