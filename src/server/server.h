@@ -115,6 +115,7 @@ private:
     QPushButton *mini_scene_button;
     QLineEdit *address_edit;
     QLineEdit *port_edit;
+    QLineEdit *wheel_count;
     QCheckBox *cheat_enable_checkbox;
     QCheckBox *free_choose_generals_checkbox;
     QCheckBox *free_choose_cards_checkbox;

@@ -15,10 +15,6 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         //const WheelFightScenario *scenario = qobject_cast<const WheelFightScenario *>(parent());
         switch(event){
-        case GameStart:{
-            room->setTag("LandlordBan", ban);
-            break;
-        }
         case PreDeath:{
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
@@ -31,6 +27,7 @@ public:
                 if(!ban.contains(tmp->getGeneral2Name()))
                     ban << tmp->getGeneral2Name();
             }
+            room->setTag("WheelBan", ban);
             QStringList list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
             QString next_general = room->askForGeneral(player, list);
             room->transfigure(player, next_general, true, true, player->getGeneralName());

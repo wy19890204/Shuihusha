@@ -224,6 +224,10 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
+    wheel_count = new QLineEdit;
+    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
+    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
+
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
@@ -237,6 +241,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
     layout->addLayout(HLay(new QLabel(tr("Port")), port_edit));
+    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -1024,6 +1029,7 @@ bool ServerDialog::config(){
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
     Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
+    Config.setValue("WheelCount", wheel_count->text());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);
     Config.setValue("Address", Config.Address);

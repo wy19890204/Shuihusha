@@ -38,6 +38,7 @@ config = {
 		"Dusong",
 		"Couple",
 		"Landlord",
+		"WheelFight",
 --		"Changban",
 --		"Contract",
 --[[	"Zombie",
