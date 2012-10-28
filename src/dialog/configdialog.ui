@@ -50,7 +50,7 @@
         <x>10</x>
         <y>20</y>
         <width>421</width>
-        <height>51</height>
+        <height>53</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -214,7 +214,7 @@
        <rect>
         <x>10</x>
         <y>110</y>
-        <width>421</width>
+        <width>437</width>
         <height>21</height>
        </rect>
       </property>
@@ -597,6 +597,32 @@
       <string>Enable Lua Generals</string>
      </property>
      <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="langLabel">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>410</y>
+       <width>51</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Language:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="langComboBox">
+     <property name="geometry">
+      <rect>
+       <x>328</x>
+       <y>410</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="editable">
       <bool>true</bool>
      </property>
     </widget>

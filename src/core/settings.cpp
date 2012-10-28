@@ -62,7 +62,7 @@ void Settings::init(){
     if(!contains("BanPackages")){
         QStringList banlist;
         banlist << "test" << "god" << "sp" << "gift"
-                << "customcards"
+                << "customcards" << "sanguosha"
                 //<< "joy" << "kuso" << "joyer"
                 ;
 
@@ -148,7 +148,8 @@ void Settings::init(){
             hegemony_ban << general;
     }
 
-    pairs_ban << "tongguan" << "tongguanf" << "caijing" << "zhangheng"
+    pairs_ban << "tongguan" << "caijing" << "zhangheng"
+              << "+tongguan" << "+tora"
               << "gaoqiu+luozhenren" << "wangying+zhangqing" << "wangying+qiongying"
               << "tianhu+yanshun" << "husanniang+yanshun" << "qingzhang+sunerniang"
               << "shien+andaoquan" << "yanxijiao+guansheng" << "lujunyi+shien"
@@ -176,21 +177,21 @@ void Settings::init(){
     banlist = value("Banlist/Basara").toStringList();
     foreach(QString ban_general, basara_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Basara", banlist);
 
     banlist = value("Banlist/Hegemony").toStringList();
     foreach(QString ban_general, hegemony_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Hegemony", banlist);
 
     banlist = value("Banlist/Pairs").toStringList();
     foreach(QString ban_general, pairs_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Pairs", banlist);
 

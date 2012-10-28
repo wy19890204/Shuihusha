@@ -1178,11 +1178,11 @@ StandardCardPackage::StandardCardPackage()
 
     cards << new AmazingGrace(Card::Heart, 3)
           << new AmazingGrace(Card::Heart, 4)
-          << new GodSalvation
+          << new GodSalvation(Card::Heart, 1)
           << new SavageAssault(Card::Spade, 7)
           << new SavageAssault(Card::Spade, 13)
           << new SavageAssault(Card::Club, 7)
-          << new ArcheryAttack
+          << new ArcheryAttack(Card::Heart, 1)
           << new Duel(Card::Spade, 1)
           << new Duel(Card::Club, 1)
           << new Duel(Card::Diamond, 1)
