@@ -264,39 +264,32 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
     foreach(QString name, generals){
         if(Config.Enable2ndGeneral){
-            if(getGeneral()){
+            if(getGeneral())
                 if(BanPair::isBanned(getGeneralName(), name))
                     continue;
-            }else{
+            else
                 if(BanPair::isBanned(name))
                     continue;
-            }
 
             if(Config.EnableHegemony)
-            {
-                if(getGeneral())
-                    if(getGeneral()->getKingdom()
-                            != Sanguosha->getGeneral(name)->getKingdom())
-                        continue;
-            }
+                if(getGeneral() && getGeneral()->getKingdom() != Sanguosha->getGeneral(name)->getKingdom())
+                    continue;
         }
-        if(Config.EnableBasara)
-        {
+        if(Config.EnableBasara){
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();
 
             if(ban_list.contains(name))continue;
         }
-        if(Config.GameMode == "zombie_mode")
-        {
+        if(Config.GameMode == "zombie_mode"){
             QStringList ban_list = Config.value("Banlist/Zombie").toStringList();
 
             if(ban_list.contains(name))continue;
         }
         if(Config.value("DisableQimen", false).toBool())
             if(name == "gongsunsheng")continue;
-        if((Config.GameMode.endsWith("p") ||
-            Config.GameMode.endsWith("pd")))
-        {
+        if(Config.GameMode.endsWith("p") ||
+                Config.GameMode.endsWith("pd") ||
+                Config.GameMode.endsWith("pz") ){
             QStringList ban_list = Config.value("Banlist/Roles").toStringList();
 
             if(ban_list.contains(name))continue;
@@ -702,6 +695,23 @@ ServerPlayer *ServerPlayer::getNextAlive() const{
         next = next->getNext();
 
     return next;
+}
+
+void ServerPlayer::swapViewPlus(ServerPlayer *target){ //@todo
+    if(target == this)
+        return;
+    room->swapSeat(target, this);
+    /*ServerPlayer *c;
+    c->copyFrom(this);
+    this->copyFrom(target);
+    target->copyFrom(c);*/
+    QString gen1, gen2;
+    gen1 = this->getGeneralName();
+    gen2 = this->getGeneral2Name();
+    room->setPlayerProperty(this, "general", target->getGeneralName());
+    room->setPlayerProperty(this, "general2", target->getGeneral2Name());
+    room->setPlayerProperty(target, "general", gen1);
+    room->setPlayerProperty(target, "general2", gen2);
 }
 
 int ServerPlayer::getGeneralMaxHP() const{

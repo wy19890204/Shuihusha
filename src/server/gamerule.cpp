@@ -293,7 +293,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(player->isLord())
             setGameProcess(room);
 
-        if(Config.EnableReincarnation){
+        if(Config.EnableReincarnation && room->getMode() != "wheel_fight"){
             int count = Sanguosha->getPlayerCount(room->getMode());
             if(count > 3)
                 room->attachSkillToPlayer(player, "sacrifice");

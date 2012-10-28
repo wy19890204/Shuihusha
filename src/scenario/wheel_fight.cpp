@@ -9,7 +9,21 @@ class WheelFightScenarioRule: public ScenarioRule{
 public:
     WheelFightScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << GameStart << PreDeath;
+        events << PreDeath;
+    }
+
+    static void Oyasumi(Room *room, ServerPlayer *player){
+        QStringList ban = room->getTag("WheelBan").toStringList();
+        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+            if(!ban.contains(tmp->getGeneralName()))
+                ban << tmp->getGeneralName();
+            if(!ban.contains(tmp->getGeneral2Name()))
+                ban << tmp->getGeneral2Name();
+        }
+        room->setTag("WheelBan", ban);
+        QStringList list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
+        QString next_general = room->askForGeneral(player, list);
+        room->transfigure(player, next_general, true, true, player->getGeneralName());
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -18,22 +32,56 @@ public:
         case PreDeath:{
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;
-            if(killer)
+            if(killer){
+                killer->addMark("wheelon");
+                if(killer->getMark("wheelon") >= 3){
+                    LogMessage log;
+                    log.type = "#KillerB";
+                    log.from = killer;
+                    log.arg = killer->getGeneralName();
+                    room->sendLog(log);
+                    Oyasumi(room, killer);
+                }
                 killer->drawCards(3);
-            QStringList ban = room->getTag("WheelBan").toStringList();
-            foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(!ban.contains(tmp->getGeneralName()))
-                    ban << tmp->getGeneralName();
-                if(!ban.contains(tmp->getGeneral2Name()))
-                    ban << tmp->getGeneral2Name();
+                room->setPlayerStatistics(killer, "kill", 1);
             }
-            room->setTag("WheelBan", ban);
-            QStringList list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
-            QString next_general = room->askForGeneral(player, list);
-            room->transfigure(player, next_general, true, true, player->getGeneralName());
-            player->gainMark("@skull");
-            if(player->getMark("@skull") >= Config.value("WheelCount", 10).toInt())
+
+            room->setPlayerMark(player, "wheelon", 0);
+            player->addMark("@skull");
+            if(player->getMark("@skull") >= Config.value("WheelCount", 10).toInt()){
                 room->gameOver(room->getOtherPlayers(player).first()->objectName());
+                return true;
+            }
+            //player->setProperty("wheel", player->getMark("@skull"));
+            int wheel = player->getMark("@skull");
+
+            LogMessage log;
+            log.type = "#VictimB";
+            log.from = player;
+            //log.arg = QString::number(player->property("wheel").toInt());
+            log.arg = QString::number(wheel);
+            room->sendLog(log);
+            int maxwheel = Config.value("WheelCount", 10).toInt();
+            if((float)wheel / (float)maxwheel > 0.7){
+                log.type = "#VictimC";
+                log.from = player;
+                log.arg = QString::number(maxwheel);
+                log.arg2 = QString::number(maxwheel - wheel);
+                room->sendLog(log);
+            }
+
+            if(!player->faceUp())
+                player->turnOver();
+            player->clearFlags();
+            player->clearHistory();
+            player->throwAllCards();
+            player->throwAllMarks();
+            player->clearPrivatePiles();
+
+            Oyasumi(room, player);
+            //room->setPlayerMark(player, "@skull", player->property("wheel").toInt());
+            room->setPlayerMark(player, "@skull", wheel);
+            player->drawCards(4);
             return true;
         }
         default:
