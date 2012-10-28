@@ -112,8 +112,8 @@ public:
 CoupleScenario::CoupleScenario()
     :Scenario("couple")
 {
-    lord = "zhoutong";
-    renegades << "fangla" << "wangqing";
+    //lord = "zhoutong";
+    //renegades << "fangla" << "wangqing";
     rule = new CoupleScenarioRule(this);
 
     //map["ximenqing"] = "panjinlian";
@@ -132,7 +132,14 @@ CoupleScenario::CoupleScenario()
     //map["wusong"] = "yulan";
     //map["chaijin"] = "fangjinzhi";
     //map["zhengtu"] = "jincuilian";
-
+/*
+    lua_State *lua = Sanguosha->getLuaState();
+    QStringList spouses = GetConfigFromLuaState(lua, "couple_spouse", "scenario").toStringList();
+    foreach(QString spouse, spouses){
+        QStringList couple = spouse.split("+");
+        map[couple.first()] = couple.last();
+    }
+*/
     full_map = map;
     full_map["wuda"] = "panjinlian";
     full_map["gaoyanei"] = "linniangzi";
@@ -215,8 +222,11 @@ bool CoupleScenario::isWidow(ServerPlayer *player) const{
 }
 
 void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
-    generals << lord;
+    lua_State *lua = Sanguosha->getLuaState();
+    QString zhoutong = GetConfigFromLuaState(lua, "couple_lord", "scenario").toString();
+    generals << zhoutong;
 
+    //map.insert("tianhu", "wangqing");
     QStringList husbands = map.keys();
     qShuffle(husbands);
     husbands = husbands.mid(0, 4);
@@ -231,7 +241,7 @@ void CoupleScenario::assign(QStringList &generals, QStringList &roles) const{
     // roles
     int i;
     for(i=0; i<9; i++){
-        if(generals.at(i) == "zhoutong")
+        if(generals.at(i) == zhoutong)
             roles << "lord";
         else
             roles << "renegade";

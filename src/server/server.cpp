@@ -171,20 +171,20 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     second_general_checkbox = new QCheckBox(tr("Enable second general"));
 
-    nolordskill_checkbox  = new QCheckBox(tr("No lord skill"));
+    nolordskill_checkbox = new QCheckBox(tr("No lord skill"));
     nolordskill_checkbox->setChecked(Config.NoLordSkill);
 
-    reincarnation_checkbox  = new QCheckBox(tr("Enable Reincarnation"));
+    reincarnation_checkbox = new QCheckBox(tr("Enable Reincarnation"));
     reincarnation_checkbox->setChecked(Config.EnableReincarnation);
     reinca_unchange_checkbox  = new QCheckBox(tr("Persist general in reincarnation"));
     reinca_unchange_checkbox->setChecked(Config.value("ReincaPersist").toBool());
 
-    scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
+    scene_checkbox = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
 
-    anzhan_checkbox  = new QCheckBox(tr("Enable Anzhan"));
+    anzhan_checkbox = new QCheckBox(tr("Enable Anzhan"));
     anzhan_checkbox->setChecked(Config.EnableAnzhan);
-    anzhan_equal_checkbox  = new QCheckBox(tr("Anzhan equality"));
+    anzhan_equal_checkbox = new QCheckBox(tr("Anzhan equality"));
     anzhan_equal_checkbox->setChecked(Config.value("AnzhanEqual").toBool());
 
     max_hp_label = new QLabel(tr("Max HP scheme"));
@@ -363,6 +363,7 @@ QWidget *ServerDialog::createAITab(){
 
     updateButtonEnablility(mode_group->checkedButton());
     connect(mode_group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(updateButtonEnablility(QAbstractButton*)));
+    //@todo:connect(mode_group, SIGNAL(activated(QAbstractButton*)), this, SLOT(updateButtonEnablility(QAbstractButton*)));
 
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
@@ -406,7 +407,22 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
         mini_scene_button->setEnabled(false);
         second_general_checkbox->setEnabled(true);
         anzhan_checkbox->setEnabled(true);
-        endless_checkbox->setEnabled(true); //@todo:crash
+        endless_checkbox->setEnabled(true);
+    }
+
+    QString scename = scenario_combobox->itemData(scenario_combobox->currentIndex()).toString();
+    if(button->objectName().contains("scenario") && scename == "wheel_fight"){
+        anzhan_checkbox->setChecked(false);
+        anzhan_checkbox->setEnabled(false);
+        endless_checkbox->setChecked(false);
+        endless_checkbox->setEnabled(false);
+        reincarnation_checkbox->setChecked(false);
+        reincarnation_checkbox->setEnabled(false);
+    }
+    else{
+        anzhan_checkbox->setEnabled(true);
+        endless_checkbox->setEnabled(true);
+        reincarnation_checkbox->setEnabled(true);
     }
 }
 

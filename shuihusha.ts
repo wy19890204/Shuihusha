@@ -3552,6 +3552,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>探测我的广域网IP</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="244"/>
+        <source>Wheel Fight</source>
+        <translation>车轮战死亡上限</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="43"/>
         <source>Cheat</source>
         <translation>测试选项</translation>

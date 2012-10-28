@@ -85,6 +85,11 @@ config = {
 	color_god = "#96943D",
 }
 
+scenario = {
+	couple_lord = "zhoutong",
+--	couple_spouse = {"xiezhen+xiebao",},
+}
+
 ban_list = {
 	roles_ban = {
 		"gongsunsheng",

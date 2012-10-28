@@ -41,6 +41,7 @@ public:
                     log.arg = killer->getGeneralName();
                     room->sendLog(log);
                     Oyasumi(room, killer);
+                    room->setPlayerMark(killer, "wheelon", 0);
                 }
                 killer->drawCards(3);
                 room->setPlayerStatistics(killer, "kill", 1);
@@ -52,13 +53,11 @@ public:
                 room->gameOver(room->getOtherPlayers(player).first()->objectName());
                 return true;
             }
-            //player->setProperty("wheel", player->getMark("@skull"));
             int wheel = player->getMark("@skull");
 
             LogMessage log;
             log.type = "#VictimB";
             log.from = player;
-            //log.arg = QString::number(player->property("wheel").toInt());
             log.arg = QString::number(wheel);
             room->sendLog(log);
             int maxwheel = Config.value("WheelCount", 10).toInt();
@@ -72,6 +71,7 @@ public:
 
             if(!player->faceUp())
                 player->turnOver();
+            room->setPlayerFlag(player, "-ecst");
             player->clearFlags();
             player->clearHistory();
             player->throwAllCards();
@@ -79,9 +79,9 @@ public:
             player->clearPrivatePiles();
 
             Oyasumi(room, player);
-            //room->setPlayerMark(player, "@skull", player->property("wheel").toInt());
             room->setPlayerMark(player, "@skull", wheel);
             player->drawCards(4);
+            data = QVariant();
             return true;
         }
         default:

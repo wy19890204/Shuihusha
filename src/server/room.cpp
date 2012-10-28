@@ -2163,6 +2163,8 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomLords();
         if(Config.EnableAnzhan)
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
+        if(mode == "wheel_fight")
+            lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
 
