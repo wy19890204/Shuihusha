@@ -697,6 +697,23 @@ ServerPlayer *ServerPlayer::getNextAlive() const{
     return next;
 }
 
+void ServerPlayer::swapViewPlus(ServerPlayer *target){ //@todo
+    if(target == this)
+        return;
+    room->swapSeat(target, this);
+    /*ServerPlayer *c;
+    c->copyFrom(this);
+    this->copyFrom(target);
+    target->copyFrom(c);*/
+    QString gen1, gen2;
+    gen1 = this->getGeneralName();
+    gen2 = this->getGeneral2Name();
+    room->setPlayerProperty(this, "general", target->getGeneralName());
+    room->setPlayerProperty(this, "general2", target->getGeneral2Name());
+    room->setPlayerProperty(target, "general", gen1);
+    room->setPlayerProperty(target, "general2", gen2);
+}
+
 int ServerPlayer::getGeneralMaxHP() const{
     int max_hp = 0;
 
