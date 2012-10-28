@@ -1381,7 +1381,7 @@ void Room::swapPile(){
         }
     }
     else{
-        if(times == 6)
+        if(mode != "wheel_fight" && times == 6)
             gameOver(".");
         if(mode == "dusong"){
             int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;

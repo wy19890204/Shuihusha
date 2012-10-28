@@ -81,6 +81,7 @@ SOURCES += \
 	src/scenario/legend.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
+	src/scenario/wheel_fight.cpp \
 	src/scenario/zombie.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
@@ -215,6 +216,7 @@ HEADERS += \
 	src/scenario/legend.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
+	src/scenario/wheel_fight.h \
 	src/scenario/zombie.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
