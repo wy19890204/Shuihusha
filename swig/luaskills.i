@@ -39,6 +39,7 @@ public:
 		MaxCards,
 		Mixed
 	};
+
 	ClientSkill(const QString &name, Category cate = Mixed);
 	virtual Category getCategory() const;
 	virtual int getExtra(const Player *target) const;
