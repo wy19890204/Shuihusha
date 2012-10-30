@@ -603,7 +603,7 @@ void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     card_ids.removeOne(card_id);
     room->takeAG(source, card_id);
     room->broadcastInvoke("clearAG");
-    room->playSkillEffect("qiapai");
+    room->playSkillEffect(skill_name);
 }
 
 class Qiapai: public ZeroCardViewAsSkill{
@@ -650,7 +650,7 @@ public:
 TestPackage::TestPackage()
     :Package("test")
 {
-    skills << new Sacrifice;
+    skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);

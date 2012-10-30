@@ -18,17 +18,17 @@ bool TaolueCard::targetFilter(const QList<const Player *> &targets, const Player
 void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer *> &targets) const{
     bool success = player->pindian(targets.first(), "Taolue", this);
     if(!success){
-        room->playSkillEffect("taolue", 2);
+        room->playSkillEffect(skill_name, 2);
         if(!player->isNude())
-            room->askForDiscard(player, "taolue", 1, false, true);
+            room->askForDiscard(player, skill_name, 1, false, true);
         return;
     }
-    room->playSkillEffect("taolue", 1);
+    room->playSkillEffect(skill_name, 1);
     PlayerStar from = targets.first();
     if(from->getCards("ej").isEmpty())
         return;
 
-    int card_id = room->askForCardChosen(player, from , "ej", "taolue");
+    int card_id = room->askForCardChosen(player, from , "ej", skill_name);
     const Card *card = Sanguosha->getCard(card_id);
     Player::Place place = room->getCardPlace(card_id);
 
@@ -55,7 +55,7 @@ void TaolueCard::use(Room *room, ServerPlayer *player, const QList<ServerPlayer 
         delete trick;
 
     room->setTag("TaolueTarget", QVariant::fromValue(from));
-    ServerPlayer *to = room->askForPlayerChosen(player, tos, "qiaobian");
+    ServerPlayer *to = room->askForPlayerChosen(player, tos, skill_name);
     if(to)
         room->moveCardTo(card, to, place);
     room->removeTag("TaolueTarget");
@@ -271,11 +271,11 @@ bool NeiyingCard::targetsFeasible(const QList<const Player *> &targets, const Pl
 void NeiyingCard::weAreFriends(Room *room, ServerPlayer *you, ServerPlayer *me) const{
     QList<int> all1 = you->handCards();
     QList<int> all2 = me->handCards();
-    room->playSkillEffect("neiying", qrand() % 2 + 5);
+    room->playSkillEffect(skill_name, qrand() % 2 + 5);
     room->fillAG(all1, me);
     room->fillAG(all2, you);
     room->getThread()->delay(4000);
-    //room->askForAG(you, me, true, "neiying");
+    //room->askForAG(you, me, true, skill_name);
     me->invoke("clearAG");
     you->invoke("clearAG");
 }

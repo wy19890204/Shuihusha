@@ -77,7 +77,6 @@ FreeRegulateSkill::FreeRegulateSkill(QObject *parent)
     :ViewAsSkill("free-regulate")
 {
     setParent(parent);
-    card = new DummyCard;
 }
 
 bool FreeRegulateSkill::isEnabledAtPlay(const Player *) const{

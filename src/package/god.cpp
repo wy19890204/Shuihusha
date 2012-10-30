@@ -438,7 +438,7 @@ bool MeiyuCard::targetFilter(const QList<const Player *> &targets, const Player 
 void MeiyuCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->throwCard(card_use.from->getPile("stone").last());
     Slash *slash = new Slash(Card::NoSuit, 0);
-    slash->setSkillName("meiyu");
+    slash->setSkillName(skill_name);
     CardUseStruct use;
     use.card = slash;
     use.from = card_use.from;

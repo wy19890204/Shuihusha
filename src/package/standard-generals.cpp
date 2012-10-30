@@ -13,12 +13,12 @@ GanlinCard::GanlinCard(){
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
 
-    room->playSkillEffect("ganlin", qrand() % 2 + 1);
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
     room->obtainCard(target, this, false);
     int n = source->getLostHp() - source->getHandcardNum();
-    if(n > 0 && source->askForSkillInvoke("ganlin")){
+    if(n > 0 && source->askForSkillInvoke(skill_name)){
         source->drawCards(n);
-        room->playSkillEffect("ganlin", qrand() % 2 + 3);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
         room->setPlayerFlag(source, "Ganlin");
     }
 };
@@ -507,7 +507,7 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
 
     JudgeStruct judge;
     judge.pattern = QRegExp("(.*):(.*):(.*)");
-    judge.reason = "qimen";
+    judge.reason = skill_name;
     judge.who = superman;
 
     room->judge(judge);
@@ -516,14 +516,14 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
     QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
     if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
         if(!dragon->hasMark("wudao_wake"))
-            room->playSkillEffect("qimen", qrand() % 2 + 1);
+            room->playSkillEffect(skill_name, qrand() % 2 + 1);
         else
-            room->playSkillEffect("qimen", qrand() % 2 + 3);
+            room->playSkillEffect(skill_name, qrand() % 2 + 3);
         LogMessage log;
         log.type = "#Qimen";
         log.from = dragon;
         log.to << superman;
-        log.arg = "qimen";
+        log.arg = skill_name;
         room->sendLog(log);
 
         willCry(room, superman);
@@ -862,7 +862,7 @@ bool HaoshenCard::targetFilter(const QList<const Player *> &targets, const Playe
     if(!targets.isEmpty())
         return false;
     if(Self->getPhase() == Player::Draw)
-        return to_select->getHandcardNum() != to_select->getMaxHP();
+        return to_select->getHandcardNum() != to_select->getMaxHp();
     else
         return to_select != Self;
     return false;
@@ -1119,7 +1119,7 @@ MaidaoCard::MaidaoCard(){
 }
 
 void MaidaoCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    source->playSkillEffect("maidao", qrand() % 2 + 1);
+    source->playSkillEffect(skill_name, qrand() % 2 + 1);
     foreach(int x, getSubcards())
         source->addToPile("knife", x);
 }
@@ -1592,15 +1592,15 @@ bool DaleiCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *> &targets) const{
-    room->playSkillEffect("dalei", qrand() % 2 + 1);
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
     PlayerStar target = targets.first();
-    bool success = xiaoyi->pindian(target, "dalei", this);
+    bool success = xiaoyi->pindian(target, skill_name, this);
     if(success){
-        room->playSkillEffect("dalei", 3);
+        room->playSkillEffect(skill_name, 3);
         room->setPlayerFlag(xiaoyi, "dalei_success");
         room->setPlayerProperty(xiaoyi, "dalei_target", QVariant::fromValue(target));
     }else{
-        room->playSkillEffect("dalei", 4);
+        room->playSkillEffect(skill_name, 4);
         DamageStruct damage;
         damage.from = target;
         damage.to = xiaoyi;
@@ -2557,8 +2557,8 @@ bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void SuocaiCard::use(Room *o, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *yanp = targets.first();
-    o->playSkillEffect("suocai", qrand() % 2 + 1);
-    source->pindian(yanp, "suocai", this);
+    o->playSkillEffect(skill_name, qrand() % 2 + 1);
+    source->pindian(yanp, skill_name, this);
 }
 
 class SuocaiPindian: public OneCardViewAsSkill{

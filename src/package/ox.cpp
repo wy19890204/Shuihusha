@@ -23,12 +23,12 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
     judge.reason = objectName();
     judge.who = gaolian;
 
-    room->playSkillEffect("guibing", 2);
+    room->playSkillEffect(skill_name, 2);
     room->judge(judge);
 
     if(judge.isGood()){
         Slash *slash = new Slash(Card::NoSuit, 0);
-        slash->setSkillName("guibing");
+        slash->setSkillName(skill_name);
 
         CardUseStruct use;
         use.from = gaolian;
@@ -221,24 +221,24 @@ void ZhengfaCard::use(Room *room, ServerPlayer *tonguan, const QList<ServerPlaye
     const General *player = tonguan->getGeneral2Name().startsWith("tongguan") ? tonguan->getGeneral2() : tonguan->getGeneral();
     if(getSubcards().isEmpty()){
         Slash *slash = new Slash(Card::NoSuit, 0);
-        slash->setSkillName("zhengfa");
+        slash->setSkillName(skill_name);
         CardUseStruct uset;
         uset.card = slash;
         uset.mute = true;
         uset.from = tonguan;
         uset.to = targets;
-        room->playSkillEffect("zhengfa", player->isMale()? 3: 4);
+        room->playSkillEffect(skill_name, player->isMale()? 3: 4);
         room->useCard(uset);
     }
     else{
-        room->playSkillEffect("zhengfa", player->isMale()? 1: 2);
-        bool success = tonguan->pindian(targets.first(), "zhengfa", this);
+        room->playSkillEffect(skill_name, player->isMale()? 1: 2);
+        bool success = tonguan->pindian(targets.first(), skill_name, this);
         if(success){
-            //room->playSkillEffect("zhengfa", tonguan->getGeneral()->isMale()? 3: 4);
+            //room->playSkillEffect(skill_name, tonguan->getGeneral()->isMale()? 3: 4);
             room->setPlayerFlag(tonguan, "Zhengfa");
             room->askForUseCard(tonguan, "@@zhengfa", "@zhengfa-effect", true);
         }else{
-            room->playSkillEffect("zhengfa", player->isMale()? 5: 6);
+            room->playSkillEffect(skill_name, player->isMale()? 5: 6);
             tonguan->turnOver();
         }
     }
@@ -294,13 +294,12 @@ LianmaCard::LianmaCard(){
 void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlayer *> &) const{
     QList<ServerPlayer *> players = room->getAlivePlayers();
 
-    //room->broadcastSkillInvoke(objectName());
-    QString choice = room->askForChoice(huyanzhuo, "lianma", "lian+ma");
+    QString choice = room->askForChoice(huyanzhuo, skill_name, "lian+ma");
     LogMessage log;
     log.from = huyanzhuo;
-    log.arg = "lianma";
+    log.arg = skill_name;
     if(choice == "lian"){
-        room->playSkillEffect("lianma", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         log.type = "#LianmaOn";
         foreach(ServerPlayer *player, players){
             if(player->hasEquip("Horse", true)){
@@ -313,7 +312,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
             }
         }
     }else{
-        room->playSkillEffect("lianma", qrand() % 2 + 3);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
         log.type = "#LianmaOff";
         foreach(ServerPlayer *player, players){
             if(!player->hasEquip("Horse", true)){
@@ -390,21 +389,21 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     room->throwCard(this, source);
     PlayerStar target = targets.first();
-    QString choice = room->askForChoice(source, "sheru", "she+ru");
+    QString choice = room->askForChoice(source, skill_name, "she+ru");
     int x = target->getLostHp();
     if(choice == "she"){
-        room->playSkillEffect("sheru", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         target->drawCards(x);
         room->loseHp(target);
     }else{
-        room->playSkillEffect("sheru", qrand() % 2 + 3);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
         if(target->getCardCount(true) <= x){
             target->throwAllHandCards();
             target->throwAllEquips();
         }else{
             int card_id = -1;
             for(int i=1; i<=x; i++){
-                card_id = room->askForCardChosen(source, target, "he", "sheru");
+                card_id = room->askForCardChosen(source, target, "he", skill_name);
                 room->throwCard(card_id, target, source);
                 if(target->isNude())
                     break;
@@ -880,7 +879,7 @@ bool XunlieCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(getSubcards().isEmpty()){
-        room->playSkillEffect("xunlie", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         foreach(ServerPlayer *target, targets){
             CardEffectStruct effect;
             effect.card = this;
@@ -892,7 +891,7 @@ void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
         }
     }else{
         room->throwCard(this, source);
-        room->playSkillEffect("xunlie", qrand() % 2 + 3);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
         room->cardEffect(this, source, targets.first());
     }
 }

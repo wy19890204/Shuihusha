@@ -862,11 +862,11 @@ void HuatianCard::onEffect(const CardEffectStruct &effect) const{
     if(effect.from->getMark("Huatian") == 1){
         RecoverStruct recovvv;
         recovvv.who = effect.from;
-        room->playSkillEffect("huatian", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         room->recover(effect.to, recovvv, true);
     }
     else if(effect.from->getMark("Huatian") == 2){
-        room->playSkillEffect("huatian", qrand() % 2 + 3);
+        room->playSkillEffect(skill_name, qrand() % 2 + 3);
         DamageStruct damage;
         damage.from = effect.from;
         damage.to = effect.to;

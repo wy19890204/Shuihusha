@@ -434,24 +434,27 @@ ShougeCard::ShougeCard(){
 }
 
 void ShougeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->playSkillEffect("shouge", qrand() % 2 + 1);
-    source->addToPile("vege", this->getSubcards().first());
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
+    foreach(int table, getSubcards())
+        source->addToPile("vege", table);
 }
 
-class ShougeViewAsSkill: public OneCardViewAsSkill{
+class ShougeViewAsSkill: public ViewAsSkill{
 public:
-    ShougeViewAsSkill():OneCardViewAsSkill("shouge"){
+    ShougeViewAsSkill():ViewAsSkill("shouge"){
 
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
         return to_select->getCard()->inherits("Peach") ||
                 to_select->getCard()->inherits("Analeptic");
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
         ShougeCard *card = new ShougeCard;
-        card->addSubcard(card_item->getFilteredCard());
+        card->addSubcards(cards);
         return card;
     }
 };
@@ -670,16 +673,16 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
     damage.to = effect.to;
     if(ichi && me){
         damage.nature = DamageStruct::Fire;
-        room->playSkillEffect("huanshu", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         room->damage(damage);
     }
     else if(!ichi && !me){
-        room->playSkillEffect("huanshu", qrand() % 2 + 1);
+        room->playSkillEffect(skill_name, qrand() % 2 + 1);
         damage.nature = DamageStruct::Thunder;
         room->damage(damage);
     }
     else
-        room->playSkillEffect("huanshu", 3);
+        room->playSkillEffect(skill_name, 3);
 }
 
 class HuanshuViewAsSkill: public ZeroCardViewAsSkill{
@@ -760,7 +763,7 @@ bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->playSkillEffect("yuanpei", qrand() % 2 + 1);
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
     const Card *card = room->askForCard(effect.to, "Slash,Weapon$", "@yuanpei:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(card){
         effect.from->obtainCard(card);
@@ -773,7 +776,7 @@ void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{
         lsp.type = "#Yuanpei";
         lsp.from = effect.from;
         lsp.to << effect.to;
-        lsp.arg = "yuanpei";
+        lsp.arg = skill_name;
         room->sendLog(lsp);
     }
 }

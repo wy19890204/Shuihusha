@@ -41,6 +41,7 @@ void QingnangCard::onEffect(const CardEffectStruct &effect) const{
 
 FreeRegulateCard::FreeRegulateCard(){
     will_throw = false;
+    mute = true;
 }
 
 bool FreeRegulateCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -56,17 +57,21 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
     if(targets.isEmpty()){
         if(getSubcards().isEmpty()){
             if(!room->getDiscardPile().isEmpty()){
+                room->playSkillEffect(skill_name, 4);
                 int card_id = room->getDiscardPile().first();
                 room->obtainCard(source, card_id);
             }
         }
-        else
+        else{
+            room->playSkillEffect(skill_name, 1);
             room->throwCard(this, source);
+        }
     }
     else{
         PlayerStar target = targets.first();
         if(getSubcards().isEmpty()){
             if(target != source){
+                room->playSkillEffect(skill_name, 3);
                 int card_id = room->askForCardChosen(source, target, "hejp", "free-regulate");
                 room->obtainCard(source, card_id);
             }
@@ -77,8 +82,10 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
             if(target == source){
                 foreach(int i, getSubcards()){
                     const Card *card = Sanguosha->getCard(i);
-                    if(card->isEquipped())
+                    if(card->isEquipped()){
+                        room->playSkillEffect(skill_name, 5);
                         room->obtainCard(source, card);
+                    }
                 }
                 if(getSubcards().length() == 1){
                     const Card *card = Sanguosha->getCard(getSubcards().first());
@@ -90,6 +97,7 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
                             if(c->objectName() == card->objectName() ||
                                     (c->getSubtype() == "offensive_horse" && card->getSubtype() == "offensive_horse") ||
                                     (c->getSubtype() == "defensive_horse" && card->getSubtype() == "defensive_horse")){
+                                room->playSkillEffect(skill_name, 6);
                                 room->obtainCard(source, c);
                                 break;
                             }
@@ -97,8 +105,10 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
                     }
                 }
             }
-            else
+            else{
+                room->playSkillEffect(skill_name, 2);
                 room->obtainCard(target, this, false);
+            }
         }
     }
 }
