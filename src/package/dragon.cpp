@@ -28,7 +28,7 @@ public:
 
 class Mengchong: public ClientSkill{
 public:
-    Mengchong():ClientSkill("mengchong"){
+    Mengchong():ClientSkill("mengchong", ClientSkill::Distance){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
@@ -405,7 +405,7 @@ public:
 
 class Jibu: public ClientSkill{
 public:
-    Jibu():ClientSkill("jibu"){
+    Jibu():ClientSkill("jibu", ClientSkill::Distance){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{

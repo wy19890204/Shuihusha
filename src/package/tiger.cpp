@@ -1004,7 +1004,7 @@ public:
 
 class Linse: public ClientSkill{
 public:
-    Linse():ClientSkill("linse"){
+    Linse():ClientSkill("linse", ClientSkill::Mixed){
     }
 
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{

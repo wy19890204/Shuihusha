@@ -237,7 +237,7 @@ public:
 
 class Duduan: public ClientSkill{
 public:
-    Duduan():ClientSkill("duduan"){
+    Duduan():ClientSkill("duduan", ClientSkill::Prohibit){
     }
 
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const{

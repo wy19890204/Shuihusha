@@ -89,7 +89,7 @@ void Moonpie::onEffect(const CardEffectStruct &effect) const{
 
 class Yaoyue: public ClientSkill{
 public:
-    Yaoyue():ClientSkill("yaoyue"){
+    Yaoyue():ClientSkill("yaoyue", ClientSkill::MaxCards){
     }
 
     virtual int getExtra(const Player *target) const{

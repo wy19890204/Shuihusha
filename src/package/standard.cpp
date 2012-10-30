@@ -476,7 +476,7 @@ public:
 // test main
 class Ubuna: public ClientSkill{
 public:
-    Ubuna():ClientSkill("#ubuna"){
+    Ubuna():ClientSkill("#ubuna", ClientSkill::MaxCards){
     }
 
     virtual int getExtra(const Player *target) const{

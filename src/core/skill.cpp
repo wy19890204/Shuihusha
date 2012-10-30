@@ -318,9 +318,13 @@ void GameStartSkill::onIdied(ServerPlayer *) const{
     return;
 }
 
-ClientSkill::ClientSkill(const QString &name)
-    :Skill(name, Skill::Compulsory)
-{
+ClientSkill::ClientSkill(const QString &name, Category cate)
+    :Skill(name, Skill::Compulsory){
+    this->cate = cate;
+}
+
+ClientSkill::Category ClientSkill::getCategory() const{
+    return cate;
 }
 
 int ClientSkill::getExtra(const Player *) const{

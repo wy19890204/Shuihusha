@@ -631,7 +631,7 @@ public:
 
 class Huqi: public ClientSkill{
 public:
-    Huqi():ClientSkill("huqi"){
+    Huqi():ClientSkill("huqi", ClientSkill::Distance){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
@@ -819,7 +819,7 @@ public:
 
 class KaixianRange: public ClientSkill{
 public:
-    KaixianRange():ClientSkill("#kaixian_range"){
+    KaixianRange():ClientSkill("#kaixian_range", ClientSkill::AttackRange){
     }
 
     virtual int getAtkrg(const Player *hbry) const{
@@ -1492,7 +1492,7 @@ public:
 
 class Jueming: public ClientSkill{
 public:
-    Jueming():ClientSkill("jueming"){
+    Jueming():ClientSkill("jueming", ClientSkill::Prohibit){
     }
 
     virtual bool isProhibited(const Player *, const Player *to, const Card *card) const{

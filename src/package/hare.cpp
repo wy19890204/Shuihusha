@@ -1064,7 +1064,7 @@ public:
 
 class Lizheng: public ClientSkill{
 public:
-    Lizheng():ClientSkill("lizheng"){
+    Lizheng():ClientSkill("lizheng", ClientSkill::Distance){
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
