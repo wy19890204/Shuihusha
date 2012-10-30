@@ -19,7 +19,7 @@ int LuaTriggerSkill::getPriority() const{
 }
 
 LuaProhibitSkill::LuaProhibitSkill(const char *name)
-    :ClientSkill(name, Prohibit), is_prohibited(0)
+    :ClientSkill(name), is_prohibited(0)
 {
 
 }
@@ -38,7 +38,7 @@ LuaFilterSkill::LuaFilterSkill(const char *name)
 }
 
 LuaDistanceSkill::LuaDistanceSkill(const char *name)
-    :ClientSkill(name, cate), correct_func(0)
+    :ClientSkill(name), correct_func(0)
 {
 
 }

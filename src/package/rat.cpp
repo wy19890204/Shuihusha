@@ -186,7 +186,7 @@ public:
 
 class YinyuRange: public ClientSkill{
 public:
-    YinyuRange():ClientSkill("#yinyu_range", ClientSkill::AttackRange){
+    YinyuRange():ClientSkill("#yinyu_range"){
     }
 
     virtual int getAtkrg(const Player *from) const{
@@ -591,7 +591,7 @@ public:
 
 class Feiyan: public ClientSkill{
 public:
-    Feiyan():ClientSkill("feiyan", ClientSkill::Prohibit){
+    Feiyan():ClientSkill("feiyan"){
     }
 
     virtual bool isProhibited(const Player *, const Player *, const Card *card) const{

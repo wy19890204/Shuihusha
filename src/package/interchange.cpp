@@ -176,7 +176,7 @@ public:
 
 class ShensuanMC: public ClientSkill{
 public:
-    ShensuanMC():ClientSkill("#shensuan-mc", ClientSkill::MaxCards){
+    ShensuanMC():ClientSkill("#shensuan-mc"){
     }
 
     virtual int getExtra(const Player *target) const{

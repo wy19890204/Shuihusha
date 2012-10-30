@@ -1055,9 +1055,10 @@ RenwangShield::RenwangShield(Suit suit, int number)
     skill = new RenwangShieldSkill;
 }
 
-class HorseSkill: public ClientSkill{
+class HorseSkill: public DistanceSkill{
 public:
-    HorseSkill():ClientSkill("horse", ClientSkill::Distance){
+    HorseSkill(): DistanceSkill("horse"){
+
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{

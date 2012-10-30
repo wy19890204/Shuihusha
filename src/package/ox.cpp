@@ -344,7 +344,7 @@ public:
 
 class Zhongjia: public ClientSkill{
 public:
-    Zhongjia():ClientSkill("zhongjia", ClientSkill::MaxCards){
+    Zhongjia():ClientSkill("zhongjia"){
     }
 
     virtual int getExtra(const Player *target) const{

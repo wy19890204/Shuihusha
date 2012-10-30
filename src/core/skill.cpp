@@ -318,13 +318,9 @@ void GameStartSkill::onIdied(ServerPlayer *) const{
     return;
 }
 
-ClientSkill::ClientSkill(const QString &name, Category cate)
-    :Skill(name, Skill::Compulsory){
-    this->cate = cate;
-}
-
-ClientSkill::Category ClientSkill::getCategory() const{
-    return cate;
+ClientSkill::ClientSkill(const QString &name)
+    :Skill(name, Skill::Compulsory)
+{
 }
 
 int ClientSkill::getExtra(const Player *) const{
@@ -341,6 +337,14 @@ int ClientSkill::getAtkrg(const Player *) const{
 
 bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
     return false;
+}
+
+DistanceSkill::DistanceSkill(const QString &name)
+    :ClientSkill(name){
+}
+
+int DistanceSkill::getCorrect(const Player *, const Player *) const{
+    return 0;
 }
 
 WeaponSkill::WeaponSkill(const QString &name)
