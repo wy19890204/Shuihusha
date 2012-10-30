@@ -139,6 +139,7 @@ ban_list = {
 		"dingdesun+wangqing",
 		"shijin+yanshun",
 		"shijin+leiheng",
+		"zhaoji+pangwanchun",
 --		"shenwuyong",
 --		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",
