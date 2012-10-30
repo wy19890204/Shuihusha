@@ -49,6 +49,7 @@ return{
 	["cheat5"] = "可自我变身",
 	["cheat6"] = "开启身份宣布",
 	["cheat7"] = "开启不死之身",
+	["gambling"] = "手气卡",
 	["change"] = "变身",
 	["free-regulate"] = "自由调控",
 	["freeregulate"] = "超级操控",

@@ -122,6 +122,7 @@ private:
     QCheckBox *free_assign_checkbox;
     QCheckBox *free_assign_self_checkbox;
     QCheckBox *free_discard_checkbox;
+    QCheckBox *gambling_cards_checkbox;
     QCheckBox *free_change_general_checkbox;
     QCheckBox *free_showrole_checkbox;
     QCheckBox *free_undead_checkbox;

@@ -3602,6 +3602,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>显示自由调控按钮</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="288"/>
+        <source>Gambling Cards</source>
+        <translation>启用手气卡</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="290"/>
         <source>Change me freely</source>
         <translation>启用自我变身</translation>

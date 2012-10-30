@@ -301,6 +301,12 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
         room->setTag("FirstRound", true);
         player->drawCards(4, false);
+        if(Config.value("GamblingCards", false).toBool()){
+            if(player->getState() == "online" && player->askForSkillInvoke("gambling")){
+                player->throwAllHandCards();
+                player->drawCards(4, false);
+            }
+        }
 
         break;
     }

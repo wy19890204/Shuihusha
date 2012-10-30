@@ -292,6 +292,9 @@ QWidget *ServerDialog::createCheatTab(){
     free_discard_checkbox = new QCheckBox(tr("Regulate freely"));
     free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
 
+    gambling_cards_checkbox = new QCheckBox(tr("Gambling Cards"));
+    gambling_cards_checkbox->setChecked(Config.value("GamblingCards").toBool());
+
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
     free_change_general_checkbox->setChecked(Config.value("FreeChange").toBool());
 
@@ -306,6 +309,7 @@ QWidget *ServerDialog::createCheatTab(){
     laybox->addWidget(free_assign_checkbox);
     laybox->addWidget(free_assign_self_checkbox);
     laybox->addWidget(free_discard_checkbox);
+    laybox->addWidget(gambling_cards_checkbox);
     laybox->addWidget(free_change_general_checkbox);
     laybox->addWidget(free_showrole_checkbox);
     laybox->addWidget(free_undead_checkbox);
@@ -1036,6 +1040,7 @@ bool ServerDialog::config(){
     Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
     Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
     Config.setValue("FreeRegulate", free_discard_checkbox->isChecked());
+    Config.setValue("GamblingCards", gambling_cards_checkbox->isChecked());
     Config.setValue("FreeChange", free_change_general_checkbox->isChecked());
     Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
     Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
