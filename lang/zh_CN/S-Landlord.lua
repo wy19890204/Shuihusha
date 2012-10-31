@@ -8,6 +8,8 @@ return {
 	["landlord:pass"] = "不叫",
 	["#LandLordDone"] = "%from 为本局地主",
 	["#LLEnd"] = "------ <font color=green>抢地主结束</font> ------",
+	["Landlord"] = "地主",
+	["Cottier"] = "佃农",
 	["bizhai"] = "逼债",
 	[":bizhai"] = "出牌阶段，你使用的【杀】可额外指定一个目标。",
 	["boxue"] = "剥削",

@@ -1540,8 +1540,8 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     hegemony_mode["rebel"] = Sanguosha->translate("min");
     hegemony_mode["renegade"] = Sanguosha->translate("kou");
 
-    landlord_mode["lord"] = tr("Landlord");
-    landlord_mode["rebel"] = tr("Populace");
+    landlord_mode["lord"] = Sanguosha->translate("Landlord");
+    landlord_mode["rebel"] = Sanguosha->translate("Cottier");
 
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){

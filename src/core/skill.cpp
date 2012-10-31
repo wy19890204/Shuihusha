@@ -339,6 +339,14 @@ bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card 
     return false;
 }
 
+DistanceSkill::DistanceSkill(const QString &name)
+    :ClientSkill(name){
+}
+
+int DistanceSkill::getCorrect(const Player *, const Player *) const{
+    return 0;
+}
+
 WeaponSkill::WeaponSkill(const QString &name)
     :TriggerSkill(name)
 {
