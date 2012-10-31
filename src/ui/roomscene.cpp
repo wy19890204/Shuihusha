@@ -1526,7 +1526,7 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
@@ -1540,10 +1540,14 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     hegemony_mode["rebel"] = Sanguosha->translate("min");
     hegemony_mode["renegade"] = Sanguosha->translate("kou");
 
+    landlord_mode["lord"] = tr("Landlord");
+    landlord_mode["rebel"] = tr("Populace");
+
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 4: map = &threeV3_mode; break;
-    case 5: map = &hegemony_mode; break;
+    case 2: map = &threeV3_mode; break;
+    case 3: map = &hegemony_mode; break;
+    case 4: map = &landlord_mode; break;
     default:
         map = &normal_mode;
     }
