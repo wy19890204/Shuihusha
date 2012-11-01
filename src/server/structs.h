@@ -134,6 +134,14 @@ struct PhaseChangeStruct{
     Player::Phase to;
 };
 
+struct QiaogongStruct{
+    QiaogongStruct();
+
+    const Card *equip;
+    bool wear; //true: equip; false: lost
+    ServerPlayer * target; // who equip or lost
+};
+
 enum TriggerEvent{
     NonTrigger, //those two events actually trigger nothing
 
@@ -199,6 +207,7 @@ enum TriggerEvent{
     CardFinished,
 
     ChoiceMade,
+    QiaogongTrigger,
 
     NumOfEvents,
 };
@@ -224,5 +233,6 @@ Q_DECLARE_METATYPE(JudgeStar)
 Q_DECLARE_METATYPE(DamageStar)
 Q_DECLARE_METATYPE(PindianStar)
 Q_DECLARE_METATYPE(PhaseChangeStruct)
+Q_DECLARE_METATYPE(QiaogongStruct)
 
 #endif // STRUCTS_H
