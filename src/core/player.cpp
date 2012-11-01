@@ -439,7 +439,7 @@ bool Player::hasEquip(const QString &name, bool inherit) const{
 }
 
 const Weapon *Player::getWeapon() const{
-    CardStar car = property(QString("qiaogong_weapon").toLocal8Bit().data()).value<CardStar>();
+    CardStar car = property("qiaogong_weapon").value<CardStar>();
     if(car)
         return (const Weapon *)car;
     else
@@ -447,7 +447,7 @@ const Weapon *Player::getWeapon() const{
 }
 
 const Armor *Player::getArmor() const{
-    CardStar car = property(QString("qiaogong_armor").toLocal8Bit().data()).value<CardStar>();
+    CardStar car = property("qiaogong_armor").value<CardStar>();
     if(car)
         return (const Armor *)car;
     else
@@ -455,22 +455,22 @@ const Armor *Player::getArmor() const{
 }
 
 const Horse *Player::getDefensiveHorse() const{
-    CardStar car = property(QString("qiaogong_defensive_horse").toLocal8Bit().data()).value<CardStar>();
+    CardStar car = property("qiaogong_defensive_horse").value<CardStar>();
     if(car)
-        return (const Horse *)car;
+        return qobject_cast<const Horse*>(car);
     else
         return defensive_horse;
 }
 
 const Horse *Player::getOffensiveHorse() const{
-    CardStar car = property(QString("qiaogong_offensive_horse").toLocal8Bit().data()).value<CardStar>();
+    CardStar car = property("qiaogong_offensive_horse").value<CardStar>();
     if(car)
-        return (const Horse *)car;
+        return qobject_cast<const Horse*>(car);
     else
         return offensive_horse;
 }
 
-QList<const Card *> Player::getEquips() const{
+QList<const Card *> Player::getEquips(bool trueequip) const{
     QList<const Card *> equips;
     if(weapon)
         equips << weapon;
@@ -481,12 +481,14 @@ QList<const Card *> Player::getEquips() const{
     if(offensive_horse)
         equips << offensive_horse;
 
-    QStringList nn;
-    nn << "weapon" << "armor" << "defensive_horse" << "offensive_horse";
-    foreach(QString n, nn){
-        CardStar car = property(QString("qiaogong_%1").arg(n).toLocal8Bit().data()).value<CardStar>();
-        if(car)
-            equips << car;
+    if(!trueequip){
+        QStringList nn;
+        nn << "weapon" << "armor" << "defensive_horse" << "offensive_horse";
+        foreach(QString n, nn){
+            CardStar car = property(QString("qiaogong_%1").arg(n).toLocal8Bit().data()).value<CardStar>();
+            if(car)
+                equips << car;
+        }
     }
 
     return equips;

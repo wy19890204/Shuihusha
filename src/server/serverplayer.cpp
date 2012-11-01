@@ -81,7 +81,7 @@ void ServerPlayer::obtainCard(const Card *card, bool unhide){
 }
 
 void ServerPlayer::throwAllEquips(){
-    QList<const Card *> equips = getEquips();
+    QList<const Card *> equips = getEquips(true);
 
     if(equips.isEmpty())
         return;
@@ -437,7 +437,7 @@ QList<const Card *> ServerPlayer::getCards(const QString &flags) const{
         cards << handcards;
 
     if(flags.contains("e"))
-        cards << getEquips();
+        cards << getEquips(true);
 
     if(flags.contains("j"))
         cards << getJudgingArea();

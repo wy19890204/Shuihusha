@@ -289,7 +289,7 @@ public:
     static bool isScreenSingleEquip(Room *room, const EquipCard *equip){
         int n = 0;
         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-            foreach(const Card *c, tmp->getEquips()){
+            foreach(const Card *c, tmp->getEquips(true)){
                 if(c->getSubtype() == equip->getSubtype())
                     n ++;
             }
@@ -302,7 +302,7 @@ public:
     static const Card *getTargetEquip(Room *room, const EquipCard *equip){
         int n = 0;
         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-            foreach(const Card *c, tmp->getEquips()){
+            foreach(const Card *c, tmp->getEquips(true)){
                 if(c->getSubtype() == equip->getSubtype())
                     return c;
             }
