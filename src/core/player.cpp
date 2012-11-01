@@ -438,36 +438,52 @@ bool Player::hasEquip(const QString &name, bool inherit) const{
     return ok;
 }
 
-const Weapon *Player::getWeapon() const{
-    CardStar car = property("qiaogong_weapon").value<CardStar>();
-    if(car)
-        return (const Weapon *)car;
-    else
+const Weapon *Player::getWeapon(bool trueequip) const{
+    if(trueequip)
         return weapon;
+    else{
+        CardStar car = property("qiaogong_weapon").value<CardStar>();
+        if(car)
+            return qobject_cast<const Weapon*>(car);
+        else
+            return weapon;
+    }
 }
 
-const Armor *Player::getArmor() const{
-    CardStar car = property("qiaogong_armor").value<CardStar>();
-    if(car)
-        return (const Armor *)car;
-    else
+const Armor *Player::getArmor(bool trueequip) const{
+    if(trueequip)
         return armor;
+    else{
+        CardStar car = property("qiaogong_armor").value<CardStar>();
+        if(car)
+            return qobject_cast<const Armor*>(car);
+        else
+            return armor;
+    }
 }
 
-const Horse *Player::getDefensiveHorse() const{
-    CardStar car = property("qiaogong_defensive_horse").value<CardStar>();
-    if(car)
-        return qobject_cast<const Horse*>(car);
-    else
+const Horse *Player::getDefensiveHorse(bool trueequip) const{
+    if(trueequip)
         return defensive_horse;
+    else{
+        CardStar car = property("qiaogong_defensive_horse").value<CardStar>();
+        if(car)
+            return qobject_cast<const Horse*>(car);
+        else
+            return defensive_horse;
+    }
 }
 
-const Horse *Player::getOffensiveHorse() const{
-    CardStar car = property("qiaogong_offensive_horse").value<CardStar>();
-    if(car)
-        return qobject_cast<const Horse*>(car);
-    else
+const Horse *Player::getOffensiveHorse(bool trueequip) const{
+    if(trueequip)
         return offensive_horse;
+    else{
+        CardStar car = property("qiaogong_offensive_horse").value<CardStar>();
+        if(car)
+            return qobject_cast<const Horse*>(car);
+        else
+            return offensive_horse;
+    }
 }
 
 QList<const Card *> Player::getEquips(bool trueequip) const{

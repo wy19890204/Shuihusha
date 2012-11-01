@@ -438,9 +438,9 @@ public:
 
         QStringList horses;
         if(damage.card && damage.card->inherits("Slash") && !damage.chain){
-            if(damage.to->getDefensiveHorse())
+            if(damage.to->getDefensiveHorse(true))
                 horses << "dhorse";
-            if(damage.to->getOffensiveHorse())
+            if(damage.to->getOffensiveHorse(true))
                 horses << "ohorse";
 
             if(horses.isEmpty())

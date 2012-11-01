@@ -79,10 +79,10 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     ServerPlayer *target = targets.value(0, source);
     
     switch(location()){
-    case WeaponLocation: equipped = target->getWeapon(); break;
-    case ArmorLocation: equipped = target->getArmor(); break;
-    case DefensiveHorseLocation: equipped = target->getDefensiveHorse(); break;
-    case OffensiveHorseLocation: equipped = target->getOffensiveHorse(); break;
+    case WeaponLocation: equipped = target->getWeapon(true); break;
+    case ArmorLocation: equipped = target->getArmor(true); break;
+    case DefensiveHorseLocation: equipped = target->getDefensiveHorse(true); break;
+    case OffensiveHorseLocation: equipped = target->getOffensiveHorse(true); break;
     }
 
     if(equipped)

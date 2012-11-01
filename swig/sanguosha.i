@@ -164,10 +164,10 @@ public:
 	virtual void removeCard(const Card *card, Place place) = 0;
 	virtual void addCard(const Card *card, Place place) = 0;
 
-	const Weapon *getWeapon() const;
-	const Armor *getArmor() const;
-	const Horse *getDefensiveHorse() const;
-	const Horse *getOffensiveHorse() const;
+	const Weapon *getWeapon(bool trueequip = false) const;
+	const Armor *getArmor(bool trueequip = false) const;
+	const Horse *getDefensiveHorse(bool trueequip = false) const;
+	const Horse *getOffensiveHorse(bool trueequip = false) const;
 	QList<const Card *> getEquips(bool trueequip = false) const;
 	const EquipCard *getEquip(int index) const;
 
