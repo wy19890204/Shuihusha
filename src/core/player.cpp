@@ -411,7 +411,8 @@ bool Player::hasEquip(const Card *card) const{
     CardStar car = property(QString("qiaogong_%1").arg(card->getSubtype()).toLocal8Bit().data()).value<CardStar>();
     if(car == card)
         return true;
-    return weapon == card || armor == card || defensive_horse == card || offensive_horse == card;
+    else
+        return weapon == card || armor == card || defensive_horse == card || offensive_horse == card;
 }
 
 bool Player::hasEquip() const{
@@ -426,7 +427,7 @@ bool Player::hasEquip() const{
 }
 
 bool Player::hasEquip(const QString &name, bool inherit) const{
-//for example: hasEquip("axe") ;  hasEquip("Weapon", true)
+    //for example: hasEquip("axe") ;  hasEquip("Weapon", true)
     bool ok = false;
     foreach(const Card *equip, getEquips()){
         if((!inherit && equip->objectName() == name) ||
