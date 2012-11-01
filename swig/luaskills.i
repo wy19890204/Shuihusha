@@ -32,16 +32,7 @@ public:
 
 class ClientSkill: public Skill{
 public:
-	enum Category{
-		Distance,
-		AttackRange,
-		Prohibit,
-		MaxCards,
-		Mixed
-	};
-
-	ClientSkill(const QString &name, Category cate = Mixed);
-	virtual Category getCategory() const;
+	ClientSkill(const QString &name);
 	virtual int getExtra(const Player *target) const;
 	virtual int getCorrect(const Player *from, const Player *to) const;
 	virtual int getAtkrg(const Player *target) const;
