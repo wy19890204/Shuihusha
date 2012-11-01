@@ -245,6 +245,8 @@ public:
     virtual void onInstall(ServerPlayer *player) const;
     virtual void onUninstall(ServerPlayer *player) const;
 
+    bool hasSkill() const;
+
 protected:
     int range;
     bool attach_skill;

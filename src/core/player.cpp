@@ -408,10 +408,20 @@ void Player::removeEquip(const EquipCard *equip){
 }
 
 bool Player::hasEquip(const Card *card) const{
+    CardStar car = property("qiaogong_" + card->getSubtype()).value<CardStar>();
+    if(car == card)
+        return true;
     return weapon == card || armor == card || defensive_horse == card || offensive_horse == card;
 }
 
 bool Player::hasEquip() const{
+    QStringList nn;
+    nn << "weapon" << "armor" << "defensive_horse" << "offensive_horse";
+    foreach(QString n, nn){
+        CardStar car = property("qiaogong_" + n).value<CardStar>();
+        if(car)
+            return true;
+    }
     return weapon || armor || defensive_horse || offensive_horse;
 }
 
@@ -429,19 +439,35 @@ bool Player::hasEquip(const QString &name, bool inherit) const{
 }
 
 const Weapon *Player::getWeapon() const{
-    return weapon;
+    CardStar car = property("qiaogong_weapon").value<CardStar>();
+    if(car)
+        return car;
+    else
+        return weapon;
 }
 
 const Armor *Player::getArmor() const{
-    return armor;
+    CardStar car = property("qiaogong_armor").value<CardStar>();
+    if(car)
+        return car;
+    else
+        return armor;
 }
 
 const Horse *Player::getDefensiveHorse() const{
-    return defensive_horse;
+    CardStar car = property("qiaogong_defensive_horse").value<CardStar>();
+    if(car)
+        return car;
+    else
+        return defensive_horse;
 }
 
 const Horse *Player::getOffensiveHorse() const{
-    return offensive_horse;
+    CardStar car = property("qiaogong_offensive_horse").value<CardStar>();
+    if(car)
+        return car;
+    else
+        return offensive_horse;
 }
 
 QList<const Card *> Player::getEquips() const{
@@ -472,11 +498,19 @@ const EquipCard *Player::getEquip(int index) const{
 }
 
 bool Player::hasWeapon(const QString &weapon_name) const{
-    return weapon && weapon->objectName() == weapon_name;
+    CardStar car = property("qiaogong_weapon").value<CardStar>();
+    if(car)
+        return car && car->objectName() == weapon_name;
+    else
+        return weapon && weapon->objectName() == weapon_name;
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
-    return armor && !hasMark("qinggang") && armor->objectName() == armor_name;
+    CardStar car = property("qiaogong_armor").value<CardStar>();
+    if(car)
+        return car && !hasMark("qinggang") && car->objectName() == armor_name;
+    else
+        return armor && !hasMark("qinggang") && armor->objectName() == armor_name;
 }
 
 QList<const Card *> Player::getJudgingArea() const{

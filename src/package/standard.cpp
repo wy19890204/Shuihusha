@@ -289,6 +289,10 @@ void Weapon::onInstall(ServerPlayer *player) const{
         room->attachSkillToPlayer(player, objectName());
 }
 
+bool Weapon::hasSkill() const{
+    return attach_skill;
+}
+
 void Weapon::onUninstall(ServerPlayer *player) const{
     EquipCard::onUninstall(player);
     Room *room = player->getRoom();
