@@ -85,6 +85,7 @@ public:
 
     void setRole(const QString &role);
     QString getRole() const;
+    QString getScreenRole() const;
     Role getRoleEnum() const;
 
     void setGeneral(const General *general);

@@ -28,11 +28,13 @@ struct DistanceViewDialogUI{
 
         QList<const ClientSkill *> skills = Sanguosha->getClientSkills();
         foreach(const ClientSkill *skill, skills){
-            QLineEdit *distance_edit = new QLineEdit;
-            distance_edit->setObjectName(skill->objectName());
-            distance_edit->setReadOnly(true);
+            if(skill->inherits("DistanceSkill")){
+                QLineEdit *distance_edit = new QLineEdit;
+                distance_edit->setObjectName(skill->objectName());
+                distance_edit->setReadOnly(true);
 
-            distance_edits << distance_edit;
+                distance_edits << distance_edit;
+            }
         }
 
         final = new QLineEdit;

@@ -3002,16 +3002,6 @@
         <translation>内奸</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="1535"/>
-        <source>Marshal</source>
-        <translation>主帅</translation>
-    </message>
-    <message>
-        <location filename="src/ui/roomscene.cpp" line="1536"/>
-        <source>Vanguard</source>
-        <translation>前锋</translation>
-    </message>
-    <message>
         <location filename="src/ui/roomscene.cpp" line="2129"/>
         <source>Please choose a player</source>
         <translation>请选择一名玩家</translation>

@@ -264,12 +264,9 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
     foreach(QString name, generals){
         if(Config.Enable2ndGeneral){
-            if(getGeneral())
-                if(BanPair::isBanned(getGeneralName(), name))
-                    continue;
-            else
-                if(BanPair::isBanned(name))
-                    continue;
+            if((getGeneral() && BanPair::isBanned(getGeneralName(), name)) ||
+               BanPair::isBanned(name))
+                continue;
 
             if(Config.EnableHegemony)
                 if(getGeneral() && getGeneral()->getKingdom() != Sanguosha->getGeneral(name)->getKingdom())
