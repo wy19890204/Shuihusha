@@ -192,11 +192,13 @@ QString Engine::translate(const QString &to_translate) const{
 }
 
 int Engine::getRoleIndex() const{
-    if(ServerInfo.GameMode == "06_3v3"){
+    if(ServerInfo.GameMode == "06_3v3")
+        return 2;
+    else if(ServerInfo.EnableHegemony)
+        return 3;
+    else if(ServerInfo.GameMode == "landlord")
         return 4;
-    }else if(ServerInfo.EnableHegemony){
-        return 5;
-    }else
+    else
         return 1;
 }
 

@@ -278,6 +278,31 @@ QString Player::getRole() const{
     return role;
 }
 
+QString Player::getScreenRole() const{
+    int index = Sanguosha->getRoleIndex();
+
+    QMap<QString, QString> threeV3_mode, hegemony_mode, landlord_mode;
+
+    threeV3_mode["lord"] = threeV3_mode["renegade"] = "Marshal";
+    threeV3_mode["loyalist"] = threeV3_mode["rebel"] = "Vanguard";
+
+    hegemony_mode["lord"] = "guan";
+    hegemony_mode["loyalist"] = "jiang";
+    hegemony_mode["rebel"] = "min";
+    hegemony_mode["renegade"] = "kou";
+
+    landlord_mode["lord"] = "Landlord";
+    landlord_mode["rebel"] = "Cottier";
+
+    switch(index){
+    case 2: return threeV3_mode[role]; break;
+    case 3: return hegemony_mode[role]; break;
+    case 4: return landlord_mode[role]; break;
+    default:
+        return role;
+    }
+}
+
 Player::Role Player::getRoleEnum() const{
     static QMap<QString, Role> role_map;
     if(role_map.isEmpty()){

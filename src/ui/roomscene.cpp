@@ -1526,24 +1526,28 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
     normal_mode["renegade"] = tr("Renegade");
 
-    threeV3_mode["lord"] = threeV3_mode["renegade"] = tr("Marshal");
-    threeV3_mode["loyalist"] = threeV3_mode["rebel"] = tr("Vanguard");
+    threeV3_mode["lord"] = threeV3_mode["renegade"] = Sanguosha->translate("Marshal");
+    threeV3_mode["loyalist"] = threeV3_mode["rebel"] = Sanguosha->translate("Vanguard");
 
     hegemony_mode["lord"] = Sanguosha->translate("guan");
     hegemony_mode["loyalist"] = Sanguosha->translate("jiang");
     hegemony_mode["rebel"] = Sanguosha->translate("min");
     hegemony_mode["renegade"] = Sanguosha->translate("kou");
 
+    landlord_mode["lord"] = Sanguosha->translate("Landlord");
+    landlord_mode["rebel"] = Sanguosha->translate("Cottier");
+
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 4: map = &threeV3_mode; break;
-    case 5: map = &hegemony_mode; break;
+    case 2: map = &threeV3_mode; break;
+    case 3: map = &hegemony_mode; break;
+    case 4: map = &landlord_mode; break;
     default:
         map = &normal_mode;
     }
@@ -2859,15 +2863,12 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         item = new QTableWidgetItem;
 
-        if(ServerInfo.EnableHegemony){
-            QIcon icon(QString("image/kingdom/icon/%1.png").arg(player->getKingdom()));
-            item->setIcon(icon);
-            item->setText(Sanguosha->translate(player->getKingdom()));
-        }else{
-            QIcon icon(QString("image/system/roles/%1.png").arg(player->getRole()));
-            item->setIcon(icon);
-            item->setText(Sanguosha->translate(player->getRole()));
-        }
+        QString iconurl = ServerInfo.EnableHegemony ?
+                    QString("image/kingdom/icon/%1.png").arg(player->getKingdom()) :
+                    QString("image/system/roles/%1.png").arg(player->getRole());
+        QIcon icon(iconurl);
+        item->setIcon(icon);
+        item->setText(Sanguosha->translate(player->getScreenRole()));
         if(!player->isAlive())
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
         table->setItem(i, 3, item);
