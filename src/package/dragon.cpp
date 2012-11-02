@@ -304,20 +304,8 @@ public:
     }
 
     static void storeEquip(Room *room, ServerPlayer *taozi, QString name, QVariant data){
-        room->setPlayerProperty(taozi, (QString("qiaogong_%1").arg(name)).toLocal8Bit().data(), data);
-        /*if(data == QVariant()){
-            taozi->removeMark(QString("qiaogong_%1").arg(name));
-            return;
-        }
-        CardStar equip = data.value<CardStar>();
-        if(name == "w"){
-            const Weapon *weapon = qobject_cast<const Weapon*>(equip);
-            room->setPlayerMark(taozi, QString("qiaogong_%1").arg(name), weapon->getRange());
-        }
-        else if(name != "a"){
-            const Horse *horse = qobject_cast<const Horse*>(equip);
-            room->setPlayerMark(taozi, QString("qiaogong_%1").arg(name), horse->getCorrect());
-        }*/
+        QString perty = "qiaogong_" + name;
+        room->setPlayerProperty(taozi, perty.toLocal8Bit().data(), data);
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *taozi, QVariant &data) const{
@@ -339,7 +327,6 @@ public:
                 if(qkgy.target == taozi)
                     continue;
                 storeEquip(room, taozi, name.left(1), QVariant::fromValue((CardStar)equip));
-                //room->setPlayerProperty(taozi, (QString("qiaogong_%1").arg(name.left(1))).toLocal8Bit().data(), QVariant::fromValue((CardStar)equip));
                 if(equip->inherits("Weapon")){
                     const Weapon *weapon = qobject_cast<const Weapon*>(equip);
                     if(weapon->hasSkill())
@@ -349,7 +336,6 @@ public:
             else if(!qkgy.wear && getScreenSingleEquip(room, equip)){ //2 to 1
                 CardStar equ = getScreenSingleEquip(room, equip);
                 storeEquip(room, taozi, name.left(1), QVariant::fromValue(equ));
-                //room->setPlayerProperty(taozi, (QString("qiaogong_%1").arg(name.left(1))).toLocal8Bit().data(), QVariant::fromValue(equ));
                 if(equ->inherits("Weapon")){
                     const Weapon *weapon = qobject_cast<const Weapon*>(equ);
                     if(weapon->hasSkill())
@@ -366,7 +352,6 @@ public:
                         room->detachSkillFromPlayer(taozi, weapon->objectName(), false);
                 }
                 storeEquip(room, taozi, name.left(1), QVariant());
-                //room->setPlayerProperty(taozi, (QString("qiaogong_%1").arg(name.left(1))).toLocal8Bit().data(), QVariant());
             }
         }
 
