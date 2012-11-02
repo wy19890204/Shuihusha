@@ -138,11 +138,13 @@ void ServerPlayer::bury(){
     clearHistory();
     throwAllCards();
 
-    QStringList nn;
-    nn << "w" << "a" << "d" << "o";
-    foreach(QString n, nn){
-        QString proty = QString("qiaogong_%1").arg(n);
-        tag.remove(proty);
+    if(hasSkill("qiaogong")){
+        QStringList nn;
+        nn << "w" << "a" << "d" << "o";
+        foreach(QString n, nn){
+            QString proty = QString("qiaogong_%1").arg(n);
+            tag.remove(proty);
+        }
     }
 
     throwAllMarks();

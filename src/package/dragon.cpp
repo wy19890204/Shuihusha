@@ -328,7 +328,7 @@ public:
                 if(qkgy.target == taozi)
                     continue;
                 storeEquip(taozi, name.left(1), QVariant::fromValue((CardStar)equip));
-                if(equip->inherits("Weapon")){
+                if(name == "weapon"){
                     const Weapon *weapon = qobject_cast<const Weapon*>(equip);
                     if(weapon->hasSkill())
                         room->attachSkillToPlayer(taozi, weapon->objectName());
