@@ -137,6 +137,14 @@ void ServerPlayer::bury(){
     clearFlags();
     clearHistory();
     throwAllCards();
+
+    QStringList nn;
+    nn << "w" << "a" << "d" << "o";
+    foreach(QString n, nn){
+        QString proty = QString("qiaogong_%1").arg(n);
+        tag.remove(proty);
+    }
+
     throwAllMarks();
     clearPrivatePiles();
 

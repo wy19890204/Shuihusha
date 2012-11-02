@@ -145,7 +145,7 @@ void Player::clearFlags(){
 }
 
 int Player::getAttackRange() const{
-    int atkrg = weapon ? weapon->getRange() : 1;
+    int atkrg = getWeapon() ? getWeapon()->getRange() : 1;
     int extra = Sanguosha->correctClient("attackrange", this);
 
     return extra >= 0 ? qMax(atkrg, extra): qAbs(extra);
@@ -433,7 +433,8 @@ void Player::removeEquip(const EquipCard *equip){
 }
 
 bool Player::hasEquip(const Card *card) const{
-    CardStar car = property(QString("qiaogong_%1").arg(card->getSubtype()).toLocal8Bit().data()).value<CardStar>();
+    QString perty = QString("qiaogong_%1").arg(card->getSubtype().left(1));
+    CardStar car = tag[perty].value<CardStar>();
     if(car == card)
         return true;
     else
@@ -442,9 +443,10 @@ bool Player::hasEquip(const Card *card) const{
 
 bool Player::hasEquip() const{
     QStringList nn;
-    nn << "weapon" << "armor" << "defensive_horse" << "offensive_horse";
+    nn << "w" << "a" << "d" << "o";
     foreach(QString n, nn){
-        CardStar car = property(QString("qiaogong_%1").arg(n).toLocal8Bit().data()).value<CardStar>();
+        QString perty = QString("qiaogong_%1").arg(n);
+        CardStar car = tag[perty].value<CardStar>();
         if(car)
             return true;
     }
@@ -468,7 +470,7 @@ const Weapon *Player::getWeapon(bool trueequip) const{
     if(trueequip)
         return weapon;
     else{
-        CardStar car = property("qiaogong_weapon").value<CardStar>();
+        CardStar car = tag["qiaogong_w"].value<CardStar>();
         if(car)
             return qobject_cast<const Weapon*>(car);
         else
@@ -480,7 +482,7 @@ const Armor *Player::getArmor(bool trueequip) const{
     if(trueequip)
         return armor;
     else{
-        CardStar car = property("qiaogong_armor").value<CardStar>();
+        CardStar car = tag["qiaogong_a"].value<CardStar>();
         if(car)
             return qobject_cast<const Armor*>(car);
         else
@@ -492,7 +494,7 @@ const Horse *Player::getDefensiveHorse(bool trueequip) const{
     if(trueequip)
         return defensive_horse;
     else{
-        CardStar car = property("qiaogong_defensive_horse").value<CardStar>();
+        CardStar car = tag["qiaogong_d"].value<CardStar>();
         if(car)
             return qobject_cast<const Horse*>(car);
         else
@@ -504,7 +506,7 @@ const Horse *Player::getOffensiveHorse(bool trueequip) const{
     if(trueequip)
         return offensive_horse;
     else{
-        CardStar car = property("qiaogong_offensive_horse").value<CardStar>();
+        CardStar car = tag["qiaogong_o"].value<CardStar>();
         if(car)
             return qobject_cast<const Horse*>(car);
         else
@@ -525,9 +527,10 @@ QList<const Card *> Player::getEquips(bool trueequip) const{
 
     if(!trueequip){
         QStringList nn;
-        nn << "weapon" << "armor" << "defensive_horse" << "offensive_horse";
+        nn << "w" << "a" << "d" << "o";
         foreach(QString n, nn){
-            CardStar car = property(QString("qiaogong_%1").arg(n).toLocal8Bit().data()).value<CardStar>();
+            QString proty = QString("qiaogong_%1").arg(n);
+            CardStar car = tag[proty].value<CardStar>();
             if(car)
                 equips << car;
         }
@@ -550,7 +553,7 @@ const EquipCard *Player::getEquip(int index) const{
 }
 
 bool Player::hasWeapon(const QString &weapon_name) const{
-    CardStar car = property("qiaogong_weapon").value<CardStar>();
+    CardStar car = tag["qiaogong_w"].value<CardStar>();
     if(car)
         return car && car->objectName() == weapon_name;
     else
@@ -558,7 +561,7 @@ bool Player::hasWeapon(const QString &weapon_name) const{
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
-    CardStar car = property("qiaogong_armor").value<CardStar>();
+    CardStar car = tag["qiaogong_a"].value<CardStar>();
     if(car)
         return car && !hasMark("qinggang") && car->objectName() == armor_name;
     else
