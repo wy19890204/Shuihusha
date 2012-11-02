@@ -1025,9 +1025,16 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *lz) const{
+        Room *room = lz->getRoom();
         if(lz->getPhase() == Player::Discard &&
-           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards())
-            lz->playSkillEffect("linse");
+           lz->getHandcardNum() > lz->getHp() && lz->getHandcardNum() <= lz->getMaxCards()){
+            int index = 0;
+            if(room->getMode() == "landlord" && lz->isLord())
+                index = lz->getGender() == General::Male ? qrand() % 2 + 3 : qrand() % 2 + 5;
+            else
+                index = qrand() % 2 + 1;
+            lz->playSkillEffect("linse", index);
+        }
         return false;
     }
 };

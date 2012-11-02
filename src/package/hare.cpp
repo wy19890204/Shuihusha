@@ -1051,7 +1051,13 @@ public:
         }
         else{
             if(!emperor->hasFlag("NongQ")){
-                int index = emperor->faceUp() ? 2: 1;
+                int index = 0;
+                if(room->getMode() == "landlord" && emperor->isLord())
+                    index = emperor->getGender() == General::Male ?
+                            emperor->faceUp() ? 4 : 3 :
+                            emperor->faceUp() ? 6 : 5 ;
+                else
+                    index = emperor->faceUp() ? 2 : 1;
                 room->playSkillEffect(objectName(), index);
             }
             int x = emperor->getLostHp();

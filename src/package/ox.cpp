@@ -637,6 +637,7 @@ public:
 
 DuomingCard::DuomingCard(){
     target_fixed = true;
+    mute = true;
 }
 
 PlayerStar DuomingCard::findPlayerByFlag(Room *room, const QString &flag) const{
@@ -648,10 +649,18 @@ PlayerStar DuomingCard::findPlayerByFlag(Room *room, const QString &flag) const{
     return NULL;
 }
 
-void DuomingCard::use(Room *m, ServerPlayer *, const QList<ServerPlayer *> &) const{
+void DuomingCard::use(Room *m, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     PlayerStar target = findPlayerByFlag(m, "Duoming");
-    if(target)
+    if(target){
+        int index = 0;
+        if(m->getMode() == "landlord" && source->isLord())
+            index = source->getGender() == General::Male ? qrand() % 2 + 3 : qrand() % 2 + 5;
+        else
+            index = qrand() % 2 + 1;
+        source->playSkillEffect(skill_name, index);
+
         target->obtainCard(this, false);
+    }
 }
 
 class DuomingViewAsSkill: public ViewAsSkill{

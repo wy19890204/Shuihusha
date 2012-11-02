@@ -157,8 +157,14 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
         for(int i = 0; i < sources.length(); i++){
             if(skill->objectName() == "yinyu" && i > 6) // wake skills
                 break;
-            if((skill->objectName() == "butian" || skill->objectName() == "qimen") && i > 1)
+            if(skill->objectName() == "suocai" && i > 3)
                 break;
+            if(i > 1){
+                QStringList skills;
+                skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
+                if(skills.contains(skill->objectName()))
+                    break;
+            }
             QString general_name = ui->tableWidget->item(ui->tableWidget->currentRow(), 0)->data(Qt::UserRole).toString();
             if(skill->objectName() == "zhengfa"){
                 if(general_name == "tongguan" && (i == 1 || i == 3 || i == 5))
