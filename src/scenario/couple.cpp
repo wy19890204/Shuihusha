@@ -275,7 +275,7 @@ AI::Relation CoupleScenario::relationTo(const ServerPlayer *a, const ServerPlaye
     if(getSpouse(a) == b)
         return AI::Friend;
 
-    if((a->isLord() || b->isLord()) && a->getGeneral()->isMale() != b->getGeneral()->isMale())
+    if((a->isLord() || b->isLord()) && a->getGenderString() != b->getGenderString())
         return AI::Neutrality;
 
     return AI::Enemy;

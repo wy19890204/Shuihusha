@@ -2417,10 +2417,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         case -1: {
                 ClientPlayer *player = ClientInstance->getPlayer(who);
                 int r = qrand() % 3 + 1;
-                if(player->getGeneral()->isMale())
-                    damage_effect = QString("injure1-male%1").arg(r);
-                else
-                    damage_effect = QString("injure1-female%1").arg(r);
+                damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
                 break;
             }
 

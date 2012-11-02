@@ -758,7 +758,7 @@ YuanpeiCard::YuanpeiCard(){
 bool YuanpeiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    return to_select->getGeneral()->isMale();
+    return to_select->getGenderString() == "male";
 }
 
 void YuanpeiCard::onEffect(const CardEffectStruct &effect) const{

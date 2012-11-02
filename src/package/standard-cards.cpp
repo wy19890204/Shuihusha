@@ -187,7 +187,7 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
-        if(effect.from->getGeneral()->isMale() != effect.to->getGeneral()->isMale()){
+        if(effect.from->getGender() != effect.to->getGender()){
             if(effect.from->askForSkillInvoke(objectName())){
                 bool draw_card = false;
 

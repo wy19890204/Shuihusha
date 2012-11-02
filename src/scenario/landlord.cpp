@@ -50,35 +50,20 @@ public:
                 log.type = "#LLBegin";
                 room->sendLog(log);
 
-                QStringList choices;
-                choices << "2" << "3" << "pass";
                 QString choice = "pass";
                 foreach(ServerPlayer *fmr, players){
-                    choice = room->askForChoice(fmr, "landlord", choices.join("+"));
+                    choice = room->askForChoice(fmr, "landlord", "light+pass");
+                    room->broadcastInvoke("playAudio", QString("landlord-%1-%2").arg(choice).arg(fmr->getGenderString()));
                     log.type = choice != "pass" ? "#LandLord1" : "#LandLord2";
                     log.from = fmr;
                     log.arg = choice;
                     room->sendLog(log);
-                    fmr->setMark("Land", choice == "pass" ? 0 : atoi(choice.toLocal8Bit().data()));
-                    if(choice == "3"){
+                    if(choice == "light"){
                         lord->setRole(fmr->getRole());
                         fmr->setRole("lord");
                         lord = fmr;
                         room->setTag("LandLordDone", true);
                         break;
-                    }
-                    else if(choice == "2")
-                        choices.removeOne("2");
-                }
-                if(!room->getTag("LandLordDone").toBool()){
-                    foreach(ServerPlayer *fmr, players){
-                        if(fmr->getMark("Land") == 2){
-                            lord->setRole(fmr->getRole());
-                            fmr->setRole("lord");
-                            lord = fmr;
-                            room->setTag("LandLordDone", true);
-                            break;
-                        }
                     }
                 }
 
@@ -179,8 +164,10 @@ public:
     virtual bool onPhaseChange(ServerPlayer *x) const{
         Room *room = x->getRoom();
         if(x->getPhase() == Player::Start || x->getPhase() == Player::Finish){
-            if(room->askForSkillInvoke(x, objectName()))
+            if(room->askForSkillInvoke(x, objectName())){
+                room->playSkillEffect(objectName());
                 x->drawCards(1);
+            }
         }
         return false;
     }

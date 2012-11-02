@@ -3865,8 +3865,7 @@ QList<ServerPlayer *> Room::getMenorWomen(const QString &gender, ServerPlayer *e
     foreach(ServerPlayer *player, m_alivePlayers){
         if(except && player == except)
             continue;
-        if((player->getGeneral()->isMale() && gender == "male") ||
-           (player->getGeneral()->isFemale() && gender == "female"))
+        if(player->getGenderString() == gender)
             targets << player;
     }
     return targets;
