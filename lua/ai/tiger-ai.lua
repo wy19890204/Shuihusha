@@ -110,6 +110,7 @@ sgs.ai_skill_invoke["pinming"] = function(self, data)
 			return damage.damage > 1
 		end
 	else
+		if self:isFriend(damage.to) then return false end
 		if #self:getEnemies() == 1 then
 			return true
 		end

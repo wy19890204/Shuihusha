@@ -79,7 +79,6 @@ class DuomingCard: public SkillCard{
 
 public:
     Q_INVOKABLE DuomingCard();
-    virtual PlayerStar findPlayerByFlag(Room *room, const QString &flag) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 

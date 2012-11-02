@@ -345,7 +345,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     mute = true;
                 }
                 if(player->hasSkill("bizhai") && card_use.to.count() == 2){
-                    room->playSkillEffect("bizhai");
+                    int index = player->getGender() == General::Male ? qrand() % 2 + 1 : qrand() % 2 + 3;
+                    room->playSkillEffect("bizhai", index);
                     mute = true;
                 }
                 if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)

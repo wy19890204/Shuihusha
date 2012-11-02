@@ -640,17 +640,8 @@ DuomingCard::DuomingCard(){
     mute = true;
 }
 
-PlayerStar DuomingCard::findPlayerByFlag(Room *room, const QString &flag) const{
-    const QList<ServerPlayer *> &list = room->getAlivePlayers();
-    foreach(ServerPlayer *player, list){
-        if(player->hasFlag(flag))
-            return player;
-    }
-    return NULL;
-}
-
 void DuomingCard::use(Room *m, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    PlayerStar target = findPlayerByFlag(m, "Duoming");
+    PlayerStar target = m->getCurrent();
     if(target){
         int index = 0;
         if(m->getMode() == "landlord" && source->isLord())
@@ -707,16 +698,16 @@ public:
         if(player->getPhase() == Player::NotActive)
             return false;
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
-        room->setPlayerFlag(player, "Duoming");
         foreach(ServerPlayer *lili, lily){
             if(lili != player && lili->getHandcardNum() > 1 && room->askForUseCard(lili, "@@duoming", "@duoming:" + player->objectName(), true)){
                 DamageStruct damage;
                 damage.from = lili;
                 damage.to = player;
+                room->setPlayerFlag(player, "Duoming");
                 room->damage(damage);
+                room->setPlayerFlag(player, "-Duoming");
             }
         }
-        room->setPlayerFlag(player, "-Duoming");
         return false;
     }
 };
@@ -735,7 +726,8 @@ public:
         QList<ServerPlayer *> lily = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *lili, lily){
             if(lili != player && player->getHandcardNum() > lili->getHp() && lili->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
-                room->playSkillEffect(objectName());
+                if(!player->hasFlag("Duoming"))
+                    room->playSkillEffect(objectName());
                 const Card *wolegequ = player->getRandomHandCard();
                 lili->obtainCard(wolegequ, false);
             }

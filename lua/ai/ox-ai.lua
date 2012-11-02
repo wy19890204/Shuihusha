@@ -283,7 +283,23 @@ sgs.lili_suit_value =
 sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 
 -- duoming
-sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
+sgs.ai_skill_use["@@duoming"] = function(self, prompt)
+	local target = self.room:getCurrent()
+	if self:isFriend(target) then return "." end
+	if self.player:getHandcardNum() > 2 then
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local card_ids = {}
+		for _, card in ipairs(cards) do
+			if #card_ids < 2 and card:isBlack() then
+				table.insert(card_ids, card:getEffectiveId())
+			end
+		end
+		return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
+	end
+	return "."
+end
 
 -- shijin
 sgs.shijin_keep_value =
