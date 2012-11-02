@@ -2557,12 +2557,7 @@ bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void SuocaiCard::use(Room *o, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *yanp = targets.first();
-    int index = 0;
-    if(o->getMode() == "landlord" && source->isLord())
-        index = source->getGender() == General::Male ? qrand() % 2 + 5 : qrand() % 2 + 8;
-    else
-        index = qrand() % 2 + 1;
-    o->playSkillEffect(skill_name, index);
+    o->playSkillEffect(skill_name, qrand() % 2 + 1);
     source->pindian(yanp, skill_name, this);
 }
 
@@ -2601,16 +2596,12 @@ public:
         PindianStar pindian = data.value<PindianStar>();
         if(pindian->reason == objectName()){
             if(pindian->isSuccess()){
-                if(room->getMode() == "landlord" && player->isLord())
-                    room->playSkillEffect(objectName(), player->getGender() == General::Male ? 7 : 10);
-                else
-                    room->playSkillEffect(objectName(), 3);
+                room->playSkillEffect(objectName(), 3);
                 player->obtainCard(pindian->from_card);
                 player->obtainCard(pindian->to_card);
             }
             else{
-                if(room->getMode() != "landlord" || !player->isLord())
-                    room->playSkillEffect(objectName(), 4);
+                room->playSkillEffect(objectName(), 4);
                 DamageStruct damage;
                 damage.from = pindian->to;
                 damage.to = pindian->from;

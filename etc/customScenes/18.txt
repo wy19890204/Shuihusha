@@ -2,7 +2,7 @@
 general:shixiu role:loyalist 
 general:lujunyi role:lord starter:true maxhp:5 hp:1 equip:65 
 general:yanqing role:loyalist 
-general:sujiang role:rebel 
-general:sujiang role:rebel 
-general:sujiang role:rebel 
-general:sujiang role:rebel 
+general:shibing role:rebel 
+general:shibing role:rebel 
+general:shibing role:rebel 
+general:shibing role:rebel 

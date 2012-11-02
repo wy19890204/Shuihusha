@@ -15,7 +15,7 @@ public:
 
     static QStringList getLandSkills(Room *room){
         QStringList landskills;
-        landskills << "linse" << "suocai" << "duoming" << "shemi";
+        landskills << "linse" << "duoming" << "shemi";
         QStringList sameskills;
         foreach(QString skill, landskills){
             foreach(ServerPlayer *p, room->getAllPlayers()){
@@ -26,7 +26,7 @@ public:
         foreach(QString skill, sameskills){
             landskills.removeOne(skill);
         }
-        landskills << "bizhai" << "boxue" << "fangdai";
+        landskills << "lesuo" << "bizhai" << "boxue" << "fangdai";
 
         qShuffle(landskills);
         return landskills;
@@ -155,6 +155,66 @@ bool LandlordScenario::generalSelection(Room *room) const{
     return false;
 }
 
+LesuoCard::LesuoCard(){
+    will_throw = false;
+    mute = true;
+}
+
+bool LesuoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
+}
+
+void LesuoCard::use(Room *o, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *yanp = targets.first();
+    int index = source->getGender() == General::Male ? qrand() % 2 + 1 : qrand() % 2 + 4;
+    o->playSkillEffect(skill_name, index);
+    source->pindian(yanp, skill_name, this);
+}
+
+class LesuoPindian: public OneCardViewAsSkill{
+public:
+    LesuoPindian():OneCardViewAsSkill("lesuo"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("LesuoCard") && !player->isKongcheng();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        LesuoCard *card = new LesuoCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return ! to_select->isEquipped();
+    }
+};
+
+class Lesuo: public TriggerSkill{
+public:
+    Lesuo():TriggerSkill("lesuo"){
+        events << Pindian;
+        view_as_skill = new LesuoPindian;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        PindianStar pindian = data.value<PindianStar>();
+        if(pindian->reason == objectName()){
+            if(pindian->isSuccess()){
+                room->playSkillEffect(objectName(), player->getGender() == General::Male ? 3 : 6);
+                player->obtainCard(pindian->from_card);
+                player->obtainCard(pindian->to_card);
+            }
+        }
+        return false;
+    }
+};
+
 class Boxue: public PhaseChangeSkill{
 public:
     Boxue():PhaseChangeSkill("boxue"){
@@ -236,7 +296,8 @@ LandlordScenario::LandlordScenario()
     :Scenario("landlord")
 {
     rule = new LandlordScenarioRule(this);
-    skills << new Skill("bizhai") << new Boxue << new Fangdai;
+    skills << new Lesuo << new Skill("bizhai") << new Boxue << new Fangdai;
+    addMetaObject<LesuoCard>();
     addMetaObject<FangdaiCard>();
 }
 

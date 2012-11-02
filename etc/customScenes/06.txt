@@ -1,8 +1,8 @@
 
 general:qiongying role:loyalist 
-general:sujiangf role:rebel maxhp:3 hp:3 
-general:sujiang role:rebel maxhp:3 hp:3 
-general:sujiang role:rebel maxhp:3 hp:4 
-general:sujiangf role:rebel maxhp:3 hp:4 
+general:shibingf role:rebel maxhp:3 hp:3 
+general:shibing role:rebel maxhp:3 hp:3 
+general:shibing role:rebel maxhp:3 hp:4 
+general:shibingf role:rebel maxhp:3 hp:4 
 general:zhangqing role:lord starter:true maxhp:5 hp:5 
 

@@ -1,7 +1,7 @@
 
 general:xuning general2:select role:lord starter:true maxhp:5 hp:5 equip:61 
-general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:207 
-general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:68 
+general:shibing role:rebel maxhp:2 hp:2 chained:true equip:207 
+general:shibing role:rebel maxhp:2 hp:2 chained:true equip:68 
 general:huyanzhuo role:rebel maxhp:4 hp:4 equip:136,155 
-general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:64 
-general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:66 
+general:shibing role:rebel maxhp:2 hp:2 chained:true equip:64 
+general:shibing role:rebel maxhp:2 hp:2 chained:true equip:66 

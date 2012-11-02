@@ -1,6 +1,6 @@
 
 general:chaijin general2:yanqing role:renegade maxhp:3 hp:3 equip:66 
-general:sujiang role:loyalist 
+general:shibing role:loyalist 
 general:guansheng role:rebel starter:true 
 general:huarong role:rebel 
 general:zhutong role:rebel 
