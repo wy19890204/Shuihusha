@@ -1325,11 +1325,11 @@ public:
             return false;
 
         QStringList horses;
-        if(damage.to->getArmor())
+        if(damage.to->getArmor(true))
             horses << "armor";
-        if(damage.to->getDefensiveHorse())
+        if(damage.to->getDefensiveHorse(true))
             horses << "defensive_horse";
-        if(damage.to->getOffensiveHorse())
+        if(damage.to->getOffensiveHorse(true))
             horses << "offensive_horse";
 
         if(horses.isEmpty())

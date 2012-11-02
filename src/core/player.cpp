@@ -154,7 +154,7 @@ void Player::clearFlags(){
 }
 
 int Player::getAttackRange() const{
-    int atkrg = weapon ? weapon->getRange() : 1;
+    int atkrg = getWeapon() ? getWeapon()->getRange() : 1;
     int extra = Sanguosha->correctClient("attackrange", this);
 
     return extra >= 0 ? qMax(atkrg, extra): qAbs(extra);
@@ -442,15 +442,31 @@ void Player::removeEquip(const EquipCard *equip){
 }
 
 bool Player::hasEquip(const Card *card) const{
+    if(hasSkill("qiaogong")){
+        QString perty = QString("qiaogong_%1").arg(card->getSubtype().left(1));
+        CardStar car = tag[perty].value<CardStar>();
+        if(car == card)
+            return true;
+    }
     return weapon == card || armor == card || defensive_horse == card || offensive_horse == card;
 }
 
 bool Player::hasEquip() const{
+    if(hasSkill("qiaogong")){
+        QStringList nn;
+        nn << "w" << "a" << "d" << "o";
+        foreach(QString n, nn){
+            QString perty = QString("qiaogong_%1").arg(n);
+            CardStar car = tag[perty].value<CardStar>();
+            if(car)
+                return true;
+        }
+    }
     return weapon || armor || defensive_horse || offensive_horse;
 }
 
 bool Player::hasEquip(const QString &name, bool inherit) const{
-//for example: hasEquip("axe") ;  hasEquip("Weapon", true)
+    //for example: hasEquip("axe") ;  hasEquip("Weapon", true)
     bool ok = false;
     foreach(const Card *equip, getEquips()){
         if((!inherit && equip->objectName() == name) ||
@@ -462,23 +478,51 @@ bool Player::hasEquip(const QString &name, bool inherit) const{
     return ok;
 }
 
-const Weapon *Player::getWeapon() const{
+const Weapon *Player::getWeapon(bool trueequip) const{
+    if(trueequip)
+        return weapon;
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_w"].value<CardStar>();
+        if(car)
+            return qobject_cast<const Weapon*>(car);
+    }
     return weapon;
 }
 
-const Armor *Player::getArmor() const{
+const Armor *Player::getArmor(bool trueequip) const{
+    if(trueequip)
+        return armor;
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_a"].value<CardStar>();
+        if(car)
+            return qobject_cast<const Armor*>(car);
+    }
     return armor;
 }
 
-const Horse *Player::getDefensiveHorse() const{
+const Horse *Player::getDefensiveHorse(bool trueequip) const{
+    if(trueequip)
+        return defensive_horse;
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_d"].value<CardStar>();
+        if(car)
+            return qobject_cast<const Horse*>(car);
+    }
     return defensive_horse;
 }
 
-const Horse *Player::getOffensiveHorse() const{
+const Horse *Player::getOffensiveHorse(bool trueequip) const{
+    if(trueequip)
+        return offensive_horse;
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_o"].value<CardStar>();
+        if(car)
+            return qobject_cast<const Horse*>(car);
+    }
     return offensive_horse;
 }
 
-QList<const Card *> Player::getEquips() const{
+QList<const Card *> Player::getEquips(bool trueequip) const{
     QList<const Card *> equips;
     if(weapon)
         equips << weapon;
@@ -488,6 +532,17 @@ QList<const Card *> Player::getEquips() const{
         equips << defensive_horse;
     if(offensive_horse)
         equips << offensive_horse;
+
+    if(!trueequip && hasSkill("qiaogong")){
+        QStringList nn;
+        nn << "w" << "a" << "d" << "o";
+        foreach(QString n, nn){
+            QString proty = QString("qiaogong_%1").arg(n);
+            CardStar car = tag[proty].value<CardStar>();
+            if(car)
+                equips << car;
+        }
+    }
 
     return equips;
 }
@@ -506,10 +561,18 @@ const EquipCard *Player::getEquip(int index) const{
 }
 
 bool Player::hasWeapon(const QString &weapon_name) const{
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_w"].value<CardStar>();
+        return car && car->objectName() == weapon_name;
+    }
     return weapon && weapon->objectName() == weapon_name;
 }
 
 bool Player::hasArmorEffect(const QString &armor_name) const{
+    if(hasSkill("qiaogong")){
+        CardStar car = tag["qiaogong_a"].value<CardStar>();
+        return car && !hasMark("qinggang") && car->objectName() == armor_name;
+    }
     return armor && !hasMark("qinggang") && armor->objectName() == armor_name;
 }
 

@@ -81,7 +81,7 @@ void ServerPlayer::obtainCard(const Card *card, bool unhide){
 }
 
 void ServerPlayer::throwAllEquips(){
-    QList<const Card *> equips = getEquips();
+    QList<const Card *> equips = getEquips(true);
 
     if(equips.isEmpty())
         return;
@@ -137,6 +137,16 @@ void ServerPlayer::bury(){
     clearFlags();
     clearHistory();
     throwAllCards();
+
+    if(hasSkill("qiaogong")){
+        QStringList nn;
+        nn << "w" << "a" << "d" << "o";
+        foreach(QString n, nn){
+            QString proty = QString("qiaogong_%1").arg(n);
+            tag.remove(proty);
+        }
+    }
+
     throwAllMarks();
     clearPrivatePiles();
 
@@ -434,7 +444,7 @@ QList<const Card *> ServerPlayer::getCards(const QString &flags) const{
         cards << handcards;
 
     if(flags.contains("e"))
-        cards << getEquips();
+        cards << getEquips(true);
 
     if(flags.contains("j"))
         cards << getJudgingArea();

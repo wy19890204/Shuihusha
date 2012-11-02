@@ -3011,12 +3011,11 @@ RoomThread *Room::getThread() const{
 
 void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, bool open){
     QSet<ServerPlayer *> scope;
+    int eid = card->getEffectiveId();
+    ServerPlayer *from = getCardOwner(eid);
+    Player::Place from_place= getCardPlace(eid);
 
     if(!open){
-        int eid = card->getEffectiveId();
-        ServerPlayer *from = getCardOwner(eid);
-        Player::Place from_place= getCardPlace(eid);
-
         scope.insert(from);
         scope.insert(to);
 
@@ -3061,7 +3060,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     move.to_place = place;
     move.open = open;
 
-    ServerPlayer *from = NULL;
+    from = NULL;
     QVariant data;
 
     if(card->isVirtualCard()){
@@ -3115,6 +3114,17 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
                 sour->obtainCard(card);
             }
         }
+    }
+
+    if(from_place == Player::Equip || place == Player::Equip){
+        QList<ServerPlayer *> tzww = findPlayersBySkillName("qiaogong");
+        QiaogongStruct qgdt;
+        qgdt.equip = card;
+        qgdt.wear = place == Player::Equip;
+        qgdt.target = place == Player::Equip ? to : from;
+        QVariant qg_data = QVariant::fromValue(qgdt);
+        foreach(ServerPlayer *tzw, tzww)
+            thread->trigger(QiaogongTrigger, this, tzw, qg_data);
     }
 }
 

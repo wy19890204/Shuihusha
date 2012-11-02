@@ -280,71 +280,84 @@ public:
     }
 };
 
-QiaogongCard::QiaogongCard(){
-    once = true;
-}
+class Qiaogong: public TriggerSkill{
+public:
+    Qiaogong():TriggerSkill("qiaogong"){
+        events << QiaogongTrigger;
+        frequency = Compulsory;
+    }
 
-void QiaogongCard::swapEquip(ServerPlayer *first, ServerPlayer *second, int index) const{
-    const EquipCard *e1 = first->getEquip(index);
-    const EquipCard *e2 = second->getEquip(index);
+    static CardStar getScreenSingleEquip(Room *room, const EquipCard *equip){
+        int n = 0;
+        CardStar target = equip;
+        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+            foreach(const Card *c, tmp->getEquips(true)){
+                if(c->getSubtype() == equip->getSubtype()){
+                    n ++;
+                    target = c;
+                }
+            }
+            if(n > 1)
+                return NULL;
+        }
+        return n == 1 ? target : NULL;
+    }
 
-    Room *room = first->getRoom();
+    static void storeEquip(ServerPlayer *taozi, QString name, QVariant data){
+        QString perty = "qiaogong_" + name;
+        taozi->tag[perty] = data;
+        Self->tag[perty] = data;
+    }
 
-    if(e1)
-        first->obtainCard(e1);
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *taozi, QVariant &data) const{
+        QiaogongStruct qkgy = data.value<QiaogongStruct>();
+        QList<const Card *> cards;
+        if(qkgy.equip->isVirtualCard()){
+            QList<int> subcards = qkgy.equip->getSubcards();
+            foreach(int subcard, subcards)
+                cards << Sanguosha->getCard(subcard);
+        }
+        else
+            cards << qkgy.equip;
 
-    if(e2)
-        room->moveCardTo(e2, first, Player::Equip);
+        foreach(const Card *card, cards){
+            const EquipCard *equip = qobject_cast<const EquipCard*>(card);
+            QString name = equip->getSubtype();
 
-    if(e1)
-        room->moveCardTo(e1, second, Player::Equip);
-}
-
-bool QiaogongCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() == 2;
-}
-
-bool QiaogongCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    switch(targets.length()){
-    case 0: return true;
-    case 1: {
-            int n1 = targets.first()->getEquips().length();
-            int n2 = to_select->getEquips().length();
-            return qAbs(n1-n2) <= Self->getLostHp();
+            if(qkgy.wear && getScreenSingleEquip(room, equip)){ //0 to 1
+                if(qkgy.target == taozi)
+                    continue;
+                storeEquip(taozi, name.left(1), QVariant::fromValue((CardStar)equip));
+                if(name == "weapon"){
+                    const Weapon *weapon = qobject_cast<const Weapon*>(equip);
+                    if(weapon->hasSkill())
+                        room->attachSkillToPlayer(taozi, weapon->objectName());
+                }
+            }
+            else if(!qkgy.wear && getScreenSingleEquip(room, equip)){ //2 to 1
+                CardStar equ = getScreenSingleEquip(room, equip);
+                storeEquip(taozi, name.left(1), QVariant::fromValue(equ));
+                if(name == "weapon"){
+                    const Weapon *weapon = qobject_cast<const Weapon*>(equ);
+                    if(weapon->hasSkill())
+                        room->attachSkillToPlayer(taozi, weapon->objectName());
+                }
+            }
+            else{ //1 to 2, 2 to 3 ... ; 1 to 0, 3 to 2, 4 to 3 ...
+                if(name == "weapon"){
+                    QString proxy = QString("qiaogong_%1").arg(name.left(1));
+                    CardStar myweapon = taozi->tag[proxy].value<CardStar>();
+                    if(!myweapon)
+                        continue;
+                    const Weapon *weapon = qobject_cast<const Weapon*>(myweapon);
+                    if(weapon->hasSkill())
+                        room->detachSkillFromPlayer(taozi, weapon->objectName(), false);
+                }
+                storeEquip(taozi, name.left(1), QVariant());
+            }
         }
 
-    default:
         return false;
-    }
-}
-
-void QiaogongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *first = targets.first();
-    ServerPlayer *second = targets.at(1);
-
-    int i;
-    for(i=0; i<4; i++)
-        swapEquip(first, second, i);
-
-    LogMessage log;
-    log.type = "#QiaogongSwap";
-    log.from = source;
-    log.to = targets;
-    room->sendLog(log);
-}
-
-class Qiaogong: public ZeroCardViewAsSkill{
-public:
-    Qiaogong():ZeroCardViewAsSkill("qiaogong"){
-
-    }
-
-    virtual const Card *viewAs() const{
-        return new QiaogongCard;
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("QiaogongCard");
     }
 };
 
@@ -448,7 +461,6 @@ DragonPackage::DragonPackage()
 
     addMetaObject<YuanyinCard>();
     addMetaObject<NushaCard>();
-    addMetaObject<QiaogongCard>();
 }
 
 ADD_PACKAGE(Dragon);

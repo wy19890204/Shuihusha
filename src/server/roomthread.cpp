@@ -526,3 +526,8 @@ void RoomThread::delay(unsigned long secs){
 void RoomThread::end(){
     longjmp(env, GameOver);
 }
+
+QiaogongStruct::QiaogongStruct()
+    :equip(NULL), wear(true), target(NULL)
+{
+}
