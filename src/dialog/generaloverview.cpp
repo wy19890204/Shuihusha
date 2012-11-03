@@ -143,6 +143,28 @@ GeneralOverview::~GeneralOverview()
     delete ui;
 }
 
+bool GeneralOverview::isInvisibleSkill(const QString &skill_name, int index){
+    //effect line cut down begin the index
+    if(skill_name == "yinyu") // for mengshi_wake
+        return index > 7;
+    if(index > 2){  // butian&qimen for kongmen_wake; other for landlord mode
+        QStringList skills;
+        skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
+        return skills.contains(skill_name);
+    }
+    return false;
+}
+
+bool GeneralOverview::singleSkillFineTuning(const QString &general_name, const QString &skill_name, int index){
+    if(skill_name == "zhengfa"){
+        if(general_name == "tongguan") //tongguan show zhengfa1,3,5  pass 2,4,6
+            return index % 2 == 0;
+        else if(general_name == "tongguanf") //tongguanf show zhengfa2,4,6  pass 1,3,5
+            return index % 2 == 1;
+    }
+    return false;
+}
+
 void GeneralOverview::addLines(const Skill *skill, int wake_index){
     QString skill_name = Sanguosha->translate(skill->objectName());
     QStringList sources = skill->getSources();
@@ -155,23 +177,11 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
     }else{
         QRegExp rx(".+/(\\w+\\d?).ogg");
         for(int i = 0; i < sources.length(); i++){
-            if(skill->objectName() == "yinyu" && i > 6) // wake skills
+            if(isInvisibleSkill(skill->objectName(), i + 1))
                 break;
-            if(skill->objectName() == "suocai" && i > 3)
-                break;
-            if(i > 1){
-                QStringList skills;
-                skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
-                if(skills.contains(skill->objectName()))
-                    break;
-            }
             QString general_name = ui->tableWidget->item(ui->tableWidget->currentRow(), 0)->data(Qt::UserRole).toString();
-            if(skill->objectName() == "zhengfa"){
-                if(general_name == "tongguan" && (i == 1 || i == 3 || i == 5))
-                    continue;
-                else if(general_name == "tongguanf" && (i == 0 || i == 2 || i == 4))
-                    continue;
-            }
+            if(singleSkillFineTuning(general_name, skill->objectName(), i + 1))
+                continue;
             QString source = wake_index == 0 ? sources.at(i) : sources.at(wake_index - 1);
             if(!rx.exactMatch(source))
                 continue;
@@ -198,6 +208,24 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
             if(wake_index != 0)
                 break;
         }
+    }
+}
+
+void GeneralOverview::addWakeLines(const QString &general_name){
+    //QGroupBox *wake = new QGroupBox(tr("Wake Skills"));
+    const Skill *wake_skill;
+    if(general_name == "qiongying"){
+        wake_skill = Sanguosha->getSkill("yinyu");
+        for(int i = 8; i <= 13; i ++)
+            addLines(wake_skill, i);
+    }
+    if(general_name == "fanrui"){
+        wake_skill = Sanguosha->getSkill("butian");
+        addLines(wake_skill, 3);
+        addLines(wake_skill, 4);
+        wake_skill = Sanguosha->getSkill("qimen");
+        addLines(wake_skill, 3);
+        addLines(wake_skill, 4);
     }
 }
 
@@ -253,21 +281,7 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         addLines(skill);
     }
 
-    //QGroupBox *wake = new QGroupBox(tr("Wake Skills"));
-    const Skill *wake_skill;
-    if(general_name == "qiongying"){
-        wake_skill = Sanguosha->getSkill("yinyu");
-        for(int i = 8; i <= 13; i ++)
-            addLines(wake_skill, i);
-    }
-    if(general_name == "fanrui"){
-        wake_skill = Sanguosha->getSkill("butian");
-        addLines(wake_skill, 3);
-        addLines(wake_skill, 4);
-        wake_skill = Sanguosha->getSkill("qimen");
-        addLines(wake_skill, 3);
-        addLines(wake_skill, 4);
-    }
+    addWakeLines(general_name);
 
     QString last_word = Sanguosha->translate("~" + general->objectName());
     if(!last_word.startsWith("~")){

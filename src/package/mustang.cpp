@@ -1,4 +1,4 @@
-#include "zcyn.h"
+#include "mustang.h"
 #include "general.h"
 #include "skill.h"
 #include "standard.h"
@@ -6,6 +6,117 @@
 #include "carditem.h"
 #include "engine.h"
 #include "maneuvering.h"
+
+class Qiaogong: public TriggerSkill{
+public:
+    Qiaogong():TriggerSkill("qiaogong"){
+        events << QiaogongTrigger;
+        frequency = Compulsory;
+    }
+
+    static CardStar getScreenSingleEquip(Room *room, const EquipCard *equip){
+        int n = 0;
+        CardStar target = equip;
+        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+            foreach(const Card *c, tmp->getEquips(true)){
+                if(c->getSubtype() == equip->getSubtype()){
+                    n ++;
+                    target = c;
+                }
+            }
+            if(n > 1)
+                return NULL;
+        }
+        return n == 1 ? target : NULL;
+    }
+
+    static void storeEquip(ServerPlayer *taozi, QString name, QVariant data){
+        QString perty = "qiaogong_" + name;
+        taozi->tag[perty] = data;
+        Self->tag[perty] = data;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *taozi, QVariant &data) const{
+        QiaogongStruct qkgy = data.value<QiaogongStruct>();
+        QList<const Card *> cards;
+        if(qkgy.equip->isVirtualCard()){
+            QList<int> subcards = qkgy.equip->getSubcards();
+            foreach(int subcard, subcards)
+                cards << Sanguosha->getCard(subcard);
+        }
+        else
+            cards << qkgy.equip;
+
+        foreach(const Card *card, cards){
+            const EquipCard *equip = qobject_cast<const EquipCard*>(card);
+            QString name = equip->getSubtype();
+
+            if(qkgy.wear && getScreenSingleEquip(room, equip)){ //0 to 1
+                if(qkgy.target == taozi)
+                    continue;
+                storeEquip(taozi, name.left(1), QVariant::fromValue((CardStar)equip));
+                if(name == "weapon"){
+                    const Weapon *weapon = qobject_cast<const Weapon*>(equip);
+                    if(weapon->hasSkill())
+                        room->attachSkillToPlayer(taozi, weapon->objectName());
+                }
+            }
+            else if(!qkgy.wear && getScreenSingleEquip(room, equip)){ //2 to 1
+                CardStar equ = getScreenSingleEquip(room, equip);
+                storeEquip(taozi, name.left(1), QVariant::fromValue(equ));
+                if(name == "weapon"){
+                    const Weapon *weapon = qobject_cast<const Weapon*>(equ);
+                    if(weapon->hasSkill())
+                        room->attachSkillToPlayer(taozi, weapon->objectName());
+                }
+            }
+            else{ //1 to 2, 2 to 3 ... ; 1 to 0, 3 to 2, 4 to 3 ...
+                if(name == "weapon"){
+                    QString proxy = QString("qiaogong_%1").arg(name.left(1));
+                    CardStar myweapon = taozi->tag[proxy].value<CardStar>();
+                    if(!myweapon)
+                        continue;
+                    const Weapon *weapon = qobject_cast<const Weapon*>(myweapon);
+                    if(weapon->hasSkill())
+                        room->detachSkillFromPlayer(taozi, weapon->objectName(), false);
+                }
+                storeEquip(taozi, name.left(1), QVariant());
+            }
+        }
+
+        return false;
+    }
+};
+
+class Manli: public TriggerSkill{
+public:
+    Manli():TriggerSkill("manli"){
+        events << DamageProceed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *turtle, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        const Card *reason = damage.card;
+        if(reason == NULL)
+            return false;
+        if((reason->inherits("Slash") || reason->inherits("Duel"))
+            && turtle->getWeapon() && turtle->getArmor()
+            && turtle->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName());
+            LogMessage log;
+            log.type = "#ManliBuff";
+            log.from = turtle;
+            log.to << damage.to;
+            log.arg = QString::number(damage.damage);
+            log.arg2 = QString::number(damage.damage + 1);
+            room->sendLog(log);
+
+            damage.damage ++;
+            data = QVariant::fromValue(damage);
+        }
+        return false;
+    }
+};
 
 class Tianyan: public PhaseChangeSkill{
 public:
@@ -263,9 +374,13 @@ public:
     }
 };
 
-ZCYNPackage::ZCYNPackage()
-    :Package("ZCYN")
+MustangPackage::MustangPackage()
+    :Package("mustang")
 {
+    General *taozongwang = new General(this, "taozongwang", "min", 3);
+    taozongwang->addSkill(new Qiaogong);
+    taozongwang->addSkill(new Manli);
+/*
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
@@ -284,7 +399,7 @@ ZCYNPackage::ZCYNPackage()
     General *gudasao = new General(this, "gudasao", "min", 4, false);
     gudasao->addSkill(new Cihu);
 
-    addMetaObject<CihuCard>();
+    addMetaObject<CihuCard>();*/
 }
 
-ADD_PACKAGE(ZCYN);
+ADD_PACKAGE(Mustang)

@@ -62,8 +62,8 @@ SOURCES += \
 	src/package/tiger.cpp \
 	src/package/hare.cpp \
 	src/package/dragon.cpp \
+	src/package/mustang.cpp \
 	src/package/qlfd.cpp \
-	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
 	src/package/sp.cpp \
@@ -197,8 +197,8 @@ HEADERS += \
 	src/package/tiger.h \
 	src/package/hare.h \
 	src/package/dragon.h \
+	src/package/mustang.h \
 	src/package/qlfd.h \
-	src/package/zcyn.h \
 	src/package/cgdk.h \
 	src/package/ybyt.h \
 	src/package/sp.h \

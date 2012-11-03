@@ -1,14 +1,14 @@
-#ifndef ZCYNPACKAGE_H
-#define ZCYNPACKAGE_H
+#ifndef MUSTANGPACKAGE_H
+#define MUSTANGPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 
-class ZCYNPackage : public Package{
+class MustangPackage : public Package{
     Q_OBJECT
 
 public:
-    ZCYNPackage();
+    MustangPackage();
 };
 
 class CihuCard: public SkillCard{
@@ -22,4 +22,4 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-#endif // ZCYNPACKAGE_H
+#endif // MUSTANGPACKAGE_H

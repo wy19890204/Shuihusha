@@ -50,9 +50,8 @@ public:
                 log.type = "#LLBegin";
                 room->sendLog(log);
 
-                QString choice = "pass";
                 foreach(ServerPlayer *fmr, players){
-                    choice = room->askForChoice(fmr, "landlord", "light+pass");
+                    QString choice = room->askForChoice(fmr, "landlord", "light+pass");
                     room->broadcastInvoke("playAudio", QString("landlord-%1-%2").arg(choice).arg(fmr->getGenderString()));
                     log.type = "#LandLord_" + choice;
                     log.from = fmr;
