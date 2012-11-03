@@ -600,9 +600,9 @@ public:
     }
 };
 
-class Qingshang: public TriggerSkill{
+class Qing5hang: public TriggerSkill{
 public:
-    Qingshang():TriggerSkill("qingshang"){
+    Qing5hang():TriggerSkill("qing5hang"){
         events << Death;
         frequency = Compulsory;
     }
@@ -712,7 +712,7 @@ InterChangePackage::InterChangePackage()
 
     General *yulan = new General(this, "yulan", "guan", 3, false);
     yulan->addSkill(new Qingdong);
-    yulan->addSkill(new Qingshang);
+    yulan->addSkill(new Qing5hang);
 
     General *shixiu = new General(this, "shixiu", "kou", 4);
     shixiu->addSkill(new Boming);

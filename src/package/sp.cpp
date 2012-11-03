@@ -290,6 +290,61 @@ public:
     }
 };
 
+class Luanjun: public MasochismSkill{
+public:
+    Luanjun():MasochismSkill("luanjun"){
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &) const{
+        Room *room = player->getRoom();
+        QList<ServerPlayer *> edogawa = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *conan, edogawa){
+            if(player->getKingdom() == "jiang" && conan->askForSkillInvoke(objectName())){
+                room->throwCard(room->askForCardChosen(conan, player, "he", objectName()), player, conan);
+            }
+            if(conan == player || conan->getKingdom() == player->getKingdom())
+                continue;
+            if(conan->askForSkillInvoke(objectName()))
+                player->drawCards(1);
+        }
+    }
+};
+
+class Qingshang:public TriggerSkill{
+public:
+    Qingshang():TriggerSkill("qingshang"){
+        events << HpRecovered;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->askForSkillInvoke(objectName())){
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
+
+            JudgeStruct judge;
+            judge.reason = objectName();
+            judge.who = player;
+            room->judge(judge);
+            Card::Color mycolor = judge.card->getColor();
+
+            room->getThread()->delay();
+
+            judge.who = target;
+            room->judge(judge);
+            if(judge.card->getColor() == mycolor){
+                DamageStruct mmm;
+                mmm.from = player;
+                mmm.to = target;
+                room->damage(mmm);
+            }
+        }
+        return false;
+    }
+};
+
 /*
 JiebaoCard::JiebaoCard(){
 }
@@ -664,6 +719,9 @@ SPPackage::SPPackage()
     related_skills.insertMulti("exterminate", "#@kacha-1");
     skills << new Tigerou;
 
+    General *keyin = new General(this, "keyin", "jiang", 3, false);
+    keyin->addSkill(new Luanjun);
+    keyin->addSkill(new Qingshang);
 /*
     General *chaogai = new General(this, "chaogai", "kou");
     chaogai->addSkill(new Jiebao);
