@@ -1404,7 +1404,7 @@ public:
         const Card *c = card_item->getCard();
         Wiretap *wp = new Wiretap(c->getSuit(), c->getNumber());
         wp->setSkillName(objectName());
-        wp->addSubcard(card_item->getCard());
+        wp->addSubcard(c);
 
         return wp;
     }

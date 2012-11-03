@@ -299,60 +299,97 @@ public:
     }
 };
 
-class Tuzai: public TriggerSkill{
+class Zhengbing: public OneCardViewAsSkill{
 public:
-    Tuzai():TriggerSkill("tuzai"){
-        events << Damage;
-        frequency = Frequent;
+    Zhengbing():OneCardViewAsSkill("zhengbing"){
+
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->isBlack() && !to_select->isEquipped();
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.card && damage.card->inherits("Slash") &&
-           damage.to && !damage.to->isKongcheng()
-            && player->askForSkillInvoke(objectName(), data)){
-            room->playSkillEffect(objectName());
-            int dust = damage.to->getRandomHandCardId();
-            room->showCard(damage.to, dust);
-
-            if(Sanguosha->getCard(dust)->isRed()){
-                room->throwCard(dust, damage.to, player);
-                player->drawCards(1);
-            }
-        }
+    virtual bool isEnabledAtPlay(const Player *player) const{
         return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "nullification";
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *first = card_item->getFilteredCard();
+        Card *ncard = new Nullification(first->getSuit(), first->getNumber());
+        ncard->addSubcard(first);
+        ncard->setSkillName(objectName());
+
+        return ncard;
     }
 };
 
-class Cihu: public MasochismSkill{
+QibingCard::QibingCard(){
+    target_fixed = true;
+}
+
+void QibingCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    CardUseStruct table = card_use.from->tag["QibingData"].value<CardUseStruct>();
+    PlayerStar target = table.from;
+    QString card_name = table.card->objectName();
+
+    Card *card = Sanguosha->cloneCard(card_name, card_use.card->getSuit(), card_use.card->getNumber());
+    card->setSkillName(skill_name);
+    card->addSubcard(card_use.card);
+
+    CardUseStruct use = card_use;
+    use.card = card;
+    use.to << target;
+    room->useCard(use);
+}
+
+class Qibing: public OneCardViewAsSkill{
 public:
-    Cihu():MasochismSkill("cihu"){
+    Qibing():OneCardViewAsSkill("qibing"){
     }
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getGeneral()->isFemale();
+    virtual bool viewFilter(const CardItem *) const{
+        return true;
     }
 
-    virtual void onDamaged(ServerPlayer *akaziki, const DamageStruct &damage) const{
-        Room *room = akaziki->getRoom();
-        ServerPlayer *tiger = room->findPlayerBySkillName(objectName());
-        if(!tiger || !damage.card || !damage.card->inherits("Slash"))
-            return;
-        PlayerStar ogami = damage.from;
-        if(!ogami || !ogami->getGeneral()->isMale())
-            return;
-        if(tiger->getCardCount(true) >= akaziki->getHp()){
-            room->setPlayerMark(tiger, "CihuNum", akaziki->getHp());
-            tiger->tag["CihuOgami"] = QVariant::fromValue(ogami);
-            QString prompt = QString("@cihu:%1::%2").arg(ogami->getGeneralName()).arg(akaziki->getGeneralName());
-            room->askForUseCard(tiger, "@@cihu", prompt, true);
-            tiger->tag.remove("CihuOgami");
-            room->setPlayerMark(tiger, "CihuNum", 0);
+    virtual const Card *viewAs(CardItem *card_item) const{
+        QibingCard *card = new QibingCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@qibing";
+    }
+};
+
+class Qibing: public TriggerSkill{
+public:
+    Qibing():TriggerSkill("qibing"){
+        events << CardFinished;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardUseStruct use = data.value<CardUseStruct>();
+        if(!use.card->isNDTrick() || use.to.length() != 1)
+            return false;
+        QList<ServerPlayer *> xis = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *xi, xis){
+            if(xi != use.to.first() || player == xi)
+                continue;
+            xi->tag["QibingData"] = data;
+            QString prompt = QString("@qibing:%1::%2").arg(player->objectName()).arg(use.card->objectName());
+            room->askForUseCard(xi, "@@qibing", prompt, true);
+            xi->tag.remove("QibingData");
         }
+        return false;
     }
 };
 
@@ -381,6 +418,13 @@ void MiniScene::addGenerals(int stage){
             General *renyuan = new General(this, "renyuan", "jiang", 4, true, true);
             renyuan->addSkill(new Pushou);
             addMetaObject<PushouCard>();
+            break;
+        }
+    case 4: {
+            General *xisheng = new General(this, "xisheng", "min", 3, true, true);
+            xisheng->addSkill(new Zhengbing);
+            xisheng->addSkill(new Qibing);
+            addMetaObject<QibingCard>();
             break;
         }
     default:

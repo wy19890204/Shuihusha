@@ -43,4 +43,13 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class QibingCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE QibingCard();
+
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
 #endif // MINIGENERALS_H
