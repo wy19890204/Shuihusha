@@ -67,7 +67,7 @@ SOURCES += \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
 	src/package/sp.cpp \
-	src/package/mini.cpp \
+	src/package/mini-generals.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
@@ -203,7 +203,7 @@ HEADERS += \
 	src/package/cgdk.h \
 	src/package/ybyt.h \
 	src/package/sp.h \
-	src/package/mini.h \
+	src/package/mini-generals.h \
 	src/package/god.h \
 	src/package/joy.h \
 	src/package/interchange.h \

@@ -1,6 +1,5 @@
-#include "mini.h"
+#include "mini-generals.h"
 #include "general.h"
-#include "skill.h"
 #include "standard.h"
 #include "client.h"
 #include "carditem.h"

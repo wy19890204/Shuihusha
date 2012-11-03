@@ -1,8 +1,8 @@
 #ifndef MINIGENERALS_H
 #define MINIGENERALS_H
 
-#include "package.h"
 #include "card.h"
+#include "skill.h"
 
 class FangdiaoCard: public SkillCard{
     Q_OBJECT

@@ -331,7 +331,7 @@ void MiniSceneRule::loadSetting(QString path)
     }
 }
 
-#include "mini.cpp"
+#include "mini-generals.cpp"
 
 MiniScene::MiniScene(const QString &name)
     :Scenario(name){
