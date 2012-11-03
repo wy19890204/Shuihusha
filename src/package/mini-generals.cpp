@@ -313,8 +313,8 @@ public:
         return false;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "nullification";
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "nullification" || pattern == "nulliplot";
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -327,18 +327,19 @@ public:
     }
 };
 
-QibingCard::QibingCard(){
+Qi6ingCard::Qi6ingCard(){
     target_fixed = true;
 }
 
-void QibingCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    CardUseStruct table = card_use.from->tag["QibingData"].value<CardUseStruct>();
+void Qi6ingCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    CardUseStruct table = card_use.from->tag["Qi6ingData"].value<CardUseStruct>();
     PlayerStar target = table.from;
     QString card_name = table.card->objectName();
 
-    Card *card = Sanguosha->cloneCard(card_name, card_use.card->getSuit(), card_use.card->getNumber());
+    CardStar trick = Sanguosha->getCard(getSubcards().first());
+    Card *card = Sanguosha->cloneCard(card_name, trick->getSuit(), trick->getNumber());
     card->setSkillName(skill_name);
-    card->addSubcard(card_use.card);
+    card->addSubcard(trick);
 
     CardUseStruct use = card_use;
     use.card = card;
@@ -346,9 +347,9 @@ void QibingCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->useCard(use);
 }
 
-class Qibing: public OneCardViewAsSkill{
+class Qi6ingViewAsSkill: public OneCardViewAsSkill{
 public:
-    Qibing():OneCardViewAsSkill("qibing"){
+    Qi6ingViewAsSkill():OneCardViewAsSkill("qi6ing"){
     }
 
     virtual bool viewFilter(const CardItem *) const{
@@ -356,20 +357,21 @@ public:
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        QibingCard *card = new QibingCard;
+        Qi6ingCard *card = new Qi6ingCard;
         card->addSubcard(card_item->getFilteredCard());
         return card;
     }
 
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern == "@@qibing";
+        return pattern == "@@qi6ing";
     }
 };
 
-class Qibing: public TriggerSkill{
+class Qi6ing: public TriggerSkill{
 public:
-    Qibing():TriggerSkill("qibing"){
+    Qi6ing():TriggerSkill("qi6ing"){
         events << CardFinished;
+        view_as_skill = new Qi6ingViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -378,16 +380,18 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
-        if(!use.card->isNDTrick() || use.to.length() != 1)
+        if(!use.card->isNDTrick() || (use.to.length() != 1 && !use.card->inherits("Collateral")))
             return false;
         QList<ServerPlayer *> xis = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *xi, xis){
             if(xi != use.to.first() || player == xi)
                 continue;
-            xi->tag["QibingData"] = data;
-            QString prompt = QString("@qibing:%1::%2").arg(player->objectName()).arg(use.card->objectName());
-            room->askForUseCard(xi, "@@qibing", prompt, true);
-            xi->tag.remove("QibingData");
+            if(xi->isNude())
+                continue;
+            xi->tag["Qi6ingData"] = data;
+            QString prompt = QString("@qi6ing:%1::%2").arg(player->objectName()).arg(use.card->objectName());
+            room->askForUseCard(xi, "@@qi6ing", prompt, true);
+            xi->tag.remove("Qi6ingData");
         }
         return false;
     }
@@ -420,11 +424,11 @@ void MiniScene::addGenerals(int stage){
             addMetaObject<PushouCard>();
             break;
         }
-    case 4: {
+    case 5: {
             General *xisheng = new General(this, "xisheng", "min", 3, true, true);
             xisheng->addSkill(new Zhengbing);
-            xisheng->addSkill(new Qibing);
-            addMetaObject<QibingCard>();
+            xisheng->addSkill(new Qi6ing);
+            addMetaObject<Qi6ingCard>();
             break;
         }
     default:

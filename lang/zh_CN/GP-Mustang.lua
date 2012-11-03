@@ -2,6 +2,7 @@
 
 return {
 	["ZCYN"] = "折冲厌难",
+	["mustang"] = "午马",
 
 	["$taozongwang"] = "075",
 	["#taozongwang"] = "九尾龟",
