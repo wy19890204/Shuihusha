@@ -331,125 +331,17 @@ void MiniSceneRule::loadSetting(QString path)
     }
 }
 
-#include "carditem.h"
-class Chumai: public TriggerSkill{
-public:
-    Chumai():TriggerSkill("chumai"){
-        events << CardLost;
-    }
-
-    virtual bool triggerable(const ServerPlayer *ta) const{
-        return ta->getGeneral()->isMale();
-    }
-
-    virtual int getPriority() const{
-        return 3;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *ran = room->findPlayerBySkillName(objectName());
-        if(!ran || room->getCurrent() == ran)
-            return false;
-        CardMoveStar move = data.value<CardMoveStar>();
-        if(move->from->isAlive() && move->to_place == Player::DiscardedPile){
-            const Card *equ = Sanguosha->getCard(move->card_id);
-            QVariant chu = QVariant::fromValue((PlayerStar)player);
-            if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
-               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), true, chu, CardDiscarded)){
-                room->playSkillEffect(objectName());
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = ran;
-                log.arg = objectName();
-                room->sendLog(log);
-                room->loseHp(player);
-            }
-        }
-        return false;
-    }
-};
-
-YinlangCard::YinlangCard(){
-    will_throw = false;
-}
-
-bool YinlangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->getGeneral()->isMale();
-}
-
-void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = NULL;
-    if(targets.isEmpty()){
-        foreach(ServerPlayer *player, room->getAlivePlayers()){
-            if(player != source){
-                target = player;
-                break;
-            }
-        }
-    }else
-        target = targets.first();
-    room->obtainCard(target, this, false);
-
-    int num = 0;
-    foreach(int x, this->getSubcards()){
-        if(Sanguosha->getCard(x)->inherits("Weapon") ||
-           Sanguosha->getCard(x)->inherits("Armor"))
-            num ++;
-    }
-
-    int old_value = source->getMark("Yinlang");
-    int new_value = old_value + num;
-    room->setPlayerMark(source, "Yinlang", new_value);
-
-    if(old_value < 1 && new_value >= 1){
-        RecoverStruct recover;
-        recover.card = this;
-        recover.who = source;
-        room->recover(source, recover);
-    }
-}
-
-class YinlangViewAsSkill:public ViewAsSkill{
-public:
-    YinlangViewAsSkill():ViewAsSkill("yinlang"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getCard()->inherits("EquipCard");
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.isEmpty())
-            return NULL;
-        YinlangCard *ard = new YinlangCard;
-        ard->addSubcards(cards);
-        return ard;
-    }
-};
-
-class Yinlang: public PhaseChangeSkill{
-public:
-    Yinlang():PhaseChangeSkill("yinlang"){
-        view_as_skill = new YinlangViewAsSkill;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return PhaseChangeSkill::triggerable(target)
-                && target->getPhase() == Player::NotActive
-                && target->hasUsed("YinlangCard");
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "Yinlang", 0);
-        return false;
-    }
-};
+#include "mini.cpp"
 
 MiniScene::MiniScene(const QString &name)
     :Scenario(name){
     rule = new MiniSceneRule(this);
 
     if(name == "_mini_01"){
+        General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true, true);
+        zhangbao->addSkill(new Fangdiao);
+        addMetaObject<FangdiaoCard>();
+
         General *liruilan = new General(this, "liruilan", "min", 3, false, true, true);
         liruilan->addSkill(new Chumai);
         liruilan->addSkill(new Yinlang);

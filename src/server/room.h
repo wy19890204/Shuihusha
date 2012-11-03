@@ -197,6 +197,7 @@ public:
     void resetAI(ServerPlayer *player);
     void transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start = true, const QString &old_general = QString(""));
     void swapSeat(ServerPlayer *a, ServerPlayer *b);
+    void swapHandcards(ServerPlayer *source, ServerPlayer *target);
     lua_State *getLuaState() const;
     void setFixedDistance(Player *from, const Player *to, int distance);
     void reverseFor3v3(const Card *card, ServerPlayer *player, QList<ServerPlayer *> &list);

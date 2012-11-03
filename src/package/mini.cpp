@@ -6,61 +6,168 @@
 #include "carditem.h"
 #include "engine.h"
 
-ShouwangCard::ShouwangCard(){
+FangdiaoCard::FangdiaoCard(){
     will_throw = false;
     once = true;
 }
 
-bool ShouwangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool FangdiaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(!targets.isEmpty())
         return false;
-    return to_select->getGeneral()->isMale();
+    return Self->inMyAttackRange(to_select) && to_select != Self && !to_select->isKongcheng();
 }
 
-void ShouwangCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->obtainCard(this);
-    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi", QVariant::fromValue(effect)) == "tian")
-        effect.to->drawCards(1);
-    else
-        effect.from->drawCards(1);
+void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &list) const{
+    room->throwCard(this, source);
+    PlayerStar target = list.first();
+    const Card *spade = room->askForCard(target, ".S$", "@fangdiao:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
+    if(spade)
+        source->obtainCard(spade, false);
+    else{
+        QString choice = room->askForChoice(source, skill_name, "fang+diao", QVariant::fromValue(target));
+        if(choice == "fang"){
+            room->swapHandcards(source, target);
+        }
+        else{
+            foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+                if(target->distanceTo(tmp) <= 1)
+                    tmp->drawCards(1);
+            }
+        }
+    }
 }
 
-class Shouwang: public OneCardViewAsSkill{
+class Fangdiao: public OneCardViewAsSkill{
 public:
-    Shouwang():OneCardViewAsSkill("shouwang"){
+    Fangdiao():OneCardViewAsSkill("fangdiao"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("ShouwangCard");
+        return ! player->hasUsed("FangdiaoCard");
     }
 
-    virtual bool viewFilter(const CardItem *watch) const{
-        return watch->getCard()->inherits("Slash");
+    virtual bool viewFilter(const CardItem *shoupai) const{
+        return !shoupai->isEquipped();
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
-        ShouwangCard *card = new ShouwangCard;
+        FangdiaoCard *card = new FangdiaoCard;
         card->addSubcard(card_item->getCard()->getId());
         return card;
     }
 };
 
-class Paohong: public FilterSkill{
+
+class Chumai: public TriggerSkill{
 public:
-    Paohong():FilterSkill("paohong"){
+    Chumai():TriggerSkill("chumai"){
+        events << CardLost;
     }
 
-    virtual bool viewFilter(const CardItem *to_select) const{
-        const Card *card = to_select->getCard();
-        return card->objectName() == "slash" && card->isBlack();
+    virtual bool triggerable(const ServerPlayer *ta) const{
+        return ta->getGeneral()->isMale();
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *c = card_item->getCard();
-        ThunderSlash *bs = new ThunderSlash(c->getSuit(), c->getNumber());
-        bs->setSkillName(objectName());
-        bs->addSubcard(card_item->getCard());
-        return bs;
+    virtual int getPriority() const{
+        return 3;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *ran = room->findPlayerBySkillName(objectName());
+        if(!ran || room->getCurrent() == ran)
+            return false;
+        CardMoveStar move = data.value<CardMoveStar>();
+        if(move->from->isAlive() && move->to_place == Player::DiscardedPile){
+            const Card *equ = Sanguosha->getCard(move->card_id);
+            QVariant chu = QVariant::fromValue((PlayerStar)player);
+            if(move->from->getHp() > 0 && (equ->inherits("Weapon") || equ->inherits("Armor")) &&
+               room->askForCard(ran, ".|.|.|hand|black", "@chumai:" + player->objectName(), true, chu, CardDiscarded)){
+                room->playSkillEffect(objectName());
+                LogMessage log;
+                log.type = "#InvokeSkill";
+                log.from = ran;
+                log.arg = objectName();
+                room->sendLog(log);
+                room->loseHp(player);
+            }
+        }
+        return false;
+    }
+};
+
+YinlangCard::YinlangCard(){
+    will_throw = false;
+}
+
+bool YinlangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getGeneral()->isMale();
+}
+
+void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    ServerPlayer *target = NULL;
+    if(targets.isEmpty()){
+        foreach(ServerPlayer *player, room->getAlivePlayers()){
+            if(player != source){
+                target = player;
+                break;
+            }
+        }
+    }else
+        target = targets.first();
+    room->obtainCard(target, this, false);
+
+    int num = 0;
+    foreach(int x, this->getSubcards()){
+        if(Sanguosha->getCard(x)->inherits("Weapon") ||
+           Sanguosha->getCard(x)->inherits("Armor"))
+            num ++;
+    }
+
+    int old_value = source->getMark("Yinlang");
+    int new_value = old_value + num;
+    room->setPlayerMark(source, "Yinlang", new_value);
+
+    if(old_value < 1 && new_value >= 1){
+        RecoverStruct recover;
+        recover.card = this;
+        recover.who = source;
+        room->recover(source, recover);
+    }
+}
+
+class YinlangViewAsSkill:public ViewAsSkill{
+public:
+    YinlangViewAsSkill():ViewAsSkill("yinlang"){
+    }
+
+    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+        return !to_select->isEquipped() && to_select->getCard()->inherits("EquipCard");
+    }
+
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty())
+            return NULL;
+        YinlangCard *ard = new YinlangCard;
+        ard->addSubcards(cards);
+        return ard;
+    }
+};
+
+class Yinlang: public PhaseChangeSkill{
+public:
+    Yinlang():PhaseChangeSkill("yinlang"){
+        view_as_skill = new YinlangViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target)
+                && target->getPhase() == Player::NotActive
+                && target->hasUsed("YinlangCard");
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        target->getRoom()->setPlayerMark(target, "Yinlang", 0);
+        return false;
     }
 };
 
@@ -250,29 +357,3 @@ public:
         }
     }
 };
-
-ZCYNPackage::ZCYNPackage()
-    :Package("ZCYN")
-{
-    General *pengqi = new General(this, "pengqi", "guan");
-    pengqi->addSkill(new Tianyan);
-
-    General *lingzhen = new General(this, "lingzhen", "jiang");
-    lingzhen->addSkill(new Paohong);
-
-    General *caozheng = new General(this, "caozheng", "min");
-    caozheng->addSkill(new Tuzai);
-
-    General *zourun = new General(this, "zourun", "min");
-    zourun->addSkill(new Longjiao);
-
-    General *caifu = new General(this, "caifu", "jiang");
-    caifu->addSkill(new Juesi);
-
-    General *gudasao = new General(this, "gudasao", "min", 4, false);
-    gudasao->addSkill(new Cihu);
-
-    addMetaObject<CihuCard>();
-}
-
-ADD_PACKAGE(ZCYN);

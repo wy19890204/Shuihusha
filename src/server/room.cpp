@@ -2327,6 +2327,20 @@ void Room::swapSeat(ServerPlayer *a, ServerPlayer *b){
     }
 }
 
+void Room::swapHandcards(ServerPlayer *source, ServerPlayer *target){
+    DummyCard *card1 = source->wholeHandCards();
+    DummyCard *card2 = target->wholeHandCards();
+    if(card1){
+        obtainCard(target, card1, false);
+        delete card1;
+    }
+    thread->delay();
+    if(card2){
+        obtainCard(source, card2, false);
+        delete card2;
+    }
+}
+
 void Room::adjustSeats(){
     int i;
     for(i=0; i<m_players.length(); i++){

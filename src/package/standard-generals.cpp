@@ -79,18 +79,7 @@ void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *>
         return;
     if(room->askForChoice(song, "jui", "agree+deny", QVariant::fromValue((PlayerStar)source)) == "agree"){
         room->playSkillEffect("juyi", qrand() % 2 + 1);
-        DummyCard *card1 = source->wholeHandCards();
-        DummyCard *card2 = song->wholeHandCards();
-        if(card1){
-            room->obtainCard(song, card1, false);
-            delete card1;
-        }
-        room->getThread()->delay();
-
-        if(card2){
-            room->obtainCard(source, card2, false);
-            delete card2;
-        }
+        room->swapHandcards(source, song);
         LogMessage log;
         log.type = "#Juyi";
         log.from = source;
