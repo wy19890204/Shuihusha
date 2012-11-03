@@ -171,10 +171,47 @@ public:
     }
 };
 
+BeishuiCard::BeishuiCard(){
+}
+
+bool BeishuiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    int n = Self->getMark("BeishuiNum");
+    return targets.length() < n && to_select != Self;
+}
+
+void BeishuiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    Slash *slash = new Slash(Card::NoSuit, 0);
+    slash->setSkillName(skill_name);
+    CardUseStruct use;
+    use.card = slash;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
+class BeishuiViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    BeishuiViewAsSkill(): ZeroCardViewAsSkill("Beishui"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual const Card *viewAs() const{
+        return new BeishuiCard;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@beishui";
+    }
+};
+
 class Beishui: public TriggerSkill{
 public:
     Beishui():TriggerSkill("beishui"){
         events << CardLost;
+        view_as_skill = new BeishuiViewAsSkill;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *jie, QVariant &data) const{
@@ -183,6 +220,7 @@ public:
             if(move->from_place == Player::Hand){
                 QString choice = room->askForChoice(jie, objectName(), "bei+shui");
                 int x = qMin(1, jie->getLostHp());
+                room->setPlayerMark(jie, "BeishuiNum", x);
                 LogMessage log;
                 log.type = "#InvokeSkill";
                 log.from = jie;
@@ -258,69 +296,9 @@ public:
     }
 };
 
-CihuCard::CihuCard(){
-}
-
-bool CihuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && to_select->getGeneral()->isFemale() && to_select->isWounded();
-}
-
-bool CihuCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() < 2;
-}
-
-void CihuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
-    ServerPlayer *ogami = source->tag["CihuOgami"].value<PlayerStar>();
-    DamageStruct damage;
-    damage.from = source;
-    damage.to = ogami;
-    room->damage(damage);
-    PlayerStar target = !targets.isEmpty() ? targets.first() :
-                        (source->getGeneral()->isFemale() && source->isWounded()) ?
-                        source : NULL;
-    if(target){
-        RecoverStruct recover;
-        recover.who = source;
-        room->recover(target, recover, true);
-    }
-}
-
-class CihuViewAsSkill: public ViewAsSkill{
-public:
-    CihuViewAsSkill(): ViewAsSkill("Cihu"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        int n = Self->getMark("CihuNum");
-        if(selected.length() >= n)
-            return false;
-        return true;
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        int n = Self->getMark("CihuNum");
-        if(cards.length() != n)
-            return NULL;
-
-        CihuCard *card = new CihuCard;
-        card->addSubcards(cards);
-        return card;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@cihu";
-    }
-};
-
 class Cihu: public MasochismSkill{
 public:
     Cihu():MasochismSkill("cihu"){
-        view_as_skill = new CihuViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{

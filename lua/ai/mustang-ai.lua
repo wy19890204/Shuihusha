@@ -1,3 +1,9 @@
+-- AI for mustang package
+
+-- manli
+sgs.ai_skill_invoke["manli"] = sgs.ai_skill_invoke["liba"]
+
+-- qiaogong
 
 -- tianyan
 sgs.ai_skill_invoke["tianyan"] = true

@@ -3,6 +3,22 @@
 return {
 	["ZCYN"] = "折冲厌难",
 
+	["$taozongwang"] = "075",
+	["#taozongwang"] = "九尾龟",
+	["taozongwang"] = "陶宗旺",
+	["cv:taozongwang"] = "东方胤弘【夜澜锦音】",
+	["coder:taozongwang"] = "宇文天启",
+	["qiaogong"] = "巧工",
+	[":qiaogong"] = "<b>锁定技</b>，若某一种类的装备牌只有一张在场上，则视为你装备着该装备。",
+	["manli"] = "蛮力",
+	[":manli"] = "出牌阶段，当你使用【杀】或【决斗】对其他角色造成伤害时，若你已装备了武器和防具，则你可以令该伤害+1。",
+	["#ManliBuff"] = "%from【蛮力】爆发，对 %to 的伤害从 %arg 点上升至 %arg2 点",
+	["$qiaogong1"] = "粗中有细！",
+	["$qiaogong2"] = "这细巧手段如何？",
+	["$manli1"] = "千斤铁闸我独扛！",
+	["$manli2"] = "吾之臂力，何人能敌？",
+	["~taozongwang"] = "兄弟们，快！",
+
 	["#pengqi"] = "天目将",
 	["pengqi"] = "彭玘",
 	["cv:pengqi"] = "小虎尔赤【影音同画】",

@@ -24,6 +24,7 @@ SOURCES += \
 	src/core/banpair.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
+	src/core/exppattern.cpp \
 	src/core/general.cpp \
 	src/core/jsonutils.cpp \
 	src/core/lua-wrapper.cpp \
@@ -48,7 +49,6 @@ SOURCES += \
 	src/dialog/scenario-overview.cpp \
 	src/dialog/halldialog.cpp \
 	src/package/package.cpp \
-	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/common-skillcards.cpp \
@@ -62,6 +62,7 @@ SOURCES += \
 	src/package/tiger.cpp \
 	src/package/hare.cpp \
 	src/package/dragon.cpp \
+	src/package/mustang.cpp \
 	src/package/qlfd.cpp \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
@@ -159,6 +160,7 @@ HEADERS += \
 	src/core/banpair.h \
 	src/core/card.h \
 	src/core/engine.h \
+	src/core/exppattern.h \
 	src/core/general.h \
 	src/core/jsonutils.h \
 	src/core/lua-wrapper.h \
@@ -182,7 +184,6 @@ HEADERS += \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/exppattern.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
 	src/package/standard-generals.h \
@@ -197,6 +198,7 @@ HEADERS += \
 	src/package/tiger.h \
 	src/package/hare.h \
 	src/package/dragon.h \
+	src/package/mustang.h \
 	src/package/qlfd.h \
 	src/package/cgdk.h \
 	src/package/ybyt.h \

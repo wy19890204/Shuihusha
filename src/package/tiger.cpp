@@ -487,7 +487,7 @@ bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player 
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
     room->throwCard(this, card_use.from);
     Slash *slash = new Slash(Card::NoSuit, 0);
-    slash->setSkillName("lieji");
+    slash->setSkillName(skill_name);
     CardUseStruct use;
     use.card = slash;
     use.from = card_use.from;

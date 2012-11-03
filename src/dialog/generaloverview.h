@@ -20,6 +20,8 @@ public:
     GeneralOverview(QWidget *parent = 0);
     ~GeneralOverview();
     void fillGenerals(const QList<const General *> &generals);
+    bool isInvisibleSkill(const QString &skill_name, int index);
+    bool singleSkillFineTuning(const QString &general_name, const QString &skill_name, int index);
 
 private:
     Ui::GeneralOverview *ui;
@@ -27,6 +29,7 @@ private:
 
     void resetButtons();
     void addLines(const Skill *skill, int wake_index = 0);
+    void addWakeLines(const QString &general_name);
     void addCopyAction(QCommandLinkButton *button);
 
 private slots:

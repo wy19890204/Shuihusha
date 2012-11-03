@@ -578,7 +578,7 @@ public:
             foreach(const Card *c, from->getJudgingArea())
                 card_ids << c->getId();
             room->fillAG(card_ids, player);
-            int card_id = room->askForAG(player, card_ids, true, objectName());
+            int card_id = room->askForAG(player, card_ids, false, objectName());
             if(card_id > -1){
                 const Card *card = Sanguosha->getCard(card_id);
                 const DelayedTrick *trick = DelayedTrick::CastFrom(card);
