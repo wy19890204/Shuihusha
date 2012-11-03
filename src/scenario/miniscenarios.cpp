@@ -331,26 +331,12 @@ void MiniSceneRule::loadSetting(QString path)
     }
 }
 
-#include "mini-generals.cpp"
-
 MiniScene::MiniScene(const QString &name)
     :Scenario(name){
     rule = new MiniSceneRule(this);
 
-    if(name == "_mini_01"){
-        General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true);
-        zhangbao->addSkill(new Fangdiao);
-        addMetaObject<FangdiaoCard>();
-
-        General *liruilan = new General(this, "liruilan", "min", 3, false, true);
-        liruilan->addSkill(new Chumai);
-        liruilan->addSkill(new Yinlang);
-        addMetaObject<YinlangCard>();
-
-        General *fangjie = new General(this, "fangjie", "jiang", 4, true, true);
-        fangjie->addSkill(new Beishui);
-        addMetaObject<BeishuiCard>();
-    }
+    int stage = name.right(2).toInt();
+    addGenerals(stage);
 }
 
 void MiniScene::setupCustom(QString name) const

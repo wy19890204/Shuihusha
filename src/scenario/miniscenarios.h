@@ -34,6 +34,7 @@ class MiniScene : public Scenario
 
 public:
     MiniScene(const QString &name);
+    void addGenerals(int stage);
     void setupCustom(QString name) const;
     virtual QString setBackgroundMusic() const;
     virtual bool generalSelection(Room *room) const;

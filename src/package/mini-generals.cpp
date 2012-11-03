@@ -1,3 +1,4 @@
+#include "miniscenarios.h"
 #include "mini-generals.h"
 #include "general.h"
 #include "standard.h"
@@ -55,7 +56,6 @@ public:
         return card;
     }
 };
-
 
 class Chumai: public TriggerSkill{
 public:
@@ -218,49 +218,82 @@ public:
             CardMoveStar move = data.value<CardMoveStar>();
             if(move->from_place == Player::Hand){
                 QString choice = room->askForChoice(jie, objectName(), "bei+shui");
-                int x = qMin(1, jie->getLostHp());
+                int x = qMax(1, jie->getLostHp());
                 room->setPlayerMark(jie, "BeishuiNum", x);
-                LogMessage log;
-                log.type = "#InvokeSkill";
-                log.from = jie;
-                log.arg = objectName();
-                room->playSkillEffect(objectName());
-                room->sendLog(log);
                 if(choice == "bei"){
+                    LogMessage log;
+                    log.type = "#InvokeSkill";
+                    log.from = jie;
+                    log.arg = objectName();
+                    room->sendLog(log);
                     ServerPlayer *target = room->askForPlayerChosen(jie, room->getAlivePlayers(), objectName());
+                    room->playSkillEffect(objectName(), 1);
                     target->drawCards(x);
                 }
-                else{
-                    room->askForUseCard(jie, "@@beishui", "@beishui", true);
-                }
+                else
+                    room->askForUseCard(jie, "@@beishui", "@beishui:" + QString::number(x), true);
             }
         }
         return false;
     }
 };
 
-class Juesi: public TriggerSkill{
+PushouCard::PushouCard(){
+    will_throw = false;
+    mute = true;
+}
+
+bool PushouCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
+}
+
+void PushouCard::use(Room *room, ServerPlayer *sbren, const QList<ServerPlayer *> &targets) const{
+    room->playSkillEffect(skill_name, qrand() % 2 + 1);
+    PlayerStar target = targets.first();
+    bool success = sbren->pindian(target, skill_name, this);
+    if(success){
+        room->playSkillEffect(skill_name, 3);
+        sbren->drawCards(1);
+    }else{
+        room->playSkillEffect(skill_name, 4);
+        target->drawCards(1);
+    }
+}
+
+class PushouViewAsSkill: public OneCardViewAsSkill{
 public:
-    Juesi():TriggerSkill("juesi"){
-        events << DamageProceed;
-        frequency = Compulsory;
+    PushouViewAsSkill():OneCardViewAsSkill("pushou"){
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *caifu, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@pushou";
+    }
 
-        if(damage.to->isAlive() && damage.to->getHp() <= 1){
-            LogMessage log;
-            log.type = "#JuesiBuff";
-            log.from = caifu;
-            log.to << damage.to;
-            log.arg = QString::number(damage.damage);
-            log.arg2 = QString::number(damage.damage + 1);
-            room->sendLog(log);
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
 
-            damage.damage ++;
-            room->playSkillEffect(objectName());
-            data = QVariant::fromValue(damage);
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        PushouCard *card = new PushouCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Pushou: public PhaseChangeSkill{
+public:
+    Pushou():PhaseChangeSkill("pushou"){
+        view_as_skill = new PushouViewAsSkill;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *target) const{
+        if(target->getPhase() == Player::Start ||
+           target->getPhase() == Player::Finish){
+            target->getRoom()->askForUseCard(target, "@@pushou", "@pushou", true);
         }
         return false;
     }
@@ -322,3 +355,35 @@ public:
         }
     }
 };
+
+void MiniScene::addGenerals(int stage){
+    switch(stage){
+    case 1: {
+            General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true);
+            zhangbao->addSkill(new Fangdiao);
+            addMetaObject<FangdiaoCard>();
+            break;
+        }
+    case 2: {
+            General *liruilan = new General(this, "liruilan", "min", 3, false, true);
+            liruilan->addSkill(new Chumai);
+            liruilan->addSkill(new Yinlang);
+            addMetaObject<YinlangCard>();
+            break;
+        }
+    case 3: {
+            General *fangjie = new General(this, "fangjie", "jiang", 4, true, true);
+            fangjie->addSkill(new Beishui);
+            addMetaObject<BeishuiCard>();
+            break;
+        }
+    case 4: {
+            General *renyuan = new General(this, "renyuan", "jiang", 4, true, true);
+            renyuan->addSkill(new Pushou);
+            addMetaObject<PushouCard>();
+            break;
+        }
+    default:
+        ;
+    }
+}
