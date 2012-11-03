@@ -131,6 +131,7 @@ class ArcheryAttack:public AOE{
 
 public:
     Q_INVOKABLE ArcheryAttack(Card::Suit suit, int number);
+    virtual CardStar doLianzhu(Room *room, CardEffectStruct effect) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
