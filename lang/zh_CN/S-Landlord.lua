@@ -3,8 +3,8 @@
 return {
 	["landlord"] = "斗地主",
 	["#LLBegin"] = "------ <font color=green>叫地主开始</font> ------",
-	["#LandLord1"] = "%from 叫地主",
-	["#LandLord2"] = "%from 不叫",
+	["#LandLord_light"] = "%from 叫地主",
+	["#LandLord_pass"] = "%from 不叫",
 	["landlord:light"] = "叫地主",
 	["landlord:pass"] = "不叫",
 	["#LandLordDone"] = "%from 为本局地主",
