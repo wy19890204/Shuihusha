@@ -1,59 +1,47 @@
-#include "zcyn.h"
+#include "mini.h"
 #include "general.h"
 #include "skill.h"
 #include "standard.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "maneuvering.h"
 
-class Tianyan: public PhaseChangeSkill{
-public:
-    Tianyan():PhaseChangeSkill("tianyan"){
-    }
+ShouwangCard::ShouwangCard(){
+    will_throw = false;
+    once = true;
+}
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->getPhase() != Player::Judge || player->getHandcardNum() < 3)
-            return false;
-        Room *room = player->getRoom();
-        ServerPlayer *tianqi = room->findPlayerBySkillName(objectName());
-        if(tianqi && tianqi->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-
-            tianqi->tag["TianyanTarget"] = QVariant::fromValue((PlayerStar)player);
-            QList<int> cards = room->getNCards(3);
-            if(!cards.isEmpty()){
-                room->fillAG(cards, tianqi);
-                while(!cards.isEmpty()){
-                    int card_id = room->askForAG(tianqi, cards, true, objectName());
-                    if(card_id == -1)
-                        break;
-                    if(!cards.contains(card_id))
-                        continue;
-                    cards.removeOne(card_id);
-                    room->throwCard(card_id);
-                    room->takeAG(NULL, card_id);
-
-                    LogMessage log;
-                    log.from = tianqi;
-                    log.type = "$DiscardCard";
-                    log.card_str = QString::number(card_id);
-                    room->sendLog(log);
-                }
-                for(int i = cards.length() - 1; i >= 0; i--){
-                    room->throwCard(cards.at(i));
-                    const Card *tmp = Sanguosha->getCard(cards.at(i));
-                    room->moveCardTo(tmp, NULL, Player::DrawPile);
-                }
-                tianqi->invoke("clearAG");
-            }
-        }
-        tianqi->tag.remove("TianyanTarget");
+bool ShouwangCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
         return false;
+    return to_select->getGeneral()->isMale();
+}
+
+void ShouwangCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this);
+    if(effect.from->getRoom()->askForChoice(effect.from, "shouwang", "tian+zi", QVariant::fromValue(effect)) == "tian")
+        effect.to->drawCards(1);
+    else
+        effect.from->drawCards(1);
+}
+
+class Shouwang: public OneCardViewAsSkill{
+public:
+    Shouwang():OneCardViewAsSkill("shouwang"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("ShouwangCard");
+    }
+
+    virtual bool viewFilter(const CardItem *watch) const{
+        return watch->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        ShouwangCard *card = new ShouwangCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
     }
 };
 

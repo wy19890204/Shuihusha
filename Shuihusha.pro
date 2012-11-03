@@ -63,10 +63,10 @@ SOURCES += \
 	src/package/hare.cpp \
 	src/package/dragon.cpp \
 	src/package/qlfd.cpp \
-	src/package/zcyn.cpp \
 	src/package/cgdk.cpp \
 	src/package/ybyt.cpp \
 	src/package/sp.cpp \
+	src/package/mini.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
 	src/package/interchange.cpp \
@@ -198,10 +198,10 @@ HEADERS += \
 	src/package/hare.h \
 	src/package/dragon.h \
 	src/package/qlfd.h \
-	src/package/zcyn.h \
 	src/package/cgdk.h \
 	src/package/ybyt.h \
 	src/package/sp.h \
+	src/package/mini.h \
 	src/package/god.h \
 	src/package/joy.h \
 	src/package/interchange.h \
