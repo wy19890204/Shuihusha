@@ -325,6 +325,7 @@ public:
 class Luanjun: public MasochismSkill{
 public:
     Luanjun():MasochismSkill("luanjun"){
+        view_as_skill = new LuanjunViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
