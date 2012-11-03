@@ -338,14 +338,18 @@ MiniScene::MiniScene(const QString &name)
     rule = new MiniSceneRule(this);
 
     if(name == "_mini_01"){
-        General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true, true);
+        General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true);
         zhangbao->addSkill(new Fangdiao);
         addMetaObject<FangdiaoCard>();
 
-        General *liruilan = new General(this, "liruilan", "min", 3, false, true, true);
+        General *liruilan = new General(this, "liruilan", "min", 3, false, true);
         liruilan->addSkill(new Chumai);
         liruilan->addSkill(new Yinlang);
         addMetaObject<YinlangCard>();
+
+        General *fangjie = new General(this, "fangjie", "jiang", 4, true, true);
+        fangjie->addSkill(new Beishui);
+        addMetaObject<BeishuiCard>();
     }
 }
 

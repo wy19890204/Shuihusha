@@ -171,44 +171,32 @@ public:
     }
 };
 
-class Longjiao:public TriggerSkill{
+class Beishui: public TriggerSkill{
 public:
-    Longjiao():TriggerSkill("longjiao"){
-        events << CardUsed;
+    Beishui():TriggerSkill("beishui"){
+        events << CardLost;
     }
 
-    virtual int getPriority() const{
-        return 3;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
-        ServerPlayer *zou = room->findPlayerBySkillName(objectName());
-        if(!zou)
-            return false;
-        CardUseStruct effect = data.value<CardUseStruct>();
-        bool caninvoke = false;
-        if(effect.card->isNDTrick()){
-            if(effect.to.contains(zou))
-                caninvoke = true; //指定自己为目标
-            //if(effect.card->inherits("GlobalEffect"))
-            //    caninvoke = true; //指定所有人为目标
-            //if(effect.card->inherits("AOE") && effect.from != zou)
-            //    caninvoke = true; //其他人使用的AOE
-            if(effect.from == zou && effect.to.isEmpty() && effect.card->inherits("ExNihilo"))
-                caninvoke = true; //自己使用的无中生有
-        }
-        if(caninvoke && room->askForSkillInvoke(zou, objectName(), data)){
-            zou->drawCards(2);
-            room->playSkillEffect(objectName());
-            QList<int> card_ids = zou->handCards().mid(zou->getHandcardNum() - 2);
-            room->fillAG(card_ids, zou);
-            int card_id = room->askForAG(zou, card_ids, false, objectName());
-            room->broadcastInvoke("clearAG");
-            room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *jie, QVariant &data) const{
+        if(jie->isKongcheng()){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(move->from_place == Player::Hand){
+                QString choice = room->askForChoice(jie, objectName(), "bei+shui");
+                int x = qMin(1, jie->getLostHp());
+                LogMessage log;
+                log.type = "#InvokeSkill";
+                log.from = jie;
+                log.arg = objectName();
+                room->playSkillEffect(objectName());
+                room->sendLog(log);
+                if(choice == "bei"){
+                    ServerPlayer *target = room->askForPlayerChosen(jie, room->getAlivePlayers(), objectName());
+                    target->drawCards(x);
+                }
+                else{
+                    room->askForUseCard(jie, "@@beishui", "@beishui", true);
+                }
+            }
         }
         return false;
     }
