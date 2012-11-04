@@ -651,7 +651,7 @@ public:
                 target->obtainCard(effect.jink);
                 if(target != erge && erge->getState() == "online")
                     erge->addMark("guansheng");
-                if(erge->getMark("guansheng") > 1){
+                if(erge->getMark("guansheng") > 4){
                     LogMessage log;
                     log.type = "#RemoveHidden";
                     log.from = erge;

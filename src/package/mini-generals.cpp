@@ -247,17 +247,9 @@ bool PushouCard::targetFilter(const QList<const Player *> &targets, const Player
     return targets.isEmpty() && !to_select->isKongcheng() && to_select != Self;
 }
 
-void PushouCard::use(Room *room, ServerPlayer *sbren, const QList<ServerPlayer *> &targets) const{
-    room->playSkillEffect(skill_name, qrand() % 2 + 1);
-    PlayerStar target = targets.first();
-    bool success = sbren->pindian(target, skill_name, this);
-    if(success){
-        room->playSkillEffect(skill_name, 3);
-        sbren->drawCards(1);
-    }else{
-        room->playSkillEffect(skill_name, 4);
-        target->drawCards(1);
-    }
+void PushouCard::onEffect(const CardEffectStruct &effect) const{
+    effect.from->playSkillEffect(skill_name, qrand() % 2 + 1);
+    effect.from->pindian(effect.to, skill_name, effect.card);
 }
 
 class PushouViewAsSkill: public OneCardViewAsSkill{
@@ -294,6 +286,38 @@ public:
         if(target->getPhase() == Player::Start ||
            target->getPhase() == Player::Finish){
             target->getRoom()->askForUseCard(target, "@@pushou", "@pushou", true);
+        }
+        return false;
+    }
+};
+
+class PushouPindian: public TriggerSkill{
+public:
+    PushouPindian():TriggerSkill("#pushou_pd"){
+        events << Pindian;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *, QVariant &data) const{
+        PindianStar pindian = data.value<PindianStar>();
+        QList<ServerPlayer *> haras = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *hara, haras){
+            if(pindian->from != hara && pindian->to != hara)
+                continue;
+            if(pindian->isSuccess()){
+                room->playSkillEffect("pushou", 3);
+                pindian->from->drawCards(1);
+            }else{
+                room->playSkillEffect("pushou", 4);
+                pindian->to->drawCards(1);
+            }
         }
         return false;
     }
@@ -421,6 +445,8 @@ void MiniScene::addGenerals(int stage){
     case 4: {
             General *renyuan = new General(this, "renyuan", "jiang", 4, true, true);
             renyuan->addSkill(new Pushou);
+            renyuan->addSkill(new PushouPindian);
+            related_skills.insertMulti("pushou", "#pushou_pd");
             addMetaObject<PushouCard>();
             break;
         }
