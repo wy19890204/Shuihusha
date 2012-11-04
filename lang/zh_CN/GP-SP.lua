@@ -44,7 +44,6 @@ return {
 	["tigerou"] = "虎王",
 	[":tigerou"] = "隐藏技，连续发动“扑”、“掀”三次后获得。效果：<b>锁定技</b>，【猛虎下山】对你无效，你是所有【猛虎下山】造成伤害的来源。",
 	["#TigerTransfer"] = "%from 的锁定技【%arg2】被触发，将 %arg 对 %to 所造成的伤害视为 %from 造成",
-	["#Tigerhide"] = "恭喜 %from 达成了隐藏技获得的条件！",
 
 	["$keyin"] = "S04",
 	["#keyin"] = "南国驸马", -- jiang 3hp

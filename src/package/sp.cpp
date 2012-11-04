@@ -76,12 +76,12 @@ public:
                     }
                 }
                 switch(fist){
-                    case 1:{
+                case 1:{
                         room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         lusashi->drawCards(1);
                         break;
                     }
-                    case 2:{
+                case 2:{
                         room->playSkillEffect(objectName(), qrand() % 2 + 3);
                         PlayerStar target = room->askForPlayerChosen(lusashi, room->getAllPlayers(), objectName());
                         QString choice = target->isWounded() ?
@@ -96,8 +96,16 @@ public:
                         }
                         break;
                     }
-                    default:
+                default:{
                         room->askForUseCard(lusashi, "@@baoquan", "@baoquan", true);
+                        if(fist >= 5){
+                            LogMessage log;
+                            log.type = "#RemoveHidden";
+                            log.from = lusashi;
+                            room->sendLog(log);
+                            room->acquireSkill(lusashi, "zuohua");
+                        }
+                    }
                 }
                 room->setPlayerMark(lusashi, "@fist", 0);
             }
@@ -190,10 +198,11 @@ public:
                 player->addMark("tola");
             room->slashResult(effect, NULL);
             if(player->getMark("tola") >= 3){
-                log.type = "#Tigerhide";
+                log.type = "#RemoveHidden";
                 room->sendLog(log);
                 room->acquireSkill(player, "tigerou");
             }
+            return true;
         }
 
         return false;
@@ -322,18 +331,18 @@ public:
     }
 };
 
-class Luanjun: public MasochismSkill{
+class Luanjun: public TriggerSkill{
 public:
-    Luanjun():MasochismSkill("luanjun"){
+    Luanjun():TriggerSkill("luanjun"){
         view_as_skill = new LuanjunViewAsSkill;
+        events << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &) const{
-        Room *room = player->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         QList<ServerPlayer *> edogawa = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *conan, edogawa){
             if(player->getKingdom() == "jiang")
@@ -343,6 +352,7 @@ public:
             if(conan->askForSkillInvoke(objectName()))
                 player->drawCards(1);
         }
+        return false;
     }
 };
 

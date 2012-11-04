@@ -131,6 +131,7 @@ return {
 	["#GuanxingResult"] = "%from 将 %arg 张牌放到了牌堆顶，将 %arg2 张牌放到了牌堆底",
 	["$CheatCard"] = "%from 使用了作弊，获得了 %card",
 	["#ShowRole"] = "%from 的身份是【%arg】",
+	["#RemoveHidden"] = "恭喜 %from 达成了隐藏技获得的条件！",
 
 	-- askForChoice相关
 	["draw1card"] = "摸1张牌",

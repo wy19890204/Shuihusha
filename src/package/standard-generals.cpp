@@ -649,6 +649,15 @@ public:
                 erge->obtainCard(effect.jink);
                 ServerPlayer *target = room->askForPlayerChosen(erge, room->getOtherPlayers(effect.to), objectName());
                 target->obtainCard(effect.jink);
+                if(target != erge && erge->getState() == "online")
+                    erge->addMark("guansheng");
+                if(erge->getMark("guansheng") > 1){
+                    LogMessage log;
+                    log.type = "#RemoveHidden";
+                    log.from = erge;
+                    room->sendLog(log);
+                    room->acquireSkill(erge, "wusheng");
+                }
             }
         }
         return false;
@@ -2605,17 +2614,21 @@ class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
-        events << Damaged;
+        events << Damaged << PreDeath;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *other, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *other, QVariant &data) const{
         QList<ServerPlayer *> lolita = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *loli, lolita){
-            if(loli->distanceTo(other) < 2 && loli->askForSkillInvoke(objectName())){
+            int lolidistance = loli->distanceTo(other);
+            if(event == PreDeath)
+                continue;
+            lolidistance = other->isDead() ? lolidistance : loli->distanceTo(other);
+            if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
                 const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 room->setEmotion(loli, "draw-card");

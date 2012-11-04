@@ -3,7 +3,8 @@
 -- liying
 -- kongliang
 sgs.ai_skill_invoke["kong1iang"] = function(self, data)
-	local showcardnum = self.player:getMaxHP() + self.player:getLostHp() + self.player:getHandcardNum()
+	if not self.player:isWounded() then return false end
+	local showcardnum = self.player:getMaxHp() + self.player:getLostHp() + self.player:getHandcardNum()
 	return showcardnum > 8
 end
 sgs.ai_skill_askforag["kong1iang"] = function(self, card_ids)

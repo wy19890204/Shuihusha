@@ -477,6 +477,34 @@ public:
     }
 };
 
+// hidden skills
+class Wusheng:public OneCardViewAsSkill{
+public:
+    Wusheng():OneCardViewAsSkill("wusheng"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "slash";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getFilteredCard();
+        return card->isRed();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Card *slash = new Slash(card->getSuit(), card->getNumber());
+        slash->addSubcard(card->getId());
+        slash->setSkillName(objectName());
+        return slash;
+    }
+};
+
 // test main
 class Ubuna: public ClientSkill{
 public:
@@ -654,6 +682,7 @@ public:
 TestPackage::TestPackage()
     :Package("test")
 {
+    skills << new Wusheng;
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 

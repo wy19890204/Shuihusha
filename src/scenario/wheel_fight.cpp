@@ -72,16 +72,19 @@ public:
             if(!player->faceUp())
                 player->turnOver();
             room->setPlayerFlag(player, "-ecst");
+            room->setPlayerFlag(player, "-init_wake");
             player->clearFlags();
             player->clearHistory();
             player->throwAllCards();
             player->throwAllMarks();
             player->clearPrivatePiles();
+            player->loseAllSkills();
+            data = QVariant();
 
             Oyasumi(room, player);
+
             room->setPlayerMark(player, "@skull", wheel);
             player->drawCards(4);
-            data = QVariant();
             return true;
         }
         default:

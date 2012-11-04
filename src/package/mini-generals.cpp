@@ -30,7 +30,7 @@ void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
         }
         else{
             foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-                if(target->distanceTo(tmp) <= 1)
+                if(source->distanceTo(tmp) <= 1)
                     tmp->drawCards(1);
             }
         }
