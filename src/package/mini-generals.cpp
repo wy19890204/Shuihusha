@@ -20,9 +20,9 @@ bool FangdiaoCard::targetFilter(const QList<const Player *> &targets, const Play
 void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &list) const{
     room->throwCard(this, source);
     PlayerStar target = list.first();
-    const Card *spade = room->askForCard(target, ".S", "@fangdiao:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
+    const Card *spade = room->askForCard(target, ".S", "@fangdiao:" + source->objectName(), QVariant::fromValue((PlayerStar)source), NonTrigger);
     if(spade)
-        source->obtainCard(spade, false);
+        room->obtainCard(source, spade);
     else{
         QString choice = room->askForChoice(source, skill_name, "fang+diao", QVariant::fromValue(target));
         if(choice == "fang"){
@@ -231,7 +231,7 @@ public:
                     target->drawCards(x);
                 }
                 else
-                    room->askForUseCard(jie, "@@beishui", "@beishui:" + QString::number(x), true);
+                    room->askForUseCard(jie, "@@beishui", "@beishui:::" + QString::number(x), true);
             }
         }
         return false;

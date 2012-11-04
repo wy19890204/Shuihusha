@@ -109,13 +109,12 @@ sgs.ai_skill_choice["beishui"] = function(self, choice, data)
 	local e = #self.enemies
 	if n > e then return "bei" end
 	if math.random(1, 3) == 2 then
-		self.beishuidraw = self.player
 		return "bei"
 	end
 	return "shui"
 end
 sgs.ai_skill_playerchosen["beishui"] = function(self, targets)
-	return self.beishuidraw
+	return self.player
 end
 sgs.ai_skill_use["@@beishui"] = function(self, prompt)
 	local n = self.player:getMark("BeishuiNum")

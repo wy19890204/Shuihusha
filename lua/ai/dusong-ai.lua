@@ -84,7 +84,7 @@ ubunb_skill.name = "ubunb"
 table.insert(sgs.ai_skills, ubunb_skill)
 ubunb_skill.getTurnUseCard = function(self)
 	if not self.player:hasFlag("Ubunb") then
-		self.player:drawCards(10)
+		self.player:drawCards(self.player:getHp())
 		self.player:setFlags("Ubunb")
 	end
 end
