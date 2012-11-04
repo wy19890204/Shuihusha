@@ -349,7 +349,7 @@ public:
                 room->askForUseCard(conan, "@@luanjun", "@luanjun", true);
             if(conan == player || conan->getKingdom() == player->getKingdom())
                 continue;
-            if(conan->askForSkillInvoke(objectName()))
+            if(conan->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
                 player->drawCards(1);
         }
         return false;
@@ -375,6 +375,8 @@ public:
             room->getThread()->delay();
 
             judge.who = target;
+            judge.pattern = mycolor == Card::Red ? QRegExp("(.*):(heart|diamond):(.*)"): QRegExp("(.*):(club|spade):(.*)");
+            judge.good = false;
             room->judge(judge);
             if(judge.card->getColor() == mycolor){
                 DamageStruct mmm;

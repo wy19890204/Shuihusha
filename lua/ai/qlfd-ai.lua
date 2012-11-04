@@ -263,56 +263,6 @@ sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 	return cards[1]
 end
 
--- chumai
-sgs.ai_skill_cardask["@chumai"] = function(self, data)
-	local target = data:toPlayer()
-	if self:isEnemy(target) then
-		local cards = self.player:getHandcards()
-		for _, card in sgs.qlist(cards) do
-			if card:isBlack() then return card:getEffectiveId() end
-		end
-	end
-	return "."
-end
-
--- yinlang
-local yinlang_skill={}
-yinlang_skill.name = "yinlang"
-table.insert(sgs.ai_skills, yinlang_skill)
-yinlang_skill.getTurnUseCard = function(self)
-	if self.player:isKongcheng() then return end
-	for _, player in ipairs(self.friends_noself) do
-		if player:faceUp() then
-			return sgs.Card_Parse("@YinlangCard=.")
-		end
-	end
-	if (self.player:usedTimes("YinlangCard") < 2 or self:getOverflow() > 0) then
-		return sgs.Card_Parse("@YinlangCard=.")
-	end
-	if self.player:getLostHp() < 2 then
-		return sgs.Card_Parse("@YinlangCard=.")
-	end
-end
-sgs.ai_skill_use_func["YinlangCard"] = function(card, use, self)
-	local cards = sgs.QList2Table(self.player:getHandcards())
-	self:sortByUseValue(cards, true)
-	local name = self.player:objectName()
-	if #self.friends > 1 then
-		for _, hcard in ipairs(cards) do
-			if hcard:inherits("EquipCard") then
-				self:sort(self.friends_noself, "handcard")
-				for _, player in ipairs(self.friends_noself) do
-					if player:getGeneral():isMale() then
-						use.card = sgs.Card_Parse("@YinlangCard=" .. hcard:getEffectiveId())
-						if use.to then use.to:append(player) end
-						return
-					end
-				end
-			end
-		end
-	end
-end
-
 -- qianxian
 local qianxian_skill={}
 qianxian_skill.name = "qianxian"

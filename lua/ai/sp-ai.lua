@@ -78,6 +78,26 @@ sgs.ai_skill_invoke["exterminate"] = function(self, data)
 	return not notarget
 end
 
+-- keyin
+-- luanjun
+sgs.ai_skill_invoke["luanjun"] = function(self, data)
+	local player = data:toPlayer()
+	return self:isFriend(player)
+end
+sgs.ai_skill_use["@@luanjun"] = function(self, prompt)
+	self:sort(self.enemies)
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isNude() then
+			return "@LuanjunCard=.->" .. enemy:objectName()
+		end
+	end
+	return "."
+end
+
+-- qingshang
+sgs.ai_skill_invoke["qingshang"] = true
+sgs.ai_skill_playerchosen["qingshang"] = sgs.ai_skill_playerchosen["shunshui"]
+
 -- yuzhong
 sgs.ai_skill_choice["yuzhong"] = function(self, choice)
 	if choice == "hp+card+cancel" then

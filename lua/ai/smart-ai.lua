@@ -3480,6 +3480,7 @@ dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/events-ai.lua"
+dofile "lua/ai/mini-ai.lua"
 dofile "lua/ai/chat-ai.lua"
 
 local loaded = "standard|standard_cards|maneuvering|plough|events"
