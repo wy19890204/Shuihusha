@@ -9,10 +9,24 @@ class WheelFightScenarioRule: public ScenarioRule{
 public:
     WheelFightScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << PreDeath;
+        events << PreDeath << GameOverJudge;
+    }
+
+    static void Domo(Room *room, ServerPlayer *player){
+        if(!player->faceUp())
+            player->turnOver();
+        room->setPlayerFlag(player, "-ecst");
+        room->setPlayerFlag(player, "-init_wake");
+        player->clearFlags();
+        player->clearHistory();
+        player->throwAllCards();
+        player->throwAllMarks();
+        player->clearPrivatePiles();
     }
 
     static void Oyasumi(Room *room, ServerPlayer *player){
+        player->loseAllSkills();
+
         QStringList ban = room->getTag("WheelBan").toStringList();
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
             if(!ban.contains(tmp->getGeneralName()))
@@ -23,7 +37,10 @@ public:
         room->setTag("WheelBan", ban);
         QStringList list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
         QString next_general = room->askForGeneral(player, list);
-        room->transfigure(player, next_general, true, true, player->getGeneralName());
+        //room->transfigure(player, next_general, true, true, player->getGeneralName());
+        room->transfigure(player, next_general, true, true);
+
+        Domo(room, player);
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -40,6 +57,7 @@ public:
                     log.from = killer;
                     log.arg = killer->getGeneralName();
                     room->sendLog(log);
+
                     Oyasumi(room, killer);
                     room->setPlayerMark(killer, "wheelon", 0);
                 }
@@ -69,22 +87,15 @@ public:
                 room->sendLog(log);
             }
 
-            if(!player->faceUp())
-                player->turnOver();
-            room->setPlayerFlag(player, "-ecst");
-            room->setPlayerFlag(player, "-init_wake");
-            player->clearFlags();
-            player->clearHistory();
-            player->throwAllCards();
-            player->throwAllMarks();
-            player->clearPrivatePiles();
-            player->loseAllSkills();
             data = QVariant();
-
             Oyasumi(room, player);
 
             room->setPlayerMark(player, "@skull", wheel);
             player->drawCards(4);
+            return true;
+        }
+        case GameOverJudge:{
+            room->gameOver(".");
             return true;
         }
         default:

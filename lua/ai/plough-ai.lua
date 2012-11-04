@@ -171,11 +171,13 @@ function SmartAI:useCardAssassinate(ass, use)
 	if not self.enemies[1] then return end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
-			use.card = ass
-			if use.to and self:hasTrickEffective(ass, enemy) then
-				use.to:append(enemy)
+			if self:hasTrickEffective(ass, enemy) then
+				use.card = ass
+				if use.to then
+					use.to:append(enemy)
+				end
+				return
 			end
-			return
 		end
 	end
 	self:sort(self.enemies, "hp")
@@ -195,10 +197,12 @@ function SmartAI:useCardAssassinate(ass, use)
 		end
 	end
 	use.card = ass
-	if use.to then
-		if target then
+	if target then
+		if use.to then
 			use.to:append(target)
-		else
+		end
+	else
+		if use.to then
 			use.to:append(self.enemies[1])
 		end
 	end
