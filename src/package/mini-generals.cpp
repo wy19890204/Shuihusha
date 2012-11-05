@@ -357,6 +357,7 @@ public:
 
 Qi6ingCard::Qi6ingCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void Qi6ingCard::onUse(Room *room, const CardUseStruct &card_use) const{
