@@ -257,7 +257,8 @@ bool PushouCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void PushouCard::onEffect(const CardEffectStruct &effect) const{
-    effect.from->playSkillEffect(skill_name, qrand() % 2 + 1);
+    int index = effect.from->getPhase() == Player::Start ? 1 : 3;
+    effect.from->playSkillEffect(skill_name, qrand() % 2 + index);
     effect.from->pindian(effect.to, skill_name, effect.card);
 }
 
@@ -321,10 +322,10 @@ public:
             if(pindian->from != hara && pindian->to != hara)
                 continue;
             if(pindian->isSuccess()){
-                room->playSkillEffect("pushou", 3);
+                room->playSkillEffect("pushou", pindian->from == hara ? 5 : 6);
                 pindian->from->drawCards(1);
             }else{
-                room->playSkillEffect("pushou", 4);
+                room->playSkillEffect("pushou", pindian->to == hara ? 5 : 6);
                 pindian->to->drawCards(1);
             }
         }
