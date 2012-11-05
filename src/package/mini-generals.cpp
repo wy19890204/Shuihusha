@@ -423,6 +423,8 @@ public:
                 continue;
             if(xi->isNude())
                 continue;
+            if(xi->isProhibited(player, use.card))
+                continue;
             xi->tag["Qi6ingData"] = data;
             QString prompt = QString("@qi6ing:%1::%2").arg(player->objectName()).arg(use.card->objectName());
             room->askForUseCard(xi, "@@qi6ing", prompt, true);

@@ -25,8 +25,7 @@ public:
     }
 
     static void Oyasumi(Room *room, ServerPlayer *player){
-        player->loseAllSkills();
-
+        //player->loseAllSkills();
         QStringList ban = room->getTag("WheelBan").toStringList();
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
             if(!ban.contains(tmp->getGeneralName()))
@@ -39,6 +38,7 @@ public:
         QString next_general = room->askForGeneral(player, list);
         //room->transfigure(player, next_general, true, true, player->getGeneralName());
         room->transfigure(player, next_general, true, true);
+        room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
 
         Domo(room, player);
     }

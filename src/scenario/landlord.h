@@ -15,7 +15,6 @@ public:
     virtual void getRoles(char *roles) const;
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
-    virtual bool setCardPiles(const Card *card) const;
     virtual bool generalSelection(Room *room) const;
 };
 

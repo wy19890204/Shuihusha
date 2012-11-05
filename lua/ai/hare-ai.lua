@@ -227,6 +227,9 @@ sgs.ai_skill_playerchosen["hengchong"] = sgs.ai_skill_playerchosen["shunshui"]
 sgs.ai_skill_cardask["@hengchong"] = function(self, data)
 	if self.room:getAlivePlayers():length() == 2 then return "." end
 	local effect = data:toSlashEffect()
+	if self:isFriend(effect.to) and not self:hasSkills(sgs.masochism_skill, effect.to) then
+		return "."
+	end
 	local suit = effect.slash:getSuitString()
 	local cards = self.player:getCards("he")
 	cards=sgs.QList2Table(cards)

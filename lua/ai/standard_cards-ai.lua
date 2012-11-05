@@ -1170,7 +1170,10 @@ end
 
 sgs.ai_use_value.Indulgence = 8
 sgs.ai_use_priority.Indulgence = 8.9
-sgs.ai_card_intention.Indulgence = 120
+sgs.ai_card_intention.Indulgence = function(card, from, tos)
+	speakTrigger(card,from,tos[1])
+	sgs.updateIntentions(from, tos, 120)
+end
 
 sgs.dynamic_value.control_usecard.Indulgence = true
 
