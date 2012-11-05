@@ -646,8 +646,9 @@ void MainWindow::on_actionScript_editor_triggered()
 MeleeDialog::MeleeDialog(QWidget *parent)
     :QDialog(parent)
 {
-    server=NULL;    
-    room_count=0;
+    server = NULL;
+    room_count = 0;
+    stage_count = 0;
 
     setWindowTitle(tr("AI Melee"));
 
@@ -695,19 +696,23 @@ QGroupBox *MeleeDialog::createGeneralBox(){
     QFormLayout *form_layout = new QFormLayout;
     spinbox = new QSpinBox;
     spinbox->setRange(1, 50);
-    spinbox->setValue(4);
+    spinbox->setValue(2);
+
+    stagebox = new QSpinBox;
+    stagebox->setRange(1, 100);
+    stagebox->setValue(20);
+    //stagebox->setEnabled(false);
 
     start_button = new QPushButton(tr("Start"));
     connect(start_button, SIGNAL(clicked()), this, SLOT(startTest()));
 
     loop_checkbox = new QCheckBox(tr("LOOP"));
     loop_checkbox->setObjectName("loop_checkbox");
-    loop_checkbox->setChecked(true);
+    connect(loop_checkbox, SIGNAL(toggled(bool)), stagebox, SLOT(setDisabled(bool)));
 
     form_layout->addRow(tr("Num of rooms"), spinbox);
+    form_layout->addRow(tr("Num of stages"), stagebox);
     form_layout->addRow(loop_checkbox, start_button);
-    // form_layout->addWidget(start_button);
-    // form_layout->addWidget(loop_checkbox);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(avatar_button);
@@ -829,7 +834,8 @@ void MeleeDialog::onGameOver(const QString &winner){
                       .arg(room->getTag("SwapPile").toInt());
 
     if(room_item) room_item->setToolTip(tooltip);
-    if(loop_checkbox->isChecked()){
+    stage_count ++;
+    if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
         if(room_item){
             room_items.removeOne(room_item);
             delete room_item;

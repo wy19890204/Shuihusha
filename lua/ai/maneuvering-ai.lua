@@ -348,4 +348,7 @@ end
 sgs.ai_use_value.FireAttack = 4.8
 sgs.ai_use_priority.FireAttack = 2
 
-sgs.ai_card_intention.FireAttack = 80
+sgs.ai_card_intention.FireAttack = function(card, from, tos)
+	speakTrigger(card,from,tos[1])
+	sgs.updateIntentions(from, tos, 80)
+end

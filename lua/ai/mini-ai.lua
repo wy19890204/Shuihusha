@@ -143,7 +143,7 @@ sgs.ai_skill_use["@@pushou"] = function(self, prompt)
 		end
 	end
 	local card = self:getMaxCard()
-	if card:getNumber() > 11 and target then
+	if card and card:getNumber() > 11 and target then
 		return "@PushouCard=" .. card:getEffectiveId() .. "->" .. target:objectName()
 	else
 		return "."

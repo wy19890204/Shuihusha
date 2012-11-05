@@ -24,6 +24,10 @@ public:
 	bool setProperty ( const char * name, const QVariant & value);
 	QVariant property ( const char * name ) const;
 	void setParent(QObject *parent);
+
+	void setParent(Card *);
+//	bool inherits(Skill *skill);
+//	bool inherits(Card *card);
 };
 
 %extend QObject{
