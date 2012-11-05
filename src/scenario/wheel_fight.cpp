@@ -25,8 +25,7 @@ public:
     }
 
     static void Oyasumi(Room *room, ServerPlayer *player){
-        player->loseAllSkills();
-
+        //player->loseAllSkills();
         QStringList ban = room->getTag("WheelBan").toStringList();
         foreach(ServerPlayer *tmp, room->getAllPlayers()){
             if(!ban.contains(tmp->getGeneralName()))

@@ -130,10 +130,6 @@ bool LandlordScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
 
-bool LandlordScenario::setCardPiles(const Card *card) const{
-    return card->getPackage() == "gift";
-}
-
 bool LandlordScenario::generalSelection(Room *room) const{
     ServerPlayer *lord = room->getPlayers().first();
     QStringList ban;

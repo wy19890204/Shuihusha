@@ -63,8 +63,9 @@ bool Scenario::generalSelection(Room *) const{ // if need choose general freely,
     return true; // fix generals' mode
 }
 
-bool Scenario::setCardPiles(const Card *) const{ // if the unuse this card, return true
-    return false;
+bool Scenario::setCardPiles(const Card *card) const{ // if the unuse this card, return true
+    return card->getPackage() == "gift";
+    //return false;
 }
 
 void Scenario::run(Room *room) const{ // RoomThread::run(){

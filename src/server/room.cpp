@@ -516,12 +516,19 @@ void Room::detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name
     if(!player->hasSkill(skill_name))
         return;
 
+    const Skill *skill = Sanguosha->getSkill(skill_name);
+    if(!skill)
+        return;
+    if(mode == "wheel_fight"){
+        if(!player->getGeneral()->hasSkill(skill_name))
+            return;
+    }
+
     player->loseSkill(skill_name);
     broadcastInvoke("detachSkill",
         QString("%1:%2").arg(player->objectName()).arg(skill_name));
 
-    const Skill *skill = Sanguosha->getSkill(skill_name);
-    if(skill && skill->isVisible()){
+    if(skill->isVisible()){
         foreach(const Skill *skill, Sanguosha->getRelatedSkills(skill_name))
             detachSkillFromPlayer(player, skill->objectName());
 
@@ -3284,8 +3291,14 @@ void Room::acquireSkill(ServerPlayer *player, const Skill *skill, bool open){
 
 void Room::acquireSkill(ServerPlayer *player, const QString &skill_name, bool open){
     const Skill *skill = Sanguosha->getSkill(skill_name);
-    if(skill)
+
+    if(skill){
+        if(mode == "wheel_fight"){
+            if(!player->getGeneral()->hasSkill(skill_name) && player->getGeneralName() != "ubuntenkei")
+                return;
+        }
         acquireSkill(player, skill, open);
+    }
 }
 
 void Room::setTag(const QString &key, const QVariant &value){
