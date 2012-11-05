@@ -300,6 +300,7 @@ public:
 };
 
 LuanjunCard::LuanjunCard(){
+    mute = true;
 }
 
 bool LuanjunCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -308,6 +309,7 @@ bool LuanjunCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void LuanjunCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+    room->playSkillEffect(skill_name, qrand() % 2 + 3);
     int card_id = room->askForCardChosen(effect.from, effect.to, "he", skill_name);
     room->throwCard(card_id, effect.to, effect.from);
     room->setEmotion(effect.to, "bad");
@@ -349,8 +351,10 @@ public:
                 room->askForUseCard(conan, "@@luanjun", "@luanjun", true);
             if(conan == player || conan->getKingdom() == player->getKingdom())
                 continue;
-            if(conan->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player)))
+            if(conan->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 player->drawCards(1);
+            }
         }
         return false;
     }
@@ -362,8 +366,9 @@ public:
         events << HpRecovered;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         if(player->askForSkillInvoke(objectName())){
+            room->playSkillEffect(objectName(), 1);
             ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
 
             JudgeStruct judge;
@@ -379,11 +384,14 @@ public:
             judge.good = false;
             room->judge(judge);
             if(judge.card->getColor() == mycolor){
+                room->playSkillEffect(objectName(), 2);
                 DamageStruct mmm;
                 mmm.from = player;
                 mmm.to = target;
                 room->damage(mmm);
             }
+            else
+                room->playSkillEffect(objectName(), 3);
         }
         return false;
     }
