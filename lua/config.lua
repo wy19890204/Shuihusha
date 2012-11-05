@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20121102",
-	version_name = "终结版F3.3",
+	version = "20121105",
+	version_name = "终结版F3.4",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -157,7 +157,8 @@ ban_list = {
 	},
 }
 
-for i=1, config.mini_max do
+mini_max = sgs.GetConfig("S_MINI_MAX_COUNT", config.mini_max)
+for i=1, mini_max do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
 end

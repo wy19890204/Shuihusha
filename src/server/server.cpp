@@ -414,20 +414,16 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
         endless_checkbox->setEnabled(true);
     }
 
-    QString scename = scenario_combobox->itemData(scenario_combobox->currentIndex()).toString();
-    if(button->objectName().contains("scenario") && scename == "wheel_fight"){
+    if(button->objectName().contains("scenario")){
+        second_general_checkbox->setChecked(false);
+        second_general_checkbox->setEnabled(false);
         anzhan_checkbox->setChecked(false);
-        anzhan_checkbox->setEnabled(false);
-        endless_checkbox->setChecked(false);
-        endless_checkbox->setEnabled(false);
         reincarnation_checkbox->setChecked(false);
-        reincarnation_checkbox->setEnabled(false);
+        endless_checkbox->setChecked(false);
+        same_checkbox->setChecked(false);
     }
-    else{
-        anzhan_checkbox->setEnabled(true);
-        endless_checkbox->setEnabled(true);
-        reincarnation_checkbox->setEnabled(true);
-    }
+    else
+        second_general_checkbox->setEnabled(true);
 }
 
 void BanlistDialog::switchTo(int item){

@@ -38,6 +38,7 @@ public:
         QString next_general = room->askForGeneral(player, list);
         //room->transfigure(player, next_general, true, true, player->getGeneralName());
         room->transfigure(player, next_general, true, true);
+        room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
 
         Domo(room, player);
     }
