@@ -1,0 +1,6 @@
+
+general:yangxiong role:rebel maxhp:4 hp:3 
+general:shixiu role:rebel 
+general:shibing role:loyalist maxhp:3 hp:3 
+general:zhangbao role:lord starter:true maxhp:5 hp:5 
+general:shibing role:loyalist maxhp:4 hp:4 

@@ -1,0 +1,9 @@
+
+general:zhuwu role:loyalist starter:true 
+general:shibing role:rebel maxhp:2 hp:2 draw:3 equip:66 
+general:shibing role:rebel maxhp:2 hp:3 draw:3 equip:67 
+general:shibing role:rebel maxhp:2 hp:2 draw:3 equip:106 
+general:xisheng role:rebel draw:3 
+general:shibing role:rebel maxhp:2 hp:2 draw:3 equip:127 
+general:shibing role:rebel maxhp:2 hp:2 draw:3 equip:155 
+general:lujunyi role:lord equip:65 

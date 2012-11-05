@@ -85,6 +85,8 @@ config = {
 	color_min = "#4DB873",
 	color_kou = "#8A807A",
 	color_god = "#96943D",
+
+	mini_max = 25
 }
 
 scenario = {
@@ -155,7 +157,7 @@ ban_list = {
 	},
 }
 
-for i=1, 20 do
+for i=1, config.mini_max do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
 end

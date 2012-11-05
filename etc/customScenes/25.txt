@@ -1,0 +1,8 @@
+
+general:gaoqiu role:loyalist starter:true maxhp:3 hp:2 equip:214 
+general:wuyong role:rebel draw:2 hand:95,82 
+general:huarong role:rebel draw:3 equip:127 hand:27 
+general:caijing role:lord maxhp:5 hp:3 
+general:tongguan role:loyalist maxhp:4 hp:3 
+general:songjiang role:renegade draw:3 equip:207 hand:125 
+general:likui role:rebel maxhp:4 hp:3 draw:2 

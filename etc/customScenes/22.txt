@@ -1,0 +1,4 @@
+
+general:shijin role:rebel starter:true draw:2 hand:55,67 
+general:dongping role:lord 
+general:liruilan role:renegade maxhp:3 hp:3 
