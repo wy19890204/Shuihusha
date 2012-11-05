@@ -175,6 +175,7 @@ public:
 };
 
 BeishuiCard::BeishuiCard(){
+    mute = true;
 }
 
 bool BeishuiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -231,7 +232,7 @@ public:
                     log.arg = objectName();
                     room->sendLog(log);
                     ServerPlayer *target = room->askForPlayerChosen(jie, room->getAlivePlayers(), objectName());
-                    room->playSkillEffect(objectName(), 1);
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
                     target->drawCards(x);
                 }
                 else
@@ -239,6 +240,10 @@ public:
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 3;
     }
 };
 
