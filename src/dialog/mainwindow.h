@@ -69,8 +69,10 @@ private:
     QGroupBox *result_box;
     QTextEdit *server_log;
     QSpinBox *spinbox;
+    QSpinBox *stagebox;
     Server *server;
     int room_count;
+    int stage_count;
     QList<RoomItem*> room_items;
 };
 

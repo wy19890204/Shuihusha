@@ -2399,6 +2399,11 @@
         <translation>房间数目</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.cpp" line="710"/>
+        <source>Num of stages</source>
+        <translation>混战局数</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.cpp" line="826"/>
         <source>Winner(s): %1 &lt;br/&gt; Losers: %2 &lt;br /&gt; Shuffle times: %3</source>
         <translation>获胜者: %1 &lt;br/&gt; 失败者: %2 &lt;br /&gt; 洗牌次数: %3</translation>
