@@ -9,6 +9,7 @@
 FangdiaoCard::FangdiaoCard(){
     will_throw = false;
     once = true;
+    mute = true;
 }
 
 bool FangdiaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -19,6 +20,7 @@ bool FangdiaoCard::targetFilter(const QList<const Player *> &targets, const Play
 
 void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &list) const{
     room->throwCard(this, source);
+    room->playSkillEffect(skill_name, 1);
     PlayerStar target = list.first();
     const Card *spade = room->askForCard(target, ".S", "@fangdiao:" + source->objectName(), QVariant::fromValue((PlayerStar)source), NonTrigger);
     if(spade)
@@ -26,6 +28,7 @@ void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     else{
         QString choice = room->askForChoice(source, skill_name, "fang+diao", QVariant::fromValue(target));
         if(choice == "fang"){
+            room->playSkillEffect(skill_name, 2);
             room->swapHandcards(source, target);
         }
         else{
@@ -33,6 +36,7 @@ void FangdiaoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
                 if(source->distanceTo(tmp) <= 1)
                     tmp->drawCards(1);
             }
+            room->playSkillEffect(skill_name, 3);
         }
     }
 }
