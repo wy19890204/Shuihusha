@@ -72,7 +72,7 @@ private:
     QSpinBox *stagebox;
     Server *server;
     int room_count;
-    int stage_count;
+    double stage_count;
     QList<RoomItem*> room_items;
 };
 

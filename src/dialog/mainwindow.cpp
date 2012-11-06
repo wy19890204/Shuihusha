@@ -781,11 +781,12 @@ void MeleeDialog::startTest(){
     Config.AIDelay = 0;
     room_count = spinbox->value();
     for(int i=0;i<room_count;i++){
-        Room *room = server->createNewRoom();
-        connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
-        connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-
-        room->startTest(avatar_button->property("to_test").toString());
+        while(loop_checkbox->isChecked() || stage_count < stagebox->value()){
+            Room *room = server->createNewRoom();
+            connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
+            connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
+            room->startTest(avatar_button->property("to_test").toString());
+        }
     }
 }
 
@@ -834,17 +835,9 @@ void MeleeDialog::onGameOver(const QString &winner){
                       .arg(room->getTag("SwapPile").toInt());
 
     if(room_item) room_item->setToolTip(tooltip);
-    stage_count ++;
-    if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
-        if(room_item){
-            room_items.removeOne(room_item);
-            delete room_item;
-        }
-        Room *room = server->createNewRoom();
-        connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
-        connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-
-        room->startTest(avatar_button->property("to_test").toString());
+    if(room_item){
+        room_items.removeOne(room_item);
+        delete room_item;
     }
 }
 
@@ -972,18 +965,19 @@ void MeleeDialog::updateResultBox(QString role, int win){
     double rate = winCount / roleCount * 100;
     edit->setText(QString("%1 / %2 = %3 %").arg(winCount).arg(roleCount).arg(rate));
 
-    double totalCount = 0, totalWinCount = 0;
+    stage_count = 0;
+    double totalWinCount = 0;
 
     foreach(int count, this->roleCount.values())
-        totalCount += count;
+        stage_count += count;
 
     foreach(int count, this->winCount.values())
         totalWinCount += count;
 
     QLineEdit *total_edit = result_box->findChild<QLineEdit *>("total_edit");
-    total_edit->setText(QString("%1 / %2 = %3 %").arg(totalWinCount).arg(totalCount).arg(totalWinCount/totalCount*100));
+    total_edit->setText(QString("%1 / %2 = %3 %").arg(totalWinCount).arg(stage_count).arg(totalWinCount/stage_count*100));
 
-    server_log->append(tr("End of game %1").arg(totalCount));
+    server_log->append(tr("End of game %1").arg(stage_count));
 }
 
 void MainWindow::on_actionView_ban_list_triggered()
