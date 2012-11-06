@@ -781,12 +781,11 @@ void MeleeDialog::startTest(){
     Config.AIDelay = 0;
     room_count = spinbox->value();
     for(int i=0;i<room_count;i++){
-        while(loop_checkbox->isChecked() || stage_count < stagebox->value()){
-            Room *room = server->createNewRoom();
-            connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
-            connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
-            room->startTest(avatar_button->property("to_test").toString());
-        }
+        Room *room = server->createNewRoom();
+        connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
+        connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
+
+        room->startTest(avatar_button->property("to_test").toString());
     }
 }
 
@@ -835,9 +834,17 @@ void MeleeDialog::onGameOver(const QString &winner){
                       .arg(room->getTag("SwapPile").toInt());
 
     if(room_item) room_item->setToolTip(tooltip);
-    if(room_item){
-        room_items.removeOne(room_item);
-        delete room_item;
+    stage_count ++;
+    if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
+        if(room_item){
+            room_items.removeOne(room_item);
+            delete room_item;
+        }
+        Room *room = server->createNewRoom();
+        connect(room, SIGNAL(game_start()), this, SLOT(onGameStart()));
+        connect(room, SIGNAL(game_over(QString)), this, SLOT(onGameOver(QString)));
+
+        room->startTest(avatar_button->property("to_test").toString());
     }
 }
 
