@@ -270,6 +270,7 @@ sgs.ai_skill_cardask["@baoguo"] = function(self, data)
 			for _, fcard in ipairs(cards) do
 				if fcard:inherits("BasicCard") and
 					not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+					self:speak("baoguo")
 					return fcard:getEffectiveId()
 				end
 			end
@@ -343,6 +344,7 @@ sgs.ai_skill_use_func["HuaceCard"] = function(card, use, self)
 	local userstring = card:toString()
 	userstring = (userstring:split(":"))[3]
 	local huacecard = sgs.Sanguosha:cloneCard(userstring, card:getSuit(), card:getNumber())
+	huacecard:setSkillName("huace")
 	self:useTrickCard(huacecard,use)
 	if not use.card then return end
 	use.card = card
@@ -383,6 +385,7 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 			for _, equip in sgs.qlist(pequips) do
 				if equip:getEffectiveId() == card_id then
 					self.yixingcid = card_id
+					if self.player ~= player then speak(player, "yixing") end
 					return "@YixingCard=.->" .. player:objectName()
 				end
 			end
@@ -475,6 +478,7 @@ sgs.ai_skill_use["@@duijue"] = function(self, prompt)
 		end
 	end
 	if final then
+		self:speak("duijue")
 		return "@DuijueCard=.->" .. final:objectName()
 	else
 		return "."
@@ -489,6 +493,8 @@ sgs.ai_skill_invoke["kaixian"] = true
 -- danshu
 sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_equip)
 	local to_discard = {}
+	local chaijin = self.room:findPlayerBySkillName("danshu")
+	speak(chaijin, "danshu")
 	local cards = self.player:getHandcards()
 	cards=sgs.QList2Table(cards)
 	self:sortByKeepValue(cards, true)
@@ -523,6 +529,7 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 			end
 		end
 		if target then
+			speak(target, "haoshen")
 			return "@HaoshenCard=.->" .. target:objectName()
 		else
 			return "."
@@ -538,6 +545,7 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 		for i = 1, math.floor((#cards + 1) / 2) do
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
+		speak(target, "haoshen")
 		return "@HaoshenCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
 	else
 		return "."
@@ -568,7 +576,10 @@ sgs.ai_skill_use_func["SijiuCard"] = function(card, use, self)
 	for _, friend in ipairs(self.friends) do
 		if friend:isWounded() then
 			use.card = card
-			if use.to then use.to:append(friend) end
+			if use.to then
+				self:speak("sijiu")
+				use.to:append(friend)
+			end
 			return
 		end
 	end
@@ -608,7 +619,16 @@ end
 -- liba
 sgs.ai_skill_invoke["liba"] = function(self, data)
 	local damage = data:toDamage()
-	return self:isEnemy(damage.to)
+	if self:isEnemy(damage.to) then
+		if self.player:hasSkill("liba") then
+			self:speak("liba")
+		elseif self.player:hasSkill("goulian") then
+			self:speak("goulian")
+		end
+		return true
+	else
+		return false
+	end
 end
 
 -- wusong
@@ -638,11 +658,13 @@ sgs.ai_skill_cardask["@fuhu"] = function(self, data)
 				if not default then default = card end
 				if self:getCardsNum("Jink", damage.from) == 0 and
 					(card:inherits("Analeptic") or card:inherits("Weapon")) then
+					self:speak("fuhu")
 					return card:getEffectiveId()
 				end
 			end
 		end
 		if default then
+			self:speak("fuhu")
 			return default:getEffectiveId()
 		end
 	end
@@ -671,6 +693,7 @@ maidao_skill.getTurnUseCard = function(self)
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards)  do
 			if acard:inherits("Weapon") then
+				self:speak("maidao")
 				return sgs.Card_Parse("@MaidaoCard=" .. acard:getEffectiveId())
 			end
 		end
@@ -723,7 +746,10 @@ sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
 				end
 				if #card_ids == 2 then
 					use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
-					if use.to then use.to:append(yangzhi) end
+					if use.to then
+						self:speak("buydao")
+						use.to:append(yangzhi)
+					end
 					return
 				end
 			end
@@ -790,6 +816,7 @@ sgs.ai_skill_cardask["@jibao"] = function(self)
 	local cards = self.player:getHandcards()
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
+	self:speak("jibao")
 	return cards[1]:getEffectiveId()
 end
 
@@ -829,6 +856,7 @@ sgs.ai_skill_cardask["@xingxing"] = function(self, data)
 		local cards = self.player:getCards("h")
 		for _, card in sgs.qlist(cards) do
 			if card:getSuit() == sgs.Card_Spade then
+				self:speak("xingxing")
 				return card:getEffectiveId()
 			end
 		end
@@ -839,7 +867,6 @@ end
 -- yanqing
 -- dalei
 sgs.ai_card_intention.DaleiCard = function(card, from, tos)
-	speakTrigger(card,from,tos[1])
 	if tos[1]:getHandcardNum() > 3 and tos[1]:getLostHp() == 0 then
 		sgs.updateIntentions(from, tos, -30)
 	else
@@ -1037,6 +1064,7 @@ wuji_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["WujiCard"]=function(card,use,self)
 	use.card = card
+	self:speak("wuji")
 end
 
 -- sun2niang
@@ -1182,6 +1210,7 @@ sgs.ai_skill_use_func["YongleCard"]=function(card,use,self)
 	end
 	use.card = card
 	if use.to then
+		self:speak("yongle")
 		for _, enemy in ipairs(enemies) do
 			use.to:append(enemy)
 		end
@@ -1334,6 +1363,7 @@ sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 			table.insert(yinjiancards, cards[2]:getEffectiveId())
 			use.card = sgs.Card_Parse("@YinjianCard=" .. table.concat(yinjiancards, "+"))
 			if use.to then
+				self:speak("yinjian")
 				use.to:append(from)
 				use.to:append(to)
 			end
@@ -1362,11 +1392,17 @@ sgs.ai_skill_use_func["SuocaiCard"]=function(card,use,self)
 	for _, enemy in ipairs(self.enemies) do
 		if not enemy:isKongcheng() and enemy:getGeneral():isMale() then
 			use.card = card
-			if use.to then use.to:append(enemy) end
+			if use.to then
+				self:speak("suocai")
+				use.to:append(enemy)
+			end
 			return
 		end
 	end
 end
 
 -- huakui
-sgs.ai_skill_invoke["huakui"] = true
+sgs.ai_skill_invoke["huakui"] = function(self, data)
+	self:speak("huakui")
+	return true
+end

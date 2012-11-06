@@ -1667,11 +1667,23 @@ function SmartAI:filterEvent(event, player, data)
 				player:setFlags("-CujuBad")
 			end
 		end
+	elseif event == sgs.SlashEffect then
+		local effect = data:toSlashEffect()
+		target = effect.to
+	elseif event == sgs.SlashProceed then
+		local effect = data:toSlashEffect()
+		target = effect.to
+	elseif event == sgs.SlashHit then
+		local effect = data:toSlashEffect()
+		target = effect.to
 	elseif event == sgs.PhaseChange and player:isLord() and player:getPhase()== sgs.Player_Finish then
 		sgs.turncount = sgs.turncount + 1
 		--self.room:writeToConsole(self.player:objectName() .. " " .. sgs.turncount)
 	elseif event == sgs.GameStart then
 		sgs.turncount = 0
+	elseif event == sgs.Pindian then
+		local pindian = data:toPindian()
+		target = pindian.to
 	end
 
 	speakTrigger(nil, player, target, event)
@@ -3267,6 +3279,9 @@ function SmartAI:useTrickCard(card, use)
 		self:useCardByClassName(card, use)
 	end
 	if use.to then
+		if card:getSkillName() == "huace" then
+			self:speak("huace")
+		end
 		if not use.to:isEmpty() and sgs.dynamic_value.damage_card[card:className()] then
 			for _, target in sgs.qlist(use.to) do
 				if self:damageIsEffective(target) then return end

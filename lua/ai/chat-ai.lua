@@ -7,10 +7,23 @@ function speak(to,type)
 end
 
 function speakTrigger(card,from,to,event)
-	if event == sgs.Death and from:hasSkill("zuohua") then
+	if event == sgs.SlashEffect and from:hasSkill("tongwu") then
+		speak(to,"tongwu")
+	elseif event == sgs.SlashProceed then
+		if from:hasSkill("kaixian") then
+			speak(from,"kaixian")
+		end
+	elseif event == sgs.SlashHit then
+		if from:hasSkill("jingzhun") then
+			speak(to,"jingzhun")
+		end
+	elseif event == sgs.Death and from:hasSkill("zuohua") then
 		speak(from,"zuohua_death")
 	elseif event == sgs.FinishJudge and from:hasFlag("CujuBad") then
 		speak(from,"cuju_fail")
+	elseif event == sgs.Pindian then
+		speak(from,"pindian")
+		speak(to,"pindian_target")
 	end
 
 	if not card then return end
@@ -45,9 +58,6 @@ function speakTrigger(card,from,to,event)
 	elseif card:inherits("GanlinCard") then
 		speak(from, "ganlin")
 		speak(to,"friendly")
-	elseif card:inherits("DaleiCard") then
-		speak(from,"pindian")
-		speak(to,"pindian_target")
 	end
 end
 
@@ -96,7 +106,8 @@ sgs.ai_chat.duel_female=
 }
 sgs.ai_chat.duel=
 {
-"来吧！像男人一样决斗吧！"
+"来吧！像男人一样决斗吧！",
+"生活压力大，只有靠欺负同事来缓解压力……"
 }
 -- ex_nihilo
 sgs.ai_chat.lucky=
@@ -200,50 +211,22 @@ sgs.ai_chat.friendly=
 "这……不太好吧- -",
 "谢了。。。",
 }
---qingzhang
-sgs.ai_chat.qiongtu={
-"擦，还我菊花！",
-"内牛满面了",
-"哎哟我去"
-}
---sun2niang
-sgs.ai_chat.heidian=
+--lujunyi
+sgs.ai_chat.baoguo=
 {
-"二娘饶命……",
-"没留意竟然进了黑店！"
+"别怕，有兄弟给你顶着~",
+"为兄弟两肋插刀，为小猫插朋友两刀！"
 }
---pangwanchun
-sgs.ai_chat.lianzhu=
+sgs.ai_chat.lujunyi_weak=
 {
-"放箭！",
-"看我射不死你们！",
+"擦，再卖血会卖死的",
+"不敢再卖了诶诶诶诶"
 }
---qiaodaoqing
-sgs.ai_chat.huanshu=
+--wuyong
+sgs.ai_chat.huace=
 {
-"竟敢伤我，你活够了？",
-"挣扎吧，在火与雷的地狱中！",
-"老子最牛逼，不服单挑"
-}
---gaoqiu
-sgs.ai_chat.cuju=
-{
-"好球！",
-"踢个球玩玩~",
-"想和我一起组队踢世界杯吗？",
-"看什么看，踢的就是你！"
-}
-sgs.ai_chat.cuju_fail=
-{
-"操！臭球！",
-"竟然，踢空了？",
-"世界杯什么的，呵呵，说着玩呢。",
-}
---zhangqing
-sgs.ai_chat.yinyu=
-{
-"靠石头吃饭不容易，兄弟们担待点~",
-"看我一石激起千层浪！"
+"主公，你还记得大明湖畔的吴学究么……",
+"其实，我一直深爱着你！"
 }
 --gongsunsheng
 sgs.ai_chat.qimen_source=
@@ -260,12 +243,170 @@ sgs.ai_chat.qimen=
 "公孙老道，你丫给我等着！",
 "被、被封印了么- -"
 }
+sgs.ai_chat.yixing=
+{
+"谁、谁刚才摸了我一下？",
+"啊！"
+}
+--guansheng
+sgs.ai_chat.tongwu=
+{
+"我闪不闪呢……",
+"闪、还是不闪，这是个问题= ="
+}
+--linchong
+sgs.ai_chat.duijue=
+{
+"寒星夺魄刺，冷月索命舞！",
+"哦不如搞基，就真的不如搞基~ 嘿咻~"
+}
+--huarong
+sgs.ai_chat.kaixian=
+{
+"我这一箭即可取汝狗头！元芳你怎么看？"
+}
+sgs.ai_chat.jingzhun=
+{
+"看看看，看你麻痹看！"
+}
+--chaijin
+sgs.ai_chat.danshu=
+{
+"哈哈哈，傻眼了吧，爷也有个叫刘备的爸爸！",
+"小子，牌不多就别妄动哦~"
+}
+sgs.ai_chat.haoshen=
+{
+"幸福是什么？幸福就是有个有钱的哥们啊！",
+"求安慰求包养各种求。。"
+}
+--zhutong
+sgs.ai_chat.sijiu=
+{
+"跟爷混，有肉吃。"
+}
+--luzhishen
+sgs.ai_chat.liba=
+{
+"这JB鸟树，真TNND沉！",
+"去歧姐家把虫妹叫来~ "
+}
+--wusong
+sgs.ai_chat.fuhu=
+{
+"一点一点亮晶晶，满眼都是小星星。。",
+"老虎，老鼠，喝醉了分不清楚……"
+}
+--yangzhi
+sgs.ai_chat.maidao=
+{
+"谁TM敢动我的刀我和谁玩命！",
+"卖刀，其实是一种态度，一种人生信仰，你懂的。"
+}
+sgs.ai_chat.buydao=
+{
+"哎呦，不错，这个屌！",
+"两个大子回家耍去，这刀归我了~ ",
+"城管执法！没收管制刀具！"
+}
+--xuning
+sgs.ai_chat.goulian=
+{
+"要不是被偷了宝甲，谁愿意上这破逼梁山？！",
+"狗链枪？我在行！"
+}
+--daizong
+sgs.ai_chat.jibao=
+{
+"戴跑跑，我跑啊跑啊跑~ ",
+"不好意思，还是我在跑~ "
+}
+--yangxiong
+sgs.ai_chat.xingxing=
+{
+"兄弟，一路走好。",
+"其实，这全是导演安排的……"
+}
 --andaoquan
 sgs.ai_chat.jishi=
 {
 "这盒金疮药接住了~",
 "医生真苦逼，各种疗伤……",
-"掌仙术！",
+"掌仙术！"
+}
+--husanniang
+sgs.ai_chat.wuji=
+{
+"天然美貌蒲小喵~ ",
+"喵~ 喵~ "
+}
+--sun2niang
+sgs.ai_chat.heidian=
+{
+"二娘饶命……",
+"没留意竟然进了黑店！"
+}
+--gaoqiu
+sgs.ai_chat.cuju=
+{
+"好球！",
+"踢个球玩玩~",
+"想和我一起组队踢世界杯吗？",
+"看什么看，踢的就是你！"
+}
+sgs.ai_chat.cuju_fail=
+{
+"操！臭球！",
+"竟然，踢空了？",
+"世界杯什么的，呵呵，说着玩呢。",
+}
+--fangla
+sgs.ai_chat.yongle={
+"谁有肉？快交出来！",
+"交保护费了！",
+"坑爹啊，你除了初音手办就没有别的了么？"
+}
+--lishishi
+sgs.ai_chat.yinjian={
+"捂脸。",
+"切了你！",
+"你才带孩子呢，你带四五个孩子！"
+}
+--yanxijiao
+sgs.ai_chat.suocai={
+"你们都嫌弃我……",
+"MUA~",
+"嘤嘤……好桑心- -"
+}
+sgs.ai_chat.huakui={
+"才不是胆小，只是太谨慎。",
+"工口网站什么的最讨厌了！",
+"花花乖，花花不哭~"
+}
+--qingzhang
+sgs.ai_chat.qiongtu={
+"擦，还我菊花！",
+"内牛满面了",
+"哎哟我去"
+}
+--pangwanchun
+sgs.ai_chat.lianzhu=
+{
+"放箭！",
+"看我射不死你们！",
+}
+--qiaodaoqing
+sgs.ai_chat.huanshu=
+{
+"竟敢伤我，你活够了？",
+"挣扎吧，在火与雷的地狱中！",
+"老子最牛逼，不服单挑"
+}
+--zhangqing
+sgs.ai_chat.yinyu=
+{
+"靠石头吃饭不容易，兄弟们担待点~",
+"看我一石激起千层浪！"
 }
 --weidingguo
 sgs.ai_chat.shenhuo=
@@ -284,12 +425,6 @@ sgs.ai_chat.shenhuo_forb=
 sgs.ai_chat.zuohua_death=
 {
 "本来无一物，何处惹尘埃……"
-}
---lujunyi
-sgs.ai_chat.lujunyi_weak=
-{
-"擦，再卖血会卖死的",
-"不敢再卖了诶诶诶诶"
 }
 --baixiuying
 sgs.ai_chat.zhangshi_female=

@@ -52,6 +52,7 @@ public:
             if(killer){
                 killer->addMark("wheelon");
                 if(killer->getMark("wheelon") >= 3){
+                    int wheel = killer->getMark("@skull");
                     LogMessage log;
                     log.type = "#KillerB";
                     log.from = killer;
@@ -59,7 +60,7 @@ public:
                     room->sendLog(log);
 
                     Oyasumi(room, killer);
-                    room->setPlayerMark(killer, "wheelon", 0);
+                    room->setPlayerMark(killer, "@skull", wheel);
                 }
                 killer->drawCards(3);
                 room->setPlayerStatistics(killer, "kill", 1);
