@@ -834,10 +834,12 @@ void MeleeDialog::onGameOver(const QString &winner){
                       .arg(losers.join(","))
                       .arg(room->getTag("SwapPile").toInt());
 
-    if(room_item) room_item->setToolTip(tooltip);
     if(room_item){
-        room_items.removeOne(room_item);
-        delete room_item;
+        room_item->setToolTip(tooltip);
+        if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
+            room_items.removeOne(room_item);
+            delete room_item;
+        }
     }
 }
 
