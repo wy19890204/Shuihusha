@@ -2252,6 +2252,11 @@ function SmartAI:askForPindian(requestor, reason)
 	minusecard = cards[1]
 	maxcard = maxcard or minusecard
 	mincard = mincard or minusecard
+	if requestor == self.player then
+		self:speak("pindian_target")
+	else
+		speak(requestor, "pindian")
+	end
 	local callback = sgs.ai_skill_pindian[reason]
 	if type(callback) == "function" then
 		local ret = callback(minusecard, self, requestor, maxcard, mincard)

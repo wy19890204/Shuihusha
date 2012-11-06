@@ -18,10 +18,14 @@ function speakTrigger(card,from,to,event)
 		if to:getHandcardNum() > to:getHp() then
 			speak(to, "indulgence")
 		end
-	elseif card:inherits("Slash") and to:hasSkill("baoguo") and (to:getHp()<=1) then
-		speak(to,"lujunyi_weak")
-	elseif card:inherits("SavageAssault") and (to:hasSkill("fuhu") or to:hasSkill("shalu")) then
-		speak(to,"tiger")
+	elseif card:inherits("Slash") then
+		if to:hasSkill("baoguo") and to:getHp() <= 1 then
+			speak(to,"lujunyi_weak")
+		end
+	elseif card:inherits("SavageAssault") then
+		if to:hasSkill("fuhu") or to:hasSkill("shalu") then
+			speak(to,"tiger")
+		end
 	elseif card:inherits("FireAttack") then
 		if from:hasSkill("shenhuo") then
 			speak(from,"shenhuo")
@@ -33,14 +37,9 @@ function speakTrigger(card,from,to,event)
 		speak(to,"ecstasy")
 	elseif card:inherits("GanlinCard") then
 		speak(to,"friendly")
-	elseif card:inherits("CujuCard") then
-		speak(from,"cuju")
 	elseif card:inherits("DaleiCard") then
-		speak(from,"dalei")
-		speak(to,"dalei_target")
-	elseif card:inherits("QimenCard") then
-		speak(from,"qimen_source")
-		speak(to,"qimen")
+		speak(from,"pindian")
+		speak(to,"pindian_target")
 	end
 end
 
@@ -69,6 +68,18 @@ sgs.ai_chat.hostile={
 "yoooo少年，不来一发么",
 "果然还是看你不爽",
 "我看你霸气侧漏，不得不防啊"
+}
+--pindian
+sgs.ai_chat.pindian=
+{
+"出大的！",
+"来来来拼点了",
+"哟，拼点吧"
+}
+sgs.ai_chat.pindian_target=
+{
+"老子怕你不成！",
+"暂且看看，鹿死谁手吧！",
 }
 -- duel
 sgs.ai_chat.duel_female=
@@ -181,18 +192,6 @@ sgs.ai_chat.huanshu=
 "挣扎吧，在火与雷的地狱中！",
 "老子最牛逼，不服单挑"
 }
---yanqing
-sgs.ai_chat.dalei=
-{
-"出大的！",
-"来来来拼点了",
-"哟，拼点吧"
-}
-sgs.ai_chat.dalei_target=
-{
-"老子怕你不成！",
-"暂且看看，鹿死谁手吧！",
-}
 --gaoqiu
 sgs.ai_chat.cuju=
 {
@@ -200,6 +199,12 @@ sgs.ai_chat.cuju=
 "踢个球玩玩~",
 "想和我一起组队踢世界杯吗？",
 "看什么看，踢的就是你！"
+}
+sgs.ai_chat.cuju_fail=
+{
+"操！臭球！",
+"竟然，踢空了？",
+"世界杯什么的，呵呵，说着玩呢。",
 }
 --zhangqing
 sgs.ai_chat.yinyu=

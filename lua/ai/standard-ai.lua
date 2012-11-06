@@ -392,10 +392,7 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 end
 
 -- qimen
-sgs.ai_card_intention.QimenCard = function(card, from, tos)
-	speakTrigger(card,from,tos[1])
-	sgs.updateIntentions(from, tos, 90)
-end
+sgs.ai_card_intention.QimenCard = 90
 
 function SmartAI:qimenValue(current, target) -- 判断是否有被奇门的必要，参数为当前行动者和被奇门者
 --	if current:distanceTo(target) > 2 then return false end
@@ -422,14 +419,14 @@ sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 			break
 		end
 	end
-	if target then
-		return "@QimenCard=.->" .. target:objectName()
-	else
+	if not target then
 		if self:isEnemy(current) and math.random(1, 3) ~= 2 then
-			return "@QimenCard=.->" .. current:objectName()
-		else
-			return "."
+			target = current
 		end
+	end
+	if target then
+		self.qimentarget = target
+		return "@QimenCard=.->" .. target:objectName()
 	end
 end
 sgs.ai_skill_cardask["@qimen"] = function(self, data)
@@ -439,6 +436,8 @@ sgs.ai_skill_cardask["@qimen"] = function(self, data)
 	self:sortByKeepValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuitString() == suit and self:getUseValue(card) < 5.7 then
+			self:speak("qimen_source")
+			speak(self.qimentarget, "qimen")
 			return card:getEffectiveId()
 		end
 	end
@@ -1083,10 +1082,7 @@ end
 
 -- gaoqiu
 -- cuju
-sgs.ai_card_intention.CujuCard = function(card, from, tos)
-	speakTrigger(card,from,tos[1])
-	sgs.updateIntentions(from, tos, 75)
-end
+sgs.ai_card_intention.CujuCard = 75
 
 sgs.ai_skill_invoke["cuju"] = function(self, data)
 	local damage = data:toDamage()
@@ -1103,7 +1099,10 @@ sgs.ai_skill_use["@@cuju"] = function(self, prompt)
 		local cards = self.player:getHandcards()
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
-		if target then return "@CujuCard=" .. cards[1]:getEffectiveId() .. "->" .. target:objectName() end
+		if target then
+			self:speak("cuju")
+			return "@CujuCard=" .. cards[1]:getEffectiveId() .. "->" .. target:objectName()
+		end
 	else
 		return "."
 	end

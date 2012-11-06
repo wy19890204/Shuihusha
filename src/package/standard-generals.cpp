@@ -544,7 +544,7 @@ public:
     }
 
     static void stopCry(Room *room, ServerPlayer *player){
-        player->loseMark("@shut");
+        player->loseAllMarks("@shut");
 
         QString data = player->tag.value("QimenStore").toString();
         QStringList Qimen_data = data.split("+");
@@ -2069,6 +2069,8 @@ public:
                     return true;
                 gaoqiu->tag.remove("CujuDamage");
             }
+            //else
+            //    room->speakCommand(gaoqiu, "cuju_fail");
         }
         return false;
     }
