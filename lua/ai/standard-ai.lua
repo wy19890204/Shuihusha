@@ -1160,7 +1160,10 @@ end
 sgs.ai_skill_use_func["JiashuCard"] = function(card, use, self)
 	self:sort(self.enemies, "handcard")
 	use.card = card
-	if use.to then use.to:append(self.enemies[1]) end
+	if use.to then
+		self:speak("jiashu")
+		use.to:append(self.enemies[1])
+	end
 end
 sgs.ai_skill_suit["jiashu"] = function(self)
 	local map = {}

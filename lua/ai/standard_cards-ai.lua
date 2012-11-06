@@ -704,6 +704,9 @@ function SmartAI:useCardGodSalvation(card, use)
 
 	if good > bad then
 		use.card = card
+		if not use.isDummy then
+			self:speak("god_salvation")
+		end
 	end
 end
 

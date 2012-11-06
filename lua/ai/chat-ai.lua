@@ -51,6 +51,8 @@ function speakTrigger(card,from,to,event)
 			speak(from,"shenhuo")
 		elseif to:hasSkill("shenhuo") then
 			speak(to,"shenhuo_forb")
+		else
+			speak(from,"fire_attack")
 		end
 	elseif card:inherits("Ecstasy") then
 		speak(from,"ecstasy_source")
@@ -113,12 +115,20 @@ sgs.ai_chat.duel=
 sgs.ai_chat.lucky=
 {
 "哎哟运气好",
+"马猴烧酒，参上！",
 "哈哈哈哈哈"
 }
 -- amazing_grace
 sgs.ai_chat.amazing_grace=
 {
-"一人一口，分而食之。"
+"一人一口，分而食之。",
+"药药药，切克劳，煎饼果子来一套~"
+}
+-- god_salvation
+sgs.ai_chat.god_salvation=
+{
+"有肉一起吃，有血一起回。",
+"妈妈没回来不开门。"
 }
 -- collateral
 sgs.ai_chat.collateral_female=
@@ -128,6 +138,12 @@ sgs.ai_chat.collateral_female=
 sgs.ai_chat.collateral=
 {
 "你妹啊，我的刀！"
+}
+-- fire_attack
+sgs.ai_chat.fire_attack=
+{
+"抓住那对异性恋，烧死他们！",
+"火攻是一件具有技术含量的活动。"
 }
 -- assassinate
 sgs.ai_chat.assassinate_female=
@@ -359,6 +375,12 @@ sgs.ai_chat.cuju_fail=
 "操！臭球！",
 "竟然，踢空了？",
 "世界杯什么的，呵呵，说着玩呢。",
+}
+--caijing
+sgs.ai_chat.jiashu=
+{
+"来，给大爷乐一个~",
+"要记住，你爸是李刚。"
 }
 --fangla
 sgs.ai_chat.yongle={
