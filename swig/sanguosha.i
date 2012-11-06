@@ -34,6 +34,10 @@ public:
 	const char *className() const{
 		return $self->metaObject()->className();
 	}
+	void setParent(Card *);
+	bool inherits(const char *class_name){
+		return $self->metaObject()->className() == class_name;
+	}
 };
 
 class General : public QObject

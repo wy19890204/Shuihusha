@@ -436,26 +436,26 @@ public:
 
 void MiniScene::addGenerals(int stage){
     switch(stage){
-    case 1: {
+    case 21: {
             General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true);
             zhangbao->addSkill(new Fangdiao);
             addMetaObject<FangdiaoCard>();
             break;
         }
-    case 2: {
+    case 22: {
             General *liruilan = new General(this, "liruilan", "min", 3, false, true);
             liruilan->addSkill(new Chumai);
             liruilan->addSkill(new Yinlang);
             addMetaObject<YinlangCard>();
             break;
         }
-    case 3: {
+    case 20: {
             General *fangjie = new General(this, "fangjie", "jiang", 4, true, true);
             fangjie->addSkill(new Beishui);
             addMetaObject<BeishuiCard>();
             break;
         }
-    case 4: {
+    case 23: {
             General *renyuan = new General(this, "renyuan", "jiang", 4, true, true);
             renyuan->addSkill(new Pushou);
             renyuan->addSkill(new PushouPindian);
@@ -463,7 +463,7 @@ void MiniScene::addGenerals(int stage){
             addMetaObject<PushouCard>();
             break;
         }
-    case 5: {
+    case 24: {
             General *xisheng = new General(this, "xisheng", "min", 3, true, true);
             xisheng->addSkill(new Zhengbing);
             xisheng->addSkill(new Qi6ing);

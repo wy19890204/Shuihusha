@@ -771,7 +771,7 @@ SPPackage::SPPackage()
     related_skills.insertMulti("exterminate", "#@kacha-1");
     skills << new Tigerou;
 
-    General *keyin = new General(this, "keyin", "jiang", 3, false);
+    General *keyin = new General(this, "keyin", "jiang", 3);
     keyin->addSkill(new Luanjun);
     keyin->addSkill(new Qingshang);
 /*

@@ -2382,13 +2382,7 @@ int Room::getCardFromPile(const QString &card_pattern){
         swapPile();
 
     if(card_pattern.startsWith("@")){
-        if(card_pattern == "@duanliang"){
-            foreach(int card_id, *draw_pile){
-                const Card *card = Sanguosha->getCard(card_id);
-                if(card->isBlack() && (card->inherits("BasicCard") || card->inherits("EquipCard")))
-                    return card_id;
-            }
-        }
+        return -1;
     }else{
         QString card_name = card_pattern;
         foreach(int card_id, *draw_pile){
