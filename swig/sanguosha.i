@@ -25,7 +25,7 @@ public:
 	QVariant property ( const char * name ) const;
 	void setParent(QObject *parent);
 
-	void setParent(Card *);
+	void setParent(Card *card);
 //	bool inherits(Skill *skill);
 //	bool inherits(Card *card);
 };
@@ -33,10 +33,6 @@ public:
 %extend QObject{
 	const char *className() const{
 		return $self->metaObject()->className();
-	}
-	void setParent(Card *);
-	bool inherits(const char *class_name){
-		return $self->metaObject()->className() == class_name;
 	}
 };
 

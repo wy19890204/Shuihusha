@@ -82,16 +82,25 @@ sgs.ai_card_intention.JintangCard = -80
 sgs.ai_skill_use["@@jintang!"] = function(self, prompt)
 --	local count = self.player:getEquips():length()
 	local equip = self.player:getTag("Jintg"):toCard()
+	local target
 	self:sort(self.friends_noself, "equip")
 	for _, friend in ipairs(self.friends_noself) do
 		local cards = sgs.QList2Table(friend:getCards("e"))
 		for _, card in ipairs(cards) do
 			if equip:getSubtype() ~= card:getSubtype() then
-				return "@JintangCard=.->" .. friend:objectName()
+				target = friend
+				break
 			end
 		end
 	end
-	return "@JintangCard=.->" .. self.friends_noself[1]:objectName()
+	if not target then
+		if #self.friends_noself ~= 0 then
+			target = self.friends_noself[1]
+		else
+			target = self.enemies[1]
+		end
+	end
+	return "@JintangCard=.->" .. target:objectName()
 end
 
 -- shixiu

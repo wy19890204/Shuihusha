@@ -696,7 +696,7 @@ QGroupBox *MeleeDialog::createGeneralBox(){
     QFormLayout *form_layout = new QFormLayout;
     spinbox = new QSpinBox;
     spinbox->setRange(1, 50);
-    spinbox->setValue(2);
+    spinbox->setValue(1);
 
     stagebox = new QSpinBox;
     stagebox->setRange(1, 100);
