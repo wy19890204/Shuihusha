@@ -1538,6 +1538,7 @@ function SmartAI:filterEvent(event, player, data)
 	end
 	sgs.lastevent = event
 	sgs.lasteventdata = eventdata
+	local target
 	if event == sgs.ChoiceMade and self == sgs.recorder then
 		local carduse = data:toCardUse()
 		if carduse and carduse:isValid() then
@@ -1650,11 +1651,21 @@ function SmartAI:filterEvent(event, player, data)
 	elseif event == sgs.StartJudge then
 		local judge = data:toJudge()
 		local reason = judge.reason
-		if reason == "beige" then
+	--[[if reason == "beige" then
 			local caiwenji = self.room:findPlayerBySkillName("beige")
 			local intention = -60
 			if player:objectName() == caiwenji:objectName() then intention = 0 end
 			sgs.ai_card_intention.general(caiwenji, player, intention)
+		end]]
+	elseif event == sgs.FinishJudge then
+		local judge = data:toJudge()
+		local reason = judge.reason
+		if reason == "cuju" then
+			if judge:isBad() then
+				player:setFlags("CujuBad")
+			else
+				player:setFlags("-CujuBad")
+			end
 		end
 	elseif event == sgs.PhaseChange and player:isLord() and player:getPhase()== sgs.Player_Finish then
 		sgs.turncount = sgs.turncount + 1
@@ -1662,6 +1673,8 @@ function SmartAI:filterEvent(event, player, data)
 	elseif event == sgs.GameStart then
 		sgs.turncount = 0
 	end
+
+	speakTrigger(nil, player, target, event)
 end
 
 function SmartAI:askForSuit(reason)

@@ -7,8 +7,10 @@ function speak(to,type)
 end
 
 function speakTrigger(card,from,to,event)
-	if (event=="death") and from:hasSkill("zuohua") then
+	if event == sgs.Death and from:hasSkill("zuohua") then
 		speak(from,"zuohua_death")
+	elseif event == sgs.FinishJudge and from:hasFlag("CujuBad") then
+		speak(from,"cuju_fail")
 	end
 
 	if not card then return end
@@ -17,6 +19,11 @@ function speakTrigger(card,from,to,event)
 		speak(from, "indulgence_source")
 		if to:getHandcardNum() > to:getHp() then
 			speak(to, "indulgence")
+		end
+	elseif card:inherits("SupplyShortage") then
+		speak(from, "supply_shortage_source")
+		if to:getHandcardNum() < to:getHp() then
+			speak(to, "supply_shortage")
 		end
 	elseif card:inherits("Slash") then
 		if to:hasSkill("baoguo") and to:getHp() <= 1 then
@@ -36,6 +43,7 @@ function speakTrigger(card,from,to,event)
 		speak(from,"ecstasy_source")
 		speak(to,"ecstasy")
 	elseif card:inherits("GanlinCard") then
+		speak(from, "ganlin")
 		speak(to,"friendly")
 	elseif card:inherits("DaleiCard") then
 		speak(from,"pindian")
@@ -96,6 +104,11 @@ sgs.ai_chat.lucky=
 "哎哟运气好",
 "哈哈哈哈哈"
 }
+-- amazing_grace
+sgs.ai_chat.amazing_grace=
+{
+"一人一口，分而食之。"
+}
 -- collateral
 sgs.ai_chat.collateral_female=
 {
@@ -113,6 +126,15 @@ sgs.ai_chat.assassinate_female=
 sgs.ai_chat.assassinate=
 {
 "啊！有刺客！"
+}
+-- wiretap
+sgs.ai_chat.wiretap_female=
+{
+"讨厌，人家都被你看光了啦~"
+}
+sgs.ai_chat.wiretap=
+{
+"再看，再看就把你喝掉！"
 }
 -- ecstasy
 sgs.ai_chat.ecstasy_source=
@@ -137,6 +159,17 @@ sgs.ai_chat.indulgence=
 "呜呜呜，招你惹你了……",
 "放我出去！"
 }
+-- supply_shortage
+sgs.ai_chat.supply_shortage_source=
+{
+"喝西北风去吧！",
+"其实这是兵粮寸断哦~"
+}
+sgs.ai_chat.supply_shortage=
+{
+"本大仙运气好，下次一定是梅花~",
+"饿肚子的感觉，你知道吗……"
+}
 -- bishangliangshan
 sgs.ai_chat.drivolt=
 {
@@ -154,6 +187,11 @@ sgs.ai_chat.tiger=
 }
 
 --songjiang
+sgs.ai_chat.ganlin=
+{
+"这是您的~",
+"这个给您~"
+}
 sgs.ai_chat.friendly=
 {
 "。。。",
@@ -173,11 +211,6 @@ sgs.ai_chat.heidian=
 {
 "二娘饶命……",
 "没留意竟然进了黑店！"
-}
-sgs.ai_chat.renrou=
-{
-"这是您的~",
-"这个给您~"
 }
 --pangwanchun
 sgs.ai_chat.lianzhu=

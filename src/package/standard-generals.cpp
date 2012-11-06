@@ -2069,8 +2069,6 @@ public:
                     return true;
                 gaoqiu->tag.remove("CujuDamage");
             }
-            //else
-            //    room->speakCommand(gaoqiu, "cuju_fail");
         }
         return false;
     }
