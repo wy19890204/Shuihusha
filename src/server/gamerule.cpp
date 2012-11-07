@@ -658,7 +658,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         //xiaobawang
         if(!Config.BanPackages.contains("events")){
             DamageStruct damage = data.value<DamageStruct>();
-            if(!damage.from || !damage.to)
+            if(!damage.from || !damage.to || player->isKongcheng())
                 break;
             ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
             if(source && source != player && player->getGender() != damage.to->getGender()){
@@ -676,7 +676,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             DamageStruct damage = data.value<DamageStruct>();
             ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
             if(damage.from && damage.from == source){
-                if(damage.to && damage.from->getGender() == damage.to->getGender()){
+                if(damage.to && !damage.to->isNude() &&
+                   damage.from->getGender() == damage.to->getGender()){
                     const Card *e = room->askForCard(source, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
                     if(e){
                         source->playCardEffect("@xiaobawang2");

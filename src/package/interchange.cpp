@@ -337,26 +337,6 @@ public:
     }
 };
 
-class Fangsheng:public PhaseChangeSkill{
-public:
-    Fangsheng():PhaseChangeSkill("fangsheng"){
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *taiwei) const{
-        if(taiwei->getPhase() == Player::Start && taiwei->getHandcardNum() > taiwei->getHp() &&
-           taiwei->askForSkillInvoke(objectName())){
-            Room *room = taiwei->getRoom();
-            taiwei->drawCards(2, false);
-            room->playSkillEffect(objectName());
-
-            PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
-            target->gainAnExtraTurn(taiwei);
-            taiwei->skip();
-        }
-        return false;
-    }
-};
-
 class Tancai:public PhaseChangeSkill{
 public:
     Tancai():PhaseChangeSkill("tancai"){
@@ -690,9 +670,6 @@ InterChangePackage::InterChangePackage()
     General *tongmeng = new General(this, "tongmeng", "min", 3);
     tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
-
-    General *hongxin = new General(this, "hongxin", "guan");
-    hongxin->addSkill(new Fangsheng);
 
     General *zhangmengfang = new General(this, "zhangmengfang", "guan");
     zhangmengfang->addSkill(new Tancai);
