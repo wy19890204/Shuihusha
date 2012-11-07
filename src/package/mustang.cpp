@@ -6,6 +6,7 @@
 #include "carditem.h"
 #include "engine.h"
 #include "maneuvering.h"
+#include "plough.h"
 
 class Qiaogong: public TriggerSkill{
 public:

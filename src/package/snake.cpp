@@ -1,4 +1,4 @@
-#include "ybyt.h"
+#include "snake.h"
 #include "standard.h"
 #include "skill.h"
 #include "client.h"
@@ -451,8 +451,8 @@ public:
     }
 };
 
-YBYTPackage::YBYTPackage()
-    :Package("YBYT")
+SnakePackage::SnakePackage()
+    :Package("snake")
 {
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
@@ -490,4 +490,4 @@ YBYTPackage::YBYTPackage()
     addMetaObject<FangzaoCard>();
 }
 
-ADD_PACKAGE(YBYT);
+ADD_PACKAGE(Snake);

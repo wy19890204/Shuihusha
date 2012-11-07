@@ -62,10 +62,10 @@ SOURCES += \
 	src/package/tiger.cpp \
 	src/package/hare.cpp \
 	src/package/dragon.cpp \
+	src/package/snake.cpp \
 	src/package/mustang.cpp \
+	src/package/sheep.cpp \
 	src/package/qlfd.cpp \
-	src/package/cgdk.cpp \
-	src/package/ybyt.cpp \
 	src/package/sp.cpp \
 	src/package/mini-generals.cpp \
 	src/package/god.cpp \
@@ -198,10 +198,10 @@ HEADERS += \
 	src/package/tiger.h \
 	src/package/hare.h \
 	src/package/dragon.h \
+	src/package/snake.h \
 	src/package/mustang.h \
+	src/package/sheep.h \
 	src/package/qlfd.h \
-	src/package/cgdk.h \
-	src/package/ybyt.h \
 	src/package/sp.h \
 	src/package/mini-generals.h \
 	src/package/god.h \

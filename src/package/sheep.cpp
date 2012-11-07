@@ -1,4 +1,4 @@
-#include "cgdk.h"
+#include "sheep.h"
 #include "standard.h"
 #include "skill.h"
 #include "client.h"
@@ -483,8 +483,8 @@ public:
     }
 };
 
-CGDKPackage::CGDKPackage()
-    :Package("CGDK")
+SheepPackage::SheepPackage()
+    :Package("sheep")
 {
     General *yanglin = new General(this, "yanglin", "kou");
     yanglin->addSkill(new Citan);
@@ -528,4 +528,4 @@ CGDKPackage::CGDKPackage()
     //addMetaObject<FeiqiangCard>();
 }
 
-ADD_PACKAGE(CGDK)
+ADD_PACKAGE(Sheep)

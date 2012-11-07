@@ -39,6 +39,18 @@ local tt = {
 	["$jiangxin2"] = "精华在笔端，咫尺匠心难！",
 	["~jindajian"] = "印信雕刻竟纰漏百出，吾愧矣！",
 
+	["#houjian"] = "通臂猿", -- kou 2hp (bwqz)
+	["houjian"] = "侯健",
+	["designer:houjian"] = "宇文天启",
+	["cv:houjian"] = "卜音悠扬【LE秘密】",
+	["yuanyin"] = "飞针",
+	[":yuanyin"] = "你可以将其他角色装备区里的武器当【杀】、非武器当【闪】使用或打出。",
+	["yuanyin:slash"] = "你想发动技能【飞针·杀】吗？",
+	["yuanyin:jink"] = "你想发动技能【飞针·闪】吗？",
+	["$yuanyin1"] = "飞针走线，小事一桩。",
+	["$yuanyin2"] = "针影闪动，战袍已新。",
+	["~houjian"] = "蚕丝终究是断了。",
+
 	["#yangchun"] = "白花蛇",
 	["yangchun"] = "杨春",
 	["cv:yangchun"] = "倔强的小红军【剪刀剧团】",

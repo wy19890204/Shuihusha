@@ -4,6 +4,35 @@
 #include "carditem.h"
 #include "engine.h"
 #include "standard.h"
+#include "client.h"
+#include "maneuvering.h"
+#include "plough.h"
+
+class Xianxi: public TriggerSkill{
+public:
+    Xianxi():TriggerSkill("xianxi"){
+        events << SlashMissed;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        int jink = effect.jink->getEffectiveId();
+        if(!Sanguosha->getCard(jink)->inherits("Jink"))
+            return false;
+        LogMessage log;
+        log.from = player;
+        log.type = "#Xianxi";
+        log.arg = objectName();
+        room->sendLog(log);
+        if(player->getCardCount(true) >= 2){
+            if(!room->askForDiscard(player, objectName(), 2, true, true))
+                room->loseHp(player);
+        }
+        else
+            room->loseHp(player);
+        return false;
+    }
+};
 
 TaolueCard::TaolueCard(){
     once = true;
@@ -620,6 +649,9 @@ public:
 DragonPackage::DragonPackage()
     :Package("dragon")
 {
+    General *qinming = new General(this, "qinming", "guan");
+    qinming->addSkill(new Xianxi);
+
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);

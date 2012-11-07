@@ -1,5 +1,5 @@
-#ifndef YBYTPACKAGE_H
-#define YBYTPACKAGE_H
+#ifndef SNAKEPACKAGE_H
+#define SNAKEPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -23,11 +23,11 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class YBYTPackage: public Package{
+class SnakePackage: public Package{
     Q_OBJECT
 
 public:
-    YBYTPackage();
+    SnakePackage();
 };
 
-#endif // YBYTPACKAGE_H
+#endif // SNAKEPACKAGE_H

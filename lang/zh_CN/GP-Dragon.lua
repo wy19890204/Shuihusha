@@ -3,17 +3,13 @@
 return {
 	["BWQZ"] = "博闻强识",
 
-	["#houjian"] = "通臂猿",
-	["houjian"] = "侯健",
-	["designer:houjian"] = "宇文天启",
-	["cv:houjian"] = "卜音悠扬【LE秘密】",
-	["yuanyin"] = "飞针",
-	[":yuanyin"] = "你可以将其他角色装备区里的武器当【杀】、非武器当【闪】使用或打出。",
-	["yuanyin:slash"] = "你想发动技能【飞针·杀】吗？",
-	["yuanyin:jink"] = "你想发动技能【飞针·闪】吗？",
-	["$yuanyin1"] = "飞针走线，小事一桩。",
-	["$yuanyin2"] = "针影闪动，战袍已新。",
-	["~houjian"] = "蚕丝终究是断了。",
+	["#qinming"] = "霹雳火", -- guan 4hp (fcdc)
+	["qinming"] = "秦明",
+	["designer:qinming"] = "曉ャ絕對",
+	["xianxi"] = "险袭",
+	[":xianxi"] = "你使用的【杀】可额外指定任意个目标，其中每有一个目标使用手牌【闪】抵消【杀】时，你须弃置两张牌或失去一点体力",
+	["#Xianxi"] = "%from 出师不利，【%arg】的负面效果被触发",
+	["~qinming"] = "可怜霹雳火，灭地竟无声……",
 
 	["#mengkang"] = "玉幡竿",
 	["mengkang"] = "孟康",

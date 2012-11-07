@@ -1,5 +1,5 @@
-#ifndef CGDKPACKAGE_H
-#define CGDKPACKAGE_H
+#ifndef SHEEPPACKAGE_H
+#define SHEEPPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -45,12 +45,12 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class CGDKPackage : public Package
+class SheepPackage : public Package
 {
     Q_OBJECT
 
 public:
-    CGDKPackage();
+    SheepPackage();
 };
 
-#endif // CGDKPACKAGE_H
+#endif // SHEEPPACKAGE_H
