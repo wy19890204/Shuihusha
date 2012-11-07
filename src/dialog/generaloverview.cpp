@@ -147,7 +147,7 @@ bool GeneralOverview::isInvisibleSkill(const QString &skill_name, int index){
     //effect line cut down begin the index
     if(skill_name == "yinyu") // for mengshi_wake
         return index > 7;
-    if(index > 2){  // butian&qimen for kongmen_wake; other for landlord mode
+    if(index > 2){  // butian&qimen for wudao_wake; other for landlord mode
         QStringList skills;
         skills << "butian" << "qimen" << "linse" << "duoming" << "shemi";
         return skills.contains(skill_name);
