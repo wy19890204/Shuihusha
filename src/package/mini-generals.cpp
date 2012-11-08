@@ -434,8 +434,7 @@ public:
     }
 };
 
-void MiniScene::addGenerals(int stage){
-    bool show = !Sanguosha->biliBili();
+void MiniScene::addGenerals(int stage, bool show){
     switch(stage){
     case 21: {
             General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true, show);

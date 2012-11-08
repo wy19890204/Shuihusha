@@ -1,5 +1,5 @@
-#ifndef QLFDPACKAGE_H
-#define QLFDPACKAGE_H
+#ifndef COCKPACKAGE_H
+#define COCKPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -40,11 +40,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class QLFDPackage: public Package{
+class CockPackage: public Package{
     Q_OBJECT
 
 public:
-    QLFDPackage();
+    CockPackage();
 };
 
-#endif // QLFDPACKAGE_H
+#endif // COCKPACKAGE_H

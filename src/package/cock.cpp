@@ -3,7 +3,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "qlfd.h"
+#include "cock.h"
 #include "maneuvering.h"
 
 FanwuCard::FanwuCard(){
@@ -514,8 +514,8 @@ public:
     }
 };
 
-QLFDPackage::QLFDPackage()
-    :Package("QLFD")
+CockPackage::CockPackage()
+    :Package("cock")
 {
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
@@ -550,4 +550,4 @@ QLFDPackage::QLFDPackage()
     addMetaObject<ZhangshiCard>();
 }
 
-ADD_PACKAGE(QLFD);
+ADD_PACKAGE(Cock)
