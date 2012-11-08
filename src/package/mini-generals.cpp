@@ -117,7 +117,7 @@ void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         }
     }else
         target = targets.first();
-    room->obtainCard(target, this, false);
+    room->obtainCard(target, this);
 
     int num = 0;
     foreach(int x, this->getSubcards()){

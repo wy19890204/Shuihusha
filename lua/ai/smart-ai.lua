@@ -169,7 +169,7 @@ function sgs.getDefense(player)
 	if player:getArmor() and not player:getArmor():inherits("GaleShell") then
 		defense = defense + 2
 	end
-	if not player:getArmor() and player:hasSkill("yuanyin") then
+	if not player:getArmor() and player:hasSkill("feizhen") then
 		defense = defense + 2
 	end
 	local m = sgs.masochism_skill:split("|")
@@ -484,7 +484,7 @@ function SmartAI:cardNeed(card)
 		if self.player:getHp() < 2 then return 10 end
 	end
 	if card:inherits("Slash") and (self:getCardsNum("Slash") > 0) then return 4 end
-	if card:inherits("Crossbow") and  self:hasSkills("zhanchi|qibing|yongle|guibing|shemi|shenhuo|baoguo|yuanyin|sixiang", self.player) then return 20 end
+	if card:inherits("Crossbow") and  self:hasSkills("zhanchi|qibing|yongle|guibing|shemi|shenhuo|baoguo|feizhen|sixiang", self.player) then return 20 end
 	if card:inherits("Axe") and  self:hasSkills("liba|meicha|juesi|manli", self.player) then return 15 end
 	if card:inherits("Weapon") and (not self.player:getWeapon()) and (self:getCardsNum("Slash") > 1) then return 6 end
 	if card:inherits("Nullification") and self:getCardsNum("Nullification") == 0 then
@@ -2818,7 +2818,7 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 				end
 			end
 		end
-		if player:hasSkill("yuanyin") then
+		if player:hasSkill("feizhen") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
 				if target:getArmor() then
 					n = n + 1
@@ -2835,7 +2835,7 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 		if player:hasSkill("guibing") then
 			n = n + 4
 		end
-		if player:hasSkill("yuanyin") then
+		if player:hasSkill("feizhen") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
 				if target:getWeapon() then
 					n = n + 1
@@ -3133,7 +3133,7 @@ function SmartAI:getAoeValueTo(card, to , from)
 	local value = 0
 	local sj_num
 
-	if to:hasSkill("yuanyin") then
+	if to:hasSkill("feizhen") then
 		value = value + 5
 	end
 

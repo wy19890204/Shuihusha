@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
     // initialize random seed for later use
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
+    /*
     QTranslator qt_translator, translator;
     qt_translator.load("qt_zh_CN.qm");
     translator.load("shuihusha.qm");
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
         qApp->installTranslator(&qt_translator);
         qApp->installTranslator(&translator);
     }
+    */
 
     Sanguosha = new Engine;
     Config.init();

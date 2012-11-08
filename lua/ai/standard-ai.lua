@@ -1016,7 +1016,7 @@ end
 sgs.ai_skill_use_func["YanshouCard"]=function(card,use,self)
 	self:sort(self.friends, "maxhp")
 	for _, friend in ipairs(self.friends) do
-		if friend:hasSkill("yuanyin") or (friend:hasSkill("yanshou") and not friend:isLord())
+		if friend:hasSkill("feizhen") or (friend:hasSkill("yanshou") and not friend:isLord())
 			or friend:hasSkill("wudao") then
 			use.card = card
 			if use.to then
