@@ -65,12 +65,12 @@ SOURCES += \
 	src/package/snake.cpp \
 	src/package/mustang.cpp \
 	src/package/sheep.cpp \
+	src/package/monkey.cpp \
 	src/package/qlfd.cpp \
 	src/package/sp.cpp \
 	src/package/mini-generals.cpp \
 	src/package/god.cpp \
 	src/package/joy.cpp \
-	src/package/interchange.cpp \
 	src/package/guben.cpp \
 	src/scenario/boss.cpp \
 	src/scenario/contract.cpp \
@@ -201,12 +201,12 @@ HEADERS += \
 	src/package/snake.h \
 	src/package/mustang.h \
 	src/package/sheep.h \
+	src/package/monkey.h \
 	src/package/qlfd.h \
 	src/package/sp.h \
 	src/package/mini-generals.h \
 	src/package/god.h \
 	src/package/joy.h \
-	src/package/interchange.h \
 	src/package/guben.h \
 	src/scenario/boss.h \
 	src/scenario/contract.h \
