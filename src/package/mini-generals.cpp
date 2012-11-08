@@ -435,28 +435,29 @@ public:
 };
 
 void MiniScene::addGenerals(int stage){
+    bool show = !Sanguosha->biliBili();
     switch(stage){
     case 21: {
-            General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true);
+            General *zhangbao = new General(this, "zhangbao", "jiang", 4, true, true, show);
             zhangbao->addSkill(new Fangdiao);
             addMetaObject<FangdiaoCard>();
             break;
         }
     case 22: {
-            General *liruilan = new General(this, "liruilan", "min", 3, false, true);
+            General *liruilan = new General(this, "liruilan", "min", 3, false, true, show);
             liruilan->addSkill(new Chumai);
             liruilan->addSkill(new Yinlang);
             addMetaObject<YinlangCard>();
             break;
         }
     case 20: {
-            General *fangjie = new General(this, "fangjie", "jiang", 4, true, true);
+            General *fangjie = new General(this, "fangjie", "jiang", 4, true, true, show);
             fangjie->addSkill(new Beishui);
             addMetaObject<BeishuiCard>();
             break;
         }
     case 23: {
-            General *renyuan = new General(this, "renyuan", "jiang", 4, true, true);
+            General *renyuan = new General(this, "renyuan", "jiang", 4, true, true, show);
             renyuan->addSkill(new Pushou);
             renyuan->addSkill(new PushouPindian);
             related_skills.insertMulti("pushou", "#pushou_pd");
@@ -464,7 +465,7 @@ void MiniScene::addGenerals(int stage){
             break;
         }
     case 24: {
-            General *xisheng = new General(this, "xisheng", "min", 3, true, true);
+            General *xisheng = new General(this, "xisheng", "min", 3, true, true, show);
             xisheng->addSkill(new Zhengbing);
             xisheng->addSkill(new Qi6ing);
             addMetaObject<Qi6ingCard>();
