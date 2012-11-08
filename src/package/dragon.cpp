@@ -486,126 +486,6 @@ public:
     }
 };
 
-YuanyinCard::YuanyinCard(){
-    mute = true;
-}
-
-bool YuanyinCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    if(targets.length() == 2)
-        return true;
-    return targets.length() == 1 && Self->canSlash(targets.first());
-}
-
-bool YuanyinCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(targets.isEmpty()){
-        return to_select->getWeapon() && to_select != Self;
-    }else if(targets.length() == 1){
-        const Player *first = targets.first();
-        return to_select != Self && first->getWeapon() && Self->canSlash(to_select);
-    }else
-        return false;
-}
-
-void YuanyinCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    QList<ServerPlayer *> targets = card_use.to;
-    PlayerStar target; PlayerStar source = card_use.from;
-    if(targets.length() > 1)
-        target = targets.at(1);
-    else if(targets.length() == 1 && source->canSlash(targets.first())){
-        target = targets.first();
-    }
-    else
-        return;
-
-    const Card *weapon = target->getWeapon();
-    if(weapon){
-        Slash *slash = new Slash(weapon->getSuit(), weapon->getNumber());
-        slash->setSkillName(skill_name);
-        slash->addSubcard(weapon);
-        room->throwCard(weapon->getId(), target, source);
-        CardUseStruct use;
-        use.card = slash;
-        use.from = source;
-        use.to << target;
-        room->useCard(use);
-    }
-}
-
-class YuanyinViewAsSkill:public ZeroCardViewAsSkill{
-public:
-    YuanyinViewAsSkill():ZeroCardViewAsSkill("yuanyin"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return Slash::IsAvailable(player);
-    }
-
-    virtual const Card *viewAs() const{
-        return new YuanyinCard;
-    }
-};
-
-class Yuanyin: public TriggerSkill{
-public:
-    Yuanyin():TriggerSkill("yuanyin"){
-        events << CardAsked;
-        view_as_skill = new YuanyinViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        QString asked = data.toString();
-        if(asked != "slash" && asked != "jink")
-            return false;
-        QList<ServerPlayer *> playerAs, playerBs;
-        foreach(ServerPlayer *tmp, room->getOtherPlayers(player)){
-            if(asked == "slash" && tmp->getWeapon())
-                playerAs << tmp;
-            if(asked == "jink" &&
-                    (tmp->getArmor() || tmp->getOffensiveHorse() || tmp->getDefensiveHorse()))
-                playerBs << tmp;
-        }
-        if((asked == "slash" && playerAs.isEmpty()) || (asked == "jink" && playerBs.isEmpty()))
-            return false;
-        if(room->askForSkillInvoke(player, objectName(), data)){
-            ServerPlayer *target = asked == "slash" ?
-                                   room->askForPlayerChosen(player, playerAs, objectName()) :
-                                   room->askForPlayerChosen(player, playerBs, objectName());
-            const Card *card = NULL;
-            if(asked == "slash")
-                card = target->getWeapon();
-            else if(asked == "jink"){
-                if(target->getEquips().length() == 1 && !target->getWeapon())
-                    card = target->getEquips().first();
-                else if(target->getWeapon() && target->getEquips().length() == 2)
-                    card = target->getEquips().at(1);
-                else
-                    card = Sanguosha->getCard(room->askForCardChosen(player, target, "e", objectName()));
-            }
-            if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card->getId())
-                return false;
-            if(asked == "slash"){
-                Slash *yuanyin_card = new Slash(card->getSuit(), card->getNumber());
-                yuanyin_card->setSkillName(objectName());
-                yuanyin_card->addSubcard(card);
-                room->provide(yuanyin_card);
-            }
-            else{
-                Jink *yuanyin_card = new Jink(card->getSuit(), card->getNumber());
-                yuanyin_card->setSkillName(objectName());
-                yuanyin_card->addSubcard(card);
-                room->provide(yuanyin_card);
-            }
-            room->setEmotion(player, "good");
-        }
-        return false;
-    }
-};
-
 class Kongying: public TriggerSkill{
 public:
     Kongying():TriggerSkill("kongying"){
@@ -670,9 +550,6 @@ DragonPackage::DragonPackage()
     wangpo->addSkill(new Qianxian);
     wangpo->addSkill(new Meicha);
 
-    General *houjian = new General(this, "houjian", "kou", 2);
-    houjian->addSkill(new Yuanyin);
-
     General *mengkang = new General(this, "mengkang", "kou");
     mengkang->addSkill(new Zaochuan);
     mengkang->addSkill(new Mengchong);
@@ -687,7 +564,6 @@ DragonPackage::DragonPackage()
     addMetaObject<TaolueCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<QianxianCard>();
-    addMetaObject<YuanyinCard>();
 }
 
-ADD_PACKAGE(Dragon);
+ADD_PACKAGE(Dragon)
