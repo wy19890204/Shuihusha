@@ -853,7 +853,7 @@ function SmartAI:getValuableCard(who)
 		return armor:getEffectiveId()
 	end
 
-	if self:isEquip("Monkey", who) then
+	if self:isEquip("Saru", who) then
 		return offhorse:getEffectiveId()
 	end
 

@@ -1959,7 +1959,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 				return who:getArmor():getId()
 			end
 
-			if self:isEquip("Monkey", who) then
+			if self:isEquip("Saru", who) then
 				return who:getOffensiveHorse():getId()
 			end
 		end
@@ -3431,7 +3431,7 @@ function SmartAI:useEquipCard(card, use)
 		for _,friend in ipairs(self.friends_noself) do
 			if not friend:getOffensiveHorse() then return end
 		end
-	elseif card:inherits("Monkey") or self.lua_ai:useCard(card) then
+	elseif card:inherits("Saru") or self.lua_ai:useCard(card) then
 		use.card = card
 	end
 end

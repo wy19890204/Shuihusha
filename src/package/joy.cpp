@@ -161,25 +161,25 @@ public:
     }
 };
 
-Monkey::Monkey(Card::Suit suit, int number)
+Saru::Saru(Card::Suit suit, int number)
     :OffensiveHorse(suit, number)
 {
-    setObjectName("monkey");
+    setObjectName("saru");
 
     grab_peach = new GrabPeach;
     grab_peach->setParent(this);
 }
 
-void Monkey::onInstall(ServerPlayer *player) const{
+void Saru::onInstall(ServerPlayer *player) const{
     player->getRoom()->getThread()->addTriggerSkill(grab_peach);
 }
 
-void Monkey::onUninstall(ServerPlayer *player) const{
+void Saru::onUninstall(ServerPlayer *player) const{
 
 }
 
-QString Monkey::getEffectPath(bool ) const{
-    return "audio/card/common/monkey.ogg";
+QString Saru::getEffectPath(bool ) const{
+    return "audio/card/common/Saru.ogg";
 }
 
 class GaleShellSkill: public ArmorSkill{
@@ -263,7 +263,7 @@ JoyPackage::JoyPackage()
 {
     QList<Card *> cards;
     cards
-                << new Monkey(Card::Diamond, 5)
+                << new Saru(Card::Diamond, 5)
                 << new GaleShell(Card::Heart, 1)
                 << new Poison(Card::Heart, 7)
                 << new Poison(Card::Club, 9)

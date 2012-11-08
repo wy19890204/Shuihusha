@@ -39,11 +39,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class Monkey: public OffensiveHorse{
+class Saru: public OffensiveHorse{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Monkey(Card::Suit suit, int number);
+    Q_INVOKABLE Saru(Card::Suit suit, int number);
 
     virtual void onInstall(ServerPlayer *player) const;
     virtual void onUninstall(ServerPlayer *player) const;
