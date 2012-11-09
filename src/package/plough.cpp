@@ -296,9 +296,8 @@ GoldArmor::GoldArmor(Suit suit, int number):Armor(suit, number){
 }
 
 PloughPackage::PloughPackage()
-    :Package("plough")
+    :CardPackage("plough")
 {
-    type = CardPack;
     QList<Card *> cards;
 
     cards

@@ -484,10 +484,8 @@ public:
 };
 
 SheepPackage::SheepPackage()
-    :Package("sheep")
+    :GeneralPackage("sheep")
 {
-    genre = CPP;
-
     General *yanglin = new General(this, "yanglin", "kou");
     yanglin->addSkill(new Citan);
 

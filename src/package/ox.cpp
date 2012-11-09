@@ -1079,10 +1079,8 @@ public:
 };
 
 OxPackage::OxPackage()
-    :Package("ox")
+    :GeneralPackage("ox")
 {
-    genre = CPP;
-
     General *gaolian = new General(this, "gaolian", "guan", 3);
     gaolian->addSkill(new Guibing);
     gaolian->addSkill(new Heiwu);

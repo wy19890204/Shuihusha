@@ -758,10 +758,8 @@ public:
 };
 */
 SPPackage::SPPackage()
-    :Package("sp")
+    :GeneralPackage("sp")
 {
-    genre = CPP;
-
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);
 

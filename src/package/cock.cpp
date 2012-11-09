@@ -515,10 +515,8 @@ public:
 };
 
 CockPackage::CockPackage()
-    :Package("cock")
+    :GeneralPackage("cock")
 {
-    genre = CPP;
-
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
     panqiaoyun->addSkill(new Panxin);

@@ -660,7 +660,15 @@ class DummyCard: public Card{
 
 class Package: public QObject{
 public:
+	enum Type{
+		GeneralPack,
+		CardPack,
+		MixedPack,
+		SpecialPack
+	};
+
 	Package(const char *name);
+	Type getType() const;
 };
 
 class Engine: public QObject

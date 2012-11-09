@@ -1108,10 +1108,8 @@ public:
 };
 
 HarePackage::HarePackage()
-    :Package("hare")
+    :GeneralPackage("hare")
 {
-    genre = CPP;
-
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);
 

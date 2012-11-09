@@ -156,7 +156,7 @@ public:
 };
 
 GiftPackage::GiftPackage()
-    :Package("gift")
+    :CardPackage("gift")
 {
     skills << new Lisao << new Yaoyue << new YaoyueEffect << new BeatJapan;
     related_skills.insertMulti("yaoyue", "#yaoyue-effect");
@@ -171,8 +171,6 @@ GiftPackage::GiftPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 ADD_PACKAGE(Gift)

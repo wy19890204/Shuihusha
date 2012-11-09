@@ -527,10 +527,8 @@ public:
 };
 
 DragonPackage::DragonPackage()
-    :Package("dragon")
+    :GeneralPackage("dragon")
 {
-    genre = CPP;
-
     General *qinming = new General(this, "qinming", "guan");
     qinming->addSkill(new Xianxi);
 

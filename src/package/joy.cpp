@@ -114,7 +114,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
 
 
 KusoPackage::KusoPackage()
-    :Package("kuso"){
+    :CardPackage("kuso"){
     QList<Card *> cards;
 
     cards << new Shit(Card::Club, 1)
@@ -125,8 +125,6 @@ KusoPackage::KusoPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 class GrabPeach: public TriggerSkill{
@@ -259,7 +257,7 @@ void Poison::onEffect(const CardEffectStruct &card_effect) const{
 }
 
 JoyPackage::JoyPackage()
-    :Package("joy")
+    :CardPackage("joy")
 {
     QList<Card *> cards;
     cards
@@ -271,9 +269,7 @@ JoyPackage::JoyPackage()
                 << new Poison(Card::Spade, 13);
 
     foreach(Card *card, cards)
-            card->setParent(this);
-
-    type = CardPack;
+        card->setParent(this);
 }
 
 class Timer: public PhaseChangeSkill{
@@ -622,10 +618,8 @@ public:
 };
 
 JoyGeneralPackage::JoyGeneralPackage()
-    :Package("joyer")
+    :GeneralPackage("joyer")
 {
-    genre = CPP;
-
     General *maque = new General(this, "maque", "god", 12);
     maque->addSkill(new Timer);
     maque->addSkill(new Lingyu);
@@ -638,8 +632,6 @@ JoyGeneralPackage::JoyGeneralPackage()
 
     addMetaObject<ZhuangcheCard>();
     addMetaObject<ChuiniuCard>();
-
-    type = GeneralPack;
 }
 
 ADD_PACKAGE(Kuso)

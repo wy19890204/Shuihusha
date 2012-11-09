@@ -81,9 +81,20 @@ protected:
     Genre genre;
 };
 
+class GeneralPackage : public Package{
+    Q_OBJECT
+public:
+    explicit GeneralPackage(const QString &name);
+};
+
+class CardPackage : public Package{
+    Q_OBJECT
+public:
+    explicit CardPackage(const QString &name);
+};
+
 typedef QHash<QString, Package *> PackageHash;
 class PackageAdder{
-
 
 public:
     PackageAdder(const QString &name, Package *pack){

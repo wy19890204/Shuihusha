@@ -844,10 +844,8 @@ public:
 };
 
 TigerPackage::TigerPackage()
-    :Package("tiger")
+    :GeneralPackage("tiger")
 {
-    genre = CPP;
-
     General *leiheng = new General(this, "leiheng", "guan");
     leiheng->addSkill(new Guzong);
 
