@@ -1,5 +1,5 @@
 
-dofile "funs.lua"
+dofile "extensions/ai/funs.lua"
 
 sgs.ai_skill_cardask.qll_shenchou=function(self, data, pattern, target, target2)
 	local cards=sgs.QList2Table(player:getCards("he"))

@@ -1,37 +1,4 @@
 
--- meicha
-meicha_skill={}
-meicha_skill.name = "meicha"
-table.insert(sgs.ai_skills, meicha_skill)
-meicha_skill.getTurnUseCard = function(self)
-	local cards = self.player:getCards("h")
-	cards=sgs.QList2Table(cards)
-	local card
-	self:sortByUseValue(cards,true)
-	for _,acard in ipairs(cards)  do
-		if (acard:getSuit() == sgs.Card_Club) then
-			card = acard
-			break
-		end
-	end
-	if not card then return nil end
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	local card_str = ("analeptic:meicha[club:%s]=%d"):format(number, card_id)
-	local analeptic = sgs.Card_Parse(card_str)
-	assert(analeptic)
-	return analeptic
-end
-sgs.ai_view_as["meicha"] = function(card, player, card_place)
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-
-	if card_place ~= sgs.Player_Equip and card:getSuit() == sgs.Card_Club then
-		return ("analeptic:meicha[%s:%s]=%d"):format(suit, number, card_id)
-	end
-end
-
 -- fanwu
 sgs.ai_skill_use["@@fanwu"] = function(self, prompt)
 	if self.player:isKongcheng() then return "." end
@@ -261,57 +228,6 @@ sgs.ai_cardshow["zhiyu"] = function(self, requestor)
 		self:sortByUseValue(cards, true)
 	end
 	return cards[1]
-end
-
--- qianxian
-local qianxian_skill={}
-qianxian_skill.name = "qianxian"
-table.insert(sgs.ai_skills, qianxian_skill)
-qianxian_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("QianxianCard") then return end
-	local cards = self.player:getCards("h")
-	cards = sgs.QList2Table(cards)
-	for _, acard in ipairs(cards) do
-		if acard:isNDTrick() and acard:isBlack() then
-			return sgs.Card_Parse("@QianxianCard=" .. acard:getEffectiveId())
-		end
-	end
-end
-sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
-	self:sort(self.enemies, "handcard")
-	local first, second
-	for _, tmp in ipairs(self.enemies) do
-		if not tmp:isChained() or tmp:faceUp() then
-			if not first then
-				first = tmp
-			elseif tmp:getMaxHP() ~= first:getMaxHP() then
-				second = tmp
-			end
-			if first and second then break end
-		end
-	end
-	if not first then
-		for _, tmp in ipairs(self.friends_noself) do
-			if tmp:getHandcardNum() > 2 and (not tmp:faceUp() or tmp:isChained()) then
-				first = tmp
-			elseif tmp:getMaxHP() ~= first:getMaxHP() then
-				second = tmp
-			end
-			if first and second then break end
-		end
-	elseif not second then
-		for _, tmp in ipairs(self.friends_noself) do
-			if tmp:getHandcardNum() > 2 and (not tmp:faceUp() or tmp:isChained()) then
-				second = tmp
-			end
-			if first and second then break end
-		end
-	end
-	if first and second and use.to then
-		use.card = card
-		use.to:append(first)
-		use.to:append(second)
-	end
 end
 
 -- baoen

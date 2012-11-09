@@ -169,7 +169,7 @@ function sgs.getDefense(player)
 	if player:getArmor() and not player:getArmor():inherits("GaleShell") then
 		defense = defense + 2
 	end
-	if not player:getArmor() and player:hasSkill("yuanyin") then
+	if not player:getArmor() and player:hasSkill("feizhen") then
 		defense = defense + 2
 	end
 	local m = sgs.masochism_skill:split("|")
@@ -484,7 +484,7 @@ function SmartAI:cardNeed(card)
 		if self.player:getHp() < 2 then return 10 end
 	end
 	if card:inherits("Slash") and (self:getCardsNum("Slash") > 0) then return 4 end
-	if card:inherits("Crossbow") and  self:hasSkills("zhanchi|qibing|yongle|guibing|shemi|shenhuo|baoguo|yuanyin|sixiang", self.player) then return 20 end
+	if card:inherits("Crossbow") and  self:hasSkills("zhanchi|qibing|yongle|guibing|shemi|shenhuo|baoguo|feizhen|sixiang", self.player) then return 20 end
 	if card:inherits("Axe") and  self:hasSkills("liba|meicha|juesi|manli", self.player) then return 15 end
 	if card:inherits("Weapon") and (not self.player:getWeapon()) and (self:getCardsNum("Slash") > 1) then return 6 end
 	if card:inherits("Nullification") and self:getCardsNum("Nullification") == 0 then
@@ -1538,6 +1538,7 @@ function SmartAI:filterEvent(event, player, data)
 	end
 	sgs.lastevent = event
 	sgs.lasteventdata = eventdata
+	local target
 	if event == sgs.ChoiceMade and self == sgs.recorder then
 		local carduse = data:toCardUse()
 		if carduse and carduse:isValid() then
@@ -1650,18 +1651,42 @@ function SmartAI:filterEvent(event, player, data)
 	elseif event == sgs.StartJudge then
 		local judge = data:toJudge()
 		local reason = judge.reason
-		if reason == "beige" then
+	--[[if reason == "beige" then
 			local caiwenji = self.room:findPlayerBySkillName("beige")
 			local intention = -60
 			if player:objectName() == caiwenji:objectName() then intention = 0 end
 			sgs.ai_card_intention.general(caiwenji, player, intention)
+		end]]
+	elseif event == sgs.FinishJudge then
+		local judge = data:toJudge()
+		local reason = judge.reason
+		if reason == "cuju" then
+			if judge:isBad() then
+				player:setFlags("CujuBad")
+			else
+				player:setFlags("-CujuBad")
+			end
 		end
+	elseif event == sgs.SlashEffect then
+		local effect = data:toSlashEffect()
+		target = effect.to
+	elseif event == sgs.SlashProceed then
+		local effect = data:toSlashEffect()
+		target = effect.to
+	elseif event == sgs.SlashHit then
+		local effect = data:toSlashEffect()
+		target = effect.to
 	elseif event == sgs.PhaseChange and player:isLord() and player:getPhase()== sgs.Player_Finish then
 		sgs.turncount = sgs.turncount + 1
 		--self.room:writeToConsole(self.player:objectName() .. " " .. sgs.turncount)
 	elseif event == sgs.GameStart then
 		sgs.turncount = 0
+	elseif event == sgs.Pindian then
+		local pindian = data:toPindian()
+		target = pindian.to
 	end
+
+	speakTrigger(nil, player, target, event)
 end
 
 function SmartAI:askForSuit(reason)
@@ -1934,7 +1959,7 @@ function SmartAI:askForCardChosen(who, flags, reason)
 				return who:getArmor():getId()
 			end
 
-			if self:isEquip("Monkey", who) then
+			if self:isEquip("Saru", who) then
 				return who:getOffensiveHorse():getId()
 			end
 		end
@@ -2252,6 +2277,11 @@ function SmartAI:askForPindian(requestor, reason)
 	minusecard = cards[1]
 	maxcard = maxcard or minusecard
 	mincard = mincard or minusecard
+	if requestor == self.player then
+		self:speak("pindian_target")
+	else
+		speak(requestor, "pindian")
+	end
 	local callback = sgs.ai_skill_pindian[reason]
 	if type(callback) == "function" then
 		local ret = callback(minusecard, self, requestor, maxcard, mincard)
@@ -2788,7 +2818,7 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 				end
 			end
 		end
-		if player:hasSkill("yuanyin") then
+		if player:hasSkill("feizhen") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
 				if target:getArmor() then
 					n = n + 1
@@ -2805,7 +2835,7 @@ function SmartAI:getCardsNum(class_name, player, flag, selfonly)
 		if player:hasSkill("guibing") then
 			n = n + 4
 		end
-		if player:hasSkill("yuanyin") then
+		if player:hasSkill("feizhen") then
 			for _, target in sgs.qlist(self.room:getOtherPlayers(player)) do
 				if target:getWeapon() then
 					n = n + 1
@@ -3103,7 +3133,7 @@ function SmartAI:getAoeValueTo(card, to , from)
 	local value = 0
 	local sj_num
 
-	if to:hasSkill("yuanyin") then
+	if to:hasSkill("feizhen") then
 		value = value + 5
 	end
 
@@ -3249,6 +3279,9 @@ function SmartAI:useTrickCard(card, use)
 		self:useCardByClassName(card, use)
 	end
 	if use.to then
+		if card:getSkillName() == "huace" then
+			self:speak("huace")
+		end
 		if not use.to:isEmpty() and sgs.dynamic_value.damage_card[card:className()] then
 			for _, target in sgs.qlist(use.to) do
 				if self:damageIsEffective(target) then return end
@@ -3398,7 +3431,7 @@ function SmartAI:useEquipCard(card, use)
 		for _,friend in ipairs(self.friends_noself) do
 			if not friend:getOffensiveHorse() then return end
 		end
-	elseif card:inherits("Monkey") or self.lua_ai:useCard(card) then
+	elseif card:inherits("Saru") or self.lua_ai:useCard(card) then
 		use.card = card
 	end
 end
@@ -3491,6 +3524,7 @@ local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 for _, aextension in ipairs(sgs.Sanguosha:getExtensions()) do
 	if not loaded:match(aextension) and files:match(string.lower(aextension)) then
 		dofile("lua/ai/" .. string.lower(aextension) .. "-ai.lua")
+		dofile("extensions/ai/" .. string.lower(aextension) .. "-ai.lua")
 	end
 end
 

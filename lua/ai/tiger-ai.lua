@@ -4,6 +4,7 @@
 -- guzong
 sgs.ai_skill_cardask["@guzong"] = function(self, data)
 	local player = data:toPlayer()
+	if player == self.player and self:getCard("Jink") then return "." end
 	if self:isFriend(player) then
 		local cards = self.player:getCards("he")
 		cards=sgs.QList2Table(cards)

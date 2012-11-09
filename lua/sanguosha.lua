@@ -34,7 +34,6 @@ function load_extensions(just_require)
 			local loaded = require(module_name)
 			
 			sgs.Sanguosha:addPackage(loaded.extension)
-			dofile("extensions/ai/" .. string.lower(name) .. "-ai.lua")
 		end
 	end
 end

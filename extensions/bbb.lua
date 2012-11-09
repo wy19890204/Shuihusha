@@ -1,6 +1,6 @@
 module("extensions.bbb",package.seeall)
 extension=sgs.Package("bbb")
-dofile "lua/funs.lua"
+dofile "extensions/ai/funs.lua"
 
 
 --ADD Generals--

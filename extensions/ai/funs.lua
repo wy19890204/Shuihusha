@@ -1,4 +1,4 @@
-----¼¼ÄÜ´¥·¢ĞÅÏ¢
+----æŠ€èƒ½è§¦å‘ä¿¡æ¯
 function SkillLog(player,str,typ,num)
 	local room=player:getRoom()
 	local log1=sgs.LogMessage()
@@ -22,10 +22,10 @@ function SkillLog(player,str,typ,num)
 	room:sendLog(log1)
 	return nil
 end
---CreateCardµÄÈı¸ö²ÎÊı£º
---1.ÄãÒª¸´ÖÆµÄ¿¨µÄobjectname£¨string£©£¬»òÕß¼¼ÄÜ¿¨µÄ±äÁ¿Ãû
---2.×Ó¿¨£¬¿ÉÒÔÊÇnumber£¬card£¬table£¬qlist
---3.¼¼ÄÜÃû£¬string
+--CreateCardçš„ä¸‰ä¸ªå‚æ•°ï¼š
+--1.ä½ è¦å¤åˆ¶çš„å¡çš„objectnameï¼ˆstringï¼‰ï¼Œæˆ–è€…æŠ€èƒ½å¡çš„å˜é‡å
+--2.å­å¡ï¼Œå¯ä»¥æ˜¯numberï¼Œcardï¼Œtableï¼Œqlist
+--3.æŠ€èƒ½åï¼Œstring
 function CreateCard(name,cards,skill)
 	local ct={}
 	if cards then
@@ -66,7 +66,7 @@ function CreateCard(name,cards,skill)
 	if skill then card:setSkillName(skill) end
 	return card
 end
---Ìí¼Ó´¥·¢¼¼ÄÜ
+--æ·»åŠ è§¦å‘æŠ€èƒ½
 function TempSkill(skill)
 	if not sgs.Sanguosha:getSkill(skill:objectName()) then
 		local skillList=sgs.SkillList()

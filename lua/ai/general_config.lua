@@ -96,7 +96,7 @@ sgs.ai_use_value =
 --	ShemiCard = 4.4,
 
 	-- bwqz
-	YuanyinCard = 4.3,
+	FeizhenCard = 4.3,
 	NushaCard = 6.1,
 	QiaogongCard = 2.3,
 	FeiqiangCard = 9.2,
@@ -224,7 +224,7 @@ sgs.ai_use_priority = {
 --	ShemiCard = 4.4,
 
 	-- bwqz
-	YuanyinCard = 8.3,
+	FeizhenCard = 8.3,
 	NushaCard = 7.1,
 	QiaogongCard = 3.3,
 	FeiqiangCard = 5.4,
