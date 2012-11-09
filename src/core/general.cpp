@@ -64,19 +64,9 @@ bool General::isTotallyHidden() const{
 }
 
 bool General::isLuaGeneral() const{
-    QString package = getPackage();  //for example: rat
-    QStringList localpackages = GetConfigFromLuaState(Sanguosha->getLuaState(), "package_names").toStringList();
-    foreach(QString luaname, localpackages){  //for example: Rat
-        Package *pack = PackageAdder::packages()[luaname];  //make rat to Rat
-        if(pack && pack->objectName() == package)
-            return false;
-    }
-    localpackages = GetConfigFromLuaState(Sanguosha->getLuaState(), "scene_names").toStringList();
-    foreach(QString luaname, localpackages){
-        Scenario *scenario = ScenarioAdder::scenarios()[luaname];
-        if(scenario && scenario->objectName() == package)
-            return false;
-    }
+    const Package *package = Sanguosha->findChild<const Package *>(getPackage());
+    //Package *package = PackageAdder::packages()[getPackage()];
+    //return package->getGenre() == Package::LUA;
     return true;
 }
 
@@ -84,15 +74,9 @@ QString General::getPixmapPath(const QString &category) const{
     QString suffix = "png";
     if(category == "card")
         suffix = "jpg";
-    //@todo:
-    //QString path = !isLuaGeneral() ? "image" : "extensions";
-    //return QString("%1/generals/%2/%3.%4").arg(path).arg(category).arg(objectName()).arg(suffix);
 
-    QString path = QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
-    if(!QFile::exists(path))
-        path = QString("extensions/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
-
-    return path;
+    QString path = !isLuaGeneral() ? "image" : "extensions";
+    return QString("%1/generals/%2/%3.%4").arg(path).arg(category).arg(objectName()).arg(suffix);
 }
 
 void General::addSkill(Skill *skill){
