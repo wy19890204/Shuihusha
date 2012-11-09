@@ -431,8 +431,8 @@ numa=sgs.CreateTriggerSkill{
 				for _, skill in sgs.qlist(player:getVisibleSkillList()) do
 					room:detachSkillFromPlayer(player, skill:objectName())
 				end
-				room:setPlayerProperty(player, "general", sgs.QVariant("sujiang"))
-				room:setPlayerProperty(player, "general2", sgs.QVariant("sujiangf"))
+				room:setPlayerProperty(player, "general", sgs.QVariant("shibing"))
+				room:setPlayerProperty(player, "general2", sgs.QVariant("shibingf"))
 				room:setPlayerProperty(player, "maxhp", sgs.QVariant(player:getMaxHp() + 2))
 		elseif string.len(word) == 5 and player:getMark("fivewd") == 0 then
 			gitlog.type = "#Numa_5wd"
