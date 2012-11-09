@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class MustangPackage : public Package{
+class MustangPackage : public GeneralPackage{
     Q_OBJECT
 
 public:

@@ -4,14 +4,14 @@
 #include "package.h"
 #include "standard.h"
 
-class KusoPackage: public Package{
+class KusoPackage: public CardPackage{
     Q_OBJECT
 
 public:
     KusoPackage();
 };
 
-class JoyPackage: public Package{
+class JoyPackage: public CardPackage{
     Q_OBJECT
 
 public:
@@ -74,7 +74,7 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
-class JoyGeneralPackage: public Package{
+class JoyGeneralPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

@@ -40,7 +40,7 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class CockPackage: public Package{
+class CockPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

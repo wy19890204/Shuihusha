@@ -36,7 +36,7 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class DragonPackage: public Package{
+class DragonPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

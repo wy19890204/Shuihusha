@@ -35,7 +35,7 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class MonkeyPackage: public Package{
+class MonkeyPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

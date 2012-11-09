@@ -41,7 +41,7 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 */
-class SPPackage: public Package{
+class SPPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

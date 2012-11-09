@@ -107,7 +107,7 @@ public:
     Q_INVOKABLE GoldArmor(Card::Suit suit, int number);
 };
 
-class PloughPackage: public Package{
+class PloughPackage: public CardPackage{
     Q_OBJECT
 
 public:

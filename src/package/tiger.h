@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class TigerPackage: public Package{
+class TigerPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

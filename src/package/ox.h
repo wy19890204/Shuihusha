@@ -5,7 +5,7 @@
 #include "card.h"
 #include "structs.h"
 
-class OxPackage : public Package{
+class OxPackage : public GeneralPackage{
     Q_OBJECT
 
 public:

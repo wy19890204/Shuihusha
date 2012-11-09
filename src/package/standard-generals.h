@@ -6,7 +6,7 @@
 #include "standard.h"
 #include "common-skillcards.h"
 
-class StandardPackage : public Package{
+class StandardPackage : public GeneralPackage{
     Q_OBJECT
 
 public:

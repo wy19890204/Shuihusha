@@ -6,7 +6,7 @@
 #include "skill.h"
 #include "standard.h"
 
-class BoarPackage : public Package{
+class BoarPackage : public GeneralPackage{
     Q_OBJECT
 
 public:
