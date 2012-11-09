@@ -3524,7 +3524,6 @@ local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 for _, aextension in ipairs(sgs.Sanguosha:getExtensions()) do
 	if not loaded:match(aextension) and files:match(string.lower(aextension)) then
 		dofile("lua/ai/" .. string.lower(aextension) .. "-ai.lua")
-		dofile("extensions/ai/" .. string.lower(aextension) .. "-ai.lua")
 	end
 end
 
@@ -3542,4 +3541,12 @@ if sgs.GetConfig("EnableBasara", false) then
 end
 if sgs.GetConfig("EnableHegemony", false) then
 	dofile "lua/ai/hegemony-ai.lua"
+end
+
+files = table.concat(sgs.GetFileNames("extensions/ai"), " ")
+
+for _, aextension in ipairs(sgs.Sanguosha:getLuaExtensions()) do
+	if files:match(string.lower(aextension)) then
+		dofile("extensions/ai/" .. string.lower(aextension) .. "-ai.lua")
+	end
 end

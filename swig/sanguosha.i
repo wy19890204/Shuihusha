@@ -678,6 +678,7 @@ public:
 	QString getVersion() const;
 	QString getVersionName() const;
 	QStringList getExtensions() const;
+	QStringList getLuaExtensions() const;
 	QStringList getKingdoms() const;
 	QColor getKingdomColor(const char *kingdom) const;
 	QString getSetupString() const;

@@ -321,6 +321,19 @@ QStringList Engine::getExtensions() const{
     return extensions;
 }
 
+QStringList Engine::getLuaExtensions() const{
+    QStringList extensions;
+    QList<const Package *> packages = findChildren<const Package *>();
+    foreach(const Package *package, packages){
+        if(package->inherits("Scenario"))
+            continue;
+        if(package->getGenre() == Package::CPP)
+            continue;
+        extensions << package->objectName();
+    }
+    return extensions;
+}
+
 QStringList Engine::getKingdoms() const{
     static QStringList kingdoms;
     if(kingdoms.isEmpty())
@@ -759,4 +772,8 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
     }
 
     return x;
+}
+
+bool Engine::biliBili() const{
+    return Config.value("Minibili").toString() == Config.UserName;
 }
