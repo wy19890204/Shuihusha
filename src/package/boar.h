@@ -1,16 +1,16 @@
-#ifndef GOD_H
-#define GOD_H
+#ifndef BOARPACKAGE_H
+#define BOARPACKAGE_H
 
 #include "package.h"
 #include "card.h"
 #include "skill.h"
 #include "standard.h"
 
-class GodPackage : public Package{
+class BoarPackage : public Package{
     Q_OBJECT
 
 public:
-    GodPackage();
+    BoarPackage();
 };
 
 class ZhushaCard: public SkillCard{
@@ -61,4 +61,4 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-#endif // GOD_H
+#endif // BOARPACKAGE_H

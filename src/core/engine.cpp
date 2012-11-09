@@ -760,3 +760,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
 
     return x;
 }
+
+bool Engine::biliBili() const{
+    return Config.value("Minibili").toString() == Config.UserName;
+}

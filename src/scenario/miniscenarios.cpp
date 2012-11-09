@@ -336,7 +336,8 @@ MiniScene::MiniScene(const QString &name)
     rule = new MiniSceneRule(this);
 
     int stage = name.right(2).toInt();
-    addGenerals(stage);
+    bool show = !Sanguosha->biliBili();
+    addGenerals(stage, show);
 }
 
 void MiniScene::setupCustom(QString name) const
