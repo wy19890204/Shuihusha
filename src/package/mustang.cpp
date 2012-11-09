@@ -723,6 +723,8 @@ public:
 MustangPackage::MustangPackage()
     :Package("mustang")
 {
+    genre = CPP;
+
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 

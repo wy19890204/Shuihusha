@@ -866,6 +866,8 @@ public:
 RatPackage::RatPackage()
     :Package("rat")
 {
+    genre = CPP;
+
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);
 

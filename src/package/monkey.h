@@ -35,11 +35,11 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class InterChangePackage: public Package{
+class MonkeyPackage: public Package{
     Q_OBJECT
 
 public:
-    InterChangePackage();
+    MonkeyPackage();
 };
 
 #endif // MONKEYPACKAGE_H

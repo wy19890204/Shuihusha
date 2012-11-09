@@ -624,6 +624,8 @@ public:
 JoyGeneralPackage::JoyGeneralPackage()
     :Package("joyer")
 {
+    genre = CPP;
+
     General *maque = new General(this, "maque", "god", 12);
     maque->addSkill(new Timer);
     maque->addSkill(new Lingyu);

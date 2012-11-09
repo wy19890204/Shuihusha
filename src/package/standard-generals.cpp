@@ -2654,6 +2654,8 @@ public:
 StandardPackage::StandardPackage()
     :Package("standard")
 {
+    genre = CPP;
+
     General *songjiang = new General(this, "songjiang$", "kou");
     songjiang->addSkill(new Ganlin);
     songjiang->addSkill(new Juyi);

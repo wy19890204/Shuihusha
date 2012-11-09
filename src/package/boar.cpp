@@ -604,6 +604,8 @@ public:
 BoarPackage::BoarPackage()
     :Package("boar")
 {
+    genre = CPP;
+
     General *shenwusong = new General(this, "shenwusong", "god", 5);
     shenwusong->addSkill(new Shenchou);
     shenwusong->addSkill(new Wujie);

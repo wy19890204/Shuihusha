@@ -7,6 +7,7 @@ Scenario::Scenario(const QString &name)
     :Package(name), rule(NULL)
 {
     type = SpecialPack;
+    genre = CPP;
 }
 
 int Scenario::getPlayerCount() const{

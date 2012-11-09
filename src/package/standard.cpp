@@ -682,6 +682,8 @@ public:
 TestPackage::TestPackage()
     :Package("test")
 {
+    genre = CPP;
+
     skills << new Wusheng;
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();

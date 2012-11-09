@@ -4,7 +4,6 @@
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
-#include "god.h"
 #include "standard.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)

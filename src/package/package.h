@@ -21,19 +21,26 @@ public:
 class Package: public QObject{
     Q_OBJECT
 
-    Q_ENUMS(Type);
+    Q_ENUMS(Type)
+    Q_ENUMS(Genre)
 
 public:
     enum Type{
         GeneralPack,
         CardPack,
         MixedPack,
-        SpecialPack,
+        SpecialPack
+    };
+
+    enum Genre{
+        LUA,
+        CPP
     };
 
     Package(const QString &name){
         setObjectName(name);
         type = GeneralPack;
+        genre = LUA;
     }
 
     QList<const QMetaObject *> getMetaObjects() const{
@@ -56,6 +63,10 @@ public:
         return type;
     }
 
+    Genre getGenre() const{
+        return genre;
+    }
+
     template<typename T>
     void addMetaObject(){
         metaobjects << &T::staticMetaObject;
@@ -67,6 +78,7 @@ protected:
     QMap<QString, const CardPattern *> patterns;
     QMultiMap<QString, QString> related_skills;
     Type type;
+    Genre genre;
 };
 
 typedef QHash<QString, Package *> PackageHash;

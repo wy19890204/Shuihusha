@@ -580,6 +580,8 @@ public:
 MonkeyPackage::MonkeyPackage()
     :Package("monkey")
 {
+    genre = CPP;
+
     General *caiqing = new General(this, "caiqing", "jiang", 5);
     caiqing->addSkill(new Lianzang);
 

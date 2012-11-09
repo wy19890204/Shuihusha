@@ -574,6 +574,8 @@ public:
 SnakePackage::SnakePackage()
     :Package("snake")
 {
+    genre = CPP;
+
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     muhong->addSkill("huqi");
