@@ -1,10 +1,9 @@
-
 -- this script to store the basic configuration for game program itself
 -- and it is a little different from config.ini
 
 config = {
 	version = "20121105",
-	version_name = "终结版F3.4",
+	version_name = "终结版F3.4 Shibada Wansui！",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
