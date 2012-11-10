@@ -3,7 +3,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
-#include "qlfd.h"
+#include "cock.h"
 #include "maneuvering.h"
 
 FanwuCard::FanwuCard(){
@@ -128,173 +128,6 @@ public:
             room->getThread()->delay(1500);
         }
         return false;
-    }
-};
-
-class Meicha: public OneCardViewAsSkill{
-public:
-    Meicha():OneCardViewAsSkill("meicha"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return Analeptic::IsAvailable(player);
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern.contains("analeptic");
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return !to_select->isEquipped() && to_select->getFilteredCard()->getSuit() == Card::Club;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getCard();
-        Analeptic *analeptic = new Analeptic(card->getSuit(), card->getNumber());
-        analeptic->setSkillName(objectName());
-        analeptic->addSubcard(card->getId());
-        return analeptic;
-    }
-};
-
-QianxianCard::QianxianCard(){
-    once = true;
-}
-
-bool QianxianCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(to_select == Self)
-        return false;
-    if(targets.isEmpty())
-        return true;
-    if(targets.length() == 1){
-        int max1 = targets.first()->getMaxHP();
-        return to_select->getMaxHP() != max1;
-    }
-    return false;
-}
-
-bool QianxianCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    if(targets.length() != 2)
-        return false;
-    int max1 = targets.first()->getMaxHP();
-    int max2 = targets.last()->getMaxHP();
-    return max1 != max2;
-}
-
-void QianxianCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    const Card *club = room->askForCard(effect.to, ".C", "@qianxian:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
-    if(club){
-        effect.from->obtainCard(club);
-        if(!effect.to->faceUp())
-            effect.to->turnOver();
-        room->setPlayerProperty(effect.to, "chained", false);
-    }
-    else{
-        if(effect.to->faceUp())
-            effect.to->turnOver();
-        room->setPlayerProperty(effect.to, "chained", true);
-    }
-}
-
-class Qianxian: public OneCardViewAsSkill{
-public:
-    Qianxian():OneCardViewAsSkill("qianxian"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("QianxianCard");
-    }
-
-    virtual bool viewFilter(const CardItem *blackfeiyanshitrick) const{
-        const Card *card = blackfeiyanshitrick->getCard();
-        return card->isBlack() && card->isNDTrick();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        QianxianCard *card = new QianxianCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
-    }
-};
-
-ZishiCard::ZishiCard(){
-    target_fixed = true;
-}
-
-void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    int num = this->getSubcards().length();
-    room->throwCard(this, source);
-    source->tag["ZiShi"] = num;
-}
-
-class ZishiViewAsSkill: public ViewAsSkill{
-public:
-    ZishiViewAsSkill():ViewAsSkill("zishi"){
-    }
-
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        return selected.length() < 3 && to_select->getCard()->isBlack();
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@zishi";
-    }
-
-    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() > 2 && !cards.isEmpty())
-            return NULL;
-        ZishiCard *card = new ZishiCard;
-        card->addSubcards(cards);
-        return card;
-    }
-};
-
-class Zishi:public DrawCardsSkill{
-public:
-    Zishi():DrawCardsSkill("zishi"){
-        view_as_skill = new ZishiViewAsSkill;
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getGeneral()->isMale();
-    }
-
-    virtual int getDrawNum(ServerPlayer *player, int n) const{
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> duan3iang = room->findPlayersBySkillName(objectName());
-        if(duan3iang.isEmpty())
-            return n;
-        foreach(ServerPlayer *duan3niang, duan3iang){
-            if(duan3niang->isNude())
-                continue;
-            duan3niang->tag["ZishiSource"] = QVariant::fromValue((PlayerStar)player);
-            if(room->askForUseCard(duan3niang, "@@zishi", "@zishi:" + player->objectName(), true)){
-                int delta = duan3niang->tag.value("ZiShi", 0).toInt();
-                if(delta > 0){
-                    QString choice = room->askForChoice(duan3niang, objectName(), "duo+shao", QVariant::fromValue((PlayerStar)player));
-                    LogMessage log;
-                    log.type = "#Zishi";
-                    log.from = duan3niang;
-                    log.to << player;
-                    log.arg = QString::number(delta);
-                    log.arg2 = choice == "duo" ? "duo" : "shao";
-                    n = choice == "duo" ? n + delta : n - delta;
-                    room->sendLog(log);
-                }
-                duan3niang->tag.remove("ZiShi");
-            }
-            duan3niang->tag.remove("ZishiSource");
-        }
-        return qMax(n, 0);
     }
 };
 
@@ -681,8 +514,8 @@ public:
     }
 };
 
-QLFDPackage::QLFDPackage()
-    :Package("QLFD")
+CockPackage::CockPackage()
+    :GeneralPackage("cock")
 {
     General *panqiaoyun = new General(this, "panqiaoyun", "min", 3, false);
     panqiaoyun->addSkill(new Fanwu);
@@ -690,13 +523,6 @@ QLFDPackage::QLFDPackage()
     panqiaoyun->addSkill(new MarkAssignSkill("@spray", 1));
     related_skills.insertMulti("panxin", "#@spray-1");
     panqiaoyun->addSkill(new Foyuan);
-
-    General *wangpo = new General(this, "wangpo", "min", 3, false);
-    wangpo->addSkill(new Qianxian);
-    wangpo->addSkill(new Meicha);
-
-    General *duansanniang = new General(this, "duansanniang", "min", 4, false);
-    duansanniang->addSkill(new Zishi);
 
     General *baixiuying = new General(this, "baixiuying", "min", 3, false);
     baixiuying->addSkill(new Eyan);
@@ -719,11 +545,9 @@ QLFDPackage::QLFDPackage()
     ximenqing->addSkill(new Caiquan);
 
     addMetaObject<FanwuCard>();
-    addMetaObject<QianxianCard>();
-    addMetaObject<ZishiCard>();
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
     addMetaObject<ZhangshiCard>();
 }
 
-ADD_PACKAGE(QLFD);
+ADD_PACKAGE(Cock)

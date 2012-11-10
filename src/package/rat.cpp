@@ -864,7 +864,7 @@ public:
 };
 
 RatPackage::RatPackage()
-    :Package("rat")
+    :GeneralPackage("rat")
 {
     General *liying = new General(this, "liying", "guan");
     liying->addSkill(new Kong1iang);

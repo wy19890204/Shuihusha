@@ -1,4 +1,4 @@
-#include "god.h"
+#include "boar.h"
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"
@@ -601,8 +601,8 @@ public:
     }
 };
 
-GodPackage::GodPackage()
-    :Package("god")
+BoarPackage::BoarPackage()
+    :GeneralPackage("boar")
 {
     General *shenwusong = new General(this, "shenwusong", "god", 5);
     shenwusong->addSkill(new Shenchou);
@@ -638,4 +638,4 @@ GodPackage::GodPackage()
     addMetaObject<HuafoCard>();
 }
 
-ADD_PACKAGE(God)
+ADD_PACKAGE(Boar)

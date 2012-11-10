@@ -114,7 +114,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
 
 
 KusoPackage::KusoPackage()
-    :Package("kuso"){
+    :CardPackage("kuso"){
     QList<Card *> cards;
 
     cards << new Shit(Card::Club, 1)
@@ -125,8 +125,6 @@ KusoPackage::KusoPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 class GrabPeach: public TriggerSkill{
@@ -161,25 +159,25 @@ public:
     }
 };
 
-Monkey::Monkey(Card::Suit suit, int number)
+Saru::Saru(Card::Suit suit, int number)
     :OffensiveHorse(suit, number)
 {
-    setObjectName("monkey");
+    setObjectName("saru");
 
     grab_peach = new GrabPeach;
     grab_peach->setParent(this);
 }
 
-void Monkey::onInstall(ServerPlayer *player) const{
+void Saru::onInstall(ServerPlayer *player) const{
     player->getRoom()->getThread()->addTriggerSkill(grab_peach);
 }
 
-void Monkey::onUninstall(ServerPlayer *player) const{
+void Saru::onUninstall(ServerPlayer *player) const{
 
 }
 
-QString Monkey::getEffectPath(bool ) const{
-    return "audio/card/common/monkey.ogg";
+QString Saru::getEffectPath(bool ) const{
+    return "audio/card/common/Saru.ogg";
 }
 
 class GaleShellSkill: public ArmorSkill{
@@ -259,11 +257,11 @@ void Poison::onEffect(const CardEffectStruct &card_effect) const{
 }
 
 JoyPackage::JoyPackage()
-    :Package("joy")
+    :CardPackage("joy")
 {
     QList<Card *> cards;
     cards
-                << new Monkey(Card::Diamond, 5)
+                << new Saru(Card::Diamond, 5)
                 << new GaleShell(Card::Heart, 1)
                 << new Poison(Card::Heart, 7)
                 << new Poison(Card::Club, 9)
@@ -271,9 +269,7 @@ JoyPackage::JoyPackage()
                 << new Poison(Card::Spade, 13);
 
     foreach(Card *card, cards)
-            card->setParent(this);
-
-    type = CardPack;
+        card->setParent(this);
 }
 
 class Timer: public PhaseChangeSkill{
@@ -622,7 +618,7 @@ public:
 };
 
 JoyGeneralPackage::JoyGeneralPackage()
-    :Package("joyer")
+    :GeneralPackage("joyer")
 {
     General *maque = new General(this, "maque", "god", 12);
     maque->addSkill(new Timer);
@@ -636,8 +632,6 @@ JoyGeneralPackage::JoyGeneralPackage()
 
     addMetaObject<ZhuangcheCard>();
     addMetaObject<ChuiniuCard>();
-
-    type = GeneralPack;
 }
 
 ADD_PACKAGE(Kuso)

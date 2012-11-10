@@ -846,6 +846,7 @@ void MeleeDialog::onGameOver(const QString &winner){
 
         room->startTest(avatar_button->property("to_test").toString());
     }
+    //stagebox->setValue(stage_count);
 }
 
 QGroupBox *MeleeDialog::createResultBox(){

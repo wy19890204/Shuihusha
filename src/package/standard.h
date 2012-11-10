@@ -7,7 +7,7 @@
 #include "skill.h"
 
 /*
-class CustomCardPackage: public Package{
+class CustomCardPackage: public CardPackage{
     Q_OBJECT
 
 public:
@@ -15,7 +15,7 @@ public:
 };
 */
 
-class TestPackage: public Package{
+class TestPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

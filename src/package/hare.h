@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class HarePackage: public Package{
+class HarePackage: public GeneralPackage{
     Q_OBJECT
 
 public:

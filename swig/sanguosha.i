@@ -21,8 +21,8 @@ public:
 	QString objectName();
 	void setObjectName(const char *name);
 	bool inherits(const char *class_name);
-	bool setProperty ( const char * name, const QVariant & value);
-	QVariant property ( const char * name ) const;
+	bool setProperty(const char * name, const QVariant & value);
+	QVariant property(const char * name ) const;
 	void setParent(QObject *parent);
 
 	void setParent(Card *card);
@@ -660,7 +660,15 @@ class DummyCard: public Card{
 
 class Package: public QObject{
 public:
+	enum Type{
+		GeneralPack,
+		CardPack,
+		MixedPack,
+		SpecialPack
+	};
+
 	Package(const char *name);
+	Type getType() const;
 };
 
 class Engine: public QObject

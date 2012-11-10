@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class EventsPackage: public Package{
+class EventsPackage: public CardPackage{
     Q_OBJECT
 
 public:

@@ -1079,7 +1079,7 @@ public:
 };
 
 OxPackage::OxPackage()
-    :Package("ox")
+    :GeneralPackage("ox")
 {
     General *gaolian = new General(this, "gaolian", "guan", 3);
     gaolian->addSkill(new Guibing);

@@ -409,7 +409,7 @@ public:
 #include <QTextStream>
 #include "plough.h"
 CustomCardPackage::CustomCardPackage()
-    :Package("custom_cards")
+    :CardPackage("custom_cards")
 {
     QList<Card *> cards;
     QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
@@ -450,8 +450,6 @@ CustomCardPackage::CustomCardPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 ADD_PACKAGE(CustomCard)
 */
@@ -680,7 +678,7 @@ public:
 };
 
 TestPackage::TestPackage()
-    :Package("test")
+    :GeneralPackage("test")
 {
     skills << new Wusheng;
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);

@@ -62,15 +62,15 @@ SOURCES += \
 	src/package/tiger.cpp \
 	src/package/hare.cpp \
 	src/package/dragon.cpp \
+	src/package/snake.cpp \
 	src/package/mustang.cpp \
-	src/package/qlfd.cpp \
-	src/package/cgdk.cpp \
-	src/package/ybyt.cpp \
+	src/package/sheep.cpp \
+	src/package/monkey.cpp \
+	src/package/cock.cpp \
+	src/package/boar.cpp \
 	src/package/sp.cpp \
 	src/package/mini-generals.cpp \
-	src/package/god.cpp \
 	src/package/joy.cpp \
-	src/package/interchange.cpp \
 	src/package/guben.cpp \
 	src/scenario/boss.cpp \
 	src/scenario/contract.cpp \
@@ -82,6 +82,7 @@ SOURCES += \
 	src/scenario/legend.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
+	src/scenario/warlords.cpp \
 	src/scenario/wheel_fight.cpp \
 	src/scenario/zombie.cpp \
 	src/server/ai.cpp \
@@ -198,15 +199,15 @@ HEADERS += \
 	src/package/tiger.h \
 	src/package/hare.h \
 	src/package/dragon.h \
+	src/package/snake.h \
 	src/package/mustang.h \
-	src/package/qlfd.h \
-	src/package/cgdk.h \
-	src/package/ybyt.h \
+	src/package/sheep.h \
+	src/package/monkey.h \
+	src/package/cock.h \
+	src/package/boar.h \
 	src/package/sp.h \
 	src/package/mini-generals.h \
-	src/package/god.h \
 	src/package/joy.h \
-	src/package/interchange.h \
 	src/package/guben.h \
 	src/scenario/boss.h \
 	src/scenario/contract.h \
@@ -218,6 +219,7 @@ HEADERS += \
 	src/scenario/legend.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
+	src/scenario/warlords.h \
 	src/scenario/wheel_fight.h \
 	src/scenario/zombie.h \
 	src/server/ai.h \

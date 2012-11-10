@@ -305,7 +305,7 @@ sgs.ai_chat.sijiu=
 sgs.ai_chat.liba=
 {
 "这JB鸟树，真TNND沉！",
-"去歧姐家把虫妹叫来~ "
+"你插的再深，洒家也能拔出来~"
 }
 --wusong
 sgs.ai_chat.fuhu=
@@ -334,6 +334,7 @@ sgs.ai_chat.goulian=
 --daizong
 sgs.ai_chat.jibao=
 {
+"让领导先走！",
 "戴跑跑，我跑啊跑啊跑~ ",
 "不好意思，还是我在跑~ "
 }
@@ -380,7 +381,8 @@ sgs.ai_chat.cuju_fail=
 sgs.ai_chat.jiashu=
 {
 "来，给大爷乐一个~",
-"要记住，你爸是李刚。"
+"要记住，你爸是李刚。",
+"去歧姐家把虫妹叫来~ "
 }
 --fangla
 sgs.ai_chat.yongle={

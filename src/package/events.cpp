@@ -243,7 +243,7 @@ bool Xiaobawang::isAvailable(const Player *) const{
 }
 
 EventsPackage::EventsPackage()
-    :Package("events_package")
+    :CardPackage("events_package")
 {
     QList<Card *> cards;
     cards
@@ -258,8 +258,6 @@ EventsPackage::EventsPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 ADD_PACKAGE(Events)

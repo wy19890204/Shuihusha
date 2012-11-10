@@ -1,5 +1,5 @@
-#ifndef QLFDPACKAGE_H
-#define QLFDPACKAGE_H
+#ifndef COCKPACKAGE_H
+#define COCKPACKAGE_H
 
 #include "package.h"
 #include "card.h"
@@ -11,26 +11,6 @@ public:
     Q_INVOKABLE FanwuCard();
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class QianxianCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE QianxianCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class ZishiCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE ZishiCard();
-
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class EyanCard: public SkillCard{
@@ -60,11 +40,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class QLFDPackage: public Package{
+class CockPackage: public GeneralPackage{
     Q_OBJECT
 
 public:
-    QLFDPackage();
+    CockPackage();
 };
 
-#endif // QLFDPACKAGE_H
+#endif // COCKPACKAGE_H

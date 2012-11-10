@@ -5,8 +5,8 @@ return {
 不详",
 
 -- test
-	["resume:sujiang"] = "男性无技能素将",
-	["resume:sujiangf"] = "女性无技能素将",
+	["resume:shibing"] = "男性无技能素将",
+	["resume:shibingf"] = "女性无技能素将",
 	["resume:ubuntenkei"] = "测试专用武将",
 -- standard
 	["resume:songjiang"] = "人物简介：\

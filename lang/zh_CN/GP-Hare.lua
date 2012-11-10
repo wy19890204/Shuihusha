@@ -156,7 +156,7 @@ return {
 	["zhoutong"] = "周通",
 	["cv:zhoutong"] = "疯狂牛魔王【风行天下】",
 	["coder:zhoutong"] = "roxiel",
-	["illustrator:zhoutong"] = "佚名",
+	["illustrator:zhoutong"] = "黑山老妖",
 	["qiangqu"] = "强娶",
 	[":qiangqu"] = "当你使用【杀】对已受伤的女性角色造成伤害时，你可以防止该伤害，获得该角色的一张牌，然后你与其各回复1点体力。",
 	["#Qiangqu"] = "%from 硬是把 %to 拉入了洞房",

@@ -891,7 +891,7 @@ public:
 };
 
 GubenPackage::GubenPackage()
-    :Package("guben")
+    ::GeneralPackage("guben")
 {
     // hero
     General *wujiao = new General(this, "wujiao", "kou", 3);

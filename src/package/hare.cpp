@@ -1108,7 +1108,7 @@ public:
 };
 
 HarePackage::HarePackage()
-    :Package("hare")
+    :GeneralPackage("hare")
 {
     General *haosiwen = new General(this, "haosiwen", "guan");
     haosiwen->addSkill(new Sixiang);

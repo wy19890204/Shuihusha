@@ -4,14 +4,14 @@
 #include "package.h"
 #include "standard.h"
 
-class KusoPackage: public Package{
+class KusoPackage: public CardPackage{
     Q_OBJECT
 
 public:
     KusoPackage();
 };
 
-class JoyPackage: public Package{
+class JoyPackage: public CardPackage{
     Q_OBJECT
 
 public:
@@ -39,11 +39,11 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
-class Monkey: public OffensiveHorse{
+class Saru: public OffensiveHorse{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Monkey(Card::Suit suit, int number);
+    Q_INVOKABLE Saru(Card::Suit suit, int number);
 
     virtual void onInstall(ServerPlayer *player) const;
     virtual void onUninstall(ServerPlayer *player) const;
@@ -74,7 +74,7 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
 };
 
-class JoyGeneralPackage: public Package{
+class JoyGeneralPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

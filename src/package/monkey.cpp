@@ -1,37 +1,11 @@
 #include "standard.h"
 #include "skill.h"
-#include "interchange.h"
+#include "monkey.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
 #include "ai.h"
 #include "plough.h"
-
-class Xianxi: public TriggerSkill{
-public:
-    Xianxi():TriggerSkill("xianxi"){
-        events << SlashMissed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        int jink = effect.jink->getEffectiveId();
-        if(!Sanguosha->getCard(jink)->inherits("Jink"))
-            return false;
-        LogMessage log;
-        log.from = player;
-        log.type = "#Xianxi";
-        log.arg = objectName();
-        room->sendLog(log);
-        if(player->getCardCount(true) >= 2){
-            if(!room->askForDiscard(player, objectName(), 2, true, true))
-                room->loseHp(player);
-        }
-        else
-            room->loseHp(player);
-        return false;
-    }
-};
 
 class Lianzang: public TriggerSkill{
 public:
@@ -337,26 +311,6 @@ public:
     }
 };
 
-class Fangsheng:public PhaseChangeSkill{
-public:
-    Fangsheng():PhaseChangeSkill("fangsheng"){
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *taiwei) const{
-        if(taiwei->getPhase() == Player::Start && taiwei->getHandcardNum() > taiwei->getHp() &&
-           taiwei->askForSkillInvoke(objectName())){
-            Room *room = taiwei->getRoom();
-            taiwei->drawCards(2, false);
-            room->playSkillEffect(objectName());
-
-            PlayerStar target = room->askForPlayerChosen(taiwei, room->getOtherPlayers(taiwei), objectName());
-            target->gainAnExtraTurn(taiwei);
-            taiwei->skip();
-        }
-        return false;
-    }
-};
-
 class Tancai:public PhaseChangeSkill{
 public:
     Tancai():PhaseChangeSkill("tancai"){
@@ -623,52 +577,9 @@ public:
     }
 };
 
-BomingCard::BomingCard(){
-    once = true;
-}
-
-bool BomingCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    return to_select->hasEquip() && Self->inMyAttackRange(to_select) && Self != to_select;
-}
-
-void BomingCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    DummyCard *dummy = new DummyCard;
-    int dmgnum = effect.to->getEquips().length();
-    foreach(const Card *equip, effect.to->getEquips())
-        dummy->addSubcard(equip);
-    DamageStruct damage;
-    damage.from = effect.from;
-    damage.to = effect.to;
-    damage.card = dummy;
-    damage.damage = dmgnum;
-    room->damage(damage);
-    room->loseHp(effect.from, dmgnum);
-}
-
-class Boming: public ZeroCardViewAsSkill{
-public:
-    Boming():ZeroCardViewAsSkill("boming"){
-
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("BomingCard");
-    }
-
-    virtual const Card *viewAs() const{
-        return new BomingCard;
-    }
-};
-
-InterChangePackage::InterChangePackage()
-    :Package("interchange")
+MonkeyPackage::MonkeyPackage()
+    :GeneralPackage("monkey")
 {
-    General *qinming = new General(this, "qinming", "guan");
-    qinming->addSkill(new Xianxi);
-
     General *caiqing = new General(this, "caiqing", "jiang", 5);
     caiqing->addSkill(new Lianzang);
 
@@ -691,9 +602,6 @@ InterChangePackage::InterChangePackage()
     tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
-    General *hongxin = new General(this, "hongxin", "guan");
-    hongxin->addSkill(new Fangsheng);
-
     General *zhangmengfang = new General(this, "zhangmengfang", "guan");
     zhangmengfang->addSkill(new Tancai);
 
@@ -714,13 +622,9 @@ InterChangePackage::InterChangePackage()
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qing5hang);
 
-    General *shixiu = new General(this, "shixiu", "kou", 4);
-    shixiu->addSkill(new Boming);
-
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
     addMetaObject<XianhaiCard>();
-    addMetaObject<BomingCard>();
 }
 
-ADD_PACKAGE(InterChange);
+ADD_PACKAGE(Monkey)

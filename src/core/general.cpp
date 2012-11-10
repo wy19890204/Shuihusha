@@ -65,9 +65,7 @@ bool General::isTotallyHidden() const{
 
 bool General::isLuaGeneral() const{
     const Package *package = Sanguosha->findChild<const Package *>(getPackage());
-    //Package *package = PackageAdder::packages()[getPackage()];
-    //return package->getGenre() == Package::LUA;
-    return true;
+    return package->getGenre() == Package::LUA;
 }
 
 QString General::getPixmapPath(const QString &category) const{

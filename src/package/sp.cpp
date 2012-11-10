@@ -351,7 +351,7 @@ public:
                 room->askForUseCard(conan, "@@luanjun", "@luanjun", true);
             if(conan == player || conan->getKingdom() == player->getKingdom())
                 continue;
-            if(conan->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
+            if(player->isAlive() && conan->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 player->drawCards(1);
             }
@@ -758,7 +758,7 @@ public:
 };
 */
 SPPackage::SPPackage()
-    :Package("sp")
+    :GeneralPackage("sp")
 {
     General *luda = new General(this, "luda", "guan");
     luda->addSkill(new Baoquan);

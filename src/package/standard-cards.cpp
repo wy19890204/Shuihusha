@@ -1078,10 +1078,8 @@ public:
 };
 
 StandardCardPackage::StandardCardPackage()
-    :Package("standard_cards")
+    :CardPackage("standard_cards")
 {
-    type = Package::CardPack;
-
     QList<Card*> cards;
 
     cards << new Slash(Card::Spade, 7)
@@ -1224,7 +1222,7 @@ StandardCardPackage::StandardCardPackage()
 
 #include "plough.h"
 ExCardPackage::ExCardPackage()
-    :Package("ex_cards")
+    :CardPackage("ex_cards")
 {
     QList<Card *> cards;
     cards
@@ -1238,8 +1236,6 @@ ExCardPackage::ExCardPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 ADD_PACKAGE(StandardCard)

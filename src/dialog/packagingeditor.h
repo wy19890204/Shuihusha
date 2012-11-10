@@ -38,10 +38,17 @@ private:
 
 private slots:
     void installPackage();
+<<<<<<< HEAD
+=======
+    void modifyPackage(QListWidgetItem* item);
+>>>>>>> 200f492716447d10829e0c3bee57942241d524f0
     void modifyPackage();
     void uninstallPackage();
+    void hideorshowPackage();
     void rescanPackage();
     void browseFiles();
+    void removeFile(QListWidgetItem* item, bool mute = true);
+    void removeFile();
     void makePackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);

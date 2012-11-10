@@ -4,7 +4,7 @@
 #include "package.h"
 #include "standard.h"
 
-class GiftPackage : public Package{
+class GiftPackage : public CardPackage{
     Q_OBJECT
 
 public:

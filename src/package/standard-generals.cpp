@@ -544,7 +544,7 @@ public:
     }
 
     static void stopCry(Room *room, ServerPlayer *player){
-        player->loseMark("@shut");
+        player->loseAllMarks("@shut");
 
         QString data = player->tag.value("QimenStore").toString();
         QStringList Qimen_data = data.split("+");
@@ -2652,7 +2652,7 @@ public:
 };
 
 StandardPackage::StandardPackage()
-    :Package("standard")
+    :GeneralPackage("standard")
 {
     General *songjiang = new General(this, "songjiang$", "kou");
     songjiang->addSkill(new Ganlin);
