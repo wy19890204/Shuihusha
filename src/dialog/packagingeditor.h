@@ -31,16 +31,20 @@ private:
 
     QListWidget *file_list;
     MetaInfoWidget *file_list_meta;
-
+    QTabWidget *tab_widget;
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
     void loadPackageList();
 
 private slots:
     void installPackage();
+    void modifyPackage(QListWidgetItem* item);
+    void modifyPackage();
     void uninstallPackage();
     void rescanPackage();
     void browseFiles();
+    void removeFile(QListWidgetItem* item, bool mute = true);
+    void removeFile();
     void makePackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);

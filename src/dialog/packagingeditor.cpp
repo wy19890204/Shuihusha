@@ -83,7 +83,7 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
     QString url = "http://www.7-zip.org";
     QLabel *label = new QLabel(tr("Package format is 7z, see its offcial site :<a href='%1' style = \"color:#0072c1; \">%1</a>").arg(url));
 
-    QTabWidget *tab_widget = new QTabWidget;
+    tab_widget = new QTabWidget;
     tab_widget->addTab(createManagerTab(), tr("Package management"));
     tab_widget->addTab(createPackagingTab(), tr("Make package"));
 
@@ -128,6 +128,9 @@ QWidget *PackagingEditor::createManagerTab(){
     QCommandLinkButton *install_button = new QCommandLinkButton(tr("Install"));
     install_button->setDescription(tr("Install a DIY package"));
 
+    QCommandLinkButton *modify_button = new QCommandLinkButton(tr("Modify"));
+    modify_button->setDescription(tr("Modify a DIY package"));
+
     QCommandLinkButton *uninstall_button = new QCommandLinkButton(tr("Uninstall"));
     uninstall_button->setDescription(tr("Uninstall a DIY package"));
 
@@ -135,6 +138,7 @@ QWidget *PackagingEditor::createManagerTab(){
     rescan_button->setDescription(tr("Rescan existing packages"));
 
     vlayout->addWidget(install_button);
+    vlayout->addWidget(modify_button);
     vlayout->addWidget(uninstall_button);
     vlayout->addWidget(rescan_button);
     vlayout->addStretch();
@@ -146,9 +150,11 @@ QWidget *PackagingEditor::createManagerTab(){
     widget->setLayout(layout);
 
     connect(install_button, SIGNAL(clicked()), this, SLOT(installPackage()));
+    connect(modify_button, SIGNAL(clicked()), this, SLOT(modifyPackage()));
     connect(uninstall_button, SIGNAL(clicked()), this, SLOT(uninstallPackage()));
     connect(rescan_button, SIGNAL(clicked()), this, SLOT(rescanPackage()));
     connect(package_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
+    connect(package_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyPackage(QListWidgetItem*)));
 
     return widget;
 }
@@ -177,13 +183,17 @@ QWidget *PackagingEditor::createPackagingTab(){
 
     QVBoxLayout *vlayout = new QVBoxLayout;
 
-    QCommandLinkButton *browse_button = new QCommandLinkButton(tr("Browse files"));
+    QCommandLinkButton *browse_button = new QCommandLinkButton(tr("Add files"));
     browse_button->setDescription(tr("Select files to package"));
+
+    QCommandLinkButton *remove_button = new QCommandLinkButton(tr("Remove files"));
+    remove_button->setDescription(tr("Remove files to package"));
 
     QCommandLinkButton *package_button = new QCommandLinkButton(tr("Make package"));
     package_button->setDescription(tr("Export files to a single package"));
 
     vlayout->addWidget(browse_button);
+    vlayout->addWidget(remove_button);
     vlayout->addWidget(package_button);
     vlayout->addStretch();
 
@@ -195,7 +205,9 @@ QWidget *PackagingEditor::createPackagingTab(){
     widget->setLayout(layout);
 
     connect(browse_button, SIGNAL(clicked()), this, SLOT(browseFiles()));
+    connect(remove_button, SIGNAL(clicked()), this, SLOT(removeFile()));
     connect(package_button, SIGNAL(clicked()), this, SLOT(makePackage()));
+    connect(file_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeFile(QListWidgetItem*)));
 
     return widget;
 }
@@ -217,21 +229,41 @@ void PackagingEditor::installPackage(){
     }
 }
 
+void PackagingEditor::modifyPackage(QListWidgetItem* item){
+    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
+    if(settings == NULL)
+        return;
+
+    tab_widget->setCurrentIndex(1);
+
+    file_list->clear();
+    QStringList filelist = settings->value("FileList").toStringList();
+    foreach(QString file, filelist)
+        new QListWidgetItem(file, file_list);
+
+    file_list_meta->showSettings(settings);
+}
+
+void PackagingEditor::modifyPackage(){
+    QListWidgetItem *item = package_list->currentItem();
+    if(item)
+        modifyPackage(item);
+}
+
 void PackagingEditor::uninstallPackage(){
     QListWidgetItem *item = package_list->currentItem();
     if(item == NULL)
         return;
 
-    int settings_ptr = item->data(Qt::UserRole).toInt();
-    QSettings *settings = reinterpret_cast<QSettings *>(settings_ptr);
-
+    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
     if(settings == NULL)
         return;
 
     QMessageBox::StandardButton button = QMessageBox::question(this,
                                                                tr("Are you sure"),
-                                                               tr("Are you sure to remove ?"));
-    if(button != QMessageBox::Ok)
+                                                               tr("Are you sure to remove ?"),
+                                                               QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
+    if(button != QMessageBox::Yes)
         return;
 
     QStringList filelist = settings->value("FileList").toStringList();
@@ -240,7 +272,7 @@ void PackagingEditor::uninstallPackage(){
 
     QFile::remove(settings->fileName());
 
-    settings->deleteLater();
+    //settings->deleteLater();
 
     delete item;
 }
@@ -254,6 +286,34 @@ void PackagingEditor::browseFiles(){
     QDir dir;
     foreach(QString file, files){
         new QListWidgetItem(dir.relativeFilePath(file), file_list);
+    }
+}
+
+void PackagingEditor::removeFile(QListWidgetItem* item, bool mute){
+    if(mute == true){
+        delete(item);
+        return;
+    }
+    QString file_name = item->text();
+
+    QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Remove file"), tr("Are you sure to physical delete this file?"),
+                                                              QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel), QMessageBox::Cancel);
+    if(button == QMessageBox::Cancel)
+        return;
+    if(button == QMessageBox::Yes)
+        QFile::remove(file_name);
+    delete(item);
+}
+
+void PackagingEditor::removeFile(){
+    QListWidgetItem *item = file_list->currentItem();
+    if(item)
+        removeFile(item, false);
+    else{
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Clear file list"), tr("Are you sure to clear the file list?"),
+                                                                   QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
+        if(button == QMessageBox::Yes)
+            file_list->clear();
     }
 }
 
