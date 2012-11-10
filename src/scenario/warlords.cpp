@@ -1,6 +1,5 @@
 #include "warlords.h"
 #include "engine.h"
-#include "standard-skillcards.h"
 #include "clientplayer.h"
 #include "client.h"
 #include "carditem.h"
@@ -81,10 +80,6 @@ public:
     }
 };
 
-bool WarlordsScenario::exposeRoles() const{
-    return true;
-}
-
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
@@ -100,10 +95,6 @@ QString WarlordsScenario::getRoles() const{
     return "NNNNNNNN";
 }
 
-bool WarlordsScenario::generalSelection() const{
-    return true;
-}
-
 bool WarlordsScenario::lordWelfare(const ServerPlayer *player) const{
     return false;
 }
@@ -113,7 +104,7 @@ void WarlordsScenario::onTagSet(Room *room, const QString &key) const{
 }
 
 WarlordsScenario::WarlordsScenario()
-    :Scenario("warlords-mode")
+    :Scenario("warlords")
 {
     rule = new WarlordsRule(this);
 }

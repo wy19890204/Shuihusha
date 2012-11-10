@@ -10,11 +10,9 @@ class WarlordsScenario : public Scenario{
 public:
     explicit WarlordsScenario();
 
-    virtual bool exposeRoles() const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual QString getRoles() const;
-    virtual bool generalSelection() const;
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
 };
