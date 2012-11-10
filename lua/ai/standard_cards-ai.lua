@@ -232,7 +232,7 @@ function SmartAI:useCardSlash(card, use)
 	end
 
 	for _, friend in ipairs(self.friends_noself) do
-		if friend:hasSkill("baoguo") and friend:getHp() > 1 and
+		if friend:hasSkill("longluo") and friend:getHp() > 1 and
 			not (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage")) then
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card, friend)
@@ -243,7 +243,6 @@ function SmartAI:useCardSlash(card, use)
 					use.card = card
 					if use.to then
 						use.to:append(friend)
-						self:speak("renrou")
 						if self.slash_targets <= use.to:length() then return end
 					end
 				end
@@ -674,6 +673,9 @@ function SmartAI:useCardAmazingGrace(card, use)
 	if #self.friends >= #self.enemies or (self:hasSkills(sgs.need_kongcheng) and self.player:getHandcardNum() == 1)
 		or self.player:hasSkill("longjiao") then
 		use.card = card
+		if not use.isDummy then
+			self:speak("amazing_grace")
+		end
 	end
 end
 
@@ -702,6 +704,9 @@ function SmartAI:useCardGodSalvation(card, use)
 
 	if good > bad then
 		use.card = card
+		if not use.isDummy then
+			self:speak("god_salvation")
+		end
 	end
 end
 
@@ -848,7 +853,7 @@ function SmartAI:getValuableCard(who)
 		return armor:getEffectiveId()
 	end
 
-	if self:isEquip("Monkey", who) then
+	if self:isEquip("Saru", who) then
 		return offhorse:getEffectiveId()
 	end
 

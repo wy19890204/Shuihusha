@@ -157,10 +157,11 @@ function SmartAI:useCardWiretap(wiretap, use)
 		end
 	end
 	if #targets == 0 then return "." end
+	local r = math.random(1, #targets)
 	use.card = wiretap
 	if use.to then
-		local r = math.random(1, #targets)
 		use.to:append(targets[r])
+		self:speak("wiretap", targets[r]:getGeneral():isFemale(), targets[r])
 	end
 end
 
@@ -209,7 +210,7 @@ function SmartAI:useCardAssassinate(ass, use)
 end
 
 sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
-	self:speak("assassinate", self.player:getGeneral():isFemale(), to)
+	self:speak("assassinate", self.player:getGeneral():isFemale())
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
 	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end
 end

@@ -1,5 +1,16 @@
 -- AI for mustang package
 
+-- yueli
+function sgs.ai_slash_prohibit.yueli(self, to)
+	if self:isEquip("EightDiagram", to) then return true end
+end
+
+-- taohui
+sgs.ai_skill_playerchosen["taohui"] = function(self, targets)
+	self:sort(self.friends, "handcard")
+	return self.friends[1]
+end
+
 -- manli
 sgs.ai_skill_invoke["manli"] = sgs.ai_skill_invoke["liba"]
 
@@ -32,65 +43,93 @@ sgs.ai_skill_askforag["tianyan"] = function(self, card_ids)
 	return -1
 end
 
--- paohong
-local paohong_skill={}
-paohong_skill.name = "paohong"
-table.insert(sgs.ai_skills, paohong_skill)
-paohong_skill.getTurnUseCard = function(self)
+-- hunjiu-jiu
+hunjiu_skill={}
+hunjiu_skill.name = "hunjiu"
+table.insert(sgs.ai_skills, hunjiu_skill)
+hunjiu_skill.getTurnUseCard = function(self)
 	local cards = self.player:getCards("h")
 	cards=sgs.QList2Table(cards)
-	local thunder_card
-	self:sortByUseValue(cards, true)
-	for _,card in ipairs(cards)  do
-		if card:objectName() == "slash" and card:isBlack() then
-			thunder_card = card
+	local card
+	self:sortByUseValue(cards,true)
+	for _,acard in ipairs(cards)  do
+		if (acard:inherits("Ecstasy") or
+			(not self.player:isWounded() and acard:inherits("Peach"))) then
+			card = acard
 			break
 		end
 	end
-	if thunder_card then
-		local suit = thunder_card:getSuitString()
-		local number = thunder_card:getNumberString()
-		local card_id = thunder_card:getEffectiveId()
-		local card_str = ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id)
-		return sgs.Card_Parse(card_str)
-	end
-end
-sgs.ai_filterskill_filter["paohong"] = function(card, card_place)
+	if not card then return nil end
 	local suit = card:getSuitString()
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
-	if card:objectName() == "slash" and card:isBlack() then return ("thunder_slash:paohong[%s:%s]=%d"):format(suit, number, card_id) end
+	local card_str = ("analeptic:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
+	local caard = sgs.Card_Parse(card_str)
+	assert(caard)
+	return caard
+end
+-- hunjiu-mi
+hunjiu2_skill={}
+hunjiu2_skill.name = "hunjiu"
+table.insert(sgs.ai_skills, hunjiu2_skill)
+hunjiu2_skill.getTurnUseCard = function(self)
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local card
+	self:sortByUseValue(cards,true)
+	for _,acard in ipairs(cards)  do
+		if (acard:inherits("Analeptic") or
+			(not self.player:isWounded() and acard:inherits("Peach"))) then
+			card = acard
+			break
+		end
+	end
+	if not card then return nil end
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+	local card_str = ("ecstasy:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
+	local caard = sgs.Card_Parse(card_str)
+	assert(caard)
+	return caard
+end
+sgs.ai_view_as["hunjiu"] = function(card, player, card_place, class_name)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local card_id = card:getEffectiveId()
+
+	if card:inherits("Peach") or card:inherits("Analeptic") or card:inherits("Ecstasy") then
+		if class_name == "Analeptic" then
+			return ("analeptic:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
+		else
+			return ("ecstasy:hunjiu[%s:%s]=%d"):format(suit, number, card_id)
+		end
+	end
+end
+
+-- guitai
+sgs.ai_skill_cardask["@guitai"] = function(self, data)
+	local ard
+	local cards = self.player:getCards("he")
+	cards=sgs.QList2Table(cards)
+	self:sortByUseValue(cards, true)
+	for _, card in ipairs(cards) do
+		if card:getSuit() == sgs.Card_Heart then
+			ard = card
+			break
+		end
+	end
+	if not ard then return "." end
+	local effect = data:toCardEffect()
+	if self:isEnemy(effect.to) or
+		(self:isFriend(effect.to) and self:isWeak() and not self:isWeak(effect.to)) then
+		return ard:getEffectiveId()
+	else
+		return "."
+	end
 end
 
 -- tuzai&longjiao
 sgs.ai_skill_invoke["tuzai"] = true
 sgs.ai_skill_invoke["longjiao"] = true
-
--- cihu
-sgs.ai_skill_invoke["@cihu"] = function(self, prompt)
-	local num = self.player:getMark("CihuNum")
-	local ogami = self.player:getTag("CihuOgami"):toPlayer()
-	if self:isFriend(ogami) then return "." end
-	local caninvoke = false
-	local women = {}
-	local players = self.room:getMenorWomen("female")
-	players = sgs.QList2Table(players)
-	for _, woman in ipairs(players) do
-		if woman:isWounded() and self:isFriend(woman) then
-			caninvoke = true
-			table.insert(women, woman)
-		end
-	end
-	if self.player:getHp() > 2 and caninvoke then
-		self:sort(women, "hp")
-		local cards = self.player:getCards("he")
-		cards = sgs.QList2Table(cards)
-		local card_ids = {}
-		for i = 1, num do
-			table.insert(card_ids, cards[i]:getEffectiveId())
-		end
-		return "@CihuCard=" .. table.concat(card_ids, "+") .. "->" .. women[1]:objectName()
-	end
-	return "."
-end
 

@@ -125,7 +125,7 @@ end
 
 sgs.ai_use_value.SupplyShortage = 7
 
-sgs.ai_card_intention.SupplyShortage = 120
+sgs.ai_card_intention.SupplyShortage = sgs.ai_card_intention.Indulgence
 
 sgs.dynamic_value.control_usecard.SupplyShortage = true
 
