@@ -83,7 +83,7 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
     QString url = "http://www.7-zip.org";
     QLabel *label = new QLabel(tr("Package format is 7z, see its offcial site :<a href='%1' style = \"color:#0072c1; \">%1</a>").arg(url));
 
-    QTabWidget *tab_widget = new QTabWidget;
+    tab_widget = new QTabWidget;
     tab_widget->addTab(createManagerTab(), tr("Package management"));
     tab_widget->addTab(createPackagingTab(), tr("Make package"));
 
@@ -128,6 +128,9 @@ QWidget *PackagingEditor::createManagerTab(){
     QCommandLinkButton *install_button = new QCommandLinkButton(tr("Install"));
     install_button->setDescription(tr("Install a DIY package"));
 
+    QCommandLinkButton *modify_button = new QCommandLinkButton(tr("Modify"));
+    modify_button->setDescription(tr("Modify a DIY package"));
+
     QCommandLinkButton *uninstall_button = new QCommandLinkButton(tr("Uninstall"));
     uninstall_button->setDescription(tr("Uninstall a DIY package"));
 
@@ -135,6 +138,7 @@ QWidget *PackagingEditor::createManagerTab(){
     rescan_button->setDescription(tr("Rescan existing packages"));
 
     vlayout->addWidget(install_button);
+    vlayout->addWidget(modify_button);
     vlayout->addWidget(uninstall_button);
     vlayout->addWidget(rescan_button);
     vlayout->addStretch();
@@ -146,6 +150,7 @@ QWidget *PackagingEditor::createManagerTab(){
     widget->setLayout(layout);
 
     connect(install_button, SIGNAL(clicked()), this, SLOT(installPackage()));
+    connect(modify_button, SIGNAL(clicked()), this, SLOT(modifyPackage()));
     connect(uninstall_button, SIGNAL(clicked()), this, SLOT(uninstallPackage()));
     connect(rescan_button, SIGNAL(clicked()), this, SLOT(rescanPackage()));
     connect(package_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
@@ -217,14 +222,30 @@ void PackagingEditor::installPackage(){
     }
 }
 
+void PackagingEditor::modifyPackage(){
+    QListWidgetItem *item = package_list->currentItem();
+    if(item == NULL)
+        return;
+
+    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
+    if(settings == NULL)
+        return;
+
+    tab_widget->setCurrentIndex(1);
+
+    QStringList filelist = settings->value("FileList").toStringList();
+    foreach(QString file, filelist)
+        new QListWidgetItem(file, file_list);
+
+    package_list_meta->showSettings(settings);
+}
+
 void PackagingEditor::uninstallPackage(){
     QListWidgetItem *item = package_list->currentItem();
     if(item == NULL)
         return;
 
-    int settings_ptr = item->data(Qt::UserRole).toInt();
-    QSettings *settings = reinterpret_cast<QSettings *>(settings_ptr);
-
+    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
     if(settings == NULL)
         return;
 
@@ -240,7 +261,7 @@ void PackagingEditor::uninstallPackage(){
 
     QFile::remove(settings->fileName());
 
-    settings->deleteLater();
+    //settings->deleteLater();
 
     delete item;
 }

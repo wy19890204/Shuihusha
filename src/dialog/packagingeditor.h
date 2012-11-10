@@ -31,13 +31,14 @@ private:
 
     QListWidget *file_list;
     MetaInfoWidget *file_list_meta;
-
+    QTabWidget *tab_widget;
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
     void loadPackageList();
 
 private slots:
     void installPackage();
+    void modifyPackage();
     void uninstallPackage();
     void rescanPackage();
     void browseFiles();
