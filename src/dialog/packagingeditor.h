@@ -41,6 +41,7 @@ private slots:
     void modifyPackage(QListWidgetItem* item);
     void modifyPackage();
     void uninstallPackage();
+    void hideorshowPackage();
     void rescanPackage();
     void browseFiles();
     void removeFile(QListWidgetItem* item, bool mute = true);

@@ -101,6 +101,8 @@ void PackagingEditor::loadPackageList(){
     foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.ini")){
         const QSettings *settings = new QSettings(info.filePath(), QSettings::IniFormat, package_list);
 
+        if(qgetenv("USERNAME") != "Tenkei" && settings->value("Hide", false).toBool())
+            continue;
         QString name = settings->value("Name").toString();
         if(name.isEmpty())
             name = info.baseName();
@@ -134,12 +136,16 @@ QWidget *PackagingEditor::createManagerTab(){
     QCommandLinkButton *uninstall_button = new QCommandLinkButton(tr("Uninstall"));
     uninstall_button->setDescription(tr("Uninstall a DIY package"));
 
+    QCommandLinkButton *hdsw_button = new QCommandLinkButton(tr("Hide/Show"));
+    hdsw_button->setDescription(tr("Hide or show a DIY package"));
+
     QCommandLinkButton *rescan_button = new QCommandLinkButton(tr("Rescan"));
     rescan_button->setDescription(tr("Rescan existing packages"));
 
     vlayout->addWidget(install_button);
     vlayout->addWidget(modify_button);
     vlayout->addWidget(uninstall_button);
+    vlayout->addWidget(hdsw_button);
     vlayout->addWidget(rescan_button);
     vlayout->addStretch();
 
@@ -152,6 +158,7 @@ QWidget *PackagingEditor::createManagerTab(){
     connect(install_button, SIGNAL(clicked()), this, SLOT(installPackage()));
     connect(modify_button, SIGNAL(clicked()), this, SLOT(modifyPackage()));
     connect(uninstall_button, SIGNAL(clicked()), this, SLOT(uninstallPackage()));
+    connect(hdsw_button, SIGNAL(clicked()), this, SLOT(hideorshowPackage()));
     connect(rescan_button, SIGNAL(clicked()), this, SLOT(rescanPackage()));
     connect(package_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
     connect(package_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyPackage(QListWidgetItem*)));
@@ -164,6 +171,27 @@ void PackagingEditor::updateMetaInfo(QListWidgetItem *item){
     if(settings){
         package_list_meta->showSettings(settings);
     }
+}
+
+void PackagingEditor::hideorshowPackage(){
+    if(qgetenv("USERNAME") != "Tenkei"){
+        QMessageBox::critical(this, tr("Warning"), tr("Insufficient permissions"));
+        return;
+    }
+
+    QListWidgetItem *item = package_list->currentItem();
+    if(item == NULL)
+        return;
+
+    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
+    if(settings == NULL)
+        return;
+
+    QSettings setting(settings->fileName(), QSettings::IniFormat);
+    bool is_hide = settings->value("Hide", false).toBool();
+    setting.setValue("Hide", !is_hide);
+    rescanPackage();
+    QMessageBox::information(this, tr("Hide or Show"), tr("%1 is set to %2").arg(settings->value("Name").toString()).arg(is_hide ? tr("Show") : tr("Hide")));
 }
 
 void PackagingEditor::rescanPackage(){

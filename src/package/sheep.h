@@ -45,7 +45,7 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class SheepPackage : public Package
+class SheepPackage : public GeneralPackage
 {
     Q_OBJECT
 
