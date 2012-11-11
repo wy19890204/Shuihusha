@@ -63,6 +63,7 @@ public:
     void addPackage(const QString &name);
     void addScenario(const QString &name);
 
+    const Card *getCard(const QString &name) const;
     const General *getGeneral(const QString &name) const;
     int getGeneralCount(bool include_banned = false) const;
     const Skill *getSkill(const QString &skill_name) const;

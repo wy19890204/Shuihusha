@@ -181,6 +181,10 @@ void Settings::init(){
     }
     setValue("Banlist/Pairs", banlist);
 
+    banlist = value("Banlist/Cards").toStringList();
+    //banlist << "peach";
+    setValue("Banlist/Cards", banlist);
+
     QStringList forbid_packages = GetConfigFromLuaState(lua, "forbid_packages", "ban_list").toStringList();
     setValue("ForbidPackages", forbid_packages.join("+"));
 
