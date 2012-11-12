@@ -56,6 +56,7 @@ private:
     QPushButton* add2nd;
 
 private slots:
+    void addCard(const QString &name);
     void addGeneral(const QString &name);
     void add2ndGeneral(const QString &name);
     void addPair(const QString &first, const QString& second);

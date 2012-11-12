@@ -217,6 +217,14 @@ QList<const Skill *> Engine::getRelatedSkills(const QString &skill_name) const{
     return skills;
 }
 
+const Card *Engine::getCard(const QString &name) const{
+    foreach(const Card *card, cards){
+        if(card->objectName() == name || card->getSubtype() == name)
+            return card;
+    }
+    return NULL;
+}
+
 const General *Engine::getGeneral(const QString &name) const{
     if(generals.contains(name))
         return generals.value(name);
@@ -633,6 +641,10 @@ QList<int> Engine::getRandomCards() const{
     QList<int> list;
     foreach(Card *card, cards){
         card->clearFlags();
+
+        QStringList bancards = Config.value("Banlist/Cards", "").toStringList();
+        if(bancards.contains(card->objectName()) || bancards.contains(card->getSubtype()))
+            continue;
 
         const Scenario *scenario = getScenario(Config.GameMode);
         if(scenario)

@@ -6,11 +6,18 @@ public:
     WarlordsScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario)
     {
-        events << Damage << Death << GameOverJudge;
+        events << PhaseChange << Damage << Death << GameOverJudge;
     }
 
     virtual bool trigger(TriggerEvent triggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(triggerEvent){
+        case PhaseChange:{
+            if(player->isLord() && player->getPhase() == Player::RoundStart){
+                player->setRole("renegade");
+                room->broadcastProperty(player, "role");
+            }
+            break;
+        }
         case Damage:{
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.from)
@@ -80,6 +87,7 @@ public:
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
+    roles << "lord";
     for(int i = 0; i < 8; i++)
         roles << "renegade";
 }

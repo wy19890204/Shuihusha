@@ -7,45 +7,38 @@
 #include "ai.h"
 #include "plough.h"
 
-class Lianzang: public TriggerSkill{
+class Caiquan: public TriggerSkill{
 public:
-    Lianzang():TriggerSkill("lianzang"){
-        events << Death;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return true;
+    Caiquan():TriggerSkill("caiquan"){
+        events << CardEffected;
+        frequency = Compulsory;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *tenkei = room->findPlayerBySkillName(objectName());
-        if(!tenkei)
-            return false;
-        QVariantList eatdeath_skills = tenkei->tag["EatDeath"].toList();
-        if(room->askForSkillInvoke(tenkei, objectName(), data)){
-            QStringList eatdeaths;
-            foreach(QVariant tmp, eatdeath_skills)
-                eatdeaths << tmp.toString();
-            if(!eatdeaths.isEmpty()){
-                QString choice = room->askForChoice(tenkei, objectName(), eatdeaths.join("+"));
-                room->detachSkillFromPlayer(tenkei, choice);
-                eatdeath_skills.removeOne(choice);
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && effect.to == player && player->hasEquip()){
+            QStringList suits;
+            foreach(const Card *rmp, player->getEquips()){
+                if(!suits.contains(rmp->getSuitString()))
+                    suits << rmp->getSuitString();
             }
-            room->loseMaxHp(tenkei);
-            QList<const Skill *> skills = player->getVisibleSkillList();
-            foreach(const Skill *skill, skills){
-                if(skill->parent() &&
-                   skill->getFrequency() != Skill::Limited &&
-                   skill->getFrequency() != Skill::Wake &&
-                   !skill->isLordSkill()){
-                    QString sk = skill->objectName();
-                    room->acquireSkill(tenkei, sk);
-                    eatdeath_skills << sk;
-                }
-            }
-            tenkei->tag["EatDeath"] = eatdeath_skills;
-        }
+            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
+                return false;
+            QString suit = effect.card->getSuitString();
+            if(!suits.contains(suit))
+                return false;
 
+            LogMessage log;
+            log.type = "#Caiquan";
+            log.from = effect.from;
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
         return false;
     }
 };
@@ -580,8 +573,9 @@ public:
 MonkeyPackage::MonkeyPackage()
     :GeneralPackage("monkey")
 {
-    General *caiqing = new General(this, "caiqing", "jiang", 5);
-    caiqing->addSkill(new Lianzang);
+    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
+    ximenqing->addSkill("#hp-1");
+    ximenqing->addSkill(new Caiquan);
 
     General *shenjiangjing = new General(this, "shenjiangjing", "god", 3);
     shenjiangjing->addSkill(new Shensuan);

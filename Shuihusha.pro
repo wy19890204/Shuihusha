@@ -36,6 +36,7 @@ SOURCES += \
 	src/core/util.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
+	src/dialog/choosecarddialog.cpp \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
@@ -173,6 +174,7 @@ HEADERS += \
 	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
+	src/dialog/choosecarddialog.h \
 	src/dialog/choosegeneraldialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
