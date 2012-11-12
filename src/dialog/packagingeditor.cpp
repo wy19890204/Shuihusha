@@ -257,9 +257,6 @@ void PackagingEditor::installPackage(){
     }
 }
 
-<<<<<<< HEAD
-void PackagingEditor::modifyPackage(){
-=======
 void PackagingEditor::modifyPackage(QListWidgetItem* item){
     SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
     if(settings == NULL)
@@ -282,39 +279,17 @@ void PackagingEditor::modifyPackage(){
 }
 
 void PackagingEditor::uninstallPackage(){
->>>>>>> 200f492716447d10829e0c3bee57942241d524f0
     QListWidgetItem *item = package_list->currentItem();
     if(item == NULL)
         return;
 
     SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
-<<<<<<< HEAD
-    if(settings == NULL)
-        return;
-
-    tab_widget->setCurrentIndex(1);
-
-    QStringList filelist = settings->value("FileList").toStringList();
-    foreach(QString file, filelist)
-        new QListWidgetItem(file, file_list);
-
-    package_list_meta->showSettings(settings);
-}
-
-void PackagingEditor::uninstallPackage(){
-    QListWidgetItem *item = package_list->currentItem();
-    if(item == NULL)
-        return;
-
-    SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
-=======
->>>>>>> 200f492716447d10829e0c3bee57942241d524f0
     if(settings == NULL)
         return;
 
     QMessageBox::StandardButton button = QMessageBox::question(this,
-                                                               tr("Are you sure"),
-                                                               tr("Are you sure to remove ?"),
+                                                               tr("Uninstall package"),
+                                                               tr("Are you sure to remove %1 ?").arg(item->text()),
                                                                QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
     if(button != QMessageBox::Yes)
         return;
