@@ -219,10 +219,7 @@ QList<const Skill *> Engine::getRelatedSkills(const QString &skill_name) const{
 
 const Card *Engine::getCard(const QString &name) const{
     foreach(const Card *card, cards){
-        if((name == "offensive_horse" || name == "defensive_horse")
-                && card->getSubtype() == name)
-            return card;
-        if(card->objectName() == name)
+        if(card->objectName() == name || card->getSubtype() == name)
             return card;
     }
     return NULL;
