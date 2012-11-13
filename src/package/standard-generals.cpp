@@ -214,7 +214,7 @@ HuaceDialog::HuaceDialog()
             c->setSkillName("huace");
             c->setParent(this);
 
-            QVBoxLayout *layout = c->inherits("SingleTargetTrick") ? layout1 : layout2;
+            QVBoxLayout *layout = c->isKindOf("SingleTargetTrick") ? layout1 : layout2;
             layout->addWidget(createButton(c));
         }
     }

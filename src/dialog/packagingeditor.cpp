@@ -311,7 +311,7 @@ void PackagingEditor::uninstallPackage(){
 void PackagingEditor::browseFiles(){
     QStringList files = QFileDialog::getOpenFileNames(this,
                                                       tr("Select one or more files to package"),
-                                                      ".",
+                                                      "extensions",
                                                       tr("Any files (*.*)"));
 
     QDir dir;
