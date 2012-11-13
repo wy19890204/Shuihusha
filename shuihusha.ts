@@ -972,7 +972,7 @@
     <message>
         <location filename="src/dialog/configdialog.ui" line="612"/>
         <source>Enable Lua Generals</source>
-        <translation>启用LUA武将扩展(重启后生效)</translation>
+        <translation>启用LUA扩展功能(重启后生效)</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="628"/>
@@ -2624,191 +2624,207 @@
         <translation>DIY 包管理器</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="84"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="86"/>
         <source>Package format is 7z, see its offcial site :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</source>
         <translation>打包格式为 7z, 官方网站 :&lt;a href=&apos;%1&apos; style = &quot;color:#0072c1; &quot;&gt;%1&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="130"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="132"/>
         <source>Install</source>
         <translation>安装</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="131"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="133"/>
         <source>Install a DIY package</source>
         <translation>安装一个 DIY 包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="133"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="135"/>
         <source>Modify</source>
         <translation>修改</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="134"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="136"/>
         <source>Modify a DIY package</source>
         <translation>修改一个 DIY 包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="136"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="138"/>
         <source>Uninstall</source>
         <translation>卸载</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="137"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="139"/>
         <source>Uninstall a DIY package</source>
         <translation>卸载一个 DIY 包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="139"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="141"/>
         <source>Hide/Show</source>
         <translation>显示/隐藏</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="140"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="142"/>
         <source>Hide or show a DIY package</source>
         <translation>显示/隐藏一个 DIY 包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="142"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="144"/>
         <source>Rescan</source>
         <translation>重新扫描</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="143"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="145"/>
         <source>Rescan existing packages</source>
         <translation>扫描现存的包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="178"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="355"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="391"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="83"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="180"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="358"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="394"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="178"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="180"/>
         <source>Insufficient permissions</source>
         <translation>权限不足！</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="194"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="196"/>
         <source>Hide or Show</source>
         <translation>显示或隐藏</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="87"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="89"/>
         <source>Package management</source>
         <translation>包管理</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="194"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="83"/>
+        <source>Lua extra is disabled!</source>
+        <translation>LUA扩展未开启，请先勾选“配置-游戏-启用LUA扩展”，再执行本功能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="196"/>
         <source>%1 is set to %2</source>
         <translation>%1 被设置为 %2</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="194"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="196"/>
         <source>Show</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="194"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="196"/>
         <source>Hide</source>
         <translation>隐藏</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="214"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="216"/>
         <source>Add files</source>
         <translation>添加文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="215"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="217"/>
         <source>Select files to package</source>
         <translation>选择要打包的文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="217"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="219"/>
         <source>Remove files</source>
         <translation>移除文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="218"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="220"/>
         <source>Remove files to package</source>
         <translation>将选择的文件移除或删除</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="221"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="223"/>
         <source>Export files to a single package</source>
         <translation>将选择的文件打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="245"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="247"/>
         <source>Select a package to install</source>
         <translation>选择要安装的包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="291"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="259"/>
+        <source>Notice</source>
+        <translation>提示</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="259"/>
+        <source>DIY package is loaded, please reset the game.</source>
+        <translation>DIY扩展包安装完成，重启游戏后生效。</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="294"/>
         <source>Uninstall package</source>
         <translation>卸载包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="292"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="295"/>
         <source>Are you sure to remove %1 ?</source>
         <translation>注意，此操作会彻底从硬盘上删除 %1 的所有数据。你真的要删除吗？</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="310"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="313"/>
         <source>Select one or more files to package</source>
         <translation>选择一个或多个文件打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="312"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="315"/>
         <source>Any files (*.*)</source>
         <translation>任何文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="327"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="330"/>
         <source>Remove file</source>
         <translation>移除文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="327"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="330"/>
         <source>Are you sure to physical delete this file?</source>
         <translation>物理删除请选“是”，仅从列表中移除请选“否”</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="341"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="344"/>
         <source>Clear file list</source>
         <translation>清空文件列表</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="341"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="344"/>
         <source>Are you sure to clear the file list?</source>
         <translation>你确定要清空文件列表吗？</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="88"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="220"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="90"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="222"/>
         <source>Make package</source>
         <translation>打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="355"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="358"/>
         <source>Please fill the meta information before making package</source>
         <translation>在打包之前请补全所有的元信息</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="365"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="368"/>
         <source>Select a package name</source>
         <translation>选择一个包名</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="391"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="394"/>
         <source>Package compress/decompress error!</source>
         <translation>DIY 包 打包或解压出错 !</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="247"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="367"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="249"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="370"/>
         <source>7z format (*.7z)</source>
         <translation>7z 格式 (*.7z)</translation>
     </message>

@@ -79,6 +79,8 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
     QDialog(parent)
 {
     setWindowTitle(tr("DIY package manager"));
+    if(!Config.value("EnableLua", false).toBool())
+        QMessageBox::critical(this, tr("Warning"), tr("Lua extra is disabled!"));
 
     QString url = "http://www.7-zip.org";
     QLabel *label = new QLabel(tr("Package format is 7z, see its offcial site :<a href='%1' style = \"color:#0072c1; \">%1</a>").arg(url));
@@ -254,6 +256,7 @@ void PackagingEditor::installPackage(){
         process->start("7zr", args);
 
         connect(process, SIGNAL(finished(int)), this, SLOT(done7zProcess(int)));
+        QMessageBox::information(this, tr("Notice"), tr("DIY package is loaded, please reset the game."));
     }
 }
 
