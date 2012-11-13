@@ -65,7 +65,6 @@ bool General::isTotallyHidden() const{
 
 bool General::isLuaGeneral() const{
     const Package *package = Sanguosha->findChild<const Package *>(getPackage());
-    //Package *package = PackageAdder::packages()[getPackage()];
     return package->getGenre() == Package::LUA;
 }
 
@@ -166,18 +165,20 @@ QString General::getSkillDescription() const{
 
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.ogg").arg(objectName());
-    QFile file(filename);
-    if(!file.open(QIODevice::ReadOnly)){
+    if(!QFile::exists(filename))
+        filename = QString("extensions/audio/death/%1.ogg").arg(objectName());
+    //QFile file(filename);
+    /*if(!file.open(QIODevice::ReadOnly)){
         QStringList origin_generals = objectName().split("_");
         if(origin_generals.length()>1)
             filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
-    }
+    }*/ //sp
     /*if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
         QString origin_general = objectName();
         origin_general.chop(1);
         if(Sanguosha->getGeneral(origin_general))
             filename = QString("audio/death/%1.ogg").arg(origin_general);
-    }*/
+    }*/ //sex changed
     Sanguosha->playEffect(filename);
 }
 

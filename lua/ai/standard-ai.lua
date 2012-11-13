@@ -735,22 +735,40 @@ buyaknife_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
 	for _, yangzhi in sgs.qlist(self.room:findPlayersBySkillName("maidao")) do
-		if not yangzhi:getPile("knife"):isEmpty() and self:isEnemy(yangzhi) then
+		if not yangzhi:getPile("knife"):isEmpty() and yangzhi ~= self.player then
 			local cards = self.player:getCards("h")
 			cards = sgs.QList2Table(cards)
 			self:sortByUseValue(cards, true)
 			local card_ids = {}
-			for _, car in ipairs(cards) do
-				if self:getKeepValue(car) < 4.1 then
-					table.insert(card_ids, car:getEffectiveId())
-				end
-				if #card_ids == 2 then
-					use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
-					if use.to then
-						self:speak("buydao")
-						use.to:append(yangzhi)
+			if self:isEnemy(yangzhi) then
+				for _, car in ipairs(cards) do
+					if self:getKeepValue(car) < 4.1 and not car:inherits("Events") then
+						table.insert(card_ids, car:getEffectiveId())
 					end
-					return
+					if #card_ids == 2 then
+						use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
+						if use.to then
+							self:speak("buydao")
+							use.to:append(yangzhi)
+						end
+						return
+					end
+				end
+			else
+				if self:getCardsNum("Events") > 1 then
+					for _, car in ipairs(cards) do
+						if car:inherits("Events") then
+							table.insert(card_ids, car:getEffectiveId())
+						end
+						if #card_ids == 2 then
+							use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
+							if use.to then
+								self:speak("buydao")
+								use.to:append(yangzhi)
+							end
+							return
+						end
+					end
 				end
 			end
 		end
