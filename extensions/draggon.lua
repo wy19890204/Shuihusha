@@ -11,6 +11,10 @@ SPLinChong=sgs.General(extension,"SPLinChong$","kou",4)
 sphuyanzhuo=sgs.General(extension,"sphuyanzhuo","guan",4)
 SPWuSong=sgs.General(extension,"SPWuSong","min",4)
 spzhuwu=sgs.General(extension,"spzhuwu","min",3)
+sphuyanzhuo=sgs.General(extension,"sphuyanzhuo","guan",4)
+spbird=sgs.General(extension,"spbird","god",4)
+spyuefei=sgs.General(extension,"spyuefei","god",4)
+sphuangxin=sgs.General(extension,"sphuangxin","guan",4)
 ---------------
 LuaJueDing=sgs.CreateTriggerSkill{
 	name="LuaJueDing",
@@ -747,3 +751,27 @@ sgs.LoadTranslationTable{
 	["@luasaodangdiscard"]="请弃2张牌 否则将受到1点伤害",
 }
 
+		local card_id = room:drawCard()
+		local card=sgs.Sanguosha:getCard(card_id)
+		if source:addToPile("spxi",card) then
+			local log=sgs.LogMessage()
+			log.from =source
+			log.type ="#luajinshu"
+			room:loseHp(owner,1)
+			local card_id = room:askForCardChosen(owner,damage.from,"he",self:objectName())
+			room:throwCard(card_id)
+			owner:drawCards(1)
+		end
+end
+}
+
+luazhuanshi=sgs.CreateTriggerSkill{
+name="luazhuanshi",
+events=sgs.AskForPeaches,
+frequency=sgs.Skill_Wake,
+priority=3,
+on_trigger=function(self,event,player,data)
+		local room=player:getRoom()
+		local recover=sgs.RecoverStruct()
+		recover.recover=1
+		recover.who=player
