@@ -835,7 +835,7 @@ void MeleeDialog::onGameOver(const QString &winner){
 
     if(room_item) room_item->setToolTip(tooltip);
     stage_count ++;
-    if(loop_checkbox->isChecked() || stage_count <= stagebox->value()){
+    if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
         if(room_item){
             room_items.removeOne(room_item);
             delete room_item;

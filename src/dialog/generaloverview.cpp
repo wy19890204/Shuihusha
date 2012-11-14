@@ -320,6 +320,8 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
         ui->cvLineEdit->setText(Sanguosha->translate("DefaultCV"));
 
     QString coder_text = Sanguosha->translate("coder:" + general->objectName());
+    if(coder_text.startsWith("coder:"))
+        coder_text = Sanguosha->translate("coder:" + general->getPackage());
     if(!coder_text.startsWith("coder:"))
         ui->coderLineEdit->setText(coder_text);
     else

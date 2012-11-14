@@ -214,7 +214,7 @@ HuaceDialog::HuaceDialog()
             c->setSkillName("huace");
             c->setParent(this);
 
-            QVBoxLayout *layout = c->inherits("SingleTargetTrick") ? layout1 : layout2;
+            QVBoxLayout *layout = c->isKindOf("SingleTargetTrick") ? layout1 : layout2;
             layout->addWidget(createButton(c));
         }
     }
@@ -1596,7 +1596,7 @@ void DaleiCard::use(Room *room, ServerPlayer *xiaoyi, const QList<ServerPlayer *
     if(success){
         room->playSkillEffect(skill_name, 3);
         room->setPlayerFlag(xiaoyi, "dalei_success");
-        room->setPlayerProperty(xiaoyi, "dalei_target", QVariant::fromValue(target));
+        xiaoyi->tag["dalei_target"] = QVariant::fromValue(target);
     }else{
         room->playSkillEffect(skill_name, 4);
         DamageStruct damage;
@@ -1637,13 +1637,13 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == PhaseChange){
             if(player->getPhase() == Player::NotActive)
-                room->setPlayerProperty(player, "dalei_target", QVariant());
+                player->tag.remove("dalei_target");
             return false;
         }
         if(!player->hasFlag("dalei_success"))
             return false;
         DamageStruct damage = data.value<DamageStruct>();
-        PlayerStar target = player->property("dalei_target").value<PlayerStar>();
+        PlayerStar target = player->tag["dalei_target"].value<PlayerStar>();
         if(damage.to == target){
             RecoverStruct rev;
             rev.who = player;

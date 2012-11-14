@@ -46,6 +46,7 @@ private slots:
     void browseFiles();
     void removeFile(QListWidgetItem* item, bool mute = true);
     void removeFile();
+    void editFile();
     void makePackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);

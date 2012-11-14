@@ -1575,8 +1575,6 @@ QWidget *GeneralAssignDialog::createTab(const QList<const General *> &generals){
     for(int i=0; i<generals.length(); i++){
         const General *general = generals.at(i);
         QString general_name = general->objectName();
-        if(general->isTotallyHidden())
-            continue;
 
         QString text = QString("%1[%2]")
                        .arg(Sanguosha->translate(general_name))
@@ -1589,6 +1587,8 @@ QWidget *GeneralAssignDialog::createTab(const QList<const General *> &generals){
         if(general->isLord())
             button->setIcon(lord_icon);
 
+        if(general->isTotallyHidden())
+           button->setDisabled(true);
         group->addButton(button);
 
         int row = i / columns;

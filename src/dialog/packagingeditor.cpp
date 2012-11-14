@@ -79,6 +79,8 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
     QDialog(parent)
 {
     setWindowTitle(tr("DIY package manager"));
+    if(!Config.value("EnableLua", false).toBool())
+        QMessageBox::critical(this, tr("Warning"), tr("Lua extra is disabled!"));
 
     QString url = "http://www.7-zip.org";
     QLabel *label = new QLabel(tr("Package format is 7z, see its offcial site :<a href='%1' style = \"color:#0072c1; \">%1</a>").arg(url));
@@ -217,11 +219,15 @@ QWidget *PackagingEditor::createPackagingTab(){
     QCommandLinkButton *remove_button = new QCommandLinkButton(tr("Remove files"));
     remove_button->setDescription(tr("Remove files to package"));
 
+    QCommandLinkButton *edit_button = new QCommandLinkButton(tr("Edit file"));
+    edit_button->setDescription(tr("Edit file to package"));
+
     QCommandLinkButton *package_button = new QCommandLinkButton(tr("Make package"));
     package_button->setDescription(tr("Export files to a single package"));
 
     vlayout->addWidget(browse_button);
     vlayout->addWidget(remove_button);
+    vlayout->addWidget(edit_button);
     vlayout->addWidget(package_button);
     vlayout->addStretch();
 
@@ -234,6 +240,7 @@ QWidget *PackagingEditor::createPackagingTab(){
 
     connect(browse_button, SIGNAL(clicked()), this, SLOT(browseFiles()));
     connect(remove_button, SIGNAL(clicked()), this, SLOT(removeFile()));
+    connect(edit_button, SIGNAL(clicked()), this, SLOT(editFile()));
     connect(package_button, SIGNAL(clicked()), this, SLOT(makePackage()));
     connect(file_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeFile(QListWidgetItem*)));
 
@@ -254,6 +261,7 @@ void PackagingEditor::installPackage(){
         process->start("7zr", args);
 
         connect(process, SIGNAL(finished(int)), this, SLOT(done7zProcess(int)));
+        QMessageBox::information(this, tr("Notice"), tr("DIY package is loaded, please reset the game."));
     }
 }
 
@@ -288,8 +296,8 @@ void PackagingEditor::uninstallPackage(){
         return;
 
     QMessageBox::StandardButton button = QMessageBox::question(this,
-                                                               tr("Are you sure"),
-                                                               tr("Are you sure to remove ?"),
+                                                               tr("Uninstall package"),
+                                                               tr("Are you sure to remove %1 ?").arg(item->text()),
                                                                QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
     if(button != QMessageBox::Yes)
         return;
@@ -308,7 +316,7 @@ void PackagingEditor::uninstallPackage(){
 void PackagingEditor::browseFiles(){
     QStringList files = QFileDialog::getOpenFileNames(this,
                                                       tr("Select one or more files to package"),
-                                                      ".",
+                                                      "extensions",
                                                       tr("Any files (*.*)"));
 
     QDir dir;
@@ -343,6 +351,10 @@ void PackagingEditor::removeFile(){
         if(button == QMessageBox::Yes)
             file_list->clear();
     }
+}
+
+void PackagingEditor::editFile(){
+    QMessageBox::critical(this, tr("Warning"), tr("Insufficient permissions"));
 }
 
 void PackagingEditor::makePackage(){
