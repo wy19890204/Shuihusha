@@ -602,6 +602,14 @@ void Card::clearFlags() const{
     flags.clear();
 }
 
+bool Card::hasSameSuit() const{
+    if(subcards.length() != 2)
+        return false;
+    const Card *card1 = Sanguosha->getCard(subcards.first());
+    const Card *card2 = Sanguosha->getCard(subcards.last());
+    return card1->suit == card2->suit;
+}
+
 // ---------   Skill card     ------------------
 
 SkillCard::SkillCard()
