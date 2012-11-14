@@ -17,12 +17,13 @@ RoomThread3v3::RoomThread3v3(Room *room)
 QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     QList<const General *> generals;
 
-    const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-    const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
+    lua_State *lua = Sanguosha->getLuaState();
+    QStringList packages = GetConfigFromLuaState(lua, "savsa_packages", "scenario").toStringList();
 
-    generals << stdpack->findChildren<const General *>()
-             << ratpack->findChildren<const General *>()
-			 ;
+    foreach(QString tmp, packages){
+        const Package *stdpack = Sanguosha->findChild<const Package *>(tmp);
+        generals << stdpack->findChildren<const General *>();
+    }
 
     // remove hidden generals
     QMutableListIterator<const General *> itor(generals);
@@ -33,19 +34,9 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
             itor.remove();
     }
 
-    //generals.removeOne(Sanguosha->getGeneral("zhuwu"));
-
-    if(Config.value("3v3/UsingNewMode", false).toBool()){
-          QStringList list_remove, list_add;
-          list_remove << "zhuwu" << "wangqing" << "lujunyi" << "andaoquan" << "chaijin"
-                  << "yuehe" << "gongsunsheng" << "qiaodaoqing" << "lijun";
-          list_add << "dingdesun" << "tongguan" << "fangla" << "liruilan" << "haosiwen"
-                  << "zourun" << "yanglin" << "gaolian";
-          foreach(QString general_name, list_remove)
-              generals.removeOne(Sanguosha->getGeneral(general_name));
-          foreach(QString general_name, list_add)
-              generals << Sanguosha->getGeneral(general_name);
-    }
+    QStringList bans = GetConfigFromLuaState(lua, "savsa_ban", "ban_list").toStringList();
+    foreach(QString ban, bans)
+        generals.removeOne(Sanguosha->getGeneral(ban));
 
     QStringList general_names;
     foreach(const General *general, generals)
