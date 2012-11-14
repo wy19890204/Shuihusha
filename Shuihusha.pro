@@ -171,6 +171,7 @@ HEADERS += \
 	src/core/settings.h \
 	src/core/skill.h \
 	src/core/statistics.h \
+	src/core/structs.h \
 	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
@@ -234,7 +235,6 @@ HEADERS += \
 	src/server/roomthread3v3.h \
 	src/server/server.h \
 	src/server/serverplayer.h \
-	src/server/structs.h \
 	src/ui/button.h \
 	src/ui/cardcontainer.h \
 	src/ui/carditem.h \

@@ -315,4 +315,4 @@ LegendScenario::LegendScenario()
     addMetaObject<ArcChuanqiCard>();
 }
 
-ADD_SCENARIO(Legend)
+//ADD_SCENARIO(Legend)
