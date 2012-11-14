@@ -1,5 +1,5 @@
-module("extensions.bbb",package.seeall)
-extension=sgs.Package("bbb")
+module("extensions.draggon",package.seeall)
+extension=sgs.Package("draggon")
 dofile "extensions/ai/funs.lua"
 
 
@@ -454,7 +454,8 @@ TempSkill(qll_zhusha)
 SPWuSong:addSkill(qll_shenchou)
 
 sgs.LoadTranslationTable{
-	["bbb"]="群龙逆天",
+	["draggon"]="群龙逆天",
+
 	["spluzhishen"]="鲁智深",
 	["#spluzhishen"]="聚义逆天",
 	["LuaJueDing"]="绝顶",
