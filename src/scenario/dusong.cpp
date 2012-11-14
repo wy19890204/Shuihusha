@@ -369,11 +369,14 @@ bool DusongScenario::generalSelection(Room *room) const{
     ServerPlayer *lord = room->getPlayers().first();
     room->setPlayerProperty(lord, "general", "zhang1dong");
 
-    const Package *stdpack = Sanguosha->findChild<const Package *>("standard");
-    const Package *ratpack = Sanguosha->findChild<const Package *>("rat");
+    lua_State *lua = Sanguosha->getLuaState();
+    QStringList packages = GetConfigFromLuaState(lua, "dusong_packages", "scenario").toStringList();
 
-    QList<const General *> generals = stdpack->findChildren<const General *>();
-    generals << ratpack->findChildren<const General *>();
+    QList<const General *> generals;
+    foreach(QString tmp, packages){
+        const Package *stdpack = Sanguosha->findChild<const Package *>(tmp);
+        generals << stdpack->findChildren<const General *>();
+    }
 
     QStringList names;
     foreach(const General *general, generals){

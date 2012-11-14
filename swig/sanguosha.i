@@ -956,6 +956,10 @@ public:
 };
 
 %extend Room {
+	bool broadcastSkillInvoke(const char *skillName, int type){
+		$self->playSkillEffect(skillName, type);
+		return true;
+	}
 	ServerPlayer *nextPlayer() const{
 		return $self->getCurrent()->getNextAlive();
 	}

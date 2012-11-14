@@ -349,4 +349,4 @@ ZombieScenario::ZombieScenario()
     addMetaObject<GanranEquip>();
 }
 
-ADD_SCENARIO(Zombie)
+//ADD_SCENARIO(Zombie)

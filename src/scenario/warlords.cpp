@@ -88,7 +88,7 @@ void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
     roles << "lord";
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 7; i++)
         roles << "renegade";
 }
 
@@ -114,4 +114,4 @@ WarlordsScenario::WarlordsScenario()
     rule = new WarlordsScenarioRule(this);
 }
 
-ADD_SCENARIO(Warlords)
+//ADD_SCENARIO(Warlords)
