@@ -56,6 +56,7 @@ private:
     QPushButton* add2nd;
 
 private slots:
+    void addCard(const QString &name);
     void addGeneral(const QString &name);
     void add2ndGeneral(const QString &name);
     void addPair(const QString &first, const QString& second);
@@ -132,7 +133,6 @@ private:
     QSpinBox *ai_delay_spinbox;
     QCheckBox *disable_gongsunsheng;
     QRadioButton *standard_3v3_radiobutton;
-    QRadioButton *new_3v3_radiobutton;
     QComboBox *role_choose_combobox;
     QCheckBox *exclude_disaster_checkbox;
 

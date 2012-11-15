@@ -41,6 +41,7 @@ public:
     QString getVersionName() const;
     QString getMODName() const;
     QStringList getExtensions() const;
+    QStringList getLuaExtensions() const;
     QStringList getKingdoms() const;
     QColor getKingdomColor(const QString &kingdom) const;
     QString getSetupString() const;
@@ -62,6 +63,7 @@ public:
     void addPackage(const QString &name);
     void addScenario(const QString &name);
 
+    const Card *getCard(const QString &name) const;
     const General *getGeneral(const QString &name) const;
     int getGeneralCount(bool include_banned = false) const;
     const Skill *getSkill(const QString &skill_name) const;
@@ -88,7 +90,6 @@ public:
 
     const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
     int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
-    bool biliBili() const;
 
 private:
     QHash<QString, QString> translations;

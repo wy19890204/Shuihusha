@@ -1,10 +1,9 @@
-
 -- this script to store the basic configuration for game program itself
 -- and it is a little different from config.ini
 
 config = {
 	version = "20121105",
-	version_name = "终结版F3.4",
+	version_name = "终结版F3.4 Shibada Wansui！",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -52,11 +51,13 @@ config = {
 		"KenKic的机器女仆",
 		"HyperX的基友",
 		"天启的怨灵",
-		"灵魂的⑨赎",
+		"逮捕麻麻的手铐",
 		"太阳神的苦工",
 		"威廉古堡",
 		"安歧的小黑屋",
 		"海泡叉的乱码",
+		"妙妙的思绪",
+		"氢弹的狂风甲",
 		"歧姐家的猴子",
 		"葱娘家的灵魂手办",
 		"启姐家的小雏田",
@@ -64,6 +65,7 @@ config = {
 		"中国的钓鱼岛",
 		"donle的最后之作",
 		"天霜雪舞的烤萝莉",
+		"七爷的觉醒",
 		"科比挂的柯南",
 		"导线的电阻",
 		"QB的契约",
@@ -72,13 +74,18 @@ config = {
 		"Slob的杀虫剂",
 		"克拉克的跑动投",
 		"讨厌的核弹",
+		"早苗的假面",
+		"Lisar的凯子",
 		"自来也的黄书",
 		"墨韵的诅咒",
+		"被和谐的XX生",
 		"沾血的青苹果",
 		"海南的椰子",
 		"卖萌的小猫",
 		"江西安义的雷海",
 		"中条老道的大头贴",
+		"超级塞克洛",
+		"贝克街的亡灵",
 	},
 
 	color_guan = "#547998",
@@ -91,11 +98,17 @@ config = {
 }
 
 scenario = {
+	savsa_packages = {
+		"standard",
+		"rat",
+	},
+	dusong_packages = {
+		"standard",
+		"rat",
+	},
 	couple_lord = "zhoutong",
 	couple_spouse = {
-		"xiezhen+xiebao",
-		"zhangheng+zhangshun",
-		"lijun+lili",
+--		"xiezhen+xiebao",
 	},
 }
 
@@ -110,6 +123,9 @@ ban_list = {
 		"zhaoji",
 --		"shenwuyong",
 --		"wangdingliu",
+	},
+	savsa_ban = {
+		"yanxijiao",
 	},
 	basara_ban = {
 		"dingdesun",
@@ -130,6 +146,7 @@ ban_list = {
 		"zhangheng",
 		"+tongguan",
 		"+tora",
+		"tianhu+songjiang",
 		"gaoqiu+luozhenren",
 		"wangying+zhangqing",
 		"wangying+qiongying",
@@ -145,6 +162,8 @@ ban_list = {
 		"shijin+yanshun",
 		"shijin+leiheng",
 		"zhaoji+pangwanchun",
+		"zhaoji+andaoquan",
+		"fangjie+songjiang",
 --		"shenwuyong",
 --		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",

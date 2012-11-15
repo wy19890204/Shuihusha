@@ -11,7 +11,7 @@ return{
 	["#TrickDirection"] = "%from 选择了 %arg 作为锦囊的顺序",
 
 -- basara & hegemony
-	["Basara"] = "暗将模式",
+	["Basara"] = "暗将",
 	["#BasaraReveal"] = "%from 展示了他的武将，主将为 %arg，副将为 %arg2",
 	["RevealGeneral"] = "展示武将",
 	["#anjiang"] = "猜你妹",
@@ -22,7 +22,7 @@ return{
 	["coder:anjiang"] = "hypercross",
 	["~anjiang"] = "还没亮明武将，死不瞑目啊……",
 
-	["Hegemony"] = "国战模式",
+	["Hegemony"] = "国战",
 	["Roles"] = "身份",
 
 -- reincarnation

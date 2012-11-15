@@ -36,6 +36,7 @@ SOURCES += \
 	src/core/util.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
+	src/dialog/choosecarddialog.cpp \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
@@ -72,11 +73,11 @@ SOURCES += \
 	src/package/mini-generals.cpp \
 	src/package/joy.cpp \
 	src/package/guben.cpp \
-	src/scenario/boss.cpp \
 	src/scenario/contract.cpp \
 	src/scenario/couple.cpp \
 	src/scenario/dusong.cpp \
 	src/scenario/changban.cpp \
+	src/scenario/impasse_fight.cpp \
 	src/scenario/miniscenarios.cpp \
 	src/scenario/landlord.cpp \
 	src/scenario/legend.cpp \
@@ -174,6 +175,7 @@ HEADERS += \
 	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
+	src/dialog/choosecarddialog.h \
 	src/dialog/choosegeneraldialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
@@ -210,11 +212,11 @@ HEADERS += \
 	src/package/mini-generals.h \
 	src/package/joy.h \
 	src/package/guben.h \
-	src/scenario/boss.h \
 	src/scenario/contract.h \
 	src/scenario/couple.h \
 	src/scenario/dusong.h \
 	src/scenario/changban.h \
+	src/scenario/impasse_fight.h \
 	src/scenario/miniscenarios.h \
 	src/scenario/landlord.h \
 	src/scenario/legend.h \

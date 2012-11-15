@@ -602,13 +602,13 @@ bool XiaozaiCard::targetFilter(const QList<const Player *> &targets, const Playe
     return !to_select->hasFlag("Xiaozai");
 }
 
-void XiaozaiCard::onEffect(const CardEffectStruct &effect) const{
-    effect.to->obtainCard(this, false);
-    DamageStruct damage = effect.from->tag["XiaozaiDamage"].value<DamageStruct>();
-    damage.to = effect.to;
-    Room *room = effect.from->getRoom();
+void XiaozaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    PlayerStar target = targets.first();;
+    target->obtainCard(this, false);
+    DamageStruct damage = source->tag["XiaozaiDamage"].value<DamageStruct>();
+    damage.to = target;
+    room->setPlayerFlag(source, "-Xiaozai");
     room->damage(damage);
-    room->setPlayerFlag(damage.from, "-Xiaozai");
 }
 
 class XiaozaiViewAsSkill: public ViewAsSkill{

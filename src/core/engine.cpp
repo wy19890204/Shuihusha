@@ -217,6 +217,14 @@ QList<const Skill *> Engine::getRelatedSkills(const QString &skill_name) const{
     return skills;
 }
 
+const Card *Engine::getCard(const QString &name) const{
+    foreach(const Card *card, cards){
+        if(card->objectName() == name || card->getSubtype() == name)
+            return card;
+    }
+    return NULL;
+}
+
 const General *Engine::getGeneral(const QString &name) const{
     if(generals.contains(name))
         return generals.value(name);
@@ -316,6 +324,19 @@ QStringList Engine::getExtensions() const{
         if(package->inherits("Scenario"))
             continue;
 
+        extensions << package->objectName();
+    }
+    return extensions;
+}
+
+QStringList Engine::getLuaExtensions() const{
+    QStringList extensions;
+    QList<const Package *> packages = findChildren<const Package *>();
+    foreach(const Package *package, packages){
+        if(package->inherits("Scenario"))
+            continue;
+        if(package->getGenre() == Package::CPP)
+            continue;
         extensions << package->objectName();
     }
     return extensions;
@@ -609,17 +630,18 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false, using_new_3v3 = false;
+    bool exclude_disaters = false;
 
-    if(Config.GameMode == "06_3v3"){
-        using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
-        exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool() ||
-                            using_new_3v3;
-    }
+    if(Config.GameMode == "06_3v3")
+        exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
 
     QList<int> list;
     foreach(Card *card, cards){
         card->clearFlags();
+
+        QStringList bancards = Config.value("Banlist/Cards", "").toStringList();
+        if(bancards.contains(card->objectName()) || bancards.contains(card->getSubtype()))
+            continue;
 
         const Scenario *scenario = getScenario(Config.GameMode);
         if(scenario)
@@ -629,11 +651,7 @@ QList<int> Engine::getRandomCards() const{
         if(exclude_disaters && card->inherits("Disaster"))
             continue;
 
-        if(card->getPackage() == "Special3v3" && using_new_3v3){
-            list << card->getId();
-            list.removeOne(98);
-        }
-        else if(!ban_package.contains(card->getPackage()))
+        if(!ban_package.contains(card->getPackage()))
             list << card->getId();
     }
 
@@ -759,8 +777,4 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
     }
 
     return x;
-}
-
-bool Engine::biliBili() const{
-    return Config.value("Minibili").toString() == Config.UserName;
 }

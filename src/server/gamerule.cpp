@@ -867,12 +867,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(Config.EnableReincarnation && victim->property("isDead").toBool())
             return true;
 
-        if(room->getMode() == "06_3v3"){
-            if(Config.value("3v3/UsingNewMode", false).toBool())
-                killer->drawCards(2);
-            else
-                killer->drawCards(3);
-        }
+        if(room->getMode() == "06_3v3")
+            killer->drawCards(3);
         else{
             if(room->getMode() == "contract")
                 return true;

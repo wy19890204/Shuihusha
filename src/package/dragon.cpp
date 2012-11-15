@@ -448,84 +448,6 @@ public:
     }
 };
 
-class Zaochuan: public OneCardViewAsSkill{
-public:
-    Zaochuan():OneCardViewAsSkill("zaochuan"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->inherits("TrickCard");
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *card = card_item->getFilteredCard();
-        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
-        chain->addSubcard(card);
-        chain->setSkillName(objectName());
-        return chain;
-    }
-};
-
-class Mengchong: public DistanceSkill{
-public:
-    Mengchong():DistanceSkill("mengchong"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        bool mengkang = from->hasSkill(objectName());
-        foreach(const Player *player, from->getSiblings()){
-            if(player->isAlive() && player->hasSkill(objectName())){
-                mengkang = true;
-                break;
-            }
-        }
-        if(mengkang && !from->isChained() && to->isChained())
-            return +1;
-        else
-            return 0;
-    }
-};
-
-class Kongying: public TriggerSkill{
-public:
-    Kongying():TriggerSkill("kongying"){
-        events << CardResponsed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardStar card_star = data.value<CardStar>();
-        if(!card_star->inherits("Jink"))
-            return false;
-
-        if(player->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
-            if(!room->askForCard(target, "jink", "@kongying:" + player->objectName())){
-                DamageStruct damage;
-                damage.from = player;
-                damage.to = target;
-                room->damage(damage);
-            }
-        }
-        return false;
-    }
-};
-
-class Jibu: public DistanceSkill{
-public:
-    Jibu(): DistanceSkill("jibu"){
-    }
-
-    virtual int getCorrect(const Player *from, const Player *to) const{
-        if(to->hasSkill(objectName()))
-            return +1;
-        else if(from->hasSkill(objectName()))
-            return -1;
-        else
-            return 0;
-    }
-};
-
 DragonPackage::DragonPackage()
     :GeneralPackage("dragon")
 {
@@ -550,20 +472,9 @@ DragonPackage::DragonPackage()
     wangpo->addSkill(new Qianxian);
     wangpo->addSkill(new Meicha);
 
-    General *mengkang = new General(this, "mengkang", "kou");
-    mengkang->addSkill(new Zaochuan);
-    mengkang->addSkill(new Mengchong);
-
-    General *jiaoting = new General(this, "jiaoting", "kou");
-    jiaoting->addSkill(new Skill("qinlong"));
-
-    General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
-    wangdingliu->addSkill(new Kongying);
-    wangdingliu->addSkill(new Jibu);
-
     addMetaObject<TaolueCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<QianxianCard>();
 }
 
-ADD_PACKAGE(Dragon)
+//ADD_PACKAGE(Dragon)

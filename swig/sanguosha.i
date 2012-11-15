@@ -620,6 +620,8 @@ public:
 	virtual void onEffect(const CardEffectStruct &effect) const;
 	virtual bool isCancelable(const CardEffectStruct &effect) const;
 
+	virtual bool isKindOf(const char* cardType) const;
+	virtual QStringList getFlags() const;
 	virtual void onMove(const CardMoveStruct &move) const;
 
 	// static functions
@@ -686,6 +688,7 @@ public:
 	QString getVersion() const;
 	QString getVersionName() const;
 	QStringList getExtensions() const;
+	QStringList getLuaExtensions() const;
 	QStringList getKingdoms() const;
 	QColor getKingdomColor(const char *kingdom) const;
 	QString getSetupString() const;
@@ -953,6 +956,10 @@ public:
 };
 
 %extend Room {
+	bool broadcastSkillInvoke(const char *skillName, int type){
+		$self->playSkillEffect(skillName, type);
+		return true;
+	}
 	ServerPlayer *nextPlayer() const{
 		return $self->getCurrent()->getNextAlive();
 	}

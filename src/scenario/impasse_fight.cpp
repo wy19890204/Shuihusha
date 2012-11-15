@@ -1,4 +1,4 @@
-#include "boss.h"
+#include "impasse_fight.h"
 #include "engine.h"
 #include "common-skillcards.h"
 #include "clientplayer.h"
@@ -524,4 +524,4 @@ ImpasseScenario::ImpasseScenario()
 
 }
 
-ADD_SCENARIO(Impasse)
+//ADD_SCENARIO(Impasse)

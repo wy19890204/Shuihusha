@@ -930,7 +930,8 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
     thread->trigger(ChoiceMade, this, repliedPlayer, decisionData);
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
-    if(repliedPlayer->hasSkill("pozhen")){
+    if(repliedPlayer->hasSkill("pozhen") ||
+       (card->getSkillName() == "neiying" && card->hasSameSuit())){
         if(card->objectName() == "counterplot")
             repliedPlayer->obtainCard(last_trick);
         return true;

@@ -1,22 +1,25 @@
 #include "warlords.h"
 #include "engine.h"
-#include "clientplayer.h"
-#include "client.h"
-#include "carditem.h"
-#include "general.h"
 
-class WarlordsRule: public ScenarioRule{
+class WarlordsScenarioRule: public ScenarioRule{
 public:
-    WarlordsRule(Scenario *scenario)
+    WarlordsScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario)
     {
-        events << Damage << Death << GameOverJudge;
+        events << PhaseChange << Damage << Death << GameOverJudge;
     }
 
     virtual bool trigger(TriggerEvent triggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         switch(triggerEvent){
+        case PhaseChange:{
+            if(player->isLord() && player->getPhase() == Player::RoundStart){
+                player->setRole("renegade");
+                room->broadcastProperty(player, "role");
+            }
+            break;
+        }
         case Damage:{
-            DamageStruct &damage = data.value<DamageStruct>();
+            DamageStruct damage = data.value<DamageStruct>();
             if(damage.from)
                 damage.from->gainMark("@blood", damage.damage);
 
@@ -33,7 +36,8 @@ public:
             DamageStar damage = data.value<DamageStar>();
             if((player->getRole() == "loyalist" || player->getRole() == "lord") && damage && damage->from) {
                 if((player->getRole() == "lord" && damage->from->getRole() == "loyalist") || (player->getRole() == "loyalist" && damage->from->getRole() == "lord")) {
-                    damage->from->throwAllHandCardsAndEquips();
+                    damage->from->throwAllEquips();
+                    damage->from->throwAllHandCards();
                     room->setPlayerProperty(damage->from, "role", "renegade");
                 }
                 else
@@ -83,7 +87,8 @@ public:
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    for(int i = 0; i < 8; i++)
+    roles << "lord";
+    for(int i = 0; i < 7; i++)
         roles << "renegade";
 }
 
@@ -91,8 +96,8 @@ int WarlordsScenario::getPlayerCount() const{
     return 8;
 }
 
-QString WarlordsScenario::getRoles() const{
-    return "NNNNNNNN";
+void WarlordsScenario::getRoles(char *roles) const{
+    strcpy(roles, "NNNNNNNN");
 }
 
 bool WarlordsScenario::lordWelfare(const ServerPlayer *player) const{
@@ -106,5 +111,7 @@ void WarlordsScenario::onTagSet(Room *room, const QString &key) const{
 WarlordsScenario::WarlordsScenario()
     :Scenario("warlords")
 {
-    rule = new WarlordsRule(this);
+    rule = new WarlordsScenarioRule(this);
 }
+
+//ADD_SCENARIO(Warlords)

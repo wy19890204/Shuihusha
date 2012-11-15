@@ -122,12 +122,15 @@ public:
     void setFlags(const QString &flag) const;
     bool hasFlag(const QString &flag) const;
     void clearFlags() const;
+    bool hasSameSuit() const;
 
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
     virtual void use(Room *room, ServerPlayer *source,  const QList<ServerPlayer *> &targets) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
     virtual bool isCancelable(const CardEffectStruct &effect) const;
 
+    inline virtual bool isKindOf(const char* cardType) const { return inherits(cardType); }
+    inline virtual QStringList getFlags() const { return flags; }
     virtual void onMove(const CardMoveStruct &move) const;
 
     // static functions

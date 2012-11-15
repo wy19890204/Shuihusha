@@ -3542,3 +3542,11 @@ end
 if sgs.GetConfig("EnableHegemony", false) then
 	dofile "lua/ai/hegemony-ai.lua"
 end
+
+files = table.concat(sgs.GetFileNames("extensions/ai"), " ")
+
+for _, aextension in ipairs(sgs.Sanguosha:getLuaExtensions()) do
+	if files:match(string.lower(aextension)) then
+		dofile("extensions/ai/" .. string.lower(aextension) .. "-ai.lua")
+	end
+end

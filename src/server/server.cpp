@@ -7,6 +7,7 @@
 #include "scenario.h"
 #include "contestdb.h"
 #include "choosegeneraldialog.h"
+#include "choosecarddialog.h"
 #include "customassigndialog.h"
 
 #include <QInputDialog>
@@ -436,19 +437,20 @@ void BanlistDialog::switchTo(int item){
 BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     :QDialog(parent),add2nd(NULL)
 {
-    setWindowTitle(tr("Select generals that are excluded"));
+    setWindowTitle(tr("Select generals or cards that are excluded"));
+    resize(QSize(350, 250));
 
     if(ban_list.isEmpty())
-        ban_list << "Roles" << "1v1" << "Basara" << "Hegemony" << "Pairs";
+        ban_list << "Roles" << "1v1" << "Basara" << "Hegemony" << "Pairs" << "Cards";
     QVBoxLayout *layout = new QVBoxLayout;
 
     QTabWidget *tab = new QTabWidget;
     layout->addWidget(tab);
     connect(tab,SIGNAL(currentChanged(int)),this,SLOT(switchTo(int)));
-
-    foreach(QString item, ban_list)
-    {
-        if(item == "Pairs") continue;
+//ban without pairs and cards
+    foreach(QString item, ban_list){
+        if(item == "Pairs" || item == "Cards")
+            continue;
         QWidget *apage = new QWidget;
 
         list = new QListWidget;
@@ -470,7 +472,7 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     }
 
     QWidget *apage = new QWidget;
-
+// pairs
     list = new QListWidget;
     list->setObjectName("Pairs");
     this->list = list;
@@ -489,7 +491,21 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     apage->setLayout(vlay);
     tab->addTab(apage,Sanguosha->translate("Pairs"));
     lists << list;
-
+//cards
+    apage = new QWidget;
+    list = new QListWidget;
+    list->setObjectName("Cards");
+    this->list = list;
+    QStringList banlist = Config.value("Banlist/Cards").toStringList();
+    foreach(QString name, banlist){
+        addCard(name);
+    }
+    lists << list;
+    vlay = new QVBoxLayout;
+    vlay->addWidget(list);
+    apage->setLayout(vlay);
+    //tab->addTab(apage,Sanguosha->translate("Cards"));
+//--
     QPushButton *add = new QPushButton(tr("Add ..."));
     QPushButton *remove = new QPushButton(tr("Remove"));
     if(!view)add2nd = new QPushButton(tr("Add 2nd general ..."));
@@ -522,6 +538,20 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
         alist->setIconSize(General::TinyIconSize);
         alist->setViewMode(QListView::IconMode);
         alist->setDragDropMode(QListView::NoDragDrop);
+    }
+}
+
+void BanlistDialog::addCard(const QString &name){
+    if(list->objectName() == "Cards"){
+        QStringList cards = name.split("+");
+        foreach(QString named, cards){
+            const Card *card = Sanguosha->getCard(named);
+            QIcon icon(card->getPixmapPath());
+            QString text = Sanguosha->translate(named);
+            QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+            item->setData(Qt::UserRole, name);
+            //item->setSizeHint(QSize(40,60));
+        }
     }
 }
 
@@ -558,10 +588,17 @@ void BanlistDialog::addPair(const QString &first, const QString &second){
 }
 
 void BanlistDialog::doAddButton(){
-    FreeChooseDialog *chooser = new FreeChooseDialog(this, (list->objectName() == "Pairs"));
-    connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(addGeneral(QString)));
-    connect(chooser, SIGNAL(pair_chosen(QString,QString)), this, SLOT(addPair(QString, QString)));
-    chooser->exec();
+    if(list->objectName() == "Cards"){
+        CardKindDialog *chooser = new CardKindDialog(this);
+        connect(chooser, SIGNAL(card_kind_chosen(QString)), this, SLOT(addCard(QString)));
+        chooser->exec();
+    }
+    else{
+        FreeChooseDialog *chooser = new FreeChooseDialog(this, (list->objectName() == "Pairs"));
+        connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(addGeneral(QString)));
+        connect(chooser, SIGNAL(pair_chosen(QString,QString)), this, SLOT(addPair(QString, QString)));
+        chooser->exec();
+    }
 }
 
 void BanlistDialog::doAdd2ndButton(){
@@ -610,7 +647,6 @@ QGroupBox *ServerDialog::create3v3Box(){
     QVBoxLayout *vlayout = new QVBoxLayout;
 
     standard_3v3_radiobutton = new QRadioButton(tr("Standard mode"));
-    new_3v3_radiobutton = new QRadioButton(tr("New Mode"));
     QRadioButton *extend = new QRadioButton(tr("Extension mode"));
     QPushButton *extend_edit_button = new QPushButton(tr("General selection ..."));
     extend_edit_button->setEnabled(false);
@@ -636,23 +672,17 @@ QGroupBox *ServerDialog::create3v3Box(){
     }
 
     vlayout->addWidget(standard_3v3_radiobutton);
-    vlayout->addWidget(new_3v3_radiobutton);
     vlayout->addLayout(HLay(extend, extend_edit_button));
     vlayout->addWidget(exclude_disaster_checkbox);
     vlayout->addLayout(HLay(new QLabel(tr("Role choose")), role_choose_combobox));
     box->setLayout(vlayout);
 
     bool using_extension = Config.value("3v3/UsingExtension", false).toBool();
-    bool using_new_mode = Config.value("3v3/UsingNewMode", false).toBool();
     if(using_extension)
         extend->setChecked(true);
-    else if(using_new_mode)
-        new_3v3_radiobutton->setChecked(true);
     else
         standard_3v3_radiobutton->setChecked(true);
 
-    //hide
-    new_3v3_radiobutton->setVisible(false);
     return box;
 }
 
@@ -1052,10 +1082,9 @@ bool ServerDialog::config(){
     Config.setValue("Address", Config.Address);
 
     Config.beginGroup("3v3");
-    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked() && !new_3v3_radiobutton->isChecked());
+    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked());
     Config.setValue("RoleChoose", role_choose_combobox->itemData(role_choose_combobox->currentIndex()).toString());
     Config.setValue("ExcludeDisaster", exclude_disaster_checkbox->isChecked());
-    Config.setValue("UsingNewMode", new_3v3_radiobutton->isChecked());
     Config.endGroup();
 
     QSet<QString> ban_packages;

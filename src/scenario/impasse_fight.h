@@ -1,5 +1,5 @@
-#ifndef BOSSCHALLENGE_H
-#define BOSSCHALLENGE_H
+#ifndef IMPASSEFIGHTSCENARIO_H
+#define IMPASSEFIGHTSCENARIO_H
 
 #include "scenario.h"
 #include "maneuvering.h"
@@ -17,4 +17,4 @@ public:
     virtual void onTagSet(Room *room, const QString &key) const;
 };
 
-#endif // BOSSCHALLENGE_H
+#endif // IMPASSEFIGHTSCENARIO_H

@@ -614,4 +614,4 @@ SnakePackage::SnakePackage()
     addMetaObject<FeizhenCard>();
 }
 
-ADD_PACKAGE(Snake)
+//ADD_PACKAGE(Snake)

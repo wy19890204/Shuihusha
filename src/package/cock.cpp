@@ -478,42 +478,6 @@ public:
     }
 };
 
-class Caiquan: public TriggerSkill{
-public:
-    Caiquan():TriggerSkill("caiquan"){
-        events << CardEffected;
-        frequency = Compulsory;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(effect.from && effect.to == player && player->hasEquip()){
-            QStringList suits;
-            foreach(const Card *rmp, player->getEquips()){
-                if(!suits.contains(rmp->getSuitString()))
-                    suits << rmp->getSuitString();
-            }
-            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
-                return false;
-            QString suit = effect.card->getSuitString();
-            if(!suits.contains(suit))
-                return false;
-
-            LogMessage log;
-            log.type = "#Caiquan";
-            log.from = effect.from;
-            log.to << effect.to;
-            log.arg = effect.card->objectName();
-            log.arg2 = objectName();
-
-            room->sendLog(log);
-            room->playSkillEffect(objectName());
-            return true;
-        }
-        return false;
-    }
-};
-
 CockPackage::CockPackage()
     :GeneralPackage("cock")
 {
@@ -540,14 +504,10 @@ CockPackage::CockPackage()
     jiashi->addSkill(new Banzhuang);
     jiashi->addSkill(new Zhuying);
 
-    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
-    ximenqing->addSkill("#hp-1");
-    ximenqing->addSkill(new Caiquan);
-
     addMetaObject<FanwuCard>();
     addMetaObject<EyanCard>();
     addMetaObject<EyanSlashCard>();
     addMetaObject<ZhangshiCard>();
 }
 
-ADD_PACKAGE(Cock)
+//ADD_PACKAGE(Cock)

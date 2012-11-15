@@ -52,7 +52,8 @@ return {
 	["$fangdai3"] = "利滚利！",
 	["$fangdai4"] = "小鱼钓大鱼，年年有余！",
 
-
+	["warlords"] = "投名状",
+	["@blood"] = "血",
 	["#ximenjinge"] = "光之子",
 	["ximenjinge"] = "西门金哥",
 	["designer:ximenjinge"] = "江山英魂",

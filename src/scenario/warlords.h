@@ -2,7 +2,6 @@
 #define WARLORDS_MODE_H
 
 #include "scenario.h"
-#include "maneuvering.h"
 
 class WarlordsScenario : public Scenario{
     Q_OBJECT
@@ -12,7 +11,7 @@ public:
 
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
-    virtual QString getRoles() const;
+    virtual void getRoles(char *roles) const;
     virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
 };

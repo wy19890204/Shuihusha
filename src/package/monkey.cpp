@@ -6,46 +6,128 @@
 #include "engine.h"
 #include "ai.h"
 #include "plough.h"
+#include "maneuvering.h"
 
-class Lianzang: public TriggerSkill{
+class Caiquan: public TriggerSkill{
 public:
-    Lianzang():TriggerSkill("lianzang"){
-        events << Death;
+    Caiquan():TriggerSkill("caiquan"){
+        events << CardEffected;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(effect.from && effect.to == player && player->hasEquip()){
+            QStringList suits;
+            foreach(const Card *rmp, player->getEquips()){
+                if(!suits.contains(rmp->getSuitString()))
+                    suits << rmp->getSuitString();
+            }
+            if(!effect.card->inherits("Slash") && !effect.card->inherits("Duel") && !effect.card->inherits("Ecstasy"))
+                return false;
+            QString suit = effect.card->getSuitString();
+            if(!suits.contains(suit))
+                return false;
+
+            LogMessage log;
+            log.type = "#Caiquan";
+            log.from = effect.from;
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = objectName();
+
+            room->sendLog(log);
+            room->playSkillEffect(objectName());
+            return true;
+        }
+        return false;
+    }
+};
+
+class Chengfu: public TriggerSkill{
+public:
+    Chengfu():TriggerSkill("chengfu"){
+        events << CardLost << CardAsk << CardUseAsk << PhaseChange;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent t, Room* room, ServerPlayer *conan, QVariant &data) const{
+        if(t == PhaseChange){
+            if(conan->getPhase() == Player::NotActive)
+                room->setPlayerCardLock(conan, "Slash");
+            else if(conan->getPhase() == Player::RoundStart)
+                room->setPlayerCardLock(conan, "-Slash");
+            return false;
+        }
+        else if((t == CardAsk || t == CardUseAsk) &&
+                conan->getPhase() == Player::NotActive){
+            QString asked = data.toString();
+            if(asked == "slash"){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                LogMessage log;
+                log.type = "#ChengfuEffect";
+                log.from = conan;
+                log.arg = asked;
+                log.arg2 = objectName();
+                room->sendLog(log);
+                return true;
+            }
+        }
+        else if(t == CardLost && conan->getPhase() == Player::NotActive){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(conan->isDead())
+                return false;
+            if(move->from_place == Player::Hand || move->from_place == Player::Equip){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = conan;
+                log.arg = objectName();
+                room->sendLog(log);
+
+                conan->drawCards(1);
+            }
+        }
+        return false;
+    }
+};
+
+class Xiaduo: public TriggerSkill{
+public:
+    Xiaduo():TriggerSkill("xiaduo"){
+        events << DamageComplete;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *tenkei = room->findPlayerBySkillName(objectName());
-        if(!tenkei)
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || !damage.from->hasSkill(objectName()))
             return false;
-        QVariantList eatdeath_skills = tenkei->tag["EatDeath"].toList();
-        if(room->askForSkillInvoke(tenkei, objectName(), data)){
-            QStringList eatdeaths;
-            foreach(QVariant tmp, eatdeath_skills)
-                eatdeaths << tmp.toString();
-            if(!eatdeaths.isEmpty()){
-                QString choice = room->askForChoice(tenkei, objectName(), eatdeaths.join("+"));
-                room->detachSkillFromPlayer(tenkei, choice);
-                eatdeath_skills.removeOne(choice);
-            }
-            room->loseMaxHp(tenkei);
-            QList<const Skill *> skills = player->getVisibleSkillList();
-            foreach(const Skill *skill, skills){
-                if(skill->parent() &&
-                   skill->getFrequency() != Skill::Limited &&
-                   skill->getFrequency() != Skill::Wake &&
-                   !skill->isLordSkill()){
-                    QString sk = skill->objectName();
-                    room->acquireSkill(tenkei, sk);
-                    eatdeath_skills << sk;
-                }
-            }
-            tenkei->tag["EatDeath"] = eatdeath_skills;
-        }
+        if(damage.from->distanceTo(damage.to) != 1)
+            return false;
+        ServerPlayer *wanglun = damage.from;
+        QList<ServerPlayer *> ones;
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(damage.to))
+            if(wanglun->distanceTo(tmp) == 1)
+                ones << tmp;
+        if(!ones.isEmpty() && room->askForCard(wanglun, "EquipCard", "@xiaduo", data, CardDiscarded)){
+            room->playSkillEffect(objectName());
+            ServerPlayer *target = room->askForPlayerChosen(wanglun, ones, objectName());
+            LogMessage log;
+            log.type = "#UseSkill";
+            log.from = wanglun;
+            log.to << target;
+            log.arg = objectName();
+            room->sendLog(log);
 
+            DamageStruct dama;
+            dama.from = wanglun;
+            dama.to = target;
+            room->damage(dama);
+        }
         return false;
     }
 };
@@ -311,25 +393,6 @@ public:
     }
 };
 
-class Tancai:public PhaseChangeSkill{
-public:
-    Tancai():PhaseChangeSkill("tancai"){
-    }
-
-    virtual int getPriority() const{
-        return 2;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *dujian) const{
-        if(dujian->getPhase() == Player::Discard &&
-           dujian->askForSkillInvoke(objectName())){
-            dujian->playSkillEffect(objectName());
-            dujian->drawCards(dujian->getLostHp() + 1, false);
-        }
-        return false;
-    }
-};
-
 JingtianCard::JingtianCard(){
 }
 
@@ -577,11 +640,54 @@ public:
     }
 };
 
+class Zaochuan: public OneCardViewAsSkill{
+public:
+    Zaochuan():OneCardViewAsSkill("zaochuan"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->inherits("TrickCard");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getFilteredCard();
+        IronChain *chain = new IronChain(card->getSuit(), card->getNumber());
+        chain->addSubcard(card);
+        chain->setSkillName(objectName());
+        return chain;
+    }
+};
+
+class Mengchong: public DistanceSkill{
+public:
+    Mengchong():DistanceSkill("mengchong"){
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        bool mengkang = from->hasSkill(objectName());
+        foreach(const Player *player, from->getSiblings()){
+            if(player->isAlive() && player->hasSkill(objectName())){
+                mengkang = true;
+                break;
+            }
+        }
+        if(mengkang && !from->isChained() && to->isChained())
+            return +1;
+        else
+            return 0;
+    }
+};
+
 MonkeyPackage::MonkeyPackage()
     :GeneralPackage("monkey")
 {
-    General *caiqing = new General(this, "caiqing", "jiang", 5);
-    caiqing->addSkill(new Lianzang);
+    General *ximenqing = new General(this, "ximenqing$", "min", 4, true, true);
+    ximenqing->addSkill("#hp-1");
+    ximenqing->addSkill(new Caiquan);
+
+    General *wanglun = new General(this, "wanglun", "kou", 3);
+    wanglun->addSkill(new Chengfu);
+    wanglun->addSkill(new Xiaduo);
 
     General *shenjiangjing = new General(this, "shenjiangjing", "god", 3);
     shenjiangjing->addSkill(new Shensuan);
@@ -602,9 +708,6 @@ MonkeyPackage::MonkeyPackage()
     tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
-    General *zhangmengfang = new General(this, "zhangmengfang", "guan");
-    zhangmengfang->addSkill(new Tancai);
-
     General *litianrun = new General(this, "litianrun", "jiang");
     litianrun->addSkill(new Jingtian);
 
@@ -622,9 +725,13 @@ MonkeyPackage::MonkeyPackage()
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qing5hang);
 
+    General *mengkang = new General(this, "mengkang", "kou");
+    mengkang->addSkill(new Zaochuan);
+    mengkang->addSkill(new Mengchong);
+
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
     addMetaObject<XianhaiCard>();
 }
 
-ADD_PACKAGE(Monkey)
+//ADD_PACKAGE(Monkey)
