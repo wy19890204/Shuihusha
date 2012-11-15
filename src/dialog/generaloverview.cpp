@@ -308,6 +308,8 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     }
 */
     QString designer_text = Sanguosha->translate("designer:" + general->objectName());
+    if(designer_text.startsWith("designer:"))
+        designer_text = Sanguosha->translate("designer:" + general->getPackage());
     if(!designer_text.startsWith("designer:"))
         ui->designerLineEdit->setText(designer_text);
     else
