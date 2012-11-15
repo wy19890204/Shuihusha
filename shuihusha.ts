@@ -2683,7 +2683,7 @@
         <location filename="src/dialog/packagingeditor.cpp" line="180"/>
         <location filename="src/dialog/packagingeditor.cpp" line="357"/>
         <location filename="src/dialog/packagingeditor.cpp" line="367"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="403"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="404"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -2765,6 +2765,7 @@
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="264"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="398"/>
         <source>Notice</source>
         <translation>提示</translation>
     </message>
@@ -2830,9 +2831,14 @@
         <translation>选择一个包名</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="403"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="398"/>
+        <source>DIY package is finished.</source>
+        <translation>打包完成！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="404"/>
         <source>Package compress/decompress error!</source>
-        <translation>DIY 包 打包或解压出错 !</translation>
+        <translation>打包或解压出错！</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="254"/>

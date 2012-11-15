@@ -395,6 +395,9 @@ void PackagingEditor::makePackage(){
         process->start("7zr", args);
 
         connect(process, SIGNAL(finished(int)), this, SLOT(done7zProcess(int)));
+        QMessageBox::information(this, tr("Notice"), tr("DIY package is finished."));
+
+        tab_widget->setCurrentIndex(0);
     }
 }
 
