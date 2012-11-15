@@ -19,6 +19,7 @@ public:
 
 	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 	virtual void onGameStart(ServerPlayer *player) const = 0;
+	virtual void onIdied(ServerPlayer *player) const;
 };
 
 class DrawCardsSkill: public TriggerSkill{

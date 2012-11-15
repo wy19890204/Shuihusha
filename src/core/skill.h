@@ -200,16 +200,28 @@ public:
     virtual int getAtkrg(const Player *target) const;
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
+/*
+class ProhibitSkill: public ClientSkill{
+    Q_OBJECT
 
+public:
+    ProhibitSkill(const QString &name);
+};
+*/
 class DistanceSkill: public ClientSkill{
     Q_OBJECT
 
 public:
     DistanceSkill(const QString &name);
-
-    virtual int getCorrect(const Player *from, const Player *to) const;
 };
+/*
+class MaxCardsSkill: public ClientSkill{
+    Q_OBJECT
 
+public:
+    MaxCardsSkill(const QString &name);
+};
+*/
 class WeaponSkill: public TriggerSkill{
     Q_OBJECT
 
