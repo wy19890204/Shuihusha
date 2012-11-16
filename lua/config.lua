@@ -21,7 +21,7 @@ config = {
 		"Ox",
 		"Tiger",
 		"Hare",
-		"Dragon",
+--		"Dragon",
 --		"Snake",
 --		"Mustang",
 --		"Sheep",
