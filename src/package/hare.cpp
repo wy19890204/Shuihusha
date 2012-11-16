@@ -773,11 +773,7 @@ public:
         events << Death;
         view_as_skill = new YijieViewAsSkill;
     }
-/*
-    virtual int getPriority() const{
-        return 2;
-    }
-*/
+
     virtual bool triggerable(const ServerPlayer *target) const{
         return target != NULL && target->hasSkill(objectName());
     }
@@ -793,7 +789,7 @@ public:
         room->playSkillEffect(objectName(), qrand() % 2 + 3);
         if(!player->isNude()){
             DummyCard *dummy = player->wholeHandCards();
-            foreach(const Card *ard, player->getEquips())
+            foreach(const Card *ard, player->getEquips(true))
                 dummy->addSubcard(ard);
             target->obtainCard(dummy, false);
         }
