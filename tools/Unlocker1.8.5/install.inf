@@ -1,0 +1,34 @@
+[Version]
+Signature="$CHICAGO$"
+
+[DefaultInstall]
+AddReg=Unlocker_AddReg
+
+[DefaultUnInstall]
+DelReg=Unlocker_DelReg
+
+[Unlocker_AddReg]
+hkcr,"*\shellex\ContextMenuHandlers\UnlockerShellExtension",,,"{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hkcr,"AllFilesystemObjects\shellex\ContextMenuHandlers\UnlockerShellExtension",,,"{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hkcr,"CLSID\{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}\InProcServer32",,,"%01%\UnlockerCOM.dll"
+hkcr,"CLSID\{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}\InProcServer32","ThreadingModel",,"Apartment"
+hkcr,"CLSID\{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}",,,"UnlockerShellExtension"
+hkcr,"CLSID\UnlockerShellExtension",,,"{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hkcr,"Directory\shellex\ContextMenuHandlers\UnlockerShellExtension",,,"{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hkcr,"Folder\shellex\ContextMenuHandlers\UnlockerShellExtension",,,"{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Unlocker.exe",,,"%01%\Unlocker.exe"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved","{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}",,"UnlockerShellExtension"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Unlocker","Language",,"2052"
+
+[Unlocker_DelReg]
+hkcr,"*\shellex\ContextMenuHandlers\UnlockerShellExtension"
+hkcr,"AllFilesystemObjects\shellex\ContextMenuHandlers\UnlockerShellExtension"
+hkcr,"CLSID\{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hkcr,"CLSID\UnlockerShellExtension"
+hkcr,"Directory\shellex\ContextMenuHandlers\UnlockerShellExtension"
+hkcr,"Folder\shellex\ContextMenuHandlers\UnlockerShellExtension"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Unlocker.exe"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved","{DDE4BEEB-DDE6-48fd-8EB5-035C09923F83}"
+hklm,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Unlocker"
+
+[Strings]
