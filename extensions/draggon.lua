@@ -501,6 +501,7 @@ sgs.LoadTranslationTable{
 	[":luahuopin"]="主公技.锁定技,回合开始阶段,若场上存在已死亡的寇势力角色,你须执行下列两项中的一项：1.摸取3张牌，然后失去1点体力；2.弃置3张牌，然后回复1点体力。",
 	["spwusong"]="武松",
 	["#spwusong"]="杀人者打虎",
+	["cv:spwusong"]="猎狐",
 	["luashenchou"]="深仇",
 	[":luashenchou"]="你始终获得对你造成伤害的牌;你每受到一次伤害你可以将一张牌置于你的武将牌上称为“仇”。",
 	["~luashenchou"]="你始终获得对你造成伤害的牌;你每受到一次伤害你可以将一张牌置于你的武将牌上称为“仇”。",
@@ -514,6 +515,10 @@ sgs.LoadTranslationTable{
 	["luaduanbi"]="断臂",
 	[":luaduanbi"]="限定技,回合开始阶段,若你的体力为1,你可以将体力上限减至1,然后让任一角色回复或失去2点体力.",
 
+	["$luawujie"]="冤各有头，债各有主！",
+	["$luaduanbi"]="自断一臂，力擒此贼！",
+	["$luashenchou1"] = "人无刚骨，安身不牢。",
+	["$luashenchou2"] = "杀兄之仇，不共戴天！",
 }
 
 luaqiankun=sgs.CreateProhibitSkill{
@@ -898,7 +903,7 @@ on_trigger=function(self,event,player,data)
 		if not damage.from then return end
 		if not damage.from:isAlive() then return end
 		local owner = room:findPlayerBySkillName(self:objectName())
-		if owner:getMark("luazhuanshi")>0 then return end
+		if owner:getMark("luazhuanshi_wake")>0 then return end
         if not room:askForSkillInvoke(owner,self:objectName(),data) then return end
 		room:loseHp(owner,1)
 		local card_id = room:askForCardChosen(owner,damage.from,"he",self:objectName())
@@ -924,9 +929,9 @@ on_trigger=function(self,event,player,data)
 	local duijue=sgs.Sanguosha:getTriggerSkill("duijue")
 	local dujian=sgs.Sanguosha:getTriggerSkill("dujian")
 if event==sgs.AskForPeaches and player:objectName()==owner:objectName() then
-		if player:getMark("luazhuanshi")==1 then return end
+		if player:getMark("luazhuanshi_wake")==1 then return end
 		local room=player:getRoom()
-		room:setPlayerMark(player,"luazhuanshi",1)
+		room:setPlayerMark(player,"luazhuanshi_wake",1)
 		local recover=sgs.RecoverStruct()
 		recover.recover=1
 		recover.who=player
@@ -939,10 +944,10 @@ if event==sgs.AskForPeaches and player:objectName()==owner:objectName() then
 		room:sendLog(log)
 elseif event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
 	if player:objectName()~=owner:objectName() then return end
-	if player:getMark("luazhuanshi")~=1 then return end
+	if player:getMark("luazhuanshi_wake")~=1 then return end
 	room:askForUseCard(player, "@@luajinshucard", "@luajinshu")
 elseif event==sgs.Predamaged then
-	if player:getMark("luazhuanshi")~=1 then return end
+	if player:getMark("luazhuanshi_wake")~=1 then return end
 	if owner:getPile("spxi"):length()==0 then return end
 	local damage=data:toDamage()
 	if damage.to:objectName()==owner:objectName() then return end
@@ -958,7 +963,7 @@ elseif event==sgs.Predamaged then
 			return true
 		end
 elseif event==sgs.Predamage then
-	if player:getMark("luazhuanshi")~=1 then return end
+	if player:getMark("luazhuanshi_wake")~=1 then return end
 	if player:objectName()==owner:objectName() then
 		local damage=data:toDamage()
 		if damage.to:canSlash(damage.from) then return end
@@ -970,7 +975,7 @@ elseif event==sgs.Predamage then
 		return true
 	end
 elseif event==sgs.Damaged or sgs.Damage then
-	if owner:getMark("luazhuanshi")~=1 then return end
+	if owner:getMark("luazhuanshi_wake")~=1 then return end
 	if owner:getPile("spxi"):length()==0 then return end
 	local damage=data:toDamage()
 	if event==sgs.Damaged and player:objectName()==owner:objectName() then
@@ -1115,7 +1120,7 @@ sgs.LoadTranslationTable{
 	["#spbird"]="护法明王",
 	["spbird"]="大鹏金翅鸟",
 	["$luazhuanshi"]="转世重生",
-	["luazhuanshi"]="[醒]转世",
+	["luazhuanshi"]="转世",
 	[":luazhuanshi"]="<b>觉醒技</b>,当你处于濒死状态时,你须回复至1点体力并\
 摸两张牌,然后你须失去技能【啄邪】并获得技能【尽术】的效果:\
 弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
@@ -1192,5 +1197,7 @@ for j=1,#mygname,1 do
 	}
 	if j>=7 or j==5 then
 		sgs.LoadTranslationTable{["coder:"..mygname[j]]="roxiel",}
+	else
+		sgs.LoadTranslationTable{["coder:"..mygname[j]]="群龙令",}
 	end
 end
