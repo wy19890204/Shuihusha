@@ -133,7 +133,7 @@ sgs.LoadTranslationTable{
 	["#NoqingLoseHp"] = "受到 %from 【%arg】锁定技的影响，%to 流失了一点体力",
 	["#NoqingLoseMaxHp"] = "受到 %from 【%arg】锁定技的影响，%to 流失了一点体力上限",
 
-	["#tianqi"] = "百撕不得骑姐",
+	["#tianqi"] = "食死徒",
 	["tianqi"] = "天启",
 	["designer:tianqi"] = "宇文天启",
 	["cv:tianqi"] = "",

@@ -477,4 +477,4 @@ DragonPackage::DragonPackage()
     addMetaObject<QianxianCard>();
 }
 
-ADD_PACKAGE(Dragon)
+//ADD_PACKAGE(Dragon)

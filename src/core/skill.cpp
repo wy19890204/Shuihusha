@@ -342,15 +342,19 @@ int ClientSkill::getAtkrg(const Player *) const{
 bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
     return false;
 }
-
+/*
+ProhibitSkill::ProhibitSkill(const QString &name)
+    :ClientSkill(name){
+}
+*/
 DistanceSkill::DistanceSkill(const QString &name)
     :ClientSkill(name){
 }
-
-int DistanceSkill::getCorrect(const Player *, const Player *) const{
-    return 0;
+/*
+MaxCardsSkill::MaxCardsSkill(const QString &name)
+    :ClientSkill(name){
 }
-
+*/
 WeaponSkill::WeaponSkill(const QString &name)
     :TriggerSkill(name)
 {

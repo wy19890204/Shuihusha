@@ -510,4 +510,4 @@ CockPackage::CockPackage()
     addMetaObject<ZhangshiCard>();
 }
 
-ADD_PACKAGE(Cock)
+//ADD_PACKAGE(Cock)

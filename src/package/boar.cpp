@@ -855,4 +855,4 @@ BoarPackage::BoarPackage()
     addMetaObject<HuafoCard>();
 }
 
-ADD_PACKAGE(Boar)
+//ADD_PACKAGE(Boar)

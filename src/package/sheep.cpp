@@ -528,4 +528,4 @@ SheepPackage::SheepPackage()
     //addMetaObject<FeiqiangCard>();
 }
 
-ADD_PACKAGE(Sheep)
+//ADD_PACKAGE(Sheep)

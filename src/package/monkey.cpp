@@ -734,4 +734,4 @@ MonkeyPackage::MonkeyPackage()
     addMetaObject<XianhaiCard>();
 }
 
-ADD_PACKAGE(Monkey)
+//ADD_PACKAGE(Monkey)

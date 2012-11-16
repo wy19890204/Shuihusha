@@ -2078,62 +2078,62 @@
         <translation>脚本编辑器</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="284"/>
+        <location filename="src/dialog/mainwindow.ui" line="287"/>
         <source>Broadcast ...</source>
         <translation>广播 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="289"/>
+        <location filename="src/dialog/mainwindow.ui" line="292"/>
         <source>Acknowledgement</source>
         <translation>鸣谢</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="297"/>
+        <location filename="src/dialog/mainwindow.ui" line="300"/>
         <source>Damage maker</source>
         <translation>伤害制造器</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="305"/>
+        <location filename="src/dialog/mainwindow.ui" line="308"/>
         <source>Expand dashboard</source>
         <translation>延长控制板</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="313"/>
+        <location filename="src/dialog/mainwindow.ui" line="316"/>
         <source>Get card ...</source>
         <translation>获取卡牌 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="318"/>
+        <location filename="src/dialog/mainwindow.ui" line="321"/>
         <source>Death note ...</source>
         <translation>死亡笔记 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="323"/>
+        <location filename="src/dialog/mainwindow.ui" line="326"/>
         <source>Revive wand ...</source>
         <translation>复活魔杖 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="328"/>
+        <location filename="src/dialog/mainwindow.ui" line="331"/>
         <source>Card editor ...</source>
         <translation>卡牌编辑器 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="331"/>
+        <location filename="src/dialog/mainwindow.ui" line="334"/>
         <source>Ctrl+T</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="336"/>
+        <location filename="src/dialog/mainwindow.ui" line="339"/>
         <source>PC Console Start</source>
         <translation>单机启动</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="339"/>
+        <location filename="src/dialog/mainwindow.ui" line="342"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="344"/>
+        <location filename="src/dialog/mainwindow.ui" line="347"/>
         <source>Package manager ...</source>
         <translation>DIY 包管理器 ...</translation>
     </message>
@@ -2143,49 +2143,49 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="349"/>
+        <location filename="src/dialog/mainwindow.ui" line="352"/>
         <source>AI Melee</source>
         <translation>AI 混战</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="352"/>
+        <location filename="src/dialog/mainwindow.ui" line="355"/>
         <source>Ctrl+M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="357"/>
+        <location filename="src/dialog/mainwindow.ui" line="360"/>
         <source>Replay file convert ...</source>
         <translation>重放文件格式转换 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="362"/>
+        <location filename="src/dialog/mainwindow.ui" line="365"/>
         <source>Send lowlevel command ...</source>
         <translation>发送底层命令 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="367"/>
+        <location filename="src/dialog/mainwindow.ui" line="370"/>
         <source>View ban list</source>
         <translation>查看禁选表</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="372"/>
+        <location filename="src/dialog/mainwindow.ui" line="375"/>
         <location filename="src/dialog/mainwindow.cpp" line="1011"/>
         <source>About fmod</source>
         <translation>关于 fmod</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="377"/>
+        <location filename="src/dialog/mainwindow.ui" line="380"/>
         <location filename="src/dialog/mainwindow.cpp" line="1034"/>
         <source>About Lua</source>
         <translation>关于 Lua</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="382"/>
+        <location filename="src/dialog/mainwindow.ui" line="385"/>
         <source>Execute script at server side ...</source>
         <translation>在服务器端执行脚本 ...</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="387"/>
+        <location filename="src/dialog/mainwindow.ui" line="390"/>
         <source>Change general ...</source>
         <translation>换将卡 ...</translation>
     </message>
@@ -2681,13 +2681,15 @@
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="83"/>
         <location filename="src/dialog/packagingeditor.cpp" line="180"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="358"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="394"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="357"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="367"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="404"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="180"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="357"/>
         <source>Insufficient permissions</source>
         <translation>权限不足！</translation>
     </message>
@@ -2742,89 +2744,105 @@
         <translation>将选择的文件移除或删除</translation>
     </message>
     <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="222"/>
+        <source>Edit file</source>
+        <translation>编辑文件</translation>
+    </message>
+    <message>
         <location filename="src/dialog/packagingeditor.cpp" line="223"/>
+        <source>Edit file to package</source>
+        <translation>编辑选择的文件</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="226"/>
         <source>Export files to a single package</source>
         <translation>将选择的文件打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="247"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="252"/>
         <source>Select a package to install</source>
         <translation>选择要安装的包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="259"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="264"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="398"/>
         <source>Notice</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="259"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="264"/>
         <source>DIY package is loaded, please reset the game.</source>
         <translation>DIY扩展包安装完成，重启游戏后生效。</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="294"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="299"/>
         <source>Uninstall package</source>
         <translation>卸载包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="295"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="300"/>
         <source>Are you sure to remove %1 ?</source>
         <translation>注意，此操作会彻底从硬盘上删除 %1 的所有数据。你真的要删除吗？</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="313"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="318"/>
         <source>Select one or more files to package</source>
         <translation>选择一个或多个文件打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="315"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="320"/>
         <source>Any files (*.*)</source>
         <translation>任何文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="330"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="335"/>
         <source>Remove file</source>
         <translation>移除文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="330"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="335"/>
         <source>Are you sure to physical delete this file?</source>
         <translation>物理删除请选“是”，仅从列表中移除请选“否”</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="344"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="349"/>
         <source>Clear file list</source>
         <translation>清空文件列表</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="344"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="349"/>
         <source>Are you sure to clear the file list?</source>
         <translation>你确定要清空文件列表吗？</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="90"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="222"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="225"/>
         <source>Make package</source>
         <translation>打包</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="358"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="367"/>
         <source>Please fill the meta information before making package</source>
         <translation>在打包之前请补全所有的元信息</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="368"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="377"/>
         <source>Select a package name</source>
         <translation>选择一个包名</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="394"/>
-        <source>Package compress/decompress error!</source>
-        <translation>DIY 包 打包或解压出错 !</translation>
+        <location filename="src/dialog/packagingeditor.cpp" line="398"/>
+        <source>DIY package is finished.</source>
+        <translation>打包完成！</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="249"/>
-        <location filename="src/dialog/packagingeditor.cpp" line="370"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="404"/>
+        <source>Package compress/decompress error!</source>
+        <translation>打包或解压出错！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="254"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="379"/>
         <source>7z format (*.7z)</source>
         <translation>7z 格式 (*.7z)</translation>
     </message>
@@ -2996,71 +3014,71 @@
 <context>
     <name>Room</name>
     <message>
-        <location filename="src/server/room.cpp" line="1708"/>
+        <location filename="src/server/room.cpp" line="1709"/>
         <source>disconnected</source>
         <translation>断开</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1962"/>
+        <location filename="src/server/room.cpp" line="1963"/>
         <source>Computer %1</source>
         <translation>电脑 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1730"/>
-        <location filename="src/server/room.cpp" line="2053"/>
-        <location filename="src/server/room.cpp" line="4054"/>
+        <location filename="src/server/room.cpp" line="1731"/>
+        <location filename="src/server/room.cpp" line="2054"/>
+        <location filename="src/server/room.cpp" line="4055"/>
         <source>Contestant</source>
         <translation>选手</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1731"/>
+        <location filename="src/server/room.cpp" line="1732"/>
         <source>&lt;font color=#000000&gt;Player &lt;b&gt;%1&lt;/b&gt; left the game&lt;/font&gt;</source>
         <translation>&lt;font color=#000000&gt;玩家 %1 离开了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1944"/>
+        <location filename="src/server/room.cpp" line="1945"/>
         <source>%1: %2 is not invokable</source>
         <translation>%1: 不可调用的方法名 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="1982"/>
+        <location filename="src/server/room.cpp" line="1983"/>
         <source>Hello, I&apos;m a robot</source>
         <translation>大家好，我是一个机器人</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2052"/>
+        <location filename="src/server/room.cpp" line="2053"/>
         <source>&lt;font color=#EEB422&gt;Player &lt;b&gt;%1&lt;/b&gt; joined the game&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 加入了游戏&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2464"/>
+        <location filename="src/server/room.cpp" line="2465"/>
         <source>Unable to parse player</source>
         <translation>不可分析的玩家</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2468"/>
+        <location filename="src/server/room.cpp" line="2469"/>
         <source>Server is not waiting for reply from %1</source>
         <translation>服务正在等待 %1 的响应</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2472"/>
+        <location filename="src/server/room.cpp" line="2473"/>
         <source>Reply command should be %1 instead of %2</source>
         <translation>应答指令应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="2477"/>
+        <location filename="src/server/room.cpp" line="2478"/>
         <source>Reply serial should be %1 instead of %2</source>
         <translation>玩家序号应为 %1 而不是 %2</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="3359"/>
+        <location filename="src/server/room.cpp" line="3360"/>
         <source>Card can not parse:
  %1</source>
         <translation>卡牌字符串无法解析:
 %1</translation>
     </message>
     <message>
-        <location filename="src/server/room.cpp" line="4053"/>
+        <location filename="src/server/room.cpp" line="4054"/>
         <source>&lt;font color=#EEB422&gt;The network delay of player &lt;b&gt;%1&lt;/b&gt; is %2 milliseconds.&lt;/font&gt;</source>
         <translation>&lt;font color=#EEB422&gt;玩家 &lt;b&gt;%1&lt;/b&gt; 的网络延迟为 %2 毫秒&lt;/font&gt;</translation>
     </message>

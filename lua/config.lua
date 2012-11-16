@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20121105",
-	version_name = "终结版F3.4 Shibada Wansui！",
+	version = "20121117",
+	version_name = "终结版F3.5", -- Shuihusha's Anniversary
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -21,9 +21,9 @@ config = {
 		"Ox",
 		"Tiger",
 		"Hare",
-		"Dragon",
+--		"Dragon",
 --		"Snake",
-		"Mustang",
+--		"Mustang",
 --		"Sheep",
 --		"Monkey",
 --		"Cock",
@@ -67,6 +67,7 @@ config = {
 		"天霜雪舞的烤萝莉",
 		"七爷的觉醒",
 		"科比挂的柯南",
+		"贝克街的亡灵",
 		"导线的电阻",
 		"QB的契约",
 		"小A喜欢用的外挂",
@@ -85,7 +86,6 @@ config = {
 		"江西安义的雷海",
 		"中条老道的大头贴",
 		"超级塞克洛",
-		"贝克街的亡灵",
 	},
 
 	color_guan = "#547998",

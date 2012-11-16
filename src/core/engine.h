@@ -90,7 +90,6 @@ public:
 
     const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
     int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
-    bool biliBili() const;
 
 private:
     QHash<QString, QString> translations;
