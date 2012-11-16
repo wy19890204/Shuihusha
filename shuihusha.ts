@@ -2785,6 +2785,11 @@
         <translation>注意，此操作会彻底从硬盘上删除 %1 的所有数据。你真的要删除吗？</translation>
     </message>
     <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="304"/>
+        <source>DIY package is deleted.</source>
+        <translation>卸载完成！</translation>
+    </message>
+    <message>
         <location filename="src/dialog/packagingeditor.cpp" line="318"/>
         <source>Select one or more files to package</source>
         <translation>选择一个或多个文件打包</translation>

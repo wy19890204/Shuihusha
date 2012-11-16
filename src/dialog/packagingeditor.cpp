@@ -307,10 +307,8 @@ void PackagingEditor::uninstallPackage(){
         QFile::remove(file);
 
     QFile::remove(settings->fileName());
-
-    //settings->deleteLater();
-
     delete item;
+    QMessageBox::information(this, tr("Notice"), tr("DIY package is deleted."));
 }
 
 void PackagingEditor::browseFiles(){
