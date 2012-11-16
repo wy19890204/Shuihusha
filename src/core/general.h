@@ -72,6 +72,7 @@ private:
     QStringList related_skills;
     bool hidden;
     bool never_shown;
+    QMap<QString, QString> kmap;
 };
 
 #endif // GENERAL_H

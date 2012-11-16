@@ -21,6 +21,11 @@ General::General(Package *package, const QString &name, const QString &kingdom, 
         lord = false;
         setObjectName(name);
     }
+
+    kmap["wei"] = "guan";
+    kmap["shu"] = "jiang";
+    kmap["wu"] = "min";
+    kmap["qun"] = "kou";
 }
 
 int General::getMaxHp() const{
@@ -28,7 +33,11 @@ int General::getMaxHp() const{
 }
 
 QString General::getKingdom() const{
-    return kingdom;
+    QString m_kingdom = kmap.value(kingdom, QString());
+    if(!m_kingdom.isNull())
+        return m_kingdom;
+    else
+        return kingdom;
 }
 
 bool General::isMale() const{
