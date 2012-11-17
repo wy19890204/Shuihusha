@@ -35,7 +35,7 @@ MetaInfoWidget::MetaInfoWidget(bool load_config){
     programmer_edit->setObjectName("Programmer");
     version_edit->setObjectName("Version");
     description_edit->setObjectName("Description");
-
+/*
     if(load_config){
         Config.beginGroup("PackageManager");
         name_edit->setText(Config.value("Name", "My DIY").toString());
@@ -45,7 +45,7 @@ MetaInfoWidget::MetaInfoWidget(bool load_config){
         description_edit->setText(Config.value("Description").toString());
         Config.endGroup();
     }
-
+*/
     layout->addRow(tr("Name"), name_edit);
     layout->addRow(tr("Designer"), designer_edit);
     layout->addRow(tr("Programmer"), programmer_edit);
@@ -225,10 +225,14 @@ QWidget *PackagingEditor::createPackagingTab(){
     QCommandLinkButton *package_button = new QCommandLinkButton(tr("Make package"));
     package_button->setDescription(tr("Export files to a single package"));
 
+    QCommandLinkButton *migration_button = new QCommandLinkButton(tr("Resource migration"));
+    migration_button->setDescription(tr("Resource migration with single package"));
+
     vlayout->addWidget(browse_button);
     vlayout->addWidget(remove_button);
     vlayout->addWidget(edit_button);
     vlayout->addWidget(package_button);
+    vlayout->addWidget(migration_button);
     vlayout->addStretch();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -242,6 +246,7 @@ QWidget *PackagingEditor::createPackagingTab(){
     connect(remove_button, SIGNAL(clicked()), this, SLOT(removeFile()));
     connect(edit_button, SIGNAL(clicked()), this, SLOT(editFile()));
     connect(package_button, SIGNAL(clicked()), this, SLOT(makePackage()));
+    connect(migration_button, SIGNAL(clicked()), this, SLOT(migrationPackage()));
     connect(file_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeFile(QListWidgetItem*)));
 
     return widget;
@@ -396,6 +401,51 @@ void PackagingEditor::makePackage(){
         QMessageBox::information(this, tr("Notice"), tr("DIY package is finished."));
 
         tab_widget->setCurrentIndex(0);
+    }
+}
+
+void PackagingEditor::migrationPackage(){
+    for(int i=0; i< file_list->count(); i++){
+        QString filepath = file_list->item(i)->text();
+        if(!filepath.startsWith("extensions")){
+            QStringList th = filepath.split("/");
+            if(th.at(1) == "generals")
+                th[0] = "extensions";
+            else if(th.at(1) == "mark")
+                th[0] = "extensions/generals";
+            else if(th.at(1) == "ai")
+                th[0] = "extensions";
+            else if(th.at(0) == "audio")
+                th[0] = "extensions/audio";
+
+            QString newname = th.join("/");
+            th.removeLast();
+
+            QString newpath = th.join("/");
+            QDir *newdir = new QDir;
+            if(!newdir->exists(newpath))
+                newdir->mkpath(newpath);
+
+            if(!QFile::exists(filepath)){
+                QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(filepath));
+                //delete(file_list->item(i));
+                continue;
+            }
+            if(QFile::exists(newname)){
+                QMessageBox::StandardButton button = QMessageBox::warning(this, tr("Warning"), tr("File %1 is exists.").arg(newname),
+                                                                          QMessageBox::StandardButtons(QMessageBox::Ok | QMessageBox::Ignore), QMessageBox::Ignore);
+                if(button == QMessageBox::Ignore){
+                    file_list->item(i)->setText(newname);
+                    continue;
+                }
+                else
+                    QFile::remove(newname);
+            }
+
+            QFile::copy(filepath, newname);
+            //QFile::remove(filepath);
+            file_list->item(i)->setText(newname);
+        }
     }
 }
 

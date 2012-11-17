@@ -48,6 +48,7 @@ private slots:
     void removeFile();
     void editFile();
     void makePackage();
+    void migrationPackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);
 };
