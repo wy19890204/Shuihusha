@@ -165,6 +165,8 @@ void Engine::addPackage(Package *package){
         else
             nonlord_list << general->objectName();
 
+        if(generals.contains(general->objectName()))
+            QMessageBox::warning(NULL, "", tr("Duplicated general : %1").arg(general->objectName()));
         generals.insert(general->objectName(), general);
     }
 
