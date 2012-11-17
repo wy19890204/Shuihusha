@@ -15,7 +15,15 @@ public:
     void saveToSettings(QSettings &settings);
     void showSettings(const QSettings *settings);
 
+    void setName(const QString &name);
+    void setDesigner(const QString &designer);
+    void setCoder(const QString &coder);
+
 private:
+    QLineEdit *name_edit;
+    QLineEdit *designer_edit;
+    QLineEdit *programmer_edit;
+    QLineEdit *version_edit;
     QTextEdit *description_edit;
 };
 
@@ -31,9 +39,11 @@ private:
 
     QListWidget *file_list;
     MetaInfoWidget *file_list_meta;
+    QListWidget *lua_list;
     QTabWidget *tab_widget;
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
+    QWidget *createSniffTab();
     void loadPackageList();
 
 private slots:
@@ -51,6 +61,7 @@ private slots:
     void migrationPackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);
+    void sniffLua();
 };
 
 #endif // PACKAGINGEDITOR_H

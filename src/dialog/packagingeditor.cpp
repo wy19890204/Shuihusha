@@ -23,11 +23,10 @@ MetaInfoWidget::MetaInfoWidget(bool load_config){
 
     QFormLayout *layout = new QFormLayout;
 
-    QLineEdit *name_edit = new QLineEdit;
-    QLineEdit *designer_edit = new QLineEdit;
-    QLineEdit *programmer_edit = new QLineEdit;
-    QLineEdit *version_edit = new QLineEdit;
-
+    name_edit = new QLineEdit;
+    designer_edit = new QLineEdit;
+    programmer_edit = new QLineEdit;
+    version_edit = new QLineEdit;
     description_edit = new QTextEdit;
 
     name_edit->setObjectName("Name");
@@ -65,6 +64,18 @@ void MetaInfoWidget::saveToSettings(QSettings &settings){
     settings.setValue("Description", description_edit->toPlainText());
 }
 
+void MetaInfoWidget::setName(const QString &name){
+    name_edit->setText(name);
+}
+
+void MetaInfoWidget::setDesigner(const QString &designer){
+    designer_edit->setText(designer);
+}
+
+void MetaInfoWidget::setCoder(const QString &coder){
+    programmer_edit->setText(coder);
+}
+
 void MetaInfoWidget::showSettings(const QSettings *settings){
     QList<QLineEdit *> edits = findChildren<QLineEdit *>();
 
@@ -88,6 +99,7 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
     tab_widget = new QTabWidget;
     tab_widget->addTab(createManagerTab(), tr("Package management"));
     tab_widget->addTab(createPackagingTab(), tr("Make package"));
+    tab_widget->addTab(createSniffTab(), tr("Sniff lua packages"));
 
     QVBoxLayout *layout = new QVBoxLayout;
 
@@ -464,4 +476,101 @@ void MainWindow::on_actionPackaging_triggered()
 {
     PackagingEditor *editor = new PackagingEditor(this);
     editor->show();
+}
+
+QWidget *PackagingEditor::createSniffTab(){
+    QWidget *widget = new QWidget;
+
+    lua_list = new QListWidget;
+    lua_list->clear();
+    foreach(QString lua, Sanguosha->getLuaExtensions())
+        new QListWidgetItem(lua, lua_list);
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
+
+    QCommandLinkButton *sniff_button = new QCommandLinkButton(tr("Sniff it"));
+    sniff_button->setDescription(tr("Sniff lua packages resource"));
+
+    vlayout->addWidget(sniff_button);
+    vlayout->addStretch();
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addLayout(vlayout);
+    layout->addWidget(lua_list);
+    //layout->addWidget(file_list_meta = new MetaInfoWidget(true));
+
+    widget->setLayout(layout);
+
+    connect(sniff_button, SIGNAL(clicked()), this, SLOT(sniffLua()));
+    //connect(lua_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT());
+
+    return widget;
+}
+
+void PackagingEditor::sniffLua(){
+    file_list->clear();
+    QListWidgetItem *item = lua_list->currentItem();
+    QString package_name = item->text();
+    const Package *package = Sanguosha->findChild<const Package *>(package_name);
+    if(!package)
+        return;
+
+    QString path = QString("extensions/%1.lua").arg(package_name);
+    new QListWidgetItem(path, file_list);
+    path = QString("lua/ai/%1-ai.lua").arg(package_name);
+    if(QFile::exists(path))
+        new QListWidgetItem(path, file_list);
+
+    QStringList skills;
+    foreach(const Skill *tmp, package->getSkills())
+        skills << tmp->objectName();
+
+    QList<General *> all_generals = package->findChildren<General *>();
+    foreach(General *general, all_generals){
+        QString general_name = general->objectName();
+        path = QString("image/generals/card/%1.jpg").arg(general_name);
+        if(QFile::exists(path))
+            new QListWidgetItem(path, file_list);
+        path = QString("image/generals/big/%1.png").arg(general_name);
+        if(QFile::exists(path))
+            new QListWidgetItem(path, file_list);
+        path = QString("image/generals/small/%1.png").arg(general_name);
+        if(QFile::exists(path))
+            new QListWidgetItem(path, file_list);
+        path = QString("image/generals/tiny/%1.png").arg(general_name);
+        if(QFile::exists(path))
+            new QListWidgetItem(path, file_list);
+        path = QString("audio/death/%1.ogg").arg(general_name);
+        if(QFile::exists(path))
+            new QListWidgetItem(path, file_list);
+
+        foreach(const Skill *tmp, general->findChildren<const Skill *>())
+            skills << tmp->objectName();
+    }
+
+    foreach(QString skill, skills){
+        QString effect_file = QString("audio/skill/%1.ogg").arg(skill);
+        if(QFile::exists(effect_file))
+            new QListWidgetItem(effect_file, file_list);
+        for(int i=1; ;i++){
+            effect_file = QString("audio/skill/%1%2.ogg").arg(skill).arg(i);
+            if(QFile::exists(effect_file))
+                new QListWidgetItem(effect_file, file_list);
+            else
+                break;
+        }
+    }
+
+    QMessageBox::information(this, tr("Notice"), tr("Sniff done, find %1 files").arg(file_list->count()));
+    tab_widget->setCurrentIndex(1);
+
+    file_list_meta->setName(Sanguosha->translate(package_name));
+    QString designer = Sanguosha->translate("designer:" + package_name);
+    if(designer.startsWith("designer:"))
+        designer = Sanguosha->translate("designer:" + all_generals.first()->objectName());
+    file_list_meta->setDesigner(designer);
+    QString coder = Sanguosha->translate("coder:" + package_name);
+    if(coder.startsWith("coder:"))
+        coder = Sanguosha->translate("coder:" + all_generals.first()->objectName());
+    file_list_meta->setCoder(coder);
 }
