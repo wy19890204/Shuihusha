@@ -98,12 +98,10 @@ General::Gender Player::getGender() const{
 }
 
 QString Player::getGenderString() const{
-    switch(getGender()){
-    case General::Male: return "male";
-    case General::Female: return "female";
-    default:
+    if(general)
+        return general->getGenderString();
+    else
         return "neuter";
-    }
 }
 
 int Player::getSeat() const{

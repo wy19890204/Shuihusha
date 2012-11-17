@@ -330,7 +330,7 @@ public:
 
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getCard();
-        return card->inherits("TrickCard");
+        return card->isKindOf("TrickCard");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -2549,7 +2549,7 @@ SuocaiCard::SuocaiCard(){
     mute = true;
 }
 
-bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+bool SuocaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
     return targets.isEmpty() && !to_select->isKongcheng() && to_select->getGeneral()->isMale();
 }
 

@@ -67,8 +67,8 @@ public:
         events << CardLost;
     }
 
-    virtual bool triggerable(const ServerPlayer *ta) const{
-        return ta->getGeneral()->isMale();
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
     }
 
     virtual int getPriority() const{
@@ -76,6 +76,8 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->getGeneral()->isFemale())
+            return false;
         ServerPlayer *ran = room->findPlayerBySkillName(objectName());
         if(!ran || room->getCurrent() == ran)
             return false;

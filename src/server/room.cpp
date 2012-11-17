@@ -143,7 +143,7 @@ void Room::enterDying(ServerPlayer *player, DamageStruct *reason){
     player->setFlags("dying");
 
     QString sos_filename;
-    if(player->getGeneral()->isMale())
+    if(player->getGender() == General::Male)
         sos_filename = "male-sos";
     else{
         int r = qrand() % 2 + 1;

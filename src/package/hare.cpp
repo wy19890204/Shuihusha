@@ -285,9 +285,9 @@ public:
         if(use.card->isVirtualCard())
             return false;
         const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
-        if(use.to.contains(writer) && (word->inherits("BasicCard") || word->isNDTrick())
+        if(use.to.contains(writer) && (word->isKindOf("BasicCard") || word->isNDTrick())
             && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
-            if(use.to.last() == writer && word->inherits("Collateral"))
+            if(use.to.last() == writer && word->isKindOf("Collateral"))
                 return false;
             bool hassamezi = false;
             foreach(int x, writer->getPile("zi")){

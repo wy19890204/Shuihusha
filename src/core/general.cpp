@@ -32,7 +32,9 @@ int General::getMaxHp() const{
     return max_hp;
 }
 
-QString General::getKingdom() const{
+QString General::getKingdom(bool unmap) const{
+    if(unmap)
+        return kingdom;
     QString m_kingdom = kmap.value(kingdom, QString());
     if(!m_kingdom.isNull())
         return m_kingdom;
@@ -58,6 +60,15 @@ void General::setGender(Gender gender){
 
 General::Gender General::getGender() const{
     return gender;
+}
+
+QString General::getGenderString() const{
+    switch(gender){
+    case Male: return "male";
+    case Female: return "female";
+    default:
+        return "neuter";
+    }
 }
 
 bool General::isLord() const{

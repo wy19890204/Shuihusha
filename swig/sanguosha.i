@@ -43,7 +43,7 @@ public:
 
 	// property getters/setters
 	int getMaxHp() const;
-	QString getKingdom() const;
+	QString getKingdom(bool unmap = false) const;
 	bool isMale() const;
 	bool isFemale() const;
 	bool isNeuter() const;

@@ -222,7 +222,7 @@ ServerPlayer *CoupleScenario::getSpouse(const ServerPlayer *player) const{
 }
 
 bool CoupleScenario::isWidow(ServerPlayer *player) const{
-    if(player->getGeneral()->isMale())
+    if(player->getGender() == General::Male)
         return false;
 
     ServerPlayer *spouse = getSpouse(player);
