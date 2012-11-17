@@ -417,6 +417,10 @@ void PackagingEditor::migrationPackage(){
                 th[0] = "extensions";
             else if(th.at(0) == "audio")
                 th[0] = "extensions/audio";
+            else{
+                QMessageBox::warning(this, tr("Warning"), tr("File %1 is unknown.").arg(filepath));
+                continue;
+            }
 
             QString newname = th.join("/");
             th.removeLast();
@@ -443,7 +447,7 @@ void PackagingEditor::migrationPackage(){
             }
 
             QFile::copy(filepath, newname);
-            //QFile::remove(filepath);
+            QFile::remove(filepath);
             file_list->item(i)->setText(newname);
         }
     }

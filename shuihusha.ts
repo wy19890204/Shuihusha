@@ -2835,7 +2835,7 @@
         <location filename="src/dialog/packagingeditor.cpp" line="90"/>
         <location filename="src/dialog/packagingeditor.cpp" line="225"/>
         <source>Make package</source>
-        <translation>打包</translation>
+        <translation>资源管理</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="370"/>
@@ -2851,6 +2851,11 @@
         <location filename="src/dialog/packagingeditor.cpp" line="401"/>
         <source>DIY package is finished.</source>
         <translation>打包完成！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="430"/>
+        <source>File %1 is unknown.</source>
+        <translation>非法的资源文件 %1 ！</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="430"/>
