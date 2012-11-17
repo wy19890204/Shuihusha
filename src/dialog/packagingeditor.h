@@ -6,6 +6,7 @@
 #include <QGroupBox>
 #include <QSettings>
 #include <QTextEdit>
+#include <QCheckBox>
 
 class MetaInfoWidget: public QGroupBox{
     Q_OBJECT
@@ -40,10 +41,12 @@ private:
     QListWidget *file_list;
     MetaInfoWidget *file_list_meta;
     QListWidget *lua_list;
+    QListWidget *general_list;
     QTabWidget *tab_widget;
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
     QWidget *createSniffTab();
+    QCheckBox *enable_sdbox;
     void loadPackageList();
 
 private slots:
@@ -61,6 +64,7 @@ private slots:
     void migrationPackage();
     void done7zProcess(int exit_code);
     void updateMetaInfo(QListWidgetItem *item);
+    void updateLuaGeneral(QListWidgetItem *item);
     void sniffLua();
 };
 

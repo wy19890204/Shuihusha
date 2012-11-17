@@ -98,7 +98,7 @@ PackagingEditor::PackagingEditor(QWidget *parent) :
 
     tab_widget = new QTabWidget;
     tab_widget->addTab(createManagerTab(), tr("Package management"));
-    tab_widget->addTab(createPackagingTab(), tr("Make package"));
+    tab_widget->addTab(createPackagingTab(), tr("Resource management"));
     tab_widget->addTab(createSniffTab(), tr("Sniff lua packages"));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -481,6 +481,7 @@ void MainWindow::on_actionPackaging_triggered()
 QWidget *PackagingEditor::createSniffTab(){
     QWidget *widget = new QWidget;
 
+    general_list = new QListWidget;
     lua_list = new QListWidget;
     lua_list->clear();
     foreach(QString lua, Sanguosha->getLuaExtensions())
@@ -494,22 +495,46 @@ QWidget *PackagingEditor::createSniffTab(){
     vlayout->addWidget(sniff_button);
     vlayout->addStretch();
 
+    QVBoxLayout *vlayout2 = new QVBoxLayout;
+
+    enable_sdbox = new QCheckBox(tr("Show skill's description"));
+    vlayout2->addWidget(general_list);
+    vlayout2->addWidget(enable_sdbox);
+
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(vlayout);
     layout->addWidget(lua_list);
+    layout->addLayout(vlayout2);
     //layout->addWidget(file_list_meta = new MetaInfoWidget(true));
 
     widget->setLayout(layout);
 
     connect(sniff_button, SIGNAL(clicked()), this, SLOT(sniffLua()));
-    //connect(lua_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT());
+    connect(lua_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
 
     return widget;
+}
+
+void PackagingEditor::updateLuaGeneral(QListWidgetItem *item){
+    general_list->clear();
+    const Package *package = Sanguosha->findChild<const Package *>(item->text());
+    QList<General *> all_generals = package->findChildren<General *>();
+    foreach(General *general, all_generals){
+        QString text = QString("%1[%2] %3 %4 %5").arg(Sanguosha->translate(general->objectName()))
+                .arg(general->objectName())
+                .arg(Sanguosha->translate(general->getGenderString()))
+                .arg(QString::number(general->getMaxHp()) + "HP")
+                .arg(Sanguosha->translate(general->getKingdom(true)));
+        QListWidgetItem *item2 = new QListWidgetItem(text, general_list);
+        item2->setToolTip(enable_sdbox->isChecked() ? general->getSkillDescription() : QString());
+    }
 }
 
 void PackagingEditor::sniffLua(){
     file_list->clear();
     QListWidgetItem *item = lua_list->currentItem();
+    if(item == NULL)
+        return;
     QString package_name = item->text();
     const Package *package = Sanguosha->findChild<const Package *>(package_name);
     if(!package)
@@ -568,9 +593,13 @@ void PackagingEditor::sniffLua(){
     QString designer = Sanguosha->translate("designer:" + package_name);
     if(designer.startsWith("designer:"))
         designer = Sanguosha->translate("designer:" + all_generals.first()->objectName());
+    if(designer.startsWith("designer:"))
+        designer = Sanguosha->translate("DefaultDesigner");
     file_list_meta->setDesigner(designer);
     QString coder = Sanguosha->translate("coder:" + package_name);
     if(coder.startsWith("coder:"))
         coder = Sanguosha->translate("coder:" + all_generals.first()->objectName());
+    if(coder.startsWith("coder:"))
+        coder = Sanguosha->translate("DefaultCoder");
     file_list_meta->setCoder(coder);
 }

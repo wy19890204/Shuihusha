@@ -28,7 +28,7 @@ public:
 
     // property getters/setters
     int getMaxHp() const;
-    QString getKingdom() const;
+    QString getKingdom(bool unmap = false) const;
     bool isMale() const;
     bool isFemale() const;
     bool isNeuter() const;
@@ -40,6 +40,7 @@ public:
     enum Gender {Male, Female, Neuter};
     Gender getGender() const;
     void setGender(Gender gender);
+    QString getGenderString() const;
 
     void addSkill(Skill* skill);
     void addSkill(const QString &skill_name);
