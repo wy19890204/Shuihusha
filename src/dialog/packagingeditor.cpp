@@ -500,16 +500,10 @@ QWidget *PackagingEditor::createSniffTab(){
     vlayout->addWidget(sniff_button);
     vlayout->addStretch();
 
-    QVBoxLayout *vlayout2 = new QVBoxLayout;
-
-    enable_sdbox = new QCheckBox(tr("Show skill's description"));
-    vlayout2->addWidget(general_list);
-    vlayout2->addWidget(enable_sdbox);
-
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(vlayout);
     layout->addWidget(lua_list);
-    layout->addLayout(vlayout2);
+    layout->addWidget(general_list);
     //layout->addWidget(file_list_meta = new MetaInfoWidget(true));
 
     widget->setLayout(layout);
@@ -531,7 +525,7 @@ void PackagingEditor::updateLuaGeneral(QListWidgetItem *item){
                 .arg(QString::number(general->getMaxHp()) + "HP")
                 .arg(Sanguosha->translate(general->getKingdom(true)));
         QListWidgetItem *item2 = new QListWidgetItem(text, general_list);
-        item2->setToolTip(enable_sdbox->isChecked() ? general->getSkillDescription() : QString());
+        item2->setToolTip(general->getSkillDescription());
     }
 }
 

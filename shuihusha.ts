@@ -2859,11 +2859,6 @@
         <translation>嗅探完成，共发现 %1 个资源文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/packagingeditor.cpp" line="500"/>
-        <source>Show skill's description</source>
-        <translation>显示技能描述(有可能会导致程序崩溃)</translation>
-    </message>
-    <message>
         <location filename="src/dialog/packagingeditor.cpp" line="101"/>
         <location filename="src/dialog/packagingeditor.cpp" line="237"/>
         <source>Make package</source>

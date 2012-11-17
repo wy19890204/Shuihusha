@@ -46,7 +46,6 @@ private:
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
     QWidget *createSniffTab();
-    QCheckBox *enable_sdbox;
     void loadPackageList();
 
 private slots:
