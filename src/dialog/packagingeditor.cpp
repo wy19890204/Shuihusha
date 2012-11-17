@@ -279,8 +279,12 @@ void PackagingEditor::modifyPackage(QListWidgetItem* item){
 
     file_list->clear();
     QStringList filelist = settings->value("FileList").toStringList();
-    foreach(QString file, filelist)
-        new QListWidgetItem(file, file_list);
+    foreach(QString file, filelist){
+        if(!QFile::exists(file))
+            QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(file));
+        else
+            new QListWidgetItem(file, file_list);
+    }
 
     file_list_meta->showSettings(settings);
 }
@@ -397,8 +401,8 @@ void PackagingEditor::makePackage(){
         args << "a" << filename << spec_name << filelist;
         process->start("7zr", args);
 
-        connect(process, SIGNAL(finished(int)), this, SLOT(done7zProcess(int)));
-        QMessageBox::information(this, tr("Notice"), tr("DIY package is finished."));
+        if(connect(process, SIGNAL(finished(int)), this, SLOT(done7zProcess(int))))
+            QMessageBox::information(this, tr("Notice"), tr("DIY package is finished."));
 
         tab_widget->setCurrentIndex(0);
     }
