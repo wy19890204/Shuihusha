@@ -419,6 +419,8 @@ public:
         CardUseStruct use = data.value<CardUseStruct>();
         if(!use.card->isNDTrick() || (use.to.length() != 1 && !use.card->inherits("Collateral")))
             return false;
+        if(use.card->inherits("Collateral") && !player->getWeapon())
+            return false;
         QList<ServerPlayer *> xis = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *xi, xis){
             if(xi != use.to.first() || player == xi)

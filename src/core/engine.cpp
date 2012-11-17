@@ -120,7 +120,7 @@ const Scenario *Engine::getScenario(const QString &name) const{
 
 void Engine::addSkills(const QList<const Skill *> &all_skills){
     foreach(const Skill *skill, all_skills){
-        if(skills.contains(skill->objectName()))
+        if(!Config.value("MuteLoad", false).toBool() && skills.contains(skill->objectName()))
             QMessageBox::warning(NULL, "", tr("Duplicated skill : %1").arg(skill->objectName()));
 
         skills.insert(skill->objectName(), skill);
@@ -165,7 +165,7 @@ void Engine::addPackage(Package *package){
         else
             nonlord_list << general->objectName();
 
-        if(generals.contains(general->objectName()))
+        if(!Config.value("MuteLoad", false).toBool() && generals.contains(general->objectName()))
             QMessageBox::warning(NULL, "", tr("Duplicated general : %1").arg(general->objectName()));
         generals.insert(general->objectName(), general);
     }

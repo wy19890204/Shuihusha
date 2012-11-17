@@ -119,6 +119,8 @@ QList<const Skill *> General::getVisibleSkillList() const{
 
     foreach(QString skill_name, extra_set){
         const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(!skill)
+            skill = new Skill(skill_name);
         if(skill && skill->isVisible())
             skills << skill;
     }

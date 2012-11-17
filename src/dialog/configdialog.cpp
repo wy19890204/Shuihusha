@@ -41,6 +41,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
     ui->enableLua->setChecked(Config.EnableLua);
+    ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
 
     QString lang = "zh_cn+en";
     ui->langComboBox->addItems(lang.split("+"));
@@ -165,6 +166,8 @@ void ConfigDialog::saveConfig()
 
     Config.EnableLua = ui->enableLua->isChecked();
     Config.setValue("EnableLua", Config.EnableLua);
+
+    Config.setValue("MuteLoad", ui->muteLoad->isChecked());
 
     Config.setValue("Language", ui->langComboBox->lineEdit()->text());
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());

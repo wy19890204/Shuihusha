@@ -82,9 +82,17 @@ function sgs.ai_slash_prohibit.luajinshen(self,enemy,card)
 	return card:isRed() and not enemy:getArmor()
 end
 
-sgs.ai_skill_cardask["askforluayijiu"]=function(self,data)
+sgs.ai_skill_cardask["@askforluayijiu"]=function(self,data)
 	local lord=self.room:getLord()
-	if lord and self:isFriend(lord) then return nil end
+	if lord and self:isFriend(lord) then
+		local cards = sgs.QList2Table(self.player:getHandcards())
+			self:sortByUseValue(cards, false)
+			for _, fcard in ipairs(cards) do
+				if fcard:getSuit()==sgs.Card_Spade then
+					return "$" .. fcard:getEffectiveId()
+				end
+			end
+	end
 	return "."
 end
 
@@ -269,13 +277,16 @@ luachongfeng_skill.getTurnUseCard=function(self)
 	assert(skillcard)
 	return skillcard
 end
-
-sgs.ai_chaofeng.sphuangxin = 4
+--[[=================================by roxiel==========================================]]
+sgs.ai_chaofeng.sphuangxin = 3
+sgs.ai_chaofeng.spyuefei = 2
+sgs.ai_chaofeng.spbird = 2
+sgs.ai_chaofeng.spzhulei = 2
 sgs.ai_skill_invoke.luasaodang  = function(self, data)
 return self.player:getHp()>1
 end
 sgs.ai_skill_use["@@luasaodangcard"] = function(self, prompt)
-	self.room:writeToConsole("Now fuin @@ saodang!!!!!")
+	self.room:writeToConsole("Now we are in ai_skill_use[@@luasaodangcard]!")
 	self:sort(self.enemies, "hp")
 	local targets={}
 	local first,second,third
@@ -291,15 +302,21 @@ end
 sgs.ai_skill_invoke.luajinshu  = function(self, data)
 return self.player:getHp()>1
 end
-sgs.ai_skill_invoke.luajinshubaoguo=true
+
+sgs.ai_skill_invoke.luajinshubaoguo=function(self,data)
+	local damage = data:toDamage()
+	if damage.damage==0 then return end
+	return true
+end
 sgs.ai_skill_invoke.luajinshubaoguo2=function(self,data)
 	local damage = data:toDamage()
+	if damage.damage==0 then return end
 	return self.player:getHp()>2 and  self:isFriend(damage.to)
 end
 sgs.ai_skill_invoke.luajinshudujian=function(self, data)
 	local damage = data:toDamage()
 	if not damage.to:faceUp() then return end
-	return not self:isFriend(damage.to)
+	return not self:isFriend(damage.to) and not damage.to:getHandcardNum()<2
 end
 
 sgs.ai_skill_invoke.luajinshuduijue=function(self, data)
@@ -312,6 +329,7 @@ sgs.ai_skill_invoke.luajinshuduijue=function(self, data)
 end
 sgs.ai_skill_use["@@luajinshucard"] = function(self, prompt)
 	self.room:writeToConsole("Now we are in ai_skill_use[@@luajiinshucard] now.")
+	if self.player:getPile("spxi"):length()>10 then return "." end
 	local card
 	local card_id
 	local card_ids={}
@@ -319,19 +337,27 @@ sgs.ai_skill_use["@@luajinshucard"] = function(self, prompt)
 	local y=table.getn(self.friends_noself)
 		if not card_id then
 			cards=sgs.QList2Table(self.player:getHandcards())
+			self:sortByUseValue(cards, false)
 			for _, acard in ipairs(cards) do
-				if not( acard:inherits("Slash") or acard:inherits("Peach") or acard:inherits("Exnihilo"))then
+				if not(acard:inherits("Slash") or acard:inherits("Peach"))then
 					card_id = acard:getEffectiveId()
 					table.insert(card_ids,card_id)
-					if self.player:getPile("spxi"):length()<x and #card_ids==3 then break
-					elseif self.player:getPile("spxi"):length()>y and #card_ids==2 then break
-					elseif self.player:getPile("spxi"):length()>=self.room:getAlivePlayers():length() then break
-					elseif #card_ids==y then break
+					if self.player:getHandcardNum()>self.player:getHp() and #card_ids==self.player:getHandcardNum()-self.player:getHp()
+						then break
+					elseif #card_ids>=7 then break
+					end
+				end
+				if (self.player:getHandcardNum()>self.player:getHp()) and (acard:inherits("Slash") or acard:inherits("Peach")) then
+					if #card_ids<self.player:getHandcardNum()-self.player:getHp() then
+						card_id = acard:getEffectiveId()
+						table.insert(card_ids,card_id)
+					elseif self.player:getHandcardNum()==self.player:getHp() then break
 					end
 				end
 			end
 		end
-	return "#luajinshucard:"..table.concat(card_ids, "+")..":->"..self.player:objectName()
+	if #card_ids==0 then return "." end
+	return "#luajinshucard:"..table.concat(card_ids, "+")..":->."
 end
 sgs.ai_skill_cardask["@luaxuewubaoguo2"]=function(self,data)
 	self.room:writeToConsole("Now we are in ai_skill_cardask[@luaxuewubaoguo2] now.")
@@ -349,8 +375,16 @@ sgs.ai_skill_cardask["@luaxuewubaoguo2"]=function(self,data)
 	else return "."
 	end
 end
-sgs.ai_skill_invoke.luazhuoxie=true
-sgs.ai_skill_invoke.luayizong=true
+sgs.ai_skill_invoke.luazhuoxie=function(self,data)
+    local damage=data:toDamage()
+	if not damage.from then return end
+	return  not self:isFriend(damage.from)
+end
+
+sgs.ai_skill_invoke.luayizong=function(self,data)
+	return true
+end
+yztargetdiscarded={}
 sgs.ai_skill_use["@@luayizongcard"] = function(self, prompt)
 	self.room:writeToConsole("Now we are in ai_skill_use[@@luayizongcard] now.")
 	local card
@@ -358,17 +392,27 @@ sgs.ai_skill_use["@@luayizongcard"] = function(self, prompt)
 	local card_ids={}
 		if not card_id then
 			cards=sgs.QList2Table(self.player:getHandcards())
+			self:sortByUseValue(cards, false)
 			for _, acard in ipairs(cards) do
 				if not( acard:inherits("Slash") or acard:inherits("Peach"))then
 					card_id = acard:getEffectiveId()
 					table.insert(card_ids,card_id)
-					--break
+					if #card_ids>=yztargetdiscarded[1] then
+						break
+					end
 				end
 			end
 		end
-	return "#luayizongcard:"..table.concat(card_ids, "+")..":->"..self.player:objectName()
+	table.remove(yztargetdiscarded)
+	if #card_ids==0 then return "." end
+	return "#luayizongcard:"..table.concat(card_ids, "+")..":->."--..self.player:objectName()
 end
+yztarget={}
 sgs.ai_skill_choice.luayizong = function(self, choice)
-	if self.player:getHandcardNum() > self.player:getHp() then return "dis" end
+	if yztarget[1] and self:isEnemy(yztarget[1]) then
+		table.remove(yztarget)
+		return "dis"
+	else table.remove(yztarget)
 	return "draw"
+	end
 end

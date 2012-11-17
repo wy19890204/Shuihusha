@@ -52,7 +52,7 @@ luayijiucard=sgs.CreateSkillCard{--技能卡
 	on_use=function(self,room,source,targets)
 		for _,p in sgs.qlist(room:getOtherPlayers(source)) do--循环，逐一检视其它角色
 			if p:isAlive() and not p:isNude() and p:getKingdom()=="jiang" then--未死，有牌
-				local card=room:askForCard(p,".|spade","askforluayijiu")--请求弃牌
+				local card=room:askForCard(p,".|spade","@askforluayijiu")--请求弃牌
 				if card then
 					local card=sgs.Sanguosha:cloneCard("analeptic",sgs.Card_NoSuit,0)
 					card:setSkillName(self:objectName())
@@ -77,7 +77,7 @@ luayijiu=sgs.CreateViewAsSkill{
 		return not sgs.Self:hasUsed("Analeptic")
 	end,
 	enabled_at_response=function(self,player,pattern)
-		return string.find(pattern,"analeptic")
+		return string.find(pattern,"analeptic") or string.find(pattern,"peach")
 	end
 }
 
@@ -475,7 +475,7 @@ sgs.LoadTranslationTable{
 	["luayijiu"]="义酒",
 	["luayijiucard"]="义酒",
 	[":luayijiu"]="主公技,当你需要一张【酒】时,其他将势力角色弃置一张黑桃牌，若如此做,视为你使用一张【酒】",
-	["askforluayijiu"]="你可以弃置一张黑桃牌，若如此做,视为主公使用一张【酒】",
+	["@askforluayijiu"]="你可以弃置一张黑桃牌，若如此做,视为主公使用一张【酒】",
 
 	["splujunyi"]="卢俊义",
 	["#splujunyi"]="无双无对",
@@ -810,7 +810,7 @@ end,
 
 luajinshu=sgs.CreateTriggerSkill{
 name="luajinshu",
-events={sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
+events={sgs.TurnStart,sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
 priority=3,
 view_as_skill=luajinshuvs,
 can_trigger=function(self,player)
@@ -820,21 +820,27 @@ frequency=sgs.Skill_NotFrequent,
 on_trigger=function(self,event,player,data)
 	local room=player:getRoom()
 	local owner=room:findPlayerBySkillName(self:objectName())
+	if not owner then return end
 	if not owner:isAlive() then return end
 	local baoguo=sgs.Sanguosha:getTriggerSkill("baoguo")
 	local duijue=sgs.Sanguosha:getTriggerSkill("duijue")
 	local dujian=sgs.Sanguosha:getTriggerSkill("dujian")
-if event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
+if event==sgs.TurnStart and player:objectName()==owner:objectName() then
+	if owner:getPile("spxi"):length()==0 then
+		local log=sgs.LogMessage()
+		log.type="#luajinshudraw"
+		log.from=player
+		room:sendLog(log)
+		player:drawCards(1)
+	end
+elseif event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
 	if player:objectName()~=owner:objectName() then return end
-	--if (room:askForSkillInvoke(owner,self:objectName(),data)~=true) then return end
 	room:askForUseCard(player, "@@luajinshucard", "@luajinshu")
 elseif event==sgs.Predamaged then
 	if owner:getPile("spxi"):length()==0 then return end
 	local damage=data:toDamage()
 	if damage.to:objectName()==owner:objectName() then return end
-		--if owner:getPile("spxi"):length()==0 then return end
 		if (room:askForSkillInvoke(owner,"luajinshubaoguo2",data)~=true) then return end
-		--room:throwCard(owner:getPile("spxi"):first())
 		room:playSkillEffect("baoguo",math.random(1,2))
 		local cd = room:askForCard(owner, "BasicCard", "@luajinshubaoguo2",data)
 		if cd then
@@ -903,10 +909,12 @@ on_trigger=function(self,event,player,data)
 		if not damage.from then return end
 		if not damage.from:isAlive() then return end
 		local owner = room:findPlayerBySkillName(self:objectName())
+		if not owner then return end
 		if owner:getMark("luazhuanshi_wake")>0 then return end
+		if damage.from:isAllNude() then return end
         if not room:askForSkillInvoke(owner,self:objectName(),data) then return end
 		room:loseHp(owner,1)
-		local card_id = room:askForCardChosen(owner,damage.from,"he",self:objectName())
+		local card_id = room:askForCardChosen(owner,damage.from,"hej",self:objectName())
 		room:throwCard(card_id)
 		owner:drawCards(1)
 end
@@ -914,7 +922,7 @@ end
 
 luazhuanshi=sgs.CreateTriggerSkill{
 name="luazhuanshi",
-events={sgs.AskForPeaches,sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
+events={sgs.TurnStart,sgs.Dying,sgs.Predamage,sgs.Predamaged,sgs.Damage,sgs.Damaged,sgs.PhaseChange},
 priority=3,
 view_as_skill=luajinshuvs,
 can_trigger=function(self,player)
@@ -924,24 +932,37 @@ frequency=Skill_NotFrequent,
 on_trigger=function(self,event,player,data)
 	local room=player:getRoom()
 	local owner=room:findPlayerBySkillName(self:objectName())
+	if not owner then return end
 	if not owner:isAlive() then return end
 	local baoguo=sgs.Sanguosha:getTriggerSkill("baoguo")
 	local duijue=sgs.Sanguosha:getTriggerSkill("duijue")
 	local dujian=sgs.Sanguosha:getTriggerSkill("dujian")
-if event==sgs.AskForPeaches and player:objectName()==owner:objectName() then
-		if player:getMark("luazhuanshi_wake")==1 then return end
+if event==sgs.Dying then
+		local dying=data:toDying()
+		if dying.who:objectName()~=owner:objectName() then return end
+		if not dying.who:hasSkill(self:objectName()) then return end
+		if dying.who:getMark("luazhuanshi_wake")==1 then return end
 		local room=player:getRoom()
-		room:setPlayerMark(player,"luazhuanshi_wake",1)
+		room:setPlayerMark(dying.who,"luazhuanshi_wake",1)
 		local recover=sgs.RecoverStruct()
 		recover.recover=1
-		recover.who=player
-		room:recover(player,recover)
-		player:drawCards(2)
-		room:detachSkillFromPlayer(player,"luazhuoxie")
+		recover.who=dying.who
+		room:recover(dying.who,recover)
+		dying.who:drawCards(2)
+		room:detachSkillFromPlayer(dying.who,"luazhuoxie")
 		local log=sgs.LogMessage()
 		log.type="#luazhuanshi"
+		log.from=dying.who
+		room:sendLog(log)
+elseif event==sgs.TurnStart and player:objectName()==owner:objectName() then
+	if player:getMark("luazhuanshi_wake")~=1 then return end
+	if owner:getPile("spxi"):length()==0 then
+		local log=sgs.LogMessage()
+		log.type="#luajinshudraw"
 		log.from=player
 		room:sendLog(log)
+		player:drawCards(1)
+	end
 elseif event==sgs.PhaseChange and player:getPhase()==sgs.Player_Discard then
 	if player:objectName()~=owner:objectName() then return end
 	if player:getMark("luazhuanshi_wake")~=1 then return end
@@ -1061,10 +1082,10 @@ on_trigger=function(self,event,player,data)
 	local room=player:getRoom()
 	local owner=room:findPlayerBySkillName(self:objectName())
 	local yzcardids=sgs.IntList()
+	if owner:isKongcheng() then return end
 if event == sgs.CardDiscarded and player:getPhase()==sgs.Player_Discard then
+	local owner=room:findPlayerBySkillName(self:objectName())
     if player:objectName()~=owner:objectName() then
-	--if (room:askForSkillInvoke(owner,"test",data)~=true) then return end
-		room:setPlayerFlag(player,"yznow")
 		local card = data:toCard()
 		if not card:isVirtualCard() then
 			yzcardids:append(card:getId())
@@ -1074,7 +1095,9 @@ if event == sgs.CardDiscarded and player:getPhase()==sgs.Player_Discard then
 			end
 		end
 	end
-	if (room:askForSkillInvoke(owner,self:objectName(),data)~=true) then return end
+	table.insert(yztargetdiscarded,yzcardids:length())--AiNeed 弃牌量
+	table.insert(yztarget,player)--AiNeed 目标角色
+	if (room:askForSkillInvoke(owner,self:objectName(),sgs.QVariant(player:objectName()))~=true) then return end
 	room:askForUseCard(owner, "@@luayizongcard", "@luayizong")
 	local x=owner:getPile("spyz"):length()
 	for i=1,owner:getPile("spyz"):length(),1 do
@@ -1093,7 +1116,6 @@ if event == sgs.CardDiscarded and player:getPhase()==sgs.Player_Discard then
 		end
 		if(card_id == -1) then break end
 	end
-	--owner:invoke("clearAG")
 	if owner and room:askForChoice(owner, self:objectName(), "dis+draw") == "dis" then
 		room:playSkillEffect("guzong",math.random(1,3))
 		if player:isAllNude() or get==0 then return end
@@ -1119,12 +1141,12 @@ spzhulei:addSkill(luayizong)
 sgs.LoadTranslationTable{
 	["#spbird"]="护法明王",
 	["spbird"]="大鹏金翅鸟",
-	["$luazhuanshi"]="转世重生",
 	["luazhuanshi"]="转世",
 	[":luazhuanshi"]="<b>觉醒技</b>,当你处于濒死状态时,你须回复至1点体力并\
-摸两张牌,然后你须失去技能【啄邪】并获得技能【尽术】的效果:\
-弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
-你可以在合理时机弃置一张“习”发动【对决】【毒箭】【报国】",
+    摸两张牌,然后你须失去技能【啄邪】并获得技能【尽术】的效果:\
+    弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
+    你可以在合理时机弃置一张“习”发动【对决】【毒箭】【报国】.\
+    额外的，回合开始阶段，你无【习】，则你摸一张牌.",
 	["#luazhuanshi"]="%from 【转世】觉醒了，获得了技能【尽术】的效果",
 	["luazhuoxie"]="啄邪",
 	[":luazhuoxie"]="其他角色造成伤害后,你可以自减一点体力,然后弃置其一张牌,若如此做,你摸一张牌",
@@ -1134,11 +1156,11 @@ sgs.LoadTranslationTable{
 	["luajinshu"]="尽术",
 	["luajinshuvs"]="尽术",
 	["luajinshucard"]="尽术",
-	[":luajinshu"]="弃牌阶段开始时,你可以弃置任意张牌,\
-	然后亮出牌堆顶等量的牌放置在你的武将牌上，	称为“习”\
-	你可以在合理时机弃置一张“习”\
-	发动【对决】【毒箭】【报国】.",
+	[":luajinshu"]="弃牌阶段开始时,你可以弃置任意张牌,然后亮出牌堆顶等量的牌放置在你的武将牌上，称为“习”\
+	你可以在合理时机弃置一张“习”发动【对决】【毒箭】【报国】.\
+	额外的，回合开始阶段，你无【习】，则你摸一张牌.",
 	["#luajinshu"]="%from把%arg2%arg被锻炼成了【习】",
+	["#luajinshudraw"]="%from 【尽术】的效果被触发,因求知欲旺盛将额外获得1张牌 ",
 	["spxi"]="【习】",
 	["#test"]="There is %from using card",
 	["luajinshubaoguo"]="学武·报国(你每受到一次伤害，可以摸X张牌（X为你已损失的体力值）)",
@@ -1155,8 +1177,7 @@ sgs.LoadTranslationTable{
 	["@luayizong"]="请选择任意张牌用以发动【义纵】",
 	["spyz"]="【义】",
 	["#yztest"] = "%arg now",
-	[":luayizong"] = "其他角色弃牌阶段结束时,若其已受伤,你可以弃置X张手牌,\
-	将其弃牌中X张弃牌返回其手牌,然后你可以选择弃置其等量的牌或摸1张牌。",
+	[":luayizong"] = "其他角色弃牌阶段结束时,若其已受伤,你可以弃置X张手牌,	将其弃牌中X张弃牌返回其手牌,然后你可以选择弃置其等量的牌或摸1张牌。",
 	["luayizong:dis"] = "弃他牌",
     ["luayizong:draw"] = "摸1张",
 }

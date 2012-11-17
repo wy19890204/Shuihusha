@@ -975,6 +975,11 @@
         <translation>启用LUA扩展功能(重启后生效)</translation>
     </message>
     <message>
+        <location filename="src/dialog/configdialog.ui" line="614"/>
+        <source>Mute mode to loading</source>
+        <translation>安静启动(重启后生效)</translation>
+    </message>
+    <message>
         <location filename="src/dialog/configdialog.ui" line="628"/>
         <source>Language:</source>
         <translation>语言：</translation>

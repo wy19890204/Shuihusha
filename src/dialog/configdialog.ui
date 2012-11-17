@@ -615,6 +615,22 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QCheckBox" name="muteLoad">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>210</y>
+       <width>239</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Mute mode to loading</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
     <widget class="QLabel" name="langLabel">
      <property name="geometry">
       <rect>
