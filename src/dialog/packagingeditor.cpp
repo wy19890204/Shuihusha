@@ -395,9 +395,14 @@ void PackagingEditor::makePackage(){
     file_list_meta->saveToSettings(Config);
     Config.endGroup();
     */
+    QString filepath = file_list->item(0)->text();
+    QStringList split = filepath.split("/");
+    if(split.count() == 2 && filepath.endsWith(".lua"))
+        filepath = split.last().replace(QString(".lua"), QString(""));
+
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Select a package name"),
-                                                    ".",
+                                                    filepath,
                                                     tr("7z format (*.7z)"));
 
     if(!filename.isEmpty()){

@@ -457,9 +457,8 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
         list->setObjectName(item);
 
         QStringList banlist = Config.value(QString("Banlist/%1").arg(item)).toStringList();
-        foreach(QString name, banlist){
+        foreach(QString name, banlist)
             addGeneral(name);
-        }
 
         lists << list;
 
@@ -476,15 +475,12 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     list = new QListWidget;
     list->setObjectName("Pairs");
     this->list = list;
-    foreach(QString banned, BanPair::getAllBanSet().toList()){
+    foreach(QString banned, BanPair::getAllBanSet().toList())
         addGeneral(banned);
-    }
-    foreach(QString banned, BanPair::getSecondBanSet().toList()){
+    foreach(QString banned, BanPair::getSecondBanSet().toList())
         add2ndGeneral(banned);
-    }
-    foreach(BanPair pair, BanPair::getBanPairSet().toList()){
+    foreach(BanPair pair, BanPair::getBanPairSet().toList())
         addPair(pair.first, pair.second);
-    }
 
     QVBoxLayout *vlay = new QVBoxLayout;
     vlay->addWidget(list);
@@ -497,9 +493,8 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     list->setObjectName("Cards");
     this->list = list;
     QStringList banlist = Config.value("Banlist/Cards").toStringList();
-    foreach(QString name, banlist){
+    foreach(QString name, banlist)
         addCard(name);
-    }
     lists << list;
     vlay = new QVBoxLayout;
     vlay->addWidget(list);
@@ -532,13 +527,14 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
 
     setLayout(layout);
 
-    foreach(QListWidget * alist , lists)
-    {
-        if(alist->objectName() == "Pairs")continue;
+    foreach(QListWidget *alist ,lists){
+        if(alist->objectName() == "Pairs")
+            continue;
         alist->setIconSize(General::TinyIconSize);
         alist->setViewMode(QListView::IconMode);
         alist->setDragDropMode(QListView::NoDragDrop);
     }
+    saveAll();
 }
 
 void BanlistDialog::addCard(const QString &name){
@@ -564,11 +560,13 @@ void BanlistDialog::addGeneral(const QString &name){
     }
     else{
         const General *general = Sanguosha->getGeneral(name);
-        QIcon icon(general->getPixmapPath("tiny"));
-        QString text = Sanguosha->translate(name);
-        QListWidgetItem *item = new QListWidgetItem(icon, text, list);
-        item->setSizeHint(QSize(60,60));
-        item->setData(Qt::UserRole, name);
+        if(general){
+            QIcon icon(general->getPixmapPath("tiny"));
+            QString text = Sanguosha->translate(name);
+            QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+            item->setSizeHint(QSize(60,60));
+            item->setData(Qt::UserRole, name);
+        }
     }
 }
 

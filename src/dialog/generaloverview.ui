@@ -99,7 +99,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>../image/generals/card/caocao.jpg</pixmap>
+    <pixmap>../image/generals/card/ubuntenkei.jpg</pixmap>
    </property>
   </widget>
   <widget class="QScrollArea" name="scrollArea">
