@@ -380,7 +380,19 @@ void Qi6ingCard::onUse(Room *room, const CardUseStruct &card_use) const{
 
     CardUseStruct use = card_use;
     use.card = card;
+    use.to.clear();
     use.to << target;
+
+    if(trick->inherits("Collateral")){
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *tmp, room->getOtherPlayers(target)){
+            if(target->canSlash(tmp))
+                targets << tmp;
+        }
+        if(!targets.isEmpty())
+            use.to << room->askForPlayerChosen(card_use.from, targets, skill_name);
+    }
+
     room->useCard(use);
 }
 

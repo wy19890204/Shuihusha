@@ -64,8 +64,8 @@ private slots:
     void makePackage();
     void migrationPackage();
     void done7zProcess(int exit_code);
-    void updateMetaInfo(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
-    void updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
+    void updateMetaInfo(QListWidgetItem *item);
+    void updateLuaGeneral(QListWidgetItem *item);
     void sniffLua();
     void sniffMarks(const QString &luapath);
     void filtRate();

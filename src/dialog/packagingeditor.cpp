@@ -176,13 +176,15 @@ QWidget *PackagingEditor::createManagerTab(){
     connect(hdsw_button, SIGNAL(clicked()), this, SLOT(hideorshowPackage()));
     connect(rescan_button, SIGNAL(clicked()), this, SLOT(rescanPackage()));
     connect(package_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
-    connect(package_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateMetaInfo(QListWidgetItem*, QListWidgetItem *)));
+    connect(package_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
     connect(package_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyPackage(QListWidgetItem*)));
 
     return widget;
 }
 
-void PackagingEditor::updateMetaInfo(QListWidgetItem *item, QListWidgetItem *){
+void PackagingEditor::updateMetaInfo(QListWidgetItem *item){
+    if(item == NULL)
+        return;
     SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
     if(settings){
         package_list_meta->showSettings(settings);
@@ -514,12 +516,12 @@ QWidget *PackagingEditor::createSniffTab(){
 
     connect(sniff_button, SIGNAL(clicked()), this, SLOT(sniffLua()));
     connect(lua_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
-    connect(lua_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateLuaGeneral(QListWidgetItem*, QListWidgetItem *)));
+    connect(lua_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
 
     return widget;
 }
 
-void PackagingEditor::updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *){
+void PackagingEditor::updateLuaGeneral(QListWidgetItem *item){
     general_list->clear();
     const Package *package = Sanguosha->findChild<const Package *>(item->text());
     QList<General *> all_generals = package->findChildren<General *>();
