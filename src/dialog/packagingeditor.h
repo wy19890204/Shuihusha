@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QTextEdit>
 #include <QCheckBox>
+#include <QCommandLinkButton>
 
 class MetaInfoWidget: public QGroupBox{
     Q_OBJECT
@@ -46,6 +47,7 @@ private:
     QWidget *createManagerTab();
     QWidget *createPackagingTab();
     QWidget *createSniffTab();
+    QCommandLinkButton *filtrate_button;
     void loadPackageList();
 
 private slots:
@@ -62,9 +64,12 @@ private slots:
     void makePackage();
     void migrationPackage();
     void done7zProcess(int exit_code);
-    void updateMetaInfo(QListWidgetItem *item);
-    void updateLuaGeneral(QListWidgetItem *item);
+    void updateMetaInfo(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
+    void updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
     void sniffLua();
+    void sniffMarks(const QString &luapath);
+    void filtRate();
+    void showAll();
 };
 
 #endif // PACKAGINGEDITOR_H

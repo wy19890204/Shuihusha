@@ -1,7 +1,6 @@
 #include "packagingeditor.h"
 #include "mainwindow.h"
 
-#include <QCommandLinkButton>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QFileDialog>
@@ -121,7 +120,9 @@ void PackagingEditor::loadPackageList(){
         if(name.isEmpty())
             name = info.baseName();
 
-        QListWidgetItem *item = new QListWidgetItem(icon, name, package_list);
+        QListWidgetItem *item = !settings->value("Hide", false).toBool() ?
+                                new QListWidgetItem(icon, name, package_list) :
+                                new QListWidgetItem(name, package_list);
         QVariant data = QVariant::fromValue(settings);
         item->setData(Qt::UserRole, data);
     }
@@ -467,6 +468,7 @@ void PackagingEditor::migrationPackage(){
 
             if(!QFile::exists(newname))
                 QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(newname));
+            QMessageBox::information(this, tr("Notice"), tr("Migration done."));
         }
     }
 }
@@ -489,16 +491,17 @@ QWidget *PackagingEditor::createSniffTab(){
 
     general_list = new QListWidget;
     lua_list = new QListWidget;
-    lua_list->clear();
-    foreach(QString lua, Sanguosha->getLuaExtensions())
-        new QListWidgetItem(lua, lua_list);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
 
     QCommandLinkButton *sniff_button = new QCommandLinkButton(tr("Sniff it"));
     sniff_button->setDescription(tr("Sniff lua packages resource"));
 
+    filtrate_button = new QCommandLinkButton();
+
+    showAll();
     vlayout->addWidget(sniff_button);
+    vlayout->addWidget(filtrate_button);
     vlayout->addStretch();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -529,6 +532,41 @@ void PackagingEditor::updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *)
         QListWidgetItem *item2 = new QListWidgetItem(text, general_list);
         item2->setToolTip(general->getSkillDescription());
     }
+}
+
+void PackagingEditor::showAll(){
+    lua_list->clear();
+    foreach(QString lua, Sanguosha->getLuaExtensions())
+        new QListWidgetItem(lua, lua_list);
+
+    filtrate_button->setText(tr("Filtrate it"));
+    filtrate_button->setDescription(tr("Filtrate lua packages"));
+    connect(filtrate_button, SIGNAL(clicked()), this, SLOT(filtRate()));
+}
+
+void PackagingEditor::filtRate(){
+    QStringList luasinini;
+    QDir dir("extensions");
+    foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.ini")){
+        const QSettings *settings = new QSettings(info.filePath(), QSettings::IniFormat, package_list);
+        QStringList filelist = settings->value("FileList").toStringList();
+        foreach(QString file, filelist){
+            QStringList split = file.split("/");
+            if(QFile::exists(file) && split.count() == 2 &&
+               split.first() == "extensions" && file.endsWith(".lua"))
+                luasinini << file;
+        }
+    }
+    lua_list->clear();
+    foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.lua")){
+        QString luaname = info.fileName().replace(QString(".lua"), QString(""));
+        if(!luasinini.contains(info.filePath()) && Sanguosha->getLuaExtensions().contains(luaname))
+            new QListWidgetItem(luaname, lua_list);
+    }
+
+    filtrate_button->setText(tr("Show all"));
+    filtrate_button->setDescription(tr("Show all lua packages"));
+    connect(filtrate_button, SIGNAL(clicked()), this, SLOT(showAll()));
 }
 
 void PackagingEditor::sniffLua(){
@@ -587,6 +625,8 @@ void PackagingEditor::sniffLua(){
         }
     }
 
+    sniffMarks(QString("extensions/%1.lua").arg(package_name));
+
     QMessageBox::information(this, tr("Notice"), tr("Sniff done, find %1 files").arg(file_list->count()));
     tab_widget->setCurrentIndex(1);
 
@@ -608,5 +648,21 @@ void PackagingEditor::sniffLua(){
         QString filename = file_list->item(i)->text();
         if(!QFile::exists(filename))
             QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(filename));
+    }
+}
+
+void PackagingEditor::sniffMarks(const QString &luapath){
+    QDir dir("image/mark");
+    foreach(QFileInfo info, dir.entryInfoList(QStringList() << "@*.png")){
+        QString mark = info.fileName().replace(QString(".png"), QString(""));
+
+        QFile file(luapath);
+        QString check;
+        if(!file.open(QFile::ReadOnly | QFile::Text))
+            return;
+        check = file.readAll();
+        if(check.contains(mark))
+            new QListWidgetItem(info.filePath(), file_list);
+        file.close();
     }
 }
