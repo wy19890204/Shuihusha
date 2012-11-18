@@ -62,9 +62,10 @@ private slots:
     void makePackage();
     void migrationPackage();
     void done7zProcess(int exit_code);
-    void updateMetaInfo(QListWidgetItem *item);
-    void updateLuaGeneral(QListWidgetItem *item);
+    void updateMetaInfo(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
+    void updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *old_item = NULL);
     void sniffLua();
+    void filtRate();
 };
 
 #endif // PACKAGINGEDITOR_H

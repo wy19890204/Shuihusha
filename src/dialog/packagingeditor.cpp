@@ -467,6 +467,7 @@ void PackagingEditor::migrationPackage(){
 
             if(!QFile::exists(newname))
                 QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(newname));
+            QMessageBox::information(this, tr("Notice"), tr("Migration done."));
         }
     }
 }
@@ -498,7 +499,11 @@ QWidget *PackagingEditor::createSniffTab(){
     QCommandLinkButton *sniff_button = new QCommandLinkButton(tr("Sniff it"));
     sniff_button->setDescription(tr("Sniff lua packages resource"));
 
+    QCommandLinkButton *filtrate_button = new QCommandLinkButton(tr("Filtrate it"));
+    filtrate_button->setDescription(tr("Filtrate lua packages"));
+
     vlayout->addWidget(sniff_button);
+    //vlayout->addWidget(filtrate_button);
     vlayout->addStretch();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -510,6 +515,7 @@ QWidget *PackagingEditor::createSniffTab(){
     widget->setLayout(layout);
 
     connect(sniff_button, SIGNAL(clicked()), this, SLOT(sniffLua()));
+    connect(filtrate_button, SIGNAL(clicked()), this, SLOT(filtRate()));
     connect(lua_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
     connect(lua_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateLuaGeneral(QListWidgetItem*, QListWidgetItem *)));
 
@@ -529,6 +535,9 @@ void PackagingEditor::updateLuaGeneral(QListWidgetItem *item, QListWidgetItem *)
         QListWidgetItem *item2 = new QListWidgetItem(text, general_list);
         item2->setToolTip(general->getSkillDescription());
     }
+}
+
+void PackagingEditor::filtRate(){
 }
 
 void PackagingEditor::sniffLua(){
