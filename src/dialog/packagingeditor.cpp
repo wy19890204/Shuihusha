@@ -390,11 +390,11 @@ void PackagingEditor::makePackage(){
             return;
         }
     }
-
+    /*
     Config.beginGroup("PackageManager");
     file_list_meta->saveToSettings(Config);
     Config.endGroup();
-
+    */
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Select a package name"),
                                                     ".",
@@ -423,6 +423,7 @@ void PackagingEditor::makePackage(){
 }
 
 void PackagingEditor::migrationPackage(){
+    QString indexame;
     for(int i=0; i< file_list->count(); i++){
         QString filepath = file_list->item(i)->text();
         if(!filepath.startsWith("extensions")){
@@ -470,9 +471,24 @@ void PackagingEditor::migrationPackage(){
 
             if(!QFile::exists(newname))
                 QMessageBox::warning(this, tr("Warning"), tr("File %1 not found.").arg(newname));
-            QMessageBox::information(this, tr("Notice"), tr("Migration done."));
+        }
+        else{
+            QStringList split = filepath.split("/");
+            if(split.count() == 2 && filepath.endsWith(".lua") && indexame.isNull())
+                indexame = split.last().replace(QString(".lua"), QString(""));
         }
     }
+
+    QString spec_name = QString("extensions/%1.ini").arg(indexame);
+    QSettings settings(spec_name, QSettings::IniFormat);
+    file_list_meta->saveToSettings(settings);
+    QStringList filelist;
+    for(int i=0; i<file_list->count(); i++)
+        filelist << file_list->item(i)->text();
+    settings.setValue("FileList", filelist);
+
+    QMessageBox::information(this, tr("Notice"), tr("Migration done."));
+    rescanPackage();
 }
 
 void PackagingEditor::done7zProcess(int exit_code){
@@ -523,6 +539,8 @@ QWidget *PackagingEditor::createSniffTab(){
 
 void PackagingEditor::updateLuaGeneral(QListWidgetItem *item){
     general_list->clear();
+    if(item == NULL)
+        return;
     const Package *package = Sanguosha->findChild<const Package *>(item->text());
     QList<General *> all_generals = package->findChildren<General *>();
     foreach(General *general, all_generals){
@@ -551,6 +569,8 @@ void PackagingEditor::filtRate(){
     QDir dir("extensions");
     foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.ini")){
         const QSettings *settings = new QSettings(info.filePath(), QSettings::IniFormat, package_list);
+        if(settings == NULL)
+            continue;
         QStringList filelist = settings->value("FileList").toStringList();
         foreach(QString file, filelist){
             QStringList split = file.split("/");

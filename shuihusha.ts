@@ -2781,7 +2781,7 @@
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="243"/>
         <source>Resource migration with single package</source>
-        <translation>将旧版DIY资源迁移至新版目录下</translation>
+        <translation>将旧版DIY资源迁移至新版目录下并重建配置文件</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="271"/>
