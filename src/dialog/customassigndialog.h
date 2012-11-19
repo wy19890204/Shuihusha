@@ -58,6 +58,13 @@ private:
     QSpinBox *max_hp_spin,*hp_spin;
     QSpinBox *player_draw, *marks_count;
     QCheckBox *self_select_general, *self_select_general2;
+    QTabWidget *tab_cards;
+    QVBoxLayout *createLeft();
+    QVBoxLayout *createRight();
+    QWidget *createEquipTab();
+    QWidget *createHandsTab();
+    QWidget *createJudgeTab();
+    QWidget *createPileTab();
     QPushButton *removeEquipButton, *removeHandButton, *removeJudgeButton, *removePileButton;
     QCheckBox *set_turned, *set_chained;
     QComboBox *single_turn_box, *before_next_box;

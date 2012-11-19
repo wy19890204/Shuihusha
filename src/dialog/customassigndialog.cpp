@@ -44,6 +44,121 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
     list->setFlow(QListView::TopToBottom);
     list->setMovement(QListView::Static);
 
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->addLayout(createLeft());
+    layout->addLayout(createRight());
+    QVBoxLayout *mainlayout = new QVBoxLayout();
+    mainlayout->addLayout(layout);
+    setLayout(mainlayout);
+}
+
+QVBoxLayout *CustomAssignDialog::createLeft(){
+    QVBoxLayout *info_lay = new QVBoxLayout();
+
+    move_list_up_button = new QPushButton(tr("Move Up"));
+    move_list_down_button = new QPushButton(tr("Move Down"));
+    move_list_check = new QCheckBox(tr("Move Player List"));
+    move_pile_check = new QCheckBox(tr("Move Pile List"));
+
+    move_list_check->setObjectName("list check");
+    move_pile_check->setObjectName("pile check");
+    move_list_up_button->setObjectName("list_up");
+    move_list_down_button->setObjectName("list_down");
+    move_list_up_button->setEnabled(false);
+    move_list_down_button->setEnabled(false);
+    info_lay->addWidget(list);
+
+    tab_cards = new QTabWidget;
+    tab_cards->addTab(createEquipTab(), tr("Equips"));
+    tab_cards->addTab(createHandsTab(), tr("Handcards"));
+    tab_cards->addTab(createJudgeTab(), tr("Judges"));
+    tab_cards->addTab(createPileTab(), tr("DrawPile"));
+
+    info_lay->addWidget(tab_cards);
+    info_lay->addLayout(HLay(move_list_check, move_list_up_button));
+    info_lay->addLayout(HLay(move_pile_check, move_list_down_button));
+
+    connect(move_list_up_button, SIGNAL(clicked()), this, SLOT(exchangeListItem()));
+    connect(move_list_down_button, SIGNAL(clicked()), this, SLOT(exchangeListItem()));
+    connect(move_list_check, SIGNAL(toggled(bool)), this, SLOT(setMoveButtonAvaliable(bool)));
+    connect(move_pile_check, SIGNAL(toggled(bool)), this, SLOT(setMoveButtonAvaliable(bool)));
+
+    return info_lay;
+}
+
+QWidget *CustomAssignDialog::createEquipTab(){
+    QWidget *widget = new QWidget;
+    equip_list = new QListWidget;
+
+    QVBoxLayout *equip_lay = new QVBoxLayout;
+    QPushButton *equipAssign = new QPushButton(tr("EquipAssign"));
+    removeEquipButton = new QPushButton(tr("Remove Equip"));
+    removeEquipButton->setEnabled(false);
+
+    equip_lay->addWidget(equip_list);
+    equip_lay->addLayout(HLay(equipAssign, removeEquipButton));
+    widget->setLayout(equip_lay);
+
+    connect(removeEquipButton, SIGNAL(clicked()), this, SLOT(removeEquipCard()));
+    connect(equipAssign, SIGNAL(clicked()), this, SLOT(doEquipCardAssign()));
+    return widget;
+}
+
+QWidget *CustomAssignDialog::createHandsTab(){
+    QWidget *widget = new QWidget;
+    hand_list = new QListWidget;
+
+    QVBoxLayout *hand_lay = new QVBoxLayout;
+    QPushButton *handcardAssign = new QPushButton(tr("HandcardAssign"));
+    removeHandButton = new QPushButton(tr("Remove Handcard"));
+    removeHandButton->setEnabled(false);
+
+    hand_lay->addWidget(hand_list);
+    hand_lay->addLayout(HLay(handcardAssign, removeHandButton));
+    widget->setLayout(hand_lay);
+
+    connect(removeHandButton, SIGNAL(clicked()), this, SLOT(removeHandCard()));
+    connect(handcardAssign, SIGNAL(clicked()), this, SLOT(doHandCardAssign()));
+    return widget;
+}
+
+QWidget *CustomAssignDialog::createJudgeTab(){
+    QWidget *widget = new QWidget;
+    judge_list = new QListWidget;
+
+    QVBoxLayout *judge_lay = new QVBoxLayout;
+    QPushButton *judgeAssign = new QPushButton(tr("JudgeAssign"));
+    removeJudgeButton = new QPushButton(tr("Remove Judge"));
+    removeJudgeButton->setEnabled(false);
+
+    judge_lay->addWidget(judge_list);
+    judge_lay->addLayout(HLay(judgeAssign, removeJudgeButton));
+    widget->setLayout(judge_lay);
+
+    connect(removeJudgeButton, SIGNAL(clicked()), this, SLOT(removeJudgeCard()));
+    connect(judgeAssign, SIGNAL(clicked()), this, SLOT(doJudgeCardAssign()));
+    return widget;
+}
+
+QWidget *CustomAssignDialog::createPileTab(){
+    QWidget *widget = new QWidget;
+    pile_list = new QListWidget;
+
+    QVBoxLayout *pile_lay = new QVBoxLayout;
+    QPushButton *pileAssign = new QPushButton(tr("PileCardAssign"));
+    removePileButton = new QPushButton(tr("Remove Pilecard"));
+    removePileButton->setEnabled(false);
+
+    pile_lay->addWidget(pile_list);
+    pile_lay->addLayout(HLay(pileAssign, removePileButton));
+    widget->setLayout(pile_lay);
+
+    connect(removePileButton, SIGNAL(clicked()), this, SLOT(removePileCard()));
+    connect(pileAssign, SIGNAL(clicked()), this, SLOT(doPileCardAssign()));
+    return widget;
+}
+
+QVBoxLayout *CustomAssignDialog::createRight(){
     QVBoxLayout *vlayout = new QVBoxLayout;
     num_combobox = new QComboBox;
     for(int i = 0; i <= 9; i++){
@@ -148,11 +263,6 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
     general_box2->setLayout(general_lay2);
     general_lay2->addWidget(general_label2);
 
-    QPushButton *equipAssign = new QPushButton(tr("EquipAssign"));
-    QPushButton *handcardAssign = new QPushButton(tr("HandcardAssign"));
-    QPushButton *judgeAssign = new QPushButton(tr("JudgeAssign"));
-    QPushButton *pileAssign = new QPushButton(tr("PileCardAssign"));
-
     random_roles_box = new QCheckBox(tr("RandomRoles"));
 
     max_hp_prompt = new QCheckBox(tr("Max Hp"));
@@ -240,77 +350,9 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
     before_next_text2->hide();
     before_next_box->hide();
 
-    equip_list = new QListWidget;
-    hand_list = new QListWidget;
-    judge_list = new QListWidget;
-    pile_list = new QListWidget;
-    QVBoxLayout *info_lay = new QVBoxLayout(), *equip_lay = new QVBoxLayout(), *hand_lay = new QVBoxLayout()
-            , *judge_lay = new QVBoxLayout(), *pile_lay = new QVBoxLayout();
-
-    move_list_up_button = new QPushButton(tr("Move Up"));
-    move_list_down_button = new QPushButton(tr("Move Down"));
-    move_list_check = new QCheckBox(tr("Move Player List"));
-    move_pile_check = new QCheckBox(tr("Move Pile List"));
-
-    move_list_check->setObjectName("list check");
-    move_pile_check->setObjectName("pile check");
-    move_list_up_button->setObjectName("list_up");
-    move_list_down_button->setObjectName("list_down");
-    move_list_up_button->setEnabled(false);
-    move_list_down_button->setEnabled(false);
-    QVBoxLayout *list_move_lay = new QVBoxLayout;
-    list_move_lay->addWidget(move_list_check);
-    list_move_lay->addWidget(move_pile_check);
-    list_move_lay->addStretch();
-    list_move_lay->addWidget(move_list_up_button);
-    list_move_lay->addWidget(move_list_down_button);
-    QHBoxLayout *list_lay = new QHBoxLayout;
-    list_lay->addWidget(list);
-    list_lay->addLayout(list_move_lay);
-    info_lay->addLayout(list_lay);
-    QGroupBox *equip_group = new QGroupBox(tr("Equips"));
-    QGroupBox *hands_group = new QGroupBox(tr("Handcards"));
-    QGroupBox *judge_group = new QGroupBox(tr("Judges"));
-    QGroupBox *pile_group = new QGroupBox(tr("DrawPile"));
-    equip_group->setLayout(equip_lay);
-    hands_group->setLayout(hand_lay);
-    judge_group->setLayout(judge_lay);
-    pile_group->setLayout(pile_lay);
-
-    removeEquipButton = new QPushButton(tr("Remove Equip"));
-    removeHandButton = new QPushButton(tr("Remove Handcard"));
-    removeJudgeButton = new QPushButton(tr("Remove Judge"));
-    removePileButton = new QPushButton(tr("Remove Pilecard"));
-
-    removeEquipButton->setEnabled(false);
-    removeHandButton->setEnabled(false);
-    removeJudgeButton->setEnabled(false);
-    removePileButton->setEnabled(false);
-    equip_lay->addWidget(equip_list);
-    equip_lay->addLayout(HLay(equipAssign, removeEquipButton));
-    hand_lay->addWidget(hand_list);
-    hand_lay->addLayout(HLay(handcardAssign, removeHandButton));
-    info_lay->addLayout(HLay(equip_group, hands_group));
-    judge_lay->addWidget(judge_list);
-    judge_lay->addLayout(HLay(judgeAssign, removeJudgeButton));
-    pile_lay->addWidget(pile_list);
-    pile_lay->addLayout(HLay(pileAssign, removePileButton));
-    info_lay->addLayout(HLay(judge_group, pile_group));
-
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addLayout(info_lay);
-    layout->addLayout(vlayout);
-    QVBoxLayout *mainlayout = new QVBoxLayout();
-    mainlayout->addLayout(layout);
-    setLayout(mainlayout);
-
     connect(role_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRole(int)));
     connect(list, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
             this, SLOT(on_list_itemSelectionChanged(QListWidgetItem*)));
-    connect(move_list_up_button, SIGNAL(clicked()), this, SLOT(exchangeListItem()));
-    connect(move_list_down_button, SIGNAL(clicked()), this, SLOT(exchangeListItem()));
-    connect(move_list_check, SIGNAL(toggled(bool)), this, SLOT(setMoveButtonAvaliable(bool)));
-    connect(move_pile_check, SIGNAL(toggled(bool)), this, SLOT(setMoveButtonAvaliable(bool)));
     connect(num_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateNumber(int)));
     connect(general_label, SIGNAL(clicked()), this, SLOT(doGeneralAssign()));
     connect(general_label2, SIGNAL(clicked()), this, SLOT(doGeneralAssign2()));
@@ -336,14 +378,6 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
     connect(marks_count, SIGNAL(valueChanged(int)), this, SLOT(setPlayerMarks(int)));
     connect(marks_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(getPlayerMarks(int)));
     connect(pile_list, SIGNAL(currentRowChanged(int)), this, SLOT(updatePileInfo(int)));
-    connect(removeEquipButton, SIGNAL(clicked()), this, SLOT(removeEquipCard()));
-    connect(removeHandButton, SIGNAL(clicked()), this, SLOT(removeHandCard()));
-    connect(removeJudgeButton, SIGNAL(clicked()), this, SLOT(removeJudgeCard()));
-    connect(removePileButton, SIGNAL(clicked()), this, SLOT(removePileCard()));
-    connect(equipAssign, SIGNAL(clicked()), this, SLOT(doEquipCardAssign()));
-    connect(handcardAssign, SIGNAL(clicked()), this, SLOT(doHandCardAssign()));
-    connect(judgeAssign, SIGNAL(clicked()), this, SLOT(doJudgeCardAssign()));
-    connect(pileAssign, SIGNAL(clicked()), this, SLOT(doPileCardAssign()));
     connect(single_turn, SIGNAL(toggled(bool)), this, SLOT(checkBeforeNextBox(bool)));
     connect(before_next, SIGNAL(toggled(bool)), this, SLOT(checkSingleTurnBox(bool)));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -351,6 +385,8 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
     connect(saveButton,SIGNAL(clicked()),this,SLOT(save()));
     connect(defaultLoadButton, SIGNAL(clicked()), this, SLOT(load()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+
+    return vlayout;
 }
 
 void CustomAssignDialog::exchangePlayersInfo(QListWidgetItem *first, QListWidgetItem *second){
@@ -839,13 +875,13 @@ void CustomAssignDialog::removeJudgeCard(){
 void CustomAssignDialog::removePileCard(){
     int card_id = pile_list->currentItem()->data(Qt::UserRole).toInt();
     if(set_pile.contains(card_id)){
-        set_pile.removeOne(card_id);
         int row = pile_list->currentRow();
         pile_list->takeItem(row);
         if(pile_list->count() > 0)
             pile_list->setCurrentRow(row >= pile_list->count() ? row-1 : row);
         else
             removePileButton->setEnabled(false);
+        set_pile.removeOne(card_id);
     }
 }
 
