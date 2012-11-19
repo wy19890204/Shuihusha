@@ -272,13 +272,6 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     vlayout->addLayout(HLay(loadButton, saveButton));
     vlayout->addLayout(HLay(okButton, cancelButton));
 
-    single_turn_text->hide();
-    single_turn_text2->hide();
-    single_turn_box->hide();
-    before_next_text->hide();
-    before_next_text2->hide();
-    before_next_box->hide();
-
     connect(role_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRole(int)));
     connect(list, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
             this, SLOT(on_list_itemSelectionChanged(QListWidgetItem*)));
@@ -377,31 +370,44 @@ QWidget *CustomAssignDialog::starterTab(){
 QWidget *CustomAssignDialog::enderTab(){
     QWidget *widget = new QWidget;
 
-    single_turn_text = new QLabel(tr("After this turn "));
-    single_turn_text2 = new QLabel(tr("win"));
-    single_turn_box = new QComboBox();
     single_turn = new QCheckBox(tr("After this turn you lose"));
-    single_turn_box->addItem(tr("Lord"), "lord+loyalist");
-    single_turn_box->addItem(tr("Renegade"), "renegade");
-    single_turn_box->addItem(tr("Rebel"), "rebel");
-
-    before_next_text = new QLabel(tr("Before next turn "));
-    before_next_text2 = new QLabel(tr("win"));
-    before_next_box = new QComboBox();
     before_next = new QCheckBox(tr("Before next turn begin player lose"));
-    before_next_box->addItem(tr("Lord"), "lord+loyalist");
-    before_next_box->addItem(tr("Renegade"), "Renegade");
-    before_next_box->addItem(tr("Rebel"), "Rebel");
+    dieover = new QCheckBox(tr("Gameover if i dead"));
+
+    sb_text = new QLabel(tr("After this turn "));
+    sb_text2 = new QLabel(tr("win"));
+    sb_box = new QComboBox();
+    sb_box->addItem(tr("Lord"), "lord+loyalist");
+    sb_box->addItem(tr("Renegade"), "renegade");
+    sb_box->addItem(tr("Rebel"), "rebel");
+
+    dieover_text = new QLabel(tr("Gameover when die"));
+    dieover_text2 = new QLabel(tr("win"));
+    dieover_box = new QComboBox();
+    dieover_box->addItem(tr("Lord"), "lord+loyalist");
+    dieover_box->addItem(tr("Renegade"), "Renegade");
+    dieover_box->addItem(tr("Rebel"), "Rebel");
+
+    sb_text->hide();
+    sb_text2->hide();
+    sb_box->hide();
+    dieover_text->hide();
+    dieover_text2->hide();
+    dieover_box->hide();
 
     QVBoxLayout *ender_lay = new QVBoxLayout();
     ender_lay->addWidget(single_turn);
-    ender_lay->addLayout(HLay(single_turn_text, single_turn_text2, single_turn_box));
     ender_lay->addWidget(before_next);
-    ender_lay->addLayout(HLay(before_next_text, before_next_text2, before_next_box));
+    ender_lay->addLayout(HLay(sb_text, sb_text2, sb_box));
+    ender_lay->addWidget(dieover);
+    ender_lay->addLayout(HLay(dieover_text, dieover_text2, dieover_box));
     widget->setLayout(ender_lay);
 
     connect(single_turn, SIGNAL(toggled(bool)), this, SLOT(checkBeforeNextBox(bool)));
     connect(before_next, SIGNAL(toggled(bool)), this, SLOT(checkSingleTurnBox(bool)));
+    connect(dieover, SIGNAL(toggled(bool)), this, SLOT(checkDeadWinBox(bool)));
+    dieover->setEnabled(false);
+    dieover_box->setEnabled(false);
     return widget;
 }
 
@@ -442,6 +448,7 @@ void CustomAssignDialog::exchangePlayersInfo(QListWidgetItem *first, QListWidget
     player_marks[first_name] = player_marks[second_name];
     set_nationality[first_name] = set_nationality[second_name];
     assign_nationality[first_name] = set_nationality[second_name];
+    dead_over[first_name] = dead_over[second_name];
 
     role_mapping[second_name] = role;
     general_mapping[second_name] = general;
@@ -1090,6 +1097,16 @@ void CustomAssignDialog::on_list_itemSelectionChanged(QListWidgetItem *current){
     single_turn->setChecked(is_single_turn);
     before_next->setChecked(is_before_next);
 
+    QString roled = dead_over.value(player_name);
+    dieover->setChecked(!roled.isNull());
+    if(!roled.isNull()){
+        QMap<QString, int> role_index;
+        role_index["lord+loyalist"] = 0;
+        role_index["renegade"] = 1;
+        role_index["rebel"] = 2;
+        dieover_box->setCurrentIndex(role_index.value(roled, 0));
+    }
+
     if(move_list_check->isChecked()){
         move_list_up_button->setEnabled(list->currentRow() != 0);
         move_list_down_button->setEnabled(list->currentRow() != list->count()-1);
@@ -1126,16 +1143,17 @@ void CustomAssignDialog::checkBeforeNextBox(bool toggled){
         is_before_next = false;
         is_single_turn = true;
 
-        single_turn_text->show();
-        single_turn_text2->show();
-        single_turn_box->show();
+        sb_text->setText(tr("After this turn "));
+        sb_text->show();
+        sb_text2->show();
+        sb_box->show();
     }
     else{
         is_single_turn = false;
 
-        single_turn_text->hide();
-        single_turn_text2->hide();
-        single_turn_box->hide();
+        sb_text->hide();
+        sb_text2->hide();
+        sb_box->hide();
     }
 }
 
@@ -1145,17 +1163,27 @@ void CustomAssignDialog::checkSingleTurnBox(bool toggled){
         is_before_next = true;
         is_single_turn = false;
 
-        before_next_text->show();
-        before_next_text2->show();
-        before_next_box->show();
+        sb_text->setText(tr("Before next turn "));
+        sb_text->show();
+        sb_text2->show();
+        sb_box->show();
     }
     else{
         is_before_next = false;
 
-        before_next_text->hide();
-        before_next_text2->hide();
-        before_next_box->hide();
+        sb_text->hide();
+        sb_text2->hide();
+        sb_box->hide();
     }
+}
+
+void CustomAssignDialog::checkDeadWinBox(bool toggled){
+    dieover_text->setVisible(toggled);
+    dieover_text2->setVisible(toggled);
+    dieover_box->setVisible(toggled);
+    QString name = list->currentItem()->data(Qt::UserRole).toString();
+    if(toggled)
+        dead_over[name] = dieover_box->itemData(dieover_box->currentIndex()).toString();
 }
 
 void CustomAssignDialog::load()
@@ -1190,6 +1218,7 @@ void CustomAssignDialog::load()
     player_judges.clear();
     set_nationality.clear();
     assign_nationality.clear();
+    dead_over.clear();
 
     free_choose_general.clear();
     free_choose_general2.clear();
@@ -1292,12 +1321,16 @@ void CustomAssignDialog::load()
             player_exskills[name].append(skills);
         }
         if(player["singleTurn"] != NULL){
-            single_turn_box->setCurrentIndex(role_index.value(player["singleTurn"], 0));
+            sb_box->setCurrentIndex(role_index.value(player["singleTurn"], 0));
             is_single_turn = true;
         }
         if(player["beforeNext"] != NULL){
-            before_next_box->setCurrentIndex(role_index.value(player["beforeNext"], 0));
+            sb_box->setCurrentIndex(role_index.value(player["beforeNext"], 0));
             is_before_next = true;
+        }
+        if(player["win"] != NULL){
+            dead_over[name] = player["win"];
+            dieover_box->setCurrentIndex(role_index.value(player["win"], 0));
         }
         if(player["marks"] != NULL){
             foreach(QString mark, player["marks"].split(",")){
@@ -1367,8 +1400,7 @@ void CustomAssignDialog::load()
     }
 
     updateNumber(numPlayer-2);
-    for(int i=list->count()-1;i>=0;i--)
-    {
+    for(int i=list->count()-1;i>=0;i--){
         list->setCurrentItem(list->item(i));
         if(list->item(i)->data(Qt::UserRole).toString() == starter)
             starter_box->setChecked(true);
@@ -1440,11 +1472,9 @@ bool CustomAssignDialog::save(QString path)
     line.remove(line.length()-1, 1);
     line.append("\n");
 
-    if(set_pile.length())
-    {
+    if(set_pile.length()){
         line.append("setPile:");
-        for(int i = set_pile.length()-1; i >= 0; i--)
-        {
+        for(int i = set_pile.length()-1; i >= 0; i--){
             int id = set_pile.at(i);
             line.append(QString::number(id));
             line.append(",");
@@ -1502,13 +1532,17 @@ bool CustomAssignDialog::save(QString path)
             line.remove(line.length()-1, 1);
             line.append(" ");
         }
+        if(!dead_over[name].isNull()){
+            QString winner = dieover_box->itemData(dieover_box->currentIndex()).toString();
+            line.append(QString("win:%1 ").arg(winner));
+        }
         if(i == 0){
             if(is_single_turn){
-                QString winner = single_turn_box->itemData(single_turn_box->currentIndex()).toString();
+                QString winner = sb_box->itemData(sb_box->currentIndex()).toString();
                 line.append(QString("singleTurn:%1 ").arg(winner));
             }
             else if(is_before_next){
-                QString winner = before_next_box->itemData(before_next_box->currentIndex()).toString();
+                QString winner = sb_box->itemData(sb_box->currentIndex()).toString();
                 line.append(QString("beforeNext:%1 ").arg(winner));
             }
         }
