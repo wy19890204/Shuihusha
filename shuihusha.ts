@@ -1210,6 +1210,11 @@
         <translation>开局信息</translation>
     </message>
     <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="250"/>
+        <source>End Info</source>
+        <translation>终局信息</translation>
+    </message>
+    <message>
         <location filename="src/dialog/customassigndialog.cpp" line="90"/>
         <source>Start Draw</source>
         <translation>开局摸牌数</translation>
@@ -1302,7 +1307,7 @@
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="178"/>
         <source>Customize Nationality</source>
-        <translation>自定义国籍</translation>
+        <translation>势力</translation>
     </message>
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="188"/>

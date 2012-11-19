@@ -55,6 +55,14 @@ CustomAssignDialog::CustomAssignDialog(QWidget *parent)
 QVBoxLayout *CustomAssignDialog::createLeft(){
     QVBoxLayout *info_lay = new QVBoxLayout();
 
+    info_lay->addWidget(list);
+
+    tab_cards = new QTabWidget;
+    tab_cards->addTab(createEquipTab(), tr("Equips"));
+    tab_cards->addTab(createHandsTab(), tr("Handcards"));
+    tab_cards->addTab(createJudgeTab(), tr("Judges"));
+    tab_cards->addTab(createPileTab(), tr("DrawPile"));
+
     move_list_up_button = new QPushButton(tr("Move Up"));
     move_list_down_button = new QPushButton(tr("Move Down"));
     move_list_check = new QCheckBox(tr("Move Player List"));
@@ -66,13 +74,6 @@ QVBoxLayout *CustomAssignDialog::createLeft(){
     move_list_down_button->setObjectName("list_down");
     move_list_up_button->setEnabled(false);
     move_list_down_button->setEnabled(false);
-    info_lay->addWidget(list);
-
-    tab_cards = new QTabWidget;
-    tab_cards->addTab(createEquipTab(), tr("Equips"));
-    tab_cards->addTab(createHandsTab(), tr("Handcards"));
-    tab_cards->addTab(createJudgeTab(), tr("Judges"));
-    tab_cards->addTab(createPileTab(), tr("DrawPile"));
 
     info_lay->addWidget(tab_cards);
     info_lay->addLayout(HLay(move_list_check, move_list_up_button));
@@ -190,9 +191,8 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     role_combobox->addItem(tr("Renegade"), "renegade");
     role_combobox->addItem(tr("Rebel"), "rebel");
 
-    for(int i=0; i< num_combobox->currentIndex()+2; i++){
+    for(int i=0; i< num_combobox->currentIndex()+2; i++)
         list->addItem(item_map[i]);
-    }
     list->setCurrentItem(item_map[0]);
 
     player_draw = new QSpinBox();
@@ -216,8 +216,6 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     general_box2->setLayout(general_lay2);
     general_lay2->addWidget(general_label2);
 
-    random_roles_box = new QCheckBox(tr("RandomRoles"));
-
     max_hp_prompt = new QCheckBox(tr("Max Hp"));
     max_hp_prompt->setChecked(false);
     max_hp_spin = new QSpinBox();
@@ -234,9 +232,6 @@ QVBoxLayout *CustomAssignDialog::createRight(){
 
     self_select_general = new QCheckBox(tr("General Self Select"));
     self_select_general2 = new QCheckBox(tr("General2 Self Select"));
-
-    set_turned = new QCheckBox(tr("Player Turned"));
-    set_chained = new QCheckBox(tr("Player Chained"));
 
     choose_nationality = new QCheckBox(tr("Customize Nationality"));
     nationalities = new QComboBox;
@@ -270,12 +265,9 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     vlayout->addLayout(HLay(self_select_general, self_select_general2));
     vlayout->addLayout(HLay(max_hp_prompt,max_hp_spin));
     vlayout->addLayout(HLay(hp_prompt,hp_spin));
-    vlayout->addLayout(HLay(set_turned, set_chained));
     vlayout->addLayout(HLay(choose_nationality, nationalities));
-    vlayout->addWidget(random_roles_box);
     vlayout->addWidget(extra_skill_set);
     vlayout->addWidget(tab_widget);
-    vlayout->addStretch();
     vlayout->addWidget(defaultLoadButton);
     vlayout->addLayout(HLay(loadButton, saveButton));
     vlayout->addLayout(HLay(okButton, cancelButton));
@@ -301,12 +293,9 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     connect(self_select_general2, SIGNAL(toggled(bool)), this, SLOT(freeChoose2(bool)));
     connect(self_select_general, SIGNAL(toggled(bool)), general_label, SLOT(setDisabled(bool)));
     connect(self_select_general2, SIGNAL(toggled(bool)), general_label2, SLOT(setDisabled(bool)));
-    connect(set_turned, SIGNAL(toggled(bool)), this, SLOT(doPlayerTurns(bool)));
-    connect(set_chained, SIGNAL(toggled(bool)), this, SLOT(doPlayerChains(bool)));
     connect(choose_nationality, SIGNAL(toggled(bool)), nationalities, SLOT(setEnabled(bool)));
     connect(choose_nationality, SIGNAL(toggled(bool)), this, SLOT(setNationalityEnable(bool)));
     connect(nationalities, SIGNAL(currentIndexChanged(int)), this, SLOT(setNationality(int)));
-    connect(random_roles_box, SIGNAL(toggled(bool)), this, SLOT(updateAllRoles(bool)));
     connect(extra_skill_set, SIGNAL(clicked()), this, SLOT(doSkillSelect()));
     connect(hp_spin, SIGNAL(valueChanged(int)), this, SLOT(getPlayerHp(int)));
     connect(max_hp_spin, SIGNAL(valueChanged(int)), this, SLOT(getPlayerMaxHp(int)));
@@ -324,6 +313,9 @@ QWidget *CustomAssignDialog::starterTab(){
     QWidget *widget = new QWidget;
 
     starter_box = new QCheckBox(tr("Set as Starter"));
+    set_turned = new QCheckBox(tr("Player Turned"));
+    set_chained = new QCheckBox(tr("Player Chained"));
+    random_roles_box = new QCheckBox(tr("RandomRoles"));
     QLabel *draw_text = new QLabel(tr("Start Draw"));
     QLabel *mark_text = new QLabel(tr("marks"));
     QLabel *mark_num_text = new QLabel(tr("pieces"));
@@ -353,11 +345,6 @@ QWidget *CustomAssignDialog::starterTab(){
     marks_count->setRange(0, 999);
     marks_count->setEnabled(false);
 
-    QVBoxLayout *starter_lay = new QVBoxLayout();
-    starter_lay->addWidget(starter_box);
-    starter_lay->addLayout(HLay(draw_text, player_draw));
-    starter_lay->addLayout(HLay(marks_combobox, marks_count, mark_text, mark_num_text));
-
     QGridLayout *grid_layout = new QGridLayout;
     const int columns = mark_icons.length() > 10 ? 5 : 4;
     for(int i=0; i<mark_icons.length(); i++){
@@ -366,14 +353,24 @@ QWidget *CustomAssignDialog::starterTab(){
         grid_layout->addWidget(mark_icons.at(i), row, column+1);
         mark_icons.at(i)->hide();
     }
+
+    QVBoxLayout *starter_lay = new QVBoxLayout();
+    starter_lay->addWidget(starter_box);
+    starter_lay->addLayout(HLay(draw_text, player_draw));
+    starter_lay->addLayout(HLay(set_turned, set_chained));
+    starter_lay->addLayout(HLay(marks_combobox, marks_count, mark_text, mark_num_text));
     starter_lay->addLayout(grid_layout);
+    starter_lay->addWidget(random_roles_box);
 
     widget->setLayout(starter_lay);
 
-    connect(player_draw, SIGNAL(valueChanged(int)), this, SLOT(setPlayerStartDraw(int)));
     connect(starter_box, SIGNAL(toggled(bool)), this, SLOT(setStarter(bool)));
+    connect(player_draw, SIGNAL(valueChanged(int)), this, SLOT(setPlayerStartDraw(int)));
+    connect(set_turned, SIGNAL(toggled(bool)), this, SLOT(doPlayerTurns(bool)));
+    connect(set_chained, SIGNAL(toggled(bool)), this, SLOT(doPlayerChains(bool)));
     connect(marks_count, SIGNAL(valueChanged(int)), this, SLOT(setPlayerMarks(int)));
     connect(marks_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(getPlayerMarks(int)));
+    connect(random_roles_box, SIGNAL(toggled(bool)), this, SLOT(updateAllRoles(bool)));
     return widget;
 }
 
@@ -939,6 +936,7 @@ void CustomAssignDialog::setMoveButtonAvaliable(bool toggled){
             move_list_up_button->setEnabled(pile_list->count() > 0 && pile_list->currentRow() != 0);
             move_list_down_button->setEnabled(pile_list->count() > 0 && pile_list->currentRow() != pile_list->count()-1);
         }
+        tab_cards->setCurrentIndex(3);
     }
 
     if(!move_list_check->isChecked() && !move_pile_check->isChecked()){
