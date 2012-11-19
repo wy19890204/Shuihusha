@@ -200,53 +200,6 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     player_draw->setValue(4);
     player_draw->setEnabled(true);
 
-    QGroupBox *starter_group = new QGroupBox(tr("Start Info"));
-    starter_box = new QCheckBox(tr("Set as Starter"));
-    QLabel *draw_text = new QLabel(tr("Start Draw"));
-    QLabel *mark_text = new QLabel(tr("marks"));
-    QLabel *mark_num_text = new QLabel(tr("pieces"));
-
-    marks_combobox = new QComboBox;
-    marks_combobox->addItem(tr("None"));
-    QString path = "image/mark";
-    QDir *dir = new QDir(path);
-    QStringList filter;
-    filter << "*.png";
-    dir->setNameFilters(filter);
-    QList<QFileInfo> file_info(dir->entryInfoList(filter));
-    foreach(QFileInfo file, file_info){
-        QString mark_name = file.fileName().split(".").first();
-        QString mark_translate = Sanguosha->translate(mark_name);
-        if(!mark_translate.startsWith("@")){
-            marks_combobox->addItem(mark_translate, mark_name);
-            QLabel *mark_icon = new QLabel(mark_translate);
-            mark_icon->setPixmap(QPixmap(file.filePath()));
-            mark_icon->setObjectName(mark_name);
-            mark_icon->setToolTip(tr("%1 mark").arg(mark_translate));
-            mark_icons << mark_icon;
-        }
-    }
-
-    marks_count = new QSpinBox;
-    marks_count->setRange(0, 999);
-    marks_count->setEnabled(false);
-
-    QVBoxLayout *starter_lay = new QVBoxLayout();
-    starter_group->setLayout(starter_lay);
-    starter_lay->addWidget(starter_box);
-    starter_lay->addLayout(HLay(draw_text, player_draw));
-    starter_lay->addLayout(HLay(marks_combobox, marks_count, mark_text, mark_num_text));
-
-    QGridLayout *grid_layout = new QGridLayout;
-    const int columns = mark_icons.length() > 10 ? 5 : 4;
-    for(int i=0; i<mark_icons.length(); i++){
-        int row = i / columns;
-        int column = i % columns;
-        grid_layout->addWidget(mark_icons.at(i), row, column+1);
-        mark_icons.at(i)->hide();
-    }
-    starter_lay->addLayout(grid_layout);
-
     general_label = new LabelButton;
     general_label->setPixmap(QPixmap("image/system/disabled.png"));
     general_label->setFixedSize(42, 36);
@@ -297,21 +250,9 @@ QVBoxLayout *CustomAssignDialog::createRight(){
 
     extra_skill_set = new QPushButton(tr("Set Extra Skills"));
 
-    single_turn_text = new QLabel(tr("After this turn "));
-    single_turn_text2 = new QLabel(tr("win"));
-    single_turn_box = new QComboBox();
-    single_turn = new QCheckBox(tr("After this turn you lose"));
-    single_turn_box->addItem(tr("Lord"), "lord+loyalist");
-    single_turn_box->addItem(tr("Renegade"), "renegade");
-    single_turn_box->addItem(tr("Rebel"), "rebel");
-
-    before_next_text = new QLabel(tr("Before next turn "));
-    before_next_text2 = new QLabel(tr("win"));
-    before_next_box = new QComboBox();
-    before_next = new QCheckBox(tr("Before next turn begin player lose"));
-    before_next_box->addItem(tr("Lord"), "lord+loyalist");
-    before_next_box->addItem(tr("Renegade"), "Renegade");
-    before_next_box->addItem(tr("Rebel"), "Rebel");
+    QTabWidget *tab_widget = new QTabWidget;
+    tab_widget->addTab(starterTab(), tr("Start Info"));
+    tab_widget->addTab(enderTab(), tr("End Info"));
 
     QPushButton *okButton = new QPushButton(tr("OK"));
     QPushButton *cancelButton = new QPushButton(tr("Cancel"));
@@ -333,11 +274,7 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     vlayout->addLayout(HLay(choose_nationality, nationalities));
     vlayout->addWidget(random_roles_box);
     vlayout->addWidget(extra_skill_set);
-    vlayout->addWidget(starter_group);
-    vlayout->addWidget(single_turn);
-    vlayout->addLayout(HLay(single_turn_text, single_turn_text2, single_turn_box));
-    vlayout->addWidget(before_next);
-    vlayout->addLayout(HLay(before_next_text, before_next_text2, before_next_box));
+    vlayout->addWidget(tab_widget);
     vlayout->addStretch();
     vlayout->addWidget(defaultLoadButton);
     vlayout->addLayout(HLay(loadButton, saveButton));
@@ -373,13 +310,7 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     connect(extra_skill_set, SIGNAL(clicked()), this, SLOT(doSkillSelect()));
     connect(hp_spin, SIGNAL(valueChanged(int)), this, SLOT(getPlayerHp(int)));
     connect(max_hp_spin, SIGNAL(valueChanged(int)), this, SLOT(getPlayerMaxHp(int)));
-    connect(player_draw, SIGNAL(valueChanged(int)), this, SLOT(setPlayerStartDraw(int)));
-    connect(starter_box, SIGNAL(toggled(bool)), this, SLOT(setStarter(bool)));
-    connect(marks_count, SIGNAL(valueChanged(int)), this, SLOT(setPlayerMarks(int)));
-    connect(marks_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(getPlayerMarks(int)));
     connect(pile_list, SIGNAL(currentRowChanged(int)), this, SLOT(updatePileInfo(int)));
-    connect(single_turn, SIGNAL(toggled(bool)), this, SLOT(checkBeforeNextBox(bool)));
-    connect(before_next, SIGNAL(toggled(bool)), this, SLOT(checkSingleTurnBox(bool)));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(loadButton,SIGNAL(clicked()),this,SLOT(load()));
     connect(saveButton,SIGNAL(clicked()),this,SLOT(save()));
@@ -387,6 +318,94 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     return vlayout;
+}
+
+QWidget *CustomAssignDialog::starterTab(){
+    QWidget *widget = new QWidget;
+
+    starter_box = new QCheckBox(tr("Set as Starter"));
+    QLabel *draw_text = new QLabel(tr("Start Draw"));
+    QLabel *mark_text = new QLabel(tr("marks"));
+    QLabel *mark_num_text = new QLabel(tr("pieces"));
+
+    marks_combobox = new QComboBox;
+    marks_combobox->addItem(tr("None"));
+    QString path = "image/mark";
+    QDir *dir = new QDir(path);
+    QStringList filter;
+    filter << "*.png";
+    dir->setNameFilters(filter);
+    QList<QFileInfo> file_info(dir->entryInfoList(filter));
+    foreach(QFileInfo file, file_info){
+        QString mark_name = file.fileName().split(".").first();
+        QString mark_translate = Sanguosha->translate(mark_name);
+        if(!mark_translate.startsWith("@")){
+            marks_combobox->addItem(mark_translate, mark_name);
+            QLabel *mark_icon = new QLabel(mark_translate);
+            mark_icon->setPixmap(QPixmap(file.filePath()));
+            mark_icon->setObjectName(mark_name);
+            mark_icon->setToolTip(tr("%1 mark").arg(mark_translate));
+            mark_icons << mark_icon;
+        }
+    }
+
+    marks_count = new QSpinBox;
+    marks_count->setRange(0, 999);
+    marks_count->setEnabled(false);
+
+    QVBoxLayout *starter_lay = new QVBoxLayout();
+    starter_lay->addWidget(starter_box);
+    starter_lay->addLayout(HLay(draw_text, player_draw));
+    starter_lay->addLayout(HLay(marks_combobox, marks_count, mark_text, mark_num_text));
+
+    QGridLayout *grid_layout = new QGridLayout;
+    const int columns = mark_icons.length() > 10 ? 5 : 4;
+    for(int i=0; i<mark_icons.length(); i++){
+        int row = i / columns;
+        int column = i % columns;
+        grid_layout->addWidget(mark_icons.at(i), row, column+1);
+        mark_icons.at(i)->hide();
+    }
+    starter_lay->addLayout(grid_layout);
+
+    widget->setLayout(starter_lay);
+
+    connect(player_draw, SIGNAL(valueChanged(int)), this, SLOT(setPlayerStartDraw(int)));
+    connect(starter_box, SIGNAL(toggled(bool)), this, SLOT(setStarter(bool)));
+    connect(marks_count, SIGNAL(valueChanged(int)), this, SLOT(setPlayerMarks(int)));
+    connect(marks_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(getPlayerMarks(int)));
+    return widget;
+}
+
+QWidget *CustomAssignDialog::enderTab(){
+    QWidget *widget = new QWidget;
+
+    single_turn_text = new QLabel(tr("After this turn "));
+    single_turn_text2 = new QLabel(tr("win"));
+    single_turn_box = new QComboBox();
+    single_turn = new QCheckBox(tr("After this turn you lose"));
+    single_turn_box->addItem(tr("Lord"), "lord+loyalist");
+    single_turn_box->addItem(tr("Renegade"), "renegade");
+    single_turn_box->addItem(tr("Rebel"), "rebel");
+
+    before_next_text = new QLabel(tr("Before next turn "));
+    before_next_text2 = new QLabel(tr("win"));
+    before_next_box = new QComboBox();
+    before_next = new QCheckBox(tr("Before next turn begin player lose"));
+    before_next_box->addItem(tr("Lord"), "lord+loyalist");
+    before_next_box->addItem(tr("Renegade"), "Renegade");
+    before_next_box->addItem(tr("Rebel"), "Rebel");
+
+    QVBoxLayout *ender_lay = new QVBoxLayout();
+    ender_lay->addWidget(single_turn);
+    ender_lay->addLayout(HLay(single_turn_text, single_turn_text2, single_turn_box));
+    ender_lay->addWidget(before_next);
+    ender_lay->addLayout(HLay(before_next_text, before_next_text2, before_next_box));
+    widget->setLayout(ender_lay);
+
+    connect(single_turn, SIGNAL(toggled(bool)), this, SLOT(checkBeforeNextBox(bool)));
+    connect(before_next, SIGNAL(toggled(bool)), this, SLOT(checkSingleTurnBox(bool)));
+    return widget;
 }
 
 void CustomAssignDialog::exchangePlayersInfo(QListWidgetItem *first, QListWidgetItem *second){
@@ -1555,9 +1574,8 @@ GeneralAssignDialog::GeneralAssignDialog(QWidget *parent, bool can_ban)
 
     QList<const General *> all_generals = Sanguosha->findChildren<const General *>();
     QMap<QString, QList<const General*> > map;
-    foreach(const General *general, all_generals){
+    foreach(const General *general, all_generals)
         map[general->getKingdom()] << general;
-    }
 
     QStringList kingdoms = Sanguosha->getKingdoms();
 
@@ -1623,7 +1641,7 @@ QWidget *GeneralAssignDialog::createTab(const QList<const General *> &generals){
         if(general->isLord())
             button->setIcon(lord_icon);
 
-        if(general->isTotallyHidden())
+        if(general_name == "anjiang")
            button->setDisabled(true);
         group->addButton(button);
 

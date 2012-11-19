@@ -72,6 +72,8 @@ private:
     QCheckBox *single_turn, *before_next;
     QLabel *single_turn_text, *single_turn_text2, *before_next_text, *before_next_text2;
     QPushButton *extra_skill_set;
+    QWidget *starterTab();
+    QWidget *enderTab();
     QPushButton *move_list_up_button, *move_list_down_button;
     QCheckBox *move_list_check, *move_pile_check;
     QCheckBox *choose_nationality;
