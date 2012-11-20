@@ -29,6 +29,8 @@ bool Skill::isLordSkill() const{
 }
 
 QString Skill::getDescription() const{
+    if(!Sanguosha->isDuplicated("s", objectName()))
+        return Sanguosha->translate("::");
     return Sanguosha->translate(":" + objectName());
 }
 

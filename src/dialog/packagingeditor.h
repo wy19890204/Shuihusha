@@ -70,7 +70,7 @@ private slots:
     void filtRate();
     void showAll();
     void duplicateLua();
-    void doRename(const QString &old_name, const QString &new_name, const char *flag);
+    void doRename(const QString &old_name, const QString &new_name, const QString &flag);
 };
 
 #endif // PACKAGINGEDITOR_H

@@ -55,6 +55,7 @@ return {
 	["defensive_horse"] = "防御马",
 	["offensive_horse"] = "进攻马",
 	["disgusting_card"] = "恶心牌",
+	["::"] = "<font color=red>此技能不存在！</font>",
 
 	["guan"] = "官",
 	["jiang"] = "将",

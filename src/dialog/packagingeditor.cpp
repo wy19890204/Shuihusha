@@ -718,67 +718,104 @@ void PackagingEditor::duplicateLua(){
     foreach(QString tmp, generals){
         if(!duplis.contains(tmp))
             continue;
-        QString name = QInputDialog::getText(this,
-                                                 tr("Duplicated"),
-                                                 tr("%1 is duplicated, Please input new name :").arg(tmp),
-                                                 QLineEdit::Normal,
-                                                 "lua" + tmp);
+        QString name;
+        do{
+            name = QInputDialog::getText(this, tr("Duplicated"),
+                                         tr("%1 is duplicated, Please input new name :").arg(tmp),
+                                         QLineEdit::Normal, "lua" + tmp);
+            if(name.isEmpty() || !Sanguosha->isDuplicated("g", name))
+                break;
+        }while(1==1);
         if(!name.isEmpty())
             doRename(tmp, name, "g");
     }
     foreach(QString tmp, skills){
         if(!duplis.contains(tmp))
             continue;
-        QString name = QInputDialog::getText(this,
-                                                 tr("Duplicated"),
-                                                 tr("%1 is duplicated, Please input new name :").arg(tmp),
-                                                 QLineEdit::Normal,
-                                                 "lua" + tmp);
+        QString name;
+        do{
+            name = QInputDialog::getText(this, tr("Duplicated"),
+                                         tr("%1 is duplicated, Please input new name :").arg(tmp),
+                                         QLineEdit::Normal, "lua" + tmp);
+            if(name.isEmpty() || !Sanguosha->isDuplicated("s", name))
+                break;
+        }while(1==1);
         if(!name.isEmpty())
             doRename(tmp, name, "s");
     }
 }
 
-void PackagingEditor::doRename(const QString &old_name, const QString &new_name, const char *flag){
+void PackagingEditor::doRename(const QString &old_name, const QString &new_name, const QString &flag){
     QString package_name = lua_list->currentItem()->text();
     QString luapath = QString("extensions/%1.lua").arg(package_name);
     QString aipath = QString("lua/ai/%1-ai.lua").arg(package_name);
+    if(!QFile::exists(aipath))
+        aipath = QString("extensions/ai/%1-ai.lua").arg(package_name);
 
     QFile file(luapath);
-    QString check;
-    if(file.open(QFile::ReadWrite | QFile::Text)){
-        check = file.readAll();
-        check.replace(old_name, new_name);
-        file.write(check);
+    QString str;
+    if(file.open(QIODevice::ReadOnly)){
+        str = QString::fromUtf8(file.readAll());
+        str.replace(old_name, new_name, Qt::CaseSensitive);
+        file.close();
+    }
+    QFile::remove(luapath);
+    if(file.open(QIODevice::WriteOnly)){
+        file.write(str.toUtf8());
         file.close();
     }
 
-    file(aipath);
-    if(!file.open(QFile::ReadWrite | QFile::Text)){
-        check = file.readAll();
-        check.replace(old_name, new_name);
-        file.write(check);
-        file.close();
+    QFile file2(aipath);
+    QString str2;
+    if(file2.open(QIODevice::ReadOnly)){
+        str2 = QString::fromUtf8(file2.readAll());
+        str2.replace(old_name, new_name, Qt::CaseSensitive);
+        file2.close();
+    }
+    QFile::remove(aipath);
+    if(file2.open(QIODevice::WriteOnly)){
+        file2.write(str2.toUtf8());
+        file2.close();
     }
 
+    QString tmp;
     if(flag == "g"){
-        QFile::rename(QString("image/generals/card/%1.jpg").arg(old_name),
-                      QString("image/generals/card/%1.jpg").arg(new_name));
-        QFile::rename(QString("image/generals/big/%1.jpg").arg(old_name),
-                      QString("image/generals/big/%1.jpg").arg(new_name));
-        QFile::rename(QString("image/generals/small/%1.jpg").arg(old_name),
-                      QString("image/generals/small/%1.jpg").arg(new_name));
-        QFile::rename(QString("image/generals/tiny/%1.jpg").arg(old_name),
-                      QString("image/generals/tiny/%1.jpg").arg(new_name));
-        QFile::rename(QString("audio/death/%1.ogg").arg(old_name),
-                      QString("audio/death/%1.ogg").arg(new_name));
+        tmp = "image/generals/card/";
+        if(!QFile::exists(tmp + QString("%1.jpg").arg(old_name)))
+            tmp.replace("image/", "extensions/");
+        QFile::copy(tmp + QString("%1.jpg").arg(old_name),
+                    tmp + QString("%1.jpg").arg(new_name));
+
+        QStringList bst;
+        bst << "big" << "small" << "tiny";
+        foreach(QString bstn, bst){
+            tmp = QString("image/generals/%1/").arg(bstn);
+            if(!QFile::exists(tmp + QString("%1.png").arg(old_name)))
+                tmp.replace("image/", "extensions/");
+            QFile::copy(tmp + QString("%1.png").arg(old_name),
+                        tmp + QString("%1.png").arg(new_name));
+        }
+
+        tmp = "audio/death/";
+        if(!QFile::exists(tmp + QString("%1.ogg").arg(old_name)))
+            tmp.replace("audio/", "extensions/audio/");
+        QFile::copy(tmp + QString("%1.ogg").arg(old_name),
+                    tmp + QString("%1.ogg").arg(new_name));
     }
     else if(flag == "s"){
-        QFile::rename(QString("audio/skill/%1.ogg").arg(old_name),
-                      QString("audio/skill/%1.ogg").arg(new_name));
+        tmp = "audio/skill/";
+        if(!QFile::exists(tmp + QString("%1.ogg").arg(old_name)))
+            tmp.replace("audio/", "extensions/audio/");
+        QFile::copy(tmp + QString("%1.ogg").arg(old_name),
+                    tmp + QString("%1.ogg").arg(new_name));
         for(int i=1; ;i++){
-            QFile::rename(QString("audio/skill/%1%2.ogg").arg(old_name).arg(i),
-                          QString("audio/skill/%1%2.ogg").arg(new_name).arg(i));
+            tmp = "audio/skill/";
+            if(!QFile::exists(tmp + QString("%1%2.ogg").arg(old_name).arg(i)))
+                tmp.replace("audio/", "extensions/audio/");
+            if(!QFile::exists(tmp + QString("%1%2.ogg").arg(old_name).arg(i)))
+                break;
+            QFile::copy(tmp + QString("%1%2.ogg").arg(old_name).arg(i),
+                        tmp + QString("%1%2.ogg").arg(new_name).arg(i));
         }
     }
 }

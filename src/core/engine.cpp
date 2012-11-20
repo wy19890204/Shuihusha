@@ -197,6 +197,13 @@ QStringList Engine::getBanPackages() const{
         return ban_package.toList();
 }
 
+bool Engine::isDuplicated(const QString &flag, const QString &name){
+    if(flag == "g")
+        return generals.contains(name);
+    else
+        return skills.contains(name);
+}
+
 QString Engine::translate(const QString &to_translate) const{
     return translations.value(to_translate, to_translate);
 }
