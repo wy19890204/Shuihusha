@@ -519,7 +519,7 @@ void Room::detachSkillFromPlayer(ServerPlayer *player, const QString &skill_name
     const Skill *skill = Sanguosha->getSkill(skill_name);
     if(!skill)
         return;
-    if(mode == "wheel_fight"){
+    if(mode == "wheel_fight" && skill->getLocation() == Skill::Right){
         if(!player->getGeneral()->hasSkill(skill_name))
             return;
     }
@@ -3288,7 +3288,7 @@ void Room::acquireSkill(ServerPlayer *player, const QString &skill_name, bool op
     const Skill *skill = Sanguosha->getSkill(skill_name);
 
     if(skill){
-        if(mode == "wheel_fight"){
+        if(mode == "wheel_fight" && skill->getLocation() == Skill::Right){
             if(!player->getGeneral()->hasSkill(skill_name) && player->getGeneralName() != "ubuntenkei")
                 return;
         }

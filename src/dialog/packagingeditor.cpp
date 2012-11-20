@@ -177,7 +177,7 @@ QWidget *PackagingEditor::createManagerTab(){
     connect(rescan_button, SIGNAL(clicked()), this, SLOT(rescanPackage()));
     connect(package_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
     connect(package_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateMetaInfo(QListWidgetItem*)));
-    connect(package_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyPackage(QListWidgetItem*)));
+    connect(package_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyPackage()));
 
     return widget;
 }
@@ -286,7 +286,10 @@ void PackagingEditor::installPackage(){
     }
 }
 
-void PackagingEditor::modifyPackage(QListWidgetItem* item){
+void PackagingEditor::modifyPackage(){
+    QListWidgetItem *item = package_list->currentItem();
+    if(!item)
+        return;
     SettingsStar settings = item->data(Qt::UserRole).value<SettingsStar>();
     if(settings == NULL)
         return;
@@ -303,12 +306,6 @@ void PackagingEditor::modifyPackage(QListWidgetItem* item){
     }
 
     file_list_meta->showSettings(settings);
-}
-
-void PackagingEditor::modifyPackage(){
-    QListWidgetItem *item = package_list->currentItem();
-    if(item)
-        modifyPackage(item);
 }
 
 void PackagingEditor::uninstallPackage(){

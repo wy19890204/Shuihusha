@@ -52,7 +52,6 @@ private:
 
 private slots:
     void installPackage();
-    void modifyPackage(QListWidgetItem* item);
     void modifyPackage();
     void uninstallPackage();
     void hideorshowPackage();

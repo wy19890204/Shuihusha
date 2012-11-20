@@ -9,7 +9,7 @@ class WheelFightScenarioRule: public ScenarioRule{
 public:
     WheelFightScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << PreDeath << GameOverJudge;
+        events << HpLost << PreDeath << GameOverJudge;
     }
 
     static void Domo(Room *room, ServerPlayer *player){
@@ -46,6 +46,14 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         //const WheelFightScenario *scenario = qobject_cast<const WheelFightScenario *>(parent());
         switch(event){
+        case HpLost:{
+            DamageStruct damage;
+            damage.to = player;
+            damage.from = player->getNextAlive();
+            damage.damage = data.toInt();
+            room->damage(damage);
+            return true;
+        }
         case PreDeath:{
             DamageStar damage = data.value<DamageStar>();
             ServerPlayer *killer = damage ? damage->from : NULL;

@@ -468,9 +468,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(player->getHp() <= 0)
             room->enterDying(player, NULL);
 
-        if(Config.EnableEndless){
+        if(Config.EnableEndless)
             player->gainMark("@endless", lose);
-        }
+
         break;
     }
 

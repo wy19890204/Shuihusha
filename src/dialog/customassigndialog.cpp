@@ -156,6 +156,7 @@ QWidget *CustomAssignDialog::createPileTab(){
 
     connect(removePileButton, SIGNAL(clicked()), this, SLOT(removePileCard()));
     connect(pileAssign, SIGNAL(clicked()), this, SLOT(doPileCardAssign()));
+    connect(pile_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removePileCard()));
     return widget;
 }
 
@@ -1728,6 +1729,7 @@ CardAssignDialog::CardAssignDialog(QWidget *parent, QString card_type, QString c
     connect(back, SIGNAL(clicked()), this, SLOT(reject()));
     connect(getCardButton, SIGNAL(clicked()), this, SLOT(askCard()));
     connect(CustomInstance, SIGNAL(card_addin(int)), this, SLOT(updateExcluded(int)));
+    connect(card_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(askCard()));
 }
 
 void CardAssignDialog::addCard(const Card *card){
