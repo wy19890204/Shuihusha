@@ -33,7 +33,7 @@ function load_extensions(just_require)
 			local module_name = "extensions." .. name
 			local loaded = require(module_name)
 			
-			sgs.Sanguosha:addPackage(loaded.extension)
+			if loaded then sgs.Sanguosha:addPackage(loaded.extension) end
 		end
 	end
 end
