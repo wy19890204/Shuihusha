@@ -69,6 +69,8 @@ private slots:
     void sniffMarks(const QString &luapath);
     void filtRate();
     void showAll();
+    void duplicateLua();
+    void doRename(const QString &old_name, const QString &new_name, const char *flag);
 };
 
 #endif // PACKAGINGEDITOR_H

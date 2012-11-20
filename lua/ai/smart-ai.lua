@@ -2133,6 +2133,9 @@ function sgs.ai_cardneed.equip(to, card, self)
 end
 
 function SmartAI:needKongcheng(player)
+	if player:isWounded() and player:hasSkill("ganlin") then
+		return true
+	end
 	return self:hasSkills(sgs.need_kongcheng,player)
 end
 

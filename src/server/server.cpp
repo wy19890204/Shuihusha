@@ -542,11 +542,12 @@ void BanlistDialog::addCard(const QString &name){
         QStringList cards = name.split("+");
         foreach(QString named, cards){
             const Card *card = Sanguosha->getCard(named);
-            QIcon icon(card->getPixmapPath());
-            QString text = Sanguosha->translate(named);
-            QListWidgetItem *item = new QListWidgetItem(icon, text, list);
-            item->setData(Qt::UserRole, name);
-            //item->setSizeHint(QSize(40,60));
+            if(card){
+                QIcon icon(card->getPixmapPath());
+                QString text = Sanguosha->translate(named);
+                QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+                item->setData(Qt::UserRole, name);
+            }
         }
     }
 }

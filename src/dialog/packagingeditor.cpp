@@ -519,20 +519,24 @@ QWidget *PackagingEditor::createSniffTab(){
 
     filtrate_button = new QCommandLinkButton();
 
+    QCommandLinkButton *duplicated_button = new QCommandLinkButton(tr("Check Duplicated"));
+    duplicated_button->setDescription(tr("Check duplicated words in lua packages"));
+
     showAll();
     vlayout->addWidget(sniff_button);
     vlayout->addWidget(filtrate_button);
+    vlayout->addWidget(duplicated_button);
     vlayout->addStretch();
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(vlayout);
     layout->addWidget(lua_list);
     layout->addWidget(general_list);
-    //layout->addWidget(file_list_meta = new MetaInfoWidget(true));
 
     widget->setLayout(layout);
 
     connect(sniff_button, SIGNAL(clicked()), this, SLOT(sniffLua()));
+    connect(duplicated_button, SIGNAL(clicked()), this, SLOT(duplicateLua()));
     connect(lua_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
     connect(lua_list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(updateLuaGeneral(QListWidgetItem*)));
 
@@ -688,5 +692,93 @@ void PackagingEditor::sniffMarks(const QString &luapath){
         if(check.contains(mark))
             new QListWidgetItem(info.filePath(), file_list);
         file.close();
+    }
+}
+
+#include <QInputDialog>
+void PackagingEditor::duplicateLua(){
+    QListWidgetItem *item = lua_list->currentItem();
+    if(item == NULL)
+        return;
+    QString package_name = item->text();
+    const Package *package = Sanguosha->findChild<const Package *>(package_name);
+    if(!package)
+        return;
+    QStringList duplis = Config.value("Duplicated", QVariant()).toStringList();
+
+    QStringList generals, skills;
+    foreach(const Skill *tmp, package->getSkills())
+        skills << tmp->objectName();
+    foreach(General *general, package->findChildren<General *>()){
+        generals << general->objectName();
+        foreach(const Skill *tmp, general->findChildren<const Skill *>())
+            skills << tmp->objectName();
+    }
+
+    foreach(QString tmp, generals){
+        if(!duplis.contains(tmp))
+            continue;
+        QString name = QInputDialog::getText(this,
+                                                 tr("Duplicated"),
+                                                 tr("%1 is duplicated, Please input new name :").arg(tmp),
+                                                 QLineEdit::Normal,
+                                                 "lua" + tmp);
+        if(!name.isEmpty())
+            doRename(tmp, name, "g");
+    }
+    foreach(QString tmp, skills){
+        if(!duplis.contains(tmp))
+            continue;
+        QString name = QInputDialog::getText(this,
+                                                 tr("Duplicated"),
+                                                 tr("%1 is duplicated, Please input new name :").arg(tmp),
+                                                 QLineEdit::Normal,
+                                                 "lua" + tmp);
+        if(!name.isEmpty())
+            doRename(tmp, name, "s");
+    }
+}
+
+void PackagingEditor::doRename(const QString &old_name, const QString &new_name, const char *flag){
+    QString package_name = lua_list->currentItem()->text();
+    QString luapath = QString("extensions/%1.lua").arg(package_name);
+    QString aipath = QString("lua/ai/%1-ai.lua").arg(package_name);
+
+    QFile file(luapath);
+    QString check;
+    if(file.open(QFile::ReadWrite | QFile::Text)){
+        check = file.readAll();
+        check.replace(old_name, new_name);
+        file.write(check);
+        file.close();
+    }
+
+    file(aipath);
+    if(!file.open(QFile::ReadWrite | QFile::Text)){
+        check = file.readAll();
+        check.replace(old_name, new_name);
+        file.write(check);
+        file.close();
+    }
+
+    if(flag == "g"){
+        QFile::rename(QString("image/generals/card/%1.jpg").arg(old_name),
+                      QString("image/generals/card/%1.jpg").arg(new_name));
+        QFile::rename(QString("image/generals/big/%1.jpg").arg(old_name),
+                      QString("image/generals/big/%1.jpg").arg(new_name));
+        QFile::rename(QString("image/generals/small/%1.jpg").arg(old_name),
+                      QString("image/generals/small/%1.jpg").arg(new_name));
+        QFile::rename(QString("image/generals/tiny/%1.jpg").arg(old_name),
+                      QString("image/generals/tiny/%1.jpg").arg(new_name));
+        QFile::rename(QString("audio/death/%1.ogg").arg(old_name),
+                      QString("audio/death/%1.ogg").arg(new_name));
+    }
+    else if(flag == "s"){
+        QFile::rename(QString("audio/skill/%1.ogg").arg(old_name),
+                      QString("audio/skill/%1.ogg").arg(new_name));
+        for(int i=1; ;i++){
+            QFile::rename(QString("audio/skill/%1%2.ogg").arg(old_name).arg(i),
+                          QString("audio/skill/%1%2.ogg").arg(new_name).arg(i));
+        }
     }
 }
