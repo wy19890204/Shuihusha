@@ -193,6 +193,7 @@ void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
     xiao->invoke("clearAG");
 
     room->setPlayerProperty(xiao, "linmostore", zi);
+    room->throwCard(zid);
 }
 
 class LinmoViewAsSkill:public ViewAsSkill{
@@ -201,7 +202,7 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(Self->hasUsed("LinmoCard") && selected.isEmpty() && !Self->hasFlag("linmo")){
+        if(selected.isEmpty() && Self->hasFlag("linmo")){
             return !to_select->isEquipped();
         }else
             return false;
@@ -210,20 +211,16 @@ public:
     virtual bool isEnabledAtPlay(const Player *player) const{
         if(player->getPile("zi").isEmpty())
             return false;
-        if(player->hasUsed("LinmoCard") && !player->hasFlag("linmo")){
+        if(player->hasUsed("LinmoCard") && player->hasFlag("linmo")){
             QString name = Self->property("linmostore").toString();
             Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
             return card->isAvailable(player);
-        }else if(player->hasFlag("linmo"))
-            return false;
-        else
+        }else
             return true;
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(Self->hasUsed("LinmoCard")){
-            if(Self->hasFlag("linmo"))
-                return false;
+        if(Self->hasFlag("linmo")){
             if(cards.length() != 1)
                 return NULL;
             const Card *card = cards.first()->getCard();
@@ -231,9 +228,10 @@ public:
             Card *new_card = Sanguosha->cloneCard(name, card->getSuit(), card->getNumber());
             new_card->addSubcard(card);
             new_card->setSkillName("linmo");
-            Self->setFlags("linmo");
+            Self->setFlags("-linmo");
             return new_card;
         }else{
+            Self->setFlags("linmo");
             return new LinmoCard;
         }
     }
@@ -264,41 +262,37 @@ public:
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *writer = room->findPlayerBySkillName(objectName());
-        if(!writer)
-            return false;
-        if(writer == player){
+        QList<ServerPlayer *> writers = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *writer, writers){
             if(event == PhaseChange){
-                if(player->getPhase() != Player::NotActive)
-                    return false;
-                player->property("linmostore") = "";
-                if(!player->getPile("zi").isEmpty()){
-                    room->playSkillEffect(objectName(), 5);
-                    player->clearPile("zi");
+                if(writer == player && player->getPhase() == Player::NotActive){
+                    player->property("linmostore") = "";
+                    if(!player->getPile("zi").isEmpty()){
+                        room->playSkillEffect(objectName(), 5);
+                        player->clearPile("zi");
+                    }
                 }
+                continue;
             }
-            return false;
-        }
-        if(event != CardFinished)
-            return false;
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->isVirtualCard())
-            return false;
-        const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
-        if(use.to.contains(writer) && (word->isKindOf("BasicCard") || word->isNDTrick())
-            && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
-            if(use.to.last() == writer && word->isKindOf("Collateral"))
-                return false;
-            bool hassamezi = false;
-            foreach(int x, writer->getPile("zi")){
-                if(Sanguosha->getCard(x)->objectName() == word->objectName()){
-                    hassamezi = true;
-                    break;
+            CardUseStruct use = data.value<CardUseStruct>();
+            if(use.card->isVirtualCard())
+                break;
+            const Card *word = Sanguosha->getCard(use.card->getEffectiveId());
+            if(use.from != writer && use.to.contains(writer) && (word->isKindOf("BasicCard") || word->isNDTrick())
+                && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
+                if(use.to.last() == writer && word->isKindOf("Collateral"))
+                    continue;
+                bool hassamezi = false;
+                foreach(int x, writer->getPile("zi")){
+                    if(Sanguosha->getCard(x)->objectName() == word->objectName()){
+                        hassamezi = true;
+                        break;
+                    }
                 }
-            }
-            if(!hassamezi && writer->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName(), qrand() % 2 + 1);
-                writer->addToPile("zi", use.card->getEffectiveId());
+                if(!hassamezi && writer->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                    writer->addToPile("zi", use.card->getEffectiveId());
+                }
             }
         }
         return false;

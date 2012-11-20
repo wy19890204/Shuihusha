@@ -115,7 +115,6 @@ scenario = {
 ban_list = {
 	roles_ban = {
 		"gongsunsheng",
-		"xiaorang",
 	},
 	kof_ban = {
 		"andaoquan",

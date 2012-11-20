@@ -79,16 +79,35 @@ end
 -- linmo
 sgs.ai_skill_invoke["linmo"] = true
 
-local linmo_skill={}
+function linmo_card(self, card, name)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local id = card:getEffectiveId()
+
+	local zis = sgs.QList2Table(self.player:getPile("zi"))
+	for _, word in ipairs(zis) do
+		local card = sgs.Sanguosha:getCard(word)
+		if card:objectName() == name then
+			self.room:throwCard(word)
+			break
+		end
+	end
+	local card_str = ("%s:linmo[%s:%s]=%d"):format(name, suit, number, id)
+	local linmo = sgs.Card_Parse(card_str)
+	assert(linmo)
+	return linmo
+end
+
+linmo_skill={}
 linmo_skill.name = "linmo"
 table.insert(sgs.ai_skills, linmo_skill)
 linmo_skill.getTurnUseCard = function(self)
-	if self.player:hasUsed("LinmoCard") or self.player:isKongcheng() then return end
+	if self.player:isKongcheng() then return end
 	local zis = self.player:getPile("zi")
 	zis = sgs.QList2Table(zis)
 	local words = {} -- all zi not used
 	local aoenames = {}
-	local hasexn = false
+	local hasmeet = false
 	local hasgodsa = false
 	for _, word in ipairs(zis) do
 		local card = sgs.Sanguosha:getCard(word)
@@ -96,13 +115,10 @@ linmo_skill.getTurnUseCard = function(self)
 		if card:getSubtype() == "aoe" then
 			table.insert(aoenames, card:objectName())
 		end
-		if card:objectName() == "ex_nihilo" then
-			hasexn = true
-		elseif card:objectName() == "god_salvation" then
+		if card:objectName() == "god_salvation" then
 			hasgodsa = true
 		elseif card:objectName() == "peach" and self.player:isWounded() then
-			local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card:getEffectiveId() .. ":" .. "peach")
-			return parsed_card
+			hasmeet = true
 		end
 	end
 	local cards = sgs.QList2Table(self.player:getHandcards())
@@ -121,39 +137,42 @@ linmo_skill.getTurnUseCard = function(self)
 			end
 		end
 	end
-	local card = -1
 	self:sortByUseValue(cards, true)
-	for _, acard in ipairs(cards)  do
-		if acard:inherits("TrickCard") then
-			card = acard:getEffectiveId()
-			break
-		end
+	local card = cards[1]
+	if hasmeet then
+		return linmo_card(self, card, "peach")
 	end
-	if card < 0 then return end
 	for i=1, #aoenames do
 		local newlinmo = aoenames[i]
 		local aoe = sgs.Sanguosha:cloneCard(newlinmo, sgs.Card_NoSuit, 0)
 		if self:getAoeValue(aoe) > -5 then
-			local parsed_card=sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. newlinmo)
-			return parsed_card
+			return linmo_card(self, card, newlinmo)
 		end
 	end
+	if table.contains(words, "snatch") then
+		return linmo_card(self, card, "snatch")
+	end
+	if table.contains(words, "dismantlement") then
+		return linmo_card(self, card, "dismantlement")
+	end
 	if good > bad and hasgodsa then
-		local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "god_salvation")
-		return parsed_card
+		return linmo_card(self, card, "god_salvation")
 	end
-	if hasexn and self:getCardsNum("Jink") == 0 and self:getCardsNum("Peach") == 0 then
-		local parsed_card = sgs.Card_Parse("@LinmoCard=" .. card .. ":" .. "ex_nihilo")
-		return parsed_card
+	if table.contains(words, "assassinate") then
+		return linmo_card(self, card, "assassinate")
 	end
-end
-sgs.ai_skill_use_func["LinmoCard"] = function(card, use, self)
-	local userstring = card:toString()
-	userstring = (userstring:split(":"))[3]
-	local linmocard = sgs.Sanguosha:cloneCard(userstring, card:getSuit(), card:getNumber())
-	self:useTrickCard(linmocard,use)
-	if not use.card then return end
-	use.card = card
+	if table.contains(words, "duel") then
+		return linmo_card(self, card, "duel")
+	end
+	if self:getCardsNum("Slash") == 0 and self:slashIsAvailable() then
+		if table.contains(words, "slash") then
+			return linmo_card(self, card, "slash")
+		elseif table.contains(words, "fire_slash") then
+			return linmo_card(self, card, "fire_slash")
+		elseif table.contains(words, "thunder_slash") then
+			return linmo_card(self, card, "thunder_slash")
+		end
+	end
 end
 
 -- zhaixing

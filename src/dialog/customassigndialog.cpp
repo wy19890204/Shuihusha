@@ -102,6 +102,7 @@ QWidget *CustomAssignDialog::createEquipTab(){
 
     connect(removeEquipButton, SIGNAL(clicked()), this, SLOT(removeEquipCard()));
     connect(equipAssign, SIGNAL(clicked()), this, SLOT(doEquipCardAssign()));
+    connect(equip_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeEquipCard()));
     return widget;
 }
 
@@ -120,6 +121,7 @@ QWidget *CustomAssignDialog::createHandsTab(){
 
     connect(removeHandButton, SIGNAL(clicked()), this, SLOT(removeHandCard()));
     connect(handcardAssign, SIGNAL(clicked()), this, SLOT(doHandCardAssign()));
+    connect(hand_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeHandCard()));
     return widget;
 }
 
@@ -138,6 +140,7 @@ QWidget *CustomAssignDialog::createJudgeTab(){
 
     connect(removeJudgeButton, SIGNAL(clicked()), this, SLOT(removeJudgeCard()));
     connect(judgeAssign, SIGNAL(clicked()), this, SLOT(doJudgeCardAssign()));
+    connect(judge_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeJudgeCard()));
     return widget;
 }
 

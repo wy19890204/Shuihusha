@@ -1176,23 +1176,29 @@ jiashu_skill.getTurnUseCard = function(self)
 	return sgs.Card_Parse("@JiashuCard=" .. cards[1]:getEffectiveId())
 end
 sgs.ai_skill_use_func["JiashuCard"] = function(card, use, self)
-	self:sort(self.enemies, "handcard")
+	local target
+	for _, enemy in ipairs(self.enemies) do
+		if self:isWeak(enemy) then
+			target = enemy
+			break
+		end
+	end
+	if not target then
+		self:sort(self.enemies, "handcard")
+		target = self.enemies[1]
+	end
 	use.card = card
 	if use.to then
 		self:speak("jiashu")
-		use.to:append(self.enemies[1])
+		use.to:append(target)
 	end
 end
 sgs.ai_skill_suit["jiashu"] = function(self)
 	local map = {}
-	if self.jiashusuit == "spade" then
-		map = {1,2,3}
-	elseif self.jiashusuit == "club" then
-		map = {0,2,3}
-	elseif self.jiashusuit == "heart" then
+	if self.jiashusuit ~= "heart" then
+		return 2
+	else
 		map = {0,1,3}
-	elseif self.jiashusuit == "diamond" then
-		map = {0,1,2}
 	end
 	return map[math.random(1,3)]
 end
