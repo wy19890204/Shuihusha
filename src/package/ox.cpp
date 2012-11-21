@@ -573,21 +573,20 @@ public:
             QList<int> card_ids = room->getNCards(3);
             room->fillAG(card_ids, player);
             int card_id = room->askForAG(player, card_ids, false, objectName());
-            if(card_id == -1)
+            if(card_id < 0)
                 return false;
-            int locat = card_ids.indexOf(card_id);
-            card_ids.replace(locat, judge->card->getId());
+            card_ids.replace(card_ids.indexOf(card_id), judge->card->getEffectiveId());
             player->invoke("clearAG");
 
             card_ids.swap(0, 2);
             foreach(int tmp, card_ids){
-                room->throwCard(tmp);
+                room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DiscardedPile);
                 room->moveCardTo(Sanguosha->getCard(tmp), NULL, Player::DrawPile);
             }
             room->getThread()->delay();
 
             judge->card = Sanguosha->getCard(card_id);
-            room->moveCardTo(judge->card, NULL, Player::Special);
+            //room->moveCardTo(judge->card, NULL, Player::Special);
 
             LogMessage log;
             log.type = "$ChangedJudge";

@@ -783,9 +783,11 @@ public:
         room->playSkillEffect(objectName(), qrand() % 2 + 3);
         if(!player->isNude()){
             DummyCard *dummy = player->wholeHandCards();
+            target->obtainCard(dummy, false);
+            dummy->clearSubcards();
             foreach(const Card *ard, player->getEquips(true))
                 dummy->addSubcard(ard);
-            target->obtainCard(dummy, false);
+            target->obtainCard(dummy);
         }
         if(target->isWounded()){
             RecoverStruct recover;
