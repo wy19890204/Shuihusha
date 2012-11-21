@@ -700,6 +700,8 @@ void PackagingEditor::duplicateLua(){
     QListWidgetItem *item = lua_list->currentItem();
     if(item == NULL)
         return;
+
+    int word = 0, file = 0;
     QString package_name = item->text();
     const Package *package = Sanguosha->findChild<const Package *>(package_name);
     if(!package)
@@ -726,8 +728,10 @@ void PackagingEditor::duplicateLua(){
             if(name.isEmpty() || !Sanguosha->isDuplicated(name, false))
                 break;
         }while(1==1);
-        if(!name.isEmpty())
-            doRename(tmp, name, false);
+        if(!name.isEmpty()){
+            word += doReplace(tmp, name);
+            file += doRename(tmp, name, false);
+        }
     }
     foreach(QString tmp, skills){
         if(!duplis.contains(tmp))
@@ -740,22 +744,26 @@ void PackagingEditor::duplicateLua(){
             if(name.isEmpty() || !Sanguosha->isDuplicated(name, true))
                 break;
         }while(1==1);
-        if(!name.isEmpty())
-            doRename(tmp, name, true);
+        if(!name.isEmpty()){
+            word += doReplace(tmp, name);
+            file += doRename(tmp, name, false);
+        }
     }
+
+    QMessageBox::information(this, tr("Notice"), tr("Execution completed, %1 words, %2 files").arg(word).arg(file));
 }
 
-void PackagingEditor::doRename(const QString &old_name, const QString &new_name, bool is_skill){
+int PackagingEditor::doReplace(const QString &old_word, const QString &new_word){
     QString package_name = lua_list->currentItem()->text();
+    int count_words = 0;
 
-    int count_words = 0, count_files = 0;
     QString luapath = QString("extensions/%1.lua").arg(package_name);
     QFile file(luapath);
     QString str;
     if(file.open(QIODevice::ReadOnly)){
         str = QString::fromUtf8(file.readAll());
-        count_words += str.count(old_name, Qt::CaseSensitive);
-        str.replace(old_name, new_name, Qt::CaseSensitive);
+        count_words += str.count(old_word, Qt::CaseSensitive);
+        str.replace(old_word, new_word, Qt::CaseSensitive);
         file.close();
     }
     QFile::remove(luapath);
@@ -771,8 +779,8 @@ void PackagingEditor::doRename(const QString &old_name, const QString &new_name,
         QFile file2(aipath);
         if(file2.open(QIODevice::ReadOnly)){
             str = QString::fromUtf8(file2.readAll());
-            count_words += str.count(old_name, Qt::CaseSensitive);
-            str.replace(old_name, new_name, Qt::CaseSensitive);
+            count_words += str.count(old_word, Qt::CaseSensitive);
+            str.replace(old_word, new_word, Qt::CaseSensitive);
             file2.close();
         }
         QFile::remove(aipath);
@@ -782,6 +790,11 @@ void PackagingEditor::doRename(const QString &old_name, const QString &new_name,
         }
     }
 
+    return count_words;
+}
+
+int PackagingEditor::doRename(const QString &old_name, const QString &new_name, bool is_skill){
+    int count_files = 0;
     QString tmp;
     if(!is_skill){
         tmp = "image/generals/card/";
@@ -823,5 +836,5 @@ void PackagingEditor::doRename(const QString &old_name, const QString &new_name,
         }
     }
 
-    QMessageBox::information(this, tr("Notice"), tr("Execution completed, %1 words, %2 files").arg(count_words).arg(count_files));
+    return count_files;
 }
