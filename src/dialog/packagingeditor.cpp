@@ -723,11 +723,11 @@ void PackagingEditor::duplicateLua(){
             name = QInputDialog::getText(this, tr("Duplicated"),
                                          tr("%1 is duplicated, Please input new name :").arg(tmp),
                                          QLineEdit::Normal, "lua" + tmp);
-            if(name.isEmpty() || !Sanguosha->isDuplicated("g", name))
+            if(name.isEmpty() || !Sanguosha->isDuplicated(name, false))
                 break;
         }while(1==1);
         if(!name.isEmpty())
-            doRename(tmp, name, "g");
+            doRename(tmp, name, false);
     }
     foreach(QString tmp, skills){
         if(!duplis.contains(tmp))
@@ -737,25 +737,24 @@ void PackagingEditor::duplicateLua(){
             name = QInputDialog::getText(this, tr("Duplicated"),
                                          tr("%1 is duplicated, Please input new name :").arg(tmp),
                                          QLineEdit::Normal, "lua" + tmp);
-            if(name.isEmpty() || !Sanguosha->isDuplicated("s", name))
+            if(name.isEmpty() || !Sanguosha->isDuplicated(name, true))
                 break;
         }while(1==1);
         if(!name.isEmpty())
-            doRename(tmp, name, "s");
+            doRename(tmp, name, true);
     }
 }
 
-void PackagingEditor::doRename(const QString &old_name, const QString &new_name, const QString &flag){
+void PackagingEditor::doRename(const QString &old_name, const QString &new_name, bool is_skill){
     QString package_name = lua_list->currentItem()->text();
-    QString luapath = QString("extensions/%1.lua").arg(package_name);
-    QString aipath = QString("lua/ai/%1-ai.lua").arg(package_name);
-    if(!QFile::exists(aipath))
-        aipath = QString("extensions/ai/%1-ai.lua").arg(package_name);
 
+    int count_words = 0, count_files = 0;
+    QString luapath = QString("extensions/%1.lua").arg(package_name);
     QFile file(luapath);
     QString str;
     if(file.open(QIODevice::ReadOnly)){
         str = QString::fromUtf8(file.readAll());
+        count_words += str.count(old_name, Qt::CaseSensitive);
         str.replace(old_name, new_name, Qt::CaseSensitive);
         file.close();
     }
@@ -765,26 +764,31 @@ void PackagingEditor::doRename(const QString &old_name, const QString &new_name,
         file.close();
     }
 
-    QFile file2(aipath);
-    QString str2;
-    if(file2.open(QIODevice::ReadOnly)){
-        str2 = QString::fromUtf8(file2.readAll());
-        str2.replace(old_name, new_name, Qt::CaseSensitive);
-        file2.close();
-    }
-    QFile::remove(aipath);
-    if(file2.open(QIODevice::WriteOnly)){
-        file2.write(str2.toUtf8());
-        file2.close();
+    QString aipath = QString("lua/ai/%1-ai.lua").arg(package_name);
+    if(!QFile::exists(aipath))
+        aipath = QString("extensions/ai/%1-ai.lua").arg(package_name);
+    if(QFile::exists(aipath)){
+        QFile file2(aipath);
+        if(file2.open(QIODevice::ReadOnly)){
+            str = QString::fromUtf8(file2.readAll());
+            count_words += str.count(old_name, Qt::CaseSensitive);
+            str.replace(old_name, new_name, Qt::CaseSensitive);
+            file2.close();
+        }
+        QFile::remove(aipath);
+        if(file2.open(QIODevice::WriteOnly)){
+            file2.write(str.toUtf8());
+            file2.close();
+        }
     }
 
     QString tmp;
-    if(flag == "g"){
+    if(!is_skill){
         tmp = "image/generals/card/";
         if(!QFile::exists(tmp + QString("%1.jpg").arg(old_name)))
             tmp.replace("image/", "extensions/");
-        QFile::copy(tmp + QString("%1.jpg").arg(old_name),
-                    tmp + QString("%1.jpg").arg(new_name));
+        if(QFile::copy(tmp + QString("%1.jpg").arg(old_name), tmp + QString("%1.jpg").arg(new_name)))
+            count_files ++;
 
         QStringList bst;
         bst << "big" << "small" << "tiny";
@@ -792,30 +796,32 @@ void PackagingEditor::doRename(const QString &old_name, const QString &new_name,
             tmp = QString("image/generals/%1/").arg(bstn);
             if(!QFile::exists(tmp + QString("%1.png").arg(old_name)))
                 tmp.replace("image/", "extensions/");
-            QFile::copy(tmp + QString("%1.png").arg(old_name),
-                        tmp + QString("%1.png").arg(new_name));
+            if(QFile::copy(tmp + QString("%1.png").arg(old_name), tmp + QString("%1.png").arg(new_name)))
+                count_files ++;
         }
 
         tmp = "audio/death/";
         if(!QFile::exists(tmp + QString("%1.ogg").arg(old_name)))
             tmp.replace("audio/", "extensions/audio/");
-        QFile::copy(tmp + QString("%1.ogg").arg(old_name),
-                    tmp + QString("%1.ogg").arg(new_name));
+        if(QFile::copy(tmp + QString("%1.ogg").arg(old_name), tmp + QString("%1.ogg").arg(new_name)))
+            count_files ++;
     }
-    else if(flag == "s"){
+    else{
         tmp = "audio/skill/";
         if(!QFile::exists(tmp + QString("%1.ogg").arg(old_name)))
             tmp.replace("audio/", "extensions/audio/");
-        QFile::copy(tmp + QString("%1.ogg").arg(old_name),
-                    tmp + QString("%1.ogg").arg(new_name));
+        if(QFile::copy(tmp + QString("%1.ogg").arg(old_name), tmp + QString("%1.ogg").arg(new_name)))
+            count_files ++;
         for(int i=1; ;i++){
             tmp = "audio/skill/";
             if(!QFile::exists(tmp + QString("%1%2.ogg").arg(old_name).arg(i)))
                 tmp.replace("audio/", "extensions/audio/");
             if(!QFile::exists(tmp + QString("%1%2.ogg").arg(old_name).arg(i)))
                 break;
-            QFile::copy(tmp + QString("%1%2.ogg").arg(old_name).arg(i),
-                        tmp + QString("%1%2.ogg").arg(new_name).arg(i));
+            if(QFile::copy(tmp + QString("%1%2.ogg").arg(old_name).arg(i), tmp + QString("%1%2.ogg").arg(new_name).arg(i)))
+                count_files ++;
         }
     }
+
+    QMessageBox::information(this, tr("Notice"), tr("Execution completed, %1 words, %2 files").arg(count_words).arg(count_files));
 }

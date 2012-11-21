@@ -2810,6 +2810,7 @@
         <location filename="src/dialog/packagingeditor.cpp" line="421"/>
         <location filename="src/dialog/packagingeditor.cpp" line="492"/>
         <location filename="src/dialog/packagingeditor.cpp" line="658"/>
+        <location filename="src/dialog/packagingeditor.cpp" line="826"/>
         <source>Notice</source>
         <translation>提示</translation>
     </message>
@@ -2924,6 +2925,11 @@
         <location filename="src/dialog/packagingeditor.cpp" line="738"/>
         <source>%1 is duplicated, Please input new name :</source>
         <translation>%1 与已有关键词重名，请输入一个新名称：</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/packagingeditor.cpp" line="826"/>
+        <source>Execution completed, %1 words, %2 files</source>
+        <translation>执行完毕。共更改关键字 %1 处，重命名文件 %2 个。</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="241"/>
