@@ -651,32 +651,6 @@ public:
     }
 };
 
-class Fandui:public ZeroCardViewAsSkill{
-public:
-    Fandui():ZeroCardViewAsSkill("fandui"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new FanduiCard;
-    }
-};
-
-class Zhichi: public OneCardViewAsSkill{
-public:
-    Zhichi():OneCardViewAsSkill("zhichi"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ZhichiCard *card = new ZhichiCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
-    }
-};
-
 TestPackage::TestPackage()
     :GeneralPackage("test")
 {
@@ -698,15 +672,10 @@ TestPackage::TestPackage()
     ubuntenkei->addSkill(new Ubund);
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubunf);
-/*
-    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
-    zhuanjia->addSkill(new Zhichi);
-    addMetaObject<ZhichiCard>();
-    zhuanjia->addSkill(new Fandui);
-    addMetaObject<FanduiCard>();
-*/
-    new General(this, "shibing", "god", 5, true, true);
-    new General(this, "shibingf", "god", 5, false, true);
+
+    new General(this, "catty", "god", 2, false, true, true);
+    new General(this, "sujiang", "god", 5, true, true);
+    new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);
     addMetaObject<FreeRegulateCard>();
 
