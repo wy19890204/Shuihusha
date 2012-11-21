@@ -562,8 +562,10 @@ void PackagingEditor::updateLuaGeneral(QListWidgetItem *item){
 
 void PackagingEditor::showAll(){
     lua_list->clear();
-    foreach(QString lua, Sanguosha->getLuaExtensions())
-        new QListWidgetItem(lua, lua_list);
+    foreach(QString lua, Sanguosha->getLuaExtensions()){
+        QListWidgetItem *item = new QListWidgetItem(lua, lua_list);
+        item->setToolTip(Sanguosha->translate(lua));
+    }
 
     filtrate_button->setText(tr("Filtrate it"));
     filtrate_button->setDescription(tr("Filtrate lua packages"));

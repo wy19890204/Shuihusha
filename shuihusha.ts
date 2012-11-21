@@ -2929,7 +2929,7 @@
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="826"/>
         <source>Execution completed, %1 words, %2 files</source>
-        <translation>执行完毕。共更改关键字 %1 处，重命名文件 %2 个。</translation>
+        <translation>执行完毕。共更改关键词 %1 处，重命名 %2 个文件。</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="241"/>

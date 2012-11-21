@@ -94,39 +94,39 @@ config = {
 	color_kou = "#8A807A",
 	color_god = "#96943D",
 
-	mini_max = 25
+	mini_max = 25 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
 
-scenario = {
-	savsa_packages = {
+scenario = { -- 非身份局模式下的一些设置
+	savsa_packages = { -- 3v3模式：设置加载的扩展包
 		"standard",
 		"rat",
 	},
-	dusong_packages = {
+	dusong_packages = { -- 独松关模式：设置加载的扩展包
 		"standard",
 		"rat",
 	},
-	couple_lord = "zhoutong",
-	couple_spouse = {
+	couple_lord = "zhoutong", -- 花田错模式：设置主公
+	couple_spouse = { -- 花田错模式：设置新的配对
 --		"xiezhen+xiebao",
 	},
 }
 
-ban_list = {
-	roles_ban = {
+ban_list = { -- 初始禁表设置
+	roles_ban = { -- 身份局单禁
 		"gongsunsheng",
 	},
-	kof_ban = {
+	kof_ban = { -- 1v1模式
 		"andaoquan",
 		"shixiu",
 		"zhaoji",
 --		"shenwuyong",
 --		"wangdingliu",
 	},
-	savsa_ban = {
+	savsa_ban = { -- 3v3模式
 		"yanxijiao",
 	},
-	basara_ban = {
+	basara_ban = { -- 暗将模式
 		"dingdesun",
 --		"houjian",
 --		"shenwusong",
@@ -134,18 +134,18 @@ ban_list = {
 --		"shenzhangqing",
 		"lili",
 	},
-	hegemony_ban = {
+	hegemony_ban = { -- 国战模式（注意所有的神势力也会被禁用）
 		"dingdesun",
 --		"houjian",
 		"lili",
 		"gongsunsheng";
 	},
-	pairs_ban = {
-		"caijing",
+	pairs_ban = { -- 双将
+		"caijing", -- 双将全禁
 		"zhangheng",
-		"+tongguan",
+		"+tongguan", -- 副将禁用
 		"+tora",
-		"tianhu+songjiang",
+		"tianhu+songjiang", -- 特定禁用
 		"gaoqiu+luozhenren",
 		"wangying+zhangqing",
 		"wangying+qiongying",
@@ -163,15 +163,14 @@ ban_list = {
 		"zhaoji+pangwanchun",
 		"zhaoji+andaoquan",
 		"fangjie+songjiang",
+		"liruilan+shijin",
 --		"shenwuyong",
---		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",
 --		"luozhenren+yuehe",
 --		"husanniang+jiashi",
---		"oupeng+wangqing",
 --		"jiashi+shenzhangqing"
 	},
-	forbid_packages = {
+	forbid_packages = { -- 灰色不可选的包
 		"test",
 	},
 }
