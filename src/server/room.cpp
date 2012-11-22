@@ -2672,36 +2672,33 @@ void Room::damage(const DamageStruct &damage_data){
             return;
     }
 
-    // DamagedProceed
-    bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
-    if(prevent)
-        return;
+    do{
+        // DamagedProceed
+        bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
+        if(prevent)
+            break;
 
-    // DamageProceed
-    if(damage_data.from){
-        if(thread->trigger(DamageProceed, this, damage_data.from, data))
-            return;
-    }
+        // DamageProceed
+        if(damage_data.from){
+            if(thread->trigger(DamageProceed, this, damage_data.from, data))
+                break;
+        }
 
-    // predamaged
-    bool broken = thread->trigger(Predamaged, this, damage_data.to, data);
-    if(broken)
-        return;
-
-    // damage done, should not cause damage process broken
-    thread->trigger(DamageDone, this, damage_data.to, data);
-
-    // damage
-    if(damage_data.from){
-        bool broken = thread->trigger(Damage, this, damage_data.from, data);
+        // predamaged
+        bool broken = thread->trigger(Predamaged, this, damage_data.to, data);
         if(broken)
-            return;
-    }
+            break;
 
-    // damaged
-    broken = thread->trigger(Damaged, this, damage_data.to, data);
-    if(broken)
-        return;
+        // damage done, should not cause damage process broken
+        thread->trigger(DamageDone, this, damage_data.to, data);
+
+        // damage
+        if(damage_data.from)
+            thread->trigger(Damage, this, damage_data.from, data);
+
+        // damaged
+        thread->trigger(Damaged, this, damage_data.to, data);
+    }while(false);
 
     if(damage_data.from)
         thread->trigger(DamageConclude, this, damage_data.from, data);

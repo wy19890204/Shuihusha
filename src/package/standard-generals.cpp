@@ -11,7 +11,7 @@ GanlinCard::GanlinCard(){
 }
 
 void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
+    PlayerStar target = targets.first();
 
     room->playSkillEffect(skill_name, qrand() % 2 + 1);
     room->obtainCard(target, this, false);
@@ -21,14 +21,14 @@ void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
         room->playSkillEffect(skill_name, qrand() % 2 + 3);
         room->setPlayerFlag(source, "Ganlin");
     }
-};
+}
 
 class GanlinViewAsSkill:public ViewAsSkill{
 public:
     GanlinViewAsSkill():ViewAsSkill("ganlin"){
     }
 
-    virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
         return !to_select->isEquipped();
     }
 

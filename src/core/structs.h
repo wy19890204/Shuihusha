@@ -210,6 +210,16 @@ enum TriggerEvent{
     QiaogongTrigger,
 
     NumOfEvents,
+
+    ConfirmDamage,
+    DamageForseen,
+    DamageCaused,
+    DamageInflicted,
+    PreHpReduced,
+    EventPhaseStart,
+    EventPhaseEnd,
+    EventPhaseChanging,
+    CardsMoveOneTime
 };
 
 typedef const Card *CardStar;
