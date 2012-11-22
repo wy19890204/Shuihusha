@@ -487,7 +487,23 @@ end
 
 -- huarong
 -- kaixian
-sgs.ai_skill_invoke["kaixian"] = true
+sgs.ai_skill_invoke["kaixian"] = function(self, data)
+	self:sort(self.enemies)
+	for _, enemy in ipairs(self.enemies) do
+		local distance = self.player:distanceTo(enemy)
+		local cards = sgs.QList2Table(self.player:getHandcards())
+		for _, card in ipairs(cards) do
+			if card:getNumber() <= 5 and card:getNumber() == distance then
+				self.kaixian = card:getEffectiveId()
+				return true
+			end
+		end
+	end
+	return false
+end
+sgs.ai_skill_cardask["@kaixian"] = function(self, data)
+	return self.kaixian
+end
 
 -- chaijin
 -- danshu

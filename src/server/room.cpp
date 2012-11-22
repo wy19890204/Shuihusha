@@ -3287,8 +3287,8 @@ void Room::acquireSkill(ServerPlayer *player, const QString &skill_name, bool op
     const Skill *skill = Sanguosha->getSkill(skill_name);
 
     if(skill){
-        if(mode == "wheel_fight" && skill->getLocation() == Skill::Right){
-            if(!player->getGeneral()->hasSkill(skill_name) && player->getGeneralName() != "ubuntenkei")
+        if(mode == "wheel_fight" && player->getGeneralName() != "ubuntenkei"){
+            if(!player->getGeneral()->hasSkill(skill_name))
                 return;
         }
         acquireSkill(player, skill, open);
