@@ -146,6 +146,7 @@ enum TriggerEvent{
     NonTrigger, //those two events actually trigger nothing
 
     GameStart,
+    GameStarted,
     TurnStart,
     PhaseChange,
     DrawNCards,

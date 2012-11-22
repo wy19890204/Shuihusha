@@ -295,6 +295,7 @@ void RoomThread::run(){
             player->setFlags("-init_wake");
         }
         trigger(GameStart, room, player);
+        trigger(GameStarted, room, player);
     }
 
     //if(room->scenario){
