@@ -1501,6 +1501,8 @@ void Room::resetAI(ServerPlayer *player){
 }
 
 void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, const QString &old_general){
+    if(!Sanguosha->getGeneral(new_general))
+        return;
     LogMessage log;
     log.type = "#Transfigure";
     log.from = player;

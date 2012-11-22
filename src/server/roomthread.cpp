@@ -462,23 +462,8 @@ static bool CompareByPriority(const TriggerSkill *a, const TriggerSkill *b){
     return a->getPriority() > b->getPriority();
 }
 
-TriggerEvent EventMap(TriggerEvent event){
-    QMap<TriggerEvent, TriggerEvent> events;
-    events[ConfirmDamage] = Predamage;
-    events[DamageForseen] = DamagedProceed;
-    events[DamageCaused] = DamageProceed;
-    events[DamageInflicted] = Predamaged;
-    events[PreHpReduced] = Predamaged;
-    events[EventPhaseStart] = PhaseChange;
-    events[EventPhaseEnd] = PhaseChange;
-    events[EventPhaseChanging] = PhaseChange;
-    events[CardsMoveOneTime] = CardMoving;
-    return events.value(event, event);
-}
-
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data){
     Q_ASSERT(QThread::currentThread() == this);
-    event = EventMap(event);
 
     // push it to event stack
     EventTriplet triplet(event, room, target, &data);

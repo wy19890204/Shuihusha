@@ -522,17 +522,7 @@ enum TriggerEvent{
 	CardEffected,
 	CardFinished,
 
-	ChoiceMade,
-
-	ConfirmDamage,
-	DamageForseen,
-	DamageCaused,
-	DamageInflicted,
-	PreHpReduced,
-	EventPhaseStart,
-	EventPhaseEnd,
-	EventPhaseChanging,
-	CardsMoveOneTime
+	ChoiceMade
 };
 
 class Card: public QObject
