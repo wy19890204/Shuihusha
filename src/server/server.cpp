@@ -499,7 +499,7 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     vlay = new QVBoxLayout;
     vlay->addWidget(list);
     apage->setLayout(vlay);
-    //tab->addTab(apage,Sanguosha->translate("Cards"));
+    tab->addTab(apage,Sanguosha->translate("Cards"));
 //--
     QPushButton *add = new QPushButton(tr("Add ..."));
     QPushButton *remove = new QPushButton(tr("Remove"));

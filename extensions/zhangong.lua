@@ -9,7 +9,6 @@ dofile "lua/sgs_ex.lua"
 
 module("extensions.zhangong", package.seeall)
 extension = sgs.Package("zhangong")
-zganjiang=sgs.General(extension, "zganjiang", "qun", 5, true,true,true)
 
 zgfunc={}
 zgturndata={}
@@ -489,7 +488,7 @@ zgfunc[sgs.CardFinished].gjcc=function(self, room, event, player, data,isowner,n
 end
 
 
--- gn :: 果农 :: 游戏开始时，起手手牌全部是“桃”
+-- gn :: 屠户 :: 游戏开始时，起手手牌全部是“肉”
 --
 zgfunc[sgs.GameStarted].gn=function(self, room, event, player, data,isowner,name)
 	if not isowner then return false end
@@ -5955,9 +5954,10 @@ function initZhangong()
 end
 
 
-zganjiang:addSkill(zgzhangong1)
-zganjiang:addSkill(zgzhangong2)
-
+local skills = sgs.SkillList()
+if not sgs.Sanguosha:getSkill("#zgzhangong1") then skills:append(zgzhangong1) end
+if not sgs.Sanguosha:getSkill("#zgzhangong2") then skills:append(zgzhangong2) end
+sgs.Sanguosha:addSkills(skills)
 
 initZhangong()
 

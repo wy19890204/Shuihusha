@@ -1,4 +1,4 @@
-BEGIN TRANSACTION;
+﻿BEGIN TRANSACTION;
 CREATE TABLE "gongxun"([level] int(11) NOT NULL,[name] varchar(20) NOT NULL,[score] int(11) NOT NULL,[category] varchar(10) NOT NULL, Primary Key(level,category) ON CONFLICT Ignore);
 CREATE TABLE "skills"([skillname] varchar(20) NOT NULL,[gained] int(11) NOT NULL,[used] int(11) NOT NULL, Primary Key(skillname) ON CONFLICT Ignore);
 CREATE TABLE "gamedata"([id] varchar(20) NOT NULL,[num] int(11) NOT NULL, Primary Key(id) ON CONFLICT Ignore);
@@ -538,7 +538,7 @@ INSERT INTO zhangong VALUES('fynd', '愤勇难当', 10, '使用☆SP夏侯惇在
 INSERT INTO zhangong VALUES('gjcc', '诡计重重', 15, '在一局游戏中，累计使用锦囊牌至少20次', 0, 'zhonghe', '1999-12-31 00:00:00', '-', 0, 0);
 INSERT INTO zhangong VALUES('glnc', '刚烈难存', 10, '使用夏侯惇在一局游戏中连续4次刚烈判定均为红桃', 0, 'wei', '1999-12-31 00:00:00', 'xiahoudun', 0, 0);
 INSERT INTO zhangong VALUES('gmzc', '过目之才', 10, '使用☆SP庞统一回合内累计拿到至少16张牌', 0, 'shu', '1999-12-31 00:00:00', 'bgm_pangtong', 0, 0);
-INSERT INTO zhangong VALUES('gn', '果农', 15, '游戏开始时，起手手牌全部是“桃”', 0, 'zhonghe', '1999-12-31 00:00:00', '-', 0, 0);
+INSERT INTO zhangong VALUES('gn', '屠户', 15, '游戏开始时，起手手牌全部是“肉”', 0, 'zhonghe', '1999-12-31 00:00:00', '-', 0, 0);
 INSERT INTO zhangong VALUES('gqzl', '顾曲周郎', 10, '使用神周瑜连续至少4回合发动琴音回复体力', 0, 'god', '1999-12-31 00:00:00', 'shenzhouyu', 0, 0);
 INSERT INTO zhangong VALUES('gzwb', '固政为本', 10, '使用张昭张纮在一局游戏中利用技能“固政”获得累计至少40张牌', 0, 'wu', '1999-12-31 00:00:00', 'erzhang', 0, 0);
 INSERT INTO zhangong VALUES('lgzw', '雷公助我', 10, '使用张角在一局游戏中在未更改判定牌的情况下至少4次雷击成功', 0, 'qun', '1999-12-31 00:00:00', 'zhangjiao', 0, 0);
