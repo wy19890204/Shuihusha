@@ -37,7 +37,7 @@ var db=null;
 	});
 	$.each(zglist,function(i,val){$.each(data['zg'+val],function(index,item){trans[item.id]=[item.name];})});
 	
-	var info={v3:{},role:{},hegemony:{},v1:{},hulao:{},total:{},wen:{},wu:{},expval:{},zg:{},luckycard:{}};
+	var info={v3:{},role:{},hegemony:{},v1:{},dusong:{},total:{},wen:{},wu:{},expval:{},zg:{},luckycard:{}};
 	
 	function getResult(mode,cond,ratearr){
 		info[mode].winnum=db.execute("select count(id) from results where " + cond +" and result='win'");
@@ -51,7 +51,7 @@ var db=null;
 			info[mode]["winrate_"+(i+1)] = (100*info[mode]["winnum_"+(i+1)] / info[mode]["totalnum_"+(i+1)]).toFixed(1)+"%";
 		}
 	}
-	getResult("hulao","mode='04_1v3' and hegemony=0",["role='lord'","role='rebel'"]);
+	getResult("dusong","mode='dusong' and hegemony=0",["role='lord'","role='rebel'"]);
 	getResult("v3",  "mode='06_3v3' and hegemony=0",["role in ('lord','renegade')","role in ('loyalist','rebel')"]);
 	getResult("v1",  "mode='02_1v1' and hegemony=0",["role='renegade'","role='lord'"]);
 	getResult("role","mode like '__p%' and hegemony=0",["role='lord'","role='loyalist'","role='renegade'","role='rebel'"]);		
