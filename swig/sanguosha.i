@@ -465,6 +465,7 @@ enum TriggerEvent{
 	NonTrigger,
 
 	GameStart,
+	GameStarted,
 	TurnStart,
 	PhaseChange,
 	DrawNCards,
