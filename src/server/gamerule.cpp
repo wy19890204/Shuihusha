@@ -333,40 +333,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(data.canConvert<CardUseStruct>()){
             CardUseStruct card_use = data.value<CardUseStruct>();
             const Card *card = card_use.card;
-
-            bool mute = card_use.mute;
-            if(card->inherits("Slash") && Config.EnableEquipEffects){
-                if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
-                    room->playSkillEffect("shuangzhan", qrand() % 2 + 1);
-                    mute = true;
-                }
-                if(player->hasSkill("douzhan") && card_use.to.count() == 2){
-                    room->playSkillEffect("douzhan");
-                    mute = true;
-                }
-                if(player->hasSkill("bizhai") && card_use.to.count() == 2){
-                    int index = player->getGender() == General::Male ? qrand() % 2 + 1 : qrand() % 2 + 3;
-                    room->playSkillEffect("bizhai", index);
-                    mute = true;
-                }
-                if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
-                    mute = true;
-                if(card->getSkillName() == "spear"){
-                    player->playCardEffect("Espear", "weapon");
-                    mute = true;
-                }
-                else if(player->hasWeapon("halberd") &&
-                        player->isLastHandCard(card) && card_use.to.count() > 1){
-                    player->playCardEffect("Ehalberd", "weapon");
-                    mute = true;
-                }
-                else if(player->hasWeapon("sun_bow") && card->objectName() == "slash" && card_use.to.count() > 1){
-                    player->playCardEffect("Esun_bow", "weapon");
-                    mute = true;
-                }
-            }
-
-            card_use.from->playCardEffect(card, mute);
+            room->playExtra(CardUsed, data);
             card->use(room, card_use.from, card_use.to);
         }
 

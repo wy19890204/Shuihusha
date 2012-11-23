@@ -723,13 +723,13 @@ void PackagingEditor::duplicateLua(){
         if(!duplis.contains(tmp))
             continue;
         QString name;
-        do{
+        forever{
             name = QInputDialog::getText(this, tr("Duplicated"),
                                          tr("%1 is duplicated, Please input new name :").arg(tmp),
                                          QLineEdit::Normal, "lua" + tmp);
             if(name.isEmpty() || !Sanguosha->isDuplicated(name, false))
                 break;
-        }while(1==1);
+        }
         if(!name.isEmpty()){
             word += doReplace(tmp, name);
             file += doRename(tmp, name, false);
@@ -739,13 +739,13 @@ void PackagingEditor::duplicateLua(){
         if(!duplis.contains(tmp))
             continue;
         QString name;
-        do{
+        forever{
             name = QInputDialog::getText(this, tr("Duplicated"),
                                          tr("%1 is duplicated, Please input new name :").arg(tmp),
                                          QLineEdit::Normal, "lua" + tmp);
             if(name.isEmpty() || !Sanguosha->isDuplicated(name, true))
                 break;
-        }while(1==1);
+        }
         if(!name.isEmpty()){
             word += doReplace(tmp, name);
             file += doRename(tmp, name, false);

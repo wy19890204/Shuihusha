@@ -11,7 +11,7 @@ QString Zongzi::getSubtype() const{
     return "gift_card";
 }
 
-QString Zongzi::getEffectPath(bool is_male) const{
+QString Zongzi::getEffectPath(bool) const{
     return "audio/card/common/zongzi.ogg";
 }
 
@@ -22,7 +22,7 @@ bool Zongzi::isAvailable(const Player *quyuan) const{
         return true;
 }
 
-void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     room->throwCard(this);
     int n = ServerInfo.GameMode != "dusong" ? 1 : -1;
     room->addHpSlot(source, n);
@@ -75,7 +75,6 @@ bool Moonpie::targetFilter(const QList<const Player *> &targets, const Player *h
 }
 
 void Moonpie::onEffect(const CardEffectStruct &effect) const{
-    //room->throwCard(this);
     Room *room = effect.from->getRoom();
     // do animation
     room->broadcastInvoke("animate", QString("moonpie:%1:%2")
@@ -143,12 +142,6 @@ public:
                 room->setEmotion(target, "chain");
             }
 
-            /*Card *card = new IronChain(use.card->getSuit(), use.card->getNumber());
-            card->addSubcard(use.card);
-            card->setSkillName("beatjapan");
-            CardUseStruct usechange = use;
-            usechange.card = card;
-            room->useCard(usechange);*/
             return true;
         }
         return false;

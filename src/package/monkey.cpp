@@ -374,6 +374,33 @@ public:
     }
 };
 
+class FanzhanEffect: public TriggerSkill{
+public:
+    FanzhanEffect():TriggerSkill("#fanzhan-efect"){
+        events << CardEffected;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(room->getTag("Fanzhan").toBool() &&
+           (effect.card->isKindOf("Slash") || effect.card->isKindOf("Duel"))){
+            LogMessage log;
+            log.type = "#FanzhanNullify";
+            log.from = effect.from;
+            log.to << effect.to;
+            log.arg = effect.card->objectName();
+            log.arg2 = "fanzhan";
+            room->sendLog(log);
+            return true;
+        }
+        return false;
+    }
+};
+
 class Shuilao: public OneCardViewAsSkill{
 public:
     Shuilao():OneCardViewAsSkill("shuilao"){
@@ -701,7 +728,9 @@ MonkeyPackage::MonkeyPackage()
     General *puwenying = new General(this, "puwenying", "guan", 3);
     puwenying->addSkill(new Guanxing);
     puwenying->addSkill(new Fanzhan);
+    puwenying->addSkill(new FanzhanEffect);
     puwenying->addSkill(new FanzhanClear);
+    related_skills.insertMulti("fanzhan", "#fanzhan-efect");
     related_skills.insertMulti("fanzhan", "#fanzhan-clear");
 
     General *tongmeng = new General(this, "tongmeng", "min", 3);
