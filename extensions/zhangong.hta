@@ -2,20 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="./zhangong/js/zg.css" rel="stylesheet" type="text/css">
-<title>成就系统for太阳神三国杀</title> 
+<title>成就系统for太阳神水浒杀</title>
+<hta:application id="ohta" applicationname="qsgsext" border="thin" borderstyle="normal" caption="yes" icon="../Shuihusha.exe" maximizebutton="yes" 	minimizebutton="yes" showintaskbar="yes" ingleinstance="no" sysmenu="yes" version="1.0" windowstate="normal" />
 <script type="text/javascript" language="javascript" src="./zhangong/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" language="javascript" src="./zhangong/js/jquery.table.js"></script>
 <script type="text/javascript" language="javascript" src="./zhangong/js/template.min.js"></script>
-<script type="text/javascript" language="javascript" src="./zhangong/js/trans.js"></script>	
-<script type="text/javascript" language="javascript" src="./zhangong/js/zg.js"></script>
+<script type="text/javascript" language="javascript" src="./zhangong/js/trans.js"></script>
+<script type="text/javascript" language="javascript" src="./zhangong/js/sqlite.js"></script>
 </head>
 <body>
 <script id="t_overview" type="text/html">
 	<div class="divtitle">
 		本系统启用日期: <%= info.total.starttime %>
 	</div>
-	<br/>		
-	<table border width="30%">
+	<br/>
+	<table border width="50%">
 		<tr>
 			<th style="text-align:center"><a href='#' class='t'><nobr>经验值(?)</nobr>
 				<span>你每造成1点伤害,经验加1</span></a></th>
@@ -36,7 +37,7 @@
 			<td align="center" nowrap><%= getLuckyCard(info) %></td>
 		</tr>
 	</table>
-	<br/><br/> 
+	<br/><br/>
 
 	<table border width="60%">
 		<tr>
@@ -48,7 +49,7 @@
 			<th align="center" style="text-align:center"><a href='#' class='t'><nobr>武功(?)</nobr>
 				<span>你每打出或使用1张【杀】,武功加1</span></a></th>
 			<th align="center" style="text-align:center"><a href='#' class='t'><nobr>武功等级(?)</nobr>
-				<span style="width:800px;left:-5em;top:0.6em;cursor:default"><%= getGongxun('wu') %></span></a></th>
+				<span style="width:800px;left:-28em;top:0.6em;cursor:default"><%= getGongxun('wu') %></span></a></th>
 			<th align="center" style="text-align:center"><nobr>武功官职</nobr></th>
 		</tr>
 		<tr>
@@ -68,12 +69,12 @@
 		<th align="center" style="text-align:center">胜利</th>
 		<th align="center" style="text-align:center">败北</th>
 		<th align="center" style="text-align:center">逃跑</th>
-		<th align="center" style="text-align:center">胜率</th>		
+		<th align="center" style="text-align:center">胜率</th>
 		<th align="center" style="text-align:center">主胜率</th>
 		<th align="center" style="text-align:center">忠胜率</th>
 		<th align="center" style="text-align:center">内胜率</th>
 		<th align="center" style="text-align:center">反胜率</th>
-	</tr>	
+	</tr>
 	<tr>
 		<td align="center">身份局</td>
 		<td align="center"><%= info.role.winnum %></td>
@@ -113,7 +114,7 @@
 			<img src="../image/system/roles/rebel-4.png" height="23"/>
 			<%= info.v3.winrate_2 %>
 		</td>
-		<td>&nbsp;</td>				
+		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
@@ -135,23 +136,23 @@
 		<td align="center"><%= info.v1.escnum %></td>
 		<td align="center"><%= info.v1.winrate %></td>
 		<td title="后手胜率" align="center"><img src="../image/system/roles/lord.png" height="23"/><%= info.v1.winrate_2 %></td>
-		<td>&nbsp;</td>	
-		<td title="先手胜率" align="center"><img src="../image/system/roles/renegade.png" height="23"/><%= info.v1.winrate_1 %></td>			
+		<td>&nbsp;</td>
+		<td title="先手胜率" align="center"><img src="../image/system/roles/renegade.png" height="23"/><%= info.v1.winrate_1 %></td>
 		<td>&nbsp;</td>
 	</tr>
-	
+
 	<tr>
 		<th align="center" style="text-align:center">综合统计</th>
 		<th align="center" style="text-align:center"><%= info.total.winnum %></th>
 		<th align="center" style="text-align:center"><%= info.total.losenum %></th>
 		<th align="center" style="text-align:center"><%= info.total.escnum %></th>
-		<th align="center" style="text-align:center"><%= info.total.winrate %></th>		
+		<th align="center" style="text-align:center"><%= info.total.winrate %></th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
 	</tr>
-	</table>	
+	</table>
 	<div style="text-align:center;margin-top:20px">注：本报表并非实时更新，通常在你的回合开始后或者你获得战功后才更新数据</div>
 </script>
 
@@ -172,7 +173,7 @@
 </thead>
 <tbody>
     <% for (i = 0; i<skills.length; i+=5) { %>
-        <tr height="27">
+        <tr height="15">
 		<td><%= getTrans(skills[i].skillname) %></td><td><%= skills[i].gained %></td><td><%= skills[i].remainnum %></td>
 		<td><%= getTrans(skills[i+1].skillname) %></td><td><%= skills[i+1].gained %></td><td><%= skills[i+1].remainnum %></td>
 		<td><%= getTrans(skills[i+2].skillname) %></td><td><%= skills[i+2].gained %></td><td><%= skills[i+2].remainnum %></td>
@@ -187,22 +188,22 @@
 <script id="t_results" type="text/html">
 <div class="divtitle">显示最近300场游戏记录:</div>
 <table border width="100%" id="tbl_results">
-<thead>	
+<thead>
 	<tr>
-		<th nowrap="nowrap" style="width:90px">游戏时间</th>
-		<th nowrap="nowrap" style="width:85px">武将</th>
-		<th nowrap="nowrap" style="width:45px">角色</th>
-		<th nowrap="nowrap" style="width:35px">国战</th>
-		<th nowrap="nowrap" style="width:65px">游戏模式</th>		
-		<th nowrap="nowrap" style="width:45px">回合数</th>
-		<th nowrap="nowrap" style="width:35px">存活</th>
-		<th nowrap="nowrap" style="width:35px">结果</th>
-		<th nowrap="nowrap" style="width:35px">文功</th>
-		<th nowrap="nowrap" style="width:35px">武功</th>
-		<th nowrap="nowrap" style="width:35px">经验</th>
+		<th nowrap="nowrap" style="width:85px">游戏时间</th>
+		<th nowrap="nowrap" style="width:80px">武将</th>
+		<th nowrap="nowrap" style="width:40px">角色</th>
+		<th nowrap="nowrap" style="width:36px">国战</th>
+		<th nowrap="nowrap" style="width:60px">模式</th>
+		<th nowrap="nowrap" style="width:40px">回合</th>
+		<th nowrap="nowrap" style="width:30px">存活</th>
+		<th nowrap="nowrap" style="width:30px">结果</th>
+		<th nowrap="nowrap" style="width:30px">文功</th>
+		<th nowrap="nowrap" style="width:30px">武功</th>
+		<th nowrap="nowrap" style="width:30px">经验</th>
 		<th nowrap="nowrap" style="width:auto">获得战功</th>
 	</tr>
-</thead>	
+</thead>
 <tbody>
     <% for (i = 0; i<results.length; i ++) { %>
 	<tr>
@@ -219,7 +220,7 @@
 		<td nowrap="nowrap" align="center"><%= results[i].expval %></td>
 		<td><%= getZhangong(results[i].zhangong) %></td>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -228,13 +229,13 @@
 <script id='t_zhonghe' type='text/html'>
 <table border width='100%' id='tbl_zhonghe'>
 <tbody>
-    <% for (i = 0; i<zgzhonghe.length; i+=12) { %>		
+    <% for (i = 0; i<zgzhonghe.length; i+=11) { %>
     <tr>
-		<% for (j = 0; j<12; j++) { %>
+		<% for (j = 0; j<11; j++) { %>
 			<td><%= getZgInfo(zgzhonghe[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -242,13 +243,13 @@
 <script id='t_wei' type='text/html'>
 <table border width='100%' id='tbl_wei'>
 <tbody>
-    <% for (i = 0; i<zgwei.length; i+=10) { %>		
+    <% for (i = 0; i<zgwei.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zgwei[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -256,13 +257,13 @@
 <script id='t_shu' type='text/html'>
 <table border width='100%' id='tbl_shu'>
 <tbody>
-    <% for (i = 0; i<zgshu.length; i+=10) { %>		
+    <% for (i = 0; i<zgshu.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zgshu[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -270,13 +271,13 @@
 <script id='t_wu' type='text/html'>
 <table border width='100%' id='tbl_wu'>
 <tbody>
-    <% for (i = 0; i<zgwu.length; i+=10) { %>		
+    <% for (i = 0; i<zgwu.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zgwu[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -284,13 +285,13 @@
 <script id='t_qun' type='text/html'>
 <table border width='100%' id='tbl_qun'>
 <tbody>
-    <% for (i = 0; i<zgqun.length; i+=10) { %>		
+    <% for (i = 0; i<zgqun.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zgqun[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -298,13 +299,13 @@
 <script id='t_god' type='text/html'>
 <table border width='100%' id='tbl_god'>
 <tbody>
-    <% for (i = 0; i<zggod.length; i+=10) { %>		
+    <% for (i = 0; i<zggod.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zggod[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -312,13 +313,13 @@
 <script id='t_3v3' type='text/html'>
 <table border width='100%' id='tbl_3v3'>
 <tbody>
-    <% for (i = 0; i<zg3v3.length; i+=10) { %>		
+    <% for (i = 0; i<zg3v3.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zg3v3[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -326,13 +327,13 @@
 <script id='t_1v1' type='text/html'>
 <table border width='100%' id='tbl_1v1'>
 <tbody>
-    <% for (i = 0; i<zg1v1.length; i+=10) { %>		
+    <% for (i = 0; i<zg1v1.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
 			<td><%= getZgInfo(zg1v1[i+j],j) %></td>
-		<% } %>			
+		<% } %>
 	</tr>
-    <% } %>	
+    <% } %>
 </tbody>
 </table>
 </script>
@@ -354,7 +355,7 @@ var callback={
 	},
 	getGeneral:function(v){
 		return "<img height='20' src='../image/generals/tiny/"+v+".png'/>"+(trans[v] || v);
-	},	
+	},
 	getRole:function(v){
 		return "<img height='20' src='../image/system/roles/"+v+"-1.png'/>"+(trans[v] || v);
 	},
@@ -365,12 +366,12 @@ var callback={
 		var arr=v.split(/\:/g);
 		var ret=[];
 		for(var i=0;i<arr.length;i++){
-			
+
 			if (arr[i]!="") {
 				var br= (i+1)%6==0 ? ",&nbsp;&nbsp;&nbsp;" : ",&nbsp;&nbsp;&nbsp;";
 				ret.push((trans[arr[i]] || arr[i])+br);
 			}
-					
+
 		}
 		return ret.join("");
 	},
@@ -418,14 +419,14 @@ var callback={
 				imgsrc="../image/generals/big/"+info.general+".png";
 			}
 		}
-		var enableStr= info.gained !=="0" ? "" : " class='graycolor'";
+		var enableStr= info.gained !==0 ? "" : " class='graycolor'";
 		var numStr = info.gained>0 ? "<br/><font color='#888888'>x</font>&nbsp; "+info.gained : "<br/>&nbsp; ";
-		var tipcss = colindex>8 ? " style='left:-8em' " : "";
+		var tipcss = colindex>=9 ? " style='left:-8em' " : "";
 		var wincount= info.num>0 ? "<div class='sp'>&nbsp;</div>"+info.count+"&nbsp;of&nbsp;"+info.num+" :&nbsp;目前已获得"+info.count+"场胜利" : "";
 		var enableStr2 = /MSIE 9/.test(navigator.userAgent) ? "" : enableStr;
 		return "<div style='text-align:center;margin:0px'><a href='#' onclick='return false' class='s'><img style='border:1px solid gray' height='53' src='"
-				+imgsrc+"' "+enableStr +"/><span"+tipcss+"><nobr>"+info.name+"</nobr><font size='1'>(战功值:"+info.score+")</font>:&nbsp;&nbsp;"+info.description
-				+wincount +"</span></a><div style='margin-top:6px;font-size:11px;color:black'"+enableStr2+">"+info.name+numStr+"</div></div>";
+				+imgsrc+"' "+enableStr +"/><span"+tipcss+">"+info.name+"<font size='1'>(战功值:"+info.score+")</font>:&nbsp;&nbsp;"
+				+info.description+wincount+"</span></a><div style='margin-top:6px;font-size:11px;color:black'"+enableStr2+">"+info.name+numStr+"</div></div>";
 	}
 };
 
@@ -444,7 +445,7 @@ $(function(){
 	$("a.t").click(function(){
 		return false;
 	});
-	
+
 	$.each(tabLists,function(i,tab){
 		$("#link_"+tab).click(function(){
 			$.each(tabLists,function(i,val){
@@ -460,6 +461,15 @@ $(function(){
 		})
 	});
 	$("#link_overview").trigger("click");
+
+
+	try{
+		var w=screen.width;
+		var h=screen.height-30;
+		window.moveTo(0,0);
+		window.resizeTo(w,h);
+	}catch(x){}
+
 });
 </script>
 
@@ -467,17 +477,17 @@ $(function(){
 	<div id="header">
 		<div id="nav">
 			[ <a href="http://tieba.baidu.com/p/1922424820"  target="_blank">贴吧讨论贴</a> ]
-			[ <a href="https://github.com/haveatry823/qsgsext" target="_blank">项目源代码</a> ] 
+			[ <a href="https://github.com/haveatry823/qsgsext" target="_blank">项目源代码</a> ]
 			[ <a href="mailto:haveatry823@qq.com" title="给作者发邮件">联系作者</a> ]
 			[ <a href="http://qsanguosha.org/forum.php?mod=viewthread&tid=3897&page=1#pid157923" target="_blank"  style="color:red">FAQ</a> ]
 			[ <a href="#" onclick="javascript:location.reload();return false">刷新</a> ]
-			
 
-			
+
+
 		</div>
 		<div id="menucontainer">
 			<ul id="menu">
-				<li><a id="link_overview" href="#">概况总结</a></li>
+				<li><a id="link_overview" href="#">概况</a></li>
 				<li><a id="link_zhonghe" href="#">综合</a></li>
 				<li><a id="link_wei" href="#">魏</a></li>
 				<li><a id="link_shu" href="#">蜀</a></li>
@@ -491,7 +501,7 @@ $(function(){
 			</ul>
 		</div>
 	</div>
-    <div id="main">
+    <div id="main" style="overflow:hidden">
 		<script type="text/javascript">
 			$.each(tabLists,function(i,tab){
 				document.write('<div id="div_'+tab+'" style="display:none">');
