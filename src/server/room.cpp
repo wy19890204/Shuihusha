@@ -448,36 +448,8 @@ void Room::gameOver(const QString &winner){
 void Room::slashEffect(const SlashEffectStruct &effect){
     effect.from->addMark("SlashCount");
 
-    if(effect.from->hasWeapon("crossbow")){
-        int slash = effect.from->getMark("SlashCount");
-        if(slash % 2 == 0)
-            effect.from->playCardEffect("Ecrossbow1", "weapon");
-        else if(slash % 2 == 1 && slash > 1)
-            effect.from->playCardEffect("Ecrossbow2", "weapon");
-    }
-
-    if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
-        playSkillEffect("qinlong");
-    if(effect.from->hasSkill("yinyu") && effect.slash->getSkillName() != "yuanpei"){
-        if(effect.from->hasMark("@stones") && effect.from->getMark("SlashCount") > 1){
-            int index = effect.from->hasMark("mengshi_wake") ? qrand() % 2 + 9: qrand() % 2 + 3;
-            playSkillEffect("yinyu", index);
-        }
-        else if(effect.from->hasMark("@stoneh")){
-            if(effect.from->distanceTo(effect.to) > getAlivePlayers().count() / 4){
-                int index = effect.from->hasMark("mengshi_wake") ? 11: 5;
-                playSkillEffect("yinyu", index);
-            }
-        }
-        else if(effect.from->hasMark("@stonec")){
-            if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia"))){
-                int index = effect.from->hasMark("mengshi_wake") ? 12: 6;
-                playSkillEffect("yinyu", index);
-            }
-        }
-    }
-
     QVariant data = QVariant::fromValue(effect);
+    playExtra(SlashEffect, data);
 
     if(effect.nature ==DamageStruct::Thunder)setEmotion(effect.from, "thunder_slash");
     else if(effect.nature == DamageStruct::Fire)setEmotion(effect.from, "fire_slash");
@@ -2521,10 +2493,6 @@ void Room::processResponse(ServerPlayer *player, const QSanGeneralPacket *packet
 
 void Room::useCard(const CardUseStruct &card_use, bool add_history){
     const Card *card = card_use.card;
-
-    if(card->inherits("ThunderSlash") && card->getSkillName() != "paohong" && card_use.from->hasSkill("paohong"))
-        playSkillEffect("paohong");
-
     if(card_use.from->getPhase() == Player::Play && add_history){
         QString key;
         if(card->inherits("LuaSkillCard"))
@@ -2645,17 +2613,6 @@ bool Room::cardEffect(const CardEffectStruct &effect){
     if(broken)
         return false;
 
-    if(getTag("Fanzhan").toBool() &&
-       (effect.card->inherits("Slash") || effect.card->inherits("Duel"))){
-        LogMessage log;
-        log.type = "#FanzhanNullify";
-        log.from = effect.from;
-        log.to << effect.to;
-        log.arg = effect.card->objectName();
-        log.arg2 = "fanzhan";
-        sendLog(log);
-        return false;
-    }
     return !thread->trigger(CardEffected, this, effect.to, data);
 }
 
@@ -4144,4 +4101,76 @@ void Room::setGerenalGender(const QString &name, const QString &gender)
     QString pattern = name + ":" + gender;
 
     broadcastInvoke("setGerenalGender", pattern);
+}
+
+void Room::playExtra(TriggerEvent event, const QVariant &data){
+    if(event == CardUsed){
+        CardUseStruct card_use = data.value<CardUseStruct>();
+        PlayerStar player = card_use.from;
+        bool mute = card_use.mute;
+        if(card_use.card->inherits("Slash") && Config.EnableEquipEffects){
+            if(player->hasSkill("shuangzhan") && card_use.to.count() == 2){
+                playSkillEffect("shuangzhan", qrand() % 2 + 1);
+                mute = true;
+            }
+            if(player->hasSkill("douzhan") && card_use.to.count() == 2){
+                playSkillEffect("douzhan");
+                mute = true;
+            }
+            if(player->hasSkill("bizhai") && card_use.to.count() == 2){
+                int index = player->getGender() == General::Male ? qrand() % 2 + 1 : qrand() % 2 + 3;
+                playSkillEffect("bizhai", index);
+                mute = true;
+            }
+            if(player->hasWeapon("crossbow") && player->getPhase() == Player::Play && player->getMark("SlashCount") > 0)
+                mute = true;
+            if(card_use.card->getSkillName() == "spear"){
+                player->playCardEffect("Espear", "weapon");
+                mute = true;
+            }
+            else if(player->hasWeapon("halberd") &&
+                    player->isLastHandCard(card_use.card) && card_use.to.count() > 1){
+                player->playCardEffect("Ehalberd", "weapon");
+                mute = true;
+            }
+            else if(player->hasWeapon("sun_bow") && card_use.card->objectName() == "slash" && card_use.to.count() > 1){
+                player->playCardEffect("Esun_bow", "weapon");
+                mute = true;
+            }
+        }
+        player->playCardEffect(card_use.card, mute);
+    }
+    if(event == SlashEffect){
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.from->hasWeapon("crossbow")){
+            int slash = effect.from->getMark("SlashCount");
+            if(slash % 2 == 0)
+                effect.from->playCardEffect("Ecrossbow1", "weapon");
+            else if(slash % 2 == 1 && slash > 1)
+                effect.from->playCardEffect("Ecrossbow2", "weapon");
+        }
+
+        if(effect.from->hasSkill("qinlong") && effect.from->getMark("SlashCount") > 1)
+            playSkillEffect("qinlong");
+        if(effect.from->hasSkill("yinyu") && effect.slash->getSkillName() != "yuanpei"){
+            if(effect.from->hasMark("@stones") && effect.from->getMark("SlashCount") > 1){
+                int index = effect.from->hasMark("mengshi_wake") ? qrand() % 2 + 9: qrand() % 2 + 3;
+                playSkillEffect("yinyu", index);
+            }
+            else if(effect.from->hasMark("@stoneh")){
+                if(effect.from->distanceTo(effect.to) > getAlivePlayers().count() / 4){
+                    int index = effect.from->hasMark("mengshi_wake") ? 11: 5;
+                    playSkillEffect("yinyu", index);
+                }
+            }
+            else if(effect.from->hasMark("@stonec")){
+                if(effect.to->getArmor() || (!effect.to->getArmor() && effect.to->hasSkill("jinjia"))){
+                    int index = effect.from->hasMark("mengshi_wake") ? 12: 6;
+                    playSkillEffect("yinyu", index);
+                }
+            }
+        }
+        if(effect.slash->inherits("ThunderSlash") && effect.slash->getSkillName() != "paohong" && effect.from->hasSkill("paohong"))
+            playSkillEffect("paohong");
+    }
 }
