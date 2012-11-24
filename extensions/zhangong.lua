@@ -2930,7 +2930,7 @@ end
 for query in db:rows("select * from zhangong where num>0 ") do
 	zgfunc[sgs.GameOverJudge].callback[query.id]=function(room,player,data,name,result)
 		local mode=room:getMode()
-		local kingdoms={["kou"]=1,["min"]=1,["jiang"]=1,["guan"]=1,["god"]=1}
+		local kingdoms={["min"]=1,["jiang"]=1,["guan"]=1,["kou"]=1,["god"]=1}
 		if result ~='win' then return false end
 		if query.category=="3v3" and room:getMode()~="06_3v3" then return false end
 		if query.category=="1v1" and room:getMode()~="02_1v1" then return false end

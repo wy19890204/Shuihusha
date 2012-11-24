@@ -306,8 +306,9 @@ QString Player::getScreenRole() const{
     case 3: return hegemony_mode[role]; break;
     case 4: return landlord_mode[role]; break;
     default:
-        return role;
+        break;
     }
+    return role;
 }
 
 Player::Role Player::getRoleEnum() const{

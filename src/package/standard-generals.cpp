@@ -1476,10 +1476,10 @@ public:
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 likui->obtainCard(judge.card);
                 QString key = damage.card->metaObject()->className();
-                likui->addHistory(key, -1);
-                Self->addHistory(key, -1);
-                //likui->invoke("addHistory", key + ":-1");
-                //room->broadcastInvoke("addHistory", "pushPile");
+                room->addPlayerHistory(likui, key, -1);
+                //likui->addHistory(key, -1);
+                //Self->addHistory(key, -1);
+                //likui->invoke("addHistory", key + "#-1");
             }
             else
                 room->playSkillEffect(objectName(), 3);
@@ -1957,6 +1957,10 @@ public:
         return true;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->isNude())
             return false;
@@ -2161,6 +2165,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{

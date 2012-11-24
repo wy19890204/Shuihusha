@@ -187,7 +187,8 @@ void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         foreach(const SkillClass *skill, Sanguosha->getGeneral(general)->getVisibleSkillList())
             choices << skill->objectName();
         if(!choices.isEmpty()){
-            QString ski = room->askForChoice(source, "ubund", choices.join("+"));
+            QString ski = choices.count() == 1 ? choices.first() :
+                          room->askForChoice(source, "ubund", choices.join("+"));
             room->acquireSkill(source, ski);
         }
     }

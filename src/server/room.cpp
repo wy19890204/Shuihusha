@@ -1242,6 +1242,13 @@ void Room::setPlayerMark(ServerPlayer *player, const QString &mark, int value){
     broadcastInvoke("setMark", QString("%1.%2=%3").arg(player->objectName()).arg(mark).arg(value));
 }
 
+void Room::addPlayerHistory(ServerPlayer *player, const QString &name, int times){
+    player->addHistory(name, times);
+    if(times < 0)
+        times = 100 - times;
+    player->invoke("addHistory", QString("%1#%2").arg(name).arg(times));
+}
+
 void Room::setPlayerCardLock(ServerPlayer *player, const QString &name){
     player->setCardLocked(name);
     player->invoke("cardLock", name);

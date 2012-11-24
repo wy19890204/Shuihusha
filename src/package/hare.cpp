@@ -769,7 +769,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target != NULL && target->hasSkill(objectName());
+        return target->hasSkill(objectName());
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -782,12 +782,15 @@ public:
 
         room->playSkillEffect(objectName(), qrand() % 2 + 3);
         if(!player->isNude()){
+            target->obtainCard(player->getWeapon());
+            target->obtainCard(player->getArmor());
+            target->obtainCard(player->getDefensiveHorse());
+            target->obtainCard(player->getOffensiveHorse());
             DummyCard *dummy = player->wholeHandCards();
-            target->obtainCard(dummy, false);
-            dummy->clearSubcards();
-            foreach(const Card *ard, player->getEquips(true))
-                dummy->addSubcard(ard);
-            target->obtainCard(dummy);
+            if(dummy){
+                room->moveCardTo(dummy, target, Player::Hand, false);
+                delete dummy;
+            }
         }
         if(target->isWounded()){
             RecoverStruct recover;
