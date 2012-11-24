@@ -471,6 +471,7 @@ enum TriggerEvent{
 	DrawNCards,
 	DrawNCardsDone,
 	HpRecover,
+	HpRecovered,
 	HpLost,
 	HpChanged,
 

@@ -1478,7 +1478,7 @@ public:
                 QString key = damage.card->metaObject()->className();
                 likui->addHistory(key, -1);
                 Self->addHistory(key, -1);
-                //likui->invoke("addHistory", key);
+                //likui->invoke("addHistory", key + ":-1");
                 //room->broadcastInvoke("addHistory", "pushPile");
             }
             else

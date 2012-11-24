@@ -1,9 +1,9 @@
 var data={};
-var zglist=["zhonghe","wei","shu","wu","qun","god","3v3","1v1"];
+var zglist=["zhonghe","guan","jiang","min","kou","god","3v3","1v1"];
 var db=null;
 
 
-(function(){		
+(function(){
 	try{
 		db = new ActiveXObject("LiteX.LiteConnection");
 	}catch(x){
@@ -29,16 +29,16 @@ var db=null;
 	var  sql = "select level,name,score,category as cat from gongxun where level>0 and category in ('wen','wu') order by category,level";
 	var collist="level,name,score,cat";
 	data.gongxun=dbquery(sql,collist);
-	
+
 	$.each(zglist,function(i,val){
 		var sql = "select * from zhangong where category='"+val+"' order by general asc";
 		var collist="id,name,score,description,gained,category,lasttime,general,num,count";
 		data["zg"+val]=dbquery(sql,collist);
 	});
 	$.each(zglist,function(i,val){$.each(data['zg'+val],function(index,item){trans[item.id]=[item.name];})});
-	
+
 	var info={v3:{},role:{},hegemony:{},v1:{},dusong:{},total:{},wen:{},wu:{},expval:{},zg:{},luckycard:{}};
-	
+
 	function getResult(mode,cond,ratearr){
 		info[mode].winnum=db.execute("select count(id) from results where " + cond +" and result='win'");
 		info[mode].losenum=db.execute("select count(id) from results where " + cond +" and result='lose'");
@@ -54,23 +54,23 @@ var db=null;
 	getResult("dusong","mode='dusong' and hegemony=0",["role='lord'","role='rebel'"]);
 	getResult("v3",  "mode='06_3v3' and hegemony=0",["role in ('lord','renegade')","role in ('loyalist','rebel')"]);
 	getResult("v1",  "mode='02_1v1' and hegemony=0",["role='renegade'","role='lord'"]);
-	getResult("role","mode like '__p%' and hegemony=0",["role='lord'","role='loyalist'","role='renegade'","role='rebel'"]);		
-	getResult("hegemony","hegemony=1",["kingdom='wei'","kingdom='shu'","kingdom='wu'","kingdom='qun'"]);	
-	getResult("total","1",[]);	
-	
+	getResult("role","mode like '__p%' and hegemony=0",["role='lord'","role='loyalist'","role='renegade'","role='rebel'"]);
+	getResult("hegemony","hegemony=1",["kingdom='guan'","kingdom='jiang'","kingdom='min'","kingdom='kou'"]);
+	getResult("total","1",[]);
+
 	info.wen.score=db.execute("select sum(wen) from results") || 0;
 	info.wu.score=db.execute("select sum(wu) from results") || 0;
-	
+
 	info.expval.score=db.execute("select sum(expval) from results") || 0;
 	info.expval.level=Math.ceil(Math.pow(info.expval.score,1/3));
-	
+
 	info.zg.num=db.execute("select count(id) from zhangong where gained>0");
 	info.zg.total=db.execute("select count(id) from zhangong");
 	info.zg.score=db.execute("select sum(score*gained) from zhangong where gained>0") || 0;
 
 	info.wen.level=db.execute("select level from gongxun where category='wen' and score>=? order by score asc limit 1",info.wen.score);
 	info.wen.name=db.execute("select name from gongxun where category='wen' and score>=? order by score asc limit 1",info.wen.score);
-	
+
 	info.wu.level=db.execute("select level from gongxun where category='wu' and score>=? order by score asc limit 1",info.wu.score)
 	info.wu.name=db.execute("select name from gongxun where category='wu' and score>=? order by score asc limit 1",info.wu.score)
 
@@ -81,7 +81,7 @@ var db=null;
 		info.luckycard.gained=0
 		info.luckycard.used=0
 	}
-	
+
 	info.total.starttime=db.execute("select datetime(min(id),'unixepoch','localtime') from results") || "尚未开始统计";
 
 	data.info=info;
@@ -97,8 +97,8 @@ var db=null;
 			ret.push(arr);
 		}
 		return ret;
-	}		
+	}
 	ds.close();
 	ds=null;
 	setTimeout(function(){try{db.close();}catch(x){}},100)
-})()	
+})()
