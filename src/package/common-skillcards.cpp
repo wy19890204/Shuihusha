@@ -72,8 +72,10 @@ void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerP
         if(getSubcards().isEmpty()){
             if(target != source){
                 room->playSkillEffect(skill_name, 3);
+                room->setPlayerFlag(source, "loot");
                 int card_id = room->askForCardChosen(source, target, "hejp", "free-regulate");
                 room->obtainCard(source, card_id);
+                room->setPlayerFlag(source, "-loot"); //@todo
             }
             else
                 room->gameOver(source->objectName());
