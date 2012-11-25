@@ -1453,14 +1453,18 @@ public:
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
-        events << Damage;
+        events << Damage << PhaseChange;
     }
 
     virtual int getPriority() const{
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *likui, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *likui, QVariant &data) const{
+        if(event == PhaseChange){
+            if(likui->getPhase() == Player::Discard)
+                room->setPlayerMark(likui, "shalu", 0);
+        }
         DamageStruct damage = data.value<DamageStruct>();
         if(likui->getPhase() != Player::Play || !damage.card || !damage.card->inherits("Slash"))
             return false;
@@ -1475,8 +1479,9 @@ public:
             if(judge.isGood()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 likui->obtainCard(judge.card);
-                QString key = damage.card->metaObject()->className();
-                room->addPlayerHistory(likui, key, -1);
+                likui->addMark("shalu");
+                //QString key = damage.card->metaObject()->className();
+                //room->addPlayerHistory(likui, key, -1);
                 //likui->addHistory(key, -1);
                 //Self->addHistory(key, -1);
                 //likui->invoke("addHistory", key + "#-1");
@@ -1485,6 +1490,17 @@ public:
                 room->playSkillEffect(objectName(), 3);
         }
         return false;
+    }
+};
+
+class ShaluSlash: public ClientSkill{
+public:
+    ShaluSlash():ClientSkill("#shalu-slash"){
+    }
+
+    virtual int getSlashResidue(const Player *likui) const{
+        int init = 1 - likui->getSlashCount();
+        return init + likui->getMark("shalu");
     }
 };
 
@@ -2723,6 +2739,8 @@ StandardPackage::StandardPackage()
 
     General *likui = new General(this, "likui", "kou");
     likui->addSkill(new Shalu);
+    likui->addSkill(new ShaluSlash);
+    related_skills.insertMulti("shalu", "#shalu-slash");
 
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);
