@@ -1017,7 +1017,6 @@ void Client::addHistory(const QString &add_str){
     }
 
     QRegExp rx("(.+)(#\\d+)?");
-    //QRegExp rx("(.+)(#-?\\d+)?");
     if(rx.exactMatch(add_str)){
         QStringList texts = rx.capturedTexts();
         QString card_name = texts.at(1);

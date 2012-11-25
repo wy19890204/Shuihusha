@@ -931,18 +931,6 @@ bool Player::isProhibited(const Player *to, const Card *card) const{
     return Sanguosha->isProhibited(this, to, card);
 }
 
-bool Player::canSlashWithoutCrossbow() const{
-    int n = 1;
-    if(hasSkill("yinyu") && hasMark("@stones"))
-        return true;
-    if(hasSkill("paoxiao") || hasSkill("huafo"))
-        return true;
-    if(hasSkill("qinlong") && !hasEquip())
-        return true;
-    int slash_count = getSlashCount();
-    return slash_count < n;
-}
-
 void Player::jilei(const QString &type){
     if(type == ".")
         jilei_set.clear();

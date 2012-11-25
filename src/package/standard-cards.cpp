@@ -26,7 +26,6 @@ bool Slash::IsAvailable(const Player *player){
 
     int slash_residue = Sanguosha->correctClient("slashresidue", player);
     return slash_residue > 0;
-    //return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow();
 }
 
 bool Slash::isAvailable(const Player *player) const{
@@ -1068,7 +1067,7 @@ public:
     }
 
     virtual int getSlashResidue(const Player *target) const{
-        if(target->hasEquip("crossbow"))
+        if(target->hasWeapon("crossbow"))
             return 998;
         else
             return ClientSkill::getSlashResidue(target);

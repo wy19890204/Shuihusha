@@ -5,6 +5,20 @@
 #include "settings.h"
 #include "maneuvering.h"
 
+class Qinlong: public ClientSkill{
+public:
+    Qinlong():ClientSkill("qinlong"){
+        frequency = NotFrequent;
+    }
+
+    virtual int getSlashResidue(const Player *jiao) const{
+        if(jiao->hasSkill(objectName()) && !jiao->hasEquip())
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(jiao);
+    }
+};
+
 class Kongying: public TriggerSkill{
 public:
     Kongying():TriggerSkill("kongying"){
@@ -804,7 +818,7 @@ BoarPackage::BoarPackage()
     :GeneralPackage("boar")
 {
     General *jiaoting = new General(this, "jiaoting", "kou");
-    jiaoting->addSkill(new Skill("qinlong"));
+    jiaoting->addSkill(new Qinlong);
 
     General *wangdingliu = new General(this, "wangdingliu", "kou", 3);
     wangdingliu->addSkill(new Kongying);

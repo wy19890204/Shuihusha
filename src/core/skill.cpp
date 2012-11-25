@@ -345,7 +345,7 @@ int ClientSkill::getSlashResidue(const Player *target) const{
     return qMax(1 - target->getSlashCount(), 0);
 }
 
-bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
+bool ClientSkill::isProhibited(const Player *, const Player *, const Card *) const{
     return false;
 }
 /*
