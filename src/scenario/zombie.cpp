@@ -270,6 +270,20 @@ public:
     }
 };
 
+class Paoxiao: public ClientSkill{
+public:
+    Paoxiao():ClientSkill("paoxiao"){
+        frequency = NotFrequent;
+    }
+
+    virtual int getSlashResidue(const Player *zom) const{
+        if(zom->hasSkill(objectName()))
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(zom);
+    }
+};
+
 PeachingCard::PeachingCard()
     :QingnangCard()
 {
@@ -342,7 +356,7 @@ ZombieScenario::ZombieScenario()
     zombie->addSkill(new Ganran);
     zombie->addSkill(new Zaibian);
 
-    zombie->addSkill(new Skill("paoxiao"));
+    zombie->addSkill(new Paoxiao);
     zombie->addSkill(new Skill("wansha", Skill::Compulsory));
 
     addMetaObject<PeachingCard>();

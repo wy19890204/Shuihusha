@@ -451,16 +451,24 @@ void Room::slashEffect(const SlashEffectStruct &effect){
     QVariant data = QVariant::fromValue(effect);
     playExtra(SlashEffect, data);
 
-    if(effect.nature == DamageStruct::Thunder)
+    switch(effect.nature){
+    case DamageStruct::Thunder:{
         setEmotion(effect.from, "thunder_slash");
-    else if(effect.nature == DamageStruct::Fire)
+        break;
+    }
+    case DamageStruct::Fire:{
         setEmotion(effect.from, "fire_slash");
-    else if(effect.slash->isBlack())
-        setEmotion(effect.from, "slash_black");
-    else if(effect.slash->isRed())
-        setEmotion(effect.from, "slash_red");
-    else
-        setEmotion(effect.from, "killer");
+        break;
+    }
+    default:
+        if(effect.slash->isBlack())
+            setEmotion(effect.from, "slash_black");
+        else if(effect.slash->isRed())
+            setEmotion(effect.from, "slash_red");
+        else
+            setEmotion(effect.from, "killer");
+        break;
+    }
     setEmotion(effect.to, "victim");
 
     setTag("LastSlashEffect", data);
@@ -1232,6 +1240,13 @@ void Room::setPlayerProperty(ServerPlayer *player, const char *property_name, co
 void Room::setPlayerMark(ServerPlayer *player, const QString &mark, int value){
     player->setMark(mark, value);
     broadcastInvoke("setMark", QString("%1.%2=%3").arg(player->objectName()).arg(mark).arg(value));
+}
+
+void Room::addPlayerHistory(ServerPlayer *player, const QString &name, int times){
+    player->addHistory(name, times);
+    if(times < 0)
+        times = 100 - times;
+    player->invoke("addHistory", QString("%1#%2").arg(name).arg(times));
 }
 
 void Room::setPlayerCardLock(ServerPlayer *player, const QString &name){

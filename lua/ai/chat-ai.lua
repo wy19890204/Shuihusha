@@ -231,7 +231,7 @@ sgs.ai_chat.friendly=
 sgs.ai_chat.baoguo=
 {
 "别怕，有兄弟给你顶着~",
-"为兄弟两肋插刀，为小猫插朋友两刀！"
+"为朋友两肋插刀，为小猫插朋友两刀！"
 }
 sgs.ai_chat.lujunyi_weak=
 {

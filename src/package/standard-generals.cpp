@@ -307,8 +307,8 @@ const Card *HuaceCard::validateInResposing(ServerPlayer *player, bool *continuab
     use_card->addSubcard(card);
     room->throwCard(this);
 
-    player->addHistory("HuaceCard", 1);
-    Self->addHistory("HuaceCard", 1);
+    player->addHistory("HuaceCard");
+    Self->addHistory("HuaceCard");
     return use_card;
 }
 
@@ -1453,14 +1453,19 @@ public:
 class Shalu: public TriggerSkill{
 public:
     Shalu():TriggerSkill("shalu"){
-        events << Damage;
+        events << Damage << PhaseChange;
     }
 
     virtual int getPriority() const{
         return -1;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *likui, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *likui, QVariant &data) const{
+        if(event == PhaseChange){
+            if(likui->getPhase() == Player::Discard)
+                room->setPlayerMark(likui, "shalu", 0);
+            return false;
+        }
         DamageStruct damage = data.value<DamageStruct>();
         if(likui->getPhase() != Player::Play || !damage.card || !damage.card->inherits("Slash"))
             return false;
@@ -1475,16 +1480,27 @@ public:
             if(judge.isGood()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 likui->obtainCard(judge.card);
-                QString key = damage.card->metaObject()->className();
-                likui->addHistory(key, -1);
-                Self->addHistory(key, -1);
-                //likui->invoke("addHistory", key);
-                //room->broadcastInvoke("addHistory", "pushPile");
+                room->setPlayerMark(likui, "shalu", likui->getMark("shalu") + 1);
             }
             else
                 room->playSkillEffect(objectName(), 3);
         }
         return false;
+    }
+};
+
+class ShaluSlash: public ClientSkill{
+public:
+    ShaluSlash():ClientSkill("#shalu-slash"){
+    }
+
+    virtual int getSlashResidue(const Player *likui) const{
+        if(likui->hasSkill("shalu")){
+            int init = 1 - likui->getSlashCount();
+            return init + likui->getMark("shalu");
+        }
+        else
+            return ClientSkill::getSlashResidue(likui);
     }
 };
 
@@ -1957,6 +1973,10 @@ public:
         return true;
     }
 
+    virtual int getPriority() const{
+        return -1;
+    }
+
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         if(player->isNude())
             return false;
@@ -2161,6 +2181,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
+    }
+
+    virtual int getPriority() const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -2715,6 +2739,7 @@ StandardPackage::StandardPackage()
 
     General *likui = new General(this, "likui", "kou");
     likui->addSkill(new Shalu);
+    skills << new ShaluSlash;
 
     General *ruanxiaoqi = new General(this, "ruanxiaoqi", "min");
     ruanxiaoqi->addSkill(new Jueming);

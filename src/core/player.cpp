@@ -306,8 +306,9 @@ QString Player::getScreenRole() const{
     case 3: return hegemony_mode[role]; break;
     case 4: return landlord_mode[role]; break;
     default:
-        return role;
+        break;
     }
+    return role;
 }
 
 Player::Role Player::getRoleEnum() const{
@@ -928,18 +929,6 @@ QSet<QString> Player::getAcquiredSkills() const{
 
 bool Player::isProhibited(const Player *to, const Card *card) const{
     return Sanguosha->isProhibited(this, to, card);
-}
-
-bool Player::canSlashWithoutCrossbow() const{
-    int n = 1;
-    if(hasSkill("yinyu") && hasMark("@stones"))
-        return true;
-    if(hasSkill("paoxiao") || hasSkill("huafo"))
-        return true;
-    if(hasSkill("qinlong") && !hasEquip())
-        return true;
-    int slash_count = getSlashCount();
-    return slash_count < n;
 }
 
 void Player::jilei(const QString &type){

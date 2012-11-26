@@ -123,10 +123,10 @@
 		<td align="center"><%= info.hegemony.losenum %></td>
 		<td align="center"><%= info.hegemony.escnum %></td>
 		<td align="center"><%= info.hegemony.winrate %></td>
-		<td title="魏国胜率" align="center"><img src="../image/system/roles/lord-3.png" height="23"/><%= info.hegemony.winrate_1 %></td>
-		<td title="蜀国胜率" align="center"><img src="../image/system/roles/loyalist-3.png" height="23"/><%= info.hegemony.winrate_2 %></td>
-		<td title="吴国胜率" align="center"><img src="../image/system/roles/rebel-3.png" height="23"/><%= info.hegemony.winrate_3 %></td>
-		<td title="群雄胜率" align="center"><img src="../image/system/roles/renegade-3.png" height="23"/><%= info.hegemony.winrate_4 %></td>
+		<td title="官吏胜率" align="center"><img src="../image/system/roles/lord-3.png" height="23"/><%= info.hegemony.winrate_1 %></td>
+		<td title="将领胜率" align="center"><img src="../image/system/roles/loyalist-3.png" height="23"/><%= info.hegemony.winrate_2 %></td>
+		<td title="草民胜率" align="center"><img src="../image/system/roles/rebel-3.png" height="23"/><%= info.hegemony.winrate_3 %></td>
+		<td title="贼寇胜率" align="center"><img src="../image/system/roles/renegade-3.png" height="23"/><%= info.hegemony.winrate_4 %></td>
 	</tr>
 
 	<tr>
@@ -153,7 +153,6 @@
 		<th>&nbsp;</th>
 	</tr>
 	</table>
-	<div style="text-align:center;margin-top:20px">注：本报表并非实时更新，通常在你的回合开始后或者你获得战功后才更新数据</div>
 </script>
 
 <script id="t_skills" type="text/html">
@@ -240,13 +239,13 @@
 </table>
 </script>
 
-<script id='t_wei' type='text/html'>
-<table border width='100%' id='tbl_wei'>
+<script id='t_guan' type='text/html'>
+<table border width='100%' id='tbl_guan'>
 <tbody>
-    <% for (i = 0; i<zgwei.length; i+=10) { %>
+    <% for (i = 0; i<zgguan.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
-			<td><%= getZgInfo(zgwei[i+j],j) %></td>
+			<td><%= getZgInfo(zgguan[i+j],j) %></td>
 		<% } %>
 	</tr>
     <% } %>
@@ -254,13 +253,13 @@
 </table>
 </script>
 
-<script id='t_shu' type='text/html'>
-<table border width='100%' id='tbl_shu'>
+<script id='t_jiang' type='text/html'>
+<table border width='100%' id='tbl_jiang'>
 <tbody>
-    <% for (i = 0; i<zgshu.length; i+=10) { %>
+    <% for (i = 0; i<zgjiang.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
-			<td><%= getZgInfo(zgshu[i+j],j) %></td>
+			<td><%= getZgInfo(zgjiang[i+j],j) %></td>
 		<% } %>
 	</tr>
     <% } %>
@@ -268,13 +267,13 @@
 </table>
 </script>
 
-<script id='t_wu' type='text/html'>
-<table border width='100%' id='tbl_wu'>
+<script id='t_min' type='text/html'>
+<table border width='100%' id='tbl_min'>
 <tbody>
-    <% for (i = 0; i<zgwu.length; i+=10) { %>
+    <% for (i = 0; i<zgmin.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
-			<td><%= getZgInfo(zgwu[i+j],j) %></td>
+			<td><%= getZgInfo(zgmin[i+j],j) %></td>
 		<% } %>
 	</tr>
     <% } %>
@@ -282,13 +281,13 @@
 </table>
 </script>
 
-<script id='t_qun' type='text/html'>
-<table border width='100%' id='tbl_qun'>
+<script id='t_kou' type='text/html'>
+<table border width='100%' id='tbl_kou'>
 <tbody>
-    <% for (i = 0; i<zgqun.length; i+=10) { %>
+    <% for (i = 0; i<zgkou.length; i+=10) { %>
     <tr>
 		<% for (j = 0; j<10; j++) { %>
-			<td><%= getZgInfo(zgqun[i+j],j) %></td>
+			<td><%= getZgInfo(zgkou[i+j],j) %></td>
 		<% } %>
 	</tr>
     <% } %>
@@ -413,7 +412,7 @@ var callback={
 	getZgInfo:function(info,colindex){
 		if (!info)	return "<div style='width:53px'>&nbsp;</div>";
 		var imgsrc="./zhangong/img/"+info.id+".png";
-		if ($.inArray(info.category,["wei","shu","wu","qun","god"])!=-1 && info.general!=='-'){
+		if ($.inArray(info.category,["guan","jiang","min","kou","god"])!=-1 && info.general!=='-'){
 			imgsrc="../image/generals/avatar/"+info.general+".png";
 			if ($.inArray(info.general,["guanxingzhangbao","erzhang","yanliangwenchou"])!=-1){
 				imgsrc="../image/generals/big/"+info.general+".png";
@@ -489,10 +488,10 @@ $(function(){
 			<ul id="menu">
 				<li><a id="link_overview" href="#">概况</a></li>
 				<li><a id="link_zhonghe" href="#">综合</a></li>
-				<li><a id="link_wei" href="#">魏</a></li>
-				<li><a id="link_shu" href="#">蜀</a></li>
-				<li><a id="link_wu" href="#">吴</a></li>
-				<li><a id="link_qun" href="#">群</a></li>
+				<li><a id="link_guan" href="#">官</a></li>
+				<li><a id="link_jiang" href="#">将</a></li>
+				<li><a id="link_min" href="#">民</a></li>
+				<li><a id="link_kou" href="#">寇</a></li>
 				<li><a id="link_god" href="#">神</a></li>
 				<li><a id="link_3v3" href="#">3v3</a></li>
 				<li><a id="link_1v1" href="#">1v1</a></li>
@@ -501,7 +500,8 @@ $(function(){
 			</ul>
 		</div>
 	</div>
-    <div id="main" style="overflow:hidden">
+    <div id="main">
+<!--<div id="main" style="overflow:hidden"> -->
 		<script type="text/javascript">
 			$.each(tabLists,function(i,tab){
 				document.write('<div id="div_'+tab+'" style="display:none">');
@@ -515,6 +515,11 @@ $(function(){
 				document.write('</div>');
 			});
 			$("#tbl_results").tablePaging({ pageSize: 12,sorting:false});
+			$("#tbl_guan").tablePaging({ pageSize: 4,sorting:false});
+			$("#tbl_jiang").tablePaging({ pageSize: 4,sorting:false});
+			$("#tbl_min").tablePaging({ pageSize: 4,sorting:false});
+			$("#tbl_kou").tablePaging({ pageSize: 4,sorting:false});
+			$("#tbl_zhonghe").tablePaging({ pageSize: 8,sorting:false});
 		</script>
     </div>
 </div>

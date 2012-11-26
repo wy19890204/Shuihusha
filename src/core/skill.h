@@ -198,6 +198,7 @@ public:
     virtual int getExtra(const Player *target) const;
     virtual int getCorrect(const Player *from, const Player *to) const;
     virtual int getAtkrg(const Player *target) const;
+    virtual int getSlashResidue(const Player *target) const;
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 /*

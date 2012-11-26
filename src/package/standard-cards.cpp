@@ -24,7 +24,8 @@ bool Slash::IsAvailable(const Player *player){
     if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
         return false;
 
-    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow();
+    int slash_residue = Sanguosha->correctClient("slashresidue", player);
+    return slash_residue > 0;
 }
 
 bool Slash::isAvailable(const Player *player) const{
@@ -1060,10 +1061,22 @@ RenwangShield::RenwangShield(Suit suit, int number)
     skill = new RenwangShieldSkill;
 }
 
+class CrossbowSkill: public ClientSkill{
+public:
+    CrossbowSkill():ClientSkill("crossbow"){
+    }
+
+    virtual int getSlashResidue(const Player *target) const{
+        if(target->hasWeapon("crossbow"))
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(target);
+    }
+};
+
 class HorseSkill: public DistanceSkill{
 public:
     HorseSkill(): DistanceSkill("horse"){
-
     }
 
     virtual int getCorrect(const Player *from, const Player *to) const{
@@ -1157,6 +1170,7 @@ StandardCardPackage::StandardCardPackage()
           << new EightDiagram(Card::Club);
 
     skills << EightDiagramSkill::GetInstance();
+    skills << new CrossbowSkill;
 
     {
         QList<Card *> horses;

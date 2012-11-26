@@ -195,6 +195,13 @@ public:
         else
             return 0;
     }
+
+    virtual int getSlashResidue(const Player *from) const{
+        if(from->hasMark("@stones"))
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(from);
+    }
 };
 
 class Fuji:public PhaseChangeSkill{

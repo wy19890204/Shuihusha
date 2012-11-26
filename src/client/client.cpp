@@ -1011,8 +1011,7 @@ void Client::speakToServer(const QString &text){
 }
 
 void Client::addHistory(const QString &add_str){
-    if(add_str == "pushPile")
-    {
+    if(add_str == "pushPile"){
         emit card_used();
         return;
     }
@@ -1027,6 +1026,8 @@ void Client::addHistory(const QString &add_str){
         if(!times_str.isEmpty()){
             times_str.remove(QChar('#'));
             times = times_str.toInt();
+            if(times > 100) //times = 101 means addHistory(-1)
+                times = 100 - times;
         }
 
         Self->addHistory(card_name, times);

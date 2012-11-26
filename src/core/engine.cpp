@@ -786,6 +786,8 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
         }
         else if(type == "distance")
             x += skill->getCorrect(from, to);
+        else if(type == "slashresidue")
+            x += skill->getSlashResidue(from);
         else if(type == "attackrange"){
             int y = skill->getAtkrg(from);
             if(y < 0) // fixed attack range
