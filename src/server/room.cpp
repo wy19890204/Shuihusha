@@ -931,7 +931,7 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
 int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason){
 
     //@todo: whoever wrote this had better put a explantory note here
-    if(!who->hasFlag("dongchaee") && who != player){
+    if(!player->hasFlag("loot") && who != player && !who->hasFlag("dongchaee")){
         if(flags == "h" || (flags == "he" && !who->hasEquip()))
             return who->getRandomHandCardId();
     }

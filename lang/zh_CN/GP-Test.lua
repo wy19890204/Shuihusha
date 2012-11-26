@@ -23,9 +23,9 @@ return {
 	["$ubuntenkei"] = "T03",
 	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
-	["designer:ubuntenkei"] = "宇文天启",
+	["designer:ubuntenkei"] = "宇文天启 [测试专用]",
 	["cv:ubuntenkei"] = "新月冰冰",
-	["coder:ubuntenkei"] = "宇文天启 [测试专用]",
+	["coder:ubuntenkei"] = "宇文天启",
 	["illustrator:ubuntenkei"] = "烨子风暴",
 	["ubunb"] = "幻影",
 	[":ubunb"] = "出牌阶段，你可以更改一名角色的武将牌。",
@@ -55,7 +55,7 @@ return {
 	["$catty"] = "T04",
 	["#catty"] = "喵宜夏",
 	["catty"] = "蒲小猫",
-	["designer:catty"] = "宇文天启",
-	["coder:catty"] = "宇文天启 [测试专用]",
+	["designer:catty"] = "宇文天启 [测试专用]",
+	["coder:catty"] = "宇文天启",
 
 }

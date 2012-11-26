@@ -40,7 +40,7 @@ public:
     QString getVersion() const;
     QString getVersionName() const;
     QString getMODName() const;
-    QStringList getExtensions() const;
+    QStringList getExtensions(bool getall = false) const;
     QStringList getLuaExtensions() const;
     QStringList getKingdoms() const;
     QColor getKingdomColor(const QString &kingdom) const;
@@ -66,6 +66,7 @@ public:
     const Card *getCard(const QString &name) const;
     const General *getGeneral(const QString &name) const;
     int getGeneralCount(bool include_banned = false) const;
+    QList<const Skill *> getSkills(const QString &package_name) const;
     const Skill *getSkill(const QString &skill_name) const;
     QStringList getSkillNames() const;
     const TriggerSkill *getTriggerSkill(const QString &skill_name) const;
@@ -83,7 +84,7 @@ public:
     QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
     QList<int> getRandomCards() const;
     QString getRandomGeneralName() const;
-    QStringList getLimitedGeneralNames() const;
+    QStringList getLimitedGeneralNames(bool getall = false) const;
 
     void playAudio(const QString &name) const;
     void playEffect(const QString &filename) const;

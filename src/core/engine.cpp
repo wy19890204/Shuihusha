@@ -336,11 +336,11 @@ QString Engine::getMODName() const{
     return GetConfigFromLuaState(lua, "mod_name").toString();
 }
 
-QStringList Engine::getExtensions() const{
+QStringList Engine::getExtensions(bool getall) const{
     QStringList extensions;
     QList<const Package *> packages = findChildren<const Package *>();
     foreach(const Package *package, packages){
-        if(package->inherits("Scenario"))
+        if(package->inherits("Scenario") && !getall)
             continue;
 
         extensions << package->objectName();
@@ -609,8 +609,21 @@ QStringList Engine::getRandomLords() const{
     return lords;
 }
 
-QStringList Engine::getLimitedGeneralNames() const{
+QStringList Engine::getLimitedGeneralNames(bool getall) const{
     QStringList general_names;
+    if(getall){
+        QHashIterator<QString, const General *> itor(generals);
+        while(itor.hasNext()){
+            itor.next();
+            general_names << itor.key();
+        }
+        QHashIterator<QString, const General *> itpr(hidden_generals);
+        while(itpr.hasNext()){
+            itpr.next();
+            general_names << itpr.key();
+        }
+        return general_names;
+    }
     QHashIterator<QString, const General *> itor(generals);
     while(itor.hasNext()){
         itor.next();
@@ -732,6 +745,25 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
     }
 
     playEffect(path);
+}
+
+QList<const Skill *> Engine::getSkills(const QString &package_name) const{
+    QList<const Skill *> skills;
+    const Package *package = Sanguosha->findChild<const Package *>(package_name);
+    if(package && !package->inherits("CardPackage")){
+        foreach(const Skill *skill, package->getSkills()){
+            if(skill->isVisible() && skill->getFrequency() != Skill::NotSkill)
+                skills << skill;
+        }
+        QList<General *> all_generals = package->findChildren<General *>();
+        foreach(General *general, all_generals){
+            foreach(const Skill *skill, general->findChildren<const Skill *>()){
+                if(skill->isVisible() && skill->getFrequency() != Skill::NotSkill)
+                    skills << skill;
+            }
+        }
+    }
+    return skills;
 }
 
 const Skill *Engine::getSkill(const QString &skill_name) const{

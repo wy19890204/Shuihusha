@@ -689,7 +689,7 @@ public:
 	SkillCard *cloneSkillCard(const char *name) const;
 	QString getVersion() const;
 	QString getVersionName() const;
-	QStringList getExtensions() const;
+	QStringList getExtensions(bool getall = false) const;
 	QStringList getLuaExtensions() const;
 	QStringList getKingdoms() const;
 	QColor getKingdomColor(const char *kingdom) const;
@@ -711,7 +711,9 @@ public:
 
 	const General *getGeneral(const char *name) const;
 	int getGeneralCount(bool include_banned = false) const;
+	QList<const Skill *> getSkills(const char *package_name) const;
 	const Skill *getSkill(const char *skill_name) const;
+	QStringList getSkillNames() const;
 	const TriggerSkill *getTriggerSkill(const char *skill_name) const;
 	const ViewAsSkill *getViewAsSkill(const char *skill_name) const;
 	QList<const ClientSkill *> getClientSkills() const;
@@ -725,7 +727,7 @@ public:
 	QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
 	QList<int> getRandomCards() const;
 	QString getRandomGeneralName() const;
-	QStringList getLimitedGeneralNames() const;
+	QStringList getLimitedGeneralNames(bool getall = false) const;
 
 	void playAudio(const char *name) const;
 	void playEffect(const char *filename) const;

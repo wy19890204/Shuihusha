@@ -6,42 +6,39 @@
 function genJson()
 	local gens,trans,descs,packset,related,lordskill,packlist={},{},{},{},{},{},{}
 
-	local generalnames=sgs.Sanguosha:getLimitedGeneralNames()
-	local hidden={"zuocif","sp_diaochan2","sp_sunshangxiang","sp_pangde","shenlvbu1","shenlvbu2","sp_caiwenji"}
---	local hidden={"fangjie","zhangbao","liruilan","renyuan","xisheng","ubuntenkei","catty"}
-	table.insertTable(generalnames,hidden)
-
-	for _, pack in ipairs(sgs.Sanguosha:getExtensions()) do	packset[pack]={} end
+	local generalnames=sgs.Sanguosha:getLimitedGeneralNames(true)
 
 	for _, generalname in ipairs(generalnames) do
 		local general = sgs.Sanguosha:getGeneral(generalname)
 		if general then
 			local gen=string.format('"%s":"%s"',general:objectName(),sgs.Sanguosha:translate(general:objectName()))
 			if not table.contains(gens,gen) then table.insert(gens,gen) end
+		end
+	end
+	for _, pack in ipairs(sgs.Sanguosha:getExtensions(true)) do
+		packset[pack]={}
 
-			pack=general:getPackage()
-			for _, skill in sgs.qlist(general:getVisibleSkillList()) do
-				skillname=skill:objectName()
+		for _, skill in sgs.qlist(sgs.Sanguosha:getSkills(pack)) do
+			skillname=skill:objectName()
 
-				local tran=string.format('"%s":"%s"',skillname,sgs.Sanguosha:translate(skillname))
-				if not table.contains(trans,tran) then table.insert(trans,tran) end
+			local tran=string.format('"%s":"%s"',skillname,sgs.Sanguosha:translate(skillname))
+			if not table.contains(trans,tran) then table.insert(trans,tran) end
 
-				local desc=sgs.Sanguosha:translate(":"..skillname)
-				desc=string.format('"%s":"%s"',skillname,string.gsub(desc,"\r*\n+","<br>"))
-				if not table.contains(descs,desc) then table.insert(descs,desc) end
+			local desc=sgs.Sanguosha:translate(":"..skillname)
+			desc=string.format('"%s":"%s"',skillname,string.gsub(desc,"\r*\n+","<br>"))
+			if not table.contains(descs,desc) then table.insert(descs,desc) end
 
-				if skill:isLordSkill() then table.insert(lordskill, string.format('"%s":"1"',skillname)) end
+			if skill:isLordSkill() then table.insert(lordskill, string.format('"%s":"1"',skillname)) end
 
-				local item=string.format('"%s"',skillname)
-				if not table.contains(packset[pack],item) then table.insert(packset[pack],item) end
+			local item=string.format('"%s"',skillname)
+			if not table.contains(packset[pack],item) then table.insert(packset[pack],item) end
 
-				local rskill={}
-				for _, skill in sgs.qlist(sgs.Sanguosha:getRelatedSkills(skillname)) do
-					table.insert(rskill,'"'..skill:objectName()..'"')
-				end
-				rskilllist=string.format('"%s":[%s]',skillname,table.concat(rskill,","))
-				if #rskill>0 and not table.contains(related,rskilllist) then table.insert(related,rskilllist) end
+			local rskill={}
+			for _, skill in sgs.qlist(sgs.Sanguosha:getRelatedSkills(skillname)) do
+				table.insert(rskill,'"'..skill:objectName()..'"')
 			end
+			rskilllist=string.format('"%s":[%s]',skillname,table.concat(rskill,","))
+			if #rskill>0 and not table.contains(related,rskilllist) then table.insert(related,rskilllist) end
 		end
 	end
 
