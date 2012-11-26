@@ -53,4 +53,4 @@ if not done_loading then
 	sgs.Sanguosha:setProperty("DoneLoading", done_loading)
 end
 
-dofile "lua/genjson.lua"
+--dofile "lua/genjson.lua"

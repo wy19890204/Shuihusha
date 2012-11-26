@@ -672,6 +672,7 @@ public:
 
 	Package(const char *name);
 	Type getType() const;
+	QList<const Skill *> getSkills() const;
 };
 
 class Engine: public QObject
