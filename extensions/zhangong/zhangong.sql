@@ -201,7 +201,6 @@ INSERT INTO "skills" VALUES('qingshang', 0, 0);
 INSERT INTO "skills" VALUES('douzhan', 0, 0);
 INSERT INTO "skills" VALUES('feizhi', 0, 0);
 INSERT INTO "skills" VALUES('guzhu', 0, 0);
-INSERT INTO "skills" VALUES('beishui', 0, 0);
 INSERT INTO "skills" VALUES('fangdiao', 0, 0);
 INSERT INTO "skills" VALUES('yinlang', 0, 0);
 INSERT INTO "skills" VALUES('pushou', 0, 0);
