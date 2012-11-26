@@ -142,7 +142,7 @@ INSERT INTO "skills" VALUES('yongle', 0, 0);
 INSERT INTO "skills" VALUES('meihuo', 0, 0);
 INSERT INTO "skills" VALUES('shengui', 0, 0);
 INSERT INTO "skills" VALUES('qinxin', 0, 0);
-INSERT INTO "skills" VALUES('suocai', 0, 0);
+INSERT INTO "skills" VALUES('huakui', 0, 0);
 INSERT INTO "skills" VALUES('kong1iang', 0, 0);
 INSERT INTO "skills" VALUES('shuangzhan', 0, 0);
 INSERT INTO "skills" VALUES('yinyu', 0, 0);

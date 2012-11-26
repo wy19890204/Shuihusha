@@ -430,7 +430,7 @@ bool BinggongCard::targetFilter(const QList<const Player *> &targets, const Play
 }
 
 void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    int num = this->getSubcards().length();
+    int num = getSubcards().length();
     ServerPlayer *target = targets.first();
     target->obtainCard(this, false);
     if(num >= 3){
@@ -444,6 +444,10 @@ class BinggongViewAsSkill: public ViewAsSkill{
 public:
     BinggongViewAsSkill():ViewAsSkill("binggong"){
 
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{

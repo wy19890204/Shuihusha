@@ -844,29 +844,76 @@ void Client::askForChoice(const Json::Value &ask_str){
     QDialog *dialog = new QDialog;
     dialog->setWindowTitle(Sanguosha->translate(skill_name));
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(new QLabel(tr("Please choose:")));
+    if(options.count() < 6){
+        QVBoxLayout *layout = new QVBoxLayout;
+        layout->addWidget(new QLabel(tr("Please choose:")));
 
-    foreach(QString option, options){
-        QCommandLinkButton *button = new QCommandLinkButton;
-        QString text = QString("%1:%2").arg(skill_name).arg(option);
-        QString translated = Sanguosha->translate(text);
-        if(text == translated)
-            translated = Sanguosha->translate(option);
+        foreach(QString option, options){
+            QCommandLinkButton *button = new QCommandLinkButton;
+            QString text = QString("%1:%2").arg(skill_name).arg(option);
+            QString translated = Sanguosha->translate(text);
+            if(text == translated)
+                translated = Sanguosha->translate(option);
 
-        button->setObjectName(option);
-        button->setText(translated);
+            button->setObjectName(option);
+            button->setText(translated);
+            const Skill *skill = Sanguosha->getSkill(option);
+            if(skill)
+                button->setToolTip(skill->getDescription());
 
-        connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
-        connect(button, SIGNAL(clicked()), this, SLOT(onPlayerMakeChoice()));
+            connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
+            connect(button, SIGNAL(clicked()), this, SLOT(onPlayerMakeChoice()));
 
-        layout->addWidget(button);
+            layout->addWidget(button);
+        }
+
+        dialog->setObjectName(options.first());
+        connect(dialog, SIGNAL(rejected()), this, SLOT(onPlayerMakeChoice()));
+
+        dialog->setLayout(layout);
     }
+    else{
+        QGroupBox *box = new QGroupBox(tr("Please choose:"));
+        QGridLayout *layout = new QGridLayout;
+        layout->setOriginCorner(Qt::TopLeftCorner);
+        box->setLayout(layout);
 
-    dialog->setObjectName(options.first());
-    connect(dialog, SIGNAL(rejected()), this, SLOT(onPlayerMakeChoice()));
+        int a = options.count(); //use Newton's method to qSqrt(a)
+        qreal x = a/2;
+        for(int i=1;i<3;i++)
+            x = (x + a/x)/2;
+        int columns = (int)x;
 
-    dialog->setLayout(layout);
+        int i = 0;
+        foreach(QString option, options){
+            QCommandLinkButton *button = new QCommandLinkButton;
+            QString text = QString("%1:%2").arg(skill_name).arg(option);
+            QString translated = Sanguosha->translate(text);
+            if(text == translated)
+                translated = Sanguosha->translate(option);
+
+            button->setObjectName(option);
+            button->setText(translated);
+            const Skill *skill = Sanguosha->getSkill(option);
+            if(skill)
+                button->setToolTip(skill->getDescription());
+
+            connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
+            connect(button, SIGNAL(clicked()), this, SLOT(onPlayerMakeChoice()));
+
+            int row = i / columns;
+            int column = i % columns;
+            i++;
+            layout->addWidget(button, row, column);
+        }
+
+        dialog->setObjectName(options.first());
+        connect(dialog, SIGNAL(rejected()), this, SLOT(onPlayerMakeChoice()));
+
+        QHBoxLayout *ayout = new QHBoxLayout;
+        ayout->addWidget(box);
+        dialog->setLayout(ayout);
+    }
 
     ask_dialog = dialog;
     Sanguosha->playAudio("pop-up");
