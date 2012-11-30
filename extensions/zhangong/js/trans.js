@@ -21,6 +21,8 @@ var trans={
 	"10p":"十人局(单内)",
 	"10pz":"十人局(无内)",
 	"dusong":"独松关",
+	"landlord":"斗地主",
+	"couple":"花田错",
 
 	"win":"胜利",
 	"lose":"败北",
@@ -152,8 +154,9 @@ var trans_skills={
 	"pushou":"扑手",
 	"zhengbing":"正兵",
 	"qi6ing":"奇兵",
-	"tigerou":"虎王",
-	"wusheng":"武圣",
+	"lesuo":"勒索",
+	"bizhai":"逼债",
+	"yaoyue":"邀月",
 	"boxue":"剥削",
 	"fangdai":"放贷"
 };
@@ -237,6 +240,7 @@ var trans_general={
 	"huangxin":"黄信",
 	"daizong":"戴宗",
 	"huarong":"花荣",
+	"ubuntenkei":"作弊自重",
 	"sujiang":"士兵男",
 	"sujiangf":"士兵女"
 };
