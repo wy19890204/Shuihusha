@@ -4,6 +4,14 @@
 #include "package.h"
 #include "standard.h"
 
+class Discuss:public AOE{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Discuss(Card::Suit suit, int number);
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 class Burn: public SingleTargetTrick{
     Q_OBJECT
 
@@ -24,16 +32,6 @@ public:
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual bool isAvailable(const Player *player) const;
     static bool IsAvailable(const Player *player);
-};
-
-class Drivolt:public SingleTargetTrick{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE Drivolt(Card::Suit suit, int number);
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
 class Wiretap: public SingleTargetTrick{
@@ -73,48 +71,87 @@ public:
     virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
-class Treasury: public Disaster{
+class SnowStop:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Treasury(Card::Suit suit, int number);
-    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
+    Q_INVOKABLE SnowStop(Card::Suit suit, int number);
 };
 
-class Tsunami: public Disaster{
+class Shark:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE Tsunami(Card::Suit suit, int number);
-    virtual void takeEffect(ServerPlayer *target, bool good = false) const;
+    Q_INVOKABLE Shark(Card::Suit suit, int number);
 };
 
-class DoubleWhip:public Weapon{
+class SpaceAsk:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE DoubleWhip(Card::Suit suit, int number);
+    Q_INVOKABLE SpaceAsk(Card::Suit suit, int number);
+    virtual void onMove(const CardMoveStruct &move) const;
 };
 
-class MeteorSword:public Weapon{
+class SevenStar:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE MeteorSword(Card::Suit suit, int number);
+    Q_INVOKABLE SevenStar(Card::Suit suit, int number);
+    virtual void onInstall(ServerPlayer *player) const;
 };
 
-class SunBow:public Weapon{
+class Rainbow:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE SunBow(Card::Suit suit, int number);
+    Q_INVOKABLE Rainbow(Card::Suit suit, int number);
 };
 
-class GoldArmor:public Armor{
+class Pendant:public Armor{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE GoldArmor(Card::Suit suit, int number);
+    Q_INVOKABLE Pendant(Card::Suit suit, int number);
+    void onUninstall(ServerPlayer *player) const;
+};
+
+class Scroll:public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Scroll(Card::Suit suit, int number);
+};
+
+class Square:public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Square(Card::Suit suit, int number);
+
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class Mirage: public DefensiveHorse{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Mirage(Card::Suit suit, int number);
+};
+
+class Weasel: public OffensiveHorse{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Weasel(Card::Suit suit, int number);
+
+    virtual void onInstall(ServerPlayer *player) const;
+    virtual void onUninstall(ServerPlayer *player) const;
+    virtual QString getEffectPath(bool is_male) const;
+
+private:
+    TriggerSkill *skill;
 };
 
 class PloughPackage: public Package{

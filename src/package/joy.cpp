@@ -129,97 +129,6 @@ KusoPackage::KusoPackage()
     type = CardPack;
 }
 
-class GrabPeach: public TriggerSkill{
-public:
-    GrabPeach():TriggerSkill("grab_peach"){
-        events << CardUsed;
-    }
-
-    virtual bool triggerable(const ServerPlayer *) const{
-        return true;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("Peach")){
-            QList<ServerPlayer *> players = room->getOtherPlayers(player);
-
-            foreach(ServerPlayer *p, players){
-                if(p->getOffensiveHorse() == parent() &&
-                   p->askForSkillInvoke("grab_peach", data))
-                {
-                    room->throwCard(p->getOffensiveHorse());
-                    p->playCardEffect(objectName());
-                    p->obtainCard(use.card);
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-};
-
-Monkey::Monkey(Card::Suit suit, int number)
-    :OffensiveHorse(suit, number)
-{
-    setObjectName("monkey");
-
-    grab_peach = new GrabPeach;
-    grab_peach->setParent(this);
-}
-
-void Monkey::onInstall(ServerPlayer *player) const{
-    player->getRoom()->getThread()->addTriggerSkill(grab_peach);
-}
-
-void Monkey::onUninstall(ServerPlayer *player) const{
-
-}
-
-QString Monkey::getEffectPath(bool ) const{
-    return "audio/card/common/monkey.ogg";
-}
-
-class GaleShellSkill: public ArmorSkill{
-public:
-    GaleShellSkill():ArmorSkill("gale-shell"){
-        events << Predamaged;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-        if(damage.nature == DamageStruct::Fire){
-            LogMessage log;
-            log.type = "#GaleShellDamage";
-            log.from = player;
-            log.arg = QString::number(damage.damage);
-            log.arg2 = QString::number(damage.damage + 1);
-            room->sendLog(log);
-
-            damage.damage ++;
-            data = QVariant::fromValue(damage);
-        }
-        return false;
-    }
-};
-
-GaleShell::GaleShell(Suit suit, int number) :Armor(suit, number){
-    setObjectName("gale-shell");
-    skill = new GaleShellSkill;
-
-    target_fixed = false;
-}
-
-bool GaleShell::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty() && Self->distanceTo(to_select) <= 1;
-}
-
-void GaleShell::onUse(Room *room, const CardUseStruct &card_use) const{
-    Card::onUse(room, card_use);
-}
-
 Poison::Poison(Suit suit, int number)
     : BasicCard(suit, number){
     setObjectName("poison");
@@ -263,8 +172,6 @@ JoyPackage::JoyPackage()
 {
     QList<Card *> cards;
     cards
-                << new Monkey(Card::Diamond, 5)
-                << new GaleShell(Card::Heart, 1)
                 << new Poison(Card::Heart, 7)
                 << new Poison(Card::Club, 9)
                 << new Poison(Card::Diamond, 11)

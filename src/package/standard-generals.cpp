@@ -270,49 +270,29 @@ public:
     }
 };
 
-class Tianzhi: public PhaseChangeSkill{
+class Tianzhi: public TriggerSkill{
 public:
-    Tianzhi():PhaseChangeSkill("tianzhi$"){
-        frequency = Wake;
+    Tianzhi():TriggerSkill("tianzhi$"){
+        events << HpRecover;
+        frequency = Compulsory;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target != NULL && target->getPhase() == Player::Start
-                && target->hasLordSkill("tianzhi")
-                && target->isAlive()
-                && target->getMark("tianzhi") == 0;
+        return target->hasLordSkill(objectName());
     }
 
-    virtual bool onPhaseChange(ServerPlayer *jingtianming) const{
-        Room *room = jingtianming->getRoom();
-
-        bool can_invoke = true;
-        foreach(ServerPlayer *p, room->getAllPlayers()){
-            if(jingtianming->getHp() > p->getHp()){
-                can_invoke = false;
-                break;
-            }
-        }
-
-        if(can_invoke){
-            room->playSkillEffect(objectName());
+    virtual bool trigger(TriggerEvent , Room *room, ServerPlayer *player, QVariant &data) const{
+        RecoverStruct recover = data.value<RecoverStruct>();
+        if(recover.who != player && recover.who->getKingdom() == "xia" && recover.card->inherits("Peach")){
+            recover.recover ++;
 
             LogMessage log;
-            log.type = "#TianzhiWake";
-            log.from = jingtianming;
-            log.arg = QString::number(jingtianming->getHp());
-            log.arg2 = objectName();
+            log.type = "#Tianzhi";
+            log.from = player;
+            log.arg = objectName();
             room->sendLog(log);
 
-            room->setPlayerMark(jingtianming, "tianzhi", 1);
-            room->setPlayerProperty(jingtianming, "maxhp", jingtianming->getMaxHp() - 1);
-
-            if(jingtianming->isAlive()){
-                RecoverStruct recover;
-                recover.who = jingtianming;
-                room->recover(jingtianming, recover);
-                room->acquireSkill(jingtianming, "feigong");
-            }
+            data = QVariant::fromValue(recover);
         }
         return false;
     }
@@ -554,11 +534,10 @@ class Feiming: public TriggerSkill{
 public:
     Feiming():TriggerSkill("feiming"){
         events << Dying;
-        frequency = Compulsory;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *ren, QVariant &data) const{
-        if(ren->faceUp()){
+        if(ren->faceUp() && ren->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName());
             LogMessage log;
             log.type = "#TriggerSkill";
@@ -1049,7 +1028,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.card->inherits("Slash") && !damage.card->inherits("Duel"))
+        if(!damage.card->inherits("Slash") && !damage.card->inherits("Assassinate"))
             return false;
         if(damage.to && !player->isKongcheng() && !damage.to->isKongcheng() &&
            player->askForSkillInvoke(objectName())){
@@ -1190,7 +1169,11 @@ public:
 class Chenxu: public TriggerSkill{
 public:
     Chenxu(): TriggerSkill("chenxu"){
-        events << SlashMissed;
+        events << CardResponsed;
+    }
+
+    virtual int getPriority() const{
+        return 2;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -1198,16 +1181,17 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        CardStar card_star = data.value<CardStar>();
+        if(!card_star->inherits("Jink"))
+            return false;
         ServerPlayer *wolf = room->findPlayerBySkillName(objectName());
         if(wolf && wolf != player){
-            SlashEffectStruct effect = data.value<SlashEffectStruct>();
-
-            if(room->askForCard(wolf, "EquipCard", "@chenxu:" + effect.to->objectName(), data, CardDiscarded)){
+            if(room->askForCard(wolf, "EquipCard", "@chenxu:" + player->objectName(), data, CardDiscarded)){
                 Duel *dl = new Duel(Card::NoSuit, 0);
                 dl->setCancelable(false);
                 CardUseStruct use;
                 use.from = wolf;
-                use.to << effect.to;
+                use.to << player;
                 use.card = dl;
                 room->useCard(use);
             }
