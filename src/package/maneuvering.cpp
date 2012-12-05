@@ -95,12 +95,6 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         room->sendLog(log);
 
         room->setPlayerFlag(effect.to, "drank");
-
-        if(!Config.BanPackages.contains("events")){
-            ServerPlayer *source = room->findPlayerWhohasEventCard("jiangjieshi");
-            if(source && source == effect.to)
-                room->askForUseCard(effect.to, "Jiangjieshi", "@jiangjie");
-        }
     }
 }
 

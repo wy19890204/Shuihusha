@@ -54,7 +54,6 @@ SOURCES += \
 	src/package/standard.cpp \
 	src/package/plough.cpp \
 	src/package/maneuvering.cpp \
-	src/package/events.cpp \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
@@ -179,7 +178,6 @@ HEADERS += \
 	src/package/standard.h \
 	src/package/plough.h \
 	src/package/maneuvering.h \
-	src/package/events.h \
 	src/package/gift.h \
 	src/package/rat.h \
 	src/package/ox.h \

@@ -3097,23 +3097,6 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
         thread->trigger(CardLostDone, this, from);
     if(to)
         thread->trigger(CardGotDone, this, to);
-
-    if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
-        ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
-        if(sour && sour != getCurrent()){
-            const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
-            if(fight){
-                sour->playCardEffect("@jiangjieshi2");
-                LogMessage log;
-                log.type = "#Jiangjs";
-                log.from = sour;
-                log.arg = "jiangjieshi";
-                log.arg2 = card->objectName();
-                sendLog(log);
-                sour->obtainCard(card);
-            }
-        }
-    }
 }
 
 void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope){
