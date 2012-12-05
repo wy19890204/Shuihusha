@@ -78,13 +78,6 @@ public:
     Q_INVOKABLE SnowStop(Card::Suit suit, int number);
 };
 
-class Shark:public Weapon{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE Shark(Card::Suit suit, int number);
-};
-
 class SpaceAsk:public Weapon{
     Q_OBJECT
 

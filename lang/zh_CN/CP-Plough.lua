@@ -1,7 +1,7 @@
 -- translation for PloughPackage
 
 return {
-	["plough"] = "天罡卡牌包",
+	["plough"] = "地利卡牌包",
 
 	["ecstasy"] = "白马非马",
 	[":ecstasy"] = "基本牌\

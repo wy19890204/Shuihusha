@@ -10,8 +10,8 @@ config = {
 	package_names = {
 
 	"StandardCard",
-	"Plough",
 	"Maneuvering",
+	"Plough",
 --	"ExCard",
 --	"Gift",
 --	"Kuso",

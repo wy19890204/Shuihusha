@@ -5,6 +5,7 @@
 #include "client.h"
 #include "carditem.h"
 #include "standard.h"
+#include "standard-equips.h"
 
 Discuss::Discuss(Suit suit, int number)
     :AOE(suit, number)
@@ -203,31 +204,6 @@ SnowStop::SnowStop(Suit suit, int number)
 {
     setObjectName("snow_stop");
     skill = new SnowStopSkill;
-}
-
-class SharkSkill: public WeaponSkill{
-public:
-    SharkSkill():WeaponSkill("shark"){
-        events << DamageProceed;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DamageStruct damage = data.value<DamageStruct>();
-
-        if(damage.card && damage.card->inherits("Slash") && !damage.chain){
-            if(damage.to->getWeapon())
-                room->throwCard(damage.to->getWeapon(), damage.to, player);
-        }
-
-        return false;
-    }
-};
-
-Shark::Shark(Suit suit, int number)
-    :Weapon(suit, number, 2)
-{
-    setObjectName("shark");
-    skill = new SharkSkill;
 }
 
 class SpaceAskSkill : public WeaponSkill{
@@ -578,74 +554,69 @@ PloughPackage::PloughPackage()
     type = CardPack;
     QList<Card *> cards;
 
+    DefensiveHorse *mirage = new DefensiveHorse(Card::Diamond, 13);
+    mirage->setObjectName("mirage");
     cards
     // spade
-            << new Assassinate(Card::Spade, 1)
-            << new Discuss(Card::Spade, 2)
-            << new SnowStop(Card::Spade, 3)
-            << new Ecstasy(Card::Spade, 4)
-            << new Ecstasy(Card::Spade, 5)
-            << new Ecstasy(Card::Spade, 6)
-            << new Slash(Card::Spade, 7)
+            << new SpaceAsk(Card::Spade, 1)
+            << new Rainbow(Card::Spade, 2)
+            << new Analeptic(Card::Spade, 3)
+            << new Wiretap(Card::Spade, 4)
+            << new FireSlash(Card::Spade, 5)
+            << new Slash(Card::Spade, 6)
+            << new Scroll(Card::Spade, 7)
             << new Slash(Card::Spade, 8)
-            << new ThunderSlash(Card::Spade, 9)
-            << new ThunderSlash(Card::Spade, 10)
+            << new Slash(Card::Spade, 9)
+            << new Discuss(Card::Spade, 10)
             << new ThunderSlash(Card::Spade, 11)
-            << new Wiretap(Card::Spade, 12)
-            << new Burn(Card::Spade, 13)
+            << new Burn(Card::Spade, 12)
+            << new Counterplot(Card::Spade, 13)
 
     // diamond
-            << new Dismantlement(Card::Diamond, 1)
-            << new Peach(Card::Diamond, 2)
-            << new FireSlash(Card::Diamond, 3)
-            << new Slash(Card::Diamond, 4)
-            << new Slash(Card::Diamond, 5)
-            << new Jink(Card::Diamond, 6)
-            << new Jink(Card::Diamond, 7)
-            << new Shark(Card::Diamond, 8)
-            << new Analeptic(Card::Diamond, 9)
-            << new Slash(Card::Diamond, 10)
-            << new SpaceAsk(Card::Diamond, 11)
-            << new Assassinate(Card::Diamond, 12)
-            << new Counterplot(Card::Diamond, 13)
+            << new Counterplot(Card::Diamond, 1)
+            << new Assassinate(Card::Diamond, 2)
+            << new Ecstasy(Card::Diamond, 3)
+            << new Ecstasy(Card::Diamond, 4)
+            << new Peach(Card::Diamond, 5)
+            << new Burn(Card::Diamond, 6)
+            << new Slash(Card::Diamond, 7)
+            << new Jink(Card::Diamond, 8)
+            << new Jink(Card::Diamond, 9)
+            << new Jink(Card::Diamond, 10)
+            << new Jink(Card::Diamond, 11)
+            << new Jink(Card::Diamond, 12)
+            << mirage
 
     // club
-            << new Square(Card::Club, 1)
-            << new Ecstasy(Card::Club, 2)
-            << new Ecstasy(Card::Club, 3)
-            << new Slash(Card::Club, 4)
-            << new Slash(Card::Club, 5)
-            << new ThunderSlash(Card::Club, 6)
-            << new SevenStar(Card::Club, 7)
-            << new Mirage(Card::Club, 8)
-            << new Analeptic(Card::Club, 9)
-            << new Pendant(Card::Club, 10)
-            << new Wiretap(Card::Club, 11)
-            << new IronChain(Card::Club, 12)
-            << new IronChain(Card::Club, 13)
+            << new Pendant(Card::Club, 1)
+            << new Assassinate(Card::Club, 2)
+            << new Analeptic(Card::Club, 3)
+            << new Wiretap(Card::Club, 4)
+            << new Weasel(Card::Club, 5)
+            << new Slash(Card::Club, 6)
+            << new Slash(Card::Club, 7)
+            << new FireSlash(Card::Club, 8)
+            << new Slash(Card::Club, 9)
+            << new Discuss(Card::Club, 10)
+            << new Counterplot(Card::Club, 11)
+            << new ThunderSlash(Card::Club, 12)
+            << new ThunderSlash(Card::Club, 13)
 
     // heart
-            << new Rainbow(Card::Heart, 1)
-            << new FireSlash(Card::Heart, 2)
+            << new Crossbow(Card::Heart, 1)
+            << new Assassinate(Card::Heart, 2)
             << new Slash(Card::Heart, 3)
-            << new Scroll(Card::Heart, 4)
-            << new Jink(Card::Heart, 5)
-            << new Jink(Card::Heart, 6)
-            << new Jink(Card::Heart, 7)
-            << new Jink(Card::Heart, 8)
+            << new Jink(Card::Heart, 4)
+            << new Peach(Card::Heart, 5)
+            << new Square(Card::Heart, 6)
+            << new SevenStar(Card::Heart, 7)
+            << new Slash(Card::Heart, 8)
             << new Analeptic(Card::Heart, 9)
             << new Peach(Card::Heart, 10)
-            << new Peach(Card::Heart, 11)
-            << new Weasel(Card::Heart, 12)
-            << new Counterplot(Card::Heart, 13);
-/*
-    DefensiveHorse *jade = new DefensiveHorse(Card::Heart, 12);
-    jade->setObjectName("jade");
-    OffensiveHorse *brown = new OffensiveHorse(Card::Club, 8);
-    brown->setObjectName("brown");
+            << new ThunderSlash(Card::Heart, 11)
+            << new Ecstasy(Card::Heart, 12)
+            << new Jink(Card::Heart, 13);
 
-    cards << jade << brown;
-*/
     foreach(Card *card, cards)
         card->setParent(this);
 }

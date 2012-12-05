@@ -7,32 +7,6 @@
 #include "room.h"
 #include "settings.h"
 
-NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
-    :Slash(suit, number)
-{
-    this->nature = nature;
-}
-
-bool NatureSlash::match(const QString &pattern) const{
-    if(pattern == "slash")
-        return true;
-    else
-        return Slash::match(pattern);
-}
-
-ThunderSlash::ThunderSlash(Suit suit, int number)
-    :NatureSlash(suit, number, DamageStruct::Thunder)
-{
-    setObjectName("thunder_slash");
-}
-
-FireSlash::FireSlash(Suit suit, int number)
-    :NatureSlash(suit, number, DamageStruct::Fire)
-{
-    setObjectName("fire_slash");
-    nature = DamageStruct::Fire;
-}
-
 Analeptic::Analeptic(Card::Suit suit, int number)
     :BasicCard(suit, number)
 {
@@ -96,6 +70,50 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
 
         room->setPlayerFlag(effect.to, "drank");
     }
+}
+
+class DoubleSwordSkill: public WeaponSkill{
+public:
+    DoubleSwordSkill():WeaponSkill("double_sword"){
+        events << SlashEffect;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+
+        if(effect.from->getGeneral()->isMale() != effect.to->getGeneral()->isMale()){
+            if(effect.from->askForSkillInvoke(objectName())){
+                bool draw_card = false;
+
+                if(player->getGeneral()->isMale())
+                    player->playCardEffect("Edouble_sword1", "weapon");
+                else
+                    player->playCardEffect("Edouble_sword2", "weapon");
+                if(effect.to->isKongcheng())
+                    draw_card = true;
+                else{
+                    QString prompt = "double-sword-card:" + effect.from->getGeneralName();
+                    const Card *card = room->askForCard(effect.to, ".", prompt, QVariant(), CardDiscarded);
+                    if(card){
+                        room->throwCard(card, effect.to);
+                    }else
+                        draw_card = true;
+                }
+
+                if(draw_card)
+                    effect.from->drawCards(1);
+            }
+        }
+
+        return false;
+    }
+};
+
+DoubleSword::DoubleSword(Suit suit, int number)
+    :Weapon(suit, number, 2)
+{
+    setObjectName("double_sword");
+    skill = new DoubleSwordSkill;
 }
 
 class FanSkill: public WeaponSkill{
@@ -396,30 +414,32 @@ ManeuveringPackage::ManeuveringPackage()
 
     // spade
     cards
-            << new GudingBlade(Card::Spade, 1)
+            << new Nullification(Card::Spade, 1)
             << new Vine(Card::Spade, 2)
-            << new Analeptic(Card::Spade, 3)
-            << new ThunderSlash(Card::Spade, 4)
-            << new ThunderSlash(Card::Spade, 5)
-            << new ThunderSlash(Card::Spade, 6)
-            << new ThunderSlash(Card::Spade, 7)
-            << new ThunderSlash(Card::Spade, 8)
+            << new FireAttack(Card::Spade, 3)
+            << new SupplyShortage(Card::Spade, 4)
+            << new Slash(Card::Spade, 5)
+            << new SnowStop(Card::Spade, 6)
+            << new Slash(Card::Spade, 7)
+            << new Slash(Card::Spade, 8)
             << new Analeptic(Card::Spade, 9)
-            << new SupplyShortage(Card::Spade,10)
+            << new GudingBlade(Card::Spade, 10)
             << new IronChain(Card::Spade, 11)
             << new IronChain(Card::Spade, 12)
-            << new Counterplot(Card::Spade, 13);
+            << new ThunderSlash(Card::Spade, 13);
 
     // club
+    DefensiveHorse *blackdragon = new DefensiveHorse(Card::Club, 5);
+    blackdragon->setObjectName("blackdragon");
     cards
             << new SilverLion(Card::Club, 1)
             << new Vine(Card::Club, 2)
-            << new Analeptic(Card::Club, 3)
+            << new Slash(Card::Club, 3)
             << new SupplyShortage(Card::Club, 4)
-            << new ThunderSlash(Card::Club, 5)
-            << new ThunderSlash(Card::Club, 6)
-            << new ThunderSlash(Card::Club, 7)
-            << new ThunderSlash(Card::Club, 8)
+            << blackdragon
+            << new Slash(Card::Club, 6)
+            << new FireSlash(Card::Club, 7)
+            << new Slash(Card::Club, 8)
             << new Analeptic(Card::Club, 9)
             << new IronChain(Card::Club, 10)
             << new IronChain(Card::Club, 11)
@@ -427,40 +447,38 @@ ManeuveringPackage::ManeuveringPackage()
             << new IronChain(Card::Club, 13);
 
     // heart
+    OffensiveHorse *kurotora = new OffensiveHorse(Card::Heart, 13);
+    kurotora->setObjectName("kurotora");
     cards
-            << new Nullification(Card::Heart, 1)
+            << new DoubleSword(Card::Heart, 1)
             << new FireAttack(Card::Heart, 2)
-            << new FireAttack(Card::Heart, 3)
-            << new FireSlash(Card::Heart, 4)
-            << new Peach(Card::Heart, 5)
-            << new Peach(Card::Heart, 6)
-            << new FireSlash(Card::Heart, 7)
-            << new Jink(Card::Heart, 8)
-            << new Jink(Card::Heart, 9)
-            << new FireSlash(Card::Heart, 10)
-            << new Jink(Card::Heart, 11)
-            << new Jink(Card::Heart, 12)
-            << new Nullification(Card::Heart, 13);
+            << new Jink(Card::Heart, 3)
+            << new FireAttack(Card::Heart, 4)
+            << new Jink(Card::Heart, 5)
+            << new Lightning(Card::Heart, 6)
+            << new Peach(Card::Heart, 7)
+            << new Peach(Card::Heart, 8)
+            << new Slash(Card::Heart, 9)
+            << new Slash(Card::Heart, 10)
+            << new Nullification(Card::Heart, 11)
+            << new ThunderSlash(Card::Heart, 12)
+            << kurotora;
 
     // diamond
     cards
             << new Fan(Card::Diamond, 1)
-            << new Peach(Card::Diamond, 2)
-            << new Peach(Card::Diamond, 3)
-            << new FireSlash(Card::Diamond, 4)
-            << new FireSlash(Card::Diamond, 5)
+            << new Jink(Card::Diamond, 2)
+            << new Jink(Card::Diamond, 3)
+            << new Jink(Card::Diamond, 4)
+            << new Jink(Card::Diamond, 5)
             << new Jink(Card::Diamond, 6)
-            << new Jink(Card::Diamond, 7)
-            << new Jink(Card::Diamond, 8)
+            << new Peach(Card::Diamond, 7)
+            << new Slash(Card::Diamond, 8)
             << new Analeptic(Card::Diamond, 9)
-            << new Jink(Card::Diamond, 10)
-            << new Jink(Card::Diamond, 11)
-            << new FireAttack(Card::Diamond, 12);
-
-    DefensiveHorse *blackdragon = new DefensiveHorse(Card::Diamond, 13);
-    blackdragon->setObjectName("blackdragon");
-
-    cards << blackdragon;
+            << new ThunderSlash(Card::Diamond, 10)
+            << new ThunderSlash(Card::Diamond, 11)
+            << new FireAttack(Card::Diamond, 12)
+            << new Nullification(Card::Diamond, 13);
 
     foreach(Card *card, cards)
         card->setParent(this);

@@ -1,7 +1,7 @@
 -- translation for StandardPackage
 
 local t = {
-	["standard_cards"] = "基础卡牌包",
+	["standard_cards"] = "人和卡牌包",
 
 	["slash"] = "杀",
 	[":slash"] = "基本牌\
@@ -76,8 +76,6 @@ local t = {
 	[":eight_diagram"] = "装备牌·防具\
 防具效果：当你需要使用或打出一张【闪】时，你可以进行一次判定，若判定结果为红色，则视为你使用或打出一张【闪】",
 	["eight_diagram:yes"] = "进行一次判定，若判定结果为红色，则视为你使用或打出一张【闪】",
-
-	["ex_cards"] = "EX卡牌包",
 
 	["renwang_shield"] = "苍云甲",
 	[":renwang_shield"] = "装备牌·防具\
@@ -184,7 +182,7 @@ local t = {
 }
 
 local machines = {"irondino", "thunderbird", "whitetiger", "blackdragon", "mirage"}
-local mounts = {"windy", "snowy", "darky"}
+local mounts = {"windy", "snowy", "darky", "kurotora"}
 
 for _, machine in ipairs(machines) do
 	t[":" .. machine] = t[":machine"] -- +1

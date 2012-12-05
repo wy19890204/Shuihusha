@@ -361,6 +361,26 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-// Skill cards
+class NatureSlash: public Slash{
+    Q_OBJECT
+
+public:
+    NatureSlash(Suit suit, int number, DamageStruct::Nature nature);
+    virtual bool match(const QString &pattern) const;
+};
+
+class ThunderSlash: public NatureSlash{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE ThunderSlash(Card::Suit suit, int number);
+};
+
+class FireSlash: public NatureSlash{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE FireSlash(Card::Suit suit, int number);
+};
 
 #endif // STANDARD_H

@@ -1,7 +1,7 @@
 -- translation for ManeuveringPackage
 
 return {
-	["maneuvering"] = "地煞卡牌包",
+	["maneuvering"] = "天时卡牌包",
 
 	["fire_slash"] = "机关术",
 	[":fire_slash"] = "基本牌\
@@ -67,7 +67,5 @@ return {
 作用效果：若判定结果不为梅花，则目标角色跳过此回合的摸牌阶段",
 
 	["blackdragon"] = "青龙",
-	[":blackdragon"] = "装备牌·机关\
-机关效果：<b>锁定技</b>，防止你受到的机关伤害；其他角色计算与你的距离+1",
-
+	["kurotora"] = "玄虎",
 }

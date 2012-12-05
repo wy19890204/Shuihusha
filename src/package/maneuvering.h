@@ -3,28 +3,6 @@
 
 #include "standard.h"
 
-class NatureSlash: public Slash{
-    Q_OBJECT
-
-public:
-    NatureSlash(Suit suit, int number, DamageStruct::Nature nature);
-    virtual bool match(const QString &pattern) const;
-};
-
-class ThunderSlash: public NatureSlash{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE ThunderSlash(Card::Suit suit, int number);
-};
-
-class FireSlash: public NatureSlash{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE FireSlash(Card::Suit suit, int number);
-};
-
 class Analeptic: public BasicCard{
     Q_OBJECT
 
@@ -38,6 +16,13 @@ public:
     virtual bool isAvailable(const Player *player) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
+class DoubleSword:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE DoubleSword(Card::Suit suit, int number);
 };
 
 class Fan: public Weapon{

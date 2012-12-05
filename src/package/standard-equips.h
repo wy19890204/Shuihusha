@@ -10,11 +10,11 @@ public:
     Q_INVOKABLE Crossbow(Card::Suit suit, int number = 1);
 };
 
-class DoubleSword:public Weapon{
+class Shark:public Weapon{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE DoubleSword(Card::Suit suit = Spade, int number = 2);
+    Q_INVOKABLE Shark(Card::Suit suit, int number);
 };
 
 class QinggangSword:public Weapon{
