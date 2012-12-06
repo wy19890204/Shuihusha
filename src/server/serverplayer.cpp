@@ -593,6 +593,8 @@ void ServerPlayer::play(QList<Player::Phase> set_phases){
             phases.clear();
             phases << NotActive;
         }
+        if(isAlive() && phase != Play && phase != NotActive)
+            while(room->getThread()->trigger(InPhase, room, this, data));
     }
 }
 

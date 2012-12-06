@@ -149,6 +149,7 @@ enum TriggerEvent{
     GameStarted,
     TurnStart,
     PhaseChange,
+    InPhase,
     DrawNCards,
     DrawNCardsDone,
     HpRecover,

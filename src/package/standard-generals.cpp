@@ -1230,9 +1230,10 @@ public:
     }
 };
 
-class Fengmang: public PhaseChangeSkill{
+class Fengmang: public TriggerSkill{
 public:
-    Fengmang():PhaseChangeSkill("fengmang"){
+    Fengmang():TriggerSkill("fengmang"){
+        events << InPhase;
         view_as_skill = new FengmangViewAsSkill;
     }
 
@@ -1244,18 +1245,13 @@ public:
         return x;
     }
 
-    virtual int getPriority() const{
-        return -1;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *yang) const{
-        Room *room = yang->getRoom();
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *yang, QVariant &data) const{
         if(yang->getPhase() != Player::Start)
             return false;
-        while(!yang->getPile("knife").isEmpty() || getEventsCount(yang) > 0)
-            if(!room->askForUseCard(yang, "@@fengmang", "@fengmang", true))
-                break;
-        return false;
+        if(yang->getPile("knife").isEmpty() && getEventsCount(yang) < 1)
+            return false;
+        return room->askForUseCard(yang, "@@fengmang", "@fengmang", true);
+        //InPhase = true :continue; InPhase = false :break
     }
 };
 
