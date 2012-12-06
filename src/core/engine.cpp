@@ -36,10 +36,6 @@ void Engine::addScenario(const QString &name){
         qWarning("Scenario %s cannot be loaded!", qPrintable(name));
 }
 
-static inline QVariant GetConfigFromLuaState(lua_State *L, const char *key){
-    return GetValueFromLuaState(L, "config", key);
-}
-
 Engine::Engine()
 {
     Sanguosha = this;
@@ -189,6 +185,13 @@ QStringList Engine::getBanPackages() const{
         return Config.BanPackages;
     else
         return ban_package.toList();
+}
+
+bool Engine::isDuplicated(const QString &name, bool is_skill){
+    if(is_skill)
+        return skills.contains(name);
+    else
+        return generals.contains(name);
 }
 
 QString Engine::translate(const QString &to_translate) const{
@@ -540,8 +543,7 @@ QStringList Engine::getRandomLords() const{
 
     QStringList lords;
 
-    foreach(QString alord,getLords())
-    {
+    foreach(QString alord, getLords()){
         if(banlist_ban.contains(alord))continue;
 
         lords << alord;
@@ -754,6 +756,8 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
         }
         else if(type == "distance")
             x += skill->getCorrect(from, to);
+        else if(type == "slashresidue")
+            x += skill->getSlashResidue(from);
         else if(type == "attackrange"){
             int y = skill->getAtkrg(from);
             if(y < 0) // fixed attack range

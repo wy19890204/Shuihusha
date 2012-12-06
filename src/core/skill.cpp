@@ -29,6 +29,8 @@ bool Skill::isLordSkill() const{
 }
 
 QString Skill::getDescription() const{
+    if(!Sanguosha->isDuplicated(objectName()))
+        return Sanguosha->translate("::");
     return Sanguosha->translate(":" + objectName());
 }
 
@@ -328,10 +330,26 @@ int ClientSkill::getAtkrg(const Player *) const{
     return 0;
 }
 
-bool ClientSkill::isProhibited(const Player *from, const Player *to, const Card *card) const{
-    return false;
+int ClientSkill::getSlashResidue(const Player *target) const{
+    return qMax(1 - target->getSlashCount(), 0);
 }
 
+bool ClientSkill::isProhibited(const Player *, const Player *, const Card *) const{
+    return false;
+}
+/*
+ProhibitSkill::ProhibitSkill(const QString &name)
+    :ClientSkill(name){
+}
+*/
+DistanceSkill::DistanceSkill(const QString &name)
+    :ClientSkill(name){
+}
+/*
+MaxCardsSkill::MaxCardsSkill(const QString &name)
+    :ClientSkill(name){
+}
+*/
 WeaponSkill::WeaponSkill(const QString &name)
     :TriggerSkill(name)
 {
@@ -356,6 +374,10 @@ bool ArmorSkill::triggerable(const ServerPlayer *target) const{
 MarkAssignSkill::MarkAssignSkill(const QString &mark, int n)
     :GameStartSkill(QString("#%1-%2").arg(mark).arg(n)), mark_name(mark), n(n)
 {
+}
+
+int MarkAssignSkill::getPriority() const{
+    return -1;
 }
 
 void MarkAssignSkill::onGameStart(ServerPlayer *player) const{

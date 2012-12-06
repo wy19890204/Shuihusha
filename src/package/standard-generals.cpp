@@ -181,7 +181,7 @@ public:
 
         if(event == CardEffected){
             CardEffectStruct effect = data.value<CardEffectStruct>();
-            if(!effect.card->isNDTrick())
+            if(!effect.card->isNDTrick() || effect.from == tianming)
                 return false;
 
             room->playSkillEffect(objectName());

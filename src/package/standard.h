@@ -94,7 +94,7 @@ class GodSalvation:public GlobalEffect{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE GodSalvation(Card::Suit suit = Heart, int number = 1);
+    Q_INVOKABLE GodSalvation(Card::Suit suit, int number);
     virtual bool isCancelable(const CardEffectStruct &effect) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
@@ -130,7 +130,7 @@ class ArcheryAttack:public AOE{
     Q_OBJECT
 
 public:
-    Q_INVOKABLE ArcheryAttack(Card::Suit suit = Heart, int number = 1);
+    Q_INVOKABLE ArcheryAttack(Card::Suit suit, int number);
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
@@ -244,6 +244,8 @@ public:
 
     virtual void onInstall(ServerPlayer *player) const;
     virtual void onUninstall(ServerPlayer *player) const;
+
+    bool hasSkill() const;
 
 protected:
     int range;

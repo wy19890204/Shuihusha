@@ -197,9 +197,31 @@ public:
     virtual int getExtra(const Player *target) const;
     virtual int getCorrect(const Player *from, const Player *to) const;
     virtual int getAtkrg(const Player *target) const;
+    virtual int getSlashResidue(const Player *target) const;
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
+/*
+class ProhibitSkill: public ClientSkill{
+    Q_OBJECT
 
+public:
+    ProhibitSkill(const QString &name);
+};
+*/
+class DistanceSkill: public ClientSkill{
+    Q_OBJECT
+
+public:
+    DistanceSkill(const QString &name);
+};
+/*
+class MaxCardsSkill: public ClientSkill{
+    Q_OBJECT
+
+public:
+    MaxCardsSkill(const QString &name);
+};
+*/
 class WeaponSkill: public TriggerSkill{
     Q_OBJECT
 
@@ -224,6 +246,7 @@ class MarkAssignSkill: public GameStartSkill{
 public:
     MarkAssignSkill(const QString &mark, int n);
 
+    virtual int getPriority() const;
     virtual void onGameStart(ServerPlayer *player) const;
 
 private:

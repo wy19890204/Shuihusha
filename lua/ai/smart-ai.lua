@@ -10,7 +10,8 @@ math.randomseed(os.time())
 -- SmartAI is the base class for all other specialized AI classes
 SmartAI = class "SmartAI"
 
-version = "QSanguosha AI 20120617 (V0.8.8 Stable)"
+version = "Qinsmoon AI 20121204 (V1.0.0 Stable)"
+-- version = "Shuihusha AI 20121101 (V1.2.2 Stable)"
 --- this function is only function that exposed to the host program
 --- and it clones an AI instance by general name
 -- @param player The ServerPlayer object that want to create the AI object
@@ -894,7 +895,7 @@ end
 function sgs.isRolePredictable()
 	if sgs.GetConfig("RolePredictable", true) then return true end
 	local mode = string.lower(global_room:getMode())
-	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("04_1v3") or mode == "06_3v3" or mode:find("mini") then return true end
+	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("dusong") or mode == "06_3v3" or mode:find("mini") then return true end
 	return false
 end
 
@@ -1684,12 +1685,12 @@ function SmartAI:askForSkillInvoke(skill_name, data)
 	end
 end
 
-function SmartAI:askForChoice(skill_name, choices)
+function SmartAI:askForChoice(skill_name, choices, data)
 	local choice = sgs.ai_skill_choice[skill_name]
 	if type(choice) == "string" then
 		return choice
 	elseif type(choice) == "function" then
-		return choice(self, choices)
+		return choice(self, choices, data)
 	else
 		local skill = sgs.Sanguosha:getSkill(skill_name)
 		if skill and choices:match(skill:getDefaultChoice(self.player)) then
@@ -2250,6 +2251,11 @@ function SmartAI:askForPindian(requestor, reason)
 	minusecard = cards[1]
 	maxcard = maxcard or minusecard
 	mincard = mincard or minusecard
+	if requestor == self.player then
+		self:speak("pindian_target")
+	else
+		speak(requestor, "pindian")
+	end
 	local callback = sgs.ai_skill_pindian[reason]
 	if type(callback) == "function" then
 		local ret = callback(minusecard, self, requestor, maxcard, mincard)
@@ -3462,8 +3468,6 @@ dofile "lua/ai/standard_cards-ai.lua"
 dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/chat-ai.lua"
-dofile "lua/ai/basara-ai.lua"
-dofile "lua/ai/hegemony-ai.lua"
 
 local loaded = "standard|standard_cards|maneuvering|plough"
 
@@ -3480,3 +3484,14 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 		dofile("lua/ai/" .. string.lower(ascenario) .. "-ai.lua")
 	end
 end
+
+if sgs.GetConfig("EnableReincarnation", false) then
+	dofile "lua/ai/reincarnation-ai.lua"
+end
+if sgs.GetConfig("EnableBasara", false) then
+	dofile "lua/ai/basara-ai.lua"
+end
+if sgs.GetConfig("EnableHegemony", false) then
+	dofile "lua/ai/hegemony-ai.lua"
+end
+

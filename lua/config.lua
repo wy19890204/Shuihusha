@@ -29,12 +29,12 @@ config = {
 	},
 
 	scene_names = {
-	"Impasse",
---	"Couple",
---	"Contract",
---[[	"Zombie",
-	"Legend",]]
-	"Custom",
+--[[	"Impasse",
+	"Couple",
+	"Contract",
+	"Zombie",
+	"Legend",
+	"Custom",]]
 	},
 
 	color_di = "#547998",
@@ -44,8 +44,9 @@ config = {
 	color_god = "#96943D",
 }
 
+--[[
 for i=1, 20 do
 	local scene_name = ("MiniScene_%02d"):format(i)
 	table.insert(config.scene_names, scene_name)
-end
+end]]
 

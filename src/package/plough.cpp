@@ -262,9 +262,10 @@ void SpaceAsk::onMove(const CardMoveStruct &move) const{
     }
 }
 
-class SevenStarSkill: public PhaseChangeSkill{
+class SevenStarSkill: public WeaponSkill{
 public:
-    SevenStarSkill():PhaseChangeSkill("seven_star"){
+    SevenStarSkill():WeaponSkill("seven_star"){
+        events << PhaseChange;
     }
 
     virtual int getPriority() const{
@@ -320,10 +321,9 @@ public:
         delete exchange_card;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->getPhase() == Player::RoundStart){
+     virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &) const{
+        if(player->getPhase() == Player::RoundStart)
             Exchange(player);
-        }
 
         return false;
     }

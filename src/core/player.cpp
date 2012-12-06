@@ -97,6 +97,13 @@ General::Gender Player::getGender() const{
         return General::Neuter;
 }
 
+QString Player::getGenderString() const{
+    if(general)
+        return general->getGenderString();
+    else
+        return "neuter";
+}
+
 int Player::getSeat() const{
     return seat;
 }
@@ -326,9 +333,9 @@ bool Player::hasInnateSkill(const QString &skill_name) const{
 }
 
 bool Player::hasLordSkill(const QString &skill_name) const{
-    if(property("scarecrow").toBool())
-        return false;
     if(!isLord())
+        return false;
+    if(property("scarecrow").toBool()) //qimen
         return false;
 
     if(acquired_skills.contains(skill_name))
@@ -694,10 +701,12 @@ void Player::addHistory(const QString &name, int times){
     history[name] += times;
 }
 
+int Player::usedTimes(const QString &card_class, int init) const{
+    return history.value(card_class, init);
+}
+
 int Player::getSlashCount() const{
-    return history.value("Slash", 0)
-            + history.value("ThunderSlash", 0)
-            + history.value("FireSlash", 0);
+    return usedTimes("Slash") + usedTimes("ThunderSlash") + usedTimes("FireSlash");
 }
 
 void Player::clearHistory(){
@@ -706,10 +715,6 @@ void Player::clearHistory(){
 
 bool Player::hasUsed(const QString &card_class) const{
     return history.value(card_class, 0) > 0;
-}
-
-int Player::usedTimes(const QString &card_class) const{
-    return history.value(card_class, 0);
 }
 
 QSet<const TriggerSkill *> Player::getTriggerSkills() const{
@@ -752,7 +757,7 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     return skills;
 }
 
-QStringList Player::getVisSkist(const QString &exclude) const{
+QStringList Player::getVisibleSkillList(const QString &exclude) const{
     QList<const Skill *> skills;
     if(general)
         skills << general->getVisibleSkillList();

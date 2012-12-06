@@ -44,6 +44,7 @@ public:
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+typedef Skill SkillClass;
 class UbundCard: public SkillCard{
     Q_OBJECT
 
@@ -70,25 +71,6 @@ public:
     Q_INVOKABLE QiapaiCard();
 
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
-};
-
-class FanduiCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE FanduiCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
-
-class ZhichiCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE ZhichiCard();
-    QStringList allPiles() const;
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
 #endif // STANDARDSKILLCARDS_H

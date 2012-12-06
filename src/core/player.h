@@ -69,6 +69,7 @@ public:
     int getLostHp(bool zeromax = true) const;
     bool isWounded() const;
     General::Gender getGender() const;
+    QString getGenderString() const;
 
     bool isOwner() const;
     void setOwner(bool owner);
@@ -188,15 +189,15 @@ public:
     void addHistory(const QString &name, int times = 1);
     void clearHistory();
     bool hasUsed(const QString &card_class) const;
-    int usedTimes(const QString &card_class) const;
+    int usedTimes(const QString &card_class, int init = 0) const;
     int getSlashCount() const;
 
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
-    QStringList getVisSkist(const QString &exclude) const;
-    int getKingdoms() const;
+    QStringList getVisibleSkillList(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
+    int getKingdoms() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
     bool canSlashWithoutCrossbow() const;

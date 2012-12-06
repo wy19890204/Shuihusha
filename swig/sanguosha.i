@@ -76,6 +76,7 @@ public:
 
 	void setScreenName(const char *screen_name);
 	QString screenName() const;
+	QString getGenderString() const;
 	General::Gender getGender() const;
 
 	// property setters/getters
@@ -197,12 +198,13 @@ public:
 	void addHistory(const char *name, int times = 1);
 	void clearHistory();
 	bool hasUsed(const char *card_class) const;
-	int usedTimes(const char *card_class) const;
+	int usedTimes(const char *card_class, int init = 0) const;
 	int getSlashCount() const;
 
 	QSet<const TriggerSkill *> getTriggerSkills() const;
 	QSet<const Skill *> getVisibleSkills() const;
 	QList<const Skill *> getVisibleSkillList() const;
+	QStringList getVisibleSkillList(const char *exclude) const;
 	QSet<QString> getAcquiredSkills() const;
 
 	virtual bool isProhibited(const Player *to, const Card *card) const;
@@ -250,6 +252,7 @@ public:
 	void playCardEffect(const Card *card, bool mute = false) const;
 	void playCardEffect(const char *card_name) const;
 	void playCardEffect(const char *card_name, const char *equip);
+	void playSkillEffect(const char *skill_name, int index = -1);
 	int getRandomHandCardId() const;
 	const Card *getRandomHandCard() const;
 	void obtainCard(const Card *card, bool unhide = true);
@@ -611,6 +614,7 @@ public:
 	virtual void onEffect(const CardEffectStruct &effect) const;
 	virtual bool isCancelable(const CardEffectStruct &effect) const;
 
+	virtual bool isKindOf(const char* cardType) const;
 	virtual void onMove(const CardMoveStruct &move) const;
 
 	// static functions
@@ -835,6 +839,7 @@ public:
 	void useCard(const CardUseStruct &card_use, bool add_history = true);
 	void damage(const DamageStruct &data);
 	void sendDamageLog(const DamageStruct &data);
+	void addHpSlot(ServerPlayer *victim, int number = 1);
 	void loseHp(ServerPlayer *victim, int lose = 1);
 	void loseMaxHp(ServerPlayer *victim, int lose = 1);
 	void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
@@ -854,7 +859,6 @@ public:
 	void provide(const Card *card);
 	QList<ServerPlayer *> getLieges(const char *kingdom, ServerPlayer *lord) const;
 	QList<ServerPlayer *> getMenorWomen(const char *gender, ServerPlayer *except = NULL) const;
-	QList<ServerPlayer *> getNextandPrevious(ServerPlayer *self, bool includeme = false) const;
 	int getKingdoms() const;
 	void sendLog(const LogMessage &log);
 	void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
@@ -874,6 +878,7 @@ public:
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
 	void swapSeat(ServerPlayer *a, ServerPlayer *b);
+	void swapHandcards(ServerPlayer *source, ServerPlayer *target);
 	lua_State *getLuaState() const;
 	void setFixedDistance(Player *from, const Player *to, int distance);
 	void reverseFor3v3(const Card *card, ServerPlayer *player, QList<ServerPlayer *> &list);
@@ -916,8 +921,9 @@ public:
 	Card::Suit askForSuit(ServerPlayer *player, const char *reason);
 	QString askForKingdom(ServerPlayer *player);
 	bool askForSkillInvoke(ServerPlayer *player, const char *skill_name, const QVariant &data = QVariant());
-	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices);
+	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices, const QVariant &data = QVariant());
 	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, bool optional = false, bool include_equip = false);
+	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, int min_num, bool optional = false, bool include_equip = false);
 	const Card *askForExchange(ServerPlayer *player, const char *reason, int discard_num);
 	bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
 	bool isCanceled(const CardEffectStruct &effect);
@@ -934,6 +940,10 @@ public:
 };
 
 %extend Room {
+	bool broadcastSkillInvoke(const char *skillName, int type){
+		$self->playSkillEffect(skillName, type);
+		return true;
+	}
 	ServerPlayer *nextPlayer() const{
 		return $self->getCurrent()->getNextAlive();
 	}

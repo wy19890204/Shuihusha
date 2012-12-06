@@ -49,6 +49,7 @@ ServerDialog::ServerDialog(QWidget *parent)
     setLayout(layout);
 
     setMinimumWidth(300);
+    ok_button->setFocus();
 }
 
 QWidget *ServerDialog::createBasicTab(){
@@ -368,31 +369,26 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
     if(!button)return;
     if(button->objectName().contains("scenario")
             || button->objectName().contains("mini")
-            || button->objectName().contains("1v1")
-            || button->objectName().contains("1v3"))
-    {
+            || button->objectName().contains("1v1")){
         basara_checkbox->setChecked(false);
         basara_checkbox->setEnabled(false);
     }
     else
-    {
         basara_checkbox->setEnabled(true);
-    }
 
     if(button->objectName().contains("mini")){
-        mini_scene_button->setEnabled(true);
+        //mini_scene_button->setEnabled(true);
         second_general_checkbox->setChecked(false);
         second_general_checkbox->setEnabled(false);
     }
     else
     {
         second_general_checkbox->setEnabled(true);
-        mini_scene_button->setEnabled(false);
+        //mini_scene_button->setEnabled(false);
     }
 }
 
-void BanlistDialog::switchTo(int item)
-{
+void BanlistDialog::switchTo(int item){
     this->item = item;
     list = lists.at(item);
     if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
@@ -440,15 +436,12 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     list = new QListWidget;
     list->setObjectName("Pairs");
     this->list = list;
-    foreach(QString banned, BanPair::getAllBanSet().toList()){
+    foreach(QString banned, BanPair::getAllBanSet().toList())
         addGeneral(banned);
-    }
-    foreach(QString banned, BanPair::getSecondBanSet().toList()){
+    foreach(QString banned, BanPair::getSecondBanSet().toList())
         add2ndGeneral(banned);
-    }
-    foreach(BanPair pair, BanPair::getBanPairSet().toList()){
+    foreach(BanPair pair, BanPair::getBanPairSet().toList())
         addPair(pair.first, pair.second);
-    }
 
     QVBoxLayout *vlay = new QVBoxLayout;
     vlay->addWidget(list);
@@ -482,9 +475,9 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
 
     setLayout(layout);
 
-    foreach(QListWidget * alist , lists)
-    {
-        if(alist->objectName() == "Pairs")continue;
+    foreach(QListWidget *alist ,lists){
+        if(alist->objectName() == "Pairs")
+            continue;
         alist->setIconSize(General::TinyIconSize);
         alist->setViewMode(QListView::IconMode);
         alist->setDragDropMode(QListView::NoDragDrop);
@@ -500,11 +493,13 @@ void BanlistDialog::addGeneral(const QString &name){
     }
     else{
         const General *general = Sanguosha->getGeneral(name);
-        QIcon icon(general->getPixmapPath("tiny"));
-        QString text = Sanguosha->translate(name);
-        QListWidgetItem *item = new QListWidgetItem(icon, text, list);
-        item->setSizeHint(QSize(60,60));
-        item->setData(Qt::UserRole, name);
+        if(general){
+            QIcon icon(general->getPixmapPath("tiny"));
+            QString text = Sanguosha->translate(name);
+            QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+            item->setSizeHint(QSize(60,60));
+            item->setData(Qt::UserRole, name);
+        }
     }
 }
 
@@ -576,7 +571,6 @@ QGroupBox *ServerDialog::create3v3Box(){
     QVBoxLayout *vlayout = new QVBoxLayout;
 
     standard_3v3_radiobutton = new QRadioButton(tr("Standard mode"));
-    new_3v3_radiobutton = new QRadioButton(tr("New Mode"));
     QRadioButton *extend = new QRadioButton(tr("Extension mode"));
     QPushButton *extend_edit_button = new QPushButton(tr("General selection ..."));
     extend_edit_button->setEnabled(false);
@@ -602,23 +596,17 @@ QGroupBox *ServerDialog::create3v3Box(){
     }
 
     vlayout->addWidget(standard_3v3_radiobutton);
-    vlayout->addWidget(new_3v3_radiobutton);
     vlayout->addLayout(HLay(extend, extend_edit_button));
     vlayout->addWidget(exclude_disaster_checkbox);
     vlayout->addLayout(HLay(new QLabel(tr("Role choose")), role_choose_combobox));
     box->setLayout(vlayout);
 
     bool using_extension = Config.value("3v3/UsingExtension", false).toBool();
-    bool using_new_mode = Config.value("3v3/UsingNewMode", false).toBool();
     if(using_extension)
         extend->setChecked(true);
-    else if(using_new_mode)
-        new_3v3_radiobutton->setChecked(true);
     else
         standard_3v3_radiobutton->setChecked(true);
 
-    //hide
-    new_3v3_radiobutton->setVisible(false);
     return box;
 }
 
@@ -653,7 +641,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
                 button->setChecked(true);
         }
     }
-
+/*
     {
         // add scenario modes
         QRadioButton *scenario_button = new QRadioButton(tr("Scenario mode"));
@@ -720,14 +708,14 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
     }
-
+*/
     QVBoxLayout *left = new QVBoxLayout;
     QVBoxLayout *right = new QVBoxLayout;
 
     for(int i=0; i<item_list.length(); i++){
         QObject *item = item_list.at(i);
 
-        QVBoxLayout *side = i < item_list.length()/2 - 2 ? left : right;
+        QVBoxLayout *side = i < item_list.length()/2 ? left : right;
 
         if(item->isWidgetType()){
             QWidget *widget = qobject_cast<QWidget *>(item);
@@ -753,7 +741,7 @@ QLayout *ServerDialog::createButtonLayout(){
     QHBoxLayout *button_layout = new QHBoxLayout;
     button_layout->addStretch();
 
-    QPushButton *ok_button = new QPushButton(tr("OK"));
+    ok_button = new QPushButton(tr("OK"));
     QPushButton *cancel_button = new QPushButton(tr("Cancel"));
 
     button_layout->addWidget(ok_button);
@@ -1009,10 +997,9 @@ bool ServerDialog::config(){
     Config.setValue("Address", Config.Address);
 
     Config.beginGroup("3v3");
-    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked() && !new_3v3_radiobutton->isChecked());
+    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked());
     Config.setValue("RoleChoose", role_choose_combobox->itemData(role_choose_combobox->currentIndex()).toString());
     Config.setValue("ExcludeDisaster", exclude_disaster_checkbox->isChecked());
-    Config.setValue("UsingNewMode", new_3v3_radiobutton->isChecked());
     Config.endGroup();
 
     QSet<QString> ban_packages;

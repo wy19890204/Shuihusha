@@ -63,6 +63,10 @@ void ServerPlayer::playCardEffect(const Card *card, bool mute) const{
         room->playSkillEffect(skill_name, index);
 }
 
+void ServerPlayer::playSkillEffect(const QString &skill_name, int index){
+    room->playSkillEffect(skill_name, index);
+}
+
 int ServerPlayer::getRandomHandCardId() const{
     return getRandomHandCard()->getEffectiveId();
 }
@@ -260,37 +264,29 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
     foreach(QString name, generals){
         if(Config.Enable2ndGeneral){
-            if(getGeneral()){
-                if(BanPair::isBanned(getGeneralName(), name))
-                    continue;
-            }else{
-                if(BanPair::isBanned(name))
-                    continue;
-            }
+            if((getGeneral() && BanPair::isBanned(getGeneralName(), name)) ||
+               BanPair::isBanned(name))
+                continue;
 
             if(Config.EnableHegemony)
-            {
-                if(getGeneral())
-                    if(getGeneral()->getKingdom()
-                            != Sanguosha->getGeneral(name)->getKingdom())
-                        continue;
-            }
+                if(getGeneral() && getGeneral()->getKingdom() != Sanguosha->getGeneral(name)->getKingdom())
+                    continue;
         }
-        if(Config.EnableBasara)
-        {
+        if(Config.EnableBasara){
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();
 
             if(ban_list.contains(name))continue;
         }
-        if(Config.GameMode == "zombie_mode")
-        {
+        if(Config.GameMode == "zombie_mode"){
             QStringList ban_list = Config.value("Banlist/Zombie").toStringList();
 
             if(ban_list.contains(name))continue;
         }
-        if((Config.GameMode.endsWith("p") ||
-            Config.GameMode.endsWith("pd")))
-        {
+        if(Config.value("DisableQimen", false).toBool())
+            if(name == "gongsunsheng")continue;
+        if(Config.GameMode.endsWith("p") ||
+                Config.GameMode.endsWith("pd") ||
+                Config.GameMode.endsWith("pz") ){
             QStringList ban_list = Config.value("Banlist/Roles").toStringList();
 
             if(ban_list.contains(name))continue;
@@ -858,6 +854,12 @@ void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){
     piles[pile_name] << card_id;
 
     room->moveCardTo(Sanguosha->getCard(card_id), this, Player::Special, open);
+}
+
+void ServerPlayer::clearPile(const QString &pile_name){
+    foreach(int a, getPile(pile_name))
+        room->throwCard(a);
+    piles[pile_name].clear();
 }
 
 void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){

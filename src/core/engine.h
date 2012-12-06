@@ -71,6 +71,8 @@ public:
     QList<const ClientSkill *> getClientSkills() const;
     void addSkills(const QList<const Skill *> &skills);
 
+    bool isDuplicated(const QString &name, bool is_skill = true);
+
     int getCardCount() const;
     const Card *getCard(int index) const;
 
@@ -111,5 +113,9 @@ private:
 };
 
 extern Engine *Sanguosha;
+
+static inline QVariant GetConfigFromLuaState(lua_State *L, const char *key, const char *parent = "config"){
+    return GetValueFromLuaState(L, parent, key);
+}
 
 #endif // ENGINE_H

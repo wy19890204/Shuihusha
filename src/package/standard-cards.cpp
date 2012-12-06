@@ -25,8 +25,8 @@ bool Slash::IsAvailable(const Player *player){
     if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
         return false;
 
-    return player->hasWeapon("crossbow") || player->canSlashWithoutCrossbow()
-        || (player->hasSkill("shalu") && player->hasMark("shalu"));
+    int slash_residue = Sanguosha->correctClient("slashresidue", player);
+    return slash_residue > 0;
 }
 
 bool Slash::isAvailable(const Player *player) const{
@@ -1064,9 +1064,22 @@ FireSlash::FireSlash(Suit suit, int number)
     nature = DamageStruct::Fire;
 }
 
-class HorseSkill: public ClientSkill{
+class CrossbowSkill: public ClientSkill{
 public:
-    HorseSkill():ClientSkill("horse"){
+    CrossbowSkill():ClientSkill("crossbow"){
+    }
+
+    virtual int getSlashResidue(const Player *target) const{
+        if(target->hasWeapon("crossbow"))
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(target);
+    }
+};
+
+class HorseSkill: public DistanceSkill{
+public:
+    HorseSkill():DistanceSkill("horse"){
 
     }
 

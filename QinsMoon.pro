@@ -23,6 +23,7 @@ SOURCES += \
 	src/core/banpair.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
+	src/core/exppattern.cpp \
 	src/core/general.cpp \
 	src/core/jsonutils.cpp \
 	src/core/lua-wrapper.cpp \
@@ -47,7 +48,6 @@ SOURCES += \
 	src/dialog/scenario-overview.cpp \
 	src/dialog/halldialog.cpp \
 	src/package/package.cpp \
-	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/common-skillcards.cpp \
@@ -58,19 +58,11 @@ SOURCES += \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
 	src/package/tiger.cpp \
-        src/package/hare.cpp \
-        src/package/sp.cpp \
-        src/package/joy.cpp \
-	src/scenario/boss-mode-scenario.cpp \
-	src/scenario/contract-scenario.cpp \
-	src/scenario/couple-scenario.cpp \
-	src/scenario/dusong-scenario.cpp \
-	src/scenario/changban-scenario.cpp \
+	src/package/sp.cpp \
+	src/package/joy.cpp \
 	src/scenario/miniscenarios.cpp \
-	src/scenario/legend-mode-scenario.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
-	src/scenario/zombie-mode-scenario.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
 	src/server/gamerule.cpp \
@@ -147,6 +139,7 @@ HEADERS += \
 	src/core/banpair.h \
 	src/core/card.h \
 	src/core/engine.h \
+	src/core/exppattern.h \
 	src/core/general.h \
 	src/core/jsonutils.h \
 	src/core/lua-wrapper.h \
@@ -155,6 +148,7 @@ HEADERS += \
 	src/core/settings.h \
 	src/core/skill.h \
 	src/core/statistics.h \
+	src/core/structs.h \
 	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
@@ -170,7 +164,6 @@ HEADERS += \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/exppattern.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
 	src/package/standard-generals.h \
@@ -182,19 +175,11 @@ HEADERS += \
 	src/package/rat.h \
 	src/package/ox.h \
 	src/package/tiger.h \
-        src/package/hare.h \
-        src/package/sp.h \
-        src/package/joy.h \
-	src/scenario/boss-mode-scenario.h \
-	src/scenario/contract-scenario.h \
-	src/scenario/couple-scenario.h \
-	src/scenario/dusong-scenario.h \
-	src/scenario/changban-scenario.h \
+	src/package/sp.h \
+	src/package/joy.h \
 	src/scenario/miniscenarios.h \
-	src/scenario/legend-mode-scenario.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
-	src/scenario/zombie-mode-scenario.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
 	src/server/gamerule.h \
@@ -205,7 +190,6 @@ HEADERS += \
 	src/server/roomthread3v3.h \
 	src/server/server.h \
 	src/server/serverplayer.h \
-	src/server/structs.h \
 	src/ui/button.h \
 	src/ui/cardcontainer.h \
 	src/ui/carditem.h \

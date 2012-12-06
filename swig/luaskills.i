@@ -27,7 +27,14 @@ public:
 	virtual int getExtra(const Player *target) const;
 	virtual int getCorrect(const Player *from, const Player *to) const;
 	virtual int getAtkrg(const Player *target) const;
+	virtual int getSlashResidue(const Player *target) const;
 	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
+};
+
+class DistanceSkill: public ClientSkill{
+public:
+	DistanceSkill(const QString &name);
+	virtual int getCorrect(const Player *from, const Player *to) const;
 };
 
 class LuaProhibitSkill: public ClientSkill{
@@ -92,7 +99,7 @@ public:
 	LuaFunction view_as;
 };
 
-class LuaDistanceSkill: public ClientSkill{
+class LuaDistanceSkill: public DistanceSkill{
 public:
 	LuaDistanceSkill(const char *name);
 	virtual int getCorrect(const Player *from, const Player *to) const;

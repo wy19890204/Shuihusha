@@ -346,7 +346,7 @@ void MiniScene::onTagSet(Room *room, const QString &key) const
 {
 
 }
-
+/*
 #define ADD_CUSTOM_SCENARIO(name) static ScenarioAdder MiniScene##name##ScenarioAdder(QString("MiniScene_") + #name, new LoadedScenario(#name));
 
 ADD_CUSTOM_SCENARIO(01)
@@ -371,3 +371,4 @@ ADD_CUSTOM_SCENARIO(19)
 ADD_CUSTOM_SCENARIO(20)
 
 ADD_SCENARIO(Custom)
+*/

@@ -289,6 +289,10 @@ void Weapon::onInstall(ServerPlayer *player) const{
         room->attachSkillToPlayer(player, objectName());
 }
 
+bool Weapon::hasSkill() const{
+    return attach_skill;
+}
+
 void Weapon::onUninstall(ServerPlayer *player) const{
     EquipCard::onUninstall(player);
     Room *room = player->getRoom();
@@ -551,7 +555,7 @@ void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     card_ids.removeOne(card_id);
     room->takeAG(source, card_id);
     room->broadcastInvoke("clearAG");
-    room->playSkillEffect("qiapai");
+    room->playSkillEffect(skill_name);
 }
 
 class Qiapai: public ZeroCardViewAsSkill{
@@ -566,32 +570,6 @@ public:
 
     virtual const Card *viewAs() const{
         return new QiapaiCard;
-    }
-};
-
-class Fandui:public ZeroCardViewAsSkill{
-public:
-    Fandui():ZeroCardViewAsSkill("fandui"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new FanduiCard;
-    }
-};
-
-class Zhichi: public OneCardViewAsSkill{
-public:
-    Zhichi():OneCardViewAsSkill("zhichi"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ZhichiCard *card = new ZhichiCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
     }
 };
 
