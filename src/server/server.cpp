@@ -308,25 +308,25 @@ QWidget *ServerDialog::createCheatTab(){
 
     same_checkbox  = new QCheckBox(tr("Enable Same"));
     same_checkbox->setChecked(Config.EnableSame);
-/*
+
     endless_checkbox  = new QCheckBox(tr("Endless Mode"));
     endless_checkbox->setChecked(Config.EnableEndless);
     endless_timebox = new QSpinBox;
     endless_timebox->setRange(1, 100);
     endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
     endless_timebox->setToolTip(tr("This box set the swap times"));
-*/
+
     layout->addWidget(cheat_enable_checkbox);
     layout->addWidget(box);
     layout->addWidget(same_checkbox);
-    //layout->addLayout(HLay(endless_checkbox, endless_timebox));
+    layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
 
-    //endless_timebox->setVisible(Config.EnableEndless);
-    //connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
+    endless_timebox->setVisible(Config.EnableEndless);
+    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
 
     return widget;
 }

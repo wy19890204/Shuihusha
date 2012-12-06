@@ -1429,12 +1429,12 @@
     <message>
         <location filename="src/ui/roomscene.cpp" line="2683"/>
         <source>Thunder</source>
-        <translation>雷电</translation>
+        <translation>阴阳</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2684"/>
         <source>Fire</source>
-        <translation>火焰</translation>
+        <translation>机关</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="2685"/>
@@ -1851,8 +1851,8 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="14"/>
         <location filename="src/dialog/mainwindow.cpp" line="153"/>
-        <source>Shuihusha</source>
-        <translation>太阳神水浒杀 - 太阳神三国杀MOD</translation>
+        <source>QinsMoon</source>
+        <translation>秦时明月杀 - 秦时杀 - 太阳神水浒杀MOD</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="28"/>
@@ -3007,11 +3007,6 @@
         <translation>修改武将 ...</translation>
     </message>
     <message>
-        <location filename="src/ui/roomscene.cpp" line="368"/>
-        <source>Shuihusha</source>
-        <translation>太阳神水浒杀</translation>
-    </message>
-    <message>
         <location filename="src/ui/roomscene.cpp" line="956"/>
         <source>View in popup window ...</source>
         <translation>在弹出的窗口中查看 ...</translation>
@@ -3862,8 +3857,8 @@ P = 你自己, R = 你所在的房间</translation>
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="102"/>
-        <source>Shuihusha-fans</source>
-        <translation>水浒杀fans</translation>
+        <source>QinsMoon-fans</source>
+        <translation>秦时杀fans</translation>
     </message>
     <message>
         <location filename="src/core/settings.cpp" line="103"/>

@@ -107,7 +107,8 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
-    CircularView = value("CircularView", true).toBool();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/qinsmoon.jpg").toString();
+    CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
@@ -128,7 +129,6 @@ void Settings::init(){
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/qinsmoon.jpg").toString();
 
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 

@@ -53,6 +53,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     QPalette palette;
     palette.setColor(QPalette::Text, Config.TextEditColor);
     ui->textEditFontLineEdit->setPalette(palette);
+    ui->spOpen->setEnabled(false);
 
     // tab 3
     ui->smtpServerLineEdit->setText(Config.value("Contest/SMTPServer").toString());

@@ -342,9 +342,15 @@ void MiniScene::setupCustom(QString name) const
 
 }
 
-void MiniScene::onTagSet(Room *room, const QString &key) const
-{
+QString MiniScene::setBackgroundMusic() const{
+    return "audio/bgmusic/miniscene.mp3";
+}
 
+bool MiniScene::generalSelection(Room *) const{
+    return false;
+}
+
+void MiniScene::onTagSet(Room *, const QString &) const{
 }
 /*
 #define ADD_CUSTOM_SCENARIO(name) static ScenarioAdder MiniScene##name##ScenarioAdder(QString("MiniScene_") + #name, new LoadedScenario(#name));

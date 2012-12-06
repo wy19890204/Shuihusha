@@ -136,7 +136,7 @@ static int os_date (lua_State *L) {
   else if (strcmp(s, "*t") == 0) {
     lua_createtable(L, 0, 9);  /* 9 = number of fields */
     setfield(L, "sec", stm->tm_sec);
-    setfield(L, "wang", stm->tm_min);
+    setfield(L, "min", stm->tm_min);
     setfield(L, "hour", stm->tm_hour);
     setfield(L, "day", stm->tm_mday);
     setfield(L, "month", stm->tm_mon+1);
@@ -176,7 +176,7 @@ static int os_time (lua_State *L) {
     luaL_checktype(L, 1, LUA_TTABLE);
     lua_settop(L, 1);  /* make sure table is at the top */
     ts.tm_sec = getfield(L, "sec", 0);
-    ts.tm_min = getfield(L, "wang", 0);
+    ts.tm_min = getfield(L, "min", 0);
     ts.tm_hour = getfield(L, "hour", 12);
     ts.tm_mday = getfield(L, "day", -1);
     ts.tm_mon = getfield(L, "month", -1) - 1;

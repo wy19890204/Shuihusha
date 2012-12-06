@@ -972,8 +972,15 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         QList<const Skill *> skills;
         foreach(QString skill_name, skill_names){
             const Skill *skill = Sanguosha->getSkill(skill_name);
-            if(skill && !skill->inherits("WeaponSkill") && !skill->inherits("ArmorSkill"))
-                skills << skill;
+            if(skill){
+                if(skill->getFrequency() == Skill::NotSkill)
+                    continue;
+                if(player->getGeneral()->hasSkill(skill_name) ||
+                   (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
+                    continue;
+                if(skill->getLocation() == Skill::Right)
+                    skills << skill;
+            }
         }
 
         if(!skills.isEmpty()){
@@ -2391,7 +2398,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     QStringList list = QString("%1:%2").arg(who).arg(delta).split(":");
     doAnimation("hpChange",list);
 
-    if(delta < 0){
+    if(delta <= 0){
         if(losthp){
             Sanguosha->playAudio("hplost");
             return;
@@ -2402,10 +2409,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         case -1: {
                 ClientPlayer *player = ClientInstance->getPlayer(who);
                 int r = qrand() % 3 + 1;
-                if(player->getGeneral()->isMale())
-                    damage_effect = QString("injure1-male%1").arg(r);
-                else
-                    damage_effect = QString("injure1-female%1").arg(r);
+                damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
                 break;
             }
 
@@ -2563,7 +2567,7 @@ void RoomScene::addRestartButton(QDialog *dialog){
     }
 
     QPushButton *restart_button;
-      restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
+    restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
     QPushButton *return_button = new QPushButton(tr("Return to main menu"));
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
@@ -2889,7 +2893,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         table->setColumnWidth(0, 85);
         table->setColumnWidth(1, 65);
-        table->setColumnWidth(2, 50);
+        table->setColumnWidth(2, 65);
         table->setColumnWidth(3, 65);
         table->setColumnWidth(4, 37);
         table->setColumnWidth(5, 37);
