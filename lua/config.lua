@@ -3,9 +3,9 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20120931",
-	version_name = "终结版F2.5.1",
-	mod_name = "Shuihusha",
+	version = "20121205",
+	version_name = "百步飞剑①",
+	mod_name = "QinsMoon",
 	kingdoms = { "di", "xia", "wang", "free", "god"},
 	package_names = {
 
