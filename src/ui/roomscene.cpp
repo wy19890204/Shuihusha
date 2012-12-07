@@ -1691,6 +1691,7 @@ void RoomScene::useSelectedCard(){
             break;
         }
     case Client::Responsing:{
+        //@todo :auto choice
             const Card *card = dashboard->getSelected();
             if(card){
                 if(ClientInstance->hasNoTargetResponsing())
@@ -2068,7 +2069,7 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                dashboard->selectCard(pattern);
+                //dashboard->selectCard(pattern);
             }
 
             break;

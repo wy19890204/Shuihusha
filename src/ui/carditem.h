@@ -47,6 +47,7 @@ public:
     static const int NormalY = 36;
     static const int PendingY = NormalY - 40;
     static CardItem *FindItem(const QList<CardItem *> &items, int card_id);
+    void clickItem() {emit clicked();}
 
 public slots:
     void reduceZ();
