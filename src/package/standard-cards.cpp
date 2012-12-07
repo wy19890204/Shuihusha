@@ -1167,6 +1167,7 @@ StandardCardPackage::StandardCardPackage()
           << new RenwangShield(Card::Club, 2);
 
     skills << EightDiagramSkill::GetInstance();
+    skills << new CrossbowSkill;
 
     {
         QList<Card *> horses;

@@ -464,6 +464,12 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
         if(include_counterplot)
             return true;
     }
+    if(hasSkill("dayi")){
+        foreach(const Card *card, handcards){
+            if(card->isBlack() || card->objectName() == "nullification")
+                return true;
+        }
+    }
     foreach(const Card *card, handcards){
         if(include_counterplot && card->inherits("Nullification"))
             return true; // all trick

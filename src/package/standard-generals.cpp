@@ -470,13 +470,7 @@ public:
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getFilteredCard();
 
-        if(!card->isRed())
-            return false;
-
-        if(card == Self->getWeapon() && card->objectName() == "crossbow")
-            return Self->canSlashWithoutCrossbow();
-        else
-            return true;
+        return card->isRed();
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -1322,15 +1316,15 @@ public:
     }
 
     virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getFilteredCard()->isBlack() && !to_select->isEquipped();
+        return to_select->getFilteredCard()->inherits("EquipCard") && !to_select->isEquipped();
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return false;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "nullification";
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "nullification" || pattern == "nulliplot";
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -2261,17 +2255,21 @@ StandardPackage::StandardPackage()
     xiaoyaozi->addSkill(new Yangsheng);
 
     // for skill cards
-    addMetaObject<FeigongCard>();
     addMetaObject<JianaiCard>();
-    addMetaObject<PofuCard>();
+    addMetaObject<FeigongCard>();
+    addMetaObject<ShengxueCard>();
     addMetaObject<YoulanCard>();
     addMetaObject<SuoshaCard>();
-    addMetaObject<LuoshengCard>();
-    addMetaObject<ShouyaoCard>();
-    addMetaObject<DushaCard>();
-    addMetaObject<EnchouCard>();
     addMetaObject<HuomeiCard>();
+    addMetaObject<ShangtongCard>();
+    addMetaObject<PofuCard>();
+    addMetaObject<ShenwuCard>();
+    addMetaObject<DushaCard>();
+    addMetaObject<LuoshengCard>();
+    addMetaObject<EnchouCard>();
+    addMetaObject<ShouyaoCard>();
     addMetaObject<ZhiyanCard>();
+    addMetaObject<GuirouCard>();
     addMetaObject<YangshengCard>();
     //addMetaObject<QingnangCard>();
 }
