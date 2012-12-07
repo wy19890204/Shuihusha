@@ -3,8 +3,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20121205",
-	version_name = "百步飞剑①",
+	version = "20121207",
+	version_name = "百步飞剑②",
 	mod_name = "QinsMoon",
 	kingdoms = { "di", "xia", "wang", "free", "god"},
 	package_names = {
@@ -18,10 +18,6 @@ config = {
 --	"Joy",
 
 	"Standard",
---	"Rat",
---	"Ox",
---	"Tiger",
---	"Hare",
 --	"SP",
 	"Test",
 
