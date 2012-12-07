@@ -860,13 +860,24 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     case Qt::Key_F1: break;
     case Qt::Key_F2: chooseSkillButton(); break;
     case Qt::Key_F3: sort_combobox->showPopup(); break;
+    case Qt::Key_F4: dashboard->reverseSelection(); break;
+    case Qt::Key_F5: {
+            if (control_is_down) {
+                if (add_robot && add_robot->isVisible())
+                    ClientInstance->addRobot();
+            } else if (fill_robots && fill_robots->isVisible())
+                ClientInstance->fillRobots();
+            break;
+        }
 
     case Qt::Key_S: dashboard->selectCard("slash");  break;
     case Qt::Key_J: dashboard->selectCard("jink"); break;
     case Qt::Key_P: dashboard->selectCard("peach"); break;
+    case Qt::Key_O: dashboard->selectCard("analeptic"); break;
 
     case Qt::Key_E: dashboard->selectCard("equip"); break;
     case Qt::Key_W: dashboard->selectCard("weapon"); break;
+    case Qt::Key_F: dashboard->selectCard("armor"); break;
     case Qt::Key_H: dashboard->selectCard("horse"); break;
 
     case Qt::Key_T: dashboard->selectCard("trick"); break;
@@ -878,12 +889,13 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     case Qt::Key_L: dashboard->selectCard("lightning"); break;
     case Qt::Key_I: dashboard->selectCard("indulgence"); break;
     case Qt::Key_R: dashboard->selectCard("collateral"); break;
+    case Qt::Key_B: dashboard->selectCard("supply_shortage"); break;
     case Qt::Key_Y: dashboard->selectCard("god_salvation"); break;
 
     case Qt::Key_Left: dashboard->selectCard(".", false); break;
     case Qt::Key_Right:
     case Qt::Key_Space:  dashboard->selectCard("."); break; // iterate all cards
-    case Qt::Key_F:  break; // fix the selected
+    //case Qt::Key_F:  break; // fix the selected
 
     case Qt::Key_G: selectNextTarget(control_is_down); break; // iterate generals
 

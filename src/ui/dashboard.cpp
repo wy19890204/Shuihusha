@@ -333,8 +333,8 @@ void Dashboard::selectCard(const QString &pattern, bool forward){
     if(to_select != selected){
         if(selected)
             selected->unselect();
-        to_select->select();
         selected = to_select;
+        selected->select();
 
         emit card_selected(selected->getFilteredCard());
     }
