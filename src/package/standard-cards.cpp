@@ -1060,7 +1060,7 @@ ThunderSlash::ThunderSlash(Suit suit, int number)
 FireSlash::FireSlash(Suit suit, int number)
     :NatureSlash(suit, number, DamageStruct::Fire)
 {
-    setObjectName("fire_slash");
+    setObjectName(isRed() ? "fire_slash" : "urgent_slash");
     nature = DamageStruct::Fire;
 }
 
