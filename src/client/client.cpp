@@ -857,9 +857,10 @@ void Client::askForChoice(const Json::Value &ask_str){
 
             button->setObjectName(option);
             button->setText(translated);
-            const Skill *skill = Sanguosha->getSkill(option);
-            if(skill)
-                button->setToolTip(skill->getDescription());
+
+            QString tooltip = QString(":%1").arg(option);
+            if(Sanguosha->translate(tooltip) != tooltip)
+                button->setToolTip(Sanguosha->translate(tooltip));
 
             connect(button, SIGNAL(clicked()), dialog, SLOT(accept()));
             connect(button, SIGNAL(clicked()), this, SLOT(onPlayerMakeChoice()));
