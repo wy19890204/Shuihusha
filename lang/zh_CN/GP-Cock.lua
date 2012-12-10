@@ -3,7 +3,7 @@
 return {
 	["QLFD"] = "绮罗粉黛",
 
-	["#panqiaoyun"] = "水性杨花",
+	["#panqiaoyun"] = "水性杨花", -- min 3hp (qlfd)
 	["panqiaoyun"] = "潘巧云",
 	["cv:panqiaoyun"] = "梁小啾【「御」】",
 	["designer:panqiaoyun"] = "烨子&大Ｒ",
@@ -22,7 +22,7 @@ return {
 	["$foyuan2"] = "佛牙可否借妹妹一观。",
 	["unknown"] = "未知",
 
-	["#wangpo"] = "枯藤蔓",
+	["#wangpo"] = "枯藤蔓", -- min 3hp (qlfd)
 	["wangpo"] = "王婆",
 	["cv:wangpo"] = "九辨【重华剧社】",
 	["qianxian"] = "牵线",
@@ -35,7 +35,7 @@ return {
 	["$meicha1"] = "我这茶别有风味。",
 	["$meicha2"] = "好个“宽煎叶儿茶”。",
 
-	["#duansanniang"] = "大虫窝",
+	["#duansanniang"] = "大虫窝", -- min 4hp (qlfd)
 	["duansanniang"] = "段三娘",
 	["cv:duansanniang"] = "南宫泓【「御」】",
 	["zishi"] = "自恃",
@@ -47,7 +47,7 @@ return {
 	["$zishi1"] = "老娘替你做主了！",
 	["$zishi2"] = "原银在此，将了去！",
 
-	["#baixiuying"] = "白罂粟",
+	["#baixiuying"] = "白罂粟", -- min 3hp (qlfd)
 	["baixiuying"] = "白秀英",
 	["cv:baixiuying"] = "蒲小猫【夜澜锦音】",
 	["designer:baixiuying"] = "烨子&大Ｒ",
@@ -63,7 +63,7 @@ return {
 	["$zhangshi1"] = "你要替我做主啊～",
 	["$zhangshi2"] = "可不能轻饶了他！",
 
-	["#liqiaonu"] = "断肠草",
+	["#liqiaonu"] = "断肠草", -- min 3hp (qlfd)
 	["liqiaonu"] = "李巧奴",
 	["cv:liqiaonu"] = "蒲小猫【夜澜锦音】",
 	["chiyuan"] = "痴怨",
@@ -80,7 +80,7 @@ return {
 	["$huoshui1"] = "你若去那梁山，再也休上我门！",
 	["$huoshui2"] = "哼！你去便是了！",
 
-	["#jincuilian"] = "四叶草",
+	["#jincuilian"] = "四叶草", -- min 3hp (qlfd)
 	["jincuilian"] = "金翠莲",
 	["designer:jincuilian"] = "烨子&仙道",
 	["cv:jincuilian"] = "Paddy【№第④声】",
@@ -96,7 +96,7 @@ return {
 	["$zhiyu1"] = "幸得惊扰得提辖。",
 	["$zhiyu2"] = "相逢何必曾相识。",
 
-	["#jiashi"] = "毒蔷薇",
+	["#jiashi"] = "毒蔷薇", -- min 3hp (qlfd)
 	["jiashi"] = "贾氏",
 	["cv:jiashi"] = "呼呼",
 	["coder:jiashi"] = "凌天翼",
@@ -109,7 +109,7 @@ return {
 	["$zhuying1"] = "奴家这厢有礼了～",
 	["$zhuying2"] = "奴家不胜酒力，浅饮一杯，聊表敬意。",
 
-	["#ximenqing"] = "大官人",
+	["#ximenqing"] = "大官人", -- min 3hp (qlfd)
 	["ximenqing"] = "西门庆",
 
 	["caiquan"] = "猜拳",

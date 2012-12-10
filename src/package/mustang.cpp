@@ -722,7 +722,7 @@ public:
 
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
-{
+{/*
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
@@ -732,11 +732,11 @@ MustangPackage::MustangPackage()
 
     General *guosheng = new General(this, "guosheng", "jiang");
     guosheng->addSkill(new Bingji);
-
+*/
     General *taozongwang = new General(this, "taozongwang", "min", 3);
     taozongwang->addSkill(new Qiaogong);
     taozongwang->addSkill(new Manli);
-
+/*
     General *yuehe = new General(this, "yuehe", "min", 3);
     yuehe->addSkill(new Yueli);
     yuehe->addSkill(new Taohui);
@@ -750,16 +750,16 @@ MustangPackage::MustangPackage()
     zhufu->addSkill(new Guitai);
 
     General *duansanniang = new General(this, "duansanniang", "min", 4, false);
-    duansanniang->addSkill(new Zishi);
+    duansanniang->addSkill(new Zishi);*/
 /*
     General *caozheng = new General(this, "caozheng", "min");
     caozheng->addSkill(new Tuzai);
-*/
+*//*
     addMetaObject<HuazhuCard>();
     addMetaObject<BingjiCard>();
     addMetaObject<MaiyiCard>();
     addMetaObject<HunjiuCard>();
-    addMetaObject<ZishiCard>();
+    addMetaObject<ZishiCard>();*/
 }
 
 ADD_PACKAGE(Mustang)

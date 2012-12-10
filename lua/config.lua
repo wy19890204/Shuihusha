@@ -21,9 +21,9 @@ config = {
 		"Ox",
 		"Tiger",
 		"Hare",
---		"Dragon",
+		"Dragon",
 --		"Snake",
---		"Mustang",
+		"Mustang",
 --		"Sheep",
 --		"Monkey",
 --		"Cock",
@@ -38,12 +38,12 @@ config = {
 		"Couple",
 		"Landlord",
 		"WheelFight",
---		"Warlords",
+		"Warlords",
 --		"Changban",
 --		"Contract",
+		"Impasse",
 --[[	"Zombie",
-		"Legend",
-		"Impasse",]]
+		"Legend",]]
 		"Custom",
 	},
 

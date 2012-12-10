@@ -3,7 +3,7 @@
 return {
 	["interchange"] = "中转站",
 
-	["#caiqing"] = "一枝花",
+	["#caiqing"] = "一枝花", -- kou 3hp (fcdc)
 	["caiqing"] = "蔡庆",
 	["designer:caiqing"] = "宇文天启",
 	["lianzang"] = "殓葬",

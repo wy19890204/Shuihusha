@@ -5,7 +5,7 @@ return {
 	["mustang"] = "午马",
 
 	["$taozongwang"] = "075",
-	["#taozongwang"] = "九尾龟",
+	["#taozongwang"] = "九尾龟", -- min 3hp (bwqz)
 	["taozongwang"] = "陶宗旺",
 	["cv:taozongwang"] = "东方胤弘【夜澜锦音】",
 	["coder:taozongwang"] = "宇文天启",
@@ -20,7 +20,7 @@ return {
 	["$manli2"] = "吾之臂力，何人能敌？",
 	["~taozongwang"] = "兄弟们，快！",
 
-	["#pengqi"] = "天目将",
+	["#pengqi"] = "天目将", -- guan 4hp (zcyn)
 	["pengqi"] = "彭玘",
 	["cv:pengqi"] = "小虎尔赤【影音同画】",
 	["tianyan"] = "天眼",
@@ -29,7 +29,7 @@ return {
 	["$tianyan2"] = "路已探明，大道可行！",
 	["~pengqi"] = "夜幕降临，待天明再战！",
 
-	["#lingzhen"] = "轰天雷",
+	["#lingzhen"] = "轰天雷", -- jiang 4hp (zcyn)
 	["lingzhen"] = "凌振",
 	["cv:lingzhen"] = "佚名",
 	["coder:lingzhen"] = "凌天翼",
@@ -39,7 +39,7 @@ return {
 	["$paohong2"] = "不投降就去死吧！",
 	["~lingzhen"] = "啊！我不会倒下～",
 
-	["#caozheng"] = "操刀鬼",
+	["#caozheng"] = "操刀鬼", -- min 3hp (zcyn)
 	["caozheng"] = "曹正",
 	["cv:caozheng"] = "佚名",
 	["tuzai"] = "屠宰",
@@ -48,7 +48,7 @@ return {
 	["$tuzai2"] = "杀人如杀猪！",
 	["~caozheng"] = "这刀太钝了。",
 
-	["#zourun"] = "独角龙",
+	["#zourun"] = "独角龙", -- min 3hp (zcyn)
 	["zourun"] = "邹润",
 	["cv:zourun"] = "蓝调【裔美声社】",
 	["longjiao"] = "龙角",
@@ -58,7 +58,7 @@ return {
 	["~zourun"] = "竟然～撞不倒！",
 --	["~zourun"] = "龙角已断，兄弟分离",
 
-	["#caifu"] = "铁臂膊",
+	["#caifu"] = "铁臂膊", -- jiang 4hp (zcyn)
 	["caifu"] = "蔡福",
 	["cv:caifu"] = "刺客【怀旧配音联盟】",
 	["juesi"] = "诀死",
@@ -68,7 +68,7 @@ return {
 	["$juesi2"] = "阎王要你三更死，谁敢留您到五更！",
 	["~caifu"] = "尔等竟敢劫法……场……",
 
-	["#gudasao"] = "母大虫",
+	["#gudasao"] = "母大虫", -- kou 4hp (zcyn)
 	["gudasao"] = "顾大嫂",
 	["cv:gudasao"] = "南宫泓【「御」】",
 	["cihu"] = "雌虎",

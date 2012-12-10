@@ -1,12 +1,21 @@
 -- ZhechongYannan Shuihusha part 8.
 
-local tt = {
+return {
 	["YBYT"] = "义薄云天",
 	["coder:YBYT"] = "战栗贵公子",
 
-	["#baoxu"] = "丧门神",
+	["#qinming"] = "霹雳火", -- guan 4hp (fcdc)
+	["qinming"] = "秦明",
+	["designer:qinming"] = "曉ャ絕對",
+	["xianxi"] = "险袭",
+	[":xianxi"] = "你使用的【杀】可额外指定任意个目标，其中每有一个目标使用手牌【闪】抵消【杀】时，你须弃置两张牌或失去一点体力",
+	["#Xianxi"] = "%from 出师不利，【%arg】的负面效果被触发",
+	["~qinming"] = "可怜霹雳火，灭地竟无声……",
+
+	["#baoxu"] = "丧门神", -- kou 4hp (ybyt)
 	["baoxu"] = "鲍旭",
 	["cv:baoxu"] = "佚名",
+	["coder:baoxu"] = "战栗贵公子",
 	["sinue"] = "肆虐",
 	[":sinue"] = "出牌阶段，每当你杀死一名其他角色，可以弃置一张手牌，对一名距离为1的其他角色造成2点伤害。",
 	["@sinue"] = "你可以发动【肆虐】，弃置一张手牌，对一名距离为1的其他角色造成2点伤害",
@@ -15,9 +24,10 @@ local tt = {
 	["~baoxu"] = "被……惩戒了。",
 --	["~baoxu"] = "急于抢功可恨误入城池",
 
-	["#xiangchong"] = "八臂哪吒",
+	["#xiangchong"] = "八臂哪吒", -- jiang 4hp (ybyt)
 	["xiangchong"] = "项充",
 	["cv:xiangchong"] = "爪子",
+	["coder:xiangchong"] = "战栗贵公子",
 	["xuandao"] = "旋刀",
 	[":xuandao"] = "<b>锁定技</b>，当你使用的【杀】被【闪】抵消时，你不能发动武器技能，视为你对目标角色的下家使用了同一张【杀】。\
 ★同一张【杀】即同来源、同程度、同属性、同花色、同点数。",
@@ -26,9 +36,10 @@ local tt = {
 	["$xuandao2"] = "飞刀贯心！",
 	["~xiangchong"] = "命绝～睦州城～",
 
-	["#jindajian"] = "玉臂匠",
+	["#jindajian"] = "玉臂匠", -- kou 3hp (ybyt)
 	["jindajian"] = "金大坚",
 	["cv:jindajian"] = "卡修【剪刀剧团】",
+	["coder:jindajian"] = "战栗贵公子",
 	["fangzao"] = "仿造",
 	[":fangzao"] = "出牌阶段，你可以展示任一其他角色的一张手牌，若该牌为基本牌或非延时类锦囊，则你可以将你的任一手牌当该牌使用。每回合限一次。",
 	["jiangxin"] = "匠心",
@@ -51,16 +62,17 @@ local tt = {
 	["$feizhen2"] = "针影闪动，战袍已新。",
 	["~houjian"] = "蚕丝终究是断了。",
 
-	["#yangchun"] = "白花蛇",
+	["#yangchun"] = "白花蛇", -- kou 4hp (ybyt)
 	["yangchun"] = "杨春",
 	["cv:yangchun"] = "倔强的小红军【剪刀剧团】",
+	["coder:yangchun"] = "战栗贵公子",
 	["shexin"] = "蛇信",
 	[":shexin"] = "出牌阶段，你可以弃置一张非延时类锦囊或装备牌，展示任一其他角色的手牌并弃掉其中除基本牌外的所有牌。每回合限一次。",
 	["$shexin1"] = "此毒，无药可解。",
 	["$shexin2"] = "辣手摧花！",
 	["~yangchun"] = "居然……比我还狠……",
 
-	["#xueyong"] = "病大虫",
+	["#xueyong"] = "病大虫", -- kou 4hp (ybyt)
 	["xueyong"] = "薛永",
 	["cv:xueyong"] = "爪子",
 	["coder:xueyong"] = "战栗贵公子、宇文天启",
@@ -72,7 +84,7 @@ local tt = {
 --	["~xueyong"] = "城管来了，快跑啊……",
 	["~xueyong"] = "遇到高手了！",
 
-	["#tanglong"] = "金钱豹子",
+	["#tanglong"] = "金钱豹子", -- jiang 3hp (ybyt)
 	["tanglong"] = "汤隆",
 	["designer:tanglong"] = "宇文天启",
 	["cuihuo"] = "淬火",
@@ -81,9 +93,10 @@ local tt = {
 	[":goldsoup"] = "<b>锁定技</b>，当你受到装备有武器的角色造成的伤害时，有30%的反伤几率；你每装备一件装备，反伤几率增加15%",
 	["~tanglong"] = "祸起萧墙……破金汤……",
 
-	["#zouyuan"] = "出林龙",
+	["#zouyuan"] = "出林龙", -- min 4hp (ybyt)
 	["zouyuan"] = "邹渊",
 	["cv:zouyuan"] = "猎狐【声声melody】",
+	["coder:zouyuan"] = "战栗贵公子",
 	["longao"] = "龙傲",
 	[":longao"] = "当其他角色使用非延时类锦囊指定了唯一的目标角色时，你可以弃置一张牌，执行下列两项中的一项：1.将该锦囊转移给除该角色和目标角色外的任一角色；2.弃掉该角色的一张牌。",
 	["longao:zhuan"] = "转移锦囊目标",
@@ -92,7 +105,7 @@ local tt = {
 	["$longao2"] = "这般手段，可不适用。",
 	["~zouyuan"] = "今夜山寨里，梦魂安得空回去？",
 
-	["#zhufu"] = "笑面虎",
+	["#zhufu"] = "笑面虎", -- kou 3hp (ybyt)
 	["zhufu"] = "朱富",
 	["cv:zhufu"] = "明哲【剪刀剧团】",
 	["coder:zhufu"] = "战栗贵公子、宇文天启",
@@ -109,12 +122,3 @@ local tt = {
 	["~zhufu"] = "难道笑也有错？",
 
 }
-
-local gongzi = {"baoxu", "xiangchong", "jindajian",
-		"yangchun", "zouyuan"}
-
-for _, player in ipairs(gongzi) do
-	tt["coder:" .. player] = tt["coder:YBYT"]
-end
-
-return tt

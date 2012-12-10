@@ -3,15 +3,7 @@
 return {
 	["BWQZ"] = "博闻强识",
 
-	["#qinming"] = "霹雳火", -- guan 4hp (fcdc)
-	["qinming"] = "秦明",
-	["designer:qinming"] = "曉ャ絕對",
-	["xianxi"] = "险袭",
-	[":xianxi"] = "你使用的【杀】可额外指定任意个目标，其中每有一个目标使用手牌【闪】抵消【杀】时，你须弃置两张牌或失去一点体力",
-	["#Xianxi"] = "%from 出师不利，【%arg】的负面效果被触发",
-	["~qinming"] = "可怜霹雳火，灭地竟无声……",
-
-	["#mengkang"] = "玉幡竿",
+	["#mengkang"] = "玉幡竿", -- kou 4hp (bwqz)
 	["mengkang"] = "孟康",
 	["cv:mengkang"] = "烨子【剪刀剧团】",
 	["zaochuan"] = "造船",
@@ -21,7 +13,7 @@ return {
 	["$zaochuan1"] = "能攀强弩冲头阵，善造艨艟越大江！",
 	["$zaochuan2"] = "楼船林立，可挡朝廷千军万马！",
 
-	["#jiaoting"] = "没面目",
+	["#jiaoting"] = "没面目", -- kou 4hp (bwqz)
 	["jiaoting"] = "焦挺",
 	["designer:jiaoting"] = "宇文天启",
 	["cv:jiaoting"] = "小虎尔赤【影音同画】",
@@ -30,7 +22,7 @@ return {
 	["$qinlong1"] = "都出局吧！",
 	["$qinlong2"] = "看吾三十六路擒龙手！",
 
-	["#shantinggui"] = "圣水将",
+	["#shantinggui"] = "圣水将", -- guan 3hp (bwqz)
 	["shantinggui"] = "单廷珪",
 	["designer:shantinggui"] = "烨子&宇文天启",
 	["xiaofang"] = "消防",
@@ -40,7 +32,7 @@ return {
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",
 	["~shantinggui"] = "土克水……吾命休矣……",
 
-	["#kongliang"] = "独火星",
+	["#kongliang"] = "独火星", -- kou 3hp (bwqz)
 	["kongliang"] = "孔亮",
 	["designer:kongliang"] = "烨子&凌天翼",
 	["nusha"] = "怒杀",
@@ -53,7 +45,7 @@ return {
 	["$wanku1"] = "吾出身富家，性喜玩乐。",
 	["$wanku2"] = "鼠目寸光，如何了却我的心思？！",
 
-	["#wangdingliu"] = "活闪婆",
+	["#wangdingliu"] = "活闪婆", -- kou 3hp (bwqz)
 	["wangdingliu"] = "王定六",
 	["designer:wangdingliu"] = "烨子&宇文天启",
 	["cv:wangdingliu"] = "芭小乐【声声melody】",

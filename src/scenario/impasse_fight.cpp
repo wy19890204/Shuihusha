@@ -258,7 +258,7 @@ public:
         boss_skillbanned << "huakui" << "yuanpei" << "duoquan" << "fangzhen";
 
         dummy_skills << "duoquan" << "maidao" << "fengmang" << "shouge" << "buzhen"
-                     << "qimen";
+                     << "qimen" << "wuzhou" << "ganlin" << "beishui" << "huatian";
     }
 
     void getRandomSkill(ServerPlayer *player, bool need_trans = false) const{
@@ -290,6 +290,10 @@ public:
             foreach(const Skill *skill, skills){
                 if(!skill->isLordSkill()){
                     if(dummy_skills.contains(skill->objectName()))
+                        continue;
+                    if(skill->getFrequency() == Skill::NotSkill ||
+                       skill->getFrequency() == Skill::Wake ||
+                       skill->getFrequency() == Skill::Limited)
                         continue;
 
                     if(!skill->objectName().startsWith("#"))
@@ -462,9 +466,8 @@ public:
                     room->acquireSkill(player, "guzhan");
                     room->acquireSkill(player, "duduan");
                     room->acquireSkill(player, "jizhan");
-                    if(player->getWeapon() == NULL){
+                    if(!player->getWeapon())
                         room->acquireSkill(player, "paoxiao");
-                    }
 
                     QList<const Card *> judges = player->getCards("j");
                     foreach(const Card *card, judges)
@@ -524,4 +527,4 @@ ImpasseScenario::ImpasseScenario()
 
 }
 
-//ADD_SCENARIO(Impasse)
+ADD_SCENARIO(Impasse)
