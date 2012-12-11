@@ -10,7 +10,7 @@ MiniSceneRule::MiniSceneRule(Scenario *scenario)
 }
 
 void MiniSceneRule::assign(QStringList &generals, QStringList &roles) const{
-    for(int i=0;i<players.length();i++)
+    for(int i = 0; i < players.length(); i++)
     {
         QMap<QString,QString> sp =players.at(i);
         QString name = sp["general"];
@@ -58,8 +58,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             }
         }
 
-        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL
-                )
+        if(player->getPhase() == Player::Start && this->players.first()["beforeNext"] != NULL)
         {
             if(player->tag["playerHasPlayed"].toBool())
                 room->gameOver(this->players.first()["beforeNext"]);
@@ -75,10 +74,27 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         if(!player->property("win").isNull()){
             room->gameOver(player->property("win").toString());
         }
+        return false;
     }
     if(player->getRoom()->getTag("WaitForPlayer").toBool())
         return true;
 
+    if(event == GameStart){
+        if (objectName().startsWith("_mini_")) {
+            room->broadcastInvoke("animate", "lightbox:" + objectName() + ":2000");
+            room->getThread()->delay(2000);
+
+            LogMessage log;
+            log.type = "#WelcomeToMiniScenario";
+            log.arg = objectName().mid(6);
+            log.arg2 = objectName();
+            room->sendLog(log);
+
+            QString mini = Sanguosha->translate("#Mini" + log.arg);
+            room->broadcastInvoke("speak", "mini:" + mini.toUtf8().toBase64());
+            room->broadcastInvoke("speak", "-:");
+        }
+    }
     QList<ServerPlayer*> players = room->getAllPlayers();
     while(players.first()->getState() == "robot")
         players.append(players.takeFirst());
@@ -318,6 +334,10 @@ void MiniSceneRule::loadSetting(QString path)
 MiniScene::MiniScene(const QString &name)
     :Scenario(name){
     rule = new MiniSceneRule(this);
+
+    int stage = name.right(2).toInt();
+    bool show = qgetenv("USERNAME") == "Tenkei";
+    addGenerals(stage, !show);
 }
 
 void MiniScene::setupCustom(QString name) const
@@ -331,9 +351,15 @@ void MiniScene::setupCustom(QString name) const
 
 }
 
-void MiniScene::onTagSet(Room *room, const QString &key) const
-{
+QString MiniScene::setBackgroundMusic() const{
+    return "audio/bgmusic/miniscene.mp3";
+}
 
+bool MiniScene::generalSelection(Room *) const{
+    return false;
+}
+
+void MiniScene::onTagSet(Room *, const QString &) const{
 }
 
 #define ADD_CUSTOM_SCENARIO(name) static ScenarioAdder MiniScene##name##ScenarioAdder(QString("MiniScene_") + #name, new LoadedScenario(#name));
@@ -358,5 +384,10 @@ ADD_CUSTOM_SCENARIO(17)
 ADD_CUSTOM_SCENARIO(18)
 ADD_CUSTOM_SCENARIO(19)
 ADD_CUSTOM_SCENARIO(20)
+ADD_CUSTOM_SCENARIO(21)
+ADD_CUSTOM_SCENARIO(22)
+ADD_CUSTOM_SCENARIO(23)
+ADD_CUSTOM_SCENARIO(24)
+ADD_CUSTOM_SCENARIO(25)
 
 ADD_SCENARIO(Custom)

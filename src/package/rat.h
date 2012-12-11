@@ -42,7 +42,7 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
-class RatPackage: public Package{
+class RatPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

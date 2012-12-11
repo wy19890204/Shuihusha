@@ -1,0 +1,11 @@
+
+general:yanqing role:rebel equip:54 
+general:sujiang role:loyalist maxhp:2 hp:1 draw:2 
+general:sujiangf role:loyalist maxhp:2 hp:1 draw:2 
+general:sujiang role:loyalist maxhp:2 hp:1 draw:2 
+general:renyuan role:lord 
+general:sujiangf role:loyalist maxhp:2 hp:1 draw:2 
+general:sujiang role:loyalist maxhp:2 hp:1 draw:2 
+general:sujiangf role:loyalist maxhp:2 hp:1 draw:2 
+general:sujiang role:loyalist maxhp:2 hp:1 draw:2 
+general:likui role:rebel starter:true 

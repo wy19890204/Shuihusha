@@ -4,8 +4,8 @@
 -- guibing
 sgs.ai_card_intention.GuibingCard = sgs.ai_card_intention.Slash
 
-sgs.ai_skill_invoke["guibing"] = true
-local guibing_skill = {}
+sgs.ai_skill_invoke["guibing"] = sgs.ai_skill_invoke["shalu"]
+guibing_skill = {}
 guibing_skill.name = "guibing"
 table.insert(sgs.ai_skills, guibing_skill)
 guibing_skill.getTurnUseCard = function(self)
@@ -24,7 +24,8 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 			self:objectiveLevel(enemy)>3 and
 			self:slashIsEffective(card, enemy) and
 			not self:slashProhibit(card, enemy) then
-			if not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
+			local cheat_card = sgs.Sanguosha:getCard(self.room:getDrawPile():first())
+			if cheat_card and cheat_card:getSuit() == sgs.Card_Heart and not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))
 				self:sortByUseValue(cards, true)
 				for _, car in ipairs(cards) do
@@ -62,10 +63,13 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 		local enemies = {}
 		local i = 0
 		local king = self.room:getKingdoms()
+		local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 		self:sort(self.enemies, "handcard")
 		for _, enemy in ipairs(self.enemies) do
-			table.insert(enemies, enemy:objectName())
-			i = i + 1
+			if not self:slashProhibit(slash, enemy) then
+				table.insert(enemies, enemy:objectName())
+				i = i + 1
+			end
 			if i >= king then break end
 		end
 		if king >= #enemies and #enemies > 0 then
@@ -78,7 +82,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 	self:sort(self.friends_noself, "handcard")
 	for i = #self.friends_noself, 1, -1 do
 		if not self.friends_noself[i]:isKongcheng() and self.player:getKingdom() ~= self.friends_noself[i]:getKingdom() then
-		    if max_card then
+			if max_card and max_card:getNumber() > 7 then
 				return "@ZhengfaCard=" .. max_card:getEffectiveId() .. "->" .. self.friends_noself[i]:objectName()
 			end
 		end
@@ -147,11 +151,11 @@ table.insert(sgs.ai_skills, sheru_skill)
 sheru_skill.getTurnUseCard = function(self)
 	if self.player:hasUsed("SheruCard") then return end
 	local cards = self.player:getCards("h")
-    cards=sgs.QList2Table(cards)
+	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:isBlack() and card:inherits("BasicCard") then
-		    return sgs.Card_Parse("@SheruCard=" .. card:getEffectiveId())
+			return sgs.Card_Parse("@SheruCard=" .. card:getEffectiveId())
 		end
 	end
 end
@@ -201,7 +205,7 @@ lianzhu_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["LianzhuCard"] = function(card,use,self)
 	if not use.isDummy then self:speak("lianzhu") end
-    use.card=card
+	use.card=card
 end
 
 -- huangxin
@@ -239,7 +243,7 @@ end
 sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 	local judge = data:toJudge()
 
-	if self:needRetrial(judge) then
+	if self:needRetrial(judge) and not self.player:isKongcheng() then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
 		self.butianjudge = judge
@@ -279,7 +283,23 @@ sgs.lili_suit_value =
 sgs.ai_skill_invoke["moucai"] = sgs.ai_skill_invoke["qiongtu"]
 
 -- duoming
-sgs.ai_skill_invoke["duoming"] = sgs.ai_skill_invoke["liba"]
+sgs.ai_skill_use["@@duoming"] = function(self, prompt)
+	local target = self.room:getCurrent()
+	if self:isFriend(target) then return "." end
+	if self.player:getHandcardNum() > 2 then
+		local cards = self.player:getHandcards()
+		cards = sgs.QList2Table(cards)
+		self:sortByUseValue(cards, true)
+		local card_ids = {}
+		for _, card in ipairs(cards) do
+			if #card_ids < 2 and card:isBlack() then
+				table.insert(card_ids, card:getEffectiveId())
+			end
+		end
+		return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
+	end
+	return "."
+end
 
 -- shijin
 sgs.shijin_keep_value =
@@ -336,7 +356,7 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 			self:sort(self.enemies, "handcard")
 			target = self.enemies[1]
 		else
-			local players = sgs.QList2Table(self.room:getAlivePlayers())
+			local players = sgs.QList2Table(self.room:getOtherPlayers(self.player))
 			self:sort(players, "handcard")
 			target = players[1]
 		end
@@ -345,7 +365,7 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 		return
 	else
 		use.card = card
-		if use.to then use.to:append(self.friends_noself[1]) end
+		if use.to and #self.friends_noself ~= 0 then use.to:append(self.friends_noself[1]) end
 	end
 end
 sgs.ai_skill_invoke["dingce"] = function(self, data)
@@ -417,6 +437,16 @@ sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
 		end
 	end
 end
+sgs.ai_skill_choice["shouwang"] = function(self, choice, data)
+	local effect = data:toCardEffect()
+	if self:isEnemy(effect.to) then
+		return "zi"
+	elseif effect.from:getHandcardNum() > effect.to:getHandcardNum() then
+		return "tian"
+	else
+		return "zi"
+	end
+end
 
 -- zhongzhen
 sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
@@ -435,3 +465,16 @@ sgs.ai_skill_invoke["zhongzhen"] = function(self, data)
 		return false
 	end
 end
+sgs.ai_skill_pindian["zhongzhen"] = function(minusecard, self, requestor, maxcard)
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	local compare_func = function(a, b)
+		return a:getNumber() > b:getNumber()
+	end
+	table.sort(cards, compare_func)
+	for _, card in ipairs(cards) do
+		if not card:inherits("Analeptic") and not card:inherits("Peach") then
+			return card
+		end
+	end
+end
+

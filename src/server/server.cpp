@@ -7,6 +7,7 @@
 #include "scenario.h"
 #include "contestdb.h"
 #include "choosegeneraldialog.h"
+#include "choosecarddialog.h"
 #include "customassigndialog.h"
 
 #include <QInputDialog>
@@ -40,6 +41,7 @@ ServerDialog::ServerDialog(QWidget *parent)
     tab_widget->addTab(createBasicTab(), tr("Basic"));
     tab_widget->addTab(createPackageTab(), tr("Game Pacakge Selection"));
     tab_widget->addTab(createAdvancedTab(), tr("Advanced"));
+    tab_widget->addTab(createCheatTab(), tr("Cheat"));
     tab_widget->addTab(createAITab(), tr("Artificial intelligence"));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -48,6 +50,7 @@ ServerDialog::ServerDialog(QWidget *parent)
     setLayout(layout);
 
     setMinimumWidth(300);
+    ok_button->setFocus();
 }
 
 QWidget *ServerDialog::createBasicTab(){
@@ -157,18 +160,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     advanced_statistic_checkbox = new QCheckBox(tr("Advanced statistics"));
     advanced_statistic_checkbox->setChecked(Config.Statistic);
 
-    free_choose_checkbox = new QCheckBox(tr("Choose generals and cards freely"));
-    free_choose_checkbox->setToolTip(tr("This option enables the cheat menu"));
-    free_choose_checkbox->setChecked(Config.FreeChoose);
-
-    free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
-    free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
-
-    free_assign_self_checkbox = new QCheckBox(tr("Assign only your own role"));
-    free_assign_self_checkbox->setChecked(Config.FreeAssignSelf);
-    free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
-    connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
-
     maxchoice_spinbox = new QSpinBox;
     maxchoice_spinbox->setRange(3, 10);
     maxchoice_spinbox->setValue(Config.value("MaxChoice", 5).toInt());
@@ -181,21 +172,21 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     second_general_checkbox = new QCheckBox(tr("Enable second general"));
 
-    scene_checkbox  = new QCheckBox(tr("Enable Scene"));//changjing
+    nolordskill_checkbox = new QCheckBox(tr("No lord skill"));
+    nolordskill_checkbox->setChecked(Config.NoLordSkill);
+
+    reincarnation_checkbox = new QCheckBox(tr("Enable Reincarnation"));
+    reincarnation_checkbox->setChecked(Config.EnableReincarnation);
+    reinca_unchange_checkbox  = new QCheckBox(tr("Persist general in reincarnation"));
+    reinca_unchange_checkbox->setChecked(Config.value("ReincaPersist").toBool());
+
+    scene_checkbox = new QCheckBox(tr("Enable Scene"));//changjing
     scene_checkbox->setChecked(Config.EnableScene);	//changjing
 
-    same_checkbox  = new QCheckBox(tr("Enable Same"));
-    same_checkbox->setChecked(Config.EnableSame);
-
-    anzhan_checkbox  = new QCheckBox(tr("Enable Anzhan"));
+    anzhan_checkbox = new QCheckBox(tr("Enable Anzhan"));
     anzhan_checkbox->setChecked(Config.EnableAnzhan);
-
-    endless_checkbox  = new QCheckBox(tr("Endless Mode"));
-    endless_checkbox->setChecked(Config.EnableEndless);
-    endless_timebox = new QSpinBox;
-    endless_timebox->setRange(1, 100);
-    endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
-    endless_timebox->setToolTip(tr("This box set the swap times"));
+    anzhan_equal_checkbox = new QCheckBox(tr("Anzhan equality"));
+    anzhan_equal_checkbox->setChecked(Config.value("AnzhanEqual").toBool());
 
     max_hp_label = new QLabel(tr("Max HP scheme"));
     max_hp_scheme_combobox = new QComboBox;
@@ -207,8 +198,6 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     basara_checkbox = new QCheckBox(tr("Enable Basara"));
     basara_checkbox->setChecked(Config.EnableBasara);
-    updateButtonEnablility(mode_group->checkedButton());
-    connect(mode_group,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(updateButtonEnablility(QAbstractButton*)));
 
     hegemony_checkbox = new QCheckBox(tr("Enable Hegemony"));
     hegemony_checkbox->setChecked(Config.EnableHegemony);
@@ -236,21 +225,111 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
+    wheel_count = new QLineEdit;
+    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
+    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
+
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addWidget(free_choose_checkbox);
-    layout->addLayout(HLay(free_assign_checkbox, free_assign_self_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
-    layout->addWidget(second_general_checkbox);
+    layout->addLayout(HLay(second_general_checkbox, nolordskill_checkbox));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
-    layout->addLayout(HLay(scene_checkbox, same_checkbox)); //changjing
-    layout->addLayout(HLay(endless_checkbox, endless_timebox));
-    //layout->addWidget(anzhan_checkbox);
+    layout->addWidget(scene_checkbox); //changjing
+    layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
+    layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
     layout->addWidget(announce_ip_checkbox);
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
     layout->addLayout(HLay(new QLabel(tr("Port")), port_edit));
+    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
+    layout->addStretch();
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(layout);
+
+    max_hp_label->setVisible(Config.Enable2ndGeneral);
+    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
+    max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
+    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
+    anzhan_equal_checkbox->setVisible(Config.value("AnzhanEqual", false).toBool());
+    connect(anzhan_checkbox, SIGNAL(toggled(bool)), anzhan_equal_checkbox, SLOT(setVisible(bool)));
+    reinca_unchange_checkbox->setVisible(Config.value("ReincaPersist", false).toBool());
+    connect(reincarnation_checkbox, SIGNAL(toggled(bool)), reinca_unchange_checkbox, SLOT(setVisible(bool)));
+
+    //hide&disable
+    scene_checkbox->setEnabled(false);
+
+    return widget;
+}
+
+QWidget *ServerDialog::createCheatTab(){
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    cheat_enable_checkbox = new QCheckBox(tr("Enable Cheat Menu"));
+    cheat_enable_checkbox->setToolTip(tr("This option enables the cheat menu"));
+    cheat_enable_checkbox->setChecked(Config.value("EnableCheatMenu").toBool());
+
+    QGroupBox *box = new QGroupBox(tr("cheat options"));
+    box->setEnabled(cheat_enable_checkbox->isChecked());
+    connect(cheat_enable_checkbox, SIGNAL(toggled(bool)), box, SLOT(setEnabled(bool)));
+
+    QVBoxLayout *laybox = new QVBoxLayout;
+
+    free_choose_generals_checkbox = new QCheckBox(tr("Choose generals freely"));
+    free_choose_generals_checkbox->setChecked(Config.FreeChooseGenerals);
+
+    free_choose_cards_checkbox = new QCheckBox(tr("Choose cards freely"));
+    free_choose_cards_checkbox->setChecked(Config.FreeChooseCards);
+
+    free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
+    free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
+
+    free_assign_self_checkbox = new QCheckBox(tr("Assign only your own role"));
+    free_assign_self_checkbox->setChecked(Config.FreeAssignSelf);
+    free_assign_self_checkbox->setEnabled(free_assign_checkbox->isChecked());
+    connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
+
+    free_discard_checkbox = new QCheckBox(tr("Regulate freely"));
+    free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
+
+    gambling_cards_checkbox = new QCheckBox(tr("Gambling Cards"));
+    gambling_cards_checkbox->setChecked(Config.value("GamblingCards").toBool());
+
+    free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
+    free_change_general_checkbox->setChecked(Config.value("FreeChange").toBool());
+
+    free_showrole_checkbox = new QCheckBox(tr("Show everyone's role in turnstart"));
+    free_showrole_checkbox->setChecked(Config.value("FreeShowRole").toBool());
+
+    free_undead_checkbox = new QCheckBox(tr("Undead body"));
+    free_undead_checkbox->setChecked(Config.value("FreeUnDead").toBool());
+
+    laybox->addWidget(free_choose_generals_checkbox);
+    laybox->addWidget(free_choose_cards_checkbox);
+    laybox->addWidget(free_assign_checkbox);
+    laybox->addWidget(free_assign_self_checkbox);
+    laybox->addWidget(free_discard_checkbox);
+    laybox->addWidget(gambling_cards_checkbox);
+    laybox->addWidget(free_change_general_checkbox);
+    laybox->addWidget(free_showrole_checkbox);
+    laybox->addWidget(free_undead_checkbox);
+    box->setLayout(laybox);
+
+    same_checkbox  = new QCheckBox(tr("Enable Same"));
+    same_checkbox->setChecked(Config.EnableSame);
+
+    endless_checkbox  = new QCheckBox(tr("Endless Mode"));
+    endless_checkbox->setChecked(Config.EnableEndless);
+    endless_timebox = new QSpinBox;
+    endless_timebox->setRange(1, 100);
+    endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
+    endless_timebox->setToolTip(tr("This box set the swap times"));
+
+    layout->addWidget(cheat_enable_checkbox);
+    layout->addWidget(box);
+    layout->addWidget(same_checkbox);
+    layout->addLayout(HLay(endless_checkbox, endless_timebox));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -258,13 +337,6 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     endless_timebox->setVisible(Config.EnableEndless);
     connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
-    max_hp_label->setVisible(Config.Enable2ndGeneral);
-    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_label, SLOT(setVisible(bool)));
-    max_hp_scheme_combobox->setVisible(Config.Enable2ndGeneral);
-    connect(second_general_checkbox, SIGNAL(toggled(bool)), max_hp_scheme_combobox, SLOT(setVisible(bool)));
-
-    //hide
-    scene_checkbox->setVisible(false);
 
     return widget;
 }
@@ -278,6 +350,9 @@ QWidget *ServerDialog::createAITab(){
     role_predictable_checkbox = new QCheckBox(tr("Role predictable"));
     role_predictable_checkbox->setChecked(Config.value("RolePredictable", false).toBool());
 
+    ai_nickname_checkbox = new QCheckBox(tr("AI Nick Names"));
+    ai_nickname_checkbox->setChecked(Config.value("AINames", true).toBool());
+
     ai_chat_checkbox = new QCheckBox(tr("AI Chat"));
     ai_chat_checkbox->setChecked(Config.value("AIChat", true).toBool());
 
@@ -287,10 +362,20 @@ QWidget *ServerDialog::createAITab(){
     ai_delay_spinbox->setValue(Config.AIDelay);
     ai_delay_spinbox->setSuffix(tr(" millisecond"));
 
+    disable_gongsunsheng = new QCheckBox(tr("Disable Gongsunsheng"));
+    disable_gongsunsheng->setChecked(Config.value("DisableQimen", false).toBool());
+    //disable_gongsunsheng->setEnabled(false);
+
+    updateButtonEnablility(mode_group->checkedButton());
+    connect(mode_group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(updateButtonEnablility(QAbstractButton*)));
+    //@todo:connect(mode_group, SIGNAL(activated(QAbstractButton*)), this, SLOT(updateButtonEnablility(QAbstractButton*)));
+
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
-    layout->addWidget(ai_chat_checkbox);
     layout->addLayout(HLay(new QLabel(tr("AI delay")), ai_delay_spinbox));
+    layout->addWidget(ai_nickname_checkbox);
+    layout->addWidget(ai_chat_checkbox);
+    layout->addWidget(disable_gongsunsheng);
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -307,31 +392,42 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
     if(!button)return;
     if(button->objectName().contains("scenario")
             || button->objectName().contains("mini")
-            || button->objectName().contains("1v1")
-            || button->objectName().contains("1v3"))
-    {
+            || button->objectName().contains("1v1")){
         basara_checkbox->setChecked(false);
         basara_checkbox->setEnabled(false);
     }
     else
-    {
         basara_checkbox->setEnabled(true);
-    }
 
     if(button->objectName().contains("mini")){
         mini_scene_button->setEnabled(true);
         second_general_checkbox->setChecked(false);
         second_general_checkbox->setEnabled(false);
+        anzhan_checkbox->setChecked(false);
+        anzhan_checkbox->setEnabled(false);
+        endless_checkbox->setChecked(false);
+        endless_checkbox->setEnabled(false);
+    }
+    else{
+        mini_scene_button->setEnabled(false);
+        second_general_checkbox->setEnabled(true);
+        anzhan_checkbox->setEnabled(true);
+        endless_checkbox->setEnabled(true);
+    }
+
+    if(button->objectName().contains("scenario")){
+        second_general_checkbox->setChecked(false);
+        second_general_checkbox->setEnabled(false);
+        anzhan_checkbox->setChecked(false);
+        reincarnation_checkbox->setChecked(false);
+        endless_checkbox->setChecked(false);
+        same_checkbox->setChecked(false);
     }
     else
-    {
         second_general_checkbox->setEnabled(true);
-        mini_scene_button->setEnabled(false);
-    }
 }
 
-void BanlistDialog::switchTo(int item)
-{
+void BanlistDialog::switchTo(int item){
     this->item = item;
     list = lists.at(item);
     if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
@@ -341,28 +437,28 @@ void BanlistDialog::switchTo(int item)
 BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     :QDialog(parent),add2nd(NULL)
 {
-    setWindowTitle(tr("Select generals that are excluded"));
+    setWindowTitle(tr("Select generals or cards that are excluded"));
+    resize(QSize(350, 250));
 
     if(ban_list.isEmpty())
-        ban_list << "Roles" << "1v1" << "Basara" << "Hegemony" << "Pairs";
+        ban_list << "Roles" << "1v1" << "Basara" << "Hegemony" << "Pairs" << "Cards";
     QVBoxLayout *layout = new QVBoxLayout;
 
     QTabWidget *tab = new QTabWidget;
     layout->addWidget(tab);
     connect(tab,SIGNAL(currentChanged(int)),this,SLOT(switchTo(int)));
-
-    foreach(QString item, ban_list)
-    {
-        if(item == "Pairs") continue;
+//ban without pairs and cards
+    foreach(QString item, ban_list){
+        if(item == "Pairs" || item == "Cards")
+            continue;
         QWidget *apage = new QWidget;
 
         list = new QListWidget;
         list->setObjectName(item);
 
         QStringList banlist = Config.value(QString("Banlist/%1").arg(item)).toStringList();
-        foreach(QString name, banlist){
+        foreach(QString name, banlist)
             addGeneral(name);
-        }
 
         lists << list;
 
@@ -375,26 +471,36 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     }
 
     QWidget *apage = new QWidget;
-
+// pairs
     list = new QListWidget;
     list->setObjectName("Pairs");
     this->list = list;
-    foreach(QString banned, BanPair::getAllBanSet().toList()){
+    foreach(QString banned, BanPair::getAllBanSet().toList())
         addGeneral(banned);
-    }
-    foreach(QString banned, BanPair::getSecondBanSet().toList()){
+    foreach(QString banned, BanPair::getSecondBanSet().toList())
         add2ndGeneral(banned);
-    }
-    foreach(BanPair pair, BanPair::getBanPairSet().toList()){
+    foreach(BanPair pair, BanPair::getBanPairSet().toList())
         addPair(pair.first, pair.second);
-    }
 
     QVBoxLayout *vlay = new QVBoxLayout;
     vlay->addWidget(list);
     apage->setLayout(vlay);
     tab->addTab(apage,Sanguosha->translate("Pairs"));
     lists << list;
-
+//cards
+    apage = new QWidget;
+    list = new QListWidget;
+    list->setObjectName("Cards");
+    this->list = list;
+    QStringList banlist = Config.value("Banlist/Cards").toStringList();
+    foreach(QString name, banlist)
+        addCard(name);
+    lists << list;
+    vlay = new QVBoxLayout;
+    vlay->addWidget(list);
+    apage->setLayout(vlay);
+    tab->addTab(apage,Sanguosha->translate("Cards"));
+//--
     QPushButton *add = new QPushButton(tr("Add ..."));
     QPushButton *remove = new QPushButton(tr("Remove"));
     if(!view)add2nd = new QPushButton(tr("Add 2nd general ..."));
@@ -421,12 +527,28 @@ BanlistDialog::BanlistDialog(QWidget *parent, bool view)
 
     setLayout(layout);
 
-    foreach(QListWidget * alist , lists)
-    {
-        if(alist->objectName() == "Pairs")continue;
+    foreach(QListWidget *alist ,lists){
+        if(alist->objectName() == "Pairs")
+            continue;
         alist->setIconSize(General::TinyIconSize);
         alist->setViewMode(QListView::IconMode);
         alist->setDragDropMode(QListView::NoDragDrop);
+    }
+    saveAll();
+}
+
+void BanlistDialog::addCard(const QString &name){
+    if(list->objectName() == "Cards"){
+        QStringList cards = name.split("+");
+        foreach(QString named, cards){
+            const Card *card = Sanguosha->getCard(named);
+            if(card){
+                QIcon icon(card->getPixmapPath());
+                QString text = Sanguosha->translate(named);
+                QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+                item->setData(Qt::UserRole, name);
+            }
+        }
     }
 }
 
@@ -439,11 +561,13 @@ void BanlistDialog::addGeneral(const QString &name){
     }
     else{
         const General *general = Sanguosha->getGeneral(name);
-        QIcon icon(general->getPixmapPath("tiny"));
-        QString text = Sanguosha->translate(name);
-        QListWidgetItem *item = new QListWidgetItem(icon, text, list);
-        item->setSizeHint(QSize(60,60));
-        item->setData(Qt::UserRole, name);
+        if(general){
+            QIcon icon(general->getPixmapPath("tiny"));
+            QString text = Sanguosha->translate(name);
+            QListWidgetItem *item = new QListWidgetItem(icon, text, list);
+            item->setSizeHint(QSize(60,60));
+            item->setData(Qt::UserRole, name);
+        }
     }
 }
 
@@ -463,10 +587,17 @@ void BanlistDialog::addPair(const QString &first, const QString &second){
 }
 
 void BanlistDialog::doAddButton(){
-    FreeChooseDialog *chooser = new FreeChooseDialog(this, (list->objectName() == "Pairs"));
-    connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(addGeneral(QString)));
-    connect(chooser, SIGNAL(pair_chosen(QString,QString)), this, SLOT(addPair(QString, QString)));
-    chooser->exec();
+    if(list->objectName() == "Cards"){
+        CardKindDialog *chooser = new CardKindDialog(this);
+        connect(chooser, SIGNAL(card_kind_chosen(QString)), this, SLOT(addCard(QString)));
+        chooser->exec();
+    }
+    else{
+        FreeChooseDialog *chooser = new FreeChooseDialog(this, (list->objectName() == "Pairs"));
+        connect(chooser, SIGNAL(general_chosen(QString)), this, SLOT(addGeneral(QString)));
+        connect(chooser, SIGNAL(pair_chosen(QString,QString)), this, SLOT(addPair(QString, QString)));
+        chooser->exec();
+    }
 }
 
 void BanlistDialog::doAdd2ndButton(){
@@ -515,7 +646,6 @@ QGroupBox *ServerDialog::create3v3Box(){
     QVBoxLayout *vlayout = new QVBoxLayout;
 
     standard_3v3_radiobutton = new QRadioButton(tr("Standard mode"));
-    new_3v3_radiobutton = new QRadioButton(tr("New Mode"));
     QRadioButton *extend = new QRadioButton(tr("Extension mode"));
     QPushButton *extend_edit_button = new QPushButton(tr("General selection ..."));
     extend_edit_button->setEnabled(false);
@@ -541,23 +671,17 @@ QGroupBox *ServerDialog::create3v3Box(){
     }
 
     vlayout->addWidget(standard_3v3_radiobutton);
-    vlayout->addWidget(new_3v3_radiobutton);
     vlayout->addLayout(HLay(extend, extend_edit_button));
     vlayout->addWidget(exclude_disaster_checkbox);
     vlayout->addLayout(HLay(new QLabel(tr("Role choose")), role_choose_combobox));
     box->setLayout(vlayout);
 
     bool using_extension = Config.value("3v3/UsingExtension", false).toBool();
-    bool using_new_mode = Config.value("3v3/UsingNewMode", false).toBool();
     if(using_extension)
         extend->setChecked(true);
-    else if(using_new_mode)
-        new_3v3_radiobutton->setChecked(true);
     else
         standard_3v3_radiobutton->setChecked(true);
 
-    //hide
-    new_3v3_radiobutton->setVisible(false);
     return box;
 }
 
@@ -658,10 +782,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
         item_list << HLay(scenario_button, scenario_combobox);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
-        //hide
-        mini_scenes->setVisible(false);
-        mini_scene_combobox->setVisible(false);
-        mini_scene_button->setVisible(false);
     }
 
     QVBoxLayout *left = new QVBoxLayout;
@@ -696,7 +816,7 @@ QLayout *ServerDialog::createButtonLayout(){
     QHBoxLayout *button_layout = new QHBoxLayout;
     button_layout->addStretch();
 
-    QPushButton *ok_button = new QPushButton(tr("OK"));
+    ok_button = new QPushButton(tr("OK"));
     QPushButton *cancel_button = new QPushButton(tr("Cancel"));
 
     button_layout->addWidget(ok_button);
@@ -883,11 +1003,11 @@ bool ServerDialog::config(){
     Config.OperationNoLimit = nolimit_checkbox->isChecked();
     Config.ContestMode = contest_mode_checkbox->isChecked();
     Config.Statistic = advanced_statistic_checkbox->isChecked();
-    Config.FreeChoose = free_choose_checkbox->isChecked();
-    Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
+    Config.NoLordSkill = nolordskill_checkbox->isChecked();
+    Config.EnableReincarnation = reincarnation_checkbox->isChecked();
     Config.EnableScene = scene_checkbox->isChecked();		//changjing
     Config.EnableSame = same_checkbox->isChecked();
     Config.EnableEndless = endless_checkbox->isChecked();
@@ -897,6 +1017,9 @@ bool ServerDialog::config(){
     Config.MaxHpScheme = max_hp_scheme_combobox->currentIndex();
     Config.AnnounceIP = announce_ip_checkbox->isChecked();
     Config.Address = address_edit->text();
+    Config.FreeChooseGenerals = free_choose_generals_checkbox->isChecked();
+    Config.FreeChooseCards = free_choose_cards_checkbox->isChecked();
+    Config.FreeAssignSelf = free_assign_self_checkbox->isChecked() && free_assign_checkbox->isEnabled();
     Config.EnableAI = ai_enable_checkbox->isChecked();
     Config.AIDelay = ai_delay_spinbox->value();
     Config.ServerPort = port_edit->text().toInt();
@@ -920,34 +1043,47 @@ bool ServerDialog::config(){
     Config.setValue("OperationNoLimit", Config.OperationNoLimit);
     Config.setValue("ContestMode", Config.ContestMode);
     Config.setValue("Statistic", Config.Statistic);
-    Config.setValue("FreeChoose", Config.FreeChoose);
-    Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
-    Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
     Config.setValue("MaxChoice", maxchoice_spinbox->value());
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);
     Config.setValue("Enable2ndGeneral", Config.Enable2ndGeneral);
+    Config.setValue("NoLordSkill", Config.NoLordSkill);
+    Config.setValue("EnableReincarnation", Config.EnableReincarnation);
+    Config.setValue("ReincaPersist", reinca_unchange_checkbox->isChecked());
     Config.setValue("EnableScene", Config.EnableScene);	//changjing
     Config.setValue("EnableSame", Config.EnableSame);
     Config.setValue("EnableEndless", Config.EnableEndless);
     Config.setValue("EnableAnzhan", Config.EnableAnzhan);
+    Config.setValue("AnzhanEqual", anzhan_equal_checkbox->isChecked());
     Config.setValue("EndlessTimes", endless_timebox->value());
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
+    Config.setValue("EnableCheatMenu", cheat_enable_checkbox->isChecked());
+    Config.setValue("FreeChooseGenerals", Config.FreeChooseGenerals);
+    Config.setValue("FreeChooseCards", Config.FreeChooseCards);
+    Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
+    Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
+    Config.setValue("FreeRegulate", free_discard_checkbox->isChecked());
+    Config.setValue("GamblingCards", gambling_cards_checkbox->isChecked());
+    Config.setValue("FreeChange", free_change_general_checkbox->isChecked());
+    Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
+    Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
+    Config.setValue("AINames", ai_nickname_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
+    Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
+    Config.setValue("WheelCount", wheel_count->text());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);
     Config.setValue("Address", Config.Address);
 
     Config.beginGroup("3v3");
-    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked() && !new_3v3_radiobutton->isChecked());
+    Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked());
     Config.setValue("RoleChoose", role_choose_combobox->itemData(role_choose_combobox->currentIndex()).toString());
     Config.setValue("ExcludeDisaster", exclude_disaster_checkbox->isChecked());
-    Config.setValue("UsingNewMode", new_3v3_radiobutton->isChecked());
     Config.endGroup();
 
     QSet<QString> ban_packages;

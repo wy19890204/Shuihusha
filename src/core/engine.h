@@ -40,7 +40,8 @@ public:
     QString getVersion() const;
     QString getVersionName() const;
     QString getMODName() const;
-    QStringList getExtensions() const;
+    QStringList getExtensions(bool getall = false) const;
+    QStringList getLuaExtensions() const;
     QStringList getKingdoms() const;
     QColor getKingdomColor(const QString &kingdom) const;
     QString getSetupString() const;
@@ -62,14 +63,18 @@ public:
     void addPackage(const QString &name);
     void addScenario(const QString &name);
 
+    const Card *getCard(const QString &name) const;
     const General *getGeneral(const QString &name) const;
     int getGeneralCount(bool include_banned = false) const;
+    QList<const Skill *> getSkills(const QString &package_name) const;
     const Skill *getSkill(const QString &skill_name) const;
     QStringList getSkillNames() const;
     const TriggerSkill *getTriggerSkill(const QString &skill_name) const;
     const ViewAsSkill *getViewAsSkill(const QString &skill_name) const;
     QList<const ClientSkill *> getClientSkills() const;
     void addSkills(const QList<const Skill *> &skills);
+
+    bool isDuplicated(const QString &name, bool is_skill = true);
 
     int getCardCount() const;
     const Card *getCard(int index) const;
@@ -79,7 +84,7 @@ public:
     QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
     QList<int> getRandomCards() const;
     QString getRandomGeneralName() const;
-    QStringList getLimitedGeneralNames() const;
+    QStringList getLimitedGeneralNames(bool getall = false) const;
 
     void playAudio(const QString &name) const;
     void playEffect(const QString &filename) const;
@@ -111,5 +116,9 @@ private:
 };
 
 extern Engine *Sanguosha;
+
+static inline QVariant GetConfigFromLuaState(lua_State *L, const char *key, const char *parent = "config"){
+    return GetValueFromLuaState(L, parent, key);
+}
 
 #endif // ENGINE_H

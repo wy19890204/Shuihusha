@@ -1,5 +1,7 @@
-general:select|role:renegade|equip:sun_bow
-general:yangxiong|role:rebel
-general:panqiaoyun|role:lord|maxhp:5|hp:4|starter:true
-general:shiqian|role:rebel|equip:snow
-general:songqing|role:rebel
+
+general:xuning general2:select role:lord starter:true maxhp:5 hp:5 equip:61 
+general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:207 
+general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:68 
+general:huyanzhuo role:rebel maxhp:4 hp:4 equip:136,155 
+general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:64 
+general:sujiang role:rebel maxhp:2 hp:2 chained:true equip:66 

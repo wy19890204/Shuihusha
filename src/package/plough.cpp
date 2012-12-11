@@ -4,7 +4,6 @@
 #include "engine.h"
 #include "client.h"
 #include "carditem.h"
-#include "god.h"
 #include "standard.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
@@ -147,7 +146,9 @@ bool Provistore::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 bool Provistore::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    return targets.length() <= 1;
+    if(targets.isEmpty() && !Self->containsTrick(objectName()))
+        return true;
+    return targets.length() == 1;
 }
 
 void Provistore::takeEffect(ServerPlayer *target, bool good) const{
@@ -281,7 +282,7 @@ public:
                 if(damage.from->getWeapon()){
                     player->playCardEffect("Egold_armor2", "armor");
                     room->sendLog(log);
-                    room->throwCard(damage.from->getWeapon());
+                    room->throwCard(damage.from->getWeapon(), damage.from);
                 }
             }
         }
@@ -295,9 +296,8 @@ GoldArmor::GoldArmor(Suit suit, int number):Armor(suit, number){
 }
 
 PloughPackage::PloughPackage()
-    :Package("plough")
+    :CardPackage("plough")
 {
-    type = CardPack;
     QList<Card *> cards;
 
     cards

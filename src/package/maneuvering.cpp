@@ -74,7 +74,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
     QString animation_str = QString("analeptic:%1:%2").arg(who).arg(who);
     room->broadcastInvoke("animate", animation_str);
 
-    if(effect.to->getMark("poison") > 0){
+    if(effect.to->hasMark("poison")){
         LogMessage log;
         log.from = effect.to;
         log.type = "#Poison_ana";
@@ -255,7 +255,7 @@ SilverLion::SilverLion(Suit suit, int number):Armor(suit, number){
 }
 
 void SilverLion::onUninstall(ServerPlayer *player) const{
-    if(player->isAlive() && player->getMark("qinggang") == 0){
+    if(player->isAlive() && !player->hasMark("qinggang")){
         if(player->isWounded())
             player->playCardEffect("Esilver_lion2");
         RecoverStruct recover;
@@ -294,7 +294,7 @@ void FireAttack::onEffect(const CardEffectStruct &effect) const{
     QString suit_str = card->getSuitString();
     QString pattern = QString(".%1").arg(suit_str.at(0).toUpper());
     QString prompt = QString("@fire-attack:%1::%2").arg(effect.to->getGeneralName()).arg(suit_str);
-    if(room->askForCard(effect.from, pattern, prompt, false, QVariant(), CardDiscarded)){
+    if(room->askForCard(effect.from, pattern, prompt, QVariant(), CardDiscarded)){
         DamageStruct damage;
         damage.card = this;
         damage.from = effect.from;
@@ -338,7 +338,7 @@ bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Play
 
 void IronChain::onUse(Room *room, const CardUseStruct &card_use) const{
     if(card_use.to.isEmpty()){
-        room->throwCard(this);
+        room->throwCard(this, card_use.from);
         card_use.from->playCardEffect("@recast");
         card_use.from->drawCards(1);
     }else
@@ -396,7 +396,7 @@ void SupplyShortage::takeEffect(ServerPlayer *target, bool good) const{
 }
 
 ManeuveringPackage::ManeuveringPackage()
-    :Package("maneuvering")
+    :CardPackage("maneuvering")
 {
     QList<Card *> cards;
 
@@ -470,8 +470,6 @@ ManeuveringPackage::ManeuveringPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 
 ADD_PACKAGE(Maneuvering)

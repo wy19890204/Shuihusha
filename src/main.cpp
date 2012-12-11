@@ -34,9 +34,10 @@ int main(int argc, char *argv[])
     QTranslator qt_translator, translator;
     qt_translator.load("qt_zh_CN.qm");
     translator.load("shuihusha.qm");
-
-    qApp->installTranslator(&qt_translator);
-    qApp->installTranslator(&translator);
+    if(Config.value("Language", "zh_cn").toString() == "zh_cn"){
+        qApp->installTranslator(&qt_translator);
+        qApp->installTranslator(&translator);
+    }
 
     Sanguosha = new Engine;
     Config.init();

@@ -1,4 +1,5 @@
-general:select|role:loyalist|equip:guding_blade
-general:wusong|role:rebel|maxhp:4|hp:4|starter:true
-general:panjinlian|role:lord|maxhp:3|hp:3
-general:shenwusong|role:rebel|maxhp:5|hp:5
+
+general:select role:renegade 
+general:lizhong role:lord 
+general:zhoutong role:loyalist 
+general:luzhishen role:rebel starter:true equip:60 

@@ -56,6 +56,7 @@ public slots:
     void refresh();
     void hideEmotion();
     void hideSkillName();
+    void setWakeState();
     void setDrankState();
     void setEcstState();
     void setPoisonState();
@@ -94,7 +95,7 @@ private:
     QGraphicsPixmapItem *order_item;
     bool hide_avatar;
     QPixmap death_pixmap;
-    Pixmap *back_icon, *chain_icon;
+    Pixmap *back_icon, *chain_icon, *wake_icon;
     QProgressBar *progress_bar;
     int timer_id;
     QGraphicsPixmapItem *emotion_item, *frame_item;

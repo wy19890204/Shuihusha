@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "skill.h"
 #include "package.h"
+#include "scenario.h"
 #include "client.h"
 
 #include <QSize>
@@ -20,14 +21,25 @@ General::General(Package *package, const QString &name, const QString &kingdom, 
         lord = false;
         setObjectName(name);
     }
+
+    kmap["wei"] = "guan";
+    kmap["shu"] = "jiang";
+    kmap["wu"] = "min";
+    kmap["qun"] = "kou";
 }
 
 int General::getMaxHp() const{
     return max_hp;
 }
 
-QString General::getKingdom() const{
-    return kingdom;
+QString General::getKingdom(bool unmap) const{
+    if(unmap)
+        return kingdom;
+    QString m_kingdom = kmap.value(kingdom, QString());
+    if(!m_kingdom.isNull())
+        return m_kingdom;
+    else
+        return kingdom;
 }
 
 bool General::isMale() const{
@@ -50,6 +62,15 @@ General::Gender General::getGender() const{
     return gender;
 }
 
+QString General::getGenderString() const{
+    switch(gender){
+    case Male: return "male";
+    case Female: return "female";
+    default:
+        return "neuter";
+    }
+}
+
 bool General::isLord() const{
     return lord;
 }
@@ -62,12 +83,22 @@ bool General::isTotallyHidden() const{
     return never_shown;
 }
 
+bool General::isLuaGeneral() const{
+    const Package *package = Sanguosha->findChild<const Package *>(getPackage());
+    return package->getGenre() == Package::LUA;
+}
+
 QString General::getPixmapPath(const QString &category) const{
     QString suffix = "png";
     if(category == "card")
         suffix = "jpg";
 
-    return QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
+    //QString path = !isLuaGeneral() ? "image" : "extensions";
+    //return QString("%1/generals/%2/%3.%4").arg(path).arg(category).arg(objectName()).arg(suffix);
+    QString path = QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
+    if(!QFile::exists(path))
+        path = QString("extensions/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
+    return path;
 }
 
 void General::addSkill(Skill *skill){
@@ -92,7 +123,9 @@ QList<const Skill *> General::getVisibleSkillList() const{
 
     foreach(QString skill_name, extra_set){
         const Skill *skill = Sanguosha->getSkill(skill_name);
-        if(skill->isVisible())
+        if(!skill)
+            skill = new Skill(skill_name);
+        if(skill && skill->isVisible())
             skills << skill;
     }
 
@@ -158,18 +191,20 @@ QString General::getSkillDescription() const{
 
 void General::lastWord() const{
     QString filename = QString("audio/death/%1.ogg").arg(objectName());
-    QFile file(filename);
-    if(!file.open(QIODevice::ReadOnly)){
+    if(!QFile::exists(filename))
+        filename = QString("extensions/audio/death/%1.ogg").arg(objectName());
+    //QFile file(filename);
+    /*if(!file.open(QIODevice::ReadOnly)){
         QStringList origin_generals = objectName().split("_");
         if(origin_generals.length()>1)
             filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
-    }
+    }*/ //sp
     /*if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
         QString origin_general = objectName();
         origin_general.chop(1);
         if(Sanguosha->getGeneral(origin_general))
             filename = QString("audio/death/%1.ogg").arg(origin_general);
-    }*/
+    }*/ //sex changed
     Sanguosha->playEffect(filename);
 }
 

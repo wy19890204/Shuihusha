@@ -28,17 +28,19 @@ public:
 
     // property getters/setters
     int getMaxHp() const;
-    QString getKingdom() const;
+    QString getKingdom(bool unmap = false) const;
     bool isMale() const;
     bool isFemale() const;
     bool isNeuter() const;
     bool isLord() const;
     bool isHidden() const;
     bool isTotallyHidden() const;
+    bool isLuaGeneral() const;
 
     enum Gender {Male, Female, Neuter};
     Gender getGender() const;
     void setGender(Gender gender);
+    QString getGenderString() const;
 
     void addSkill(Skill* skill);
     void addSkill(const QString &skill_name);
@@ -71,6 +73,7 @@ private:
     QStringList related_skills;
     bool hidden;
     bool never_shown;
+    QMap<QString, QString> kmap;
 };
 
 #endif // GENERAL_H

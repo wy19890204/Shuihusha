@@ -23,7 +23,7 @@
 #include "pixmapanimation.h"
 
 Photo::Photo()
-    :Pixmap("image/system/photo-back.png"),
+    :Pixmap(":system/photo-back.png"),
     player(NULL),
     handcard("image/system/handcard.png"),
     action_item(NULL), save_me_item(NULL), permanent(false),
@@ -34,7 +34,6 @@ Photo::Photo()
 
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
-    //back_icon->setPos(105, 67);
     back_icon->setPos(3, 13);
     back_icon->hide();
     back_icon->setZValue(0.2);
@@ -43,6 +42,12 @@ Photo::Photo()
     chain_icon->setParentItem(this);
     chain_icon->setPos(boundingRect().width() - 22, 5);
     chain_icon->hide();
+
+    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon->setParentItem(this);
+    wake_icon->setPos(50, 8);
+    wake_icon->hide();
+    wake_icon->setZValue(0.4);
 
     progress_bar = new QProgressBar;
     progress_bar->setMinimum(0);
@@ -75,6 +80,7 @@ Photo::Photo()
 
     emotion_item = new QGraphicsPixmapItem(this);
     emotion_item->moveBy(10, 0);
+    emotion_item->setZValue(0.9);
 
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
@@ -205,10 +211,19 @@ void Photo::hideSkillName(){
     skill_name_item->hide();
 }
 
+void Photo::setWakeState(){
+    if(player->getWakeSkills().isEmpty())
+        return;
+    if(player->getMark("_wake") > 0)
+        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+    else
+        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
+}
+
 void Photo::setDrankState(){
     if(player->hasFlag("drank"))
         avatar_area->setBrush(QColor(0xFF, 0x00, 0x00, 255 * 0.45));
-    else if(player->getMark("poison") > 0)
+    else if(player->hasMark("poison"))
         setPoisonState();
     else
         avatar_area->setBrush(Qt::NoBrush);
@@ -217,14 +232,14 @@ void Photo::setDrankState(){
 void Photo::setEcstState(){
     if(player->hasFlag("ecst"))
         avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    else if(player->getMark("poison") > 0)
+    else if(player->hasMark("poison"))
         setPoisonState();
     else
         avatar_area->setBrush(Qt::NoBrush);
 }
 
 void Photo::setPoisonState(){
-    if(player->getMark("poison") > 0)
+    if(player->hasMark("poison"))
         avatar_area->setBrush(QColor(0x00, 0xFF, 0x00, 255 * 0.3));
     else if(player->hasFlag("drank"))
         setDrankState();
@@ -272,6 +287,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
         connect(player, SIGNAL(state_changed()), this, SLOT(refresh()));
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
+        connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
         connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
         connect(player, SIGNAL(poison_changed()), this, SLOT(setPoisonState()));
@@ -701,6 +717,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     chain_icon->setVisible(player->isChained());
     back_icon->setVisible(! player->faceUp());
+    wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 }
 
 void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){

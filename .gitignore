@@ -19,3 +19,7 @@ etc/customScenes/custom_scenario.txt
 *.dylib
 image/*.rcc
 *sha.exe
+lua*.dll
+extensions/zhangong/img/*.*
+extensions/zhangong/zhangong.data
+extensions/litex_sqlite3.dll

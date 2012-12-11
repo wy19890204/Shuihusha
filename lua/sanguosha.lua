@@ -25,6 +25,8 @@ function load_translations()
 end
 
 function load_extensions(just_require)
+-- module("extensions.bao",package.seeall) 游戏包
+-- extension=sgs.Package("bao") 增加拓展包
 	local scripts = sgs.GetFileNames("extensions")
 	
 	for _, script in ipairs(scripts) do	
@@ -32,8 +34,10 @@ function load_extensions(just_require)
 			local name = script:sub(script:find("%w+"))
 			local module_name = "extensions." .. name
 			local loaded = require(module_name)
-			
-			sgs.Sanguosha:addPackage(loaded.extension)
+
+			if type(loaded) ~= "boolean" and loaded.extension:objectName() == name then
+				sgs.Sanguosha:addPackage(loaded.extension)
+			end
 		end
 	end
 end
@@ -48,3 +52,5 @@ if not done_loading then
 	done_loading = sgs.QVariant(true)
 	sgs.Sanguosha:setProperty("DoneLoading", done_loading)
 end
+
+--dofile "lua/genjson.lua"

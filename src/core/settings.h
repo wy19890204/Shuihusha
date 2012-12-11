@@ -6,6 +6,7 @@
 #include <QRectF>
 #include <QPixmap>
 #include <QBrush>
+#include <QDesktopWidget>
 
 class Settings : public QSettings{
     Q_OBJECT
@@ -30,11 +31,11 @@ public:
     QStringList BanPackages;
     bool ContestMode;
     bool Statistic;
-    bool FreeChoose;
     bool ForbidSIMC;
     bool DisableChat;
-    bool FreeAssignSelf;
     bool Enable2ndGeneral;
+    bool NoLordSkill;
+    bool EnableReincarnation;
     bool EnableScene;	//changjing
     bool EnableSame;
     bool EnableEndless;
@@ -44,6 +45,9 @@ public:
     int MaxHpScheme;
     bool AnnounceIP;
     QString Address;
+    bool FreeChooseGenerals;
+    bool FreeChooseCards;
+    bool FreeAssignSelf;
     bool EnableAI;
     int AIDelay;
     ushort ServerPort;
@@ -84,6 +88,7 @@ public:
     static const int S_CHOOSE_GENERAL_TIMEOUT;
     static const int S_GUANXING_TIMEOUT;
     static const int S_SURRNDER_REQUEST_MIN_INTERVAL;
+    static const int S_MINI_MAX_COUNT;
 };
 
 extern Settings Config;

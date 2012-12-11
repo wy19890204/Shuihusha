@@ -5,7 +5,7 @@
 #include "card.h"
 #include "structs.h"
 
-class OxPackage : public Package{
+class OxPackage : public GeneralPackage{
     Q_OBJECT
 
 public:
@@ -54,7 +54,7 @@ class SheruCard: public SkillCard{
 public:
     Q_INVOKABLE SheruCard();
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class LianzhuCard: public SkillCard{
@@ -79,7 +79,6 @@ class DuomingCard: public SkillCard{
 
 public:
     Q_INVOKABLE DuomingCard();
-    virtual PlayerStar findPlayerByFlag(Room *room, const QString &flag) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 

@@ -27,6 +27,7 @@ private:
     QWidget *createHandcardButton();
     QWidget *createEquipArea();
     QWidget *createJudgingArea();
+    QWidget *createPilesArea();
 
     const ClientPlayer *player;
     QMap<QObject *, int> mapper;

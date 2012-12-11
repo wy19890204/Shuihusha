@@ -45,6 +45,7 @@
 		<file>card/meteor_sword.jpg</file>
 		<file>card/momohana.jpg</file>
 		<file>card/monkey.jpg</file>
+		<file>card/moonpie.jpg</file>
 		<file>card/nanastars.jpg</file>
 		<file>card/ninedaygirl.jpg</file>
 		<file>card/nullification.jpg</file>
@@ -71,6 +72,7 @@
 		<file>card/vine.jpg</file>
 		<file>card/white.jpg</file>
 		<file>card/wiretap.jpg</file>
+		<file>card/xiaobawang.jpg</file>
 		<file>card/zongzi.jpg</file>
 	</qresource>
 </RCC>

@@ -55,6 +55,14 @@ void ClientLogBox::appendLog(
         log.replace("%from", from);
         log.replace("%to", to);
         log.replace("%card", log_name);
+        if(!arg2.isEmpty()){
+            arg2 = bold(Sanguosha->translate(arg2), Qt::yellow);
+            log.replace("%arg2", arg2);
+        }
+        if(!arg.isEmpty()){
+            arg = bold(Sanguosha->translate(arg), Qt::yellow);
+            log.replace("%arg", arg);
+        }
 
         log = QString("<font color='%2'>%1</font>").arg(log).arg(Config.TextEditColor.name());
         append(log);
@@ -92,7 +100,7 @@ void ClientLogBox::appendLog(
                     log = tr("%from use skill [%1]").arg(skill_name);
                 else{
                     if(card->inherits("DummyCard"))
-                        skill_name = bold(Sanguosha->translate("free-discard"), Qt::yellow);
+                        skill_name = bold(Sanguosha->translate("free-regulate"), Qt::yellow);
                     log = tr("%from use skill [%1], and the cost is %2").arg(skill_name).arg(subcard_str);
                 }
             }else{

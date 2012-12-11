@@ -25,6 +25,7 @@ SOURCES += \
 	src/core/crypto.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
+	src/core/exppattern.cpp \
 	src/core/general.cpp \
 	src/core/jsonutils.cpp \
 	src/core/lua-wrapper.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 	src/core/util.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
+	src/dialog/choosecarddialog.cpp \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
@@ -49,7 +51,6 @@ SOURCES += \
 	src/dialog/scenario-overview.cpp \
 	src/dialog/halldialog.cpp \
 	src/package/package.cpp \
-	src/package/exppattern.cpp \
 	src/package/standard-cards.cpp \
 	src/package/standard-generals.cpp \
 	src/package/common-skillcards.cpp \
@@ -61,26 +62,31 @@ SOURCES += \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
 	src/package/tiger.cpp \
-	src/package/xzzd.cpp \
-	src/package/bwqz.cpp \
-	src/package/qlfd.cpp \
-	src/package/zcyn.cpp \
-	src/package/cgdk.cpp \
-	src/package/ybyt.cpp \
+	src/package/hare.cpp \
+	src/package/dragon.cpp \
+	src/package/snake.cpp \
+	src/package/mustang.cpp \
+	src/package/sheep.cpp \
+	src/package/monkey.cpp \
+	src/package/cock.cpp \
+	src/package/boar.cpp \
 	src/package/sp.cpp \
-	src/package/god.cpp \
+	src/package/mini-generals.cpp \
 	src/package/joy.cpp \
-	src/package/interchange.cpp \
 	src/package/guben.cpp \
-	src/package/stanley.cpp \
-	src/scenario/boss-mode-scenario.cpp \
-	src/scenario/couple-scenario.cpp \
-	src/scenario/dusong-scenario.cpp \
+	src/scenario/contract.cpp \
+	src/scenario/couple.cpp \
+	src/scenario/dusong.cpp \
+	src/scenario/changban.cpp \
+	src/scenario/impasse_fight.cpp \
 	src/scenario/miniscenarios.cpp \
-	src/scenario/legend-mode-scenario.cpp \
+	src/scenario/landlord.cpp \
+	src/scenario/legend.cpp \
 	src/scenario/scenario.cpp \
 	src/scenario/scenerule.cpp \
-	src/scenario/zombie-mode-scenario.cpp \
+	src/scenario/warlords.cpp \
+	src/scenario/wheel_fight.cpp \
+	src/scenario/zombie.cpp \
 	src/server/ai.cpp \
 	src/server/contestdb.cpp \
 	src/server/gamerule.cpp \
@@ -158,6 +164,7 @@ HEADERS += \
 	src/core/crypto.h \
 	src/core/card.h \
 	src/core/engine.h \
+	src/core/exppattern.h \
 	src/core/general.h \
 	src/core/jsonutils.h \
 	src/core/lua-wrapper.h \
@@ -166,9 +173,11 @@ HEADERS += \
 	src/core/settings.h \
 	src/core/skill.h \
 	src/core/statistics.h \
+	src/core/structs.h \
 	src/core/util.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
+	src/dialog/choosecarddialog.h \
 	src/dialog/choosegeneraldialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
@@ -181,7 +190,6 @@ HEADERS += \
 	src/dialog/playercarddialog.h \
 	src/dialog/roleassigndialog.h \ 
 	src/dialog/scenario-overview.h \
-	src/package/exppattern.h \
 	src/package/package.h \
 	src/package/standard-equips.h \
 	src/package/standard-generals.h \
@@ -194,26 +202,31 @@ HEADERS += \
 	src/package/rat.h \
 	src/package/ox.h \
 	src/package/tiger.h \
-	src/package/xzzd.h \
-	src/package/bwqz.h \
-	src/package/qlfd.h \
-	src/package/zcyn.h \
-	src/package/cgdk.h \
-	src/package/ybyt.h \
+	src/package/hare.h \
+	src/package/dragon.h \
+	src/package/snake.h \
+	src/package/mustang.h \
+	src/package/sheep.h \
+	src/package/monkey.h \
+	src/package/cock.h \
+	src/package/boar.h \
 	src/package/sp.h \
-	src/package/god.h \
+	src/package/mini-generals.h \
 	src/package/joy.h \
-	src/package/interchange.h \
 	src/package/guben.h \
-	src/package/stanley.h \
-	src/scenario/boss-mode-scenario.h \
-	src/scenario/couple-scenario.h \
-	src/scenario/dusong-scenario.h \
+	src/scenario/contract.h \
+	src/scenario/couple.h \
+	src/scenario/dusong.h \
+	src/scenario/changban.h \
+	src/scenario/impasse_fight.h \
 	src/scenario/miniscenarios.h \
-	src/scenario/legend-mode-scenario.h \
+	src/scenario/landlord.h \
+	src/scenario/legend.h \
 	src/scenario/scenario.h \
 	src/scenario/scenerule.h \
-	src/scenario/zombie-mode-scenario.h \
+	src/scenario/warlords.h \
+	src/scenario/wheel_fight.h \
+	src/scenario/zombie.h \
 	src/server/ai.h \
 	src/server/contestdb.h \
 	src/server/gamerule.h \
@@ -224,7 +237,6 @@ HEADERS += \
 	src/server/roomthread3v3.h \
 	src/server/server.h \
 	src/server/serverplayer.h \
-	src/server/structs.h \
 	src/ui/button.h \
 	src/ui/cardcontainer.h \
 	src/ui/carditem.h \
@@ -336,7 +348,7 @@ CONFIG(chatvoice){
 TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-        shuihusha.qss \
+	shuihusha.qss \
 	acknowledgement/main.qml \
 	acknowledgement/list.png \
 	acknowledgement/back.png

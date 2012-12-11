@@ -6,6 +6,7 @@
 
 #include <QTextDocument>
 #include <QTextOption>
+#include <QFile>
 
 ClientPlayer *Self = NULL;
 
@@ -118,7 +119,7 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
 }
 
 QString ClientPlayer::getDeathPixmapPath() const{
-    QString basename;
+    QString basename = "unknown";
     if(ServerInfo.GameMode == "06_3v3"){
         if(getRole() == "lord" || getRole() == "renegade")
             basename = "marshal";
@@ -129,9 +130,8 @@ QString ClientPlayer::getDeathPixmapPath() const{
     }else
         basename = getRole();
 
-    if(basename.isEmpty() || property("panxin").toBool()){
+    if(property("panxin").toBool())
         basename = "unknown";
-    }
 
     return QString("image/system/death/%1.png").arg(basename);
 }
@@ -163,6 +163,8 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     if(mark.endsWith("poison"))
         emit poison_changed();
+    if(mark.endsWith("_wake"))
+        emit waked();
     if(!mark.startsWith("@"))
         return;
 
@@ -174,8 +176,11 @@ void ClientPlayer::setMark(const QString &mark, int value){
         itor.next();
 
         if(itor.key().startsWith("@") && itor.value() > 0){
-            QString mark_text = QString("<img src='image/mark/%1.png' />").arg(itor.key());
-            QString mark_text_small = QString("<img src='image/mark/%1.png' width='15' height='15' />").arg(itor.key());
+            QString path = QString("image/mark/%1.png").arg(itor.key());
+            if(!QFile::exists(path))
+                path = QString("extensions/generals/mark/%1.png").arg(itor.key());
+            QString mark_text = QString("<img src='%1' />").arg(path);
+            QString mark_text_small = QString("<img src='%1' width='15' height='15' />").arg(path);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
                 mark_text_small.append(QString("x%1").arg(itor.value()));

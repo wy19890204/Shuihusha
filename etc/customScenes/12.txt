@@ -1,4 +1,6 @@
-general:select|role:renegade
-general:shijin|role:rebel|equip:eight_diagram|starter:true
-general:yangchun|role:loyalist|maxhp:4|hp:4|equip:fan
-general:zhuwu|role:lord|maxhp:4|hp:3
+
+general:select role:loyalist 
+general:gongsunsheng role:rebel starter:true equip:208 
+general:wuyong role:rebel 
+general:baisheng role:rebel 
+general:yangzhi role:lord maxhp:5 hp:5 draw:2 equip:106 hand:60,55 judge:124 

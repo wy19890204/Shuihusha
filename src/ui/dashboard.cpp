@@ -13,7 +13,7 @@
 #include <QPixmapCache>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
-    :left_pixmap("image/system/dashboard-equip.png"), right_pixmap("image/system/dashboard-avatar.png"),
+    :left_pixmap(":system/dashboard-equip.png"), right_pixmap(":system/dashboard-avatar.png"),
     button_widget(button_widget), selected(NULL), avatar(NULL),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
@@ -58,7 +58,7 @@ int Dashboard::getButtonWidgetWidth() const{
 void Dashboard::createMiddle(){
     middle = new QGraphicsRectItem(this);
 
-    QPixmap middle_pixmap("image/system/dashboard-hand.png");
+    QPixmap middle_pixmap(":system/dashboard-hand.png");
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
@@ -141,12 +141,27 @@ void Dashboard::createRight(){
     avatar_area->setZValue(0.3);
     avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
     avatar_area->setVisible(false);
+
+    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon->setParentItem(right);
+    wake_icon->setPos(18, 127);
+    wake_icon->hide();
+    wake_icon->setZValue(0.4);
+}
+
+void Dashboard::setWakeState(){
+    if(Self->getWakeSkills().isEmpty())
+        return;
+    if(Self->getMark("_wake") > 0)
+        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+    else
+        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
 }
 
 void Dashboard::setEcstState(){
     if(Self->hasFlag("ecst"))
         avatar_area->setVisible(true);
-    //else if(Self->getMark("poison") > 0)
+    //else if(Self->hasMark("poison"))
     //    setPoisonState();
     else
         avatar_area->setVisible(false);
@@ -215,6 +230,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(general_changed()), this, SLOT(updateAvatar()));
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
+    connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
     connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
@@ -536,6 +552,7 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
+    wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){
@@ -575,13 +592,11 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
         QPixmapCache::insert(path, label);
     }
 
-    if(label.isNull())
-    {
+    if(label.isNull()){
         painter->setPen(Qt::white);
         QString text = QString("%1").arg(card->label());
         painter->drawText(10, y + 20, text);
-    }else
-    {
+    }else{
         QFont font("Algerian",12);
         font.setBold(true);
         painter->setFont(font);
@@ -592,12 +607,10 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     QRect suit_rect(width - 19, y + 10, 13, 13);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
-
     // draw the number of equip
 
     //painter->drawText(width - 4,y + 23,QString("%1").arg(card->getNumberString()));
     painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
-
 
     painter->setPen(Qt::white);
     if(equip->isMarked()){

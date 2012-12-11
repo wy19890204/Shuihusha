@@ -9,9 +9,17 @@ class BaoquanCard: public SkillCard{
 
 public:
     Q_INVOKABLE BaoquanCard();
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
+class LuanjunCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LuanjunCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
 /*
 class YuzhongCard: public SkillCard{
     Q_OBJECT
@@ -24,16 +32,8 @@ public:
     virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
 };
 
-class JiebaoCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE JiebaoCard();
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
-};
 */
-class SPPackage: public Package{
+class SPPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

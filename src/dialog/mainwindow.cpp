@@ -26,6 +26,7 @@
 #include <QSystemTrayIcon>
 #include <QInputDialog>
 #include <QLabel>
+#include <QResource>
 
 class FitView : public QGraphicsView
 {
@@ -60,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     scene = NULL;
 
+    QResource::registerResource("image/skin.rcc");
+    QResource::registerResource("image/card.rcc");
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
     connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
@@ -102,7 +105,8 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::restoreFromConfig(){
-    resize(Config.value("WindowSize", QSize(1042, 719)).toSize());
+    //resize(Config.value("WindowSize", QSize(1042, 719)).toSize());
+    resize(Config.value("WindowSize", QSize(1340, 758)).toSize());
     move(Config.value("WindowPosition", QPoint(20,20)).toPoint());
 
     QFont font;
@@ -128,6 +132,8 @@ void MainWindow::closeEvent(QCloseEvent *event){
 
 MainWindow::~MainWindow()
 {
+    QResource::unregisterResource("image/card.rcc");
+    QResource::unregisterResource("image/skin.rcc");
     delete ui;
 }
 
@@ -284,10 +290,11 @@ void MainWindow::enterRoom(){
     ui->actionExpand_dashboard->toggle();
     ui->actionExpand_dashboard->toggle();
 
-    if(ServerInfo.FreeChoose){
+    if(Config.value("EnableCheatMenu", false).toBool()){
         ui->menuCheat->setEnabled(true);
 
         connect(ui->actionGet_card, SIGNAL(triggered()), ui->actionCard_Overview, SLOT(trigger()));
+        connect(ui->actionChange_general, SIGNAL(triggered()), ui->actionGeneral_Overview, SLOT(trigger()));
         connect(ui->actionDeath_note, SIGNAL(triggered()), room_scene, SLOT(makeKilling()));
         connect(ui->actionDamage_maker, SIGNAL(triggered()), room_scene, SLOT(makeDamage()));
         connect(ui->actionRevive_wand, SIGNAL(triggered()), room_scene, SLOT(makeReviving()));
@@ -378,7 +385,7 @@ void MainWindow::on_actionEnable_Hotkey_toggled(bool checked)
 void MainWindow::on_actionAbout_triggered()
 {
     // Cao Cao's pixmap
-    QString content =  "<center><img src='image/system/moligaloo.png'> <br /> </center>";
+    QString content =  "<center><img src='image/logo/moligaloo.png'> <br /> </center>";
 
     // Cao Cao' poem
     QString poem = tr("Disciples dressed in blue, my heart worries for you. You are the cause, of this song without pause");
@@ -395,7 +402,7 @@ void MainWindow::on_actionAbout_triggered()
                       "My QQ: 365840793 <br/>"
                       "My Weibo: http://weibo.com/moligaloo <br/>"
                       ).arg(email));
-
+/*
     QString config;
 
 #ifdef QT_NO_DEBUG
@@ -403,10 +410,10 @@ void MainWindow::on_actionAbout_triggered()
 #else
     config = "debug";
 #endif
-
-    content.append(tr("Current version: %1 %2 (%3)<br/>")
+*/
+    content.append(tr("Current version: %1 (%2)<br/>")
                    .arg(Sanguosha->getVersion())
-                   .arg(config)
+                   //.arg(config)
                    .arg(Sanguosha->getVersionName()));
 
     const char *date = __DATE__;
@@ -419,7 +426,7 @@ void MainWindow::on_actionAbout_triggered()
     QString forum_url = "http://qsanguosha.org";
     content.append(tr("Forum: <a href='%1'>%1</a> <br/>").arg(forum_url));
 
-    Window *window = new Window(tr("About QSanguosha"), QSize(365, 411));
+    Window *window = new Window(tr("About QSanguosha"), QSize(425, 451));
     scene->addItem(window);
 
     window->addContent(content);
@@ -639,8 +646,9 @@ void MainWindow::on_actionScript_editor_triggered()
 MeleeDialog::MeleeDialog(QWidget *parent)
     :QDialog(parent)
 {
-    server=NULL;    
-    room_count=0;
+    server = NULL;
+    room_count = 0;
+    stage_count = 0;
 
     setWindowTitle(tr("AI Melee"));
 
@@ -688,19 +696,23 @@ QGroupBox *MeleeDialog::createGeneralBox(){
     QFormLayout *form_layout = new QFormLayout;
     spinbox = new QSpinBox;
     spinbox->setRange(1, 50);
-    spinbox->setValue(4);
+    spinbox->setValue(1);
+
+    stagebox = new QSpinBox;
+    stagebox->setRange(1, 100);
+    stagebox->setValue(20);
+    //stagebox->setEnabled(false);
 
     start_button = new QPushButton(tr("Start"));
     connect(start_button, SIGNAL(clicked()), this, SLOT(startTest()));
 
     loop_checkbox = new QCheckBox(tr("LOOP"));
     loop_checkbox->setObjectName("loop_checkbox");
-    loop_checkbox->setChecked(true);
+    connect(loop_checkbox, SIGNAL(toggled(bool)), stagebox, SLOT(setDisabled(bool)));
 
     form_layout->addRow(tr("Num of rooms"), spinbox);
+    form_layout->addRow(tr("Num of stages"), stagebox);
     form_layout->addRow(loop_checkbox, start_button);
-    // form_layout->addWidget(start_button);
-    // form_layout->addWidget(loop_checkbox);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(avatar_button);
@@ -822,7 +834,8 @@ void MeleeDialog::onGameOver(const QString &winner){
                       .arg(room->getTag("SwapPile").toInt());
 
     if(room_item) room_item->setToolTip(tooltip);
-    if(loop_checkbox->isChecked()){
+    stage_count ++;
+    if(loop_checkbox->isChecked() || stage_count < stagebox->value()){
         if(room_item){
             room_items.removeOne(room_item);
             delete room_item;
@@ -833,6 +846,7 @@ void MeleeDialog::onGameOver(const QString &winner){
 
         room->startTest(avatar_button->property("to_test").toString());
     }
+    //stagebox->setValue(stage_count);
 }
 
 QGroupBox *MeleeDialog::createResultBox(){
@@ -959,18 +973,19 @@ void MeleeDialog::updateResultBox(QString role, int win){
     double rate = winCount / roleCount * 100;
     edit->setText(QString("%1 / %2 = %3 %").arg(winCount).arg(roleCount).arg(rate));
 
-    double totalCount = 0, totalWinCount = 0;
+    stage_count = 0;
+    double totalWinCount = 0;
 
     foreach(int count, this->roleCount.values())
-        totalCount += count;
+        stage_count += count;
 
     foreach(int count, this->winCount.values())
         totalWinCount += count;
 
     QLineEdit *total_edit = result_box->findChild<QLineEdit *>("total_edit");
-    total_edit->setText(QString("%1 / %2 = %3 %").arg(totalWinCount).arg(totalCount).arg(totalWinCount/totalCount*100));
+    total_edit->setText(QString("%1 / %2 = %3 %").arg(totalWinCount).arg(stage_count).arg(totalWinCount/stage_count*100));
 
-    server_log->append(tr("End of game %1").arg(totalCount));
+    server_log->append(tr("End of game %1").arg(stage_count));
 }
 
 void MainWindow::on_actionView_ban_list_triggered()

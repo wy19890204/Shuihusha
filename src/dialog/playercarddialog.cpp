@@ -64,6 +64,7 @@ PlayerCardDialog::PlayerCardDialog(const ClientPlayer *player, const QString &fl
     static QChar handcard_flag('h');
     static QChar equip_flag('e');
     static QChar judging_flag('j');
+    static QChar piles_flag('p');
 
     layout->addWidget(createAvatar());
 
@@ -75,6 +76,18 @@ PlayerCardDialog::PlayerCardDialog(const ClientPlayer *player, const QString &fl
 
     if(flags.contains(judging_flag))
         vlayout->addWidget(createJudgingArea());
+
+    if(flags.contains(piles_flag)){
+        bool show = false;
+        foreach(QString pile_name, player->getPileNames()){
+            if(!player->getPile(pile_name).isEmpty()){
+                show = true;
+                break;
+            }
+        }
+        if(show)
+            vlayout->addWidget(createPilesArea());
+    }
 
     layout->addLayout(vlayout);
 
@@ -98,7 +111,9 @@ QWidget *PlayerCardDialog::createAvatar(){
 }
 
 QWidget *PlayerCardDialog::createHandcardButton(){
-    if(!player->isKongcheng() && ((Self->hasSkill("dongcha") && player->hasFlag("dongchaee")) || Self == player)){
+    if(!player->isKongcheng() &&
+       (Self == player || Self->hasFlag("loot") ||
+        (Self->hasSkill("dongcha") && player->hasFlag("dongchaee")))){
         QGroupBox *area = new QGroupBox(tr("Handcard area"));
         QVBoxLayout *layout =  new QVBoxLayout;
         QList<const Card *> cards = player->getCards();
@@ -214,4 +229,29 @@ void PlayerCardDialog::emitId(){
     int id = mapper.value(sender(), -2);
     if(id != -2)
         emit card_id_chosen(id);
+}
+
+QWidget *PlayerCardDialog::createPilesArea(){
+    QGroupBox *area = new QGroupBox(tr("Piles Area"));
+    QVBoxLayout *layout = new QVBoxLayout;
+    foreach(QString pile_name, player->getPileNames()){
+        if(!player->getPile(pile_name).isEmpty()){
+            QGroupBox *pilesarea = new QGroupBox(Sanguosha->translate(pile_name));
+            QVBoxLayout *layout2 = new QVBoxLayout;
+            foreach(int card_id, player->getPile(pile_name)){
+                const Card *card = Sanguosha->getCard(card_id);
+                QCommandLinkButton *button = new QCommandLinkButton(card->getFullName());
+                button->setIcon(card->getSuitIcon());
+                layout2->addWidget(button);
+
+                mapper.insert(button, card->getId());
+                connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
+                pilesarea->setLayout(layout2);
+            }
+            layout->addWidget(pilesarea);
+            area->setLayout(layout);
+        }
+    }
+
+    return area;
 }

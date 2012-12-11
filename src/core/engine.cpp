@@ -36,10 +36,6 @@ void Engine::addScenario(const QString &name){
         qWarning("Scenario %s cannot be loaded!", qPrintable(name));
 }
 
-static inline QVariant GetConfigFromLuaState(lua_State *L, const char *key){
-    return GetValueFromLuaState(L, "config", key);
-}
-
 Engine::Engine()
 {
     Sanguosha = this;
@@ -124,8 +120,13 @@ const Scenario *Engine::getScenario(const QString &name) const{
 
 void Engine::addSkills(const QList<const Skill *> &all_skills){
     foreach(const Skill *skill, all_skills){
-        if(skills.contains(skill->objectName()))
-            QMessageBox::warning(NULL, "", tr("Duplicated skill : %1").arg(skill->objectName()));
+        if(skills.contains(skill->objectName())){
+            if(!Config.value("MuteLoad", false).toBool())
+                QMessageBox::warning(NULL, "", tr("Duplicated skill : %1").arg(skill->objectName()));
+            QVariantList duplis = Config.value("Duplicated", QVariant()).toList();
+            duplis << skill->objectName();
+            Config.setValue("Duplicated", duplis);
+        }
 
         skills.insert(skill->objectName(), skill);
 
@@ -169,6 +170,13 @@ void Engine::addPackage(Package *package){
         else
             nonlord_list << general->objectName();
 
+        if(generals.contains(general->objectName())){
+            if(!Config.value("MuteLoad", false).toBool())
+                QMessageBox::warning(NULL, "", tr("Duplicated general : %1").arg(general->objectName()));
+            QVariantList duplis = Config.value("Duplicated", QVariant()).toList();
+            duplis << general->objectName();
+            Config.setValue("Duplicated", duplis);
+        }
         generals.insert(general->objectName(), general);
     }
 
@@ -191,16 +199,25 @@ QStringList Engine::getBanPackages() const{
         return ban_package.toList();
 }
 
+bool Engine::isDuplicated(const QString &name, bool is_skill){
+    if(is_skill)
+        return skills.contains(name);
+    else
+        return generals.contains(name);
+}
+
 QString Engine::translate(const QString &to_translate) const{
     return translations.value(to_translate, to_translate);
 }
 
 int Engine::getRoleIndex() const{
-    if(ServerInfo.GameMode == "06_3v3"){
+    if(ServerInfo.GameMode == "06_3v3")
+        return 2;
+    else if(ServerInfo.EnableHegemony)
+        return 3;
+    else if(ServerInfo.GameMode == "landlord")
         return 4;
-    }else if(ServerInfo.EnableHegemony){
-        return 5;
-    }else
+    else
         return 1;
 }
 
@@ -217,6 +234,14 @@ QList<const Skill *> Engine::getRelatedSkills(const QString &skill_name) const{
         skills << getSkill(name);
 
     return skills;
+}
+
+const Card *Engine::getCard(const QString &name) const{
+    foreach(const Card *card, cards){
+        if(card->objectName() == name || card->getSubtype() == name)
+            return card;
+    }
+    return NULL;
 }
 
 const General *Engine::getGeneral(const QString &name) const{
@@ -311,13 +336,26 @@ QString Engine::getMODName() const{
     return GetConfigFromLuaState(lua, "mod_name").toString();
 }
 
-QStringList Engine::getExtensions() const{
+QStringList Engine::getExtensions(bool getall) const{
+    QStringList extensions;
+    QList<const Package *> packages = findChildren<const Package *>();
+    foreach(const Package *package, packages){
+        if(package->inherits("Scenario") && !getall)
+            continue;
+
+        extensions << package->objectName();
+    }
+    return extensions;
+}
+
+QStringList Engine::getLuaExtensions() const{
     QStringList extensions;
     QList<const Package *> packages = findChildren<const Package *>();
     foreach(const Package *package, packages){
         if(package->inherits("Scenario"))
             continue;
-
+        if(package->getGenre() == Package::CPP)
+            continue;
         extensions << package->objectName();
     }
     return extensions;
@@ -356,10 +394,12 @@ QColor Engine::getKingdomColor(const QString &kingdom) const{
 QString Engine::getSetupString() const{
     int timeout = Config.OperationNoLimit ? 0 : Config.OperationTimeout;
     QString flags;
-    if(Config.FreeChoose)
+    if(Config.FreeChooseGenerals || Config.FreeChooseCards)
         flags.append("F");
     if(Config.Enable2ndGeneral)
         flags.append("S");
+    if(Config.EnableReincarnation)
+        flags.append("R");
     if(Config.EnableScene)
         flags.append("C");
     if(Config.EnableSame)
@@ -412,7 +452,7 @@ int Engine::getPlayerCount(const QString &mode) const{
             return rx.capturedTexts().first().toInt();
     }else{
         // scenario mode
-        const Scenario *scenario = scenarios.value(mode, NULL);
+        const Scenario *scenario = getScenario(mode);
         if(scenario)
             return scenario->getPlayerCount();
     }
@@ -538,8 +578,7 @@ QStringList Engine::getRandomLords() const{
 
     QStringList lords;
 
-    foreach(QString alord,getLords())
-    {
+    foreach(QString alord, getLords()){
         if(banlist_ban.contains(alord))continue;
 
         lords << alord;
@@ -570,14 +609,28 @@ QStringList Engine::getRandomLords() const{
     return lords;
 }
 
-QStringList Engine::getLimitedGeneralNames() const{
+QStringList Engine::getLimitedGeneralNames(bool getall) const{
     QStringList general_names;
+    if(getall){
+        QHashIterator<QString, const General *> itor(generals);
+        while(itor.hasNext()){
+            itor.next();
+            general_names << itor.key();
+        }
+        QHashIterator<QString, const General *> itpr(hidden_generals);
+        while(itpr.hasNext()){
+            itpr.next();
+            general_names << itpr.key();
+        }
+        return general_names;
+    }
     QHashIterator<QString, const General *> itor(generals);
     while(itor.hasNext()){
         itor.next();
-        if(!ban_package.contains(itor.value()->getPackage())){
+        if(Config.value("DisableQimen", false).toBool() && itor.key() == "gongsunsheng")
+            continue;
+        if(!ban_package.contains(itor.value()->getPackage()))
             general_names << itor.key();
-        }
     }
 
     return general_names;
@@ -589,14 +642,13 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 
     Q_ASSERT(all_generals.count() >= count);
 
-    if(Config.EnableBasara) general_set =
-            general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
-    if(Config.EnableHegemony) general_set =
-            general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
+    if(Config.EnableBasara)
+        general_set = general_set.subtract(Config.value("Banlist/Basara", "").toStringList().toSet());
+    if(Config.EnableHegemony)
+        general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
 
-    if(ServerInfo.GameMode.endsWith("p") ||
-                      ServerInfo.GameMode.endsWith("pd"))
-        general_set.subtract(Config.value("Banlist/Roles","").toStringList().toSet());
+    if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd"))
+        general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();
 
@@ -610,29 +662,28 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    bool exclude_disaters = false, using_new_3v3 = false;
+    bool exclude_disaters = false;
 
-    if(Config.GameMode == "06_3v3"){
-        using_new_3v3 = Config.value("3v3/UsingNewMode", false).toBool();
-        exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool() ||
-                            using_new_3v3;
-    }
-
-    if(Config.GameMode == "dusong")
-        exclude_disaters = true;
+    if(Config.GameMode == "06_3v3")
+        exclude_disaters = Config.value("3v3/ExcludeDisasters", true).toBool();
 
     QList<int> list;
     foreach(Card *card, cards){
         card->clearFlags();
 
+        QStringList bancards = Config.value("Banlist/Cards", "").toStringList();
+        if(bancards.contains(card->objectName()) || bancards.contains(card->getSubtype()))
+            continue;
+
+        const Scenario *scenario = getScenario(Config.GameMode);
+        if(scenario)
+            if(scenario->setCardPiles(card))
+                continue;
+
         if(exclude_disaters && card->inherits("Disaster"))
             continue;
 
-        if(card->getPackage() == "Special3v3" && using_new_3v3){
-            list << card->getId();
-            list.removeOne(98);
-        }
-        else if(!ban_package.contains(card->getPackage()))
+        if(!ban_package.contains(card->getPackage()))
             list << card->getId();
     }
 
@@ -651,10 +702,7 @@ void Engine::playAudio(const QString &name) const{
 
 void Engine::playEffect(const QString &filename) const{
 #ifdef AUDIO_SUPPORT
-/*
-    if(!Config.EnableEffects)
-        return;
-*/
+
     if(filename.isNull())
         return;
 
@@ -697,6 +745,25 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
     }
 
     playEffect(path);
+}
+
+QList<const Skill *> Engine::getSkills(const QString &package_name) const{
+    QList<const Skill *> skills;
+    const Package *package = Sanguosha->findChild<const Package *>(package_name);
+    if(package && !package->inherits("CardPackage")){
+        foreach(const Skill *skill, package->getSkills()){
+            if(skill->isVisible() && skill->getFrequency() != Skill::NotSkill)
+                skills << skill;
+        }
+        QList<General *> all_generals = package->findChildren<General *>();
+        foreach(General *general, all_generals){
+            foreach(const Skill *skill, general->findChildren<const Skill *>()){
+                if(skill->isVisible() && skill->getFrequency() != Skill::NotSkill)
+                    skills << skill;
+            }
+        }
+    }
+    return skills;
 }
 
 const Skill *Engine::getSkill(const QString &skill_name) const{
@@ -742,10 +809,17 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
     int x = 0;
 
     foreach(const ClientSkill *skill, client_skills){
-        if(type == "maxcard")
-            x += skill->getExtra(from);
+        if(type == "maxcard"){
+            int y = skill->getExtra(from);
+            if(y < 0) // fixed maxcard
+                return y;
+            else
+                x += y;
+        }
         else if(type == "distance")
             x += skill->getCorrect(from, to);
+        else if(type == "slashresidue")
+            x += skill->getSlashResidue(from);
         else if(type == "attackrange"){
             int y = skill->getAtkrg(from);
             if(y < 0) // fixed attack range

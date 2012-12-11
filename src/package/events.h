@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class EventsPackage: public Package{
+class EventsPackage: public CardPackage{
     Q_OBJECT
 
 public:
@@ -95,6 +95,16 @@ public:
 
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual bool isAvailable(const Player *player) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
+class Xiaobawang:public EventsCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Xiaobawang(Card::Suit suit, int number);
+
+    virtual bool isAvailable(const Player *p) const;
     virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 

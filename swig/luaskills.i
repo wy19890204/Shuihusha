@@ -19,6 +19,16 @@ public:
 
 	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 	virtual void onGameStart(ServerPlayer *player) const = 0;
+	virtual void onIdied(ServerPlayer *player) const;
+};
+
+class DrawCardsSkill: public TriggerSkill{
+public:
+	DrawCardsSkill(const QString &name);
+
+	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
+	virtual int getDrawNum(ServerPlayer *player, int n) const = 0;
+	virtual void drawDone(ServerPlayer *player, int n) const;
 };
 
 class ClientSkill: public Skill{
@@ -27,7 +37,14 @@ public:
 	virtual int getExtra(const Player *target) const;
 	virtual int getCorrect(const Player *from, const Player *to) const;
 	virtual int getAtkrg(const Player *target) const;
+	virtual int getSlashResidue(const Player *target) const;
 	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
+};
+
+class DistanceSkill: public ClientSkill{
+public:
+	DistanceSkill(const QString &name);
+	virtual int getCorrect(const Player *from, const Player *to) const;
 };
 
 class LuaProhibitSkill: public ClientSkill{
@@ -92,7 +109,7 @@ public:
 	LuaFunction view_as;
 };
 
-class LuaDistanceSkill: public ClientSkill{
+class LuaDistanceSkill: public DistanceSkill{
 public:
 	LuaDistanceSkill(const char *name);
 	virtual int getCorrect(const Player *from, const Player *to) const;

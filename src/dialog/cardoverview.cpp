@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "clientstruct.h"
 #include "client.h"
+#include "settings.h"
 
 #include <QResource>
 static CardOverview *Overview;
@@ -27,9 +28,10 @@ CardOverview::CardOverview(QWidget *parent) :
     ui->tableWidget->setColumnWidth(3, 60);
     ui->tableWidget->setColumnWidth(4, 70);
 
-    if(ServerInfo.FreeChoose)
+    if(ServerInfo.isPlay && Config.FreeChooseCards){
+        ui->getCardButton->show();
         connect(ui->getCardButton, SIGNAL(clicked()), this, SLOT(askCard()));
-    else
+    }else
         ui->getCardButton->hide();
 
     ui->cardDescriptionBox->setProperty("description", true);
@@ -51,7 +53,7 @@ void CardOverview::loadFromList(const QList<const Card*> &list){
     int i, n = list.length();
     ui->tableWidget->setRowCount(n);
     for(i=0; i<n; i++)
-        addCard(i, list.at(i));    
+        addCard(i, list.at(i));
 
     if(n>0)
         ui->tableWidget->setCurrentItem(ui->tableWidget->item(0,0));
@@ -74,7 +76,7 @@ void CardOverview::addCard(int i, const Card *card){
     ui->tableWidget->setItem(i, 2, new QTableWidgetItem(point));
     ui->tableWidget->setItem(i, 3, new QTableWidgetItem(type));
     ui->tableWidget->setItem(i, 4, new QTableWidgetItem(subtype));
-    ui->tableWidget->setItem(i, 5, new QTableWidgetItem(package));    
+    ui->tableWidget->setItem(i, 5, new QTableWidgetItem(package));
 }
 
 CardOverview::~CardOverview()
@@ -95,7 +97,7 @@ void CardOverview::on_tableWidget_itemSelectionChanged()
 }
 
 void CardOverview::askCard(){
-    if(!ServerInfo.FreeChoose)
+    if(!Config.FreeChooseCards)
         return;
 
     int row = ui->tableWidget->currentRow();
@@ -111,18 +113,34 @@ void CardOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
         askCard();
 }
 
+void playEffect(int card_id, bool ismale){
+    const Card *card = Sanguosha->getCard(card_id);
+    if(card->inherits("Weapon") || card->inherits("Armor")){
+        QString src = "E" + card->objectName();
+        Sanguosha->playCardEffect(src, ismale);
+    }
+    else if(card->inherits("EventsCard") || card->inherits("IronChain")){
+        QString src = "@";
+        if(card->inherits("EventsCard")){
+            src = src + card->objectName();
+            src = src + QString::number(qrand() % 2 + 1);
+        }
+        else{
+            QString iron = qrand() % 2 == 0 ? "tiesuo" : "recast";
+            src = src + iron;
+        }
+        Sanguosha->playCardEffect(src, ismale);
+    }
+    else
+        Sanguosha->playCardEffect(card->objectName(), ismale);
+}
+
 void CardOverview::on_malePlayButton_clicked()
 {
     int row = ui->tableWidget->currentRow();
     if(row >= 0){
         int card_id = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toInt();
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->inherits("Weapon") || card->inherits("Armor")){
-            QString src = "E" + card->objectName();
-            Sanguosha->playCardEffect(src, true);
-        }
-        else
-            Sanguosha->playCardEffect(card->objectName(), true);
+        playEffect(card_id, true);
     }
 }
 
@@ -131,12 +149,6 @@ void CardOverview::on_femalePlayButton_clicked()
     int row = ui->tableWidget->currentRow();
     if(row >= 0){
         int card_id = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toInt();
-        const Card *card = Sanguosha->getCard(card_id);
-        if(card->inherits("Weapon") || card->inherits("Armor")){
-            QString src = "E" + card->objectName();
-            Sanguosha->playCardEffect(src, false);
-        }
-        else
-            Sanguosha->playCardEffect(card->objectName(), false);
+        playEffect(card_id, false);
     }
 }

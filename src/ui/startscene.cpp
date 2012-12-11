@@ -14,7 +14,7 @@ StartScene::StartScene()
     logo->shift();
     logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
-
+/*
     //the website URL
     QFont website_font(Config.SmallFont);
     website_font.setStyle(QFont::StyleItalic);
@@ -22,7 +22,7 @@ StartScene::StartScene()
     website_text->setBrush(Qt::white);
     website_text->setPos(Config.Rect.width()/2 - website_text->boundingRect().width(),
                        Config.Rect.height()/2 - website_text->boundingRect().height());
-
+*/
     server_log = NULL;
 }
 
@@ -127,7 +127,25 @@ void StartScene::printServerInfo(){
     if(Config.ContestMode)
         server_log->append(tr("The contest mode is enabled"));
 
-    server_log->append(tr("Free general choose is %1").arg(Config.FreeChoose ? tr("Enabled") : tr("Disabled")));
+    QStringList cheats;
+    if(Config.value("EnableCheatMenu", false).toBool())
+        cheats << Sanguosha->translate("cheat0");
+    if(Config.FreeChooseGenerals)
+        cheats << Sanguosha->translate("cheat1");
+    if(Config.FreeChooseCards)
+        cheats << Sanguosha->translate("cheat2");
+    if(Config.value("FreeAssign", false).toBool())
+        cheats << Sanguosha->translate("cheat3");
+    if(Config.value("FreeRegulate", false).toBool())
+        cheats << Sanguosha->translate("cheat4");
+    if(Config.value("FreeChange", false).toBool())
+        cheats << Sanguosha->translate("cheat5");
+    if(Config.value("FreeShowRole", false).toBool())
+        cheats << Sanguosha->translate("cheat6");
+    if(Config.value("FreeUnDead", false).toBool())
+        cheats << Sanguosha->translate("cheat7");
+    QString cheating = cheats.isEmpty() ? tr("Disabled") : cheats.join(" , ");
+    server_log->append(tr("Cheat choose is") + cheating);
 
     if(Config.Enable2ndGeneral){
         QString scheme_str;
@@ -141,9 +159,26 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    server_log->append( Config.EnableScene ?
+    QString changjing = Config.EnableScene ?
                         tr("Scene Mode is enabled") :
-                        tr("Scene Mode is disabled"));
+                        tr("Scene Mode is disabled");
+    //server_log->append(changjing);
+
+    server_log->append( Config.EnableReincarnation ?
+                        tr("Reincarnation Rule is enabled") :
+                        tr("Reincarnation Rule is disabled"));
+
+    server_log->append( Config.EnableAnzhan ?
+                        tr("Anzhan Mode is enabled") :
+                        tr("Anzhan Mode is disabled"));
+
+    server_log->append( Config.EnableBasara ?
+                        tr("Basara Mode is enabled") :
+                        tr("Basara Mode is disabled"));
+
+    server_log->append( Config.EnableHegemony ?
+                        tr("Hegemony Mode is enabled") :
+                        tr("Hegemony Mode is disabled"));
 
     server_log->append( Config.EnableSame ?
                         tr("Same Mode is enabled") :
@@ -152,18 +187,6 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableEndless ?
                         tr("Endless Mode is enabled, time: %1").arg(Config.value("EndlessTimes").toString()) :
                         tr("Endless Mode is disabled"));
-/*
-    server_log->append( Config.EnableAnzhan ?
-                        tr("Anzhan Mode is enabled") :
-                        tr("Anzhan Mode is disabled"));
-*/
-    server_log->append( Config.EnableBasara ?
-                        tr("Basara Mode is enabled") :
-                        tr("Basara Mode is disabled"));
-
-    server_log->append( Config.EnableHegemony ?
-                        tr("Hegemony Mode is enabled") :
-                        tr("Hegemony Mode is disabled"));
 
     if(Config.EnableAI){
         server_log->append(tr("This server is AI enabled, AI delay is %1 milliseconds").arg(Config.AIDelay));

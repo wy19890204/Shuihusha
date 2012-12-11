@@ -1,2 +1,3 @@
-﻿general:select|role:rebel
-general:wangqing|general2:duansanniang|maxhp:5|hp:4|role:lord|equip:lhh|starter:true
+
+general:linchong role:renegade 
+general:yangzhi role:lord starter:true equip:106 

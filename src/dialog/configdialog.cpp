@@ -41,6 +41,11 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
     ui->enableLua->setChecked(Config.EnableLua);
+    ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
+
+    QString lang = "zh_cn+en";
+    ui->langComboBox->addItems(lang.split("+"));
+    ui->langComboBox->lineEdit()->setText(Config.value("Language", "zh_cn").toString());
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
 
@@ -142,6 +147,7 @@ void ConfigDialog::saveConfig()
     Config.FitInView = ui->fitInViewCheckBox->isChecked();
     Config.setValue("FitInView", Config.FitInView);
 
+    Config.CircularView = ui->circularViewCheckBox->isChecked();
     Config.setValue("CircularView", Config.CircularView);
 
     Config.setValue("NoIndicator", ui->noIndicatorCheckBox->isChecked());
@@ -161,6 +167,9 @@ void ConfigDialog::saveConfig()
     Config.EnableLua = ui->enableLua->isChecked();
     Config.setValue("EnableLua", Config.EnableLua);
 
+    Config.setValue("MuteLoad", ui->muteLoad->isChecked());
+
+    Config.setValue("Language", ui->langComboBox->lineEdit()->text());
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());
     Config.setValue("Contest/Sender", ui->senderLineEdit->text());
     Config.setValue("Contest/Password", ui->passwordLineEdit->text());

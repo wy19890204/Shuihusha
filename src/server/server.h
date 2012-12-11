@@ -56,6 +56,7 @@ private:
     QPushButton* add2nd;
 
 private slots:
+    void addCard(const QString &name);
     void addGeneral(const QString &name);
     void add2ndGeneral(const QString &name);
     void addPair(const QString &first, const QString& second);
@@ -79,29 +80,32 @@ private:
     QWidget *createBasicTab();
     QWidget *createPackageTab();
     QWidget *createAdvancedTab();
+    QWidget *createCheatTab();
     QWidget *createAITab();
     QLayout *createButtonLayout();
 
     QGroupBox *createGameModeBox();
     QGroupBox *create3v3Box();
+    QPushButton *ok_button;
 
     QLineEdit *server_name_edit;
     QSpinBox *timeout_spinbox;
     QCheckBox *nolimit_checkbox;
     QCheckBox *contest_mode_checkbox;
     QCheckBox *advanced_statistic_checkbox;
-    QCheckBox *free_choose_checkbox;
-    QCheckBox *free_assign_checkbox;
-    QCheckBox *free_assign_self_checkbox;
     QSpinBox *maxchoice_spinbox;
     QCheckBox *forbid_same_ip_checkbox;
     QCheckBox *disable_chat_checkbox;
     QCheckBox *second_general_checkbox;
+    QCheckBox *nolordskill_checkbox;
+    QCheckBox *reincarnation_checkbox;
+    QCheckBox *reinca_unchange_checkbox;
     QCheckBox *scene_checkbox;	//changjing
     QCheckBox *same_checkbox;
     QCheckBox *endless_checkbox;
     QSpinBox *endless_timebox;
     QCheckBox *anzhan_checkbox;
+    QCheckBox *anzhan_equal_checkbox;
     QCheckBox *basara_checkbox;
     QCheckBox *hegemony_checkbox;
     QLabel *max_hp_label;
@@ -112,12 +116,23 @@ private:
     QPushButton *mini_scene_button;
     QLineEdit *address_edit;
     QLineEdit *port_edit;
+    QLineEdit *wheel_count;
+    QCheckBox *cheat_enable_checkbox;
+    QCheckBox *free_choose_generals_checkbox;
+    QCheckBox *free_choose_cards_checkbox;
+    QCheckBox *free_assign_checkbox;
+    QCheckBox *free_assign_self_checkbox;
+    QCheckBox *free_discard_checkbox;
+    QCheckBox *gambling_cards_checkbox;
+    QCheckBox *free_change_general_checkbox;
+    QCheckBox *free_showrole_checkbox;
+    QCheckBox *free_undead_checkbox;
     QCheckBox *ai_enable_checkbox;
     QCheckBox *role_predictable_checkbox;
-    QCheckBox *ai_chat_checkbox;
+    QCheckBox *ai_nickname_checkbox, *ai_chat_checkbox;
     QSpinBox *ai_delay_spinbox;
+    QCheckBox *disable_gongsunsheng;
     QRadioButton *standard_3v3_radiobutton;
-    QRadioButton *new_3v3_radiobutton;
     QComboBox *role_choose_combobox;
     QCheckBox *exclude_disaster_checkbox;
 

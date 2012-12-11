@@ -79,10 +79,10 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     ServerPlayer *target = targets.value(0, source);
     
     switch(location()){
-    case WeaponLocation: equipped = target->getWeapon(); break;
-    case ArmorLocation: equipped = target->getArmor(); break;
-    case DefensiveHorseLocation: equipped = target->getDefensiveHorse(); break;
-    case OffensiveHorseLocation: equipped = target->getOffensiveHorse(); break;
+    case WeaponLocation: equipped = target->getWeapon(true); break;
+    case ArmorLocation: equipped = target->getArmor(true); break;
+    case DefensiveHorseLocation: equipped = target->getDefensiveHorse(true); break;
+    case OffensiveHorseLocation: equipped = target->getOffensiveHorse(true); break;
     }
 
     if(equipped)
@@ -289,6 +289,10 @@ void Weapon::onInstall(ServerPlayer *player) const{
         room->attachSkillToPlayer(player, objectName());
 }
 
+bool Weapon::hasSkill() const{
+    return attach_skill;
+}
+
 void Weapon::onUninstall(ServerPlayer *player) const{
     EquipCard::onUninstall(player);
     Room *room = player->getRoom();
@@ -405,7 +409,7 @@ public:
 #include <QTextStream>
 #include "plough.h"
 CustomCardPackage::CustomCardPackage()
-    :Package("custom_cards")
+    :CardPackage("custom_cards")
 {
     QList<Card *> cards;
     QRegExp rx("(\\w+)\\s+(\\w+)\\s+(\\d+)");
@@ -446,17 +450,63 @@ CustomCardPackage::CustomCardPackage()
 
     foreach(Card *card, cards)
         card->setParent(this);
-
-    type = CardPack;
 }
 ADD_PACKAGE(CustomCard)
 */
 
-// test main
 #include "carditem.h"
+// zhuanshi-mode
+class Sacrifice:public ZeroCardViewAsSkill{
+public:
+    Sacrifice():ZeroCardViewAsSkill("sacrifice"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        if(player->hasUsed("SacrificeCard"))
+            return false;
+        foreach(const Player *p, player->getSiblings())
+            if(p->isDead())
+                return !player->isKongcheng();
+        return false;
+    }
+
+    virtual const Card *viewAs() const{
+        return new SacrificeCard;
+    }
+};
+
+// hidden skills
+class Wusheng:public OneCardViewAsSkill{
+public:
+    Wusheng():OneCardViewAsSkill("wusheng"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "slash";
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        const Card *card = to_select->getFilteredCard();
+        return card->isRed();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Card *slash = new Slash(card->getSuit(), card->getNumber());
+        slash->addSubcard(card->getId());
+        slash->setSkillName(objectName());
+        return slash;
+    }
+};
+
+// test main
 class Ubuna: public ClientSkill{
 public:
-    Ubuna():ClientSkill("ubuna"){
+    Ubuna():ClientSkill("#ubuna"){
     }
 
     virtual int getExtra(const Player *target) const{
@@ -464,6 +514,16 @@ public:
             return 1358;
         else
             return 0;
+    }
+};
+
+class Ubunb:public ZeroCardViewAsSkill{
+public:
+    Ubunb():ZeroCardViewAsSkill("ubunb"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new UbunbCard;
     }
 };
 
@@ -560,6 +620,7 @@ public:
 
 QiapaiCard::QiapaiCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
@@ -572,10 +633,7 @@ void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     card_ids.removeOne(card_id);
     room->takeAG(source, card_id);
     room->broadcastInvoke("clearAG");
-    //room->moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile);
-    //source->drawCards(1);
-    //room->moveCardTo(Sanguosha->getCard(card_id), room->askForPlayerChosen(source, room->getAllPlayers(), "dd"), Player::Equip);
-    //room->throwCard(card_id);
+    room->playSkillEffect(skill_name);
 }
 
 class Qiapai: public ZeroCardViewAsSkill{
@@ -593,57 +651,33 @@ public:
     }
 };
 
-class Fandui:public ZeroCardViewAsSkill{
-public:
-    Fandui():ZeroCardViewAsSkill("fandui"){
-    }
-
-    virtual const Card *viewAs() const{
-        return new FanduiCard;
-    }
-};
-
-class Zhichi: public OneCardViewAsSkill{
-public:
-    Zhichi():OneCardViewAsSkill("zhichi"){
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return true;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        ZhichiCard *card = new ZhichiCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
-    }
-};
-
 TestPackage::TestPackage()
-    :Package("test")
+    :GeneralPackage("test")
 {
-/*
-    General *zhuanjia = new General(this, "zhuanjia", "god", 5, true, true);
-    zhuanjia->addSkill(new Zhichi);
-    addMetaObject<ZhichiCard>();
-    zhuanjia->addSkill(new Fandui);
-    addMetaObject<FanduiCard>();
-*/
+    skills << new Wusheng;
+    skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
+    addMetaObject<SacrificeCard>();
+
     General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
+    ubuntenkei->addSkill(new Qiapai);
+    addMetaObject<QiapaiCard>();
+    ubuntenkei->addSkill(new Ubune);
+    addMetaObject<UbuneCard>();
+    ubuntenkei->addSkill(new Ubunb);
+    addMetaObject<UbunbCard>();
+    related_skills.insertMulti("ubunb", "#ubuna");
     ubuntenkei->addSkill(new Ubunc);
     addMetaObject<UbuncCard>();
     ubuntenkei->addSkill(new Ubund);
     addMetaObject<UbundCard>();
-    ubuntenkei->addSkill(new Ubune);
-    addMetaObject<UbuneCard>();
     ubuntenkei->addSkill(new Ubunf);
-    ubuntenkei->addSkill(new Qiapai);
-    addMetaObject<QiapaiCard>();
 
+    new General(this, "catty", "god", 2, false, true, true);
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);
+    addMetaObject<FreeRegulateCard>();
 
     patterns["."] = new ExpPattern(".|.|.|hand");
     patterns[".S"] = new ExpPattern(".|spade|.|hand");

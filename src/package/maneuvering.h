@@ -107,7 +107,7 @@ public:
     virtual void takeEffect(ServerPlayer *target, bool good = false) const;
 };
 
-class ManeuveringPackage: public Package{
+class ManeuveringPackage: public CardPackage{
     Q_OBJECT
 
 public:

@@ -133,3 +133,23 @@ end
 
 -- zuidajiangmenshen
 sgs.dynamic_value.damage_card.Jiangjieshi = true
+
+-- xiaobawang
+sgs.ai_card_intention.Xiaobawang = 70
+
+sgs.ai_skill_use["Xiaobawang"] = function(self, prompt)
+	local evc = self:getCard("Xiaobawang")
+	local player = self.player:getTag("Xiaob"):toPlayer()
+	if self:isEnemy(player) and player:getHandcardNum() > 1 then
+		return ("%s->."):format(evc:toString())
+	end
+	return
+end
+sgs.ai_skill_cardask["@xiaobawang2"] = function(self, data)
+	local damage = data:toDamage()
+	if self:isEnemy(damage.to) and not damage.to:isNude() then
+		local xbw = self:getCard("Xiaobawang")
+		return xbw:getEffectiveId()
+	end
+	return "."
+end

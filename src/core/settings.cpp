@@ -20,6 +20,7 @@ static const qreal ViewHeight = 800 * 0.8;
 const int Settings::S_CHOOSE_GENERAL_TIMEOUT = 15;
 const int Settings::S_GUANXING_TIMEOUT = 20;
 const int Settings::S_SURRNDER_REQUEST_MIN_INTERVAL = 60;
+const int Settings::S_MINI_MAX_COUNT = 25;
 
 Settings::Settings()
 
@@ -57,11 +58,12 @@ void Settings::init(){
     }
 
     CountDownSeconds = value("CountDownSeconds", 3).toInt();
-    GameMode = value("GameMode", "02p").toString();
+    GameMode = value("GameMode", "08p").toString();
 
     if(!contains("BanPackages")){
         QStringList banlist;
         banlist << "test" << "god" << "sp" << "gift"
+                << "customcards" << "sanguosha"
                 //<< "joy" << "kuso" << "joyer"
                 ;
 
@@ -71,11 +73,11 @@ void Settings::init(){
 
     ContestMode = value("ContestMode", false).toBool();
     Statistic = value("Statistic", false).toBool();
-    FreeChoose = value("FreeChoose", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();
-    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();
+    NoLordSkill = value("NoLordSkill", false).toBool();
+    EnableReincarnation = value("EnableReincarnation", false).toBool();
     EnableScene = value("EnableScene", false).toBool();	//changjing
     EnableSame = value("EnableSame", false).toBool();
     EnableEndless = value("EnableEndless", false).toBool();
@@ -85,6 +87,9 @@ void Settings::init(){
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
+    FreeChooseGenerals = value("FreeChooseGenerals", false).toBool();
+    FreeChooseCards = value("FreeChooseCards", false).toBool();
+    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
@@ -105,7 +110,8 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
-    CircularView = value("CircularView", true).toBool();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
+    CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
@@ -122,35 +128,23 @@ void Settings::init(){
     EnableLastWord = value("EnableLastWord", true).toBool();
     EnableCheatRing = value("EnableCheatRing", true).toBool();
     EnableBgMusic = value("EnableBgMusic", true).toBool();
-    BGMVolume = value("BGMVolume", 1.0f).toFloat();
+    BGMVolume = value("BGMVolume", 0.75f).toFloat();
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
-
+//banlist
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 
-    roles_ban << "ubuntenkei";
-
-    kof_ban << "andaoquan"/* << "shenwuyong" << "wangdingliu" << "zhaoji"*/;
-
-    //basara_ban << "dingdesun" << "houjian" << "shenwusong" << "shenwuyong" << "shenzhangqing" << "lili";
-
-    hegemony_ban.append(basara_ban);
-    //hegemony_ban << "jiangsong";
-    foreach(QString general, Sanguosha->getLimitedGeneralNames()){
+    lua_State *lua = Sanguosha->getLuaState();
+    roles_ban = GetConfigFromLuaState(lua, "roles_ban", "ban_list").toStringList();
+    kof_ban = GetConfigFromLuaState(lua, "kof_ban", "ban_list").toStringList();
+    basara_ban = GetConfigFromLuaState(lua, "basara_ban", "ban_list").toStringList();
+    hegemony_ban = GetConfigFromLuaState(lua, "hegemony_ban", "ban_list").toStringList();
+    foreach(QString general, Sanguosha->getLimitedGeneralNames())
         if(Sanguosha->getGeneral(general)->getKingdom() == "god" && !hegemony_ban.contains(general))
             hegemony_ban << general;
-    }
 
-    pairs_ban << "tongguan" << "tongguanf" << "caijing"
-              << "gaoqiu+luozhenren"
-              //<< "shenwuyong"
-              //<< "liruilan+shijin" << "lujunyi+shenzhangqing" << "luozhenren+yuehe"
-              //<< "likui+luozhenren" << "husanniang+jiashi" << "shijin+yanshun"
-              //<< "oupeng+wangqing" << "jiashi+shenzhangqing"
-              //<< "husanniang+zhaoji" << "dingdesun+wangqing"
-              ;
+    pairs_ban = GetConfigFromLuaState(lua, "pairs_ban", "ban_list").toStringList();
 
     QStringList banlist = value("Banlist/Roles").toStringList();
     foreach(QString ban_general, roles_ban){
@@ -169,26 +163,29 @@ void Settings::init(){
     banlist = value("Banlist/Basara").toStringList();
     foreach(QString ban_general, basara_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Basara", banlist);
 
     banlist = value("Banlist/Hegemony").toStringList();
     foreach(QString ban_general, hegemony_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Hegemony", banlist);
 
     banlist = value("Banlist/Pairs").toStringList();
     foreach(QString ban_general, pairs_ban){
         if(!banlist.contains(ban_general))
-                banlist << ban_general;
+            banlist << ban_general;
     }
     setValue("Banlist/Pairs", banlist);
 
-    QStringList forbid_packages;
-    forbid_packages << "test";
+    banlist = value("Banlist/Cards").toStringList();
+    //banlist << "peach";
+    setValue("Banlist/Cards", banlist);
+
+    QStringList forbid_packages = GetConfigFromLuaState(lua, "forbid_packages", "ban_list").toStringList();
     setValue("ForbidPackages", forbid_packages.join("+"));
 
 //ui

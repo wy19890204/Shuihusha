@@ -21,9 +21,13 @@ public:
 	QString objectName();
 	void setObjectName(const char *name);
 	bool inherits(const char *class_name);
-	bool setProperty ( const char * name, const QVariant & value);
-	QVariant property ( const char * name ) const;
+	bool setProperty(const char * name, const QVariant & value);
+	QVariant property(const char * name ) const;
 	void setParent(QObject *parent);
+
+	void setParent(Card *card);
+//	bool inherits(Skill *skill);
+//	bool inherits(Card *card);
 };
 
 %extend QObject{
@@ -39,7 +43,7 @@ public:
 
 	// property getters/setters
 	int getMaxHp() const;
-	QString getKingdom() const;
+	QString getKingdom(bool unmap = false) const;
 	bool isMale() const;
 	bool isFemale() const;
 	bool isNeuter() const;
@@ -61,7 +65,7 @@ public:
 	QString getPixmapPath(const char *category) const;
 	QString getPackage() const;
 	QString getSkillDescription() const;
-	
+
 	void lastWord() const;
 };
 
@@ -76,11 +80,12 @@ public:
 
 	void setScreenName(const char *screen_name);
 	QString screenName() const;
+	QString getGenderString() const;
 	General::Gender getGender() const;
 
 	// property setters/getters
 	int getHp() const;
-	void setHp(int hp);    
+	void setHp(int hp);
 	int getMaxHP() const;
 	int getMaxHp() const;
 	void setMaxHP(int max_hp);
@@ -96,12 +101,12 @@ public:
 	QString getKingdomFrame() const;
 
 	void setRole(const char *role);
-	QString getRole() const;    
+	QString getRole() const;
 	Role getRoleEnum() const;
 
 	void setGeneral(const General *general);
 	void setGeneralName(const char *general_name);
-	QString getGeneralName() const;    
+	QString getGeneralName() const;
 
 	void setGeneral2Name(const char *general_name);
 	QString getGeneral2Name() const;
@@ -111,7 +116,7 @@ public:
 	QString getState() const;
 
 	int getSeat() const;
-	void setSeat(int seat);  
+	void setSeat(int seat);
 	QString getPhaseString() const;
 	void setPhaseString(const char *phase_str);
 	Phase getPhase() const;
@@ -157,18 +162,18 @@ public:
 	void addDelayedTrick(const Card *trick);
 	void removeDelayedTrick(const Card *trick);
 	QList<const DelayedTrick *> delayedTricks() const;
-	bool containsTrick(const char *trick_name) const;
+	bool containsTrick(const char *trick_name, bool consi_hq = true) const;
 	const DelayedTrick *topDelayedTrick() const;
 
 	virtual int getHandcardNum() const = 0;
 	virtual void removeCard(const Card *card, Place place) = 0;
 	virtual void addCard(const Card *card, Place place) = 0;
 
-	const Weapon *getWeapon() const;
-	const Armor *getArmor() const;
-	const Horse *getDefensiveHorse() const;
-	const Horse *getOffensiveHorse() const;
-	QList<const Card *> getEquips() const;
+	const Weapon *getWeapon(bool trueequip = false) const;
+	const Armor *getArmor(bool trueequip = false) const;
+	const Horse *getDefensiveHorse(bool trueequip = false) const;
+	const Horse *getOffensiveHorse(bool trueequip = false) const;
+	QList<const Card *> getEquips(bool trueequip = false) const;
 	const EquipCard *getEquip(int index) const;
 
 	bool hasWeapon(const char *weapon_name) const;
@@ -180,12 +185,14 @@ public:
 
 	void addMark(const char *mark);
 	void removeMark(const char *mark);
-	virtual void setMark(const char *mark, int value);
+	virtual void setMark(const char *mark, int value = 1);
 	int getMark(const char *mark) const;
+	bool hasMark(const char *mark) const;
 
 	void setChained(bool chained);
 	bool isChained() const;
 
+	bool canSlash(const Player *other, const Card *slash, bool distance_limit = true) const;
 	bool canSlash(const Player *other, bool distance_limit = true) const;
 	int getCardCount(bool include_equip) const;
 
@@ -195,16 +202,17 @@ public:
 	void addHistory(const char *name, int times = 1);
 	void clearHistory();
 	bool hasUsed(const char *card_class) const;
-	int usedTimes(const char *card_class) const;
+	int usedTimes(const char *card_class, int init = 0) const;
 	int getSlashCount() const;
 
 	QSet<const TriggerSkill *> getTriggerSkills() const;
 	QSet<const Skill *> getVisibleSkills() const;
 	QList<const Skill *> getVisibleSkillList() const;
+	QStringList getVisibleSkillList(const char *exclude) const;
 	QSet<QString> getAcquiredSkills() const;
+	int getKingdoms() const;
 
 	virtual bool isProhibited(const Player *to, const Card *card) const;
-	bool canSlashWithoutCrossbow() const;
 	virtual bool isLastHandCard(const Card *card) const = 0;
 
 	void jilei(const char *type);
@@ -248,6 +256,7 @@ public:
 	void playCardEffect(const Card *card, bool mute = false) const;
 	void playCardEffect(const char *card_name) const;
 	void playCardEffect(const char *card_name, const char *equip);
+	void playSkillEffect(const char *skill_name, int index = -1);
 	int getRandomHandCardId() const;
 	const Card *getRandomHandCard() const;
 	void obtainCard(const Card *card, bool unhide = true);
@@ -334,11 +343,11 @@ class ClientPlayer : public Player
 public:
 	explicit ClientPlayer(Client *client);
 	virtual int aliveCount() const;
-	virtual int getHandcardNum() const;	
+	virtual int getHandcardNum() const;
 	virtual void removeCard(const Card *card, Place place);
 	virtual void addCard(const Card *card, Place place);
 	virtual void addKnownHandCard(const Card *card);
-	virtual bool isLastHandCard(const Card *card) const; 
+	virtual bool isLastHandCard(const Card *card) const;
 };
 
 extern ClientPlayer *Self;
@@ -452,63 +461,69 @@ struct PhaseChangeStruct{
 typedef PindianStruct *PindianStar;
 
 enum TriggerEvent{
-    NonTrigger,
+	NonTrigger,
 
-    GameStart,
-    TurnStart,
-    PhaseChange,
-    DrawNCards,
-    HpRecover,
-    HpLost,
-    HpChanged,
+	GameStart,
+	GameStarted,
+	TurnStart,
+	PhaseChange,
+	DrawNCards,
+	DrawNCardsDone,
+	HpRecover,
+	HpRecovered,
+	HpLost,
+	HpChanged,
 
-    StartJudge,
-    AskForRetrial,
-    FinishJudge,
+	StartJudge,
+	AskForRetrial,
+	FinishJudge,
 
-    Pindian,
-    TurnedOver,
+	Pindian,
+	TurnedOver,
 
-    Predamage,
-    DamagedProceed,
-    DamageProceed,
-    Predamaged,
-    DamageDone,
-    Damage,
-    Damaged,
-    DamageComplete,
+	Predamage,
+	DamagedProceed,
+	DamageProceed,
+	Predamaged,
+	DamageDone,
+	Damage,
+	Damaged,
+	DamageConclude,
+	DamageComplete,
 
-    Dying,
-    AskForPeaches,
-    AskForPeachesDone,
-    Death,
-    GameOverJudge,
+	Dying,
+	AskForPeaches,
+	AskForPeachesDone,
+	PreDeath,
+	Death,
+	GameOverJudge,
+	RewardAndPunish,
 
-    SlashEffect,
-    SlashEffected,
-    SlashProceed,
-    SlashHit,
-    SlashMissed,
-	
-    JinkUsed,
+	SlashEffect,
+	SlashEffected,
+	SlashProceed,
+	SlashHit,
+	SlashMissed,
 
-    CardAsked,
-    CardUsed,
-    CardResponsed,
-    CardDiscarded,
-    CardMoving,
-    CardLost,
-    CardLostDone,
-    CardGot,
-    CardGotDone,
-    CardDrawing,
-    CardDrawnDone,
+	JinkUsed,
 
-    CardEffect,
-    CardEffected,
-    CardFinished,
+	CardAsked,
+	CardUsed,
+	CardResponsed,
+	CardDiscarded,
+	CardMoving,
+	CardLost,
+	CardLostDone,
+	CardGot,
+	CardGotDone,
+	CardDrawing,
+	CardDrawnDone,
 
-    ChoiceMade,
+	CardEffect,
+	CardEffected,
+	CardFinished,
+
+	ChoiceMade
 };
 
 class Card: public QObject
@@ -518,7 +533,8 @@ public:
 	// enumeration type
 	enum Suit {Spade, Club, Heart, Diamond, NoSuit};
 	static const Suit AllSuits[4];
-	
+	enum Color {Red, Black, Colorless};
+
 	// card types
 	enum CardType{
 		Skill,
@@ -547,17 +563,18 @@ public:
 	Suit getSuit() const;
 	void setSuit(Suit suit);
 
+	Color getColor() const;
 	bool sameColorWith(const Card *other) const;
 	bool isEquipped() const;
 
 	QString getPixmapPath() const;
 	QString getIconPath() const;
-	QString getPackage() const;    
+	QString getPackage() const;
 	QIcon getSuitIcon() const;
 	QString getFullName(bool include_suit = false) const;
 	QString getLogName() const;
 	QString getName() const;
-	QString getSkillName() const;   
+	QString getSkillName() const;
 	void setSkillName(const char *skill_name);
 	QString getDescription() const;
 	QString getEffectPath() const;
@@ -594,7 +611,7 @@ public:
 	bool willThrow() const;
 	bool canJilei() const;
 	bool isOwnerDiscarded() const;
-	
+
 	void setFlags(const char *flag) const;
 	bool hasFlag(const char *flag) const;
 	void clearFlags() const;
@@ -604,6 +621,8 @@ public:
 	virtual void onEffect(const CardEffectStruct &effect) const;
 	virtual bool isCancelable(const CardEffectStruct &effect) const;
 
+	virtual bool isKindOf(const char* cardType) const;
+	virtual QStringList getFlags() const;
 	virtual void onMove(const CardMoveStruct &move) const;
 
 	// static functions
@@ -621,7 +640,7 @@ public:
 %extend Card{
 	Weapon* toWeapon(){
 		return qobject_cast<Weapon*>($self);
-	}	
+	}
 };
 
 class SkillCard: public Card{
@@ -629,10 +648,10 @@ public:
 	SkillCard();
 	void setUserString(const char *user_string);
 
-	virtual QString getSubtype() const;    
+	virtual QString getSubtype() const;
 	virtual QString getType() const;
 	virtual CardType getTypeId() const;
-	virtual QString toString() const;    
+	virtual QString toString() const;
 
 protected:
 	QString user_string;
@@ -644,14 +663,23 @@ class DummyCard: public Card{
 
 class Package: public QObject{
 public:
+	enum Type{
+		GeneralPack,
+		CardPack,
+		MixedPack,
+		SpecialPack
+	};
+
 	Package(const char *name);
+	Type getType() const;
+	QList<const Skill *> getSkills() const;
 };
 
 class Engine: public QObject
 {
 public:
 	void addTranslationEntry(const char *key, const char *value);
-	QString translate(const char *to_translate) const;    
+	QString translate(const char *to_translate) const;
 
 	void addPackage(Package *package);
 	void addBanPackage(const char *package_name);
@@ -661,7 +689,8 @@ public:
 	SkillCard *cloneSkillCard(const char *name) const;
 	QString getVersion() const;
 	QString getVersionName() const;
-	QStringList getExtensions() const;
+	QStringList getExtensions(bool getall = false) const;
+	QStringList getLuaExtensions() const;
 	QStringList getKingdoms() const;
 	QColor getKingdomColor(const char *kingdom) const;
 	QString getSetupString() const;
@@ -682,7 +711,9 @@ public:
 
 	const General *getGeneral(const char *name) const;
 	int getGeneralCount(bool include_banned = false) const;
+	QList<const Skill *> getSkills(const char *package_name) const;
 	const Skill *getSkill(const char *skill_name) const;
+	QStringList getSkillNames() const;
 	const TriggerSkill *getTriggerSkill(const char *skill_name) const;
 	const ViewAsSkill *getViewAsSkill(const char *skill_name) const;
 	QList<const ClientSkill *> getClientSkills() const;
@@ -696,7 +727,7 @@ public:
 	QStringList getRandomGenerals(int count, const QSet<QString> &ban_set = QSet<QString>()) const;
 	QList<int> getRandomCards() const;
 	QString getRandomGeneralName() const;
-	QStringList getLimitedGeneralNames() const;
+	QStringList getLimitedGeneralNames(bool getall = false) const;
 
 	void playAudio(const char *name) const;
 	void playEffect(const char *filename) const;
@@ -716,7 +747,8 @@ public:
 		NotFrequent,
 		Compulsory,
 		Limited,
-		Wake
+		Wake,
+		NotSkill
 	};
 
 	enum Location{
@@ -751,7 +783,7 @@ public:
 	QList<TriggerEvent> getTriggerEvents() const;
 
 	virtual int getPriority() const;
-	virtual bool triggerable(const ServerPlayer *target) const;    
+	virtual bool triggerable(const ServerPlayer *target) const;
 	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const = 0;
 };
 
@@ -805,7 +837,7 @@ public:
 	QList<ServerPlayer *> getAllPlayers() const;
 	QList<ServerPlayer *> getAlivePlayers() const;
 	void enterDying(ServerPlayer *player, DamageStruct *reason);
-	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL);
+	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
 	void revivePlayer(ServerPlayer *player);
 	QStringList aliveRoles(ServerPlayer *except = NULL) const;
 	void gameOver(const char *winner);
@@ -827,6 +859,7 @@ public:
 	void useCard(const CardUseStruct &card_use, bool add_history = true);
 	void damage(const DamageStruct &data);
 	void sendDamageLog(const DamageStruct &data);
+	void addHpSlot(ServerPlayer *victim, int number = 1);
 	void loseHp(ServerPlayer *victim, int lose = 1);
 	void loseMaxHp(ServerPlayer *victim, int lose = 1);
 	void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
@@ -846,7 +879,6 @@ public:
 	void provide(const Card *card);
 	QList<ServerPlayer *> getLieges(const char *kingdom, ServerPlayer *lord) const;
 	QList<ServerPlayer *> getMenorWomen(const char *gender, ServerPlayer *except = NULL) const;
-	QList<ServerPlayer *> getNextandPrevious(ServerPlayer *self, bool includeme = false) const;
 	int getKingdoms() const;
 	void sendLog(const LogMessage &log);
 	void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
@@ -866,6 +898,7 @@ public:
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
 	void swapSeat(ServerPlayer *a, ServerPlayer *b);
+	void swapHandcards(ServerPlayer *source, ServerPlayer *target);
 	lua_State *getLuaState() const;
 	void setFixedDistance(Player *from, const Player *to, int distance);
 	void reverseFor3v3(const Card *card, ServerPlayer *player, QList<ServerPlayer *> &list);
@@ -898,8 +931,8 @@ public:
 	void obtainCard(ServerPlayer *target, const Card *card, bool unhide = true);
 	void obtainCard(ServerPlayer *target, int card_id, bool unhide = true);
 
-	void throwCard(const Card *card, ServerPlayer *who = NULL);
-	void throwCard(int card_id, ServerPlayer *who = NULL);
+	void throwCard(const Card *card, ServerPlayer *who = NULL, ServerPlayer *thrower = NULL);
+	void throwCard(int card_id, ServerPlayer *who = NULL, ServerPlayer *thrower = NULL);
 	void moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, bool open = true);
 	void doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope);
 
@@ -908,13 +941,15 @@ public:
 	Card::Suit askForSuit(ServerPlayer *player, const char *reason);
 	QString askForKingdom(ServerPlayer *player);
 	bool askForSkillInvoke(ServerPlayer *player, const char *skill_name, const QVariant &data = QVariant());
-	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices);
+	QString askForChoice(ServerPlayer *player, const char *skill_name, const char *choices, const QVariant &data = QVariant());
 	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, bool optional = false, bool include_equip = false);
+	bool askForDiscard(ServerPlayer *target, const char *reason, int discard_num, int min_num, bool optional = false, bool include_equip = false);
 	const Card *askForExchange(ServerPlayer *player, const char *reason, int discard_num);
 	bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
 	bool isCanceled(const CardEffectStruct &effect);
 	int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const char *flags, const char *reason);
-	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false, const QVariant &data = QVariant());
+	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill, const QVariant &data = QVariant());
+	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, const QVariant &data = QVariant());
 	bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false);
 	int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const char *reason);
 	const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const char *reason);
@@ -925,6 +960,10 @@ public:
 };
 
 %extend Room {
+	bool broadcastSkillInvoke(const char *skillName, int type){
+		$self->playSkillEffect(skillName, type);
+		return true;
+	}
 	ServerPlayer *nextPlayer() const{
 		return $self->getCurrent()->getNextAlive();
 	}

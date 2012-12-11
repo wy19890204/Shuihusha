@@ -73,30 +73,24 @@ const Card *ResponseSkill::viewAs(CardItem *card_item) const{
 
 // -------------------------------------------
 
-FreeDiscardSkill::FreeDiscardSkill(QObject *parent)
-    :ViewAsSkill("free-discard")
+FreeRegulateSkill::FreeRegulateSkill(QObject *parent)
+    :ViewAsSkill("free-regulate")
 {
     setParent(parent);
-    card = new DummyCard;
 }
 
-bool FreeDiscardSkill::isEnabledAtPlay(const Player *) const{
+bool FreeRegulateSkill::isEnabledAtPlay(const Player *) const{
     return true;
 }
 
-bool FreeDiscardSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
+bool FreeRegulateSkill::viewFilter(const QList<CardItem *> &, const CardItem *) const{
     return true;
 }
 
-const Card *FreeDiscardSkill::viewAs(const QList<CardItem *> &cards) const{
-    if(!cards.isEmpty()){
-
-        card->clearSubcards();
-        card->addSubcards(cards);
-
-        return card;
-    }else
-        return NULL;
+const Card *FreeRegulateSkill::viewAs(const QList<CardItem *> &cards) const{
+    FreeRegulateCard *card = new FreeRegulateCard;
+    card->addSubcards(cards);
+    return card;
 }
 
 // -------------------------------------------

@@ -50,12 +50,15 @@
         <x>10</x>
         <y>20</y>
         <width>421</width>
-        <height>51</height>
+        <height>53</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QLineEdit" name="bgMusicPathLineEdit">
+         <property name="whatsThis">
+          <string>设置默认背景音乐。剧情模式的音乐另有指定，不受此设置影响</string>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -214,7 +217,7 @@
        <rect>
         <x>10</x>
         <y>110</y>
-        <width>421</width>
+        <width>437</width>
         <height>21</height>
        </rect>
       </property>
@@ -278,6 +281,9 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QLineEdit" name="bgPathLineEdit">
+           <property name="whatsThis">
+            <string>设置背景图片</string>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -340,6 +346,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="circularViewCheckBox">
+         <property name="whatsThis">
+          <string>仿OL的环状视图。聊天框和信息框靠右。适合大分辨率用户</string>
+         </property>
          <property name="text">
           <string>Circular view</string>
          </property>
@@ -577,6 +586,9 @@
        <height>16</height>
       </rect>
      </property>
+     <property name="whatsThis">
+      <string>不勾选此项，SP武将无法被自由选将。</string>
+     </property>
      <property name="text">
       <string>Open the SP package</string>
      </property>
@@ -593,10 +605,58 @@
        <height>16</height>
       </rect>
      </property>
+     <property name="whatsThis">
+      <string>不勾选此项，LUA扩展将不可用。</string>
+     </property>
      <property name="text">
       <string>Enable Lua Generals</string>
      </property>
      <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="muteLoad">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>210</y>
+       <width>239</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Mute mode to loading</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="langLabel">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>410</y>
+       <width>51</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Language:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="langComboBox">
+     <property name="geometry">
+      <rect>
+       <x>328</x>
+       <y>410</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="whatsThis">
+      <string>切换界面语言。默认为简体中文</string>
+     </property>
+     <property name="editable">
       <bool>true</bool>
      </property>
     </widget>

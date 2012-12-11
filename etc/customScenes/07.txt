@@ -1,9 +1,6 @@
-general:select|general2:select|role:loyalist
-general:yanshun|role:rebel|equip:snow
-general:gongwang|role:rebel
-general:wusong|role:lord|maxhp:5|hp:5|equip:blade
-general:dingdesun|role:rebel|maxhp:7|hp:7|equip:silver_lion
-general:lizhong|role:loyalist|starter:true
-general:zhufu|role:rebel
-general:xueyong|role:loyalist
-general:gudasao|role:rebel
+
+general:yanqing role:renegade starter:true equip:53 
+general:zhaoji role:lord maxhp:3 hp:3 
+general:lishishi role:loyalist maxhp:3 hp:3 
+general:songjiang role:rebel 
+general:chaijin role:rebel equip:66 

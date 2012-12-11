@@ -482,7 +482,7 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return Self->getMark("liegong_p_mark") > 0 && ! player->hasUsed("LiegongPassCard") ;
+        return Self->hasMark("liegong_p_mark") && ! player->hasUsed("LiegongPassCard") ;
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{
@@ -656,9 +656,9 @@ public:
     }
 };
 
-class MashuPass: public ClientSkill{
+class MashuPass: public DistanceSkill{
 public:
-    MashuPass():ClientSkill("mashu_p"){
+    MashuPass():DistanceSkill("mashu_p"){
 
     }
 
@@ -891,7 +891,7 @@ public:
 };
 
 GubenPackage::GubenPackage()
-    :Package("guben")
+    ::GeneralPackage("guben")
 {
     // hero
     General *wujiao = new General(this, "wujiao", "kou", 3);

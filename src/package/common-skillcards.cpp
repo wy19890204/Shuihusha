@@ -36,7 +36,117 @@ void QingnangCard::onEffect(const CardEffectStruct &effect) const{
     RecoverStruct recover;
     recover.card = this;
     recover.who = effect.from;
-    effect.to->getRoom()->recover(effect.to, recover);
+    effect.to->getRoom()->recover(effect.to, recover, true);
+}
+
+FreeRegulateCard::FreeRegulateCard(){
+    will_throw = false;
+    mute = true;
+}
+
+bool FreeRegulateCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+bool FreeRegulateCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() <= 1;
+}
+
+void FreeRegulateCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    room->setPlayerStatistics(source, "cheat", 1);
+    if(targets.isEmpty()){
+        if(getSubcards().isEmpty()){
+            if(!room->getDiscardPile().isEmpty()){
+                room->playSkillEffect(skill_name, 4);
+                int card_id = room->getDiscardPile().first();
+                room->obtainCard(source, card_id);
+            }
+        }
+        else{
+            room->playSkillEffect(skill_name, 1);
+            room->throwCard(this, source);
+        }
+    }
+    else{
+        PlayerStar target = targets.first();
+        if(getSubcards().isEmpty()){
+            if(target != source){
+                room->playSkillEffect(skill_name, 3);
+                room->setPlayerFlag(source, "loot");
+                int card_id = room->askForCardChosen(source, target, "hejp", "free-regulate");
+                room->obtainCard(source, card_id);
+                room->setPlayerFlag(source, "-loot"); //@todo
+            }
+            else
+                room->gameOver(source->objectName());
+        }
+        else{
+            if(target == source){
+                foreach(int i, getSubcards()){
+                    const Card *card = Sanguosha->getCard(i);
+                    if(card->isEquipped()){
+                        room->playSkillEffect(skill_name, 5);
+                        room->obtainCard(source, card);
+                    }
+                }
+                if(getSubcards().length() == 1){
+                    const Card *card = Sanguosha->getCard(getSubcards().first());
+                    for(int i = 0; ;i++){
+                        const Card *c = Sanguosha->getCard(i);
+                        if(!c)
+                            break;
+                        if(c != card){
+                            if(c->objectName() == card->objectName() ||
+                                    (c->getSubtype() == "offensive_horse" && card->getSubtype() == "offensive_horse") ||
+                                    (c->getSubtype() == "defensive_horse" && card->getSubtype() == "defensive_horse")){
+                                room->playSkillEffect(skill_name, 6);
+                                room->obtainCard(source, c);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                room->playSkillEffect(skill_name, 2);
+                room->obtainCard(target, this, false);
+            }
+        }
+    }
+}
+
+SacrificeCard::SacrificeCard(){
+    will_throw = false;
+    target_fixed = true;
+}
+
+void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(!Config.EnableReincarnation)
+        return;
+    QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
+    if(deathnote.isEmpty())
+        return;
+    QString choice = deathnote.length() == 1 ? deathnote.first() :
+                     room->askForChoice(source, "sacrifice", deathnote.join("+"), room->getTag("DeadPerson"));
+    ServerPlayer *target = room->findPlayer(choice, true);
+    const Card *card = room->askForCardShow(source, target, "sacrifice");
+    target->obtainCard(card, false);
+}
+
+UbunbCard::UbunbCard(){
+}
+
+bool UbunbCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty();
+}
+
+void UbunbCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+    qShuffle(all_generals);
+    QStringList choices = all_generals.mid(0, 4);
+    QString name = room->askForGeneral(effect.from, choices, "guansheng");
+    room->transfigure(effect.to, name, false, true, effect.to->getGeneralName());
 }
 
 UbuncCard::UbuncCard(){
@@ -48,7 +158,8 @@ bool UbuncCard::targetFilter(const QList<const Player *> &targets, const Player 
 
 void UbuncCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.length() == 1){
-        QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
+        QString kingdom = room->askForKingdom(source);
+        //QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
         room->setPlayerProperty(targets.first(), "kingdom", kingdom);
     }
     else{
@@ -61,7 +172,7 @@ UbundCard::UbundCard(){
 }
 
 bool UbundCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select != Self;
+    return true;
 }
 
 bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
@@ -70,18 +181,34 @@ bool UbundCard::targetsFeasible(const QList<const Player *> &targets, const Play
 
 void UbundCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.isEmpty()){
-        QStringList skills = source->getVisSkist("ubun");
-        if(skills.isEmpty())
-            return;
-        QString ski = room->askForChoice(source, "ubund", skills.join("+"));
-        room->detachSkillFromPlayer(source, ski);
+        QStringList genlist = Sanguosha->getLimitedGeneralNames();
+        qShuffle(genlist);
+        genlist = genlist.mid(0, 4);
+        QString general = room->askForGeneral(source, genlist);
+        QStringList choices;
+        foreach(const SkillClass *skill, Sanguosha->getGeneral(general)->getVisibleSkillList())
+            choices << skill->objectName();
+        if(!choices.isEmpty()){
+            QString ski = choices.count() == 1 ? choices.first() :
+                          room->askForChoice(source, "ubund", choices.join("+"));
+            room->acquireSkill(source, ski);
+        }
     }
     else{
         ServerPlayer *target = targets.first();
-        QStringList skills = target->getVisSkist("ubun");
-        if(!skills.isEmpty()){
-            QString ski = room->askForChoice(source, "ubund", skills.join("+"));
-            room->acquireSkill(source, ski);
+        if(target == source){
+            QStringList skills = source->getVisibleSkillList("ubun");
+            if(!skills.isEmpty()){
+                QString ski = room->askForChoice(source, "ubund", skills.join("+"));
+                room->detachSkillFromPlayer(source, ski);
+            }
+        }
+        else{
+            QStringList skills = target->getVisibleSkillList("ubun");
+            if(!skills.isEmpty()){
+                QString ski = room->askForChoice(source, "ubund", skills.join("+"));
+                room->acquireSkill(source, ski);
+            }
         }
     }
 }
@@ -108,53 +235,4 @@ void UbuneCard::onEffect(const CardEffectStruct &effect) const{
         const EquipCard *equipped = qobject_cast<const EquipCard *>(card);
         equipped->use(room, effect.to, QList<ServerPlayer *>());
     }
-}
-
-FanduiCard::FanduiCard(){
-}
-
-bool FanduiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    return !to_select->getPileNames().isEmpty();
-}
-
-void FanduiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    QStringList piles = effect.to->getPileNames();
-    QString pile = piles.first();
-    if(piles.length() > 1)
-        pile = room->askForChoice(effect.from, "fandui", piles.join("+"));
-
-    QList<int> card_ids = effect.to->getPile(pile);
-    room->fillAG(card_ids, effect.from);
-    room->obtainCard(effect.from, room->askForAG(effect.from, card_ids, false, "fandui"));
-    room->broadcastInvoke("clearAG");
-}
-
-ZhichiCard::ZhichiCard(){
-    will_throw = false;
-}
-
-bool ZhichiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
-}
-
-QStringList ZhichiCard::allPiles() const{
-    QStringList piles;
-    piles
-            << "knife" //yangzhi's dao
-            << "vege" //qingzhang's cai
-            << "zi" //xiaorang's zi
-            << "word" //miheng's yulu
-            << "chou" //shenwusong's chou
-            << "stone" //shenzhangqing's shi
-            << "jiyan"; //shenluzhishen's jiyan
-    return piles;
-}
-
-void ZhichiCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    QString pile = room->askForChoice(effect.from, "zhichi", allPiles().join("+"));
-    effect.to->addToPile(pile, getSubcards().first());
 }

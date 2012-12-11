@@ -1,3 +1,10 @@
-general:select|role:rebel|chained:true
-general:yanxijiao|general2:duansanniang|role:lord|maxhp:5|hp:5|equip:68|hand:127
-general:jiangsong|role:rebel|starter:true|maxhp:4|chained:true|equip:207
+
+general:select general2:select role:lord 
+general:luzhishen role:rebel maxhp:4 hp:4 equip:60 
+general:wusong role:rebel maxhp:4 hp:3 
+general:qingzhang role:rebel maxhp:3 hp:3 
+general:sunerniang role:rebel maxhp:3 hp:3 
+general:shien role:rebel maxhp:3 hp:3 
+general:yangzhi role:rebel maxhp:4 hp:3 equip:106 
+general:huyanzhuo role:loyalist starter:true maxhp:4 hp:2 equip:136 
+general:huangxin role:loyalist maxhp:4 hp:2 

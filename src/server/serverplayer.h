@@ -33,6 +33,7 @@ public:
     void playCardEffect(const Card *card, bool mute = false) const;
     void playCardEffect(const QString &card_name) const;
     void playCardEffect(const QString &card_name, const QString &equip);
+    void playSkillEffect(const QString &skill_name, int index = -1);
     int getRandomHandCardId() const;
     const Card *getRandomHandCard() const;
     void obtainCard(const Card *card, bool unhide = true);
@@ -84,6 +85,7 @@ public:
     void setNext(ServerPlayer *next);
     ServerPlayer *getNext() const;
     ServerPlayer *getNextAlive() const;
+    void swapViewPlus(ServerPlayer *target);
 
     // 3v3 methods
     void addToSelected(const QString &general);
@@ -101,6 +103,7 @@ public:
 
     void addToPile(const QString &pile_name, const Card *card, bool open = true);
     void addToPile(const QString &pile_name, int card_id, bool open = true);
+    void clearPile(const QString &pile_name);
     void gainAnExtraTurn(ServerPlayer *clearflag = NULL);
     QList<ServerPlayer *> getPlayersInMyAttackRange(bool include_self = false) const;
 

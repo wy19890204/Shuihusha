@@ -18,7 +18,7 @@ on_use=function(self,room,source,targets)
 		local sp=sgs.SPlayerList()
 		for _,p in sgs.qlist(room:getOtherPlayers(source)) do
 			if source:canSlash(p,true) then
-            sp:append(p)
+			sp:append(p)
 			end
 		end
 		local t = room:askForPlayerChosen(source, sp, "yinyu-spadeslash")
@@ -51,7 +51,7 @@ view_as=function(self, cards)
 end,
 enabled_at_play=function()
 	return --(sgs.Self:hasFlag("yinyu_heart") and not sgs.Self:hasFlag("yinyu_used")) or
-    sgs.Self:hasFlag("yinyu_spade")
+	sgs.Self:hasFlag("yinyu_spade")
 
 end,
 enabled_at_response=function(self,pattern)
@@ -77,7 +77,7 @@ yinyu=sgs.CreateTriggerSkill{
 		judge.who=player
 		room:judge(judge)
 		if (judge.card:getSuit()==sgs.Card_Heart) then
-		     room:setPlayerFlag(player,"yinyu_heart")
+			 room:setPlayerFlag(player,"yinyu_heart")
 			 log.type = "#yinyuHeart"
 			 room:sendLog(log)
 			 return false
@@ -107,7 +107,7 @@ yinyu=sgs.CreateTriggerSkill{
 			end
 	elseif (event==sgs.CardUsed) then
 		local use=data:toCardUse()
-	    local card = use.card
+		local card = use.card
 		if  player:hasFlag("yinyu_club") and not player:hasFlag("yinyu_clubused") then
 				if  card:inherits("Slash") then
 				room:playSkillEffect("yinyu", 4)
@@ -142,7 +142,7 @@ yinyu=sgs.CreateTriggerSkill{
 				return false
 				elseif (card:inherits("Snatch") or card:inherits("SupplyShortage")) then
 				for _,p in sgs.qlist(use.to) do
-				    room:setPlayerFlag(p,"yinyu_fixed")
+					room:setPlayerFlag(p,"yinyu_fixed")
 					if(player:distanceTo(p)>1) then
 					log.type = "#yinyu_heart"
 					room:sendLog(log)
@@ -153,8 +153,8 @@ yinyu=sgs.CreateTriggerSkill{
 				end
 				return false
 		end
-    elseif (event==sgs.PhaseChange) and (player:getPhase()==sgs.Player_Finish) then
-        if  player:hasFlag("yinyu_heart") then
+	elseif (event==sgs.PhaseChange) and (player:getPhase()==sgs.Player_Finish) then
+		if  player:hasFlag("yinyu_heart") then
 			room:setPlayerFlag(player,"-yinyu_heart")
 		elseif  player:hasFlag("yinyu_diamond")then
 			room:setPlayerFlag(player,"-yinyu_diamond")
@@ -216,7 +216,7 @@ on_trigger=function(self,event,player,data)
 		room:judge(judge)
 		if not judge.card:inherits("BasicCard") then
 			room:playSkillEffect("taohui",math.random(1, 2))
-		    local target = room:askForPlayerChosen(player, room:getAlivePlayers(), "taohui")
+			local target = room:askForPlayerChosen(player, room:getAlivePlayers(), "taohui")
 			log.arg = target:getGeneralName()
 			room:sendLog(log)
 			target:drawCards(1)
@@ -715,7 +715,7 @@ on_trigger=function(self,event,player,data)
 				room:setPlayerMark(gaoqiu,"deadcount",2)
 			elseif x>1  then return false
 			end
-    elseif (event==sgs.DrawNCards) then
+	elseif (event==sgs.DrawNCards) then
 		if not player:hasSkill(self:objectName()) then return end
 		local z=gaoqiu:getMark("deadcount")
 		if z<1 then return end
@@ -871,7 +871,7 @@ on_trigger=function(self,event,player,data)
 		 room:judge(judge)
 		 if gongsunsheng:hasFlag("qimen_good") then
 		 room:setPlayerFlag(player,"qimen_start")
-		      room:setEmotion(target, "bad")
+			  room:setEmotion(target, "bad")
 		 	  room:setEmotion(gongsunsheng, "good")
 			  log.from=gongsunsheng
 			  log.arg=target:getGeneralName()
@@ -879,9 +879,9 @@ on_trigger=function(self,event,player,data)
 			  room:sendLog(log)
 			  room:playSkillEffect("qimen",math.random(1, 2))
 			  local datatmp=sgs.QVariant(0)
-		      datatmp:setValue(target)
-		      gongsunsheng:setTag("qimentarget",datatmp)
-		      table.insert(qmtarget,datatmp)
+			  datatmp:setValue(target)
+			  gongsunsheng:setTag("qimentarget",datatmp)
+			  table.insert(qmtarget,datatmp)
 			  local backkingdom=target:getKingdom()
 			  local back=target:getGeneralName()
 			  for _,sk in sgs.qlist(target:getVisibleSkillList()) do
@@ -899,12 +899,12 @@ on_trigger=function(self,event,player,data)
 			  room:setPlayerFlag(gongsunsheng,"-qimen_good")
 		 else
 		 	  room:setEmotion(gongsunsheng, "bad")
-    	 end
+		 end
 	elseif(event==sgs.FinishJudge)	then
 		if not (gongsunsheng) then return end
 		local judge = data:toJudge()
 		if(judge.reason == "qimen" ) then
-		    local suit=judge.card:getSuitString()
+			local suit=judge.card:getSuitString()
 			suit="."..suit:sub(1,1):upper()
 			local cz=room:askForCard(gongsunsheng,suit,"@qimen",data)
 			if cz~=nil then
@@ -926,7 +926,7 @@ on_trigger=function(self,event,player,data)
 		for _,s in ipairs(skills) do
 			tar:acquireSkill(s)
 			tar:invoke("attachSkill",s)
-	    end
+		end
 		for x=1,#skills,1 do
 		table.remove(skills)
 		end
@@ -952,7 +952,7 @@ on_trigger=function(self,event,player,data)
 		for _,s in ipairs(skills) do
 			tar:acquireSkill(s)
 			tar:invoke("attachSkill",s)
-	    end
+		end
 		for x=1,#skills,1 do
 		table.remove(skills)
 		end
@@ -972,14 +972,14 @@ yixing=sgs.CreateTriggerSkill{
 		local gongsunsheng=room:findPlayerBySkillName(self:objectName())
 		local judge=data:toJudge()
 		gongsunsheng:setTag("Judge",data)
-        local sp=sgs.SPlayerList()
+		local sp=sgs.SPlayerList()
 		for _,p in sgs.qlist(room:getAllPlayers()) do
 			if not p:getEquips():isEmpty() then
 			sp:append(p)
 			end
 		end
-        if sp:isEmpty() then return false end
-        if (room:askForSkillInvoke(gongsunsheng,self:objectName())~=true) then return false end
+		if sp:isEmpty() then return false end
+		if (room:askForSkillInvoke(gongsunsheng,self:objectName())~=true) then return false end
 		local target = room:askForPlayerChosen(gongsunsheng, sp, self:objectName())
 		local card_id=room:askForCardChosen(gongsunsheng,target,"e",self:objectName())
 		local card=sgs.Sanguosha:getCard(card_id)
@@ -989,7 +989,7 @@ yixing=sgs.CreateTriggerSkill{
 		local log=sgs.LogMessage()
 		log.type = "$ChangedJudge"
 		log.from=gongsunsheng
-	    log.to:append(judge.who)
+		log.to:append(judge.who)
 		log.card_str =card:getEffectIdString()
 		room:sendLog(log)
 		room:playSkillEffect("yixing",math.random(1, 2))
@@ -1019,25 +1019,25 @@ baoguo=sgs.CreateTriggerSkill{
 				room:playSkillEffect("baoguo",math.random(1, 2))
 		   		player:drawCards(x)
 				return false
-        	end
-        elseif (event==sgs.Predamaged) then
-        	local damage=data:toDamage()
-		    if player:hasSkill(self:objectName()) then return end
-		    if lujunyi:isNude() then return end
-		    if (room:askForSkillInvoke(lujunyi,self:objectName())~=true) then return false end
-		    room:askForDiscard(lujunyi,self:objectName(),1,false,true)
-		    log.type ="#baoguodamage"
-		    log.arg=damage.to:getGeneralName()
-		    log.arg2=tostring(damage.damage)
-		    room:sendLog(log)
-		    local damagetmp=sgs.DamageStruct()
-		    damagetmp.damage=damage.damage
-		    damagetmp.from=damage.from
+			end
+		elseif (event==sgs.Predamaged) then
+			local damage=data:toDamage()
+			if player:hasSkill(self:objectName()) then return end
+			if lujunyi:isNude() then return end
+			if (room:askForSkillInvoke(lujunyi,self:objectName())~=true) then return false end
+			room:askForDiscard(lujunyi,self:objectName(),1,false,true)
+			log.type ="#baoguodamage"
+			log.arg=damage.to:getGeneralName()
+			log.arg2=tostring(damage.damage)
+			room:sendLog(log)
+			local damagetmp=sgs.DamageStruct()
+			damagetmp.damage=damage.damage
+			damagetmp.from=damage.from
 		   	damagetmp.to=lujunyi
 		   	damagetmp.nature=damage.nature
 		   	damagetmp.chain=damage.chain
 		   	room:damage(damagetmp)
-		    return true
+			return true
 		end
 	end,
 }
@@ -1059,12 +1059,12 @@ hongjin=sgs.CreateTriggerSkill{
 			room:playSkillEffect("hongjin",2)
 			player:drawCards(1)
 		elseif (room:askForChoice(player,self:objectName(), "discard+draw") ~= "draw") then
-		    log.type ="#hongjindiscard"
-		    log.arg=damage.to:getGeneralName()
-		    room:sendLog(log)
-		    local card_id=room:askForCardChosen(player,damage.to,"he",self:objectName())
+			log.type ="#hongjindiscard"
+			log.arg=damage.to:getGeneralName()
+			room:sendLog(log)
+			local card_id=room:askForCardChosen(player,damage.to,"he",self:objectName())
 			room:playSkillEffect("hongjin",1)
-		    room:throwCard(card_id)
+			room:throwCard(card_id)
 		else
 			log.type ="#hongjindraw"
 			room:sendLog(log)
@@ -1083,13 +1083,13 @@ will_throw=false,
 once=false,
 on_use=function(self,room,source,targets)
 	room:throwCard(self);
-    if(source:isAlive()) then
+	if(source:isAlive()) then
 	local log=sgs.LogMessage()
 	log.from=source
 	log.type ="#wuji"
 	room:sendLog(log)
 	room:playSkillEffect("wuji",math.random(1, 2))
-    room:drawCards(source, self:getSubcards():length())
+	room:drawCards(source, self:getSubcards():length())
 	end
 end
 }
@@ -1103,7 +1103,7 @@ end,
 view_as=function(self, cards)
 	if #cards==0 then return end
 	local acard=wuji_card:clone()
-    for var=1,#cards,1 do
+	for var=1,#cards,1 do
 	acard:addSubcard(cards[var])
 	end
 	acard:setSkillName(self:objectName())
@@ -1130,21 +1130,21 @@ on_use=function(self,room,source,targets)
 	if(source:isWounded())then
 		local x=source:getLostHp()
 		local y=source:getHandcardNum()
-	    if source:isKongcheng() then
+		if source:isKongcheng() then
 			if (x-y<=0) then return end
 			log.type ="#ganlindraw"
 			log.arg=tostring(x-y)
 			room:sendLog(log)
-    		room:drawCards(source,x-y)
+			room:drawCards(source,x-y)
 			room:setPlayerFlag(source,"-ganlin_canuse")
 		elseif (x-y>0) then
-		    if (room:askForChoice(source, self:objectName(), "draw+no") ~= "no") then
+			if (room:askForChoice(source, self:objectName(), "draw+no") ~= "no") then
 				local x=source:getLostHp()
 				local y=source:getHandcardNum()
 				log.type ="#ganlindraw"
 				log.arg=tostring(x-y)
 				room:sendLog(log)
-    			room:drawCards(source,x-y)
+				room:drawCards(source,x-y)
 				room:setPlayerFlag(source,"-ganlin_canuse")
 			end
 		end
@@ -1163,7 +1163,7 @@ end,
 view_as=function(self, cards)
 	if #cards==0 then return end
 	local acard=ganlin_card:clone()
-    for var=1,#cards,1 do
+	for var=1,#cards,1 do
 	acard:addSubcard(cards[var])
 	end
 	acard:setSkillName(self:objectName())
@@ -1182,7 +1182,7 @@ on_trigger=function(self,event,player,data)
 	local room=player:getRoom()
 	if player:getPhase()==sgs.Player_Play then
 	   room:setPlayerFlag(player,"ganlin_canuse")
-    end
+	end
 end,
 }
 
@@ -1207,12 +1207,12 @@ on_use=function(self,room,source,targets)
 	log.type ="#juyi"
 	room:sendLog(log)
 	local to_exchange=t:wholeHandCards()
-    local to_exchange2=source:wholeHandCards()
+	local to_exchange2=source:wholeHandCards()
 	room:playSkillEffect("juyi",math.random(1, 2))
 	if not t:isKongcheng() then
-    room:moveCardTo(to_exchange,source,sgs.Player_Hand,false)
+	room:moveCardTo(to_exchange,source,sgs.Player_Hand,false)
 	end
-    room:moveCardTo(to_exchange2,t,sgs.Player_Hand,false)
+	room:moveCardTo(to_exchange2,t,sgs.Player_Hand,false)
 	room:setPlayerFlag(source,"-juyi_canuse")
 end
 }
@@ -1403,7 +1403,7 @@ sgs.LoadTranslationTable{
 	[":danshu"]="<b>锁定技</b>,当其他角色使用【杀】指定你为目标时,须额外弃置X张手牌,X为你已损失的体力值,否则该【杀】对你无效.",
 	["haoshen"]="豪绅",
 	[":haoshen"]="你可以跳过你的摸牌阶段,令任一其他角色将手牌补至其体力上限的张数;\
-        你可以跳过你的出牌阶段,将一半的手牌（向上取整）交给任一其他角色.",
+		你可以跳过你的出牌阶段,将一半的手牌（向上取整）交给任一其他角色.",
 	["haoshen_vs"]="豪绅·2",
 	[":haoshen_vs"]="当你发动豪绅跳过出牌阶段时,此技能生效.",
 	["#danshu"]="%from 的技能“<b><font color='yellow'>丹书</font></b>”被触发,%arg须额外弃牌才能使该【杀】生效",
@@ -1422,8 +1422,8 @@ sgs.LoadTranslationTable{
 	["qiaodaoqing"]="乔道清",
 	["huanshu"]="幻术",
 	[":huanshu"]="你每受到1点伤害,可以令任一其他角色连续进行两次判定:\
-        若结果均为<b><font color='red'>红色</font></b>,你对其造成2点火焰伤害;\
-        若结果均为黑色,你对其造成2点雷电伤害.",
+		若结果均为<b><font color='red'>红色</font></b>,你对其造成2点火焰伤害;\
+		若结果均为黑色,你对其造成2点雷电伤害.",
 	["mozhang"]="魔障",
 	[":mozhang"]="<b>锁定技</b>,你的回合结束时,若你未处于横置状态,你须横置你的武将牌.",
 	["#huanshufire"]="%arg受到%from的技能“<b><font color='red'>幻术</font></b>”的影响,仿佛置身于火海之中",
@@ -1499,8 +1499,8 @@ sgs.LoadTranslationTable{
 	["husanniang"]="扈三娘",
 	["hongjin"]="红锦",
 	[":hongjin"]="出牌阶段,你每对男性角色造成一次伤害,可以执行下列两项中的一项:\
-        1.摸一张牌;\
-        2.弃掉该角色的一张牌.",
+		1.摸一张牌;\
+		2.弃掉该角色的一张牌.",
 	["hongjin:draw"]="摸一张牌",
 	["hongjin:discard"]="弃掉该角色的一张牌",
 	["hongjin:draw"]="摸一张牌",

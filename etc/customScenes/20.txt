@@ -1,4 +1,8 @@
-general:select general2:select role:renegade maxhp:3 equip:silver_lion draw:0  hand:135,136  starter:true  singleTurn:lord+loyalist
-general:chaijin  role:lord    maxhp:3    hp:2    equip:vine    draw:0    hand:83,44
-general:likui    role:loyalist    maxhp:4    hp:2    equip:axe    draw:0    hand:52
-setPile:101,131,90,2,31,18,103
+
+general:keyin general2:yanqing role:renegade maxhp:3 hp:3 equip:66 
+general:fangjie role:loyalist 
+general:guansheng role:rebel starter:true 
+general:huarong role:rebel 
+general:zhutong role:rebel 
+general:liying role:rebel 
+general:fangla role:lord maxhp:5 hp:4 

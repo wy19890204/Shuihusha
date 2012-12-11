@@ -2,8 +2,7 @@
 
 return {
 
-	["dusong"] = "独松关模式",
-	["Dusong"] = "独松关",
+	["dusong"] = "独松关",
 
 	["$zhang1dong"] = "S02A",
 	["#zhang1dong"] = "独松关双英",
@@ -26,7 +25,6 @@ return {
 	[":zhengzhuang"] = "摸牌阶段，你可以额外摸X张牌（X为你装备区里的牌数）。",
 	["feizhi"] = "飞掷",
 	[":feizhi"] = "弃牌阶段结束时，你可以弃掉一至三名其他角色的共计X张牌（X为你于此阶段弃置的牌数）。",
-	["@true"] = "触",
 	["$guzhu1"] = "就算死，也要拉个垫背的！", --（董平）
 	["$guzhu2"] = "乱局之中敢赌者胜！", -- （张清）
 	["$zhengzhuang1"] = "我等可把军马分调开去，四下埋伏。", --（董平）
@@ -41,4 +39,5 @@ return {
 	["#ReformingRevive"] = "%from 从重整状态中复活!",
 	["draw_1v3"] = "重整摸牌",
 	["weapon_recast"] = "武器重铸",
+	["$shapeshift"] = "",
 }

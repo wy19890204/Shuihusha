@@ -63,6 +63,10 @@ void ServerPlayer::playCardEffect(const Card *card, bool mute) const{
         room->playSkillEffect(skill_name, index);
 }
 
+void ServerPlayer::playSkillEffect(const QString &skill_name, int index){
+    room->playSkillEffect(skill_name, index);
+}
+
 int ServerPlayer::getRandomHandCardId() const{
     return getRandomHandCard()->getEffectiveId();
 }
@@ -77,7 +81,7 @@ void ServerPlayer::obtainCard(const Card *card, bool unhide){
 }
 
 void ServerPlayer::throwAllEquips(){
-    QList<const Card *> equips = getEquips();
+    QList<const Card *> equips = getEquips(true);
 
     if(equips.isEmpty())
         return;
@@ -133,11 +137,30 @@ void ServerPlayer::bury(){
     clearFlags();
     clearHistory();
     throwAllCards();
+
+    if(hasSkill("qiaogong")){
+        QStringList nn;
+        nn << "w" << "a" << "d" << "o";
+        foreach(QString n, nn){
+            QString proty = QString("qiaogong_%1").arg(n);
+            tag.remove(proty);
+        }
+    }
+
     throwAllMarks();
     clearPrivatePiles();
 
     room->clearPlayerCardLock(this);
     room->setEmotion(this, "death");
+
+    if(Config.EnableReincarnation){
+        QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
+        if(!deathnote.contains(getGeneralName()))
+            deathnote << getGeneralName();
+        if(deathnote.first() == "")
+            deathnote.removeFirst();
+        room->setTag("DeadPerson", deathnote.join("+"));
+    }
 }
 
 void ServerPlayer::throwAllCards(){
@@ -251,37 +274,29 @@ QString ServerPlayer::findReasonable(const QStringList &generals, bool no_unreas
 
     foreach(QString name, generals){
         if(Config.Enable2ndGeneral){
-            if(getGeneral()){
-                if(BanPair::isBanned(getGeneralName(), name))
-                    continue;
-            }else{
-                if(BanPair::isBanned(name))
-                    continue;
-            }
+            if((getGeneral() && BanPair::isBanned(getGeneralName(), name)) ||
+               BanPair::isBanned(name))
+                continue;
 
             if(Config.EnableHegemony)
-            {
-                if(getGeneral())
-                    if(getGeneral()->getKingdom()
-                            != Sanguosha->getGeneral(name)->getKingdom())
-                        continue;
-            }
+                if(getGeneral() && getGeneral()->getKingdom() != Sanguosha->getGeneral(name)->getKingdom())
+                    continue;
         }
-        if(Config.EnableBasara)
-        {
+        if(Config.EnableBasara){
             QStringList ban_list = Config.value("Banlist/Basara").toStringList();
 
             if(ban_list.contains(name))continue;
         }
-        if(Config.GameMode == "zombie_mode")
-        {
+        if(Config.GameMode == "zombie_mode"){
             QStringList ban_list = Config.value("Banlist/Zombie").toStringList();
 
             if(ban_list.contains(name))continue;
         }
-        if((Config.GameMode.endsWith("p") ||
-            Config.GameMode.endsWith("pd")))
-        {
+        if(Config.value("DisableQimen", false).toBool())
+            if(name == "gongsunsheng")continue;
+        if(Config.GameMode.endsWith("p") ||
+                Config.GameMode.endsWith("pd") ||
+                Config.GameMode.endsWith("pz") ){
             QStringList ban_list = Config.value("Banlist/Roles").toStringList();
 
             if(ban_list.contains(name))continue;
@@ -429,7 +444,7 @@ QList<const Card *> ServerPlayer::getCards(const QString &flags) const{
         cards << handcards;
 
     if(flags.contains("e"))
-        cards << getEquips();
+        cards << getEquips(true);
 
     if(flags.contains("j"))
         cards << getJudgingArea();
@@ -452,6 +467,16 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
     if(hasSkill("huace") && getPhase() == Player::Play && !hasUsed("HuaceCard")){
         foreach(const Card *card, getHandcards()){
             if(card->inherits("TrickCard"))
+                return true;
+        }
+    }
+    if(hasSkill("neiying") && getCardCount(true) > 1){
+        if(include_counterplot)
+            return true;
+    }
+    if(hasSkill("zhengbing")){
+        foreach(const Card *card, handcards){
+            if(card->isBlack() || card->objectName() == "nullification")
                 return true;
         }
     }
@@ -568,6 +593,8 @@ void ServerPlayer::play(QList<Player::Phase> set_phases){
             phases.clear();
             phases << NotActive;
         }
+        if(isAlive() && phase != Play && phase != NotActive)
+            while(room->getThread()->trigger(InPhase, room, this, data));
     }
 }
 
@@ -651,7 +678,7 @@ AI *ServerPlayer::getAI() const{
     if(getState() == "online"){
         return NULL;
     }
-    else if(getState() == "trust" && !Config.FreeChoose)
+    else if(getState() == "trust" && !Config.value("EnableCheatMenu", false).toBool())
         return trust_ai;
     else
         return ai;
@@ -683,6 +710,23 @@ ServerPlayer *ServerPlayer::getNextAlive() const{
         next = next->getNext();
 
     return next;
+}
+
+void ServerPlayer::swapViewPlus(ServerPlayer *target){ //@todo
+    if(target == this)
+        return;
+    room->swapSeat(target, this);
+    /*ServerPlayer *c;
+    c->copyFrom(this);
+    this->copyFrom(target);
+    target->copyFrom(c);*/
+    QString gen1, gen2;
+    gen1 = this->getGeneralName();
+    gen2 = this->getGeneral2Name();
+    room->setPlayerProperty(this, "general", target->getGeneralName());
+    room->setPlayerProperty(this, "general2", target->getGeneral2Name());
+    room->setPlayerProperty(target, "general", gen1);
+    room->setPlayerProperty(target, "general2", gen2);
 }
 
 int ServerPlayer::getGeneralMaxHP() const{
@@ -845,6 +889,12 @@ void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){
     piles[pile_name] << card_id;
 
     room->moveCardTo(Sanguosha->getCard(card_id), this, Player::Special, open);
+}
+
+void ServerPlayer::clearPile(const QString &pile_name){
+    foreach(int a, getPile(pile_name))
+        room->throwCard(a);
+    piles[pile_name].clear();
 }
 
 void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){

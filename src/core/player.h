@@ -69,6 +69,7 @@ public:
     int getLostHp(bool zeromax = true) const;
     bool isWounded() const;
     General::Gender getGender() const;
+    QString getGenderString() const;
 
     bool isOwner() const;
     void setOwner(bool owner);
@@ -85,6 +86,7 @@ public:
 
     void setRole(const QString &role);
     QString getRole() const;
+    QString getScreenRole() const;
     Role getRoleEnum() const;
 
     void setGeneral(const General *general);
@@ -135,6 +137,7 @@ public:
     bool hasSkill(const QString &skill_name) const;
     bool hasInnateSkill(const QString &skill_name) const;
     bool hasLordSkill(const QString &skill_name) const;
+    QStringList getWakeSkills() const;
     virtual QString getGameMode() const = 0;
 
     void setEquip(const EquipCard *card);
@@ -147,18 +150,18 @@ public:
     void addDelayedTrick(const Card *trick);
     void removeDelayedTrick(const Card *trick);
     QList<const DelayedTrick *> delayedTricks() const;
-    bool containsTrick(const QString &trick_name) const;
+    bool containsTrick(const QString &trick_name, bool consi_hq = true) const;
     const DelayedTrick *topDelayedTrick() const;
 
     virtual int getHandcardNum() const = 0;
     virtual void removeCard(const Card *card, Place place) = 0;
     virtual void addCard(const Card *card, Place place) = 0;
 
-    const Weapon *getWeapon() const;
-    const Armor *getArmor() const;
-    const Horse *getDefensiveHorse() const;
-    const Horse *getOffensiveHorse() const;
-    QList<const Card *> getEquips() const;
+    const Weapon *getWeapon(bool trueequip = false) const;
+    const Armor *getArmor(bool trueequip = false) const;
+    const Horse *getDefensiveHorse(bool trueequip = false) const;
+    const Horse *getOffensiveHorse(bool trueequip = false) const;
+    QList<const Card *> getEquips(bool trueequip = false) const;
     const EquipCard *getEquip(int index) const;
 
     bool hasWeapon(const QString &weapon_name) const;
@@ -170,12 +173,15 @@ public:
 
     void addMark(const QString &mark);
     void removeMark(const QString &mark);
-    virtual void setMark(const QString &mark, int value);
+    virtual void setMark(const QString &mark, int value = 1);
     int getMark(const QString &mark) const;
+    bool hasMark(const QString &mark) const;
+    QStringList getAllMarkName(int flag = 1, const QString &part = "@") const;
 
     void setChained(bool chained);
     bool isChained() const;
 
+    bool canSlash(const Player *other, const Card *slash, bool distance_limit = true) const;
     bool canSlash(const Player *other, bool distance_limit = true) const;
     int getCardCount(bool include_equip) const;
 
@@ -186,18 +192,17 @@ public:
     void addHistory(const QString &name, int times = 1);
     void clearHistory();
     bool hasUsed(const QString &card_class) const;
-    int usedTimes(const QString &card_class) const;
+    int usedTimes(const QString &card_class, int init = 0) const;
     int getSlashCount() const;
 
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
-    QStringList getVisSkist(const QString &exclude) const;
-    int getKingdoms() const;
+    QStringList getVisibleSkillList(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
+    int getKingdoms() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
-    bool canSlashWithoutCrossbow() const;
     virtual bool isLastHandCard(const Card *card) const = 0;
 
     void jilei(const QString &type);

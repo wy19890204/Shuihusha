@@ -11,6 +11,7 @@
 #include "recorder.h"
 #include "indicatoritem.h"
 #include "pixmapanimation.h"
+#include "scenario.h"
 #include "audio.h"
 
 #include <QPropertyAnimation>
@@ -199,6 +200,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(ClientInstance, SIGNAL(status_changed(Client::Status)), this, SLOT(updateStatus(Client::Status)));
     connect(ClientInstance, SIGNAL(avatars_hiden()), this, SLOT(hideAvatars()));
     connect(ClientInstance, SIGNAL(hp_changed(QString,int,DamageStruct::Nature,bool)), SLOT(changeHp(QString,int,DamageStruct::Nature,bool)));
+    connect(ClientInstance, SIGNAL(maxhp_changed(QString,int)), SLOT(changeMaxHp(QString,int)));
     connect(ClientInstance, SIGNAL(pile_cleared()), this, SLOT(clearPile()));
     connect(ClientInstance, SIGNAL(player_killed(QString)), this, SLOT(killPlayer(QString)));
     connect(ClientInstance, SIGNAL(player_revived(QString)), this, SLOT(revivePlayer(QString)));
@@ -462,14 +464,13 @@ void RoomScene::createControlButtons(){
 }
 
 void RoomScene::createExtraButtons(){
-    /*
     reverse_button = dashboard->createButton("reverse-select");
     reverse_button->setEnabled(true);
 
-    --dashboard->addWidget(sort_combobox, 2, true);
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
-    */
+    reverse_button->setVisible(false);
+
     free_discard = NULL;
 }
 
@@ -773,7 +774,7 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
     Photo *photo = name2photo[player->objectName()];
     int i;
     for(i=0; i<n; i++){
-        Pixmap *pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *pixmap = new Pixmap(":system/card-back.png");
         addItem(pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(pixmap, "pos");
@@ -859,13 +860,24 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     case Qt::Key_F1: break;
     case Qt::Key_F2: chooseSkillButton(); break;
     case Qt::Key_F3: sort_combobox->showPopup(); break;
+    case Qt::Key_F4: dashboard->reverseSelection(); break;
+    case Qt::Key_F5: {
+            if (control_is_down) {
+                if (add_robot && add_robot->isVisible())
+                    ClientInstance->addRobot();
+            } else if (fill_robots && fill_robots->isVisible())
+                ClientInstance->fillRobots();
+            break;
+        }
 
     case Qt::Key_S: dashboard->selectCard("slash");  break;
     case Qt::Key_J: dashboard->selectCard("jink"); break;
     case Qt::Key_P: dashboard->selectCard("peach"); break;
+    case Qt::Key_O: dashboard->selectCard("analeptic"); break;
 
     case Qt::Key_E: dashboard->selectCard("equip"); break;
     case Qt::Key_W: dashboard->selectCard("weapon"); break;
+    case Qt::Key_F: dashboard->selectCard("armor"); break;
     case Qt::Key_H: dashboard->selectCard("horse"); break;
 
     case Qt::Key_T: dashboard->selectCard("trick"); break;
@@ -877,12 +889,13 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     case Qt::Key_L: dashboard->selectCard("lightning"); break;
     case Qt::Key_I: dashboard->selectCard("indulgence"); break;
     case Qt::Key_R: dashboard->selectCard("collateral"); break;
+    case Qt::Key_B: dashboard->selectCard("supply_shortage"); break;
     case Qt::Key_Y: dashboard->selectCard("god_salvation"); break;
 
     case Qt::Key_Left: dashboard->selectCard(".", false); break;
     case Qt::Key_Right:
     case Qt::Key_Space:  dashboard->selectCard("."); break; // iterate all cards
-    case Qt::Key_F:  break; // fix the selected
+    //case Qt::Key_F:  break; // fix the selected
 
     case Qt::Key_G: selectNextTarget(control_is_down); break; // iterate generals
 
@@ -971,8 +984,15 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         QList<const Skill *> skills;
         foreach(QString skill_name, skill_names){
             const Skill *skill = Sanguosha->getSkill(skill_name);
-            if(skill && !skill->inherits("WeaponSkill") && !skill->inherits("ArmorSkill"))
-                skills << skill;
+            if(skill){
+                if(skill->getFrequency() == Skill::NotSkill)
+                    continue;
+                if(player->getGeneral()->hasSkill(skill_name) ||
+                   (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
+                    continue;
+                if(skill->getLocation() == Skill::Right)
+                    skills << skill;
+            }
         }
 
         if(!skills.isEmpty()){
@@ -984,7 +1004,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(ServerInfo.FreeChoose && arrange_button){
+    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -1035,7 +1055,7 @@ void RoomScene::putToDiscard(CardItem *item)
     item->setEnabled(true);
     item->setFlag(QGraphicsItem::ItemIsFocusable, false);
     item->setOpacity(1.0);
-    item->setZValue(0.0001*ClientInstance->discarded_list.length());
+    item->setZValue(0.0001 * ClientInstance->discarded_list.length());
 
     viewDiscards();
 }
@@ -1199,7 +1219,7 @@ void RoomScene::moveNCards(int n, const QString &from, const QString &to){
 
     int i;
     for(i=0; i<n; i++){
-        Pixmap *card_pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *card_pixmap = new Pixmap(":system/card-back.png");
         addItem(card_pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(card_pixmap, "pos");
@@ -1415,6 +1435,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 
         case Skill::Wake:
         case Skill::Compulsory: button = new QPushButton(); break;
+        default: button = new QPushButton(); button->setVisible(false); break;
         }
     }else if(skill->inherits("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
@@ -1498,6 +1519,10 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 void RoomScene::updateSkillButtons(){
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
+            if(Config.NoLordSkill || Config.EnableAnzhan)
+                continue;
+            if(ServerInfo.GameMode == "landlord" || ServerInfo.GameMode == "wheel_fight")
+                continue;
             if(Self->getRole() != "lord" || ServerInfo.GameMode == "06_3v3")
                 continue;
         }
@@ -1513,26 +1538,28 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
     normal_mode["renegade"] = tr("Renegade");
 
-    threeV3_mode["lord"] = threeV3_mode["renegade"] = tr("Marshal");
-    threeV3_mode["loyalist"] = threeV3_mode["rebel"] = tr("Vanguard");
+    threeV3_mode["lord"] = threeV3_mode["renegade"] = Sanguosha->translate("Marshal");
+    threeV3_mode["loyalist"] = threeV3_mode["rebel"] = Sanguosha->translate("Vanguard");
 
     hegemony_mode["lord"] = Sanguosha->translate("guan");
     hegemony_mode["loyalist"] = Sanguosha->translate("jiang");
     hegemony_mode["rebel"] = Sanguosha->translate("min");
     hegemony_mode["renegade"] = Sanguosha->translate("kou");
 
+    landlord_mode["lord"] = Sanguosha->translate("Landlord");
+    landlord_mode["rebel"] = Sanguosha->translate("Cottier");
+
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
-    case 2: break;
-    case 3: break;
-    case 4: map = &threeV3_mode; break;
-    case 5: map = &hegemony_mode; break;
+    case 2: map = &threeV3_mode; break;
+    case 3: map = &hegemony_mode; break;
+    case 4: map = &landlord_mode; break;
     default:
         map = &normal_mode;
     }
@@ -1664,6 +1691,7 @@ void RoomScene::useSelectedCard(){
             break;
         }
     case Client::Responsing:{
+        //@todo :auto choice
             const Card *card = dashboard->getSelected();
             if(card){
                 if(ClientInstance->hasNoTargetResponsing())
@@ -2041,6 +2069,7 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
+                //dashboard->selectCard(pattern);
             }
 
             break;
@@ -2069,13 +2098,14 @@ void RoomScene::updateStatus(Client::Status status){
         }
 
     case Client::ExecDialog:{
-            ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
-            ClientInstance->ask_dialog->exec();
+            if(ClientInstance->ask_dialog != NULL){
+                ClientInstance->ask_dialog->setParent(main_window, Qt::Dialog);
+                ClientInstance->ask_dialog->exec();
 
-            ok_button->setEnabled(false);
-            cancel_button->setEnabled(true);
-            discard_button->setEnabled(false);
-
+                ok_button->setEnabled(false);
+                cancel_button->setEnabled(true);
+                discard_button->setEnabled(false);
+            }
             break;
         }
 
@@ -2090,12 +2120,10 @@ void RoomScene::updateStatus(Client::Status status){
                     }
                 }
             }
-
             prompt_box->appear();
             ok_button->setEnabled(true);
             cancel_button->setEnabled(true);
             discard_button->setEnabled(false);
-
             break;
         }
 
@@ -2392,7 +2420,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     QStringList list = QString("%1:%2").arg(who).arg(delta).split(":");
     doAnimation("hpChange",list);
 
-    if(delta < 0){
+    if(delta <= 0){
         if(losthp){
             Sanguosha->playAudio("hplost");
             return;
@@ -2403,10 +2431,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         case -1: {
                 ClientPlayer *player = ClientInstance->getPlayer(who);
                 int r = qrand() % 3 + 1;
-                if(player->getGeneral()->isMale())
-                    damage_effect = QString("injure1-male%1").arg(r);
-                else
-                    damage_effect = QString("injure1-female%1").arg(r);
+                damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
                 break;
             }
 
@@ -2444,6 +2469,11 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     }
 }
 
+void RoomScene::changeMaxHp(const QString &who, int delta) {
+    if (delta < 0)
+        Sanguosha->playAudio("maxhplost");
+}
+
 void RoomScene::clearPile(){
     foreach(CardItem *item, piled_discards){
         removeItem(item);
@@ -2461,7 +2491,7 @@ void RoomScene::onStandoff(){
 #endif
 
     QDialog *dialog = new QDialog(main_window);
-    dialog->resize(500, 600);
+    dialog->resize(600, 500);
     dialog->setWindowTitle(tr("Standoff"));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -2501,7 +2531,7 @@ void RoomScene::onGameOver(){
 #endif
 
     QDialog *dialog = new QDialog(main_window);
-    dialog->resize(500, 600);
+    dialog->resize(600, 500);
     dialog->setWindowTitle(victory ? tr("Victory") : tr("Failure"));
 
     QGroupBox *winner_box = new QGroupBox(tr("Winner(s)"));
@@ -2552,14 +2582,15 @@ void RoomScene::addRestartButton(QDialog *dialog){
     {
         QString id = Config.GameMode;
         id.replace("_mini_","");
-        int stage = Config.value("MiniSceneStage",1).toInt();
+        //int stage = Config.value("MiniSceneStage", 1).toInt();
         int current = id.toInt();
-        if((stage == current) && stage<20)
+        //if(stage == current && stage < Config.S_MINI_MAX_COUNT)
+        if(current < Config.S_MINI_MAX_COUNT)
             goto_next = true;
     }
 
     QPushButton *restart_button;
-      restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
+    restart_button = new QPushButton(goto_next ? tr("Next Stage") : tr("Restart Game"));
     QPushButton *return_button = new QPushButton(tr("Return to main menu"));
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
@@ -2817,7 +2848,10 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         const ClientPlayer *player = players.at(i);
 
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(Sanguosha->translate(player->getGeneralName()));
+        QString name = !player->getGeneral2() ?
+                       Sanguosha->translate(player->getGeneralName()) :
+                       Sanguosha->translate(player->getGeneralName()) + "+" + Sanguosha->translate(player->getGeneral2Name());
+        item->setText(name);
         table->setItem(i, 0, item);
 
         item = new QTableWidgetItem;
@@ -2825,23 +2859,27 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         table->setItem(i, 1, item);
 
         item = new QTableWidgetItem;
-        if(player->isAlive())
-            item->setText(tr("Alive"));
+        if(player->isAlive()){
+            if(Config.EnableReincarnation && player->property("isDead").toBool()){
+                item->setText(tr("Reincarn"));
+                QIcon icon("image/mark/@skull.png");
+                item->setIcon(icon);
+            }
+            else
+                item->setText(tr("Alive"));
+        }
         else
             item->setText(tr("Dead"));
         table->setItem(i, 2, item);
 
         item = new QTableWidgetItem;
 
-        if(ServerInfo.EnableHegemony){
-            QIcon icon(QString("image/kingdom/icon/%1.png").arg(player->getKingdom()));
-            item->setIcon(icon);
-            item->setText(Sanguosha->translate(player->getKingdom()));
-        }else{
-            QIcon icon(QString("image/system/roles/%1.png").arg(player->getRole()));
-            item->setIcon(icon);
-            item->setText(Sanguosha->translate(player->getRole()));
-        }
+        QString iconurl = ServerInfo.EnableHegemony ?
+                    QString("image/kingdom/icon/%1.png").arg(player->getKingdom()) :
+                    QString("image/system/roles/%1.png").arg(player->getRole());
+        QIcon icon(iconurl);
+        item->setIcon(icon);
+        item->setText(Sanguosha->translate(player->getScreenRole()));
         if(!player->isAlive())
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
         table->setItem(i, 3, item);
@@ -2851,7 +2889,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
 
         StatisticsStruct *statistics = player->getStatistics();
         /*
-                item = new QTableWidgetItem;
+        item = new QTableWidgetItem;
         QString designations;
         foreach(QString designation, statistics->designation){
             designations.append(Sanguosha->translate(designation) + ", ");
@@ -2880,15 +2918,15 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         item->setText(QString::number(statistics->cheat));
         table->setItem(i, 8, item);
 
-        table->setColumnWidth(0, 65);
+        table->setColumnWidth(0, 85);
         table->setColumnWidth(1, 65);
-        table->setColumnWidth(2, 60);
+        table->setColumnWidth(2, 65);
         table->setColumnWidth(3, 65);
-        table->setColumnWidth(4, 40);
-        table->setColumnWidth(5, 40);
-        table->setColumnWidth(6, 40);
-        table->setColumnWidth(7, 40);
-        table->setColumnWidth(8, 35);
+        table->setColumnWidth(4, 37);
+        table->setColumnWidth(5, 37);
+        table->setColumnWidth(6, 37);
+        table->setColumnWidth(7, 37);
+        table->setColumnWidth(8, 37);
     }
 }
 
@@ -3039,7 +3077,7 @@ void RoomScene::doGongxin(const QList<int> &card_ids, bool enable_heart){
 
 void RoomScene::createStateItem(){
     QString state_url = Config.CircularView ?
-                        "image/system/state_c.png" : "image/system/state.png";
+                        ":system/state_c.png" : ":system/state.png";
     QPixmap state(state_url);
 
     state_item = addPixmap(state);
@@ -3142,6 +3180,9 @@ void KOFOrderBox::revealGeneral(const QString &name){
             Pixmap *avatar = avatars[revealed ++];
             avatar->changePixmap(general->getPixmapPath("small"));
             avatar->setObjectName(name);
+
+            //QRect arrayRect(0,0,122,50); //截取图片区域
+            //QGraphicsRectItem *rect_item = new QGraphicsRectItem(arrayRect, avatar);
         }
     }
 }
@@ -3234,10 +3275,10 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(ServerInfo.FreeChoose && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-discard", 10, true);
-        free_discard->setToolTip(tr("Discard cards freely"));
-        FreeDiscardSkill *discard_skill = new FreeDiscardSkill(this);
+    if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
+        free_discard = dashboard->addButton("free-regulate", 10, true);
+        free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
+        FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);
         connect(free_discard, SIGNAL(clicked()), this, SLOT(doSkillButton()));
 
@@ -3286,18 +3327,25 @@ void RoomScene::onGameStart(){
             return;
 
         // start playing background music
-        QString bgmusic_path = ServerInfo.GameMode != "dusong" ?
-                               "audio/system/background.mp3" :
-                               "audio/system/dsgbackground.mp3";
+        const Scenario *scenario = Sanguosha->getScenario(ServerInfo.GameMode);
+        QString bgmusic_path = "audio/null.mp3";
+        if(scenario){
+            bgmusic_path = scenario->setBackgroundMusic();
+        }
+        else if(ServerInfo.EnableBasara || ServerInfo.EnableHegemony)
+            bgmusic_path = Sanguosha->getScenario("dusong")->setBackgroundMusic();
 
-        Audio::playBGM(Config.value("BackgroundMusic", bgmusic_path).toString());
+        if(!QFile::exists(bgmusic_path))
+            bgmusic_path = Config.value("BackgroundMusic", "audio/bgmusic/default.mp3").toString();
+
+        Audio::playBGM(bgmusic_path);
         Audio::setBGMVolume(Config.BGMVolume);
     }
 
 #endif
 
     game_started = true;
-    drawPile = new Pixmap("image/system/card-back.png");
+    drawPile = new Pixmap(":system/card-back.png");
     addItem(drawPile);
     drawPile->setZValue(-2.0);
     drawPile->setPos(room_layout->drawpile);
@@ -3560,11 +3608,12 @@ void RoomScene::doLightboxAnimation(const QString &, const QStringList &args){
     }
 
     QString word = args.first();
+    const QBrush colorset = word != "$shapeshift" ? QColor(0x20, 0x20, 0x20) : QColor(0xDE, 0x20, 0x20);
     word = Sanguosha->translate(word);
 
     QGraphicsRectItem *lightbox = addRect(main_window->rect());
 
-    lightbox->setBrush(QColor(0x20, 0x20, 0x20));
+    lightbox->setBrush(colorset);
     lightbox->setOpacity(0.8);
     lightbox->moveBy(-main_window->width()/2, -main_window->height()/2);
 
@@ -3649,6 +3698,7 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["nullification"] = &RoomScene::doMovingAnimation;
         map["counterplot"] = &RoomScene::doMovingAnimation;
         map["ecstasy"] = &RoomScene::doMovingAnimation;
+        map["moonpie"] = &RoomScene::doMovingAnimation;
 
         map["analeptic"] = &RoomScene::doAppearingAnimation;
         map["fire"] = &RoomScene::doAppearingAnimation;

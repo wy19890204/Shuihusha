@@ -93,7 +93,7 @@ private:
     QList<CardItem *> judging_area;
     QList<QGraphicsItem *> delayed_tricks;
     QGraphicsPixmapItem *death_item;
-    Pixmap *chain_icon, *back_icon;
+    Pixmap *chain_icon, *back_icon, *wake_icon;
 
     QGraphicsRectItem *equip_rects[4];
     CardItem *weapon, *armor, *defensive_horse, *offensive_horse;
@@ -129,6 +129,7 @@ private slots:
     void onCardItemHover();
     void onCardItemLeaveHover();
     void onMarkChanged();
+    void setWakeState();
     void setEcstState();
     void setActionState();
 

@@ -6,7 +6,7 @@
 #include "standard.h"
 #include "common-skillcards.h"
 
-class StandardPackage : public Package{
+class StandardPackage : public GeneralPackage{
     Q_OBJECT
 
 public:
@@ -178,7 +178,7 @@ class CujuCard: public SkillCard{
 public:
     Q_INVOKABLE CujuCard();
 
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class JiashuCard: public SkillCard{
@@ -208,7 +208,7 @@ class MeihuoCard:public SkillCard{
 public:
     Q_INVOKABLE MeihuoCard();
     virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
 };
 
 class YinjianCard: public SkillCard{

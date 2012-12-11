@@ -4,7 +4,7 @@
 #include "package.h"
 #include "card.h"
 
-class GubenPackage: public Package{
+class GubenPackage: public GeneralPackage{
     Q_OBJECT
 
 public:

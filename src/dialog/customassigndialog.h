@@ -58,13 +58,22 @@ private:
     QSpinBox *max_hp_spin,*hp_spin;
     QSpinBox *player_draw, *marks_count;
     QCheckBox *self_select_general, *self_select_general2;
+    QTabWidget *tab_cards;
+    QVBoxLayout *createLeft();
+    QVBoxLayout *createRight();
+    QWidget *createEquipTab();
+    QWidget *createHandsTab();
+    QWidget *createJudgeTab();
+    QWidget *createPileTab();
     QPushButton *removeEquipButton, *removeHandButton, *removeJudgeButton, *removePileButton;
     QCheckBox *set_turned, *set_chained;
-    QComboBox *single_turn_box, *before_next_box;
+    QComboBox *sb_box, *dieover_box;
     QCheckBox *random_roles_box;
-    QCheckBox *single_turn, *before_next;
-    QLabel *single_turn_text, *single_turn_text2, *before_next_text, *before_next_text2;
+    QCheckBox *single_turn, *before_next, *dieover;
+    QLabel *sb_text, *sb_text2, *dieover_text, *dieover_text2;
     QPushButton *extra_skill_set;
+    QWidget *starterTab();
+    QWidget *enderTab();
     QPushButton *move_list_up_button, *move_list_down_button;
     QCheckBox *move_list_check, *move_pile_check;
     QCheckBox *choose_nationality;
@@ -84,7 +93,7 @@ private:
     QMap<QString, bool> free_choose_general, free_choose_general2;
     QMap<QString, QStringList> player_exskills;
     QMap<QString, bool> set_nationality;
-    QMap<QString, QString> assign_nationality;
+    QMap<QString, QString> assign_nationality, dead_over;
 
     QString general_name, general_name2;
     bool choose_general2;
@@ -142,6 +151,7 @@ private slots:
 
     void checkSingleTurnBox(bool toggled);
     void checkBeforeNextBox(bool toggled);
+    void checkDeadWinBox(bool toggled);
 
     void on_list_itemSelectionChanged(QListWidgetItem *current);
 

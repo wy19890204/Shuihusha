@@ -42,7 +42,7 @@ sgs.ai_cardsview["douzhan"] = function(class_name, player)
 	end
 end
 
-local douzhan_skill = {}
+douzhan_skill = {}
 douzhan_skill.name = "douzhan"
 table.insert(sgs.ai_skills, douzhan_skill)
 douzhan_skill.getTurnUseCard = function(self, inclusive)
@@ -79,3 +79,22 @@ sgs.ai_skill_invoke["zhengzhuang"] = true
 sgs.ai_skill_invoke["feizhi"] = true
 sgs.ai_skill_playerchosen["feizhi"] = sgs.ai_skill_playerchosen["shunshui"]
 
+local ubunb_skill={}
+ubunb_skill.name = "ubunb"
+table.insert(sgs.ai_skills, ubunb_skill)
+ubunb_skill.getTurnUseCard = function(self)
+	if not self.player:hasFlag("Ubunb") then
+		self.player:drawCards(self.player:getHp())
+		self.player:setFlags("Ubunb")
+	end
+end
+
+local ubunc_skill={}
+ubunc_skill.name = "ubunc"
+table.insert(sgs.ai_skills, ubunc_skill)
+ubunc_skill.getTurnUseCard = function(self)
+	if not self.player:hasFlag("Ubunc") then
+		self.room:setPlayerProperty(self.player, "maxhp", sgs.QVariant(self.player:getMaxHp() + 1))
+		self.player:setFlags("Ubunc")
+	end
+end
