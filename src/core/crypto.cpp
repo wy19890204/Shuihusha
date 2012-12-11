@@ -24,59 +24,71 @@ void DES_Process(const char *keyString, byte *block, size_t length, CryptoPP::Ci
 
     delete t;
 }
-/*
-int maintest(int argc, char *argv[])
-{
-    QCoreApplication a(argc, argv);
 
-    byte block[1024] = "++++++++--------********12345678";
-
-    const char *key = "http://qsanguosha.org/forum";
-
-    printf("original text: %s\n", block);
-
-    DES_Process(key, block, 16, CryptoPP::ENCRYPTION);
-
-    printf("Encrypt: %s\n", block);
-
-    DES_Process(key, block, 16, CryptoPP::DECRYPTION);
-
-    printf("Decrypt: %s\n", block);
-
-    return a.exec();
+QString Crypto::chooseMusicFile(){
+    return "QFileDialog::getOpenFileName(this)";
 }
-*/
-CryStruct Crypto::doCrypto(CryType type, const QString &input, const QString &output, const char *key){
-    QFile file(input);
-    if(file.open(QIODevice::ReadOnly)){
-        QByteArray data = file.readAll();
 
-        int oldSize = data.size();
-        int remainder = oldSize % 8;
+bool Crypto::encryptMusicFile(const QString &filename, const char *GlobalKey){
+    QFileInfo info(filename);
+    QString output = QString("%1/%2.dat").arg(info.absolutePath()).arg(info.baseName());
 
-        char *buffer = data.data();
-        if(remainder != 0){
-            int padding = 8 - remainder;
-            data.resize(data.size() + padding);
-            buffer = data.data();
-            memset(buffer + oldSize, 0, padding);
-        }
+    QFile file(filename);
 
-        DES_Process(key, (byte *)buffer, data.size(),
-                    type == Crypto::Jiami ? CryptoPP::ENCRYPTION : CryptoPP::DECRYPTION);
+    if(file.open(QIODevice::ReadOnly) == false)
+        return false;
 
-        CryStruct cry;
-        cry.buffer = buffer;
-        cry.size = data.size();
-        if(output == "none")
-            return cry;
-        else{
-            QFile outFile(output == "default" ? input : output);
-            outFile.open(QIODevice::WriteOnly);
-            outFile.write(buffer, data.size());
-            outFile.close();
-            cry.buffer = buffer;
-            return cry;
-        }
+    qint64 realSize = file.size();
+    int padding = realSize % 8;
+    qint64 size = realSize + padding;
+
+    byte *buffer = new byte[size];
+
+    int readed = file.read((char *)buffer, size);
+    if(readed == -1){
+        delete buffer;
+        return false;
     }
+
+    DES_Process(GlobalKey, buffer, size, CryptoPP::ENCRYPTION);
+
+    QFile newFile(output);
+    if(newFile.open(QIODevice::WriteOnly)){
+        newFile.write((char *)buffer, size);
+
+        delete buffer;
+
+        return true;
+
+    }else{
+        delete buffer;
+        return false;
+    }
+}
+
+void Crypto::playEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const char *GlobalKey){
+    QFile file(filename);
+
+    if(file.open(QIODevice::ReadOnly) == false)
+        return;
+
+    qint64 size = file.size();
+    byte *buffer = new byte[size];
+
+    file.read((char *)buffer, size);
+
+    DES_Process(GlobalKey, buffer, size, CryptoPP::DECRYPTION);
+
+    FMOD_SOUND *sound;
+
+    FMOD_CREATESOUNDEXINFO info;
+    memset(&info, 0, sizeof(info));
+    info.cbsize = sizeof(info);
+    info.length = size;
+
+
+    FMOD_System_CreateSound(System, (const char *)buffer, FMOD_OPENMEMORY, &info, &sound);
+    delete buffer;
+
+    FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, sound, false, NULL);
 }

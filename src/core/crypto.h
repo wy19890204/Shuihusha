@@ -1,20 +1,17 @@
 #ifndef CRYPTO_H
 #define CRYPTO_H
+#include "fmod.h"
 #include <QtCore/QCoreApplication>
 #include <crypto++/des.h>
 #include <stdio.h>
-#include <QFile>
-
-struct CryStruct{
-    char *buffer;
-    int size;
-};
+#include <QFileInfo>
 
 class Crypto{
 public:
-    enum CryType {Jiami, Jiemi};
 
-    static CryStruct doCrypto(CryType type, const QString &input, const QString &output = "none", const char *key = "shuihusha");
+    QString chooseMusicFile();
+    bool encryptMusicFile(const QString &filename, const char *GlobalKey = "shuihusha");
+    void playEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const char *GlobalKey = "shuihusha");
 
 //private:
 //    static QString key;

@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
         qApp->setStyleSheet(stream.readAll());
     }
 
-    //Crypto::doCrypto(Crypto::Jiami, "audio/skill/ganlin1.ogg", "default");
+    //Crypto::encryptMusicFile("audio/skill/ganlin1.ogg");
 
 #ifdef AUDIO_SUPPORT
 

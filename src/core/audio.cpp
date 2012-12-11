@@ -8,20 +8,16 @@
 class Sound;
 
 static FMOD_SYSTEM *System;
-static QCache<char *, Sound> SoundCache;
+static QCache<QString, Sound> SoundCache;
 static FMOD_SOUND *BGM;
 static FMOD_CHANNEL *BGMChannel;
 
 class Sound{
 public:
-    Sound(const char *filename, int size)
+    Sound(const QString &filename)
         :sound(NULL), channel(NULL)
     {
-        FMOD_CREATESOUNDEXINFO info;
-        memset(&info, 0, sizeof(info));
-        info.length = size;
-        info.cbsize = sizeof(info);
-        FMOD_System_CreateSound(System, filename, FMOD_OPENMEMORY, &info, &sound);
+        FMOD_System_CreateSound(System, filename.toAscii(), FMOD_DEFAULT, NULL, &sound);
     }
 
     ~Sound(){
@@ -72,17 +68,18 @@ void Audio::quit(){
 }
 
 void Audio::play(const QString &filename){
-    //char *buffer = filename.toLocal8Bit().data();
-    CryStruct cry = Crypto::doCrypto(Crypto::Jiemi, filename);
-    char *buffer = cry.buffer;
-    Sound *sound = SoundCache[buffer];
-    if(sound == NULL){
-        sound = new Sound(buffer, cry.size);
-        SoundCache.insert(buffer, sound);
-    }else if(sound->isPlaying())
-        return;
+    if(filename.endsWith("dat"))
+        Crypto::playEncryptedFile(System, filename);
+    else{
+        Sound *sound = SoundCache[filename];
+        if(sound == NULL){
+            sound = new Sound(filename);
+            SoundCache.insert(filename, sound);
+        }else if(sound->isPlaying())
+            return;
 
-    sound->play();
+        sound->play();
+    }
 }
 
 void Audio::stop(){

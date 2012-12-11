@@ -18,6 +18,7 @@ font/font.7z
 etc/customScenes/custom_scenario.txt
 *.dylib
 image/*.rcc
+lib/libcryptopp.a
 *sha.exe
 lua*.dll
 extensions/zhangong/img/*.*
