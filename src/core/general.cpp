@@ -190,7 +190,9 @@ QString General::getSkillDescription() const{
 }
 
 void General::lastWord() const{
-    QString filename = QString("audio/death/%1.ogg").arg(objectName());
+    QString filename = QString("audio/death/%1.dat").arg(objectName());
+    if(!QFile::exists(filename))
+        filename = QString("audio/death/%1.ogg").arg(objectName());
     if(!QFile::exists(filename))
         filename = QString("extensions/audio/death/%1.ogg").arg(objectName());
     //QFile file(filename);

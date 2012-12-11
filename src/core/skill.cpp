@@ -78,7 +78,9 @@ void Skill::initMediaSource(){
     }
 
     if(sources.isEmpty()){
-        QString effect_file = QString("audio/skill/%1.ogg").arg(objectName());
+        QString effect_file = QString("audio/skill/%1.dat").arg(objectName());
+        if(!QFile::exists(effect_file))
+            effect_file = QString("audio/skill/%1.ogg").arg(objectName());
         if(!QFile::exists(effect_file))
             effect_file = QString("extensions/audio/skill/%1.ogg").arg(objectName());
         if(QFile::exists(effect_file))

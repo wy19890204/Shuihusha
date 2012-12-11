@@ -1040,3 +1040,17 @@ void MainWindow::on_actionAbout_Lua_triggered()
 
     window->appear();
 }
+
+#include "crypto.h"
+void MainWindow::on_actionCrypto_audio_triggered(){
+    QStringList filenames = QFileDialog::getOpenFileNames(
+            this, tr("Please select audio files"),
+            QString(),
+            tr("OGG Audio files (*.ogg)"));
+
+    Crypto cry;
+    foreach(QString filename, filenames){
+        if(!cry.encryptMusicFile(filename))
+            QMessageBox::warning(this, tr("Notice"), tr("Encrypt music file %1 failed!").arg(filename));
+    }
+}

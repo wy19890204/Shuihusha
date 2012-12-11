@@ -4,7 +4,7 @@
 // block 是要处理的数据，处理后的数据也同时存放在 block 里，必须保证它的长度为 8 的整倍数
 // length 是 block 的长度，必须保证它为 8 的整倍数
 // direction 是表示是否是加密还是解密，若是加密，则用 CryptoPP::ENCRYPTION, 解密用 CryptoPP::DECRYPTION
-void Crypto::DES_Process(const char *keyString, byte *block, size_t length, CryptoPP::CipherDir direction){
+void DES_Process(const char *keyString, byte *block, size_t length, CryptoPP::CipherDir direction){
     using namespace CryptoPP;
 
     byte key[DES_EDE2::KEYLENGTH];
@@ -23,10 +23,6 @@ void Crypto::DES_Process(const char *keyString, byte *block, size_t length, Cryp
     }
 
     delete t;
-}
-
-QString Crypto::chooseMusicFile(){
-    return "QFileDialog::getOpenFileName(this)";
 }
 
 bool Crypto::encryptMusicFile(const QString &filename, const char *GlobalKey){
@@ -90,8 +86,4 @@ FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filena
     delete buffer;
 
     return sound;
-}
-
-void Crypto::playEncryptedFile(FMOD_SYSTEM *System, FMOD_SOUND *sound){
-    FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, sound, false, NULL);
 }
