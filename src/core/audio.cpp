@@ -17,7 +17,12 @@ public:
     Sound(const QString &filename)
         :sound(NULL), channel(NULL)
     {
-        FMOD_System_CreateSound(System, filename.toAscii(), FMOD_DEFAULT, NULL, &sound);
+        if(!filename.endsWith("dat"))
+            FMOD_System_CreateSound(System, filename.toAscii(), FMOD_DEFAULT, NULL, &sound);
+        else{
+            Crypto cry;
+            sound = cry.initEncryptedFile(System, filename);
+        }
     }
 
     ~Sound(){
@@ -68,18 +73,14 @@ void Audio::quit(){
 }
 
 void Audio::play(const QString &filename){
-    if(filename.endsWith("dat"))
-        Crypto::playEncryptedFile(System, filename);
-    else{
-        Sound *sound = SoundCache[filename];
-        if(sound == NULL){
-            sound = new Sound(filename);
-            SoundCache.insert(filename, sound);
-        }else if(sound->isPlaying())
-            return;
+    Sound *sound = SoundCache[filename];
+    if(sound == NULL){
+        sound = new Sound(filename);
+        SoundCache.insert(filename, sound);
+    }else if(sound->isPlaying())
+        return;
 
-        sound->play();
-    }
+    sound->play();
 }
 
 void Audio::stop(){
