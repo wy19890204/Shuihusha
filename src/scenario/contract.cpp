@@ -265,20 +265,8 @@ ContractScenario::ContractScenario()
     skills << new JointAttack << new Protection;
 }
 
-int getPlayersbyRole(Room *room, const QString &role){
-    int NaOH = 0;
-    foreach(ServerPlayer *player, room->getAlivePlayers()){
-        if(player->getRole() == role)
-            NaOH ++;
-    }
-    return NaOH;
-}
-
 AI::Relation ContractScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
-    if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
-       getPlayersbyRole(a->getRoom(), "rebel") > 5)
-        return AI::Neutrality;
-    else if(getComrade(a) == b)
+    if(getComrade(a) == b)
         return AI::Friend;
     else if(!getComrade(a) && !getComrade(b))
         return AI::Enemy;
