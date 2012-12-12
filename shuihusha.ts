@@ -945,6 +945,11 @@
         <translation>从不无懈自己的单体锦囊</translation>
     </message>
     <message>
+        <location filename="src/dialog/configdialog.ui" line="548"/>
+        <source>Auto target</source>
+        <translation>自动选择目标</translation>
+    </message>
+    <message>
         <location filename="src/dialog/configdialog.ui" line="558"/>
         <source>Minimize the dialog when server runs</source>
         <translation>服务器运行时最小化到托盘</translation>

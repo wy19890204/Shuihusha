@@ -660,6 +660,22 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QCheckBox" name="autoTargetCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>60</y>
+       <width>140</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Auto target</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab">
     <attribute name="title">

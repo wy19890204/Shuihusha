@@ -37,6 +37,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     // tab 2
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
+    ui->autoTargetCheckBox->setChecked(Config.EnableAutoTarget);
     ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
@@ -154,6 +155,9 @@ void ConfigDialog::saveConfig()
 
     Config.NeverNullifyMyTrick = ui->neverNullifyMyTrickCheckBox->isChecked();
     Config.setValue("NeverNullifyMyTrick", Config.NeverNullifyMyTrick);
+
+    Config.EnableAutoTarget = ui->autoTargetCheckBox->isChecked();
+    Config.setValue("EnableAutoTarget", Config.EnableAutoTarget);
 
     Config.EnableMinimizeDialog = ui->minimizecCheckBox->isChecked();
     Config.setValue("EnableMinimizeDialog", Config.EnableMinimizeDialog);
