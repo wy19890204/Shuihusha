@@ -946,7 +946,7 @@
         <translation>从不无懈自己的单体锦囊</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="548"/>
+        <location filename="src/dialog/configdialog.ui" line="673"/>
         <source>Auto target</source>
         <translation>自动选择目标</translation>
     </message>
@@ -996,72 +996,72 @@
         <translation>切换界面语言。默认为简体中文</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="666"/>
+        <location filename="src/dialog/configdialog.ui" line="682"/>
         <source>Contest mode</source>
         <translation>竞赛模式</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="681"/>
+        <location filename="src/dialog/configdialog.ui" line="697"/>
         <source>SMTP Server</source>
         <translation>SMTP 服务器</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="688"/>
+        <location filename="src/dialog/configdialog.ui" line="704"/>
         <source>SMTP server&apos;s address</source>
         <translation>SMTP 服务器的地址</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="695"/>
+        <location filename="src/dialog/configdialog.ui" line="711"/>
         <source>Sender</source>
         <translation>发送者</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="702"/>
+        <location filename="src/dialog/configdialog.ui" line="718"/>
         <source>The sender&apos;s email address</source>
         <translation>发送者的邮件地址</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="709"/>
+        <location filename="src/dialog/configdialog.ui" line="725"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="716"/>
+        <location filename="src/dialog/configdialog.ui" line="732"/>
         <source>The password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="723"/>
+        <location filename="src/dialog/configdialog.ui" line="739"/>
         <source>Receiver</source>
         <translation>接收者</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="730"/>
+        <location filename="src/dialog/configdialog.ui" line="746"/>
         <source>The receiver&apos;s email address</source>
         <translation>接收者的电子邮件</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="746"/>
+        <location filename="src/dialog/configdialog.ui" line="762"/>
         <source>Only save the record of lord</source>
         <translation>仅保存主公的重放记录</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.cpp" line="85"/>
+        <location filename="src/dialog/configdialog.cpp" line="86"/>
         <source>Select a background image</source>
         <translation>请选择一个背景图片</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.cpp" line="87"/>
+        <location filename="src/dialog/configdialog.cpp" line="88"/>
         <source>Images (*.png *.bmp *.jpg)</source>
         <translation>图像 (*.png *.bmp *.jpg)</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.cpp" line="184"/>
+        <location filename="src/dialog/configdialog.cpp" line="188"/>
         <source>Select a background music</source>
         <translation>请选择背景音乐文件</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.cpp" line="186"/>
+        <location filename="src/dialog/configdialog.cpp" line="190"/>
         <source>Audio files (*.wav *.mp3 *.ogg)</source>
         <translation>音频文件 (*.wav *.mp3 *.ogg)</translation>
     </message>
@@ -2259,6 +2259,7 @@
         <location filename="src/dialog/mainwindow.cpp" line="600"/>
         <location filename="src/dialog/mainwindow.cpp" line="625"/>
         <location filename="src/dialog/mainwindow.cpp" line="638"/>
+        <location filename="src/dialog/mainwindow.cpp" line="1062"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -2364,14 +2365,25 @@
         <translation>Ogg 音频文件 (*.ogg)</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.cpp" line="1054"/>
+        <location filename="src/dialog/mainwindow.cpp" line="1057"/>
+        <location filename="src/dialog/mainwindow.cpp" line="1061"/>
         <source>Notice</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.cpp" line="1054"/>
+        <location filename="src/dialog/mainwindow.cpp" line="1057"/>
         <source>Encrypt music file %1 failed!</source>
         <translation>音频文件 %1 加密失败！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1061"/>
+        <source>Encrypt %1 music files done!</source>
+        <translation>%1 个音频文件加密完成！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1062"/>
+        <source>Delete all old files?</source>
+        <translation>是否删除全部源文件？</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="600"/>
