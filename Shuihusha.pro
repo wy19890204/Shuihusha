@@ -22,6 +22,7 @@ SOURCES += \
 	src/client/clientplayer.cpp \
 	src/client/clientstruct.cpp \
 	src/core/banpair.cpp \
+	src/core/crypto.cpp \
 	src/core/card.cpp \
 	src/core/engine.cpp \
 	src/core/exppattern.cpp \
@@ -160,6 +161,7 @@ HEADERS += \
 	src/client/clientstruct.h \
 	src/core/audio.h \
 	src/core/banpair.h \
+	src/core/crypto.h \
 	src/core/card.h \
 	src/core/engine.h \
 	src/core/exppattern.h \
@@ -297,7 +299,7 @@ FORMS += \
 	src/dialog/connectiondialog.ui \
 	src/dialog/generaloverview.ui \
 	src/dialog/mainwindow.ui 
-	
+
 INCLUDEPATH += include
 INCLUDEPATH += src/client
 INCLUDEPATH += src/core
@@ -318,7 +320,7 @@ macx{
 	ICON = resource/icon/sgs.icns
 }
 
-
+LIBS += -Llib -lcryptopp
 LIBS += -L.
 
 CONFIG(audio){

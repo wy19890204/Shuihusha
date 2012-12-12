@@ -175,7 +175,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
         button->setEnabled(false);
         button_layout->addWidget(button);
     }else{
-        QRegExp rx(".+/(\\w+\\d?).ogg");
+        QRegExp rx(".+/(\\w+\\d?).(\\w+)");
         for(int i = 0; i < sources.length(); i++){
             if(isInvisibleSkill(skill->objectName(), i + 1))
                 break;
