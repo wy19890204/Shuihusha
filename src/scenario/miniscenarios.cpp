@@ -336,7 +336,9 @@ MiniScene::MiniScene(const QString &name)
     rule = new MiniSceneRule(this);
 
     int stage = name.right(2).toInt();
-    bool show = qgetenv("USERNAME") == "Tenkei";
+    QString usernames;
+    usernames << "Tenkei" << "1";
+    bool show = usernames.contains(qgetenv("USERNAME"));
     addGenerals(stage, !show);
 }
 
