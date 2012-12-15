@@ -265,32 +265,6 @@ public:
     }
 };
 
-class Youxia: public TriggerSkill{
-public:
-    Youxia():TriggerSkill("youxia"){
-        events << CardLost;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return !target->hasSkill(objectName());
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *jinge = room->findPlayerBySkillName(objectName());
-        if(player->isKongcheng() && jinge && !jinge->isKongcheng() && jinge->isWounded()){
-            CardMoveStar move = data.value<CardMoveStar>();
-            if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
-                const Card *card = room->askForCardShow(jinge, player, "youxia");
-                player->obtainCard(card, false);
-                RecoverStruct o;
-                o.card = card;
-                room->recover(jinge, o);
-            }
-        }
-        return false;
-    }
-};
-
 LandlordScenario::LandlordScenario()
     :Scenario("landlord")
 {

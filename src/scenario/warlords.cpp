@@ -33,7 +33,6 @@ public:
             if(damage.from && !getPlayersbyRole(room, "loyalist").isEmpty())
                 damage.from->gainMark("@blood", damage.damage);
 
-            return false;
             break;
         }
 
@@ -47,26 +46,58 @@ public:
             if((damage && damage->from) && (player->getRole() == "loyalist" || player->getRole() == "lord")) {
                 if((player->getRole() == "lord" && damage->from->getRole() == "loyalist") ||
                    (player->getRole() == "loyalist" && damage->from->getRole() == "lord")) {
+
+                    LogMessage log;
+                    log.type = "#InternalStrife";
+                    log.from = damage->from;
+                    log.to << player;
+                    log.arg = damage->from->getRole();
+                    log.arg2 = player->getRole();
+                    room->sendLog(log);
+
                     damage->from->throwAllEquips();
                     damage->from->throwAllHandCards();
                     room->setPlayerProperty(damage->from, "role", "rebel");
                 }
-                else
-                    room->setPlayerProperty(damage->from, "role", player->getRole());
-                    
-                if(player->getRole() == "lord") {
-                    int maxblood = -1;
-                    foreach(ServerPlayer *p, room->getOtherPlayers(damage->from))
-                        if(p->getMark("@blood") > maxblood)
-                            maxblood = p->getMark("@blood");
+                else{
+                    LogMessage log;
+                    log.type = "#SeizePower";
+                    log.from = damage->from;
+                    log.to << player;
+                    log.arg = damage->from->getRole();
+                    log.arg2 = player->getRole();
+                    room->sendLog(log);
 
-                    QList<ServerPlayer *> targets;
-                    foreach(ServerPlayer *p, room->getOtherPlayers(damage->from))
-                        if(p->getMark("@blood") == maxblood)
-                            targets << p;
-                            
-                    ServerPlayer *junshi = room->askForPlayerChosen(damage->from, targets, "getJunShi");
-                    room->setPlayerProperty(junshi, "role", "loyalist");
+                    room->setPlayerProperty(damage->from, "role", player->getRole());
+
+                    if(player->getRole() == "lord" && damage->from->getRole() == "lord") {
+                        int maxblood = 0;
+                        foreach(ServerPlayer *p, room->getOtherPlayers(damage->from))
+                            if(p->getMark("@blood") > maxblood)
+                                maxblood = p->getMark("@blood");
+
+                        QList<ServerPlayer *> targets;
+                        foreach(ServerPlayer *p, room->getOtherPlayers(damage->from))
+                            if(p->getMark("@blood") == maxblood)
+                                targets << p;
+
+                        if(damage->from->askForSkillInvoke("getJunShi")){
+                            ServerPlayer *junshi = room->askForPlayerChosen(damage->from, targets, "getJunShi");
+
+                            log.type = "#Empower";
+                            log.from = damage->from;
+                            log.to.clear();
+                            log.to << junshi;
+                            log.arg = damage->from->getRole();
+                            log.arg2 = junshi->getRole();
+                            room->sendLog(log);
+
+                            room->setPlayerProperty(junshi, "role", "loyalist");
+                            foreach(ServerPlayer *loy, room->getOtherPlayers(junshi))
+                                if(loy->getRole() == "loyalist")
+                                    room->setPlayerProperty(loy, "role", "rebel");
+                        }
+                    }
                 }
             }
 
@@ -75,6 +106,13 @@ public:
                 qShuffle(players);
 
                 ServerPlayer *target = players.at(0);
+
+                LogMessage log;
+                log.type = "#NewLord";
+                log.from = target;
+                log.arg = target->getRole();
+                room->sendLog(log);
+
                 room->setPlayerProperty(target, "role", "lord");
             }
             else if(room->getLord() && getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
@@ -82,13 +120,25 @@ public:
                 players.removeOne(room->getLord());
                 if(players.length() > 1) {
                     ServerPlayer *junshi = room->askForPlayerChosen(room->getLord(), players, "getJunShi");
+
+                    LogMessage log;
+                    log.type = "#NewLoya";
+                    log.from = junshi;
+                    log.arg = junshi->getRole();
+                    room->sendLog(log);
+
                     room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
                     room->setPlayerProperty(junshi, "role", "loyalist");
                 }
             }
 
-            if(getPlayersbyRole(room, "rebel").isEmpty())
-                room->gameOver("lord+loyalist");
+            if(getPlayersbyRole(room, "rebel").isEmpty()){
+                QStringList players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers())
+                    players << tmp->objectName();
+                room->gameOver(players.join("+"));
+                return true;
+            }
             break;
         }
 
@@ -131,6 +181,32 @@ AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPla
     else
         return AI::GetRelation(a, b);
 }
+
+class Youxia: public TriggerSkill{
+public:
+    Youxia():TriggerSkill("youxia"){
+        events << CardLost;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return !target->hasSkill(objectName());
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *jinge = room->findPlayerBySkillName(objectName());
+        if(player->isKongcheng() && jinge && !jinge->isKongcheng() && jinge->isWounded()){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(player->isAlive() && move->from_place == Player::Hand && jinge->askForSkillInvoke(objectName(), data)){
+                const Card *card = room->askForCardShow(jinge, player, "youxia");
+                player->obtainCard(card, false);
+                RecoverStruct o;
+                o.card = card;
+                room->recover(jinge, o);
+            }
+        }
+        return false;
+    }
+};
 
 WarlordsScenario::WarlordsScenario()
     :Scenario("warlords")
