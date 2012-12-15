@@ -386,7 +386,7 @@ void Room::gameOver(const QString &winner){
         bool only_lord = Config.value("Contest/OnlySaveLordRecord", true).toBool();
         QString start_time = tag.value("StartTime").toDateTime().toString(ContestDB::TimeFormat);
 
-        if(only_lord)
+        if(only_lord && getLord())
             getLord()->saveRecord(QString("records/%1.txt").arg(start_time));
         else{
             foreach(ServerPlayer *player, m_players){
