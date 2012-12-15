@@ -37,8 +37,46 @@ public:
         }
 
         case GameOverJudge:{
+            if(getPlayersbyRole(room, "lord").isEmpty()){
+                QList<ServerPlayer *> players = room->getAlivePlayers();
+                qShuffle(players);
+
+                ServerPlayer *target = players.at(0);
+
+                LogMessage log;
+                log.type = "#NewLord";
+                log.from = target;
+                log.arg = target->getRole();
+                room->sendLog(log);
+
+                room->setPlayerProperty(target, "role", "lord");
+            }
+            else if(room->getLord() && getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
+                QList<ServerPlayer *> players = room->getAlivePlayers();
+                players.removeOne(room->getLord());
+                if(players.length() > 1) {
+                    ServerPlayer *junshi = room->askForPlayerChosen(room->getLord(), players, "getJunShi");
+
+                    LogMessage log;
+                    log.type = "#NewLoya";
+                    log.from = junshi;
+                    log.arg = junshi->getRole();
+                    room->sendLog(log);
+
+                    if(!getPlayersbyRole(room, "loyalist").isEmpty())
+                        room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
+                    room->setPlayerProperty(junshi, "role", "loyalist");
+                }
+            }
+
+            if(getPlayersbyRole(room, "rebel").isEmpty()){
+                QStringList players;
+                foreach(ServerPlayer *tmp, room->getAlivePlayers())
+                    players << tmp->objectName();
+                room->gameOver(players.join("+"));
+                return true;
+            }
             return true;
-            break;
         }
 
         case Death:{
@@ -101,45 +139,6 @@ public:
                 }
             }
 
-            if(getPlayersbyRole(room, "lord").isEmpty()){
-                QList<ServerPlayer *> players = room->getAlivePlayers();
-                qShuffle(players);
-
-                ServerPlayer *target = players.at(0);
-
-                LogMessage log;
-                log.type = "#NewLord";
-                log.from = target;
-                log.arg = target->getRole();
-                room->sendLog(log);
-
-                room->setPlayerProperty(target, "role", "lord");
-            }
-            else if(room->getLord() && getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
-                QList<ServerPlayer *> players = room->getAlivePlayers();
-                players.removeOne(room->getLord());
-                if(players.length() > 1) {
-                    ServerPlayer *junshi = room->askForPlayerChosen(room->getLord(), players, "getJunShi");
-
-                    LogMessage log;
-                    log.type = "#NewLoya";
-                    log.from = junshi;
-                    log.arg = junshi->getRole();
-                    room->sendLog(log);
-
-                    if(!getPlayersbyRole(room, "loyalist").isEmpty())
-                        room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
-                    room->setPlayerProperty(junshi, "role", "loyalist");
-                }
-            }
-
-            if(getPlayersbyRole(room, "rebel").isEmpty()){
-                QStringList players;
-                foreach(ServerPlayer *tmp, room->getAlivePlayers())
-                    players << tmp->objectName();
-                room->gameOver(players.join("+"));
-                return true;
-            }
             break;
         }
 
@@ -171,16 +170,73 @@ bool WarlordsScenario::lordWelfare(const ServerPlayer *player) const{
     return false;
 }
 
-void WarlordsScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
        WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5)
         return AI::Neutrality;
     else
         return AI::GetRelation(a, b);
+}
+
+WarlordsScenario::WarlordsScenario()
+    :Scenario("warlords")
+{
+    rule = new WarlordsScenarioRule(this);
+}
+
+//AF
+
+class ArthurFerrisScenarioRule: public ScenarioRule{
+public:
+    ArthurFerrisScenarioRule(Scenario *scenario)
+        :ScenarioRule(scenario)
+    {
+        events << GameOverJudge;
+    }
+
+    virtual bool trigger(TriggerEvent triggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        switch(triggerEvent){
+        case GameOverJudge:{
+            if(room->getAlivePlayers().length() == 2){
+                room->gameOver(player->getNextAlive()->objectName());
+                return true;
+            }
+            return true;
+        }
+
+        default:
+            break;
+        }
+
+        return false;
+    }
+};
+
+bool ArthurFerrisScenario::setCardPiles(const Card *card) const{
+    return card->inherits("Halberd") || card->inherits("KylinBow");
+}
+
+void ArthurFerrisScenario::assign(QStringList &generals, QStringList &roles) const{
+    Q_UNUSED(generals);
+
+    roles << "lord" << "renegade" << "rebel";
+}
+
+int ArthurFerrisScenario::getPlayerCount() const{
+    return 3;
+}
+
+void ArthurFerrisScenario::getRoles(char *roles) const{
+    strcpy(roles, "ZNF");
+}
+
+AI::Relation ArthurFerrisScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
+    if(a->getNextAlive() == b)
+        return AI::Friend;
+    else if(b->getNextAlive() == a)
+        return AI::Enemy;
+    else
+        return AI::Neutrality;
 }
 
 class Youxia: public TriggerSkill{
@@ -209,10 +265,11 @@ public:
     }
 };
 
-WarlordsScenario::WarlordsScenario()
-    :Scenario("warlords")
+ArthurFerrisScenario::ArthurFerrisScenario()
+    :Scenario("arthur_ferris")
 {
-    rule = new WarlordsScenarioRule(this);
+    rule = new ArthurFerrisScenarioRule(this);
 }
 
 ADD_SCENARIO(Warlords)
+ADD_SCENARIO(ArthurFerris)

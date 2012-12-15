@@ -191,10 +191,6 @@ void ContractScenario::getRoles(char *roles) const{
     strcpy(roles, "FFFFFFFF");
 }
 
-void ContractScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 bool ContractScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }

@@ -268,10 +268,6 @@ bool CoupleScenario::generalSelection(Room *) const{
     return false;
 }
 
-void CoupleScenario::onTagSet(Room *room, const QString &key) const{
-
-}
-
 AI::Relation CoupleScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(getSpouse(a) == b)
         return AI::Friend;

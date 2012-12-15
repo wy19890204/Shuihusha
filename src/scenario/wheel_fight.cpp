@@ -128,10 +128,6 @@ void WheelFightScenario::getRoles(char *roles) const{
     strcpy(roles, "ZN");
 }
 
-void WheelFightScenario::onTagSet(Room *, const QString &) const{
-    // dummy
-}
-
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);

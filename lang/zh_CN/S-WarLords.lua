@@ -11,6 +11,8 @@ return {
 	["#NewLord"] = "寨主阵亡，%from[%arg] 被系统选择成为新的寨主",
 	["#NewLoya"] = "军师阵亡，%from[%arg] 被寨主选择成为新的军师",
 
+	["arthur_ferris"] = "三角含树", -- 杀上保下模式
+--	["arthur_ferris"] = "圆桌骑士",
 
 -- 隐藏武将
 	["#ximenjinge"] = "光之子",

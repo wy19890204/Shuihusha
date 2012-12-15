@@ -177,10 +177,6 @@ void ZombieScenario::getRoles(char *roles) const{
     strcpy(roles, "ZCCCCCCC");
 }
 
-void ZombieScenario::onTagSet(Room *, const QString &) const{
-    // dummy
-}
-
 AI::Relation ZombieScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     bool aZombie=true;
     bool bZombie=true;

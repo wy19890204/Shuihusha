@@ -39,6 +39,7 @@ config = {
 		"Landlord",
 		"WheelFight",
 		"Warlords",
+		"ArthurFerris",
 --		"Changban",
 --		"Contract",
 		"Impasse",

@@ -69,6 +69,10 @@ bool Scenario::setCardPiles(const Card *card) const{ // if the unuse this card, 
     //return false;
 }
 
+void Scenario::onTagSet(Room *, const QString &) const{
+    // dummy
+}
+
 void Scenario::run(Room *room) const{ // RoomThread::run(){
     forever {
         room->getThread()->trigger(TurnStart, room, room->getCurrent());
