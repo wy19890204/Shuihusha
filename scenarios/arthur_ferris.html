@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.6.5" />
-<title>投名状</title>
+<title>三角含树</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -712,39 +712,44 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>投名状模式</h1>
+<h1>三角含树模式（杀上保下）</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_说明">说明</h2>
 <div class="sectionbody">
 <div class="paragraph">
-  <p>本模式为水浒杀专属特色模式。</p></div>
+  <p>三人游戏时，很多人会采用“主公、反贼、内奸”三个角色进行游戏。在这样的规则下，玩家稍微有所动作，身份就一览无余，所以才有了在此基础上，修订得更刺激、更快速的游戏规则——杀上保下。玩家的游戏目标，就是“在被你的下家消灭之前，消灭你的上家”。由于该规则忽略人物身份，所以游戏中不使用身份牌。</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_规则">规则</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>＊8人局，所有角色都为平民（反贼），随机选择一名角色开始行动。</p></div>
-<div class="paragraph"><p>＊若无寨主，当场上有角色死亡时，系统随机选出一名存活角色作为寨主（主公）。</p></div>
-<div class="paragraph"><p>＊若无军师，当场上有除寨主外的角色死亡时，寨主选出一名其他角色作为军师（忠臣）。</p></div>
-<div class="paragraph"><p>＊若场上有军师，则每名角色每造成1点伤害，获得一个“血”标记。</p></div>
-<div class="paragraph"><p>＊杀死军师的平民，变为“军师”；杀死寨主的平民，变为“寨主”，并可以选择一名拥有“血”标记最多的其他角色作为新的“军师”（原军师变平民）。</p></div>
-<div class="paragraph"><p>＊若军师杀死寨主，或寨主杀死军师，则弃置自己的所有牌，并恢复平民。</p></div>
-<div class="paragraph"><p>＊胜利条件：所有平民死亡，寨主（和军师）获胜。</p></div>
+<div class="paragraph"><p>1. 胜利目标：在被你的下家消灭之前，消灭你的上家。</p></div>
+<div class="paragraph"><p>2. 按普通三人身份局规则开局，之后按照杀上保下规则游戏。</p></div>
+<div class="paragraph"><p>3. 从游戏牌里挑出【水磨禅杖】和【钩镰枪】这两张武器牌，暂不使用。</p></div>
+<div class="paragraph"><p>4. 拥有主公技的角色，在此规则里无法使用主公技。</p></div>
+<div class="paragraph"><p>5. 当一名玩家被消灭时，游戏结束，其下家获胜。</p></div>
+<div class="paragraph"><p>6. 其余游戏牌的规则与正常规则相同。</p></div>
 </div>
 <div class="sect1">
-<h2 id="_鸣谢">鸣谢</h2>
+<h2 id="_鸣谢">经验心得</h2>
 <div class="sectionbody">
 <div class="paragraph">
-  <p>设计：烨子风暴<br>程序：Slob</p></div>
+  <p>三人游戏的要点在于，杀上家的时候绝对不要忘记保护下家。因为在日常游戏中，杀下家很容易而杀上家很难。当你发动【猛虎下山】和【万箭齐发】时，首先可能受伤害的是你的下家而非上家，根据游戏规则，只要一名玩家被消灭，游戏即宣告结束，这一规则令你不得不在行动之前考虑到很多策略问题。</p></div>
+<div class="paragraph">
+  <p>比如，当你行动时，你的下家和上家都没有手牌了，此时你放【猛虎下山】或【万箭齐发】的话，按照规则是你的下家先结算，如果这时你没有办法救他，那么他就会被宣告阵亡，同时游戏结束，他的下家，也就是你的上家--你要消灭的人获胜。所以，三人游戏必须考虑实力的制衡，有没有一点三角含树的感觉呢？哇哈哈~</p></div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_design_and_code_by_ubuntenkei">Code by Ubun Tenkei</h3>
 </div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
+Last updated 2012-12-15 16:49:09 北京时间（中华人民共和国国家授时中心）
 </div>
 </div>
 </body>

@@ -36,7 +36,7 @@ public:
             break;
         }
 
-        case GameOverJudge:{
+        case Death:{
             if(getPlayersbyRole(room, "lord").isEmpty()){
                 QList<ServerPlayer *> players = room->getAlivePlayers();
                 qShuffle(players);
@@ -76,10 +76,10 @@ public:
                 room->gameOver(players.join("+"));
                 return true;
             }
-            return true;
+            break;
         }
 
-        case Death:{
+        case GameOverJudge:{
             DamageStar damage = data.value<DamageStar>();
             if((damage && damage->from) && (player->getRole() == "loyalist" || player->getRole() == "lord")) {
                 if((player->getRole() == "lord" && damage->from->getRole() == "loyalist") ||
@@ -139,7 +139,7 @@ public:
                 }
             }
 
-            break;
+            return true;
         }
 
         default:

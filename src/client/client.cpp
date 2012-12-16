@@ -881,7 +881,7 @@ void Client::askForChoice(const Json::Value &ask_str){
 
         int a = options.count(); //use Newton's method to qSqrt(a)
         qreal x = a/2;
-        for(int i=1;i<3;i++)
+        for(int i=1;i<4;i++)
             x = (x + a/x)/2;
         int columns = (int)x;
 
