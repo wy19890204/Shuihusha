@@ -268,7 +268,7 @@ QWidget *ServerDialog::createCheatTab(){
 
     cheat_enable_checkbox = new QCheckBox(tr("Enable Cheat Menu"));
     cheat_enable_checkbox->setToolTip(tr("This option enables the cheat menu"));
-    cheat_enable_checkbox->setChecked(Config.value("EnableCheatMenu").toBool());
+    cheat_enable_checkbox->setChecked(Config.value("Cheat/EnableCheatMenu").toBool());
 
     QGroupBox *box = new QGroupBox(tr("cheat options"));
     box->setEnabled(cheat_enable_checkbox->isChecked());
@@ -283,7 +283,7 @@ QWidget *ServerDialog::createCheatTab(){
     free_choose_cards_checkbox->setChecked(Config.FreeChooseCards);
 
     free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
-    free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
+    free_assign_checkbox->setChecked(Config.value("Cheat/FreeAssign").toBool());
 
     free_assign_self_checkbox = new QCheckBox(tr("Assign only your own role"));
     free_assign_self_checkbox->setChecked(Config.FreeAssignSelf);
@@ -291,19 +291,19 @@ QWidget *ServerDialog::createCheatTab(){
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
     free_discard_checkbox = new QCheckBox(tr("Regulate freely"));
-    free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
+    free_discard_checkbox->setChecked(Config.value("Cheat/FreeRegulate").toBool());
 
     gambling_cards_checkbox = new QCheckBox(tr("Gambling Cards"));
-    gambling_cards_checkbox->setChecked(Config.value("GamblingCards").toBool());
+    gambling_cards_checkbox->setChecked(Config.value("Cheat/GamblingCards").toBool());
 
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
-    free_change_general_checkbox->setChecked(Config.value("FreeChange").toBool());
+    free_change_general_checkbox->setChecked(Config.value("Cheat/FreeChange").toBool());
 
     free_showrole_checkbox = new QCheckBox(tr("Show everyone's role in turnstart"));
-    free_showrole_checkbox->setChecked(Config.value("FreeShowRole").toBool());
+    free_showrole_checkbox->setChecked(Config.value("Cheat/FreeShowRole").toBool());
 
     free_undead_checkbox = new QCheckBox(tr("Undead body"));
-    free_undead_checkbox->setChecked(Config.value("FreeUnDead").toBool());
+    free_undead_checkbox->setChecked(Config.value("Cheat/FreeUnDead").toBool());
 
     laybox->addWidget(free_choose_generals_checkbox);
     laybox->addWidget(free_choose_cards_checkbox);
@@ -1059,16 +1059,16 @@ bool ServerDialog::config(){
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
-    Config.setValue("EnableCheatMenu", cheat_enable_checkbox->isChecked());
-    Config.setValue("FreeChooseGenerals", Config.FreeChooseGenerals);
-    Config.setValue("FreeChooseCards", Config.FreeChooseCards);
-    Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
-    Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
-    Config.setValue("FreeRegulate", free_discard_checkbox->isChecked());
-    Config.setValue("GamblingCards", gambling_cards_checkbox->isChecked());
-    Config.setValue("FreeChange", free_change_general_checkbox->isChecked());
-    Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
-    Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
+    Config.setValue("Cheat/EnableCheatMenu", cheat_enable_checkbox->isChecked());
+    Config.setValue("Cheat/FreeChooseGenerals", Config.FreeChooseGenerals);
+    Config.setValue("Cheat/FreeChooseCards", Config.FreeChooseCards);
+    Config.setValue("Cheat/FreeAssign", free_assign_checkbox->isChecked());
+    Config.setValue("Cheat/FreeAssignSelf", Config.FreeAssignSelf);
+    Config.setValue("Cheat/FreeRegulate", free_discard_checkbox->isChecked());
+    Config.setValue("Cheat/GamblingCards", gambling_cards_checkbox->isChecked());
+    Config.setValue("Cheat/FreeChange", free_change_general_checkbox->isChecked());
+    Config.setValue("Cheat/FreeShowRole", free_showrole_checkbox->isChecked());
+    Config.setValue("Cheat/FreeUnDead", free_undead_checkbox->isChecked());
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
     Config.setValue("AINames", ai_nickname_checkbox->isChecked());

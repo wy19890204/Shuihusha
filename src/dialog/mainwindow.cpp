@@ -290,7 +290,7 @@ void MainWindow::enterRoom(){
     ui->actionExpand_dashboard->toggle();
     ui->actionExpand_dashboard->toggle();
 
-    if(Config.value("EnableCheatMenu", false).toBool()){
+    if(Config.value("Cheat/EnableCheatMenu", false).toBool()){
         ui->menuCheat->setEnabled(true);
 
         connect(ui->actionGet_card, SIGNAL(triggered()), ui->actionCard_Overview, SLOT(trigger()));

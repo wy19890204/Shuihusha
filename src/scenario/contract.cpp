@@ -204,7 +204,6 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(effect.to) &&
            room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), false, data)){
@@ -234,7 +233,6 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(player) &&
            room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), false, data)){

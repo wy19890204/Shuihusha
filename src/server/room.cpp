@@ -1640,7 +1640,7 @@ void Room::prepareForStart(){
         for(i=0; i<2; i++){
             broadcastProperty(m_players.at(i), "role");
         }
-    }else if(Config.value("FreeAssign", false).toBool()){
+    }else if(Config.value("Cheat/FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
         if(owner && owner->isOnline()){
             bool success = doRequest(owner, S_COMMAND_CHOOSE_ROLE, Json::Value::null);
@@ -1780,7 +1780,7 @@ void Room::trustCommand(ServerPlayer *player, const QString &){
 
 bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *packet)
 {
-    if (!Config.value("EnableCheatMenu", false).toBool()) return false;
+    if (!Config.value("Cheat/EnableCheatMenu", false).toBool()) return false;
     Json::Value arg = packet->getMessageBody();
     if (!arg.isArray() || !arg[0].isInt()) return false;
     //@todo: synchronize this
@@ -2165,7 +2165,7 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomLords();
         if(Config.EnableAnzhan)
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
-        if(mode == "wheel_fight")
+        if(mode == "wheel_fight" || mode == "arthur_ferris")
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
@@ -3320,7 +3320,7 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
         else
         {
             //@todo: change FreeChoose to EnableCheat
-            if (Config.value("EnableCheatMenu", false).toBool()) {
+            if (Config.value("Cheat/EnableCheatMenu", false).toBool()) {
                 if(makeCheat(player)){
                     if(player->isAlive())
                         return activate(player, card_use);

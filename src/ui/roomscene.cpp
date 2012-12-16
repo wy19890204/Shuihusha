@@ -1004,7 +1004,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
+    }else if(Config.value("Cheat/EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -3275,7 +3275,7 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
+    if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-regulate", 10, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
