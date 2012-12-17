@@ -2450,8 +2450,10 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         Sanguosha->playAudio(damage_effect);
 
         if(photo){
-            //photo->setEmotion("damage");
-            setEmotion(who,"damage");
+            if(qrand() % 2 == 0)
+                setEmotion(who, "damage");
+            else
+                setEmotion(who, "damage2");
             photo->tremble();
         }
 
