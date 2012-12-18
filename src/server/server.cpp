@@ -225,10 +225,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
-    wheel_count = new QLineEdit;
-    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
-    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
-
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
@@ -242,7 +238,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
     layout->addLayout(HLay(new QLabel(tr("Port")), port_edit));
-    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -416,6 +411,7 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
     }
 
     if(button->objectName().contains("scenario")){
+        scenario_advanced_button->setEnabled(true);
         second_general_checkbox->setChecked(false);
         second_general_checkbox->setEnabled(false);
         anzhan_checkbox->setChecked(false);
@@ -423,8 +419,10 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
         endless_checkbox->setChecked(false);
         same_checkbox->setChecked(false);
     }
-    else
+    else{
+        scenario_advanced_button->setEnabled(false);
         second_general_checkbox->setEnabled(true);
+    }
 }
 
 void BanlistDialog::switchTo(int item){
@@ -432,7 +430,6 @@ void BanlistDialog::switchTo(int item){
     list = lists.at(item);
     if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
 }
-
 
 BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     :QDialog(parent),add2nd(NULL)
@@ -639,6 +636,32 @@ void ServerDialog::edit1v1Banlist(){
     dialog->exec();
 }
 
+ScenarioDialog::ScenarioDialog(QWidget *parent)
+    :QDialog(parent)
+{
+    setWindowTitle(tr("Scenario Advanced"));
+    resize(QSize(550, 250));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    QTabWidget *tab = new QTabWidget;
+    layout->addWidget(tab);
+    //connect(tab,SIGNAL(currentChanged(int)),this,SLOT(switchTo(int)));
+
+    QStringList names = Sanguosha->getScenarioNames();
+    foreach(QString name, names){
+        QString scenario_name = Sanguosha->translate(name);
+        const Scenario *scenario = Sanguosha->getScenario(name);
+        QWidget *apage = scenario->getAdvancePage();
+        tab->addTab(apage, scenario_name);
+    }
+    QPushButton *ok = new QPushButton(tr("OK"));
+    connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
+
+    layout->addWidget(ok);
+    setLayout(layout);
+}
+
 QGroupBox *ServerDialog::create3v3Box(){
     QGroupBox *box = new QGroupBox(tr("3v3 options"));
     box->setEnabled(Config.GameMode == "06_3v3");
@@ -740,6 +763,11 @@ QGroupBox *ServerDialog::createGameModeBox(){
                 scenario_combobox->setCurrentIndex(index);
             }
         }
+
+        scenario_advanced_button = new QPushButton(tr("Scenario Advanced"));
+        connect(scenario_advanced_button, SIGNAL(clicked()), this, SLOT(doScenarioAdvanced()));
+        scenario_advanced_button->setEnabled(scenario_button->objectName() == "scenario");
+
         //mini scenes
         QRadioButton *mini_scenes = new QRadioButton(tr("Mini Scenes"));
         mini_scenes->setObjectName("mini");
@@ -770,8 +798,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
         else if(Config.GameMode == "custom_scenario")
             mini_scenes->setChecked(true);
 
-
-
         mini_scene_button = new QPushButton(tr("Custom Mini Scene"));
         connect(mini_scene_button, SIGNAL(clicked()), this, SLOT(doCustomAssign()));
 
@@ -780,6 +806,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
                                           false);
 
         item_list << HLay(scenario_button, scenario_combobox);
+        item_list << HLay(scenario_button, scenario_advanced_button);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
     }
@@ -947,6 +974,11 @@ void ServerDialog::doCustomAssign(){
     dialog->exec();
 }
 
+void ServerDialog::doScenarioAdvanced(){
+    ScenarioDialog *dialog = new ScenarioDialog(this);
+    dialog->exec();
+}
+
 void ServerDialog::setMiniCheckBox(){
     mini_scene_combobox->setEnabled(false);
 }
@@ -1075,7 +1107,6 @@ bool ServerDialog::config(){
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
     Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
-    Config.setValue("WheelCount", wheel_count->text());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);
     Config.setValue("Address", Config.Address);

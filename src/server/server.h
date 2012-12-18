@@ -68,6 +68,18 @@ private slots:
     void switchTo(int item);
 };
 
+class ScenarioDialog: public QDialog{
+    Q_OBJECT
+
+public:
+    ScenarioDialog(QWidget *parent);
+
+private:
+
+private slots:
+
+};
+
 class ServerDialog: public QDialog{
     Q_OBJECT
 
@@ -112,11 +124,11 @@ private:
     QComboBox *max_hp_scheme_combobox;
     QCheckBox *announce_ip_checkbox;
     QComboBox *scenario_combobox;
+    QPushButton *scenario_advanced_button;
     QComboBox *mini_scene_combobox;
     QPushButton *mini_scene_button;
     QLineEdit *address_edit;
     QLineEdit *port_edit;
-    QLineEdit *wheel_count;
     QCheckBox *cheat_enable_checkbox;
     QCheckBox *free_choose_generals_checkbox;
     QCheckBox *free_choose_cards_checkbox;
@@ -148,6 +160,7 @@ private slots:
     void updateButtonEnablility(QAbstractButton* button);
 
     void doCustomAssign();
+    void doScenarioAdvanced();
     void setMiniCheckBox();
 };
 

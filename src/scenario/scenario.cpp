@@ -77,7 +77,12 @@ void Scenario::onTagSet(Room *, const QString &) const{
     // dummy
 }
 
-void Scenario::run(Room *room) const{ // RoomThread::run(){
+QWidget *Scenario::getAdvancePage() const{
+    QWidget *apage = new QWidget;
+    return apage;
+}
+
+void Scenario::run(Room *room) const{ // RoomThread::run()@todo
     forever {
         room->getThread()->trigger(TurnStart, room, room->getCurrent());
         if (room->isFinished()) break;

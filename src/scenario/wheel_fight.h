@@ -3,6 +3,7 @@
 
 #include "scenario.h"
 #include "roomthread.h"
+#include <QLineEdit>
 
 class WheelFightScenario : public Scenario{
     Q_OBJECT
@@ -14,6 +15,13 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual int lordGeneralCount() const;
+    virtual QWidget *getAdvancePage() const;
+
+private:
+    QLineEdit *wheel_count;
+
+private slots:
+    void apply();
 };
 
 #endif // WHEELFIGHTSCENARIO_H

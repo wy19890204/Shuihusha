@@ -129,6 +129,40 @@ int WheelFightScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
 }
 
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QIntValidator>
+
+static QLayout *HLay(QWidget *left, QWidget *right){
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(left);
+    layout->addWidget(right);
+    return layout;
+}
+
+QWidget *WheelFightScenario::getAdvancePage() const{
+    QWidget *apage = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    wheel_count = new QLineEdit;
+    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
+    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
+
+    QPushButton *apply = new QPushButton(tr("Apply"));
+
+    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
+    layout->addWidget(apply);
+    apage->setLayout(layout);
+
+    connect(apply, SIGNAL(clicked()), this, SLOT(apply()));
+    return apage;
+}
+
+void WheelFightScenario::apply(){
+    Config.setValue("WheelCount", wheel_count->text());
+}
+
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);
