@@ -648,6 +648,15 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     layout->addWidget(tab);
     //connect(tab,SIGNAL(currentChanged(int)),this,SLOT(switchTo(int)));
 
+    QWidget *apage = new QWidget;
+    QVBoxLayout *page_layout = new QVBoxLayout;
+    ServerDialog svr = new ServerDialog(parent);
+    svr.wheel_count = new QLineEdit;
+    svr.wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
+    svr.wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
+    page_layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), svr.wheel_count));
+    tab->addTab(apage, "wheel_fight");
+/*
     QStringList names = Sanguosha->getScenarioNames();
     foreach(QString name, names){
         QString scenario_name = Sanguosha->translate(name);
@@ -655,11 +664,13 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
         QWidget *apage = scenario->getAdvancePage();
         tab->addTab(apage, scenario_name);
     }
+*/
     QPushButton *ok = new QPushButton(tr("OK"));
     connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
 
     layout->addWidget(ok);
     setLayout(layout);
+    //tab->setCurrentWidget(apage);
 }
 
 QGroupBox *ServerDialog::create3v3Box(){
@@ -1115,6 +1126,10 @@ bool ServerDialog::config(){
     Config.setValue("UsingExtension", !standard_3v3_radiobutton->isChecked());
     Config.setValue("RoleChoose", role_choose_combobox->itemData(role_choose_combobox->currentIndex()).toString());
     Config.setValue("ExcludeDisaster", exclude_disaster_checkbox->isChecked());
+    Config.endGroup();
+
+    Config.beginGroup("Scenario");
+    Config.setValue("WheelCount", wheel_count->text());
     Config.endGroup();
 
     QSet<QString> ban_packages;

@@ -88,6 +88,8 @@ public:
     void ensureEnableAI();
     bool config();
 
+    QLineEdit *wheel_count;
+
 private:
     QWidget *createBasicTab();
     QWidget *createPackageTab();
