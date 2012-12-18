@@ -1,4 +1,5 @@
 #include "warlords.h"
+#include "settings.h"
 #include "engine.h"
 
 class WarlordsScenarioRule: public ScenarioRule{
@@ -170,6 +171,10 @@ bool WarlordsScenario::lordWelfare(const ServerPlayer *player) const{
     return false;
 }
 
+int WarlordsScenario::lordGeneralCount() const{
+    return Config.value("MaxChoice", 5).toInt();
+}
+
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
        WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5)
@@ -228,6 +233,10 @@ int ArthurFerrisScenario::getPlayerCount() const{
 
 void ArthurFerrisScenario::getRoles(char *roles) const{
     strcpy(roles, "ZNF");
+}
+
+int ArthurFerrisScenario::lordGeneralCount() const{
+    return Config.value("MaxChoice", 5).toInt();
 }
 
 AI::Relation ArthurFerrisScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

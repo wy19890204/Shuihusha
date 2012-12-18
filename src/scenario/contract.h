@@ -16,6 +16,7 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual int lordGeneralCount() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
     static ServerPlayer *getComrade(const ServerPlayer *player);

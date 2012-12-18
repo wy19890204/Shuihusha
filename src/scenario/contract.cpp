@@ -1,7 +1,7 @@
 #include "contract.h"
 #include "skill.h"
 #include "engine.h"
-#include "room.h"
+#include "settings.h"
 
 class ContractScenarioRule: public ScenarioRule{
 public:
@@ -193,6 +193,10 @@ void ContractScenario::getRoles(char *roles) const{
 
 bool ContractScenario::lordWelfare(const ServerPlayer *) const{
     return false;
+}
+
+int ContractScenario::lordGeneralCount() const{
+    return Config.value("MaxChoice", 5).toInt();
 }
 
 class JointAttack: public TriggerSkill{
