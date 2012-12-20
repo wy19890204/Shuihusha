@@ -585,17 +585,17 @@ public:
 
 DragonPackage::DragonPackage()
     :GeneralPackage("dragon")
-{/*
+{
     General *qinming = new General(this, "qinming", "guan");
     qinming->addSkill(new Xianxi);
 
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
     hantao->addSkill(new Changsheng);
-*/
+
     General *shantinggui = new General(this, "shantinggui", "jiang", 5, true, true);
     shantinggui->addSkill(new Xiaofang);
-/*
+
     General *yangchun = new General(this, "yangchun", "kou");
     yangchun->addSkill(new Shexin);
 
@@ -609,7 +609,7 @@ DragonPackage::DragonPackage()
 
     addMetaObject<TaolueCard>();
     addMetaObject<ShexinCard>();
-    addMetaObject<QianxianCard>();*/
+    addMetaObject<QianxianCard>();
     addMetaObject<XiashuCard>();
 }
 
