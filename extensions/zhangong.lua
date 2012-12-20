@@ -5679,11 +5679,12 @@ function init_gamestart(self, room, event, player, data, isowner)
 		setGameData("status",0)
 		return false
 	end
-	--[[
+
 	if string.find(config[2],"mini") or string.find(config[2],"custom") then
 		setGameData("status",0)
 		return false
 	end
+	--[[
 	if string.find(config[5],"F") then
 		setGameData("status",0)
 		return false
