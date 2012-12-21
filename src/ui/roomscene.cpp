@@ -774,7 +774,7 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
     Photo *photo = name2photo[player->objectName()];
     int i;
     for(i=0; i<n; i++){
-        Pixmap *pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *pixmap = new Pixmap(":system/card-back.png");
         addItem(pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(pixmap, "pos");
@@ -1219,7 +1219,7 @@ void RoomScene::moveNCards(int n, const QString &from, const QString &to){
 
     int i;
     for(i=0; i<n; i++){
-        Pixmap *card_pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *card_pixmap = new Pixmap(":system/card-back.png");
         addItem(card_pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(card_pixmap, "pos");
@@ -2450,8 +2450,10 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         Sanguosha->playAudio(damage_effect);
 
         if(photo){
-            //photo->setEmotion("damage");
-            setEmotion(who,"damage");
+            if(qrand() % 2 == 0)
+                setEmotion(who, "damage");
+            else
+                setEmotion(who, "damage2");
             photo->tremble();
         }
 
@@ -3077,7 +3079,7 @@ void RoomScene::doGongxin(const QList<int> &card_ids, bool enable_heart){
 
 void RoomScene::createStateItem(){
     QString state_url = Config.CircularView ?
-                        "image/system/state_c.png" : "image/system/state.png";
+                        ":system/state_c.png" : ":system/state.png";
     QPixmap state(state_url);
 
     state_item = addPixmap(state);
@@ -3345,7 +3347,7 @@ void RoomScene::onGameStart(){
 #endif
 
     game_started = true;
-    drawPile = new Pixmap("image/system/card-back.png");
+    drawPile = new Pixmap(":system/card-back.png");
     addItem(drawPile);
     drawPile->setZValue(-2.0);
     drawPile->setPos(room_layout->drawpile);

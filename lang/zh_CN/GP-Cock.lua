@@ -114,6 +114,8 @@ return {
 
 	["caiquan"] = "猜拳",
 	[":caiquan"] = "绝密技能，效果不详。",
+	["yinjian"] = "淫贱",
+	[":yinjian"] = "你丫才贱！妈的敢骂我？",
 
 -- last words
 --	["~panjinlian"] = "庆哥哥，说好的幸福呢……",

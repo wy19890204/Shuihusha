@@ -13,6 +13,7 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
+    virtual int lordGeneralCount() const;
 };
 
 #endif // WHEELFIGHTSCENARIO_H

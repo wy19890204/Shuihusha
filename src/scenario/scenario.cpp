@@ -60,6 +60,10 @@ bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp
     return player->isLord() && player->getRoom()->getPlayerCount() > 4;
 }
 
+int Scenario::lordGeneralCount() const{ //lord can choice generals count return -1 means default
+    return -1;
+}
+
 bool Scenario::generalSelection(Room *) const{ // if need choose general freely, return true
     return true; // fix generals' mode
 }

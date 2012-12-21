@@ -13,6 +13,7 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual int lordGeneralCount() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 };
 
@@ -30,6 +31,7 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
+    virtual int lordGeneralCount() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 };
 

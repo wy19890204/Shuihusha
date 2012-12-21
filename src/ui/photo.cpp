@@ -23,7 +23,7 @@
 #include "pixmapanimation.h"
 
 Photo::Photo()
-    :Pixmap("image/system/photo-back.png"),
+    :Pixmap(":system/photo-back.png"),
     player(NULL),
     handcard("image/system/handcard.png"),
     action_item(NULL), save_me_item(NULL), permanent(false),
@@ -185,7 +185,7 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));
 
-    PixmapAnimation::GetPixmapAnimation(this,emotion);
+    PixmapAnimation::GetPixmapAnimation(this, emotion);
 }
 
 void Photo::tremble(){
