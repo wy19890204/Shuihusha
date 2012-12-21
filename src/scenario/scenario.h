@@ -29,7 +29,7 @@ public:
     virtual bool generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
     virtual QString setBackgroundMusic() const;
-    virtual QWidget *getAdvancePage() const;
+    virtual QWidget *getAdvancePage(QWidget *parent) const;
 
 protected:
     QString lord;

@@ -77,8 +77,8 @@ void Scenario::onTagSet(Room *, const QString &) const{
     // dummy
 }
 
-QWidget *Scenario::getAdvancePage() const{
-    QWidget *apage = new QWidget;
+QWidget *Scenario::getAdvancePage(QWidget *parent) const{
+    QWidget *apage = new QWidget(parent);
     return apage;
 }
 

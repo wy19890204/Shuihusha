@@ -73,10 +73,9 @@ public:
 
             room->setPlayerMark(player, "wheelon", 0);
             player->addMark("@skull");
-            if(player->getMark("@skull") >= Config.value("WheelCount", 10).toInt()){
-                room->gameOver(room->getOtherPlayers(player).first()->objectName());
-                return true;
-            }
+            if(player->getMark("@skull") >= Config.value("Scenario/WheelCount", 10).toInt())
+                return false;
+
             int wheel = player->getMark("@skull");
 
             LogMessage log;
@@ -84,7 +83,7 @@ public:
             log.from = player;
             log.arg = QString::number(wheel);
             room->sendLog(log);
-            int maxwheel = Config.value("WheelCount", 10).toInt();
+            int maxwheel = Config.value("Scenario/WheelCount", 10).toInt();
             if((float)wheel / (float)maxwheel > 0.7){
                 log.type = "#VictimC";
                 log.from = player;
@@ -101,7 +100,8 @@ public:
             return true;
         }
         case GameOverJudge:{
-            room->gameOver(".");
+            room->gameOver(room->getOtherPlayers(player).first()->objectName());
+            //room->gameOver(".");
             return true;
         }
         default:
@@ -141,12 +141,12 @@ static QLayout *HLay(QWidget *left, QWidget *right){
     return layout;
 }
 
-QWidget *WheelFightScenario::getAdvancePage() const{
-    QWidget *apage = new QWidget;
+QWidget *WheelFightScenario::getAdvancePage(QWidget *parent) const{
+    QWidget *apage = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout;
 
-    wheel_count = new QLineEdit;
-    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
+    QLineEdit *wheel_count = new QLineEdit;
+    wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
     wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
 
     QPushButton *apply = new QPushButton(tr("Apply"));
@@ -155,14 +155,14 @@ QWidget *WheelFightScenario::getAdvancePage() const{
     layout->addWidget(apply);
     apage->setLayout(layout);
 
-    connect(apply, SIGNAL(clicked()), this, SLOT(apply()));
+    //connect(apply, SIGNAL(clicked()), this, SLOT(apply()));
     return apage;
 }
-
+/*
 void WheelFightScenario::apply(){
-    Config.setValue("WheelCount", wheel_count->text());
+    Config.setValue("Scenario/WheelCount", wheel_count->text());
 }
-
+*/
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);

@@ -75,9 +75,10 @@ public:
     ScenarioDialog(QWidget *parent);
 
 private:
+    QLineEdit *wheel_count;
 
 private slots:
-
+    void save();
 };
 
 class ServerDialog: public QDialog{
@@ -87,8 +88,6 @@ public:
     ServerDialog(QWidget *parent);
     void ensureEnableAI();
     bool config();
-
-    QLineEdit *wheel_count;
 
 private:
     QWidget *createBasicTab();
