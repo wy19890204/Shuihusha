@@ -640,7 +640,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     :QDialog(parent)
 {
     setWindowTitle(tr("Scenario Advanced"));
-    resize(QSize(550, 250));
+    resize(QSize(400, 200));
 
     QVBoxLayout *layout = new QVBoxLayout;
 
@@ -653,15 +653,18 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
     wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
     page_layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
+    page_layout->addStretch();
     apage->setLayout(page_layout);
-    tab->addTab(apage, "wheel_fight");
+    tab->addTab(apage, Sanguosha->translate("wheel_fight"));
 /*
     QStringList names = Sanguosha->getScenarioNames();
     foreach(QString name, names){
         QString scenario_name = Sanguosha->translate(name);
         const Scenario *scenario = Sanguosha->getScenario(name);
-        QWidget *apage = scenario->getAdvancePage(parent);
-        tab->addTab(apage, scenario_name);
+        QMap<QString, QVariant> map = scenario->getConfigItems();
+        if(!map.isEmpty())
+            creatTab(apage, scenario_name, map);
+        //tab->addTab(apage, scenario_name);
     }
 */
     QPushButton *ok = new QPushButton(tr("OK"));

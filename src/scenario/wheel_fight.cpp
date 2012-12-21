@@ -6,7 +6,7 @@ class WheelFightScenarioRule: public ScenarioRule{
 public:
     WheelFightScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << HpLost << PreDeath << GameOverJudge;
+        events << GameStarted << HpLost << PreDeath << GameOverJudge;
     }
 
     static void Domo(Room *room, ServerPlayer *player){
@@ -43,6 +43,13 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         //const WheelFightScenario *scenario = qobject_cast<const WheelFightScenario *>(parent());
         switch(event){
+        case GameStarted:{
+            if(player->isLord()){
+                player->setRole("rebel");
+                room->broadcastProperty(player, "role");
+            }
+            break;
+        }
         case HpLost:{
             DamageStruct damage;
             damage.to = player;
@@ -129,40 +136,6 @@ int WheelFightScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
 }
 
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QIntValidator>
-
-static QLayout *HLay(QWidget *left, QWidget *right){
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(left);
-    layout->addWidget(right);
-    return layout;
-}
-
-QWidget *WheelFightScenario::getAdvancePage(QWidget *parent) const{
-    QWidget *apage = new QWidget(parent);
-    QVBoxLayout *layout = new QVBoxLayout;
-
-    QLineEdit *wheel_count = new QLineEdit;
-    wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
-    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
-
-    QPushButton *apply = new QPushButton(tr("Apply"));
-
-    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
-    layout->addWidget(apply);
-    apage->setLayout(layout);
-
-    //connect(apply, SIGNAL(clicked()), this, SLOT(apply()));
-    return apage;
-}
-/*
-void WheelFightScenario::apply(){
-    Config.setValue("Scenario/WheelCount", wheel_count->text());
-}
-*/
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);
