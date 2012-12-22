@@ -452,12 +452,18 @@ class Chuqiao: public TriggerSkill{
 public:
     Chuqiao():TriggerSkill("chuqiao"){
         frequency = Frequent;
-        events << TargetConfirmed;
+        events << CardEffected;
+    }
+
+    virtual int getPriority() const{
+        return 3;
     }
 
     virtual bool trigger(TriggerEvent, Room *, ServerPlayer *player, QVariant &data) const{
-        CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->isKindOf("Slash") && player->getHandcardNum() < player->getMaxHp() && player->askForSkillInvoke(objectName()))
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(!effect.card->inherits("Slash"))
+            return false;
+        if(player->getHandcardNum() < player->getMaxHp() && player->askForSkillInvoke(objectName(), data))
             player->drawCards(player->getMaxHp() - player->getHandcardNum());
         return false;
     }
@@ -466,7 +472,6 @@ public:
 class Jianwu: public TriggerSkill{
 public:
     Jianwu():TriggerSkill("jianwu"){
-        frequency = NotFrequent;
         events << Damaged;
     }
 
@@ -558,17 +563,9 @@ public:
             if(pattern != "jink")
                 return false;
 
-            QList<ServerPlayer *> victims;
-            foreach(ServerPlayer *p, room->getOtherPlayers(player))
-                if(player->canSlash(p))
-                    victims << p;
-
-            if(victims.isEmpty())
-                return false;
-
             if(player->askForSkillInvoke(objectName())){
                 room->setPlayerFlag(player, "xiaozhanusing");
-                room->askForUseSlashTo(player, victims, "@xiaozhan-slash");
+                room->askForUseCard(player, "slash", "@xiaozhan-slash");
                 room->setPlayerFlag(player, "-xiaozhanusing");
                 if(player->hasFlag("xiaozhansuccess")) {
                     room->setPlayerFlag(player, "-xiaozhansuccess");

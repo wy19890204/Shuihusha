@@ -47,11 +47,27 @@ protected:
         if(scene()->inherits("RoomScene")){
             RoomScene *room_scene = qobject_cast<RoomScene *>(scene());
             room_scene->adjustItems(matrix());
+            QPixmap pixmap(Config.BackgroundBrush);
+            QBrush brush(pixmap);
+            if(pixmap.width() > 100 && pixmap.height() > 100){
+                qreal _width = width() / matrix().m11();
+                qreal _height= height() / matrix().m22();
+                qreal dx = -_width / 2.0;
+                qreal dy = -_height / 2.0;
+                qreal sx = _width / qreal(pixmap.width());
+                qreal sy = _height / qreal(pixmap.height());
+                QTransform transform;
+                transform.translate(dx, dy);
+                transform.scale(sx, sy);
+                brush.setTransform(transform);
+            }
+            room_scene->setBackgroundBrush(brush);
         }
-
-        MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
-        if(main_window)
-            main_window->setBackgroundBrush();
+        else{
+            MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
+            if(main_window)
+                main_window->setBackgroundBrush();
+        }
     }
 };
 
@@ -438,7 +454,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::setBackgroundBrush(){
     if(scene){
-        QPixmap pixmap(Config.BackgroundBrush);
+        QPixmap pixmap("backdrop/shuihu.jpg");
         QBrush brush(pixmap);
 
         if(pixmap.width() > 100 && pixmap.height() > 100){
