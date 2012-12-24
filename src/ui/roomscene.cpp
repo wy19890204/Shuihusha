@@ -2450,15 +2450,14 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         Sanguosha->playAudio(damage_effect);
 
         if(photo){
-            //photo->setEmotion("damage");
-            setEmotion(who,"damage");
+            if(nature == DamageStruct::Fire)
+                setEmotion(who, "fire_damage");
+            else if(nature == DamageStruct::Thunder)
+                setEmotion(who, "thunder_damage");
+            else
+                setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
             photo->tremble();
         }
-
-        if(nature == DamageStruct::Fire)
-            doAnimation("fire", QStringList() << who);
-        else if(nature == DamageStruct::Thunder)
-            doAnimation("lightning", QStringList() << who);
 
     }else{
         QString type = "#Recover";
@@ -3701,8 +3700,6 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["moonpie"] = &RoomScene::doMovingAnimation;
 
         map["analeptic"] = &RoomScene::doAppearingAnimation;
-        map["fire"] = &RoomScene::doAppearingAnimation;
-        map["lightning"] = &RoomScene::doAppearingAnimation;
 
         map["lightbox"] = &RoomScene::doLightboxAnimation;
         map["indicate"] = &RoomScene::doIndicate;
