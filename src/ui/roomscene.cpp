@@ -2428,6 +2428,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     if(delta <= 0){
         if(losthp){
             Sanguosha->playAudio("hplost");
+            setEmotion(who, "hplost");
             return;
         }
 

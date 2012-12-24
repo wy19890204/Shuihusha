@@ -3589,6 +3589,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     broadcastInvoke("animate", "lightbox:$" + skill_name + ":" + broad);
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
+    setEmotion(player, "awake");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)
