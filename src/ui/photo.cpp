@@ -100,7 +100,7 @@ Photo::Photo()
     }
 
     kingdom_item = new QGraphicsPixmapItem(this);
-    kingdom_item->setPos(-12, -6);
+    kingdom_item->setPos(-12, -11);
     kingdom_item->setZValue(0.5);
 
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);

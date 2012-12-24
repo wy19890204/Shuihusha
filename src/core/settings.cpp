@@ -110,7 +110,7 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/duanwu.jpg").toString();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
     CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();

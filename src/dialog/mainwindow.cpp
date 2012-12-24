@@ -454,7 +454,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::setBackgroundBrush(){
     if(scene){
-        QPixmap pixmap("backdrop/shuihu.jpg");
+        QPixmap pixmap("backdrop/shuihu-cover.jpg");
         QBrush brush(pixmap);
 
         if(pixmap.width() > 100 && pixmap.height() > 100){
