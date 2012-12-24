@@ -1,0 +1,24 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>fire_damage/0.png</file>
+		<file>fire_damage/1.png</file>
+		<file>fire_damage/2.png</file>
+		<file>fire_damage/3.png</file>
+		<file>fire_damage/4.png</file>
+		<file>fire_damage/5.png</file>
+		<file>fire_damage/6.png</file>
+		<file>fire_damage/7.png</file>
+		<file>fire_damage/8.png</file>
+		<file>fire_damage/9.png</file>
+		<file>fire_damage/10.png</file>
+		<file>fire_damage/11.png</file>
+		<file>fire_damage/12.png</file>
+		<file>fire_damage/13.png</file>
+		<file>fire_damage/14.png</file>
+		<file>fire_damage/15.png</file>
+		<file>fire_damage/16.png</file>
+		<file>fire_damage/17.png</file>
+		<file>fire_damage/18.png</file>
+		<file>fire_damage/19.png</file>
+	</qresource>
+</RCC>

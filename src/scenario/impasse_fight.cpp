@@ -512,10 +512,6 @@ void ImpasseScenario::getRoles(char *roles) const{
     strcpy(roles, "ZFFFFFFF");
 }
 
-void ImpasseScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 ImpasseScenario::ImpasseScenario()
     :Scenario("impasse_fight")
 {

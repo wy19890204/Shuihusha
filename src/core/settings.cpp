@@ -87,9 +87,9 @@ void Settings::init(){
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
-    FreeChooseGenerals = value("FreeChooseGenerals", false).toBool();
-    FreeChooseCards = value("FreeChooseCards", false).toBool();
-    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
+    FreeChooseGenerals = value("Cheat/FreeChooseGenerals", false).toBool();
+    FreeChooseCards = value("Cheat/FreeChooseCards", false).toBool();
+    FreeAssignSelf = value("Cheat/FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
@@ -110,7 +110,7 @@ void Settings::init(){
     DetectorPort = value("DetectorPort", 9526u).toUInt();
     MaxCards = value("MaxCards", 15).toInt();
 
-    BackgroundBrush = value("BackgroundBrush", "backdrop/shuihu.jpg").toString();
+    BackgroundBrush = value("BackgroundBrush", "backdrop/duanwu.jpg").toString();
     CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();

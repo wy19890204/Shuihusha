@@ -1,15 +1,12 @@
 #include "wheel_fight.h"
-#include "skill.h"
 #include "engine.h"
-#include "room.h"
-#include "carditem.h"
 #include "settings.h"
 
 class WheelFightScenarioRule: public ScenarioRule{
 public:
     WheelFightScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario){
-        events << HpLost << PreDeath << GameOverJudge;
+        events << GameStarted << HpLost << PreDeath << GameOverJudge;
     }
 
     static void Domo(Room *room, ServerPlayer *player){
@@ -46,6 +43,13 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         //const WheelFightScenario *scenario = qobject_cast<const WheelFightScenario *>(parent());
         switch(event){
+        case GameStarted:{
+            if(player->isLord()){
+                player->setRole("rebel");
+                room->broadcastProperty(player, "role");
+            }
+            break;
+        }
         case HpLost:{
             DamageStruct damage;
             damage.to = player;
@@ -76,10 +80,9 @@ public:
 
             room->setPlayerMark(player, "wheelon", 0);
             player->addMark("@skull");
-            if(player->getMark("@skull") >= Config.value("WheelCount", 10).toInt()){
-                room->gameOver(room->getOtherPlayers(player).first()->objectName());
-                return true;
-            }
+            if(player->getMark("@skull") >= Config.value("Scenario/WheelCount", 10).toInt())
+                return false;
+
             int wheel = player->getMark("@skull");
 
             LogMessage log;
@@ -87,7 +90,7 @@ public:
             log.from = player;
             log.arg = QString::number(wheel);
             room->sendLog(log);
-            int maxwheel = Config.value("WheelCount", 10).toInt();
+            int maxwheel = Config.value("Scenario/WheelCount", 10).toInt();
             if((float)wheel / (float)maxwheel > 0.7){
                 log.type = "#VictimC";
                 log.from = player;
@@ -104,7 +107,8 @@ public:
             return true;
         }
         case GameOverJudge:{
-            room->gameOver(".");
+            room->gameOver(room->getOtherPlayers(player).first()->objectName());
+            //room->gameOver(".");
             return true;
         }
         default:
@@ -128,8 +132,8 @@ void WheelFightScenario::getRoles(char *roles) const{
     strcpy(roles, "ZN");
 }
 
-void WheelFightScenario::onTagSet(Room *, const QString &) const{
-    // dummy
+int WheelFightScenario::lordGeneralCount() const{
+    return Config.value("MaxChoice", 5).toInt();
 }
 
 WheelFightScenario::WheelFightScenario()

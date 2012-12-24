@@ -122,10 +122,6 @@ void LandlordScenario::getRoles(char *roles) const{
     strcpy(roles, "ZFF");
 }
 
-void LandlordScenario::onTagSet(Room *, const QString &) const{
-    // dummy
-}
-
 bool LandlordScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }

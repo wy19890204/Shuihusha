@@ -25,7 +25,7 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     ui->scrollArea->setWidget(group_box);
     ui->skillTextEdit->setProperty("description", true);
 
-    if(ServerInfo.isPlay && Config.value("FreeChange", false).toBool()){
+    if(ServerInfo.isPlay && Config.value("Cheat/FreeChange", false).toBool()){
         ui->changeGeneralButton->show();
         connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
     }
@@ -350,7 +350,7 @@ void GeneralOverview::playEffect()
 }
 
 void GeneralOverview::askChange(){
-    if(!Config.value("FreeChange", false).toBool())
+    if(!Config.value("Cheat/FreeChange", false).toBool())
         return;
 
     int row = ui->tableWidget->currentRow();

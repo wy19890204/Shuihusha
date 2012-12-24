@@ -50,7 +50,7 @@ QString GeneralSelector::selectFirst(ServerPlayer *player, const QStringList &ca
 
     ServerPlayer *lord = player->getRoom()->getLord();
     QString lord_kingdom, suffix = QString();
-    if(lord->getGeneral() && lord->getGeneral()->isLord()){
+    if(lord && lord->getGeneral() && lord->getGeneral()->isLord()){
         lord_kingdom = lord->getKingdom();
         suffix = lord->getGeneralName();
     }
