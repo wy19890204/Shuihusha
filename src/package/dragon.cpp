@@ -8,28 +8,37 @@
 #include "maneuvering.h"
 #include "plough.h"
 
-class Xianxi: public TriggerSkill{
+class Xixue: public TriggerSkill{
 public:
-    Xianxi():TriggerSkill("xianxi"){
-        events << SlashMissed;
+    Xixue():TriggerSkill("xixue"){
+        events << Predamage << Death;
+        frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        int jink = effect.jink->getEffectiveId();
-        if(!Sanguosha->getCard(jink)->inherits("Jink"))
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Death){
+            QList<ServerPlayer *> yanes = room->findPlayersBySkillName(objectName());
+            if(player->getGender() == General::Female){
+                RecoverStruct rec;
+                rec.who = player;
+                foreach(ServerPlayer *yn, yanes)
+                    if(yn->isWounded())
+                        room->recover(yn, rec, true);
+            }
             return false;
-        LogMessage log;
-        log.from = player;
-        log.type = "#Xianxi";
-        log.arg = objectName();
-        room->sendLog(log);
-        if(player->getCardCount(true) >= 2){
-            if(!room->askForDiscard(player, objectName(), 2, true, true))
-                room->loseHp(player);
         }
-        else
-            room->loseHp(player);
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.to->isDead() || !damage.from)
+            return false;
+        if((damage.to->getGender() == General::Female && damage.from->hasSkill(objectName())) ||
+            (damage.from->getGender() == General::Female && damage.to->hasSkill(objectName()))){
+            room->loseHp(damage.to, damage.damage);
+            return true;
+        }
         return false;
     }
 };
