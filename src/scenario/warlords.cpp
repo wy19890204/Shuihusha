@@ -127,7 +127,8 @@ public:
                     log.arg = junshi->getRole();
                     room->sendLog(log);
 
-                    room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
+                    if(!getPlayersbyRole(room, "loyalist").isEmpty())
+                        room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
                     room->setPlayerProperty(junshi, "role", "loyalist");
                 }
             }
