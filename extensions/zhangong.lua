@@ -5573,8 +5573,9 @@ end
 
 
 function useSkillCard(room,owner)
-	local zgquery=db:first_row("select count(id) as num from zhangong where gained>0")
-	local limitnum= math.ceil(zgquery.num) -- / 20
+--	local zgquery=db:first_row("select count(id) as num from zhangong where gained>0")
+--	local limitnum= math.ceil(zgquery.num) / 20
+	local limitnum= 29
 	local myskill={"'.'"}
 	for _,skill in sgs.qlist(owner:getVisibleSkillList()) do
 		table.insert(myskill,"'"..skill:objectName().."'")

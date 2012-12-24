@@ -111,25 +111,6 @@ QWidget *PlayerCardDialog::createAvatar(){
 }
 
 QWidget *PlayerCardDialog::createHandcardButton(){
-    if(!player->isKongcheng() &&
-       (Self == player || Self->hasFlag("loot") ||
-        (Self->hasSkill("dongcha") && player->hasFlag("dongchaee")))){
-        QGroupBox *area = new QGroupBox(tr("Handcard area"));
-        QVBoxLayout *layout =  new QVBoxLayout;
-        QList<const Card *> cards = player->getCards();
-        foreach(const Card *card, cards){
-            QCommandLinkButton *button = new QCommandLinkButton(card->getFullName());
-            button->setIcon(card->getSuitIcon());
-
-            mapper.insert(button, card->getId());
-            connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
-            layout->addWidget(button);
-        }
-
-        area->setLayout(layout);
-        return area;
-    }
-
     QCommandLinkButton *button = new QCommandLinkButton(tr("Handcard"));
     button->setObjectName("handcard_button");
     int num = player->getHandcardNum();
@@ -137,10 +118,45 @@ QWidget *PlayerCardDialog::createHandcardButton(){
         button->setDescription(tr("This guy has no any hand cards"));
         button->setEnabled(false);
     }else{
-        button->setDescription(tr("This guy has %1 hand card(s)").arg(num));
+        if(Self == player || (Self->hasSkill("dongcha") && player->hasFlag("dongchaee"))){
+            QGroupBox *area = new QGroupBox(tr("Handcard area"));
+            QVBoxLayout *layout =  new QVBoxLayout;
+            QList<const Card *> cards = player->getCards();
+            foreach(const Card *card, cards){
+                QCommandLinkButton *button = new QCommandLinkButton(card->getFullName());
+                button->setIcon(card->getSuitIcon());
 
-        mapper.insert(button, -1);
-        connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
+                mapper.insert(button, card->getId());
+                connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
+                layout->addWidget(button);
+            }
+
+            area->setLayout(layout);
+            return area;
+        }
+        else{
+            button->setDescription(tr("This guy has %1 hand card(s)").arg(num));
+
+            mapper.insert(button, -1);
+            connect(button, SIGNAL(clicked()), this, SLOT(emitId()));
+        }
+
+        if(Self->hasFlag("loot") && !player->getCards().isEmpty()){
+            QGroupBox *area = new QGroupBox(tr("Handcard area"));
+            QVBoxLayout *layout =  new QVBoxLayout;
+            layout->addWidget(button);
+            QList<const Card *> cards = player->getCards();
+            foreach(const Card *card, cards){
+                QCommandLinkButton *butt0n = new QCommandLinkButton(card->getFullName());
+                butt0n->setIcon(card->getSuitIcon());
+
+                mapper.insert(butt0n, card->getId());
+                connect(butt0n, SIGNAL(clicked()), this, SLOT(emitId()));
+                layout->addWidget(butt0n);
+            }
+            area->setLayout(layout);
+            return area;
+        }
     }
 
     return button;

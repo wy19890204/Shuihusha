@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>weapon/0.png</file>
+		<file>weapon/1.png</file>
+		<file>weapon/2.png</file>
+		<file>weapon/3.png</file>
+		<file>weapon/4.png</file>
+		<file>weapon/5.png</file>
+		<file>weapon/6.png</file>
+		<file>weapon/7.png</file>
+		<file>weapon/8.png</file>
+		<file>weapon/9.png</file>
+	</qresource>
+</RCC>

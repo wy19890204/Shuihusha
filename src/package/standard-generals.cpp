@@ -73,7 +73,7 @@ JuyiCard::JuyiCard(){
 
 void JuyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     ServerPlayer *song = room->getLord();
-    if(!song->hasLordSkill("juyi") || song == source)
+    if(!song || !song->hasLordSkill("juyi") || song == source)
         return;
     if(song->isKongcheng() && source->isKongcheng())
         return;
@@ -2102,7 +2102,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *ply, QVariant &data) const{
         ServerPlayer *gaoqiu = room->getLord();
-        if(!gaoqiu->hasLordSkill(objectName()))
+        if(!gaoqiu || !gaoqiu->hasLordSkill(objectName()))
             return false;
         RecoverStruct recover = data.value<RecoverStruct>();
         for(int i = 0; i < recover.recover; i++){

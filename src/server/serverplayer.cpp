@@ -678,7 +678,7 @@ AI *ServerPlayer::getAI() const{
     if(getState() == "online"){
         return NULL;
     }
-    else if(getState() == "trust" && !Config.value("EnableCheatMenu", false).toBool())
+    else if(getState() == "trust" && !Config.value("Cheat/EnableCheatMenu", false).toBool())
         return trust_ai;
     else
         return ai;

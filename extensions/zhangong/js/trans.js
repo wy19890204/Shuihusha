@@ -25,6 +25,7 @@ var trans={
 	"couple":"花田错",
 	"wheel_fight":"车轮战",
 	"warlords":"投名状",
+	"arthur_ferris":"三角含树",
 	"impasse_fight":"四面楚歌",
 	"contract":"佣兵天下",
 

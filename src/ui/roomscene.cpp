@@ -1004,7 +1004,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
+    }else if(Config.value("Cheat/EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -1538,7 +1538,7 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode, warlords_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
@@ -1555,11 +1555,16 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     landlord_mode["lord"] = Sanguosha->translate("Landlord");
     landlord_mode["rebel"] = Sanguosha->translate("Cottier");
 
+    warlords_mode["lord"] = Sanguosha->translate("Castellan");
+    warlords_mode["loyalist"] = Sanguosha->translate("Adviser");
+    warlords_mode["rebel"] = Sanguosha->translate("Peasant");
+
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
     case 2: map = &threeV3_mode; break;
     case 3: map = &hegemony_mode; break;
     case 4: map = &landlord_mode; break;
+    case 5: map = &warlords_mode; break;
     default:
         map = &normal_mode;
     }
@@ -2423,6 +2428,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     if(delta <= 0){
         if(losthp){
             Sanguosha->playAudio("hplost");
+            setEmotion(who, "hplost");
             return;
         }
 
@@ -3274,7 +3280,7 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
+    if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-regulate", 10, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);

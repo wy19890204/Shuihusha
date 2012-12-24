@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>killer/0.png</file>
+		<file>killer/1.png</file>
+		<file>killer/2.png</file>
+		<file>killer/3.png</file>
+		<file>killer/4.png</file>
+		<file>killer/5.png</file>
+		<file>killer/6.png</file>
+		<file>killer/7.png</file>
+		<file>killer/8.png</file>
+		<file>killer/9.png</file>
+		<file>killer/10.png</file>
+		<file>killer/11.png</file>
+		<file>killer/12.png</file>
+		<file>killer/13.png</file>
+	</qresource>
+</RCC>
