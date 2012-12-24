@@ -520,11 +520,11 @@ sgs.ai_compare_funcs = {
 	end,
 
 	hp_handcard = function(a, b)
-		return a:getHandcardNum() + a:getHp() < b:getHandcardNum() + b:getHp()
+		return a:getHandcardNum() + a:getHp() * 2 < b:getHandcardNum() + b:getHp() * 2
 	end,
 
 	hp_handcard2 = function(a, b)
-		return a:getHandcardNum() + a:getHp() > b:getHandcardNum() + b:getHp()
+		return a:getHandcardNum() + a:getHp() * 2 > b:getHandcardNum() + b:getHp() * 2
 	end,
 
 	equip = function(a, b)
