@@ -580,6 +580,33 @@ public:
     }
 };
 
+class Chongfeng: public TriggerSkill{
+public:
+    Xiaozhan():TriggerSkill("chongfeng") {
+        events << PhaseChange << Damage << Damaged;
+        view_as_skill = new BaoquanViewAsSkill;
+    }
+
+    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *suoch, QVariant &data) const{
+        if(e == PhaseChange){
+            if(suoch->getPhase() == Player::RoundStart)
+                room->setPlayerMark(suoch, "@axe", 0);
+            else if(suoch->getPhase() == Player::NotActive){
+                int fist = suoch->getMark("@axe");
+                room->setPlayerMark(suoch, "@axe", 0);
+                if(fist >= 2 && suoch->askForSkillInvoke(objectName()))
+                    suoch->gainAnExtraTurn(suoch);
+            }
+            return false;
+        }
+        else if(suoch->getPhase() != Player::NotActive){
+            DamageStruct damage = data.value<DamageStruct>();
+            suoch->gainMark("@axe", damage.damage);
+        }
+        return false;
+    }
+};
+
 DragonPackage::DragonPackage()
     :GeneralPackage("dragon")
 {
