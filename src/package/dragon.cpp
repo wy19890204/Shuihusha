@@ -121,10 +121,11 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         if(event == Predamage){
-            DamageStruct damage = data.value<DamageStruct>();
             if(player->hasFlag("Bark")){
+                DamageStruct damage = data.value<DamageStruct>();
                 damage.nature = DamageStruct::Thunder;
 
+                LogMessage log;
                 log.type = "#JZThunder";
                 log.arg = QString::number(damage.damage);
                 room->sendLog(log);
@@ -135,6 +136,7 @@ public:
             return false;
         }
         else if(event == DrawNCards){
+            int n = data.toInt();
             if(player->hasFlag("Bark")){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 return qMax(n - 1, 0);
@@ -293,10 +295,49 @@ public:
     }
 };
 
+AnxiCard::AnxiCard(){
+}
+
+bool AnxiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->getHp() >= Self->getHp() && to_select != Self;
+}
+
+void AnxiCard::onEffect(const CardEffectStruct &effect) const{
+    DamageStruct dm;
+    dm.from = effect.from;
+    dm.to = effect.to;
+    effect.from->getRoom()->damage(dm);
+}
+
+class AnxiViewAsSkill: public OneCardViewAsSkill{
+public:
+    AnxiViewAsSkill():OneCardViewAsSkill("anxi"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@anxi";
+    }
+
+    virtual bool viewFilter(const CardItem *d) const{
+        return d->getCard()->isRed() && !d->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        AnxiCard *card = new AnxiCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
 class Anxi: public TriggerSkill{
 public:
     Anxi():TriggerSkill("anxi"){
         events << DamageConclude;
+        view_as_skill = new AnxiViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -316,18 +357,8 @@ public:
                 if(tmp->getHp() >= ruangorou->getHp())
                     targets << tmp;
             }
-            if(targets.isEmpty())
-                break;
-            const Card *card = room->askForCard(ruangorou, ".|.|.|hand|red", "@anxi:" + player->objectName(), true, data, CardDiscarded);
-            if(card){
-                Slash *slash = new Slash(Card::NoSuit, 0);
-                slash->setSkillName(objectName());
-                CardUseStruct use;
-                use.card = slash;
-                use.from = ruangorou;
-                use.to << player;
-                room->useCard(use);
-            }
+            if(!targets.isEmpty())
+                room->askForUseCard(ruangorou, "@@anxi", "@anxi:" + player->objectName(), true);
         }
         return false;
     }
@@ -694,7 +725,7 @@ bool XiashuCard::targetFilter(const QList<const Player *> &targets, const Player
 void XiashuCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     effect.to->drawCards(3);
-    room->askForDiscard(effect.to, "xiashu", 2, 2);
+    room->askForDiscard(effect.to, "xiashu", qMin(2, effect.to->getHandcardNum()));
 }
 
 class Xiashu: public OneCardViewAsSkill{
@@ -706,13 +737,13 @@ public:
         return !player->hasUsed("XiashuCard");
     }
 
-    virtual bool viewFilter(const Card* to_select) const{
+    virtual bool viewFilter(const CardItem*) const{
         return true;
     }
 
-    virtual const Card *viewAs(const Card *originalCard) const{
+    virtual const Card *viewAs(CardItem *originalCard) const{
         Card *card = new XiashuCard;
-        card->addSubcard(originalCard->getId());
+        card->addSubcard(originalCard->getFilteredCard());
         return card;
     }
 };
@@ -760,6 +791,7 @@ public:
         }
         else if(triggerEvent == Damage && player->hasFlag("xiaozhanusing"))
             room->setPlayerFlag(player, "xiaozhansuccess");
+        return false;
     }
 };
 
@@ -836,6 +868,7 @@ DragonPackage::DragonPackage()
     wangpo->addSkill(new Meicha);
 
     addMetaObject<TaolueCard>();
+    addMetaObject<AnxiCard>();
     addMetaObject<ShexinCard>();
     addMetaObject<QianxianCard>();
     addMetaObject<XiashuCard>();
