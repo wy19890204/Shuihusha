@@ -45,9 +45,9 @@ public:
                 ServerPlayer *target = players.at(0);
 
                 LogMessage log;
-                log.type = "#NewLord";
+                log.type = player->isLord() ? "#NewLord" : "#NewLord2";
                 log.from = target;
-                log.arg = target->getRole();
+                log.arg = target->getScreenRole();
                 room->sendLog(log);
 
                 room->setPlayerProperty(target, "role", "lord");
@@ -61,7 +61,7 @@ public:
                     LogMessage log;
                     log.type = "#NewLoya";
                     log.from = junshi;
-                    log.arg = junshi->getRole();
+                    log.arg = junshi->getScreenRole();
                     room->sendLog(log);
 
                     if(!getPlayersbyRole(room, "loyalist").isEmpty())
@@ -90,8 +90,8 @@ public:
                     log.type = "#InternalStrife";
                     log.from = damage->from;
                     log.to << player;
-                    log.arg = damage->from->getRole();
-                    log.arg2 = player->getRole();
+                    log.arg = damage->from->getScreenRole();
+                    log.arg2 = player->getScreenRole();
                     room->sendLog(log);
 
                     damage->from->throwAllEquips();
@@ -103,8 +103,8 @@ public:
                     log.type = "#SeizePower";
                     log.from = damage->from;
                     log.to << player;
-                    log.arg = damage->from->getRole();
-                    log.arg2 = player->getRole();
+                    log.arg = damage->from->getScreenRole();
+                    log.arg2 = player->getScreenRole();
                     room->sendLog(log);
 
                     room->setPlayerProperty(damage->from, "role", player->getRole());
@@ -127,8 +127,8 @@ public:
                             log.from = damage->from;
                             log.to.clear();
                             log.to << junshi;
-                            log.arg = damage->from->getRole();
-                            log.arg2 = junshi->getRole();
+                            log.arg = damage->from->getScreenRole();
+                            log.arg2 = junshi->getScreenRole();
                             room->sendLog(log);
 
                             room->setPlayerProperty(junshi, "role", "loyalist");
