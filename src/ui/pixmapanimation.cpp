@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QPixmapCache>
 #include <QDir>
+#include <QResource>
 
 PixmapAnimation::PixmapAnimation(QGraphicsScene *scene) :
     QGraphicsItem(0,scene)
@@ -61,18 +62,17 @@ void PixmapAnimation::start(bool permanent,int interval)
 
 PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, const QString &emotion)
 {
+    QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
     PixmapAnimation *pma = new PixmapAnimation();
-    pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
-    if(pma->valid())
-    {
+    pma->setPath(QString(":/%1/").arg(emotion));
+    if(pma->valid()){
         QStringList emotions;
         emotions << "slash_red" << "slash_black" << "thunder_slash"
                 << "peach" << "analeptic"
                 //<< "chain" << "recover"
                 //<< "weapon" << "armor"
                 << "no-success";
-        if(emotions.contains(emotion))
-        {
+        if(emotions.contains(emotion)){
             pma->moveBy(pma->boundingRect().width()*0.15,
                         pma->boundingRect().height()*0.15);
             pma->setScale(0.7);
@@ -86,11 +86,12 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
         pma->setParentItem(parent);
         pma->startTimer(70);
         connect(pma,SIGNAL(finished()),pma,SLOT(deleteLater()));
+        QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
         return pma;
     }
-    else
-    {
+    else{
         delete pma;
+        QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
         return NULL;
     }
 }

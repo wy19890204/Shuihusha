@@ -38,7 +38,6 @@ public:
     void setupCustom(QString name) const;
     virtual QString setBackgroundMusic() const;
     virtual bool generalSelection(Room *room) const;
-    virtual void onTagSet(Room *room, const QString &key) const;
     virtual void assign(QStringList &generals, QStringList &roles) const
     {
         MiniSceneRule *rule = qobject_cast<MiniSceneRule*>(getRule());

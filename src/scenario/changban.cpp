@@ -764,10 +764,6 @@ void ChangbanScenario::getRoles(char *roles) const{
     strcpy(roles, "ZCFFF");
 }
 
-void ChangbanScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 bool ChangbanScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }

@@ -225,10 +225,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
-    wheel_count = new QLineEdit;
-    wheel_count->setText(QString::number(Config.value("WheelCount", 10).toInt()));
-    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
-
     layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
@@ -242,7 +238,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
     layout->addWidget(detect_button);
     layout->addLayout(HLay(new QLabel(tr("Port")), port_edit));
-    layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
@@ -268,7 +263,7 @@ QWidget *ServerDialog::createCheatTab(){
 
     cheat_enable_checkbox = new QCheckBox(tr("Enable Cheat Menu"));
     cheat_enable_checkbox->setToolTip(tr("This option enables the cheat menu"));
-    cheat_enable_checkbox->setChecked(Config.value("EnableCheatMenu").toBool());
+    cheat_enable_checkbox->setChecked(Config.value("Cheat/EnableCheatMenu").toBool());
 
     QGroupBox *box = new QGroupBox(tr("cheat options"));
     box->setEnabled(cheat_enable_checkbox->isChecked());
@@ -283,7 +278,7 @@ QWidget *ServerDialog::createCheatTab(){
     free_choose_cards_checkbox->setChecked(Config.FreeChooseCards);
 
     free_assign_checkbox = new QCheckBox(tr("Assign role and seat freely"));
-    free_assign_checkbox->setChecked(Config.value("FreeAssign").toBool());
+    free_assign_checkbox->setChecked(Config.value("Cheat/FreeAssign").toBool());
 
     free_assign_self_checkbox = new QCheckBox(tr("Assign only your own role"));
     free_assign_self_checkbox->setChecked(Config.FreeAssignSelf);
@@ -291,19 +286,19 @@ QWidget *ServerDialog::createCheatTab(){
     connect(free_assign_checkbox,SIGNAL(toggled(bool)), free_assign_self_checkbox, SLOT(setEnabled(bool)));
 
     free_discard_checkbox = new QCheckBox(tr("Regulate freely"));
-    free_discard_checkbox->setChecked(Config.value("FreeRegulate").toBool());
+    free_discard_checkbox->setChecked(Config.value("Cheat/FreeRegulate").toBool());
 
     gambling_cards_checkbox = new QCheckBox(tr("Gambling Cards"));
-    gambling_cards_checkbox->setChecked(Config.value("GamblingCards").toBool());
+    gambling_cards_checkbox->setChecked(Config.value("Cheat/GamblingCards").toBool());
 
     free_change_general_checkbox = new QCheckBox(tr("Change me freely"));
-    free_change_general_checkbox->setChecked(Config.value("FreeChange").toBool());
+    free_change_general_checkbox->setChecked(Config.value("Cheat/FreeChange").toBool());
 
     free_showrole_checkbox = new QCheckBox(tr("Show everyone's role in turnstart"));
-    free_showrole_checkbox->setChecked(Config.value("FreeShowRole").toBool());
+    free_showrole_checkbox->setChecked(Config.value("Cheat/FreeShowRole").toBool());
 
     free_undead_checkbox = new QCheckBox(tr("Undead body"));
-    free_undead_checkbox->setChecked(Config.value("FreeUnDead").toBool());
+    free_undead_checkbox->setChecked(Config.value("Cheat/FreeUnDead").toBool());
 
     laybox->addWidget(free_choose_generals_checkbox);
     laybox->addWidget(free_choose_cards_checkbox);
@@ -416,6 +411,7 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
     }
 
     if(button->objectName().contains("scenario")){
+        scenario_advanced_button->setEnabled(true);
         second_general_checkbox->setChecked(false);
         second_general_checkbox->setEnabled(false);
         anzhan_checkbox->setChecked(false);
@@ -423,8 +419,10 @@ void ServerDialog::updateButtonEnablility(QAbstractButton *button)
         endless_checkbox->setChecked(false);
         same_checkbox->setChecked(false);
     }
-    else
+    else{
+        scenario_advanced_button->setEnabled(false);
         second_general_checkbox->setEnabled(true);
+    }
 }
 
 void BanlistDialog::switchTo(int item){
@@ -432,7 +430,6 @@ void BanlistDialog::switchTo(int item){
     list = lists.at(item);
     if(add2nd) add2nd->setVisible((list->objectName()=="Pairs"));
 }
-
 
 BanlistDialog::BanlistDialog(QWidget *parent, bool view)
     :QDialog(parent),add2nd(NULL)
@@ -639,6 +636,50 @@ void ServerDialog::edit1v1Banlist(){
     dialog->exec();
 }
 
+ScenarioDialog::ScenarioDialog(QWidget *parent)
+    :QDialog(parent)
+{
+    setWindowTitle(tr("Scenario Advanced"));
+    resize(QSize(400, 200));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    QTabWidget *tab = new QTabWidget;
+    layout->addWidget(tab);
+
+    QWidget *apage = new QWidget;
+    QVBoxLayout *page_layout = new QVBoxLayout;
+    wheel_count = new QLineEdit;
+    wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
+    wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
+    page_layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
+    page_layout->addStretch();
+    apage->setLayout(page_layout);
+    tab->addTab(apage, Sanguosha->translate("wheel_fight"));
+/*
+    QStringList names = Sanguosha->getScenarioNames();
+    foreach(QString name, names){
+        QString scenario_name = Sanguosha->translate(name);
+        const Scenario *scenario = Sanguosha->getScenario(name);
+        QMap<QString, QVariant> map = scenario->getConfigItems();
+        if(!map.isEmpty())
+            creatTab(apage, scenario_name, map);
+        //tab->addTab(apage, scenario_name);
+    }
+*/
+    QPushButton *ok = new QPushButton(tr("OK"));
+    connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(this, SIGNAL(accepted()), this, SLOT(save()));
+
+    layout->addWidget(ok);
+    setLayout(layout);
+    //tab->setCurrentWidget(apage);
+}
+
+void ScenarioDialog::save(){
+    Config.setValue("Scenario/WheelCount", wheel_count->text());
+}
+
 QGroupBox *ServerDialog::create3v3Box(){
     QGroupBox *box = new QGroupBox(tr("3v3 options"));
     box->setEnabled(Config.GameMode == "06_3v3");
@@ -740,6 +781,11 @@ QGroupBox *ServerDialog::createGameModeBox(){
                 scenario_combobox->setCurrentIndex(index);
             }
         }
+
+        scenario_advanced_button = new QPushButton(tr("Scenario Advanced"));
+        connect(scenario_advanced_button, SIGNAL(clicked()), this, SLOT(doScenarioAdvanced()));
+        scenario_advanced_button->setEnabled(scenario_button->objectName() == "scenario");
+
         //mini scenes
         QRadioButton *mini_scenes = new QRadioButton(tr("Mini Scenes"));
         mini_scenes->setObjectName("mini");
@@ -770,8 +816,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
         else if(Config.GameMode == "custom_scenario")
             mini_scenes->setChecked(true);
 
-
-
         mini_scene_button = new QPushButton(tr("Custom Mini Scene"));
         connect(mini_scene_button, SIGNAL(clicked()), this, SLOT(doCustomAssign()));
 
@@ -780,6 +824,7 @@ QGroupBox *ServerDialog::createGameModeBox(){
                                           false);
 
         item_list << HLay(scenario_button, scenario_combobox);
+        item_list << HLay(scenario_button, scenario_advanced_button);
         item_list << HLay(mini_scenes, mini_scene_combobox);
         item_list << HLay(mini_scenes, mini_scene_button);
     }
@@ -947,6 +992,11 @@ void ServerDialog::doCustomAssign(){
     dialog->exec();
 }
 
+void ServerDialog::doScenarioAdvanced(){
+    ScenarioDialog *dialog = new ScenarioDialog(this);
+    dialog->exec();
+}
+
 void ServerDialog::setMiniCheckBox(){
     mini_scene_combobox->setEnabled(false);
 }
@@ -1059,23 +1109,22 @@ bool ServerDialog::config(){
     Config.setValue("EnableBasara",Config.EnableBasara);
     Config.setValue("EnableHegemony",Config.EnableHegemony);
     Config.setValue("MaxHpScheme", Config.MaxHpScheme);
-    Config.setValue("EnableCheatMenu", cheat_enable_checkbox->isChecked());
-    Config.setValue("FreeChooseGenerals", Config.FreeChooseGenerals);
-    Config.setValue("FreeChooseCards", Config.FreeChooseCards);
-    Config.setValue("FreeAssign", free_assign_checkbox->isChecked());
-    Config.setValue("FreeAssignSelf", Config.FreeAssignSelf);
-    Config.setValue("FreeRegulate", free_discard_checkbox->isChecked());
-    Config.setValue("GamblingCards", gambling_cards_checkbox->isChecked());
-    Config.setValue("FreeChange", free_change_general_checkbox->isChecked());
-    Config.setValue("FreeShowRole", free_showrole_checkbox->isChecked());
-    Config.setValue("FreeUndead", free_undead_checkbox->isChecked());
+    Config.setValue("Cheat/EnableCheatMenu", cheat_enable_checkbox->isChecked());
+    Config.setValue("Cheat/FreeChooseGenerals", Config.FreeChooseGenerals);
+    Config.setValue("Cheat/FreeChooseCards", Config.FreeChooseCards);
+    Config.setValue("Cheat/FreeAssign", free_assign_checkbox->isChecked());
+    Config.setValue("Cheat/FreeAssignSelf", Config.FreeAssignSelf);
+    Config.setValue("Cheat/FreeRegulate", free_discard_checkbox->isChecked());
+    Config.setValue("Cheat/GamblingCards", gambling_cards_checkbox->isChecked());
+    Config.setValue("Cheat/FreeChange", free_change_general_checkbox->isChecked());
+    Config.setValue("Cheat/FreeShowRole", free_showrole_checkbox->isChecked());
+    Config.setValue("Cheat/FreeUnDead", free_undead_checkbox->isChecked());
     Config.setValue("EnableAI", Config.EnableAI);
     Config.setValue("RolePredictable", role_predictable_checkbox->isChecked());
     Config.setValue("AINames", ai_nickname_checkbox->isChecked());
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
     Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
-    Config.setValue("WheelCount", wheel_count->text());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);
     Config.setValue("Address", Config.Address);

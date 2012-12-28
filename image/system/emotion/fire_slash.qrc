@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>fire_slash/0.png</file>
+		<file>fire_slash/1.png</file>
+		<file>fire_slash/2.png</file>
+		<file>fire_slash/3.png</file>
+		<file>fire_slash/4.png</file>
+		<file>fire_slash/5.png</file>
+		<file>fire_slash/6.png</file>
+		<file>fire_slash/7.png</file>
+		<file>fire_slash/8.png</file>
+		<file>fire_slash/9.png</file>
+		<file>fire_slash/10.png</file>
+		<file>fire_slash/11.png</file>
+		<file>fire_slash/12.png</file>
+		<file>fire_slash/13.png</file>
+		<file>fire_slash/14.png</file>
+	</qresource>
+</RCC>

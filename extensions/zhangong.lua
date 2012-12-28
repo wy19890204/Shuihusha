@@ -5573,8 +5573,9 @@ end
 
 
 function useSkillCard(room,owner)
-	local zgquery=db:first_row("select count(id) as num from zhangong where gained>0")
-	local limitnum= math.ceil(zgquery.num) -- / 20
+--	local zgquery=db:first_row("select count(id) as num from zhangong where gained>0")
+--	local limitnum= math.ceil(zgquery.num) / 20
+	local limitnum= 29
 	local myskill={"'.'"}
 	for _,skill in sgs.qlist(owner:getVisibleSkillList()) do
 		table.insert(myskill,"'"..skill:objectName().."'")
@@ -5679,11 +5680,12 @@ function init_gamestart(self, room, event, player, data, isowner)
 		setGameData("status",0)
 		return false
 	end
-	--[[
+
 	if string.find(config[2],"mini") or string.find(config[2],"custom") then
 		setGameData("status",0)
 		return false
 	end
+	--[[
 	if string.find(config[5],"F") then
 		setGameData("status",0)
 		return false

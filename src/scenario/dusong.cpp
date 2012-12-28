@@ -351,10 +351,6 @@ void DusongScenario::getRoles(char *roles) const{
     strcpy(roles, "ZFFF");
 }
 
-void DusongScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 bool DusongScenario::lordWelfare(const ServerPlayer *) const{
     return false;
 }
