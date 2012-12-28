@@ -217,6 +217,8 @@ int Engine::getRoleIndex() const{
         return 3;
     else if(ServerInfo.GameMode == "landlord")
         return 4;
+    else if(ServerInfo.GameMode == "warlords")
+        return 5;
     else
         return 1;
 }

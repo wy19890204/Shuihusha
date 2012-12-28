@@ -1106,6 +1106,7 @@ end
 sgs.ai_skill_cardask["@heidian2"] = function(self)
 	self:speak("heidian")
 	local ecards = sgs.QList2Table(self.player:getCards("e"))
+	if #ecards == 0 then return "." end
 	self:sortByUseValue(ecards, true)
 	return ecards[1]:getEffectiveId() or "."
 end

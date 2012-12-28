@@ -99,7 +99,7 @@ void Dashboard::createRight(){
         kingdom->setPos(91, 54);
     }
 
-    ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
+    ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), avatar);
     ready_item->setPos(2, 43);
     ready_item->hide();
 

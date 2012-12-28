@@ -663,7 +663,7 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         else
             damage.from = NULL;
         damage.to = effect.to;
-        damage.nature = effect.from->hasSkill("lianzhu") ?
+        damage.nature = effect.card->getSkillName() == "lianzhu" ?
                         DamageStruct::Fire:
                         DamageStruct::Normal;
 

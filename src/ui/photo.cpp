@@ -103,7 +103,7 @@ Photo::Photo()
     kingdom_item->setPos(-12, -6);
     kingdom_item->setZValue(0.5);
 
-    ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
+    ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), this);
     ready_item->setPos(86, 132);
     ready_item->hide();
 
@@ -185,7 +185,7 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));
 
-    PixmapAnimation::GetPixmapAnimation(this,emotion);
+    PixmapAnimation::GetPixmapAnimation(this, emotion);
 }
 
 void Photo::tremble(){
