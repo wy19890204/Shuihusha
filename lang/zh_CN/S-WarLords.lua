@@ -10,6 +10,7 @@ return {
 	["#Empower"] = "%from[%arg] 选择了 %to[%arg2] 成为 军师",
 	["#NewLord"] = "寨主阵亡，%from[%arg] 被系统选择成为新的寨主",
 	["#NewLoya"] = "军师阵亡，%from[%arg] 被寨主选择成为新的军师",
+	["#NewLord2"] = "%from[%arg] 被系统选定为 寨主",
 	["Castellan"] = "寨主",
 	["Adviser"] = "军师",
 	["Peasant"] = "草寇",

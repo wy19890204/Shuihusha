@@ -296,7 +296,9 @@ sgs.ai_skill_use["@@duoming"] = function(self, prompt)
 				table.insert(card_ids, card:getEffectiveId())
 			end
 		end
-		return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
+		if #card_ids == 2 then
+			return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
+		end
 	end
 	return "."
 end

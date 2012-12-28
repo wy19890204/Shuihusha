@@ -67,14 +67,12 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
             break;
         }
     case Player::Draw: {
-            int inc = player->getMark("IncinDraw");
-            QVariant num = qMax(2 + inc, 0);
+            QVariant num = 2;
             if(room->getTag("FirstRound").toBool()){
                 room->setTag("FirstRound", false);
                 if(room->getMode() == "02_1v1")
-                    num = qMax(1 + inc, 0);
+                    num = 1;
             }
-            room->setPlayerMark(player, "IncinDraw", 0);
 
             room->getThread()->trigger(DrawNCards, room, player, num);
             int n = num.toInt();

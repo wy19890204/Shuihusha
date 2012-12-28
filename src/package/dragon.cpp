@@ -59,18 +59,38 @@ public:
         return 4;
     }
 };
-view_as_skill = new JiaozhenViewAsSkill;
 
-class Jiaozhen: public PhaseChangeSkill{
+class Jiaozhen: public TriggerSkill{
 public:
-    Jiaozhen():PhaseChangeSkill("jiaozhen"){
+    Jiaozhen():TriggerSkill("jiaozhen"){
+        events << PhaseChange << Predamage << DrawNCards;
+        view_as_skill = new JiaozhenViewAsSkill;
     }
 
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        Room *room = player->getRoom();
-        switch(player->getPhase()){
-        case Player::RoundStart:{
-            if(player->askForSkillInvoke(objectName())){
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == Predamage){
+            DamageStruct damage = data.value<DamageStruct>();
+            if(player->hasFlag("Bark")){
+                damage.nature = DamageStruct::Thunder;
+
+                log.type = "#JZThunder";
+                log.arg = QString::number(damage.damage);
+                room->sendLog(log);
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+
+                data = QVariant::fromValue(damage);
+            }
+            return false;
+        }
+        else if(event == DrawNCards){
+            if(player->hasFlag("Bark")){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                return qMax(n - 1, 0);
+            }else
+                return n;
+        }
+        else{
+            if(player->getPhase() == Player::RoundStart && player->askForSkillInvoke(objectName())){
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(club|spade):(.*)");;
                 judge.good = true;
@@ -81,15 +101,6 @@ public:
                 if(judge.isGood())
                     room->setPlayerFlag(player, "Bark");
             }
-            break;
-        }
-        case Player::Draw:{
-            if(player->hasFlag("Bark"))
-                room->setPlayerMark(player, "IncinDraw", -1);
-            break;
-        }
-        default:
-            break;
         }
         return false;
     }
