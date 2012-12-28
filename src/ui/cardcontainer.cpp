@@ -20,7 +20,7 @@ void GrabCardItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *){
 }
 
 CardContainer::CardContainer() :
-    Pixmap("image/system/card-container.png", false)
+    Pixmap(":system/card-container.png", false)
 {
     setFlag(ItemIsFocusable);
     setFlag(ItemIsMovable);

@@ -128,7 +128,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         createControlButtons();
         QGraphicsItem *button_widget = NULL;
         if(ClientInstance->getReplayer() == NULL){
-            QString path = "image/system/button/irregular/background.png";
+            QString path = ":system/button/irregular/background.png";
             button_widget = new QGraphicsPixmapItem(QPixmap(path));
 
             ok_button->setParentItem(button_widget);

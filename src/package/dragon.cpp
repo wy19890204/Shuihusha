@@ -635,8 +635,6 @@ public:
 DragonPackage::DragonPackage()
     :GeneralPackage("dragon")
 {
-    General *qinming = new General(this, "qinming", "guan");
-    qinming->addSkill(new Xianxi);
 
     General *hantao = new General(this, "hantao", "guan");
     hantao->addSkill(new Taolue);
