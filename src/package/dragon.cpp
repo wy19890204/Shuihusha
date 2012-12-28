@@ -1,9 +1,6 @@
 #include "dragon.h"
-#include "general.h"
-#include "skill.h"
 #include "carditem.h"
 #include "engine.h"
-#include "standard.h"
 #include "client.h"
 #include "maneuvering.h"
 #include "plough.h"
@@ -139,9 +136,9 @@ public:
             int n = data.toInt();
             if(player->hasFlag("Bark")){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                return qMax(n - 1, 0);
-            }else
-                return n;
+                n--;
+            }
+            return qMax(n, 0);
         }
         else{
             if(player->getPhase() == Player::RoundStart && player->askForSkillInvoke(objectName())){
@@ -758,19 +755,19 @@ public:
         if(triggerEvent == CardUsed && !player->isKongcheng()) {
             CardUseStruct use = data.value<CardUseStruct>();
             bool invoke = false;
-            foreach(ServerPlayer *p, use.to)
+            foreach(ServerPlayer *p, use.to){
                 if(!p->isKongcheng()) {
                     invoke = true;
                     break;
                 }
-
+            }
             if(!invoke)
                 return false;
 
             if(player->askForSkillInvoke(objectName()) && room->askForDiscard(player, objectName(), 1, 1, true, true))
                 foreach(ServerPlayer *p, use.to)
                     if(!p->isKongcheng())
-                        room->askForDiscard(p, objectName(), 1, 1);
+                        room->askForDiscard(p, objectName(), 1);
         }
         else if(triggerEvent == CardAsked) {
             QString pattern = data.toString();

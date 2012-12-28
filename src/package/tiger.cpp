@@ -1,5 +1,4 @@
 #include "tiger.h"
-#include "skill.h"
 #include "plough.h"
 #include "client.h"
 #include "carditem.h"

@@ -8,6 +8,8 @@ return {
 	["#liutang"] = "赤发鬼", -- kou 4hp
 	["liutang"] = "刘唐",
 	["coder:liutang"] = "Slob",
+	["xiashu"] = "下书",
+	["~liutang"] = "如此身死，甚是委屈啊！",
 
 	["$hantao"] = "042",
 	["#hantao"] = "百胜将", -- guan 4hp (qjwm)
@@ -28,12 +30,16 @@ return {
 	["#shibao"] = "南离大将军", -- jiang 4hp
 	["shibao"] = "石宝",
 	["coder:shibao"] = "Slob",
+	["xiaozhan"] = "骁战",
+	["~shibao"] = "决不能落在你们手里，啊！",
 
 	["$ruanxiaowu"] = "029",
 	["#ruanxiaowu"] = "短命二郎", -- min 3/4hp
 	["ruanxiaowu"] = "阮小五",
 	["anxi"] = "暗袭",
 	["shuilao"] = "水牢",
+	[":shuilao"] = "出牌阶段，你可以将你的任一非延时锦囊牌当【画地为牢】使用。",
+	["~ruanxiaowu"] = "人生在世，草木一秋。",
 
 	["$zhengtianshou"] = "074",
 	["#zhengtianshou"] = "白面郎君", -- kou 3hp (cgdk)
@@ -54,6 +60,8 @@ return {
 	["$gaoyanei"] = "159",
 	["#gaoyanei"] = "花花太岁", -- guan 3hp
 	["gaoyanei"] = "高衙内",
+	["xixue"] = "戏谑",
+	["~gaoyanei"] = "人之上，还有天。人在做，天在看。",
 
 	["$shantinggui"] = "044",
 	["#shantinggui"] = "圣水将", -- jiang 3hp (bwqz)
@@ -64,12 +72,13 @@ return {
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
 	["shuizhan"] = "水战",
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你",
-	["~shantinggui"] = "土克水……吾命休矣……",
+	["~shantinggui"] = "常在河边走哪有不湿鞋！",
 
 	["$lizhu"] = "123",
 	["#lizhu"] = "金剑先生", -- min 3hp
 	["lizhu"] = "李助",
 	["coder:lizhu"] = "Slob",
+	["~lizhu"] = "金剑落地，再不能起了……",
 
 	["$yangchun"] = "073",
 	["#yangchun"] = "白花蛇", -- kou 4hp (ybyt)
@@ -86,11 +95,13 @@ return {
 	["#qiongyaonayan"] = "狼先锋", -- guan 4hp
 	["qiongyaonayan"] = "琼妖纳延",
 	["jiaozhen"] = "叫阵",
+	["~qiongyaonayan"] = "啊，是谁放的冷箭……",
 
 	["$suochao"] = "019",
 	["#suochao"] = "急先锋", -- jiang 4hp
 	["suochao"] = "索超",
 	["chongfeng"] = "冲锋",
+	["~suochao"] = "成也萧何，败也萧何。",
 
 	["$wangpo"] = "147",
 	["#wangpo"] = "枯藤蔓", -- min 3hp (qlfd)

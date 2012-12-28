@@ -1,5 +1,4 @@
 #include "rat.h"
-#include "skill.h"
 #include "client.h"
 #include "engine.h"
 #include "carditem.h"

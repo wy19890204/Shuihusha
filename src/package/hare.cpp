@@ -1,9 +1,8 @@
 #include "hare.h"
-#include "skill.h"
 #include "carditem.h"
 #include "maneuvering.h"
 #include "plough.h"
-#include "clientplayer.h"
+#include "client.h"
 #include "engine.h"
 
 SixiangCard::SixiangCard(){

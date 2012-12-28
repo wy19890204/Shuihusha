@@ -1,9 +1,7 @@
 #include "events.h"
-#include "skill.h"
-#include "room.h"
 #include "carditem.h"
 #include "maneuvering.h"
-#include "clientplayer.h"
+#include "client.h"
 #include "engine.h"
 
 QString EventsCard::getType() const{

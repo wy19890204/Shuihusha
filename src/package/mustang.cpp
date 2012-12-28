@@ -1,7 +1,4 @@
 #include "mustang.h"
-#include "general.h"
-#include "skill.h"
-#include "standard.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"

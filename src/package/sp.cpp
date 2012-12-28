@@ -1,9 +1,8 @@
-#include "standard.h"
-#include "skill.h"
 #include "sp.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
+#include "standard.h"
 
 BaoquanCard::BaoquanCard(){
     mute = true;
