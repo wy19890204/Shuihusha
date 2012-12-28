@@ -34,6 +34,67 @@ public:
     }
 };
 
+class JiaozhenViewAsSkill: public OneCardViewAsSkill{
+public:
+    JiaozhenViewAsSkill():OneCardViewAsSkill("jiaozhen"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getCard()->isBlack() && !to_select->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *c = card_item->getCard();
+        Duel *d = new Duel(c->getSuit(), c->getNumber());
+        d->setSkillName(objectName());
+        d->addSubcard(c);
+        return d;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return player->hasFlag("Bark");
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return 4;
+    }
+};
+view_as_skill = new JiaozhenViewAsSkill;
+
+class Jiaozhen: public PhaseChangeSkill{
+public:
+    Jiaozhen():PhaseChangeSkill("jiaozhen"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        Room *room = player->getRoom();
+        switch(player->getPhase()){
+        case Player::RoundStart:{
+            if(player->askForSkillInvoke(objectName())){
+                JudgeStruct judge;
+                judge.pattern = QRegExp("(.*):(club|spade):(.*)");;
+                judge.good = true;
+                judge.reason = objectName();
+                judge.who = player;
+
+                room->judge(judge);
+                if(judge.isGood())
+                    room->setPlayerFlag(player, "Bark");
+            }
+            break;
+        }
+        case Player::Draw:{
+            if(player->hasFlag("Bark"))
+                room->setPlayerMark(player, "IncinDraw", -1);
+            break;
+        }
+        default:
+            break;
+        }
+        return false;
+    }
+};
+
 TaolueCard::TaolueCard(){
     once = true;
     mute = true;
@@ -582,9 +643,8 @@ public:
 
 class Chongfeng: public TriggerSkill{
 public:
-    Xiaozhan():TriggerSkill("chongfeng") {
+    Chongfeng():TriggerSkill("chongfeng") {
         events << PhaseChange << Damage << Damaged;
-        view_as_skill = new BaoquanViewAsSkill;
     }
 
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *suoch, QVariant &data) const{
