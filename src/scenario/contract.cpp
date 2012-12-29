@@ -1,7 +1,4 @@
 #include "contract.h"
-#include "skill.h"
-#include "engine.h"
-#include "room.h"
 
 class ContractScenarioRule: public ScenarioRule{
 public:
@@ -191,12 +188,12 @@ void ContractScenario::getRoles(char *roles) const{
     strcpy(roles, "FFFFFFFF");
 }
 
-void ContractScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 bool ContractScenario::lordWelfare(const ServerPlayer *) const{
     return false;
+}
+
+int ContractScenario::lordGeneralCount() const{
+    return Config.value("MaxChoice", 5).toInt();
 }
 
 class JointAttack: public TriggerSkill{
@@ -208,7 +205,6 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(effect.to) &&
            room->askForCard(jiyou, "Slash", "@attack:" + player->objectName() + ":" + effect.to->objectName(), false, data)){
@@ -238,7 +234,6 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        //ContractScenario *contra = new ContractScenario();
         ServerPlayer *jiyou = ContractScenario::getComrade(player);
         if(jiyou && jiyou->inMyAttackRange(player) &&
            room->askForCard(jiyou, "Jink", "@protect:" + player->objectName(), false, data)){

@@ -2,6 +2,10 @@
 #define MANEUVERING_H
 
 #include "standard.h"
+#include "client.h"
+#include "engine.h"
+#include "carditem.h"
+#include "settings.h"
 
 class NatureSlash: public Slash{
     Q_OBJECT

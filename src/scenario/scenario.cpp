@@ -1,6 +1,4 @@
 #include "scenario.h"
-#include "engine.h"
-#include "settings.h"
 #include <QFile>
 
 Scenario::Scenario(const QString &name)
@@ -60,6 +58,14 @@ bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp
     return player->isLord() && player->getRoom()->getPlayerCount() > 4;
 }
 
+int Scenario::lordGeneralCount() const{ //lord can choice generals count return -1 means default
+    return -1;
+}
+
+bool Scenario::unloadLordSkill() const{ // if use not lord skill rule, return true
+    return Config.NoLordSkill;
+}
+
 bool Scenario::generalSelection(Room *) const{ // if need choose general freely, return true
     return true; // fix generals' mode
 }
@@ -67,6 +73,10 @@ bool Scenario::generalSelection(Room *) const{ // if need choose general freely,
 bool Scenario::setCardPiles(const Card *card) const{ // if the unuse this card, return true
     return card->getPackage() == "gift";
     //return false;
+}
+
+void Scenario::onTagSet(Room *, const QString &) const{
+    // dummy
 }
 
 void Scenario::run(Room *room) const{ // RoomThread::run(){

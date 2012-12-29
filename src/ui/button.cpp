@@ -49,7 +49,7 @@ void Button::init()
 
     title_item->setGraphicsEffect(de);
 
-    QImage bgimg("image/system/button/button.png");
+    QImage bgimg(":system/button/button.png");
     outimg = new QImage(size.toSize(),QImage::Format_ARGB32);
 
     qreal pad = 10;

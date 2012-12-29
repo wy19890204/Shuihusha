@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>tsunami/0.png</file>
+		<file>tsunami/1.png</file>
+		<file>tsunami/2.png</file>
+		<file>tsunami/3.png</file>
+		<file>tsunami/4.png</file>
+		<file>tsunami/5.png</file>
+		<file>tsunami/6.png</file>
+		<file>tsunami/7.png</file>
+		<file>tsunami/8.png</file>
+		<file>tsunami/9.png</file>
+		<file>tsunami/10.png</file>
+		<file>tsunami/11.png</file>
+		<file>tsunami/12.png</file>
+		<file>tsunami/13.png</file>
+		<file>tsunami/14.png</file>
+		<file>tsunami/15.png</file>
+	</qresource>
+</RCC>

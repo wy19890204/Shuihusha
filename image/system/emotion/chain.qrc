@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>chain/0.png</file>
+		<file>chain/1.png</file>
+		<file>chain/2.png</file>
+		<file>chain/3.png</file>
+		<file>chain/4.png</file>
+		<file>chain/5.png</file>
+		<file>chain/6.png</file>
+		<file>chain/7.png</file>
+		<file>chain/8.png</file>
+		<file>chain/9.png</file>
+		<file>chain/10.png</file>
+		<file>chain/11.png</file>
+		<file>chain/12.png</file>
+		<file>chain/13.png</file>
+		<file>chain/14.png</file>
+	</qresource>
+</RCC>

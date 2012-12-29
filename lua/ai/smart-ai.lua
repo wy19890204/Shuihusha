@@ -519,6 +519,14 @@ sgs.ai_compare_funcs = {
 		return a:getHandcardNum() > b:getHandcardNum()
 	end,
 
+	hp_handcard = function(a, b)
+		return a:getHandcardNum() + a:getHp() * 2 < b:getHandcardNum() + b:getHp() * 2
+	end,
+
+	hp_handcard2 = function(a, b)
+		return a:getHandcardNum() + a:getHp() * 2 > b:getHandcardNum() + b:getHp() * 2
+	end,
+
 	equip = function(a, b)
 		return a:getEquips():length() < b:getEquips():length()
 	end,
@@ -3506,6 +3514,13 @@ end
 function SmartAI:doNotSave(player)
 -- like niepan return true
 	return false
+end
+
+sgs.ai_skill_invoke["getJunShi"] = true
+sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
+	local targetlist=sgs.QList2Table(targets)
+	self:sort(targetlist, "hp_handcard2")
+	return targetlist[1]
 end
 
 dofile "lua/ai/debug-ai.lua"

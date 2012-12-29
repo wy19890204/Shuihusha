@@ -3,20 +3,6 @@
 return {
 	["XZDD"] = "血战到底",
 
-	["#hantao"] = "百胜将", -- guan 4hp (qjwm)
-	["hantao"] = "韩滔",
-	["taolue"] = "韬略",
-	["cv:hantao"] = "猎狐【声声melody】",
-	[":taolue"] = "出牌阶段，你可以和一名角色拼点。若你赢，你可以将该角色判定区或装备区里的一张牌移到另一个合理的位置。若你没赢，你须弃置一张牌。每回合限一次。",
-	["changsheng"] = "常胜",
-	[":changsheng"] = "<b>锁定技</b>，你拼点的黑桃牌点数都视为K。",
-	["#Changsheng"] = "%from 的锁定技【%arg】被触发，%from 拼点牌的点数视为K",
-	["$changsheng1"] = "进可攻，退可守！",
-	["$changsheng2"] = "流水无形而无不形。",
-	["$taolue1"] = "斩杀敌将，犹如儿戏！",
-	["$taolue2"] = "人上有人，天外有天。",
-	["~hantao"] = "终究还是败了。",
-
 	["#oupeng"] = "摩云金翅", -- kou 4.5hp (qjwm)
 	["oupeng"] = "欧鹏",
 	["zhanchi"] = "展翅",
@@ -117,21 +103,6 @@ return {
 	["$qiaodou1"] = "人困马乏，且先稍作歇息。",
 	["$qiaodou2"] = "别紧张，听吾一曲，休养生息。",
 	["~malin"] = "笛声如水，难吹万种风情。",
-
-	["#zhengtianshou"] = "白面郎君", -- kou 3hp (cgdk)
-	["zhengtianshou"] = "郑天寿",
-	["cv:zhengtianshou"] = "烨子【剪刀剧团】",
-	["coder:zhengtianshou"] = "凌天翼",
-	["wugou"] = "吴钩",
-	[":wugou"] = "出牌阶段，你可以将两张相同颜色的基本牌当一张【行刺】使用。",
-	["qiaojiang"] = "巧匠",
-	[":qiaojiang"] = "你可以将你的任一黑色锦囊牌当【杀】、红色锦囊牌当【闪】使用或打出。",
-	["$wugou"] = "男儿何不带吴钩，收取关山五十州",
-	["$wugou1"] = "突击！",
-	["$wugou2"] = "机会来了，动手！",
-	["$qiaojiang1"] = "以动制静，以静制动。",
-	["$qiaojiang2"] = "全力以赴，一举拿下！",
-	["~zhengtianshou"] = "有勇无谋，难以取胜！",
 
 	["#jiangjing"] = "神算子", -- min 3hp (fcdc)
 	["jiangjing"] = "蒋敬",

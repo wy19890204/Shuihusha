@@ -2,7 +2,6 @@
 #define SNAKEPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class SinueCard:public SkillCard{
     Q_OBJECT

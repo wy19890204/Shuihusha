@@ -1,7 +1,4 @@
 #include "couple.h"
-#include "skill.h"
-#include "engine.h"
-#include "room.h"
 
 class CoupleScenarioRule: public ScenarioRule{
 public:
@@ -266,10 +263,6 @@ void CoupleScenario::getRoles(char *roles) const{
 
 bool CoupleScenario::generalSelection(Room *) const{
     return false;
-}
-
-void CoupleScenario::onTagSet(Room *room, const QString &key) const{
-
 }
 
 AI::Relation CoupleScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

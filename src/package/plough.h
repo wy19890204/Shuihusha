@@ -3,6 +3,9 @@
 
 #include "package.h"
 #include "standard.h"
+#include "engine.h"
+#include "client.h"
+#include "carditem.h"
 
 class Ecstasy: public BasicCard{
     Q_OBJECT

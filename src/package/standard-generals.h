@@ -2,8 +2,9 @@
 #define STANDARDGENERALS_H
 
 #include "package.h"
-#include "card.h"
-#include "standard.h"
+#include "engine.h"
+#include "client.h"
+#include "carditem.h"
 #include "common-skillcards.h"
 
 class StandardPackage : public GeneralPackage{

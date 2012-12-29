@@ -2,8 +2,9 @@
 #define OXPACKAGE_H
 
 #include "package.h"
-#include "card.h"
-#include "structs.h"
+#include "client.h"
+#include "carditem.h"
+#include "engine.h"
 
 class OxPackage : public GeneralPackage{
     Q_OBJECT

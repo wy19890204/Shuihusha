@@ -1,10 +1,5 @@
 #include "standard.h"
 #include "standard-equips.h"
-#include "general.h"
-#include "engine.h"
-#include "client.h"
-#include "room.h"
-#include "carditem.h"
 
 Slash::Slash(Suit suit, int number): BasicCard(suit, number)
 {
@@ -663,7 +658,7 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
         else
             damage.from = NULL;
         damage.to = effect.to;
-        damage.nature = effect.from->hasSkill("lianzhu") ?
+        damage.nature = effect.card->getSkillName() == "lianzhu" ?
                         DamageStruct::Fire:
                         DamageStruct::Normal;
 

@@ -1,0 +1,16 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>death/0.png</file>
+		<file>death/1.png</file>
+		<file>death/2.png</file>
+		<file>death/3.png</file>
+		<file>death/4.png</file>
+		<file>death/5.png</file>
+		<file>death/6.png</file>
+		<file>death/7.png</file>
+		<file>death/8.png</file>
+		<file>death/9.png</file>
+		<file>death/10.png</file>
+		<file>death/11.png</file>
+	</qresource>
+</RCC>

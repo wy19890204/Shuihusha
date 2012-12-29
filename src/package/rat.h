@@ -2,7 +2,9 @@
 #define RATPACKAGE_H
 
 #include "package.h"
-#include "card.h"
+#include "client.h"
+#include "engine.h"
+#include "carditem.h"
 
 class BuzhenCard: public SkillCard{
     Q_OBJECT

@@ -2,6 +2,7 @@
 #define STANDARDEQUIPS_H
 
 #include "standard.h"
+#include "carditem.h"
 
 class Crossbow:public Weapon{
     Q_OBJECT

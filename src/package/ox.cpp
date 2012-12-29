@@ -1,10 +1,5 @@
 #include "ox.h"
-#include "general.h"
-#include "skill.h"
 #include "standard.h"
-#include "client.h"
-#include "carditem.h"
-#include "engine.h"
 
 GuibingCard::GuibingCard(){
     mute = true;
