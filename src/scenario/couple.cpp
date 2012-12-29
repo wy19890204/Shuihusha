@@ -19,9 +19,9 @@ public:
                 if(player->isLord()){
                     scenario->marryAll(room);
                     room->setTag("SkipNormalDeathProcess", true);
-                }else if(player->getGeneralName() == "songjiang2"){
+                }else if(player->getGeneralName() == "linchong"){
                     if(player->askForSkillInvoke("reselect"))
-                        room->transfigure(player, "jiangsong", true);
+                        room->transfigure(player, "gaoyanei", true);
                 }else if(player->getGeneralName() == "yangxiong2"){
                     if(player->askForSkillInvoke("reselect"))
                         room->transfigure(player, "peiruhai", true);

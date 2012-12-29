@@ -120,10 +120,9 @@ sgs.ai_skill_invoke["pinming"] = function(self, data)
 			return damage.damage > 1
 		end
 	else
-		if damage.to and self:isFriend(damage.to) then return false end
-		if #self:getEnemies() == 1 then
-			return true
-		end
+		if self:isFriend(damage.to) then return false end
+		if damage.to:isLord() and self.player:getRole() == "rebel" then return true end
+		if #self:getEnemies() == 1 then	return true	end
 		if self.player:isLord() then return false end
 		if #self:getEnemies() == 2 and self.player:getRole() == "loyalist" then
 			return true
