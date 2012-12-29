@@ -116,6 +116,69 @@ public:
     }
 };
 
+HengsaoCard::HengsaoCard(){
+}
+
+bool HengsaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return to_select != Self;
+}
+
+void HengsaoCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    Slash *slash = (Slash*)Sanguosha->getCard(getSubcards().first());
+    slash->setSkillName(skill_name);
+    CardUseStruct use;
+    use.card = slash;
+    use.from = card_use.from;
+    use.to = card_use.to;
+    room->useCard(use);
+}
+
+class HengsaoViewAsSkill: public OneCardViewAsSkill{
+public:
+    HengsaoViewAsSkill():OneCardViewAsSkill("hengsao"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return Slash::IsAvailable(player);
+    }
+
+    virtual bool viewFilter(const CardItem *i) const{
+        return i->getCard()->inherits("Slash");
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        HengsaoCard *card = new HengsaoCard;
+        card->addSubcard(card_item->getCard()->getId());
+        return card;
+    }
+};
+
+class Hengsao: public TriggerSkill{
+public:
+    Hengsao():TriggerSkill("hengsao"){
+        events << SlashMissed;
+        view_as_skill = new HengsaoViewAsSkill;
+    }
+
+    virtual int getPriority() const{
+        return 2;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *pilipili, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(effect.slash->getSkillName() == objectName()){
+            LogMessage log;
+            log.type = "#Hengsao";
+            log.from = pilipili;
+            log.arg = objectName();
+            room->sendLog(log);
+            if(!room->askForDiscard(pilipili, objectName(), 2, true, true))
+                room->loseHp(pilipili);
+        }
+        return false;
+    }
+};
+
 class Tianyan: public PhaseChangeSkill{
 public:
     Tianyan():PhaseChangeSkill("tianyan"){
@@ -719,7 +782,10 @@ public:
 
 MustangPackage::MustangPackage()
     :GeneralPackage("mustang")
-{/*
+{
+    General *qinming = new General(this, "qinming", "guan");
+    qinming->addSkill(new Hengsao);
+/*
     General *pengqi = new General(this, "pengqi", "guan");
     pengqi->addSkill(new Tianyan);
 
@@ -751,8 +817,9 @@ MustangPackage::MustangPackage()
 /*
     General *caozheng = new General(this, "caozheng", "min");
     caozheng->addSkill(new Tuzai);
-*//*
-    addMetaObject<HuazhuCard>();
+*/
+    addMetaObject<HengsaoCard>();
+/*addMetaObject<HuazhuCard>();
     addMetaObject<BingjiCard>();
     addMetaObject<MaiyiCard>();
     addMetaObject<HunjiuCard>();

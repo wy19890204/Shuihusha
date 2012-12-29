@@ -3,6 +3,17 @@
 return {
 	["interchange"] = "中转站",
 
+	["#mengkang"] = "玉幡竿", -- kou 4hp (bwqz)
+	["mengkang"] = "孟康",
+	["cv:mengkang"] = "烨子【剪刀剧团】",
+	["zaochuan"] = "造船",
+	[":zaochuan"] = "出牌阶段，你可以将你的任一锦囊牌当【铁索连环】使用或重铸。",
+	["mengchong"] = "艨艟",
+	[":mengchong"] = "<b>锁定技</b>，武将牌未处于横置状态的角色计算与武将牌处于横置状态的角色的距离时，始终+1.",
+	["$zaochuan1"] = "能攀强弩冲头阵，善造艨艟越大江！",
+	["$zaochuan2"] = "楼船林立，可挡朝廷千军万马！",
+	["~mengkang"] = "火炮突袭，快撤！",
+
 	["#caiqing"] = "一枝花", -- kou 3hp (fcdc)
 	["caiqing"] = "蔡庆",
 	["designer:caiqing"] = "宇文天启",
