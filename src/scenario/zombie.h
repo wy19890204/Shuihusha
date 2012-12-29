@@ -2,8 +2,8 @@
 #define ZOMBIE_MODE_H
 
 #include "scenario.h"
-#include "common-skillcards.h"
 #include "maneuvering.h"
+#include "common-skillcards.h"
 
 class ZombieScenario : public Scenario{
     Q_OBJECT

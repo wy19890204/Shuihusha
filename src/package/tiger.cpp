@@ -1,8 +1,5 @@
 #include "tiger.h"
 #include "plough.h"
-#include "client.h"
-#include "carditem.h"
-#include "engine.h"
 
 class Guzong:public TriggerSkill{
 public:

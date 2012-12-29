@@ -1,10 +1,5 @@
 #include "zombie.h"
-#include "engine.h"
-#include "common-skillcards.h"
-#include "clientplayer.h"
-#include "client.h"
 #include "carditem.h"
-#include "general.h"
 
 class ZombieRule: public ScenarioRule{
 public:

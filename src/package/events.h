@@ -2,7 +2,9 @@
 #define EVENTS_H
 
 #include "package.h"
-#include "card.h"
+#include "client.h"
+#include "engine.h"
+#include "carditem.h"
 
 class EventsPackage: public CardPackage{
     Q_OBJECT

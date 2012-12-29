@@ -1521,7 +1521,8 @@ void RoomScene::updateSkillButtons(){
         if(skill->isLordSkill()){
             if(Config.NoLordSkill || Config.EnableAnzhan)
                 continue;
-            if(ServerInfo.GameMode == "landlord" || ServerInfo.GameMode == "wheel_fight")
+            const Scenario *scenario = Sanguosha->getScenario(ServerInfo.GameMode);
+            if(scenario && scenario->unloadLordSkill())
                 continue;
             if(Self->getRole() != "lord" || ServerInfo.GameMode == "06_3v3")
                 continue;

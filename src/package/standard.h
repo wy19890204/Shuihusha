@@ -2,9 +2,9 @@
 #define STANDARD_H
 
 #include "package.h"
-#include "card.h"
-#include "roomthread.h"
 #include "skill.h"
+#include "engine.h"
+#include "client.h"
 
 /*
 class CustomCardPackage: public CardPackage{

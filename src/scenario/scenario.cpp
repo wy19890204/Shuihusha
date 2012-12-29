@@ -1,6 +1,4 @@
 #include "scenario.h"
-#include "engine.h"
-#include "settings.h"
 #include <QFile>
 
 Scenario::Scenario(const QString &name)
@@ -62,6 +60,10 @@ bool Scenario::lordWelfare(const ServerPlayer *player) const{ // if player maxhp
 
 int Scenario::lordGeneralCount() const{ //lord can choice generals count return -1 means default
     return -1;
+}
+
+bool Scenario::unloadLordSkill() const{ // if use not lord skill rule, return true
+    return Config.NoLordSkill;
 }
 
 bool Scenario::generalSelection(Room *) const{ // if need choose general freely, return true

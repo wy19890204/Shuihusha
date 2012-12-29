@@ -761,6 +761,7 @@ int ServerPlayer::getGeneralMaxHP() const{
 int ServerPlayer::getGeneralMaxHp() const{
     return getGeneralMaxHP();
 }
+
 QString ServerPlayer::getGameMode() const{
     return room->getMode();
 }

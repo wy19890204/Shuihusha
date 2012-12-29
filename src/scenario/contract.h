@@ -2,9 +2,6 @@
 #define CONTRACTSCENARIO_H
 
 #include "scenario.h"
-#include "roomthread.h"
-
-//class ServerPlayer;
 
 class ContractScenario : public Scenario{
     Q_OBJECT

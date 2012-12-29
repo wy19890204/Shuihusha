@@ -1,6 +1,4 @@
 #include "wheel_fight.h"
-#include "engine.h"
-#include "settings.h"
 
 class WheelFightScenarioRule: public ScenarioRule{
 public:
@@ -134,6 +132,10 @@ void WheelFightScenario::getRoles(char *roles) const{
 
 int WheelFightScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
+}
+
+bool WheelFightScenario::unloadLordSkill() const{
+    return true;
 }
 
 WheelFightScenario::WheelFightScenario()

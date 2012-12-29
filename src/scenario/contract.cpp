@@ -1,7 +1,4 @@
 #include "contract.h"
-#include "skill.h"
-#include "engine.h"
-#include "settings.h"
 
 class ContractScenarioRule: public ScenarioRule{
 public:

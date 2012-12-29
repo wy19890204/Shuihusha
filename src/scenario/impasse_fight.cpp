@@ -1,11 +1,4 @@
 #include "impasse_fight.h"
-#include "engine.h"
-#include "common-skillcards.h"
-#include "clientplayer.h"
-#include "client.h"
-#include "carditem.h"
-#include "room.h"
-
 #include <QTime>
 
 class Silue: public PhaseChangeSkill{
@@ -15,11 +8,11 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
-        if(player->getPhase() != Player::Draw)  return false;
+        if(player->getPhase() != Player::Draw)
+            return false;
         Room *room = player->getRoom();
         QList<ServerPlayer *> players = room->getOtherPlayers(player);
         bool has_frantic = player->hasMark("@frantic");
-        room->playSkillEffect(objectName());
 
         if(has_frantic){
             foreach(ServerPlayer *target, players){
@@ -28,10 +21,12 @@ public:
                 int card_id = room->askForCardChosen(player, target, "he", objectName());
                 room->obtainCard(player, card_id, room->getCardPlace(card_id) != Player::Hand);
             }
+            room->playSkillEffect(objectName(), 1);
             return true;
         }
         else{
             player->drawCards(player->getHp());
+            room->playSkillEffect(objectName(), 2);
             return true;
         }
         return false;
@@ -44,15 +39,15 @@ public:
         frequency = Frequent;
     }
 
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &) const{
         Room *room = player->getRoom();
-        QList<ServerPlayer *> players = room->getAlivePlayers();
         bool has_frantic = player->hasMark("@frantic");
 
         if(!room->askForSkillInvoke(player, objectName()))
             return;
 
-        room->playSkillEffect(objectName());
+        room->playSkillEffect(objectName(), has_frantic ? 1 : 2);
+        QList<ServerPlayer *> players = room->getAlivePlayers();
         int n = 0;
         if(has_frantic)
             n = players.length();
@@ -62,9 +57,28 @@ public:
     }
 };
 
-class JishI: public PhaseChangeSkill{
+class Yuanyin: public ClientSkill{
 public:
-    JishI():PhaseChangeSkill("jishI"){
+    Yuanyin():ClientSkill("yuanyin"){
+    }
+
+    virtual int getExtra(const Player *target) const{
+        if(!target->hasSkill(objectName()))
+            return 0;
+        else{
+            int extra = 1;
+            foreach(const Player *player, target->getSiblings()){
+                if(player->isAlive())
+                    extra ++;
+            }
+            return - extra;
+        }
+    }
+};
+
+class YuanyinMain: public PhaseChangeSkill{
+public:
+    YuanyinMain():PhaseChangeSkill("#yuanyin_main"){
         frequency = Compulsory;
     }
 
@@ -94,7 +108,7 @@ public:
             LogMessage log;
             log.type = "#TriggerSkill";
             log.from = target;
-            log.arg = objectName();
+            log.arg = "yuanyin";
             room->sendLog(log);
 
             foreach(ServerPlayer *player, others){
@@ -105,27 +119,18 @@ public:
                         room->loseHp(player);
                 }
                 else{
-                    int card_id = room->askForCardChosen(target, player, "h", objectName());
+                    int card_id = room->askForCardChosen(target, player, "h", "yuanyin");
                     room->obtainCard(target, card_id, false);
                 }
             }
         }
-        else
-            if(target->getPhase() == Player::Discard){
-                int n = 0;
-                n = target->getHandcardNum() - players.length();
-                if(n > 0){
-                    room->askForDiscard(target, objectName(), n, false);
-                    return true;
-                }
-            }
         return false;
     }
 };
 
-class Daji: public TriggerSkill{
+class Tiemu: public TriggerSkill{
 public:
-    Daji():TriggerSkill("daji"){
+    Tiemu():TriggerSkill("tiemu"){
         events << Damaged << PhaseChange << CardEffected << Predamaged;
         frequency = Compulsory;
     }
@@ -142,12 +147,12 @@ public:
                 player->drawCards(player->getMaxHP());
         }
 
-        if(has_frantic && (event == CardEffected)){
+        if(has_frantic && event == CardEffected){
             if(player->isWounded()){
                 CardEffectStruct effect = data.value<CardEffectStruct>();
                 if(!effect.multiple && effect.card->inherits("TrickCard") && player->getPhase() == Player::NotActive){
                     LogMessage log;
-                    log.type = "#DajiAvoid";
+                    log.type = "#TiemuAvoid";
                     log.from = effect.from;
                     log.to << player;
                     log.arg = effect.card->objectName();
@@ -178,34 +183,17 @@ public:
     }
 };
 
-class Guzhan: public TriggerSkill{
+class Guzhan: public ClientSkill{
 public:
-    Guzhan():TriggerSkill("guzhan"){
-        events << CardLost << SlashEffect;
-        frequency = Compulsory;
+    Guzhan():ClientSkill("guzhan"){
+        frequency = NotFrequent;
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(event == CardLost){
-            if(player->getWeapon() == NULL){
-                if(!player->hasSkill("paoxiao"))
-                    room->acquireSkill(player, "paoxiao");
-            }
-            else{
-                if(player->hasSkill("paoxiao"))
-                    room->detachSkillFromPlayer(player, "paoxiao");
-            }
-
-            QList<ServerPlayer *> players = room->getAllPlayers();
-            foreach(ServerPlayer *player, players){
-                player->removeMark("qinggang");
-            }
-        }
-        else{
-            SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            effect.to->addMark("qinggang");
-        }
-        return false;
+    virtual int getSlashResidue(const Player *zom) const{
+        if(zom->hasSkill(objectName()) && !zom->getWeapon())
+            return 998;
+        else
+            return ClientSkill::getSlashResidue(zom);
     }
 };
 
@@ -251,14 +239,16 @@ public:
         :ScenarioRule(scenario)
     {
         events << GameStart << TurnStart << PhaseChange
-               << Death << GameOverJudge << Damaged << HpLost;
+               << Death << GameOverJudge << HpChanged << RewardAndPunish;
 
-        boss_banlist << "yanxijiao" << "qiongying" << "caijing" << "zhuwu";
+        boss_banlist << "songjiang" << "yanxijiao" << "shijin" << "qiongying" << "caijing" << "zhuwu" << "gaoqiu" << "zhaoji";
 
-        boss_skillbanned << "huakui" << "yuanpei" << "duoquan" << "fangzhen";
+        boss_skillbanned << "ganlin" << "huakui" << "yuanpei" << "shalu" << "fangzhen" << "cuju" << "shemi";
 
-        dummy_skills << "duoquan" << "maidao" << "fengmang" << "shouge" << "buzhen"
-                     << "qimen" << "wuzhou" << "ganlin" << "beishui" << "huatian";
+        dummy_skills << "mozhang" << "maidao" << "fengmang" << "shouge" << "jielue"
+                     << "qimen" << "wuzhou" << "ganlin" << "beishui" << "huatian"
+                     << "fushang" << "zuohua" << "jiuhan" << "lianma" << "zhongjia"
+                     << "huaxian" << "linmo" << "sheyan" << "jiayao";
     }
 
     void getRandomSkill(ServerPlayer *player, bool need_trans = false) const{
@@ -267,9 +257,8 @@ public:
 
         QStringList all_generals = Sanguosha->getLimitedGeneralNames();
         QList<ServerPlayer *> players = room->getAllPlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             all_generals.removeOne(player->getGeneralName());
-        }
 
         if(need_trans){
             QString new_lord;
@@ -286,6 +275,8 @@ public:
         QStringList all_skills;
         foreach(QString one, all_generals){
             const General *general = Sanguosha->getGeneral(one);
+            if(general->isHidden())
+                continue;
             QList<const Skill *> skills = general->findChildren<const Skill *>();
             foreach(const Skill *skill, skills){
                 if(!skill->isLordSkill()){
@@ -309,8 +300,8 @@ public:
                 index = qrand() % all_skills.length();
             }while(player->isLord() && boss_skillbanned.contains(all_skills[index]));
             got_skill = all_skills[index];
-
         }while(hasSameSkill(room, got_skill));
+
         room->acquireSkill(player, got_skill);
     }
 
@@ -323,15 +314,6 @@ public:
         }
 
         return false;
-    }
-
-    void removeLordSkill(ServerPlayer *player) const{
-        const General *lord = Sanguosha->getGeneral(player->getGeneralName());
-        QList<const Skill *> lord_skills = lord->findChildren<const Skill *>();
-        foreach(const Skill *skill, lord_skills){
-            if(skill->isLordSkill())
-                player->getRoom()->detachSkillFromPlayer(player, skill->objectName());
-        }
     }
 
     void startDeadJudge(ServerPlayer *lord) const{
@@ -362,8 +344,6 @@ public:
                     if(boss_banlist.contains(player->getGeneralName()))
                         getRandomSkill(player, true);
 
-                    removeLordSkill(player);
-
                     room->installEquip(player, "silver_lion");
                     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
                     if((qrand() % 2) == 1){
@@ -371,11 +351,11 @@ public:
                         room->acquireSkill(player, "kedi");
                     }
                     else{
-                        room->acquireSkill(player, "jishI");
-                        room->acquireSkill(player, "daji");
+                        room->acquireSkill(player, "yuanyin");
+                        room->acquireSkill(player, "tiemu");
                     }
 
-                    int maxhp = 8-((player->getMaxHP()%3)%2);
+                    int maxhp = 8 - ((player->getMaxHp() % 3) % 2);
                     room->setPlayerProperty(player, "maxhp", maxhp);
                     room->setPlayerProperty(player, "hp", maxhp);
                 }
@@ -420,8 +400,8 @@ public:
                     hasRebel = true;
                 if(each->getRole() == "lord"){
                     hasLord = true;
-                    if(each->getMaxHP() > 3)
-                        room->setPlayerProperty(each, "maxhp", each->getMaxHP()-1);
+                    if(each->getMaxHp() > 3)
+                        room->setPlayerProperty(each, "maxhp", each->getMaxHp()-1);
 
                     if(each->getMark("@frantic") > (players.length()-1))
                         each->loseMark("@frantic");
@@ -431,28 +411,24 @@ public:
                 room->gameOver("lord");
             if(!hasLord)
                 room->gameOver("rebel");
+            break;
+        }
 
+        case RewardAndPunish:{
             DamageStar damage = data.value<DamageStar>();
             if(damage && damage->from){
                 if(damage->from->getRole() == damage->to->getRole())
                     damage->from->throwAllHandCards();
-                else{
-                    if(damage->to->hasSkill("huilei")){
-                        damage->from->throwAllHandCards();
-                        damage->from->throwAllEquips();
-                    }
-
+                else
                     damage->from->drawCards(2);
-                }
 
                 damage = NULL;
                 data = QVariant::fromValue(damage);
             }
-            break;
+            return true;
         }
 
-        case HpLost:
-        case Damaged:{
+        case HpChanged:{
             if(player->isLord()){
                 if(player->getHp() <= 3 && !player->hasMark("@frantic")){
                     LogMessage log;
@@ -466,8 +442,6 @@ public:
                     room->acquireSkill(player, "guzhan");
                     room->acquireSkill(player, "duduan");
                     room->acquireSkill(player, "jizhan");
-                    if(!player->getWeapon())
-                        room->acquireSkill(player, "paoxiao");
 
                     QList<const Card *> judges = player->getCards("j");
                     foreach(const Card *card, judges)
@@ -508,6 +482,10 @@ int ImpasseScenario::getPlayerCount() const{
     return 8;
 }
 
+bool ImpasseScenario::unloadLordSkill() const{
+    return true;
+}
+
 void ImpasseScenario::getRoles(char *roles) const{
     strcpy(roles, "ZFFFFFFF");
 }
@@ -518,8 +496,9 @@ ImpasseScenario::ImpasseScenario()
     rule = new ImpasseRule(this);
 
     skills << new Silue << new Kedi
-            << new Daji << new JishI
+            << new Tiemu << new Yuanyin << new YuanyinMain
             << new Guzhan << new Jizhan << new Duduan;
+    related_skills.insertMulti("yuanyin", "#yuanyin_main");
 
 }
 

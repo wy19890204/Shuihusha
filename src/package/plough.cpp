@@ -1,8 +1,5 @@
 #include "plough.h"
 #include "maneuvering.h"
-#include "engine.h"
-#include "client.h"
-#include "carditem.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {

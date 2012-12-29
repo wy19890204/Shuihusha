@@ -2,10 +2,6 @@
 #define CHANGBANSCENARIO_H
 
 #include "scenario.h"
-#include "package.h"
-#include "card.h"
-#include "skill.h"
-#include "player.h"
 
 class ChangbanScenario: public Scenario{
     Q_OBJECT

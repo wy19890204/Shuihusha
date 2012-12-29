@@ -1,9 +1,5 @@
 #include "landlord.h"
-#include "skill.h"
-#include "engine.h"
-#include "room.h"
 #include "carditem.h"
-#include "settings.h"
 
 class LandlordScenarioRule: public ScenarioRule{
 public:
@@ -124,6 +120,10 @@ void LandlordScenario::getRoles(char *roles) const{
 
 bool LandlordScenario::lordWelfare(const ServerPlayer *) const{
     return false;
+}
+
+bool LandlordScenario::unloadLordSkill() const{
+    return true;
 }
 
 bool LandlordScenario::generalSelection(Room *room) const{

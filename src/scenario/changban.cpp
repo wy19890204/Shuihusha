@@ -1,15 +1,8 @@
 #include "changban.h"
-#include "skill.h"
 #include "maneuvering.h"
-#include "clientplayer.h"
 #include "carditem.h"
-#include "engine.h"
-#include "general.h"
 #include "standard.h"
 #include "client.h"
-#include "serverplayer.h"
-#include "room.h"
-#include "settings.h"
 
 static int TransfigurationCB = 1;
 

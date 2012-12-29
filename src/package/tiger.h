@@ -2,7 +2,9 @@
 #define TIGERPACKAGE_H
 
 #include "package.h"
-#include "card.h"
+#include "client.h"
+#include "carditem.h"
+#include "engine.h"
 
 class TigerPackage: public GeneralPackage{
     Q_OBJECT

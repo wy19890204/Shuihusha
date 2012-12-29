@@ -2,7 +2,9 @@
 #define DRAGONPACKAGE_H
 
 #include "package.h"
-#include "card.h"
+#include "carditem.h"
+#include "engine.h"
+#include "client.h"
 
 class TaolueCard: public SkillCard{
     Q_OBJECT

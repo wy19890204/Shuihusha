@@ -1,8 +1,5 @@
 #include "standard.h"
 #include "standard-equips.h"
-#include "engine.h"
-#include "client.h"
-#include "carditem.h"
 
 Slash::Slash(Suit suit, int number): BasicCard(suit, number)
 {

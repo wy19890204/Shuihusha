@@ -1,9 +1,6 @@
 #include "dusong.h"
-#include "skill.h"
-#include "engine.h"
 #include "standard.h"
 #include "carditem.h"
-#include "gamerule.h"
 
 static int Transfiguration = 1;
 

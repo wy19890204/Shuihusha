@@ -1,7 +1,5 @@
-#include "engine.h"
-#include "client.h"
-#include "carditem.h"
 #include "standard-generals.h"
+#include "standard.h"
 #include "plough.h"
 
 GanlinCard::GanlinCard(){

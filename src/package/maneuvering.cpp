@@ -1,9 +1,5 @@
 #include "maneuvering.h"
 #include "plough.h"
-#include "client.h"
-#include "engine.h"
-#include "carditem.h"
-#include "settings.h"
 
 NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
     :Slash(suit, number)

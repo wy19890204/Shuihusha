@@ -2,7 +2,6 @@
 #define MUSTANGPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class MustangPackage : public GeneralPackage{
     Q_OBJECT

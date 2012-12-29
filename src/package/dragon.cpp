@@ -1,7 +1,4 @@
 #include "dragon.h"
-#include "carditem.h"
-#include "engine.h"
-#include "client.h"
 #include "maneuvering.h"
 #include "plough.h"
 

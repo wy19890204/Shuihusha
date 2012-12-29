@@ -1,8 +1,5 @@
 #include "events.h"
-#include "carditem.h"
 #include "maneuvering.h"
-#include "client.h"
-#include "engine.h"
 
 QString EventsCard::getType() const{
     return "events";

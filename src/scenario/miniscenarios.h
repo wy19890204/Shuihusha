@@ -2,8 +2,6 @@
 #define MINISCENARIOS_H
 
 #include "scenario.h"
-#include "engine.h"
-#include "room.h"
 
 class MiniSceneRule : public ScenarioRule
 {

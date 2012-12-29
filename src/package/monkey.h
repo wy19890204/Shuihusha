@@ -2,7 +2,6 @@
 #define MONKEYPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class ShensuanCard: public SkillCard{
     Q_OBJECT

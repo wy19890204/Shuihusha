@@ -1,6 +1,4 @@
 #include "warlords.h"
-#include "settings.h"
-#include "engine.h"
 
 class WarlordsScenarioRule: public ScenarioRule{
 public:

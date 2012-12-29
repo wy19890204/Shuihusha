@@ -2,7 +2,6 @@
 #define LANDLORDSCENARIO_H
 
 #include "scenario.h"
-#include "roomthread.h"
 
 class LandlordScenario : public Scenario{
     Q_OBJECT
@@ -14,6 +13,7 @@ public:
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual bool unloadLordSkill() const;
     virtual bool generalSelection(Room *room) const;
 };
 

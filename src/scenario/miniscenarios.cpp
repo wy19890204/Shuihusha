@@ -1,5 +1,4 @@
 #include "miniscenarios.h"
-
 #include <QMessageBox>
 #include <QFile>
 
