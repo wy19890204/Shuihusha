@@ -668,4 +668,8 @@ return {
 青击败。",
 	["resume:xisheng"] = "人物简介：\
 杂鱼一只，简介不详。",
+
+-- dragon
+	["resume:suochao"] = "人物简介：\
+",
 }
