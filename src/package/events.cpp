@@ -31,7 +31,6 @@ bool Jiefachang::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void Jiefachang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     ServerPlayer *target = targets.first();
     if(source->getPhase() == Player::Play && !target->getJudgingArea().isEmpty()){
         source->playCardEffect("@jiefachang2");
@@ -65,7 +64,6 @@ bool Daojia::targetsFeasible(const QList<const Player *> &targets, const Player 
 }
 
 void Daojia::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     if(targets.isEmpty()){
         source->playCardEffect("@daojia2");
         source->drawCards(1);
@@ -97,7 +95,6 @@ bool Tifanshi::targetsFeasible(const QList<const Player *> &targets, const Playe
 }
 
 void Tifanshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     if(targets.isEmpty()){
         source->playCardEffect("@tifanshi1");
         int reco = 0;
@@ -133,7 +130,6 @@ bool NinedayGirl::targetsFeasible(const QList<const Player *> &targets, const Pl
 }
 
 void NinedayGirl::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     if(!targets.isEmpty()){
         source->playCardEffect("@ninedaygirl2");
         ServerPlayer *target = targets.first();
@@ -168,7 +164,6 @@ bool FuckGaolian::isAvailable(const Player *) const{
 }
 
 void FuckGaolian::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     if(!targets.isEmpty()){
         source->playCardEffect("@fuckgaolian1");
         ServerPlayer *target = targets.first();
@@ -186,7 +181,6 @@ Jiangjieshi::Jiangjieshi(Suit suit, int number):EventsCard(suit, number){
 }
 
 void Jiangjieshi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     source->playCardEffect("@jiangjieshi1");
     room->setPlayerFlag(source, "drunken");
 }
@@ -204,7 +198,6 @@ bool NanaStars::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void NanaStars::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     source->playCardEffect("@nanastars1");
     foreach(const Card *card, targets.first()->getJudgingArea()){
         if(card->inherits("Treasury")){
@@ -225,7 +218,6 @@ Xiaobawang::Xiaobawang(Suit suit, int number):EventsCard(suit, number){
 }
 
 void Xiaobawang::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->throwCard(this);
     PlayerStar target = source->tag["Xiaob"].value<PlayerStar>();;
     if(target->isKongcheng())
         return;

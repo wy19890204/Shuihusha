@@ -139,8 +139,6 @@ QString Peach::getEffectPath(bool ) const{
 }
 
 void Peach::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     if(targets.isEmpty())
         room->cardEffect(this, source, source);
     else
@@ -195,10 +193,10 @@ public:
                     draw_card = true;
                 else{
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
-                    const Card *card = room->askForCard(effect.to, ".", prompt, QVariant(), CardDiscarded);
-                    if(card){
+                    const Card *card = room->askForCard(effect.to, ".", prompt, data, CardDiscarded);
+                    if(card)
                         room->throwCard(card, effect.to);
-                    }else
+                    else
                         draw_card = true;
                 }
 
@@ -528,8 +526,6 @@ AmazingGrace::AmazingGrace(Suit suit, int number)
 }
 
 void AmazingGrace::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     QList<ServerPlayer *> players = targets.isEmpty() ? room->getAllPlayers() : targets;
     QList<int> card_ids = room->getNCards(players.length());
     room->fillAG(card_ids);
@@ -667,8 +663,6 @@ void ArcheryAttack::onEffect(const CardEffectStruct &effect) const{
 }
 
 void SingleTargetTrick::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     CardEffectStruct effect;
     effect.card = this;
     effect.from = source;
@@ -717,8 +711,6 @@ bool Collateral::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void Collateral::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     ServerPlayer *killer = targets.at(0);
     QList<ServerPlayer *> victims = targets;
     if(victims.length() > 1)
@@ -759,7 +751,7 @@ void Collateral::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
                 else{
                     if(killer->getWeapon()){
                         int card_id = weapon->getId();
-                        room->throwCard(card_id, source);
+                        room->throwCard(card_id, killer);
                     }
                 }
             }
@@ -789,9 +781,8 @@ Nullification::Nullification(Suit suit, int number)
     setObjectName("nullification");
 }
 
-void Nullification::use(Room *room, ServerPlayer *, const QList<ServerPlayer *> &) const{
+void Nullification::use(Room *, ServerPlayer *, const QList<ServerPlayer *> &) const{
     // does nothing, just throw it
-    room->throwCard(this);
 }
 
 bool Nullification::isAvailable(const Player *) const{
@@ -914,13 +905,8 @@ void Dismantlement::onEffect(const CardEffectStruct &effect) const{
 
     Room *room = effect.to->getRoom();
     int card_id = room->askForCardChosen(effect.from, effect.to, "hej", objectName());
-    room->throwCard(card_id, room->getCardPlace(card_id) == Player::Judging ? NULL : effect.to, effect.from);
-
-    LogMessage log;
-    log.type = "$Dismantlement";
-    log.from = effect.to;
-    log.card_str = QString::number(card_id);
-    room->sendLog(log);
+    ServerPlayer *from = room->getCardPlace(card_id) == Player::Judging ? NULL : effect.to;
+    room->throwCard(card_id, from, from ? effect.from: NULL);
 }
 
 Indulgence::Indulgence(Suit suit, int number)

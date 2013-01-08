@@ -6,7 +6,6 @@ BaoquanCard::BaoquanCard(){
 }
 
 void BaoquanCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     room->playSkillEffect(skill_name, qrand() % 2 + 5);
     int fist = getSubcards().count();
 

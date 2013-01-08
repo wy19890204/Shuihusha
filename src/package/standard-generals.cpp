@@ -1836,7 +1836,6 @@ WujiCard::WujiCard(){
 }
 
 void WujiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->throwCard(this, source);
     if(source->isAlive())
         room->drawCards(source, subcards.length());
 }
@@ -2023,7 +2022,6 @@ CujuCard::CujuCard(){
 }
 
 void CujuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     DamageStruct damage = source->tag["CujuDamage"].value<DamageStruct>();
     damage.to = targets.first();
     room->damage(damage);
@@ -2375,7 +2373,6 @@ bool MeihuoCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void MeihuoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     RecoverStruct recover;
     recover.card = this;
     recover.who = source;

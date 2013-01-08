@@ -286,6 +286,7 @@ bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    card_use.from->setFlags("mute_throw");
     room->throwCard(this, card_use.from);
     Slash *slash = new Slash(Card::NoSuit, 0);
     slash->setSkillName(skill_name);

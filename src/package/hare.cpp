@@ -633,7 +633,8 @@ SheyanCard::SheyanCard(){
 }
 
 void SheyanCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    room->throwCard(this);
+    card_use.from->setFlags("mute_throw");
+    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();
@@ -1003,7 +1004,6 @@ ShemiCard::ShemiCard(){
 }
 
 void ShemiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     source->turnOver();
 }
 

@@ -234,7 +234,6 @@ FangdaiCard::FangdaiCard(){
 void FangdaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     int index = source->getGender() == General::Male ? qrand() % 2 + 1 : qrand() % 2 + 3;
     room->playSkillEffect(skill_name, index);
-    room->throwCard(this, source);
     if(source->isAlive())
         room->drawCards(source, subcards.length() + 1);
 }

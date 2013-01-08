@@ -21,7 +21,6 @@ bool Zongzi::isAvailable(const Player *quyuan) const{
 }
 
 void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
-    room->throwCard(this);
     int n = ServerInfo.GameMode != "dusong" ? 1 : -1;
     room->addHpSlot(source, n);
     room->acquireSkill(source, "lisao");

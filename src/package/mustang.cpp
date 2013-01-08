@@ -416,7 +416,6 @@ bool MaiyiCard::targetsFeasible(const QList<const Player *> &targets, const Play
 }
 
 void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     room->playSkillEffect(objectName());
     if(targets.isEmpty())
         room->setPlayerFlag(source, "maiyi");
@@ -508,7 +507,8 @@ bool HunjiuCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 }
 
 void HunjiuCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    room->throwCard(this);
+    card_use.from->setFlags("mute_throw");
+    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();
@@ -614,7 +614,6 @@ ZishiCard::ZishiCard(){
 
 void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     int num = this->getSubcards().length();
-    room->throwCard(this, source);
     source->tag["ZiShi"] = num;
 }
 

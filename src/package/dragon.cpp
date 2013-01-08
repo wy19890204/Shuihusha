@@ -452,8 +452,6 @@ bool ShexinCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void ShexinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
-
     ServerPlayer *target = targets.value(0, source);
     CardEffectStruct effect;
     effect.card = this;

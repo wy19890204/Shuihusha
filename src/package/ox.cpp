@@ -381,7 +381,6 @@ bool SheruCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void SheruCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     PlayerStar target = targets.first();
     QString choice = room->askForChoice(source, skill_name, "she+ru");
     int x = target->getLostHp();
@@ -884,7 +883,6 @@ void XunlieCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
             room->cardEffect(effect);
         }
     }else{
-        room->throwCard(this, source);
         room->playSkillEffect(skill_name, qrand() % 2 + 3);
         room->cardEffect(this, source, targets.first());
     }

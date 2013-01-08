@@ -1012,9 +1012,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         if(card->getTypeId() != Card::Skill){
             const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
             if(card_pattern == NULL || card_pattern->willThrow())
-                throwCard(card);
+                throwCard(card, trigger_event == CardDiscarded ? player: NULL);
         }else if(card->willThrow())
-            throwCard(card);
+            throwCard(card, trigger_event == CardDiscarded ? player: NULL);
 
         if(card->getSkillName() == "spear")
             player->playCardEffect("Espear", "weapon");
@@ -2970,9 +2970,9 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
             log.from = who;
         }
     }
-    else{
+    else
         log.type = "$EnterDiscardPile";
-    }
+
     QList<int> to_discard;
     if(card->isVirtualCard())
         to_discard.append(card->getSubcards());
@@ -2986,7 +2986,9 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
         else
             log.card_str += "+" + QString::number(card_id);
     }
-    if(who)
+    if(who && who->hasFlag("mute_throw"))
+        who->hasFlag("-mute_throw");
+    else
         sendLog(log);
 
     moveCardTo(card, NULL, Player::DiscardedPile);
@@ -3574,7 +3576,7 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
 
     QString result = askForChoice(shenlvmeng, "gongxin", "discard+put");
     if(result == "discard")
-        throwCard(card_id, target);
+        throwCard(card_id, target, shenlvmeng);
     else
         moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile, true);
 }
