@@ -464,22 +464,6 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 }
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
-    if(hasSkill("huace") && getPhase() == Player::Play && !hasUsed("HuaceCard")){
-        foreach(const Card *card, getHandcards()){
-            if(card->inherits("TrickCard"))
-                return true;
-        }
-    }
-    if(hasSkill("neiying") && getCardCount(true) > 1){
-        if(include_counterplot)
-            return true;
-    }
-    if(hasSkill("zhengbing")){
-        foreach(const Card *card, handcards){
-            if(card->isBlack() || card->objectName() == "nullification")
-                return true;
-        }
-    }
     foreach(const Card *card, handcards){
         if(include_counterplot && card->inherits("Nullification"))
             return true; // all trick
@@ -488,15 +472,14 @@ bool ServerPlayer::hasNullification(bool include_counterplot) const{
     }
 
     foreach(const Skill* skill, getVisibleSkillList()){
-        if(skill->inherits("LuaViewAsSkill")){
-            const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(skill);
-            if(luaskill->isEnabledAtNullification(this)) return true;
+        if(skill->inherits("ViewAsSkill")){
+            const ViewAsSkill* vsskill = qobject_cast<const ViewAsSkill*>(skill);
+            if(vsskill->isEnabledAtNullification(this, include_counterplot)) return true;
         }else if(skill->inherits("TriggerSkill")){
             const TriggerSkill* trigger_skill = qobject_cast<const TriggerSkill*>(skill);
-            if(trigger_skill && trigger_skill->getViewAsSkill()
-                    && trigger_skill->getViewAsSkill()->inherits("LuaViewAsSkill")){
-                const LuaViewAsSkill* luaskill = qobject_cast<const LuaViewAsSkill*>(trigger_skill->getViewAsSkill());
-                if(luaskill && luaskill->isEnabledAtNullification(this)) return true;
+            if(trigger_skill && trigger_skill->getViewAsSkill()){
+                const ViewAsSkill* vsskill = qobject_cast<const ViewAsSkill*>(trigger_skill->getViewAsSkill());
+                if(vsskill && vsskill->isEnabledAtNullification(this, include_counterplot)) return true;
             }
         }
     }

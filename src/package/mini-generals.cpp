@@ -359,6 +359,14 @@ public:
 
         return ncard;
     }
+
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
+        foreach(const Card *card, player->getHandcards()){
+            if(card->isBlack() || card->objectName() == "nullification")
+                return true;
+        }
+        return false;
+    }
 };
 
 Qi6ingCard::Qi6ingCard(){

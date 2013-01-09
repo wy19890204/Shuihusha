@@ -129,6 +129,10 @@ public:
         return pattern == "nulliplot";
     }
 
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool include_counterplot) const{
+        return player->getCardCount(true) > 1 && include_counterplot;
+    }
+
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
         return qrand() % 4 + 1;
     }

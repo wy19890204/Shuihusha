@@ -426,9 +426,9 @@ bool LuaViewAsSkill::isEnabledAtResponse(const Player *player, const QString &pa
 	}
 }
 
-bool LuaViewAsSkill::isEnabledAtNullification(const Player *player) const{
-	if(enabled_at_nullification == 0)
-		return false;
+bool LuaViewAsSkill::isEnabledAtNullification(const ServerPlayer *player, bool include_counterplot) const{
+    if(enabled_at_nullification == 0)
+        return ViewAsSkill::isEnabledAtNullification(player, include_counterplot);
 
 	lua_State *L = Sanguosha->getLuaState();
 
@@ -437,9 +437,9 @@ bool LuaViewAsSkill::isEnabledAtNullification(const Player *player) const{
 
 	pushSelf(L);
 
-	SWIG_NewPointerObj(L, player, SWIGTYPE_p_Player, 0);
+	SWIG_NewPointerObj(L, player, SWIGTYPE_p_ServerPlayer, 0);
 
-	int error = lua_pcall(L, 2, 1, 0);
+	int error = lua_pcall(L, 3, 1, 0);
 	if(error){
 		Error(L);
 		return false;

@@ -348,6 +348,16 @@ public:
             return NULL;
     }
 
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool) const{
+        if(player->getPhase() == Player::Play && !player->hasUsed("HuaceCard")){
+            foreach(const Card *card, player->getHandcards()){
+                if(card->inherits("TrickCard"))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     virtual QDialog *getDialog() const{
         return HuaceDialog::GetInstance();
     }
