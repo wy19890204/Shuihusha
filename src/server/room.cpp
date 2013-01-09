@@ -2959,7 +2959,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
         return;
 
     LogMessage log;
-    if(who) {
+    if(who){
         if(thrower){
             log.type = "$DiscardCardByOther"; //thrower throw who's card
             log.from = thrower;
@@ -2996,7 +2996,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
     if(who){
         CardStar card_ptr = card;
         QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, this, who, data); //@todo?
+        thread->trigger(CardDiscarded, this, who, data);
     }
 }
 

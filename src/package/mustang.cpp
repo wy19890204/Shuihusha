@@ -144,14 +144,8 @@ public:
                     if(!cards.contains(card_id))
                         continue;
                     cards.removeOne(card_id);
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, tianqi);
                     room->takeAG(NULL, card_id);
-
-                    LogMessage log;
-                    log.from = tianqi;
-                    log.type = "$DiscardCard";
-                    log.card_str = QString::number(card_id);
-                    room->sendLog(log);
                 }
                 for(int i = cards.length() - 1; i >= 0; i--){
                     room->throwCard(cards.at(i));

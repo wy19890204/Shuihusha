@@ -382,15 +382,6 @@ public:
             return false;
         CardStar card = room->askForCard(player, "@axe", "@axe:" + effect.to->objectName(), data, CardDiscarded);
         if(card){
-            QList<int> card_ids = card->getSubcards();
-            foreach(int card_id, card_ids){
-                LogMessage log;
-                log.type = "$DiscardCard";
-                log.from = player;
-                log.card_str = QString::number(card_id);
-
-                room->sendLog(log);
-            }
             player->playCardEffect("Eaxe", "weapon");
 
             LogMessage log;
