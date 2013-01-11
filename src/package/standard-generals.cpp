@@ -650,7 +650,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *erge, QVariant &data) const{
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
-        if(!effect.to->isNude() && effect.jink && !effect.jink->isVirtualCard()){
+        if(effect.jink && !effect.jink->isVirtualCard()){
             if(erge->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName());
                 erge->obtainCard(effect.jink);

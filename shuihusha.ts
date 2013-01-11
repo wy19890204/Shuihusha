@@ -1892,6 +1892,11 @@
         <source>Death</source>
         <translation>阵亡</translation>
     </message>
+    <message>
+        <location filename="src/dialog/generaloverview.cpp" line="289"/>
+        <source>Victory</source>
+        <translation>胜利</translation>
+    </message>
 </context>
 <context>
     <name>HallDialog</name>
@@ -3527,8 +3532,13 @@
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="3134"/>
-        <source>%1&apos;s judge</source>
-        <translation>%1的判定牌</translation>
+        <source>%1&apos;s %2 judge</source>
+        <translation>%1的%2判定</translation>
+    </message>
+    <message>
+        <location filename="src/ui/roomscene.cpp" line="3136"/>
+        <source>%1 retrial</source>
+        <translation>%1改判</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="3277"/>

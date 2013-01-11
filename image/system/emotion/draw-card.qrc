@@ -1,0 +1,29 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>draw-card/0.png</file>
+		<file>draw-card/1.png</file>
+		<file>draw-card/2.png</file>
+		<file>draw-card/3.png</file>
+		<file>draw-card/4.png</file>
+		<file>draw-card/5.png</file>
+		<file>draw-card/6.png</file>
+		<file>draw-card/7.png</file>
+		<file>draw-card/8.png</file>
+		<file>draw-card/9.png</file>
+		<file>draw-card/10.png</file>
+		<file>draw-card/11.png</file>
+		<file>draw-card/12.png</file>
+		<file>draw-card/13.png</file>
+		<file>draw-card/14.png</file>
+		<file>draw-card/15.png</file>
+		<file>draw-card/16.png</file>
+		<file>draw-card/17.png</file>
+		<file>draw-card/18.png</file>
+		<file>draw-card/19.png</file>
+		<file>draw-card/20.png</file>
+		<file>draw-card/21.png</file>
+		<file>draw-card/22.png</file>
+		<file>draw-card/23.png</file>
+		<file>draw-card/24.png</file>
+	</qresource>
+</RCC>

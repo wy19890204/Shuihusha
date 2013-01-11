@@ -3140,7 +3140,9 @@ void RoomScene::showOwnerButtons(bool owner){
 void RoomScene::showJudgeResult(const QString &who, const QString &result, const QString &reason){
     if(special_card){
         const ClientPlayer *player = ClientInstance->getPlayer(who);
-        QString desc = tr("%1's %2 judge").arg(Sanguosha->translate(player->getGeneralName())).arg(Sanguosha->translate(reason));
+        QString desc = result != "retrial" ?
+                       tr("%1's %2 judge").arg(Sanguosha->translate(player->getGeneralName())).arg(Sanguosha->translate(reason)) :
+                       tr("%1 retrial").arg(Sanguosha->translate(player->getGeneralName()));
         special_card->writeCardDesc(desc);
 
         special_card->setFrame(result);

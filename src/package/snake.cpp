@@ -574,8 +574,6 @@ public:
 SnakePackage::SnakePackage()
     :GeneralPackage("snake")
 {
-    General *qinming = new General(this, "qinming", "guan");
-
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     muhong->addSkill("huqi");

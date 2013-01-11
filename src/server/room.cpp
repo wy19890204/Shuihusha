@@ -341,8 +341,8 @@ void Room::sendJudgeResult(const JudgeStar judge, bool fin){
         broadcastInvoke("judgeResult", QString("%1:%2:%3").arg(who).arg(result).arg(judge->reason));
 }
 
-void sendJudgeResult(ServerPlayer *moder){
-    broadcastInvoke("judgeResult", QString("%1:%2").arg(moder).arg("retrial"));
+void Room::sendJudgeResult(ServerPlayer *moder){
+    broadcastInvoke("judgeResult", moder->objectName() + ":retrial:-");
 }
 
 QList<int> Room::getNCards(int n, bool update_pile_number){
