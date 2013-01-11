@@ -867,7 +867,8 @@ public:
 	bool cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to);
 	bool cardEffect(const CardEffectStruct &effect);
 	void judge(JudgeStruct &judge_struct);
-	void sendJudgeResult(const JudgeStar judge);
+	void sendJudgeResult(const JudgeStar judge, bool fin = false);
+	void sendJudgeResult(ServerPlayer *moder);
 	QList<int> getNCards(int n, bool update_pile_number = true);
 	ServerPlayer *getLord() const;
 	void askForGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_only);

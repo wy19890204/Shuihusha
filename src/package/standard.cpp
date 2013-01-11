@@ -325,8 +325,8 @@ QString Horse::getEffectPath(bool) const{
     return "audio/card/common/horse.ogg";
 }
 
-void Horse::onInstall(ServerPlayer *) const{
-
+void Horse::onInstall(ServerPlayer *player) const{
+    player->getRoom()->setEmotion(player, "horse");
 }
 
 void Horse::onUninstall(ServerPlayer *) const{

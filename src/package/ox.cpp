@@ -580,7 +580,7 @@ public:
             room->getThread()->delay();
 
             judge->card = Sanguosha->getCard(card_id);
-            //room->moveCardTo(judge->card, NULL, Player::Special);
+            room->moveCardTo(judge->card, NULL, Player::Special);
 
             LogMessage log;
             log.type = "$ChangedJudge";

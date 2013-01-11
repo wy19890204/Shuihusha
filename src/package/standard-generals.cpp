@@ -456,7 +456,6 @@ public:
             ServerPlayer *target = player->tag["YixingTarget"].value<PlayerStar>();
             const Card *card = Sanguosha->getCard(card_id);
             target->obtainCard(judge->card);
-            //room->playSkillEffect(objectName());
             judge->card = card;
             room->moveCardTo(judge->card, NULL, Player::Special);
 
