@@ -332,10 +332,17 @@ void Room::judge(JudgeStruct &judge_struct){
     thread->trigger(FinishJudge, this, judge_star->who, data);
 }
 
-void Room::sendJudgeResult(const JudgeStar judge){
+void Room::sendJudgeResult(const JudgeStar judge, bool fin){
     QString who = judge->who->objectName();
     QString result = judge->isGood() ? "good" : "bad";
-    broadcastInvoke("judgeResult", QString("%1:%2").arg(who).arg(result));
+    if(fin)
+        setEmotion(judge->who, "judge" + result);
+    else
+        broadcastInvoke("judgeResult", QString("%1:%2:%3").arg(who).arg(result).arg(judge->reason));
+}
+
+void sendJudgeResult(ServerPlayer *moder){
+    broadcastInvoke("judgeResult", QString("%1:%2").arg(moder).arg("retrial"));
 }
 
 QList<int> Room::getNCards(int n, bool update_pile_number){

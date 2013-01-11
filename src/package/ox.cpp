@@ -595,7 +595,7 @@ public:
             log.card_str = QString::number(card_id);
             room->sendLog(log);
 
-            room->sendJudgeResult(judge);
+            room->sendJudgeResult(player);
         }
         return false;
     }

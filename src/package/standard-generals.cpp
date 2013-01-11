@@ -460,7 +460,7 @@ public:
             log.card_str = card->getEffectIdString();
             room->sendLog(log);
 
-            room->sendJudgeResult(judge);
+            room->sendJudgeResult(player);
         }
         return false;
     }

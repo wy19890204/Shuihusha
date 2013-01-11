@@ -376,7 +376,7 @@ public:
             log.card_str = card->getEffectIdString();
             room->sendLog(log);
 
-            room->sendJudgeResult(judge);
+            room->sendJudgeResult(player);
         }
         return false;
     }
@@ -412,7 +412,7 @@ public:
             log.card_str = QString::number(card_id);
             room->sendLog(log);
 
-            room->sendJudgeResult(judge);
+            room->sendJudgeResult(player);
             return true;
         }
         return false;

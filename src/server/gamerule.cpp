@@ -889,7 +889,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                     log.to << judge->who;
                     log.card_str = QString::number(fuck->getId());
                     room->sendLog(log);
-                    room->sendJudgeResult(judge);
+                    room->sendJudgeResult(player);
                 }
                 room->setPlayerFlag(player, "-FuckLian");
             }
@@ -908,7 +908,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         log.card_str = judge->card->getEffectIdString();
         room->sendLog(log);
 
-        room->sendJudgeResult(judge);
+        room->sendJudgeResult(judge, true);
 
         if(!Config.BanPackages.contains("events")){
             if(judge->card->getSuit() == Card::Spade){
