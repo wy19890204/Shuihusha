@@ -14,7 +14,6 @@ class LegendScenario : public Scenario{
 public:
     explicit LegendScenario();
 
-    virtual void onTagSet(Room *room, const QString &key) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
     virtual void assign(QStringList &generals, QStringList &roles) const;

@@ -1,5 +1,4 @@
 #include "joy.h"
-#include "engine.h"
 
 Shit::Shit(Suit suit, int number):BasicCard(suit, number){
     setObjectName("shit");

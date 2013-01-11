@@ -1,6 +1,8 @@
 #ifndef SCENARIO_H
 #define SCENARIO_H
 
+#include "engine.h"
+#include "settings.h"
 #include "package.h"
 #include "ai.h"
 
@@ -23,8 +25,10 @@ public:
     virtual void getRoles(char *roles) const;
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
-    virtual void onTagSet(Room *room, const QString &key) const = 0;
+    virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual int lordGeneralCount() const;
+    virtual bool unloadLordSkill() const;
     virtual bool generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
     virtual QString setBackgroundMusic() const;

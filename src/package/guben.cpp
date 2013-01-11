@@ -149,9 +149,9 @@ public:
     }
 };
 
-class DajiPass : public TriggerSkill{
+class TiemuPass : public TriggerSkill{
 public:
-    DajiPass():TriggerSkill("daji_p"){
+    TiemuPass():TriggerSkill("daji_p"){
         frequency = Frequent;
         events << Damage << Damaged;
     }
@@ -897,7 +897,7 @@ GubenPackage::GubenPackage()
     General *wujiao = new General(this, "wujiao", "kou", 3);
     wujiao->addSkill(new HuangtianPass);
     wujiao->addSkill(new LeijiPass);
-    wujiao->addSkill(new DajiPass);
+    wujiao->addSkill(new TiemuPass);
 
     // boss
     General *yinchun = new General(this, "yinchun", "kou");

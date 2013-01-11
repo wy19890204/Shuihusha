@@ -1,10 +1,5 @@
 #include "plough.h"
 #include "maneuvering.h"
-#include "skill.h"
-#include "engine.h"
-#include "client.h"
-#include "carditem.h"
-#include "standard.h"
 
 Ecstasy::Ecstasy(Suit suit, int number): BasicCard(suit, number)
 {
@@ -95,6 +90,10 @@ Assassinate::Assassinate(Suit suit, int number)
 
 void Assassinate::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+
+    room->setEmotion(effect.from, "assassinate-b");
+    room->setEmotion(effect.to, "assassinate-a");
+
     const Card *card1 = room->askForCard(effect.to, "jink", "@assas1:" + effect.from->objectName());
     const Card *card2;
     if(card1)
@@ -182,8 +181,9 @@ Tsunami::Tsunami(Suit suit, int number):Disaster(suit, number){
 
 void Tsunami::takeEffect(ServerPlayer *target, bool good) const{
     if(!good){
-        //room->broadcastInvoke("animate", "tsunami:" + target->objectName());
-        target->getRoom()->broadcastInvoke("playAudio", "tsunami");
+        Room *room = target->getRoom();
+        room->broadcastInvoke("playAudio", "tsunami");
+        room->setEmotion(target, "tsunami");
         target->throwAllCards();
     }
 }

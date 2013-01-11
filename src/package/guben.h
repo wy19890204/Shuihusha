@@ -2,7 +2,6 @@
 #define GUBENPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class GubenPackage: public GeneralPackage{
     Q_OBJECT

@@ -22,19 +22,6 @@ return {
 	["$foyuan2"] = "佛牙可否借妹妹一观。",
 	["unknown"] = "未知",
 
-	["#wangpo"] = "枯藤蔓", -- min 3hp (qlfd)
-	["wangpo"] = "王婆",
-	["cv:wangpo"] = "九辨【重华剧社】",
-	["qianxian"] = "牵线",
-	[":qianxian"] = "出牌阶段，你可以弃置一张黑色非延时锦囊，指定两名体力上限不相等的其他角色。若其交给你一张梅花手牌，则将其武将牌翻至正面向上，并重置之，否则将其武将牌翻至背面向上，并横置之。每回合限一次。",
-	["@qianxian"] = "%src 对你发动了【牵线】，请给她一张梅花手牌",
-	["meicha"] = "梅茶",
-	[":meicha"] = "你可以将任一梅花手牌当【酒】使用。",
-	["$qianxian1"] = "吃个‘和合汤’如何？",
-	["$qianxian2"] = "这事交给干娘我了。",
-	["$meicha1"] = "我这茶别有风味。",
-	["$meicha2"] = "好个“宽煎叶儿茶”。",
-
 	["#duansanniang"] = "大虫窝", -- min 4hp (qlfd)
 	["duansanniang"] = "段三娘",
 	["cv:duansanniang"] = "南宫泓【「御」】",
@@ -114,11 +101,12 @@ return {
 
 	["caiquan"] = "猜拳",
 	[":caiquan"] = "绝密技能，效果不详。",
+	["yinjian"] = "淫贱",
+	[":yinjian"] = "你丫才贱！妈的敢骂我？",
 
 -- last words
 --	["~panjinlian"] = "庆哥哥，说好的幸福呢……",
 	["~panqiaoyun"] = "一了百了～",
-	["~wangpo"] = "死到眼前，犹做发财梦～",
 	["~duansanniang"] = "大王！我，此生无悔！",
 	["~baixiuying"] = "谁都帮不了我了～",
 	["~liqiaonu"] = "早知如此，何必～当初。",

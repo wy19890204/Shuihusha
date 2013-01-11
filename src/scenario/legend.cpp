@@ -31,11 +31,6 @@ public:
 private:
 };
 
-
-void LegendScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
-}
-
 int LegendScenario::getPlayerCount() const{
     return 8;
 }

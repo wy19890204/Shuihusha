@@ -2,8 +2,6 @@
 #define MINISCENARIOS_H
 
 #include "scenario.h"
-#include "engine.h"
-#include "room.h"
 
 class MiniSceneRule : public ScenarioRule
 {
@@ -38,7 +36,6 @@ public:
     void setupCustom(QString name) const;
     virtual QString setBackgroundMusic() const;
     virtual bool generalSelection(Room *room) const;
-    virtual void onTagSet(Room *room, const QString &key) const;
     virtual void assign(QStringList &generals, QStringList &roles) const
     {
         MiniSceneRule *rule = qobject_cast<MiniSceneRule*>(getRule());

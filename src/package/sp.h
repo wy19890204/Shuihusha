@@ -2,7 +2,9 @@
 #define SPPACKAGE_H
 
 #include "package.h"
-#include "card.h"
+#include "client.h"
+#include "carditem.h"
+#include "engine.h"
 
 class BaoquanCard: public SkillCard{
     Q_OBJECT

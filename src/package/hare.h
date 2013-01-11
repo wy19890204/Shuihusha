@@ -2,7 +2,9 @@
 #define HAREPACKAGE_H
 
 #include "package.h"
-#include "card.h"
+#include "carditem.h"
+#include "client.h"
+#include "engine.h"
 
 class HarePackage: public GeneralPackage{
     Q_OBJECT

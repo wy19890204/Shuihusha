@@ -2,13 +2,21 @@
 #define MUSTANGPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class MustangPackage : public GeneralPackage{
     Q_OBJECT
 
 public:
     MustangPackage();
+};
+
+class HengsaoCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE HengsaoCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
 class HuazhuCard: public SkillCard{

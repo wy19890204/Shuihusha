@@ -1,0 +1,22 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>slash_black/0.png</file>
+		<file>slash_black/1.png</file>
+		<file>slash_black/2.png</file>
+		<file>slash_black/3.png</file>
+		<file>slash_black/4.png</file>
+		<file>slash_black/5.png</file>
+		<file>slash_black/6.png</file>
+		<file>slash_black/7.png</file>
+		<file>slash_black/8.png</file>
+		<file>slash_black/9.png</file>
+		<file>slash_black/10.png</file>
+		<file>slash_black/11.png</file>
+		<file>slash_black/12.png</file>
+		<file>slash_black/13.png</file>
+		<file>slash_black/14.png</file>
+		<file>slash_black/15.png</file>
+		<file>slash_black/16.png</file>
+		<file>slash_black/17.png</file>
+	</qresource>
+</RCC>

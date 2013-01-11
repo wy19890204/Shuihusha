@@ -3,6 +3,17 @@
 return {
 	["interchange"] = "中转站",
 
+	["#mengkang"] = "玉幡竿", -- kou 4hp (bwqz)
+	["mengkang"] = "孟康",
+	["cv:mengkang"] = "烨子【剪刀剧团】",
+	["zaochuan"] = "造船",
+	[":zaochuan"] = "出牌阶段，你可以将你的任一锦囊牌当【铁索连环】使用或重铸。",
+	["mengchong"] = "艨艟",
+	[":mengchong"] = "<b>锁定技</b>，武将牌未处于横置状态的角色计算与武将牌处于横置状态的角色的距离时，始终+1.",
+	["$zaochuan1"] = "能攀强弩冲头阵，善造艨艟越大江！",
+	["$zaochuan2"] = "楼船林立，可挡朝廷千军万马！",
+	["~mengkang"] = "火炮突袭，快撤！",
+
 	["#caiqing"] = "一枝花", -- kou 3hp (fcdc)
 	["caiqing"] = "蔡庆",
 	["designer:caiqing"] = "宇文天启",
@@ -45,8 +56,6 @@ return {
 	["#tongmeng"] = "翻江蜃",
 	["tongmeng"] = "童猛",
 	["designer:tongmeng"] = "hypercross",
-	["shuilao"] = "水牢",
-	[":shuilao"] = "出牌阶段，你可以将你的任一非延时锦囊牌当【画地为牢】使用。",
 	["shuizhan"] = "水遁",
 	[":shuizhan"] = "锁定技，其他角色计算相互距离时，跳过你；其他角色计算与你的距离时，至少为2",
 	["~tongmeng"] = "大江东去浪淘尽。",
@@ -92,9 +101,6 @@ return {
 	["@xianhai"] = "你可以将一张黑桃手牌当【逼上梁山】对任意一名角色使用",
 	["~fuan"] = "林教头饶命，这都是陆谦的主意……啊~~",
 
-	["#shibao"] = "南离大将",
-	["shibao"] = "石宝",
-	["designer:shibao"] = "天启姐",
 	["shenyong"] = "神勇",
 	[":shenyong"] = "当你需要打出一张【闪】时，可对攻击范围内的一名角色使用一张【杀】，（在其结算后）视为你使用了【闪】",
 	["~shibao"] = "操！",

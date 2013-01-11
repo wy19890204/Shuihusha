@@ -2,7 +2,6 @@
 #define COCKPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class FanwuCard:public SkillCard{
     Q_OBJECT

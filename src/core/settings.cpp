@@ -87,9 +87,9 @@ void Settings::init(){
     MaxHpScheme = value("MaxHpScheme", 0).toInt();
     AnnounceIP = value("AnnounceIP", false).toBool();
     Address = value("Address", QString()).toString();
-    FreeChooseGenerals = value("FreeChooseGenerals", false).toBool();
-    FreeChooseCards = value("FreeChooseCards", false).toBool();
-    FreeAssignSelf = value("FreeAssignSelf", false).toBool();
+    FreeChooseGenerals = value("Cheat/FreeChooseGenerals", false).toBool();
+    FreeChooseCards = value("Cheat/FreeChooseCards", false).toBool();
+    FreeAssignSelf = value("Cheat/FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();

@@ -1,0 +1,21 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>judgegood/0.png</file>
+		<file>judgegood/1.png</file>
+		<file>judgegood/2.png</file>
+		<file>judgegood/3.png</file>
+		<file>judgegood/4.png</file>
+		<file>judgegood/5.png</file>
+		<file>judgegood/6.png</file>
+		<file>judgegood/7.png</file>
+		<file>judgegood/8.png</file>
+		<file>judgegood/9.png</file>
+		<file>judgegood/10.png</file>
+		<file>judgegood/11.png</file>
+		<file>judgegood/12.png</file>
+		<file>judgegood/13.png</file>
+		<file>judgegood/14.png</file>
+		<file>judgegood/15.png</file>
+		<file>judgegood/16.png</file>
+	</qresource>
+</RCC>

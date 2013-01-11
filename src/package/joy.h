@@ -3,6 +3,7 @@
 
 #include "package.h"
 #include "standard.h"
+#include "engine.h"
 
 class KusoPackage: public CardPackage{
     Q_OBJECT

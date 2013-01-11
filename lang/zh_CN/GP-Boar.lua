@@ -1,6 +1,29 @@
 -- translation for GodPackage
 
 return {
+	["#jiaoting"] = "没面目", -- kou 4hp (bwqz)
+	["jiaoting"] = "焦挺",
+	["designer:jiaoting"] = "宇文天启",
+	["cv:jiaoting"] = "小虎尔赤【影音同画】",
+	["qinlong"] = "擒龙",
+	[":qinlong"] = "若你的装备区没牌：你使用【杀】时可以额外指定一名其他角色；出牌阶段可以使用任意数量的【杀】。",
+	["$qinlong1"] = "都出局吧！",
+	["$qinlong2"] = "看吾三十六路擒龙手！",
+	["~jiaoting"] = "绝技不复代代相传矣！",
+
+	["#wangdingliu"] = "活闪婆", -- kou 3hp (bwqz)
+	["wangdingliu"] = "王定六",
+	["designer:wangdingliu"] = "烨子&宇文天启",
+	["cv:wangdingliu"] = "芭小乐【声声melody】",
+	["kongying"] = "空影",
+	[":kongying"] = "当你使用或打出一张【闪】时，（在结算前）可以令任一其他角色打出一张【闪】，若该角色无法如此做，你对其造成1点伤害。",
+	["@kongying"] = "%src 要求你打出一张【闪】，否则你会受到1点伤害",
+	["jibu"] = "疾步",
+	[":jibu"] = "<b>锁定技</b>，当你计算与其他角色的距离时，始终-1；当其他角色计算与你的距离时，始终+1。",
+	["$kongying1"] = "哈哈哈哈，扑个空吧！",
+	["$kongying2"] = "此步，汝当以何抵对？",
+	["~wangdingliu"] = "吾，太大意了！",
+
 	["#shenwusong"] = "清忠祖师",
 	["shenwusong"] = "神武松",
 	["designer:shenwusong"] = "烨子&裁之刃•散",

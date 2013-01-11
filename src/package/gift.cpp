@@ -1,6 +1,4 @@
 #include "gift.h"
-#include "skill.h"
-#include "clientstruct.h"
 
 Zongzi::Zongzi(Suit suit, int number):BasicCard(suit, number){
     setObjectName("zongzi");

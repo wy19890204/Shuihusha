@@ -288,7 +288,7 @@ QString Player::getRole() const{
 QString Player::getScreenRole() const{
     int index = Sanguosha->getRoleIndex();
 
-    QMap<QString, QString> threeV3_mode, hegemony_mode, landlord_mode;
+    QMap<QString, QString> threeV3_mode, hegemony_mode, landlord_mode, warlords_mode;
 
     threeV3_mode["lord"] = threeV3_mode["renegade"] = "Marshal";
     threeV3_mode["loyalist"] = threeV3_mode["rebel"] = "Vanguard";
@@ -301,10 +301,15 @@ QString Player::getScreenRole() const{
     landlord_mode["lord"] = "Landlord";
     landlord_mode["rebel"] = "Cottier";
 
+    warlords_mode["lord"] = "Castellan";
+    warlords_mode["loyalist"] = "Adviser";
+    warlords_mode["rebel"] = "Peasant";
+
     switch(index){
     case 2: return threeV3_mode[role]; break;
     case 3: return hegemony_mode[role]; break;
     case 4: return landlord_mode[role]; break;
+    case 5: return warlords_mode[role]; break;
     default:
         break;
     }
@@ -366,17 +371,18 @@ bool Player::hasLordSkill(const QString &skill_name) const{
     if(property("scarecrow").toBool()) //qimen
         return false;
 
-    if(acquired_skills.contains(skill_name))
-        return true;
-
-    QString mode = getGameMode();
+    //QString mode = getGameMode();
+    QString mode = ServerInfo.GameMode;
     if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
-    if(isLord() || ServerInfo.EnableHegemony)
-        return hasInnateSkill(skill_name);
+    //const Scenario *scenario = Sanguosha->getScenario(mode);  @todo
+    //if(scenario && scenario->unloadLordSkill())
+    //    return false;
 
-    return false;
+    if(ServerInfo.EnableHegemony)
+        return hasInnateSkill(skill_name);
+    return acquired_skills.contains(skill_name);
 }
 
 void Player::acquireSkill(const QString &skill_name){

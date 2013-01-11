@@ -1,0 +1,16 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>armor/0.png</file>
+		<file>armor/1.png</file>
+		<file>armor/2.png</file>
+		<file>armor/3.png</file>
+		<file>armor/4.png</file>
+		<file>armor/5.png</file>
+		<file>armor/6.png</file>
+		<file>armor/7.png</file>
+		<file>armor/8.png</file>
+		<file>armor/9.png</file>
+		<file>armor/10.png</file>
+		<file>armor/11.png</file>
+	</qresource>
+</RCC>

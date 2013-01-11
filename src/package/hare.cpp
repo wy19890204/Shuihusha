@@ -1,10 +1,6 @@
 #include "hare.h"
-#include "skill.h"
-#include "carditem.h"
 #include "maneuvering.h"
 #include "plough.h"
-#include "clientplayer.h"
-#include "engine.h"
 
 SixiangCard::SixiangCard(){
 }
@@ -1094,7 +1090,7 @@ public:
         if(otherguan->getPhase() != Player::Draw)
             return false;
         ServerPlayer *head = room->getLord();
-        if(head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
+        if(head && head->hasLordSkill(objectName()) && otherguan->getKingdom() == "guan"
            && otherguan->askForSkillInvoke(objectName())){
             room->playSkillEffect(objectName(), head->faceUp() ? 2 : 1);
             room->setPlayerFlag(head, "NongQ");
