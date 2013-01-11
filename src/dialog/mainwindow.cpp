@@ -335,6 +335,10 @@ void MainWindow::enterRoom(){
 }
 
 void MainWindow::gotoStartScene(){
+    QList<Server *> servers = findChildren<Server *>();
+    if(!servers.isEmpty())
+        servers.first()->deleteLater();
+
     StartScene *start_scene = new StartScene;
 
     QList<QAction*> actions;
