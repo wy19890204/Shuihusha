@@ -212,6 +212,7 @@ QString TrustAI::askForKingdom(){
     case Player::Loyalist:
     case Player::Renegade:
         role = room->getLord()->getKingdom(); break;
+    default: break;
     }
 
     return role;
@@ -249,18 +250,6 @@ const Card *TrustAI::askForNullification(const TrickCard *trick, ServerPlayer *,
         foreach(const Card *card, cards){
             if(card->inherits("Nullification"))
                 return card;
-        }
-
-        if(self->hasSkill("zhengbing")){
-            foreach(const Card *card, cards){
-                if(card->isBlack()){
-                    Nullification *ncard = new Nullification(card->getSuit(), card->getNumber());
-                    ncard->addSubcard(card);
-                    ncard->setSkillName("zhengbing");
-
-                    return ncard;
-                }
-            }
         }
     }
 

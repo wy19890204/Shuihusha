@@ -1,5 +1,4 @@
 #include "joy.h"
-#include "engine.h"
 
 Shit::Shit(Suit suit, int number):BasicCard(suit, number){
     setObjectName("shit");
@@ -80,7 +79,6 @@ QString Stink::getEffectPath(bool is_male) const{
 }
 
 void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
     room->setEmotion(nextfriend, "bad");
     const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));

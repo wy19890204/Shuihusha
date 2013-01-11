@@ -15,7 +15,7 @@ const Card::Suit Card::AllSuits[4] = {
 };
 
 Card::Card(Suit suit, int number, bool target_fixed)
-    :target_fixed(target_fixed), once(false), mute(false), will_throw(true), owner_discarded(false)
+    :target_fixed(target_fixed), once(false), mute(false), will_throw(true), owner_discarded(true)
     , suit(suit), number(number), id(-1)
 {
     can_jilei = will_throw;
@@ -473,16 +473,19 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
 
     QVariant data = QVariant::fromValue(card_use);
     RoomThread *thread = room->getThread();
+
+    if(will_throw){
+        card_use.from->setFlags("mute_throw");
+        room->throwCard(this, owner_discarded ? card_use.from : NULL);
+        card_use.from->setFlags("-mute_throw");
+    }
+
     thread->trigger(CardUsed, room, player, data);
 
     thread->trigger(CardFinished, room, player, data);
 }
 
 void Card::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    if(will_throw){
-        room->throwCard(this, owner_discarded ? source : NULL);
-    }
-
     if(targets.length() == 1){
         room->cardEffect(this, source, targets.first());
     }else{

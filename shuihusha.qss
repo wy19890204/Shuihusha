@@ -113,19 +113,11 @@ QPushButton[game_control="true"]{
 }
 
 QPushButton#free-regulate{
-	background-image: url(image/system/button/free-regulate.png);
+        background-image: url(:system/button/free-regulate.png);
 }
 
 QPushButton#free-regulate:disabled{
-	background-image: url(image/system/button/free-regulate-disabled.png);
-}
-
-QPushButton#reverse-select{
-	background-image: url(image/system/button/reverse-select.png);
-}
-
-QPushButton#reverse-select:disabled{
-	background-image: url(image/system/button/reverse-select-disabled.png);
+        background-image: url(:system/button/free-regulate-disabled.png);
 }
 
 QPushButton#pause{
@@ -149,7 +141,7 @@ QPushButton#uniform{
 }
 
 #skill_bar_container QPushButton{
-	background-image: url(image/system/button/back.png);
+        background-image: url(:system/button/back.png);
 		border: 1px solid gray;
 		border-radius: 4px;
 	color: yellow;
@@ -157,7 +149,7 @@ QPushButton#uniform{
 	padding: 6px 12px 6px 12px;
 }
 #skill_bar_container QPushButton:disabled{
-	background-image: url(image/system/button/back_shade.png);
+        background-image: url(:system/button/back_shade.png);
 		border-radius: 4px;
 	color: white;
 	font: 12px;
@@ -174,25 +166,25 @@ QPushButton#uniform{
 	width: 0px;
 }
 #skill_bar_container QCheckBox:unchecked{
-	background-image: url(image/system/button/frequent_checkbox/unchecked.png);
+        background-image: url(:system/button/frequent_checkbox/unchecked.png);
 }
 #skill_bar_container QCheckBox:unchecked:hover{
-	background-image: url(image/system/button/frequent_checkbox/unchecked_hover.png);
+        background-image: url(:system/button/frequent_checkbox/unchecked_hover.png);
 }
 #skill_bar_container QCheckBox:unchecked:pressed{
-	background-image: url(image/system/button/frequent_checkbox/unchecked_press.png);
+        background-image: url(:system/button/frequent_checkbox/unchecked_press.png);
 }
 #skill_bar_container QCheckBox:checked{
-	background-image: url(image/system/button/frequent_checkbox/checked.png);
+        background-image: url(:system/button/frequent_checkbox/checked.png);
 }
 #skill_bar_container QCheckBox:checked:hover{
-	background-image: url(image/system/button/frequent_checkbox/checked_hover.png);
+        background-image: url(:system/button/frequent_checkbox/checked_hover.png);
 }
 #skill_bar_container QCheckBox:checked:pressed{
-	background-image: url(image/system/button/frequent_checkbox/checked_press.png);
+        background-image: url(:system/button/frequent_checkbox/checked_press.png);
 }
 #skill_bar_container QComboBox{
-	background-image: url(image/system/button/back2.png);
+        background-image: url(:system/button/back2.png);
 	border: 1px solid gray;
 	border-radius: 3px;
 	color: white;

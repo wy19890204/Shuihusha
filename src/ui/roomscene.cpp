@@ -128,7 +128,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         createControlButtons();
         QGraphicsItem *button_widget = NULL;
         if(ClientInstance->getReplayer() == NULL){
-            QString path = "image/system/button/irregular/background.png";
+            QString path = ":system/button/irregular/background.png";
             button_widget = new QGraphicsPixmapItem(QPixmap(path));
 
             ok_button->setParentItem(button_widget);
@@ -1004,7 +1004,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         }
 
         menu->popup(event->screenPos());
-    }else if(Config.value("EnableCheatMenu", false).toBool() && arrange_button){
+    }else if(Config.value("Cheat/EnableCheatMenu", false).toBool() && arrange_button){
         QGraphicsObject *obj = item->toGraphicsObject();
         if(obj && Sanguosha->getGeneral(obj->objectName())){
             to_change = qobject_cast<CardItem *>(obj);
@@ -1521,7 +1521,8 @@ void RoomScene::updateSkillButtons(){
         if(skill->isLordSkill()){
             if(Config.NoLordSkill || Config.EnableAnzhan)
                 continue;
-            if(ServerInfo.GameMode == "landlord" || ServerInfo.GameMode == "wheel_fight")
+            const Scenario *scenario = Sanguosha->getScenario(ServerInfo.GameMode);
+            if(scenario && scenario->unloadLordSkill())
                 continue;
             if(Self->getRole() != "lord" || ServerInfo.GameMode == "06_3v3")
                 continue;
@@ -1538,7 +1539,7 @@ void RoomScene::updateSkillButtons(){
 }
 
 void RoomScene::updateRoleComboBox(const QString &new_role){
-    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode;
+    QMap<QString, QString> normal_mode, threeV3_mode, hegemony_mode, landlord_mode, warlords_mode;
     normal_mode["lord"] = tr("Lord");
     normal_mode["loyalist"] = tr("Loyalist");
     normal_mode["rebel"] = tr("Rebel");
@@ -1555,11 +1556,16 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
     landlord_mode["lord"] = Sanguosha->translate("Landlord");
     landlord_mode["rebel"] = Sanguosha->translate("Cottier");
 
+    warlords_mode["lord"] = Sanguosha->translate("Castellan");
+    warlords_mode["loyalist"] = Sanguosha->translate("Adviser");
+    warlords_mode["rebel"] = Sanguosha->translate("Peasant");
+
     QMap<QString, QString> *map = NULL;
     switch(Sanguosha->getRoleIndex()){
     case 2: map = &threeV3_mode; break;
     case 3: map = &hegemony_mode; break;
     case 4: map = &landlord_mode; break;
+    case 5: map = &warlords_mode; break;
     default:
         map = &normal_mode;
     }
@@ -2423,6 +2429,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     if(delta <= 0){
         if(losthp){
             Sanguosha->playAudio("hplost");
+            setEmotion(who, "hplost");
             return;
         }
 
@@ -2450,15 +2457,14 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         Sanguosha->playAudio(damage_effect);
 
         if(photo){
-            //photo->setEmotion("damage");
-            setEmotion(who,"damage");
+            if(nature == DamageStruct::Fire)
+                setEmotion(who, "fire_damage");
+            else if(nature == DamageStruct::Thunder)
+                setEmotion(who, "thunder_damage");
+            else
+                setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
             photo->tremble();
         }
-
-        if(nature == DamageStruct::Fire)
-            doAnimation("fire", QStringList() << who);
-        else if(nature == DamageStruct::Thunder)
-            doAnimation("lightning", QStringList() << who);
 
     }else{
         QString type = "#Recover";
@@ -2514,20 +2520,25 @@ void RoomScene::onGameOver(){
 
 #ifdef AUDIO_SUPPORT
     QString win_effect;
+    bool mute = false;
     if(victory){
         win_effect = "win";
-        /*foreach(const Player *player, ClientInstance->getPlayers()){
-            if(player->property("win").toBool() && player->isCaoCao()){
+        foreach(const Player *player, ClientInstance->getPlayers()){
+            if(!player->isLord())
+                continue;
+            if(!player->property("win").toBool())
+                continue;
+            if(!player->getGeneral()->getWinword().startsWith("`")){
                 Audio::stop();
-
-                win_effect = "win-cc";
+                player->getGeneral()->winWord();
+                mute = true;
                 break;
             }
-        }*/
+        }
     }else
         win_effect = "lose";
-
-    Sanguosha->playAudio(win_effect);
+    if(!mute)
+        Sanguosha->playAudio(win_effect);
 #endif
 
     QDialog *dialog = new QDialog(main_window);
@@ -3275,7 +3286,7 @@ void RoomScene::onGameStart(){
     log_box->append(tr("<font color='white'>------- Game Start --------</font>"));
 
     // add free discard button
-    if(Config.value("FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
+    if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
         free_discard = dashboard->addButton("free-regulate", 10, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
@@ -3701,8 +3712,6 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["moonpie"] = &RoomScene::doMovingAnimation;
 
         map["analeptic"] = &RoomScene::doAppearingAnimation;
-        map["fire"] = &RoomScene::doAppearingAnimation;
-        map["lightning"] = &RoomScene::doAppearingAnimation;
 
         map["lightbox"] = &RoomScene::doLightboxAnimation;
         map["indicate"] = &RoomScene::doIndicate;

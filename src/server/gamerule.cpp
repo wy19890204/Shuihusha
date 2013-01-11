@@ -301,7 +301,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
         room->setTag("FirstRound", true);
         player->drawCards(4, false);
-        if(Config.value("GamblingCards", false).toBool()){
+        if(Config.value("Cheat/GamblingCards", false).toBool()){
             if(player->getState() == "online" && player->askForSkillInvoke("gambling")){
                 player->throwAllHandCards();
                 player->drawCards(4, false);
@@ -313,7 +313,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
     case TurnStart:{
         player = room->getCurrent();
-        if(Config.value("FreeShowRole", false).toBool()){
+        if(Config.value("Cheat/FreeShowRole", false).toBool()){
             LogMessage log;
             log.type = "#ShowRole";
             log.from = player;
@@ -778,7 +778,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             return true;
         }
 
-        if(player->getState() == "online" && Config.value("FreeUnDead", false).toBool()){
+        if(player->getState() == "online" && Config.value("Cheat/FreeUnDead", false).toBool()){
             if(player->getMaxHp() <= 0)
                 room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
             if(player->getHp() <= 0)

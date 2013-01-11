@@ -2,7 +2,6 @@
 #define SHEEPPACKAGE_H
 
 #include "package.h"
-#include "card.h"
 
 class NushaCard: public SkillCard{
     Q_OBJECT

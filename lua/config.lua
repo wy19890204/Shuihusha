@@ -39,6 +39,7 @@ config = {
 		"Landlord",
 		"WheelFight",
 		"Warlords",
+		"ArthurFerris",
 --		"Changban",
 --		"Contract",
 		"Impasse",
@@ -80,6 +81,7 @@ config = {
 		"中条老道的大头贴",
 		"超级塞克洛",
 		"TLK的EH",
+		"肉酱茧",
 	},
 
 	color_guan = "#547998",
@@ -158,7 +160,6 @@ ban_list = { -- 初始禁表设置
 		"zhaoji+andaoquan",
 		"fangjie+songjiang",
 		"liruilan+shijin",
---		"shenwuyong",
 --		"lujunyi+shenzhangqing",
 --		"luozhenren+yuehe",
 --		"husanniang+jiashi",

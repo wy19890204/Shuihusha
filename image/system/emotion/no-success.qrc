@@ -1,0 +1,23 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>no-success/0.png</file>
+		<file>no-success/1.png</file>
+		<file>no-success/2.png</file>
+		<file>no-success/3.png</file>
+		<file>no-success/4.png</file>
+		<file>no-success/5.png</file>
+		<file>no-success/6.png</file>
+		<file>no-success/7.png</file>
+		<file>no-success/8.png</file>
+		<file>no-success/9.png</file>
+		<file>no-success/10.png</file>
+		<file>no-success/11.png</file>
+		<file>no-success/12.png</file>
+		<file>no-success/13.png</file>
+		<file>no-success/14.png</file>
+		<file>no-success/15.png</file>
+		<file>no-success/16.png</file>
+		<file>no-success/17.png</file>
+		<file>no-success/18.png</file>
+	</qresource>
+</RCC>

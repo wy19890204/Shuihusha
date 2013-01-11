@@ -2,9 +2,6 @@
 #define CONTRACTSCENARIO_H
 
 #include "scenario.h"
-#include "roomthread.h"
-
-//class ServerPlayer;
 
 class ContractScenario : public Scenario{
     Q_OBJECT
@@ -15,8 +12,8 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
-    virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
+    virtual int lordGeneralCount() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
 
     static ServerPlayer *getComrade(const ServerPlayer *player);

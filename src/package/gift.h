@@ -3,6 +3,7 @@
 
 #include "package.h"
 #include "standard.h"
+#include "client.h"
 
 class GiftPackage : public CardPackage{
     Q_OBJECT

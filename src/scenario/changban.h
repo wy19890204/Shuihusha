@@ -2,10 +2,6 @@
 #define CHANGBANSCENARIO_H
 
 #include "scenario.h"
-#include "package.h"
-#include "card.h"
-#include "skill.h"
-#include "player.h"
 
 class ChangbanScenario: public Scenario{
     Q_OBJECT
@@ -18,7 +14,6 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
-    virtual void onTagSet(Room *room, const QString &key) const;
     virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection(Room *room) const;
 };

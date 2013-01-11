@@ -1,9 +1,5 @@
 #include "tiger.h"
-#include "skill.h"
 #include "plough.h"
-#include "client.h"
-#include "carditem.h"
-#include "engine.h"
 
 class Guzong:public TriggerSkill{
 public:
@@ -131,6 +127,10 @@ public:
 
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
         return pattern == "nulliplot";
+    }
+
+    virtual bool isEnabledAtNullification(const ServerPlayer *player, bool include_counterplot) const{
+        return player->getCardCount(true) > 1 && include_counterplot;
     }
 
     virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
@@ -262,17 +262,18 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
-        if(dying.damage && dying.damage->from && dying.damage->from->hasSkill("pinming")){
-            dying.damage->from->setFlags("PinmingDie");
-            if(!dying.damage->from->askForSkillInvoke("pinming", QVariant::fromValue(dying.damage)))
+        DamageStruct *damage = dying.damage;
+        if(damage && damage->from && damage->from->hasSkill("pinming") && damage->to->isAlive()){
+            damage->from->setFlags("PinmingDie");
+            if(!damage->from->askForSkillInvoke("pinming", QVariant::fromValue(damage)))
                 return false;
             room->playSkillEffect("pinming", qrand() % 2 + 4);
             room->getThread()->delay(500);
-            room->killPlayer(dying.damage->to, dying.damage);
+            room->killPlayer(damage->to, damage);
             room->getThread()->delay(1000);
-            room->killPlayer(dying.damage->from);
+            room->killPlayer(damage->from);
 
-            dying.damage->from->setFlags("-PinmingDie");
+            damage->from->setFlags("-PinmingDie");
             return true;
         }
         return false;
@@ -289,6 +290,7 @@ bool LiejiCard::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 void LiejiCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    card_use.from->setFlags("mute_throw");
     room->throwCard(this, card_use.from);
     Slash *slash = new Slash(Card::NoSuit, 0);
     slash->setSkillName(skill_name);

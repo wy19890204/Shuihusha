@@ -1,11 +1,5 @@
 #include "maneuvering.h"
 #include "plough.h"
-#include "client.h"
-#include "engine.h"
-#include "carditem.h"
-#include "general.h"
-#include "room.h"
-#include "settings.h"
 
 NatureSlash::NatureSlash(Suit suit, int number, DamageStruct::Nature nature)
     :Slash(suit, number)
@@ -58,7 +52,6 @@ bool Analeptic::isAvailable(const Player *player) const{
 }
 
 void Analeptic::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     if(targets.isEmpty())
         room->cardEffect(this, source, source);
     else
@@ -346,8 +339,6 @@ void IronChain::onUse(Room *room, const CardUseStruct &card_use) const{
 }
 
 void IronChain::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     source->playCardEffect("@tiesuo");
     TrickCard::use(room, source, targets);
 }

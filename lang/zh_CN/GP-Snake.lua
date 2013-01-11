@@ -62,16 +62,6 @@ return {
 	["$feizhen2"] = "针影闪动，战袍已新。",
 	["~houjian"] = "蚕丝终究是断了。",
 
-	["#yangchun"] = "白花蛇", -- kou 4hp (ybyt)
-	["yangchun"] = "杨春",
-	["cv:yangchun"] = "倔强的小红军【剪刀剧团】",
-	["coder:yangchun"] = "战栗贵公子",
-	["shexin"] = "蛇信",
-	[":shexin"] = "出牌阶段，你可以弃置一张非延时类锦囊或装备牌，展示任一其他角色的手牌并弃掉其中除基本牌外的所有牌。每回合限一次。",
-	["$shexin1"] = "此毒，无药可解。",
-	["$shexin2"] = "辣手摧花！",
-	["~yangchun"] = "居然……比我还狠……",
-
 	["#xueyong"] = "病大虫", -- kou 4hp (ybyt)
 	["xueyong"] = "薛永",
 	["cv:xueyong"] = "爪子",

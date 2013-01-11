@@ -54,7 +54,10 @@ void CardItem::changeGeneral(const QString &general_name){
 
     const General *general = Sanguosha->getGeneral(general_name);
     if(general){
-        changePixmap(general->getPixmapPath("card"));
+        if(!changePixmap(general->getPixmapPath("card")))
+            changePixmap(general->isMale() ?
+                         "image/generals/card/sujiang.jpg" :
+                         "image/generals/card/sujiangf.jpg");
         setToolTip(general->getSkillDescription());
     }else{
         changePixmap("image/system/unknown.png");

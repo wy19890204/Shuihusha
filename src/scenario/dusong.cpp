@@ -1,9 +1,6 @@
 #include "dusong.h"
-#include "skill.h"
-#include "engine.h"
 #include "standard.h"
 #include "carditem.h"
-#include "gamerule.h"
 
 static int Transfiguration = 1;
 
@@ -349,10 +346,6 @@ int DusongScenario::getPlayerCount() const{
 
 void DusongScenario::getRoles(char *roles) const{
     strcpy(roles, "ZFFF");
-}
-
-void DusongScenario::onTagSet(Room *room, const QString &key) const{
-    // dummy
 }
 
 bool DusongScenario::lordWelfare(const ServerPlayer *) const{

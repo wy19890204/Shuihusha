@@ -149,9 +149,9 @@ public:
     }
 };
 
-class DajiPass : public TriggerSkill{
+class TiemuPass : public TriggerSkill{
 public:
-    DajiPass():TriggerSkill("daji_p"){
+    TiemuPass():TriggerSkill("daji_p"){
         frequency = Frequent;
         events << Damage << Damaged;
     }
@@ -253,7 +253,6 @@ LuoyiPassCard::LuoyiPassCard(){
 }
 
 void LuoyiPassCard::use(Room *room, ServerPlayer *xuchu, const QList<ServerPlayer *> &) const{
-    room->throwCard(this);
     xuchu->setFlags("luoyi");
     room->playSkillEffect("luoyi_p");
 }
@@ -295,8 +294,6 @@ TuodaoPassCard::TuodaoPassCard(){
 }
 
 void TuodaoPassCard::use(Room *room, ServerPlayer *guanyu, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
-
     ServerPlayer *from = guanyu;
     ServerPlayer *to = targets.at(0);
 
@@ -897,7 +894,7 @@ GubenPackage::GubenPackage()
     General *wujiao = new General(this, "wujiao", "kou", 3);
     wujiao->addSkill(new HuangtianPass);
     wujiao->addSkill(new LeijiPass);
-    wujiao->addSkill(new DajiPass);
+    wujiao->addSkill(new TiemuPass);
 
     // boss
     General *yinchun = new General(this, "yinchun", "kou");

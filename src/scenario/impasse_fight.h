@@ -2,7 +2,6 @@
 #define IMPASSEFIGHTSCENARIO_H
 
 #include "scenario.h"
-#include "maneuvering.h"
 
 class ImpasseScenario : public Scenario{
     Q_OBJECT
@@ -14,7 +13,7 @@ public:
     virtual void assign(QStringList &generals, QStringList &roles) const;
     virtual int getPlayerCount() const;
     virtual void getRoles(char *roles) const;
-    virtual void onTagSet(Room *room, const QString &key) const;
+    virtual bool unloadLordSkill() const;
 };
 
 #endif // IMPASSEFIGHTSCENARIO_H

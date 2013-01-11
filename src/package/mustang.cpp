@@ -1,7 +1,4 @@
 #include "mustang.h"
-#include "general.h"
-#include "skill.h"
-#include "standard.h"
 #include "client.h"
 #include "carditem.h"
 #include "engine.h"
@@ -147,14 +144,8 @@ public:
                     if(!cards.contains(card_id))
                         continue;
                     cards.removeOne(card_id);
-                    room->throwCard(card_id);
+                    room->throwCard(card_id, tianqi);
                     room->takeAG(NULL, card_id);
-
-                    LogMessage log;
-                    log.from = tianqi;
-                    log.type = "$DiscardCard";
-                    log.card_str = QString::number(card_id);
-                    room->sendLog(log);
                 }
                 for(int i = cards.length() - 1; i >= 0; i--){
                     room->throwCard(cards.at(i));
@@ -419,7 +410,6 @@ bool MaiyiCard::targetsFeasible(const QList<const Player *> &targets, const Play
 }
 
 void MaiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this, source);
     room->playSkillEffect(objectName());
     if(targets.isEmpty())
         room->setPlayerFlag(source, "maiyi");
@@ -511,7 +501,8 @@ bool HunjiuCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 }
 
 void HunjiuCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    room->throwCard(this);
+    card_use.from->setFlags("mute_throw");
+    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();
@@ -617,7 +608,6 @@ ZishiCard::ZishiCard(){
 
 void ZishiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     int num = this->getSubcards().length();
-    room->throwCard(this, source);
     source->tag["ZiShi"] = num;
 }
 

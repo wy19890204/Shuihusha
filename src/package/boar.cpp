@@ -430,7 +430,6 @@ bool DuanbiCard::targetFilter(const QList<const Player *> &targets, const Player
 }
 
 void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    room->throwCard(this);
     ServerPlayer *target = targets.first();
     room->broadcastInvoke("animate", "lightbox:$duanbi");
     source->loseMark("@arm");
@@ -707,7 +706,8 @@ bool HuafoCard::targetsFeasible(const QList<const Player *> &targets, const Play
 }
 
 void HuafoCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    room->throwCard(this);
+    card_use.from->setFlags("mute_throw");
+    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();

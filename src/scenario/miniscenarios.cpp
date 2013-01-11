@@ -1,5 +1,4 @@
 #include "miniscenarios.h"
-
 #include <QMessageBox>
 #include <QFile>
 
@@ -336,7 +335,9 @@ MiniScene::MiniScene(const QString &name)
     rule = new MiniSceneRule(this);
 
     int stage = name.right(2).toInt();
-    bool show = qgetenv("USERNAME") == "Tenkei";
+    QStringList usernames;
+    usernames << "Tenkei" << "1";
+    bool show = usernames.contains(qgetenv("USERNAME"));
     addGenerals(stage, !show);
 }
 
@@ -357,9 +358,6 @@ QString MiniScene::setBackgroundMusic() const{
 
 bool MiniScene::generalSelection(Room *) const{
     return false;
-}
-
-void MiniScene::onTagSet(Room *, const QString &) const{
 }
 
 #define ADD_CUSTOM_SCENARIO(name) static ScenarioAdder MiniScene##name##ScenarioAdder(QString("MiniScene_") + #name, new LoadedScenario(#name));

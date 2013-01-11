@@ -32,6 +32,7 @@ return {
 	["female"] = "女性",
 
 	["Pairs"] = "双将",
+	["Cards"] = "卡牌",
 	["spade"] = "黑桃",
 	["club"] = "梅花",
 	["heart"] = "红桃",

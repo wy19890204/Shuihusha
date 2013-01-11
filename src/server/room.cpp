@@ -393,7 +393,7 @@ void Room::gameOver(const QString &winner){
         bool only_lord = Config.value("Contest/OnlySaveLordRecord", true).toBool();
         QString start_time = tag.value("StartTime").toDateTime().toString(ContestDB::TimeFormat);
 
-        if(only_lord)
+        if(only_lord && getLord())
             getLord()->saveRecord(QString("records/%1.txt").arg(start_time));
         else{
             foreach(ServerPlayer *player, m_players){
@@ -1019,9 +1019,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         if(card->getTypeId() != Card::Skill){
             const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
             if(card_pattern == NULL || card_pattern->willThrow())
-                throwCard(card);
+                throwCard(card, trigger_event == CardDiscarded ? player: NULL);
         }else if(card->willThrow())
-            throwCard(card);
+            throwCard(card, trigger_event == CardDiscarded ? player: NULL);
 
         if(card->getSkillName() == "spear")
             player->playCardEffect("Espear", "weapon");
@@ -1647,7 +1647,7 @@ void Room::prepareForStart(){
         for(i=0; i<2; i++){
             broadcastProperty(m_players.at(i), "role");
         }
-    }else if(Config.value("FreeAssign", false).toBool()){
+    }else if(Config.value("Cheat/FreeAssign", false).toBool()){
         ServerPlayer *owner = getOwner();
         if(owner && owner->isOnline()){
             bool success = doRequest(owner, S_COMMAND_CHOOSE_ROLE, Json::Value::null);
@@ -1787,7 +1787,7 @@ void Room::trustCommand(ServerPlayer *player, const QString &){
 
 bool Room::processRequestCheat(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket *packet)
 {
-    if (!Config.value("EnableCheatMenu", false).toBool()) return false;
+    if (!Config.value("Cheat/EnableCheatMenu", false).toBool()) return false;
     Json::Value arg = packet->getMessageBody();
     if (!arg.isArray() || !arg[0].isInt()) return false;
     //@todo: synchronize this
@@ -2172,8 +2172,13 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomLords();
         if(Config.EnableAnzhan)
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 3).toInt());
-        if(mode == "wheel_fight")
-            lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
+
+        if(scenario){
+            int sc = scenario->lordGeneralCount();
+            if(sc > 0)
+                lord_list = Sanguosha->getRandomGenerals(sc);
+        }
+
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
 
@@ -2961,7 +2966,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
         return;
 
     LogMessage log;
-    if(who) {
+    if(who){
         if(thrower){
             log.type = "$DiscardCardByOther"; //thrower throw who's card
             log.from = thrower;
@@ -2972,9 +2977,9 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
             log.from = who;
         }
     }
-    else{
+    else
         log.type = "$EnterDiscardPile";
-    }
+
     QList<int> to_discard;
     if(card->isVirtualCard())
         to_discard.append(card->getSubcards());
@@ -2988,7 +2993,9 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
         else
             log.card_str += "+" + QString::number(card_id);
     }
-    if(who)
+    if(who && who->hasFlag("mute_throw"))
+        who->hasFlag("-mute_throw");
+    else
         sendLog(log);
 
     moveCardTo(card, NULL, Player::DiscardedPile);
@@ -2996,7 +3003,7 @@ void Room::throwCard(const Card *card, ServerPlayer *who, ServerPlayer *thrower)
     if(who){
         CardStar card_ptr = card;
         QVariant data = QVariant::fromValue(card_ptr);
-        thread->trigger(CardDiscarded, this, who, data); //@todo?
+        thread->trigger(CardDiscarded, this, who, data);
     }
 }
 
@@ -3327,7 +3334,7 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
         else
         {
             //@todo: change FreeChoose to EnableCheat
-            if (Config.value("EnableCheatMenu", false).toBool()) {
+            if (Config.value("Cheat/EnableCheatMenu", false).toBool()) {
                 if(makeCheat(player)){
                     if(player->isAlive())
                         return activate(player, card_use);
@@ -3576,7 +3583,7 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
 
     QString result = askForChoice(shenlvmeng, "gongxin", "discard+put");
     if(result == "discard")
-        throwCard(card_id, target);
+        throwCard(card_id, target, shenlvmeng);
     else
         moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DrawPile, true);
 }
@@ -3591,6 +3598,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     broadcastInvoke("animate", "lightbox:$" + skill_name + ":" + broad);
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
+    setEmotion(player, "awake");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)

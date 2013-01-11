@@ -195,19 +195,54 @@ void General::lastWord() const{
     //    filename = QString("audio/death/%1.ogg").arg(objectName());
     if(!QFile::exists(filename))
         filename = QString("extensions/audio/death/%1.ogg").arg(objectName());
-    //QFile file(filename);
-    /*if(!file.open(QIODevice::ReadOnly)){
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)){
         QStringList origin_generals = objectName().split("_");
         if(origin_generals.length()>1)
             filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
-    }*/ //sp
-    /*if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
+    } //sp
+    if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
         QString origin_general = objectName();
         origin_general.chop(1);
         if(Sanguosha->getGeneral(origin_general))
             filename = QString("audio/death/%1.ogg").arg(origin_general);
-    }*/ //sex changed
+    } //sex changed
     Sanguosha->playEffect(filename);
+}
+
+void General::winWord() const{
+    QString filename = QString("audio/win/%1.dat").arg(objectName());
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)){
+        QStringList origin_generals = objectName().split("_");
+        if(origin_generals.length()>1)
+            filename = QString("audio/win/%1.dat").arg(origin_generals.at(1));
+    }
+    if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
+        QString origin_general = objectName();
+        origin_general.chop(1);
+        if(Sanguosha->getGeneral(origin_general))
+            filename = QString("audio/win/%1.dat").arg(origin_general);
+    }
+    Sanguosha->playEffect(filename);
+}
+
+QString General::getWinword() const{
+    QString general_name = objectName();
+    QString win_word = Sanguosha->translate("`" + general_name);
+    if(win_word.startsWith("`")){
+        QStringList origin_generals = general_name.split("_");
+        if(origin_generals.length()>1)
+            win_word = Sanguosha->translate(("`") +  origin_generals.at(1));
+    }
+
+    if(win_word.startsWith("`") && general_name.endsWith("f")){
+        QString origin_general = general_name;
+        origin_general.chop(1);
+        if(Sanguosha->getGeneral(origin_general))
+            win_word = Sanguosha->translate(("`") + origin_general);
+    }
+    return win_word;
 }
 
 QSize General::BigIconSize(94, 96);

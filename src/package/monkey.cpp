@@ -401,25 +401,6 @@ public:
     }
 };
 
-class Shuilao: public OneCardViewAsSkill{
-public:
-    Shuilao():OneCardViewAsSkill("shuilao"){
-
-    }
-
-    virtual bool viewFilter(const CardItem *to_select) const{
-        return to_select->getCard()->isNDTrick();
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        const Card *first = card_item->getCard();
-        Indulgence *indulgence = new Indulgence(first->getSuit(), first->getNumber());
-        indulgence->addSubcard(first->getId());
-        indulgence->setSkillName(objectName());
-        return indulgence;
-    }
-};
-
 JingtianCard::JingtianCard(){
 }
 
@@ -734,7 +715,6 @@ MonkeyPackage::MonkeyPackage()
     related_skills.insertMulti("fanzhan", "#fanzhan-clear");
 
     General *tongmeng = new General(this, "tongmeng", "min", 3);
-    tongmeng->addSkill(new Shuilao);
     tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *litianrun = new General(this, "litianrun", "jiang");
