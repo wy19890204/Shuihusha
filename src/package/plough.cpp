@@ -38,6 +38,20 @@ void Ecstasy::onEffect(const CardEffectStruct &effect) const{
     room->setPlayerFlag(effect.to, "ecst");
 }
 
+class EcstasySlash: public SlashSkill{
+public:
+    EcstasySlash():SlashSkill("#ecstasy-slash"){
+        frequency = NotFrequent;
+    }
+
+    virtual int getSlashResidue(const Player *t) const{
+        if(t->hasFlag("ecst"))
+            return -998;
+        else
+            return ClientSkill::getSlashResidue(t);
+    }
+};
+
 Drivolt::Drivolt(Suit suit, int number)
     :SingleTargetTrick(suit, number, true) {
     setObjectName("drivolt");
@@ -245,6 +259,19 @@ MeteorSword::MeteorSword(Suit suit, int number)
     skill = new MeteorSwordSkill;
 }
 
+class SunBowSkill: public SlashSkill{
+public:
+    SunBowSkill():SlashSkill("sun_bow"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+        if(from->hasWeapon("halberd") && slash->isRed() && slash->objectName() == "slash")
+            return 1;
+        else
+            return 0;
+    }
+};
+
 SunBow::SunBow(Suit suit, int number)
     :Weapon(suit, number, 5)
 {
@@ -359,6 +386,7 @@ PloughPackage::PloughPackage()
             << new Peach(Card::Heart, 11)
             << new Counterplot(Card::Heart, 13);
 
+    skills << new EcstasySlash << new SunBowSkill;
     DefensiveHorse *jade = new DefensiveHorse(Card::Heart, 12);
     jade->setObjectName("jade");
     OffensiveHorse *brown = new OffensiveHorse(Card::Club, 8);

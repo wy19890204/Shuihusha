@@ -345,12 +345,16 @@ int ClientSkill::getCorrect(const Player *, const Player *) const{
     return 0;
 }
 
-int ClientSkill::getAtkrg(const Player *) const{
+int ClientSkill::getSlashResidue(const Player *target) const{
+    return qMax(1 - target->getSlashCount(), 0);
+}
+
+int ClientSkill::getSlashRange(const Player *, const Player *, const Card *) const{
     return 0;
 }
 
-int ClientSkill::getSlashResidue(const Player *target) const{
-    return qMax(1 - target->getSlashCount(), 0);
+int ClientSkill::getSlashExtraGoals(const Player *, const Player *, const Card *) const{
+    return 0;
 }
 
 bool ClientSkill::isProhibited(const Player *, const Player *, const Card *) const{
@@ -369,6 +373,10 @@ MaxCardsSkill::MaxCardsSkill(const QString &name)
     :ClientSkill(name){
 }
 */
+SlashSkill::SlashSkill(const QString &name)
+    :ClientSkill(name){
+}
+
 WeaponSkill::WeaponSkill(const QString &name)
     :TriggerSkill(name)
 {

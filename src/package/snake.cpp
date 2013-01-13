@@ -71,19 +71,9 @@ public:
     }
 };
 
-class Tengfei: public ClientSkill{
+class Tengfei:public PhaseChangeSkill{
 public:
-    Tengfei():ClientSkill("tengfei"){
-    }
-
-    virtual int getAtkrg(const Player *op) const{
-        return op->getHp();
-    }
-};
-
-class TengfeiMain:public PhaseChangeSkill{
-public:
-    TengfeiMain():PhaseChangeSkill("#tengfei_main"){
+    Tengfei():PhaseChangeSkill("tengfei"){
         frequency = Compulsory;
     }
 
@@ -110,6 +100,19 @@ public:
     }
 };
 
+class TengfeiSlash: public SlashSkill{
+public:
+    TengfeiSlash():SlashSkill("#tengfei-slash"){
+    }
+
+    virtual int getSlashRange(const Player *op, const Player *, const Card *) const{
+        if(op->hasSkill("tengfei"))
+            return op->getHp();
+        else
+            return 0;
+    }
+};
+
 class Paohong: public FilterSkill{
 public:
     Paohong():FilterSkill("paohong"){
@@ -126,6 +129,21 @@ public:
         bs->setSkillName(objectName());
         bs->addSubcard(card_item->getCard());
         return bs;
+    }
+};
+
+class PaohongSlash: public SlashSkill{
+public:
+    PaohongSlash():SlashSkill("#paohong-slash"){
+    }
+
+    virtual int getSlashRange(const Player *from, const Player *, const Card *card) const{
+        if(from->hasSkill("paohong") && card){
+            const Slash *slash = qobject_cast<const Slash*>(card);
+            if(slash->getNature() == DamageStruct::Thunder)
+                return 998;
+        }
+        return 0;
     }
 };
 
@@ -584,11 +602,11 @@ SnakePackage::SnakePackage()
     oupeng->addSkill(new MarkAssignSkill("@wings", 1));
     related_skills.insertMulti("zhanchi", "#@wings-1");
     oupeng->addRelateSkill("tengfei");
-    skills << new Tengfei << new TengfeiMain;
-    related_skills.insertMulti("tengfei", "#tengfei_main");
+    skills << new Tengfei << new TengfeiSlash;
 
     General *lingzhen = new General(this, "lingzhen", "jiang");
     lingzhen->addSkill(new Paohong);
+    skills << new PaohongSlash;
 
     General *baoxu = new General(this, "baoxu", "kou");
     baoxu->addSkill(new Sinue);

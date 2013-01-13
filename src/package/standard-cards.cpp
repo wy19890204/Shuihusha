@@ -16,10 +16,7 @@ void Slash::setNature(DamageStruct::Nature nature){
 }
 
 bool Slash::IsAvailable(const Player *player){
-    if(player->hasFlag("ecst") || player->hasFlag("Guibing"))
-        return false;
-
-    int slash_residue = Sanguosha->correctClient("slashresidue", player);
+    int slash_residue = Sanguosha->correctClient("residue", player);
     return slash_residue > 0;
 }
 
@@ -68,46 +65,11 @@ bool Slash::targetsFeasible(const QList<const Player *> &targets, const Player *
 }
 
 bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    int slash_targets = 1;
-    if(Self->hasWeapon("halberd") && Self->isLastHandCard(this)){
-        slash_targets = 3;
-    }
-
-    bool distance_limit = true;
-
-    if(Self->hasSkill("shuangzhan")){
-        int x = 0;
-        foreach(const Player *tmp, Self->getSiblings())
-            if(tmp->isAlive() && Self->inMyAttackRange(tmp))
-                x++;
-        if(x > 2)
-            slash_targets ++;
-    }
-
-    if(Self->hasSkill("qinlong") && !Self->hasEquip())
-        slash_targets ++;
-
-    if(Self->hasWeapon("sun_bow") && isRed() && objectName() == "slash"){
-        slash_targets ++;
-    }
-
-    if(getSkillName() == "douzhan")
-        slash_targets ++;
-
-    if(Self->hasSkill("bizhai"))
-        slash_targets ++;
+    int slash_targets = 1 + Sanguosha->correctClient("extragoals", Self, to_select, this);
+    bool distance_limit = Sanguosha->correctClient("attackrange", Self, to_select, this) < 50;
 
     if(targets.length() >= slash_targets)
         return false;
-
-    if(getSkillName() == "houfa"){
-        distance_limit = false;
-    }
-
-    if(Self->hasSkill("paohong") && this->getNature() == DamageStruct::Thunder){
-        distance_limit = false;
-    }
-
     return Self->canSlash(to_select, this, distance_limit);
 }
 
@@ -1033,9 +995,9 @@ RenwangShield::RenwangShield(Suit suit, int number)
     skill = new RenwangShieldSkill;
 }
 
-class CrossbowSkill: public ClientSkill{
+class CrossbowSkill: public SlashSkill{
 public:
-    CrossbowSkill():ClientSkill("crossbow"){
+    CrossbowSkill():SlashSkill("crossbow"){
     }
 
     virtual int getSlashResidue(const Player *target) const{
@@ -1043,6 +1005,19 @@ public:
             return 998;
         else
             return ClientSkill::getSlashResidue(target);
+    }
+};
+
+class HalberdSkill: public SlashSkill{
+public:
+    HalberdSkill():SlashSkill("halberd"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+        if(from->hasWeapon("halberd") && from->isLastHandCard(slash))
+            return 2;
+        else
+            return 0;
     }
 };
 
@@ -1143,6 +1118,7 @@ StandardCardPackage::StandardCardPackage()
 
     skills << EightDiagramSkill::GetInstance();
     skills << new CrossbowSkill;
+    skills << new HalberdSkill;
 
     {
         QList<Card *> horses;

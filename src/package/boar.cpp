@@ -5,9 +5,9 @@
 #include "settings.h"
 #include "maneuvering.h"
 
-class Qinlong: public ClientSkill{
+class Qinlong: public SlashSkill{
 public:
-    Qinlong():ClientSkill("qinlong"){
+    Qinlong():SlashSkill("qinlong"){
         frequency = NotFrequent;
     }
 
@@ -16,6 +16,13 @@ public:
             return 998;
         else
             return ClientSkill::getSlashResidue(jiao);
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+        if(from->hasSkill(objectName()) && !from->hasEquip())
+            return 1;
+        else
+            return 0;
     }
 };
 

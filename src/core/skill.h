@@ -198,8 +198,11 @@ public:
 
     virtual int getExtra(const Player *target) const;
     virtual int getCorrect(const Player *from, const Player *to) const;
-    virtual int getAtkrg(const Player *target) const;
+
+    virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
     virtual int getSlashResidue(const Player *target) const;
+
     virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 /*
@@ -224,6 +227,13 @@ public:
     MaxCardsSkill(const QString &name);
 };
 */
+class SlashSkill: public ClientSkill{
+    Q_OBJECT
+
+public:
+    SlashSkill(const QString &name);
+};
+
 class WeaponSkill: public TriggerSkill{
     Q_OBJECT
 

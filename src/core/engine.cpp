@@ -807,7 +807,7 @@ const ClientSkill *Engine::isProhibited(const Player *from, const Player *to, co
     return NULL;
 }
 
-int Engine::correctClient(const QString &type, const Player *from, const Player *to) const{
+int Engine::correctClient(const QString &type, const Player *from, const Player *to, const Card *slash) const{
     int x = 0;
 
     foreach(const ClientSkill *skill, client_skills){
@@ -820,15 +820,21 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
         }
         else if(type == "distance")
             x += skill->getCorrect(from, to);
-        else if(type == "slashresidue")
-            x += skill->getSlashResidue(from);
+        else if(type == "residue"){
+            int y = skill->getSlashResidue(from);
+            if(y < -200 || y > 200) // use slash never or endless
+                return y;
+            x += y;
+        }
         else if(type == "attackrange"){
-            int y = skill->getAtkrg(from);
+            int y = skill->getSlashRange(from, to, slash);
             if(y < 0) // fixed attack range
                 return y;
-            if(y > x)
+            if(y > x) // use longest range
                 x = y;
         }
+        else if(type == "extragoals")
+            x += skill->getSlashExtraGoals(from, to, slash);
     }
 
     return x;

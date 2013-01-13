@@ -206,6 +206,19 @@ public:
     }
 };
 
+class Bizhai: public SlashSkill{
+public:
+    Bizhai():SlashSkill("bizhai"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+        if(from->hasSkill("bizhai"))
+            return 1;
+        else
+            return SlashSkill::getSlashExtraGoals(from, to, slash);
+    }
+};
+
 class Boxue: public PhaseChangeSkill{
 public:
     Boxue():PhaseChangeSkill("boxue"){
@@ -264,7 +277,7 @@ LandlordScenario::LandlordScenario()
     :Scenario("landlord")
 {
     rule = new LandlordScenarioRule(this);
-    skills << new Lesuo << new Skill("bizhai") << new Boxue << new Fangdai;
+    skills << new Lesuo << new Bizhai << new Boxue << new Fangdai;
     addMetaObject<LesuoCard>();
     addMetaObject<FangdaiCard>();
 }

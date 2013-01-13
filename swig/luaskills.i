@@ -36,8 +36,11 @@ public:
 	ClientSkill(const QString &name);
 	virtual int getExtra(const Player *target) const;
 	virtual int getCorrect(const Player *from, const Player *to) const;
-	virtual int getAtkrg(const Player *target) const;
+
+	virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+	virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
 	virtual int getSlashResidue(const Player *target) const;
+
 	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };
 
@@ -45,6 +48,15 @@ class DistanceSkill: public ClientSkill{
 public:
 	DistanceSkill(const QString &name);
 	virtual int getCorrect(const Player *from, const Player *to) const;
+};
+
+class SlashSkill: public ClientSkill{
+public:
+	SlashSkill(const QString &name);
+
+	virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+	virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+	virtual int getSlashResidue(const Player *target) const;
 };
 
 class LuaProhibitSkill: public ClientSkill{

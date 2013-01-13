@@ -751,7 +751,7 @@ public:
         ServerPlayer *huarong = effect.from;
         Room *room = huarong->getRoom();
 
-        if(huarong->distanceTo(effect.to) == huarong->getAttackRange()){
+        if(huarong->distanceTo(effect.to) == huarong->getAttackRange(effect.to, effect.slash)){
             room->playSkillEffect(objectName());
             LogMessage log;
             log.type = "#Jingzhun";
@@ -821,13 +821,16 @@ public:
     }
 };
 
-class KaixianRange: public ClientSkill{
+class KaixianSlash: public SlashSkill{
 public:
-    KaixianRange():ClientSkill("#kaixian_range"){
+    KaixianSlash():SlashSkill("#kaixian-slash"){
     }
 
-    virtual int getAtkrg(const Player *hbry) const{
-        return - hbry->getMark("kaixian"); // negative number means fixed
+    virtual int getSlashRange(const Player *hbry, const Player *, const Card *) const{
+        if(hbry->hasSkill("kaixian"))
+            return - hbry->getMark("kaixian"); // negative number means fixed
+        else
+            return 0;
     }
 };
 
@@ -2705,7 +2708,7 @@ StandardPackage::StandardPackage()
     General *huarong = new General(this, "huarong", "guan");
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
-    skills << new KaixianRange;
+    skills << new KaixianSlash;
     patterns.insert(".kaixian!", new KaixianPattern);
 
     General *chaijin = new General(this, "chaijin", "guan", 3);

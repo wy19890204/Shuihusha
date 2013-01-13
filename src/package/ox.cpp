@@ -88,6 +88,20 @@ public:
     }
 };
 
+class GuibingSlash: public SlashSkill{
+public:
+    GuibingSlash():SlashSkill("#guibing-slash"){
+        frequency = NotFrequent;
+    }
+
+    virtual int getSlashResidue(const Player *t) const{
+        if(t->hasSkill("guibing") && t->hasFlag("Guibing"))
+            return -998;
+        else
+            return ClientSkill::getSlashResidue(t);
+    }
+};
+
 HeiwuCard::HeiwuCard(){
     target_fixed = true;
 }

@@ -798,6 +798,19 @@ public:
     }
 };
 
+class HoufaSlash2: public SlashSkill{
+public:
+    HoufaSlash2():SlashSkill("#houfa-2slash"){
+    }
+
+    virtual int getSlashRange(const Player *from, const Player *, const Card *card) const{
+        if(from->hasSkill("houfa") && card && card->getSkillName() == "houfa")
+            return 998;
+        else
+            return 0;
+    }
+};
+
 class Linse: public ClientSkill{
 public:
     Linse():ClientSkill("linse"){
@@ -880,6 +893,7 @@ TigerPackage::TigerPackage()
     wangying->addSkill(new Houfa);
     wangying->addSkill(new HoufaSlash);
     related_skills.insertMulti("houfa", "#houfa-slash");
+    skills << new HoufaSlash2;
 
     General *lizhong = new General(this, "lizhong", "kou", 4);
     lizhong->addSkill(new CutHpSkill(1));

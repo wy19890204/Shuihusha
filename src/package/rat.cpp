@@ -70,7 +70,6 @@ class Shuangzhan: public TriggerSkill{
 public:
     Shuangzhan():TriggerSkill("shuangzhan"){
         events << SlashProceed;
-        //frequency = Compulsory;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *dongping, QVariant &data) const{
@@ -94,6 +93,24 @@ public:
             return true;
         }
         return false;
+    }
+};
+
+class ShuangzhanSlash: public SlashSkill{
+public:
+    ShuangzhanSlash():SlashSkill("#shuangzhan-slash"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *, const Card *) const{
+        if(from->hasSkill("shuangzhan")){
+            int x = 0;
+            foreach(const Player *tmp, from->getSiblings())
+                if(tmp->isAlive() && from->inMyAttackRange(tmp))
+                    x++;
+            if(x > 2)
+                return 1;
+        }
+        return 0;
     }
 };
 
@@ -180,12 +197,12 @@ public:
     }
 };
 
-class YinyuRange: public ClientSkill{
+class YinyuSlash: public SlashSkill{
 public:
-    YinyuRange():ClientSkill("#yinyu_range"){
+    YinyuSlash(): SlashSkill("#yinyu-slash"){
     }
 
-    virtual int getAtkrg(const Player *from) const{
+    virtual int getSlashRange(const Player *from, const Player *, const Card *) const{
         if(from->hasMark("@stoneh"))
             return 1234;
         else
@@ -864,10 +881,11 @@ RatPackage::RatPackage()
 
     General *dongping = new General(this, "dongping", "guan");
     dongping->addSkill(new Shuangzhan);
+    skills << new ShuangzhanSlash;
 
     General *zhangqing = new General(this, "zhangqing", "guan");
     zhangqing->addSkill(new Yinyu);
-    skills << new YinyuRange;
+    skills << new YinyuSlash;
 
     General *ruanxiaoer = new General(this, "ruanxiaoer", "min");
     ruanxiaoer->addSkill(new Fuji);

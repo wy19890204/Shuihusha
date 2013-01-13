@@ -43,6 +43,19 @@ public:
     }
 };
 
+class DouzhanSlash: public SlashSkill{
+public:
+    DouzhanSlash():SlashSkill("#douzhan-slash"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+        if(from->hasSkill("douzhan") && slash->getSkillName() == "douzhan")
+            return 1;
+        else
+            return SlashSkill::getSlashExtraGoals(from, to, slash);
+    }
+};
+
 class Guzhu: public SlashBuffSkill{
 public:
     Guzhu():SlashBuffSkill("guzhu"){
@@ -399,6 +412,7 @@ DusongScenario::DusongScenario()
     General *zhang1dong = new General(this, "zhang1dong", "god", 8, true, true);
     zhang1dong->addSkill("huqi");
     zhang1dong->addSkill(new Douzhan);
+    skills << new DouzhanSlash;
 
     General *zhang2dong = new General(this, "zhang2dong", "god", 4, true, true);
     zhang2dong->addSkill("huqi");

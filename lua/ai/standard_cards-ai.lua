@@ -99,33 +99,8 @@ end
 function SmartAI:useCardSlash(card, use)
 	if not self:slashIsAvailable() then return end
 	local no_distance = self.slash_distance_limit
-	self.slash_targets = 1
-	if card:getSkillName() == "paohong" and card:isBlack() then no_distance = true end
-	if self.player:hasSkill("yinyu") and self.player:getMark("@stoneh") > 0 then no_distance = true end
-	if self.player:hasWeapon("sun_bow") and card:isRed() and card:objectName() == "slash" then
-		self.slash_targets = self.slash_targets + 1
-	end
-
-	if self.player:hasSkill("shuangzhan") then
-		local list = self.player:getPlayersInMyAttackRange()
-		list = sgs.QList2Table(list)
-		if #list > 2 then
-			self.slash_targets = self.slash_targets + 1
-		end
-	end
-	if self.player:hasSkill("qinlong") and not self.player:hasEquip() then
-		self.slash_targets = self.slash_targets + 1
-	end
-	if self.player:hasSkill("bizhai") then
-		self.slash_targets = self.slash_targets + 1
-	end
-	if self.player:hasSkill("guibing") then return end
-
-	if (self.player:getHandcardNum() == 1
-		and self.player:getHandcards():first():inherits("Slash")
-		and self.player:hasWeapon("halberd")) then
-		self.slash_targets = self.slash_targets + 2
-	end
+	if self.player:getAttackRange(nil, card) > 200 then no_distance = true end
+	self.slash_targets = self.player:getSlashTarget(nil, card)
 
 	self.predictedRange = self.player:getAttackRange()
 	if self.player:hasSkill("jishi") and self:isWeak() and self:getOverflow() == 0 then return end
