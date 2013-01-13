@@ -80,6 +80,30 @@ public:
     LuaFunction correct_func;
 };
 
+class LuaMaxCardsSkill: public ClientSkill{
+    Q_OBJECT
+
+public:
+    LuaMaxCardsSkill(const char *name);
+
+    virtual int getExtra(const Player *target) const;
+
+    LuaFunction extra_func;
+};
+
+class LuaSlashSkill: public ClientSkill{
+    Q_OBJECT
+
+public:
+    LuaSlashSkill(const char *name);
+
+    virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    virtual int getSlashResidue(const Player *target) const;
+
+    LuaFunction s_range_func, s_extra_func, s_residue_func;
+};
+
 class LuaSkillCard: public SkillCard{
     Q_OBJECT
 

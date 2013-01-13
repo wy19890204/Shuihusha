@@ -1068,7 +1068,7 @@ public:
     Lizheng(): DistanceSkill("lizheng"){
     }
 
-    virtual int getCorrect(const Player *from, const Player *to) const{
+    virtual int getCorrect(const Player *, const Player *to) const{
         if(to->hasSkill(objectName()) && !to->faceUp())
             return +1;
         else

@@ -236,7 +236,7 @@ public:
     }
 
     virtual int getExtra(const Player *target) const{
-        if(target->hasSkill(objectName()))
+        if(target->hasSkill("shensuan"))
             return 2;
         else
             return 0;
@@ -699,9 +699,8 @@ MonkeyPackage::MonkeyPackage()
 
     General *shenjiangjing = new General(this, "shenjiangjing", "god", 3);
     shenjiangjing->addSkill(new Shensuan);
-    shenjiangjing->addSkill(new ShensuanMC);
-    related_skills.insertMulti("shensuan", "#shensuan-mc");
     shenjiangjing->addSkill(new Gunzhu);
+    skills << new ShensuanMC;
 
     General *duwei = new General(this, "duwei", "jiang");
     duwei->addSkill(new Touxi);

@@ -4,7 +4,7 @@ public:
 	LuaTriggerSkill(const char *name, Frequency frequency);
 	void addEvent(TriggerEvent event);
 	void setViewAsSkill(ViewAsSkill *view_as_skill);
-	
+
 	virtual bool triggerable(const ServerPlayer *target) const;
 	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 
@@ -48,6 +48,13 @@ class DistanceSkill: public ClientSkill{
 public:
 	DistanceSkill(const QString &name);
 	virtual int getCorrect(const Player *from, const Player *to) const;
+};
+
+class MaxCardsSkill: public ClientSkill{
+public:
+	MaxCardsSkill(const QString &name);
+
+	virtual int getExtra(const Player *target) const = 0;
 };
 
 class SlashSkill: public ClientSkill{
@@ -129,6 +136,25 @@ public:
 	LuaFunction correct_func;
 };
 
+class LuaMaxCardsSkill: public ClientSkill{
+public:
+    LuaMaxCardsSkill(const char *name);
+    virtual int getExtra(const Player *target) const;
+
+    LuaFunction extra_func;
+};
+
+class LuaSlashSkill: public SlashSkill{
+public:
+    LuaSlashSkill(const char *name);
+
+    virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
+    virtual int getSlashResidue(const Player *target) const;
+
+    LuaFunction s_range_func, s_extra_func, s_residue_func;
+};
+
 class LuaSkillCard: public SkillCard{
 public:
 	LuaSkillCard(const char *name);
@@ -151,13 +177,13 @@ public:
 bool LuaTriggerSkill::triggerable(const ServerPlayer *target) const{
 	if(can_trigger == 0)
 		return TriggerSkill::triggerable(target);
-	
+
 	Room *room = target->getRoom();
 	lua_State *L = room->getLuaState();
-	
+
 	// the callback function
-	lua_rawgeti(L, LUA_REGISTRYINDEX, can_trigger);	
-	SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaTriggerSkill, 0);	
+	lua_rawgeti(L, LUA_REGISTRYINDEX, can_trigger);
+	SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaTriggerSkill, 0);
 	SWIG_NewPointerObj(L, target, SWIGTYPE_p_ServerPlayer, 0);
 
 	int error = lua_pcall(L, 2, 1, 0);
@@ -173,29 +199,29 @@ bool LuaTriggerSkill::triggerable(const ServerPlayer *target) const{
 	}
 }
 
-bool LuaTriggerSkill::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+bool LuaTriggerSkill::trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
 	if(on_trigger == 0)
 		return false;
-		
+
 	lua_State *L = room->getLuaState();
-	
+
 	int e = static_cast<int>(event);
-	
+
 	// the callback
-	lua_rawgeti(L, LUA_REGISTRYINDEX, on_trigger);	
-	
+	lua_rawgeti(L, LUA_REGISTRYINDEX, on_trigger);
+
 	LuaTriggerSkill *self = const_cast<LuaTriggerSkill *>(this);
 	SWIG_NewPointerObj(L, self, SWIGTYPE_p_LuaTriggerSkill, 0);
 
 	// the first argument: event
-	lua_pushinteger(L, e);	
-	
+	lua_pushinteger(L, e);
+
 	// the second argument: player
 	SWIG_NewPointerObj(L, player, SWIGTYPE_p_ServerPlayer, 0);
 
 	// the last event: data
 	SWIG_NewPointerObj(L, &data, SWIGTYPE_p_QVariant, 0);
-	
+
 	int error = lua_pcall(L, 4, 1, 0);
 	if(error){
 		const char *error_msg = lua_tostring(L, -1);
@@ -265,6 +291,102 @@ int LuaDistanceSkill::getCorrect(const Player *from, const Player *to) const{
 	return correct;
 }
 
+int LuaMaxCardsSkill::getExtra(const Player *target) const{
+    if(extra_func == 0)
+        return 0;
+
+    lua_State *L = Sanguosha->getLuaState();
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, extra_func);
+
+    SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaMaxCardsSkill, 0);
+    SWIG_NewPointerObj(L, target, SWIGTYPE_p_Player, 0);
+
+    int error = lua_pcall(L, 2, 1, 0);
+    if(error){
+        Error(L);
+        return 0;
+    }
+
+    int extra = lua_tointeger(L, -1);
+    lua_pop(L, 1);
+
+    return extra;
+}
+
+int LuaSlashSkill::getSlashRange(const Player *from, const Player *to, const Card *slash) const{
+    if(s_range_func == 0)
+        return 0;
+
+    lua_State *L = Sanguosha->getLuaState();
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, s_range_func);
+
+    SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaSlashSkill, 0);
+    SWIG_NewPointerObj(L, from, SWIGTYPE_p_Player, 0);
+    SWIG_NewPointerObj(L, to, SWIGTYPE_p_Player, 0);
+    SWIG_NewPointerObj(L, slash, SWIGTYPE_p_Card, 0);
+
+    int error = lua_pcall(L, 4, 1, 0);
+    if(error){
+        Error(L);
+        return 0;
+    }
+
+    int range = lua_tointeger(L, -1);
+    lua_pop(L, 1);
+
+    return range;
+}
+
+int LuaSlashSkill::getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
+    if(s_extra_func == 0)
+        return 0;
+
+    lua_State *L = Sanguosha->getLuaState();
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, s_extra_func);
+
+    SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaSlashSkill, 0);
+    SWIG_NewPointerObj(L, from, SWIGTYPE_p_Player, 0);
+    SWIG_NewPointerObj(L, to, SWIGTYPE_p_Player, 0);
+    SWIG_NewPointerObj(L, slash, SWIGTYPE_p_Card, 0);
+
+    int error = lua_pcall(L, 4, 1, 0);
+    if(error){
+        Error(L);
+        return 0;
+    }
+
+    int extra = lua_tointeger(L, -1);
+    lua_pop(L, 1);
+
+    return extra;
+}
+
+int LuaSlashSkill::getSlashResidue(const Player *target) const{
+    if(s_residue_func == 0)
+        return 0;
+
+    lua_State *L = Sanguosha->getLuaState();
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, s_residue_func);
+
+    SWIG_NewPointerObj(L, this, SWIGTYPE_p_LuaSlashSkill, 0);
+    SWIG_NewPointerObj(L, target, SWIGTYPE_p_Player, 0);
+
+    int error = lua_pcall(L, 2, 1, 0);
+    if(error){
+        Error(L);
+        return 0;
+    }
+
+    int res = lua_tointeger(L, -1);
+    lua_pop(L, 1);
+
+    return res;
+}
+
 bool LuaFilterSkill::viewFilter(const CardItem *to_select) const{
 	if(view_filter == 0)
 		return false;
@@ -303,7 +425,7 @@ const Card *LuaFilterSkill::viewAs(CardItem *card_item) const{
 		Error(L);
 		return NULL;
 	}
-	
+
 	void *card_ptr;
 	int result = SWIG_ConvertPtr(L, -1, &card_ptr, SWIGTYPE_p_Card, 0);
 	lua_pop(L, 1);
@@ -442,24 +564,24 @@ bool LuaViewAsSkill::isEnabledAtNullification(const ServerPlayer *player, bool i
     if(enabled_at_nullification == 0)
         return ViewAsSkill::isEnabledAtNullification(player, include_counterplot);
 
-	lua_State *L = Sanguosha->getLuaState();
+    lua_State *L = Sanguosha->getLuaState();
 
-	// the callback
-	lua_rawgeti(L, LUA_REGISTRYINDEX, enabled_at_nullification);
+    // the callback
+    lua_rawgeti(L, LUA_REGISTRYINDEX, enabled_at_nullification);
 
-	pushSelf(L);
+    pushSelf(L);
 
-	SWIG_NewPointerObj(L, player, SWIGTYPE_p_ServerPlayer, 0);
+    SWIG_NewPointerObj(L, player, SWIGTYPE_p_ServerPlayer, 0);
 
-	int error = lua_pcall(L, 3, 1, 0);
-	if(error){
-		Error(L);
-		return false;
-	}else{
-		bool result = lua_toboolean(L, -1);
-		lua_pop(L, 1);
-		return result;
-	}
+    int error = lua_pcall(L, 3, 1, 0);
+    if(error){
+        Error(L);
+        return false;
+    }else{
+        bool result = lua_toboolean(L, -1);
+        lua_pop(L, 1);
+        return result;
+    }
 }
 // ---------------------
 
@@ -473,9 +595,9 @@ bool LuaSkillCard::targetFilter(const QList<const Player *> &targets, const Play
 		return SkillCard::targetFilter(targets, to_select, self);
 
 	lua_State *L = Sanguosha->getLuaState();
-	
+
 	// the callback
-	lua_rawgeti(L, LUA_REGISTRYINDEX, filter);	
+	lua_rawgeti(L, LUA_REGISTRYINDEX, filter);
 
 	pushSelf(L);
 
@@ -505,9 +627,9 @@ bool LuaSkillCard::targetsFeasible(const QList<const Player *> &targets, const P
 		return SkillCard::targetsFeasible(targets, self);
 
 	lua_State *L = Sanguosha->getLuaState();
-	
+
 	// the callback
-	lua_rawgeti(L, LUA_REGISTRYINDEX, feasible);	
+	lua_rawgeti(L, LUA_REGISTRYINDEX, feasible);
 
 	pushSelf(L);
 
@@ -536,7 +658,7 @@ void LuaSkillCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
 		return SkillCard::use(room, source, targets);
 
 	lua_State *L = Sanguosha->getLuaState();
-	
+
 	// the callback
 	lua_rawgeti(L, LUA_REGISTRYINDEX, on_use);
 
@@ -566,7 +688,7 @@ void LuaSkillCard::onEffect(const CardEffectStruct &effect) const{
 		return SkillCard::onEffect(effect);
 
 	lua_State *L = Sanguosha->getLuaState();
-	
+
 	// the callback
 	lua_rawgeti(L, LUA_REGISTRYINDEX, on_effect);
 

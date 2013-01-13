@@ -219,14 +219,14 @@ class DistanceSkill: public ClientSkill{
 public:
     DistanceSkill(const QString &name);
 };
-/*
+
 class MaxCardsSkill: public ClientSkill{
     Q_OBJECT
 
 public:
     MaxCardsSkill(const QString &name);
 };
-*/
+
 class SlashSkill: public ClientSkill{
     Q_OBJECT
 

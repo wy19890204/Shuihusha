@@ -333,7 +333,7 @@ void LianmaCard::use(Room *room, ServerPlayer *huyanzhuo, const QList<ServerPlay
     }
     if(!log.to.isEmpty())
         room->sendLog(log);
-};
+}
 
 class Lianma: public ZeroCardViewAsSkill{
 public:

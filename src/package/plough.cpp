@@ -265,7 +265,7 @@ public:
     }
 
     virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
-        if(from->hasWeapon("halberd") && slash->isRed() && slash->objectName() == "slash")
+        if(from->hasWeapon("sun_bow") && slash->isRed() && slash->objectName() == "slash")
             return 1;
         else
             return 0;

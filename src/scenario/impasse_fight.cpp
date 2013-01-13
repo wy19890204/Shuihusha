@@ -57,13 +57,13 @@ public:
     }
 };
 
-class Yuanyin: public ClientSkill{
+class YuanyinEx: public ClientSkill{
 public:
-    Yuanyin():ClientSkill("yuanyin"){
+    YuanyinEx():ClientSkill("#yuanyin-extra"){
     }
 
     virtual int getExtra(const Player *target) const{
-        if(!target->hasSkill(objectName()))
+        if(!target->hasSkill("yuanyin"))
             return 0;
         else{
             int extra = 1;
@@ -76,9 +76,9 @@ public:
     }
 };
 
-class YuanyinMain: public PhaseChangeSkill{
+class Yuanyin: public PhaseChangeSkill{
 public:
-    YuanyinMain():PhaseChangeSkill("#yuanyin_main"){
+    Yuanyin():PhaseChangeSkill("yuanyin"){
         frequency = Compulsory;
     }
 
@@ -496,9 +496,8 @@ ImpasseScenario::ImpasseScenario()
     rule = new ImpasseRule(this);
 
     skills << new Silue << new Kedi
-            << new Tiemu << new Yuanyin << new YuanyinMain
+            << new Tiemu << new Yuanyin << new YuanyinEx
             << new Guzhan << new Jizhan << new Duduan;
-    related_skills.insertMulti("yuanyin", "#yuanyin_main");
 
 }
 

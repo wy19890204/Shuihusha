@@ -368,11 +368,11 @@ ProhibitSkill::ProhibitSkill(const QString &name)
 DistanceSkill::DistanceSkill(const QString &name)
     :ClientSkill(name){
 }
-/*
+
 MaxCardsSkill::MaxCardsSkill(const QString &name)
     :ClientSkill(name){
 }
-*/
+
 SlashSkill::SlashSkill(const QString &name)
     :ClientSkill(name){
 }

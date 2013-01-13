@@ -835,8 +835,7 @@ BoarPackage::BoarPackage()
     chaogai->addSkill(new Jiebao);
     chaogai->addSkill(new Dushi);
     chaogai->addSkill(new Shaxue);
-    chaogai->addSkill(new ShaxueMaxCard);
-    related_skills.insertMulti("shaxue", "#shaxue-maxcard");
+    skills << new ShaxueMaxCard;
 
     General *zhangmengfang = new General(this, "zhangmengfang", "guan");
     zhangmengfang->addSkill(new Tancai);
