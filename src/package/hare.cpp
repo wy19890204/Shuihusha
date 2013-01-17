@@ -630,11 +630,10 @@ public:
 
 SheyanCard::SheyanCard(){
     target_fixed = true;
+    will_throw = false;
 }
 
 void SheyanCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->setFlags("mute_throw");
-    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();

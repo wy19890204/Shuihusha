@@ -699,7 +699,7 @@ public:
 };
 
 HuafoCard::HuafoCard(){
-
+    will_throw = false;
 }
 
 bool HuafoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -713,8 +713,6 @@ bool HuafoCard::targetsFeasible(const QList<const Player *> &targets, const Play
 }
 
 void HuafoCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->setFlags("mute_throw");
-    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();

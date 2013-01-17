@@ -117,6 +117,7 @@ public:
 };
 
 HengsaoCard::HengsaoCard(){
+    will_throw = false;
 }
 
 bool HengsaoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -336,6 +337,7 @@ public:
 
 BingjiCard::BingjiCard(){
     mute = true;
+    will_throw = false;
 }
 
 bool BingjiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -551,7 +553,7 @@ public:
 };
 
 HunjiuCard::HunjiuCard(){
-
+    will_throw = false;
 }
 
 bool HunjiuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -564,8 +566,6 @@ bool HunjiuCard::targetsFeasible(const QList<const Player *> &targets, const Pla
 }
 
 void HunjiuCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->setFlags("mute_throw");
-    room->throwCard(this, card_use.from);
     int card_id = getSubcards().first();
     Card::Suit suit = Sanguosha->getCard(card_id)->getSuit();
     int num = Sanguosha->getCard(card_id)->getNumber();

@@ -512,6 +512,7 @@ public:
 };
 
 XianhaiCard::XianhaiCard(){
+    will_throw = false;
 }
 
 bool XianhaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{

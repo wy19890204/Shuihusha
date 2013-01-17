@@ -82,10 +82,8 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     case OffensiveHorseLocation: equipped = target->getOffensiveHorse(true); break;
     }
 
-    if(equipped){
-        source->setFlags("mute_throw");
+    if(equipped)
         room->throwCard(equipped, source);
-    }
 
     LogMessage log;
     log.from = target;

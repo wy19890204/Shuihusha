@@ -67,15 +67,19 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
     pma->setPath(QString(":/%1/").arg(emotion));
     if(pma->valid()){
         QStringList emotions;
-        emotions << "slash_red" << "slash_black" << "thunder_slash"
+        emotions << "slash_red" << "slash_black" << "thunder_slash" << "fire_slash"
                 << "peach" << "analeptic"
                 //<< "chain" << "recover"
                 //<< "weapon" << "armor"
-                << "no-success";
+                << "no-success" << "success";
         if(emotions.contains(emotion)){
             pma->moveBy(pma->boundingRect().width()*0.15,
                         pma->boundingRect().height()*0.15);
             pma->setScale(0.7);
+        }
+        else if(emotion == "horse"){
+            pma->setZValue(pma->zValue() + 0.5);
+            pma->moveBy(90,0);
         }
 
         pma->moveBy((parent->boundingRect().width() - pma->boundingRect().width())/2,

@@ -426,6 +426,7 @@ public:
 
 FeizhenCard::FeizhenCard(){
     mute = true;
+    will_throw = false;
 }
 
 bool FeizhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{

@@ -1019,9 +1019,11 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         if(card->getTypeId() != Card::Skill){
             const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
             if(card_pattern == NULL || card_pattern->willThrow())
-                throwCard(card, trigger_event == CardDiscarded ? player: NULL);
+                moveCardTo(card, NULL, Player::DiscardedPile, true);
+                //throwCard(card, trigger_event == CardDiscarded ? player: NULL);
         }else if(card->willThrow())
-            throwCard(card, trigger_event == CardDiscarded ? player: NULL);
+            moveCardTo(card, NULL, Player::DiscardedPile, true);
+            //throwCard(card, trigger_event == CardDiscarded ? player: NULL);
 
         if(card->getSkillName() == "spear")
             player->playCardEffect("Espear", "weapon");
