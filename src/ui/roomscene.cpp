@@ -774,7 +774,11 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
     Photo *photo = name2photo[player->objectName()];
     int i;
     for(i=0; i<n; i++){
+#ifdef USE_RCC
         Pixmap *pixmap = new Pixmap(":system/card-back.png");
+#else
+        Pixmap *pixmap = new Pixmap("image/system/card-back.png");
+#endif
         addItem(pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(pixmap, "pos");
@@ -1219,7 +1223,11 @@ void RoomScene::moveNCards(int n, const QString &from, const QString &to){
 
     int i;
     for(i=0; i<n; i++){
+#ifdef USE_RCC
         Pixmap *card_pixmap = new Pixmap(":system/card-back.png");
+#else
+        Pixmap *card_pixmap = new Pixmap("image/system/card-back.png");
+#endif
         addItem(card_pixmap);
 
         QPropertyAnimation *ugoku = new QPropertyAnimation(card_pixmap, "pos");
@@ -3358,7 +3366,11 @@ void RoomScene::onGameStart(){
 #endif
 
     game_started = true;
+#ifdef USE_RCC
     drawPile = new Pixmap(":system/card-back.png");
+#else
+    drawPile = new Pixmap("image/system/card-back.png");
+#endif
     addItem(drawPile);
     drawPile->setZValue(-2.0);
     drawPile->setPos(room_layout->drawpile);

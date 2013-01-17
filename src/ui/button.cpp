@@ -49,7 +49,12 @@ void Button::init()
 
     title_item->setGraphicsEffect(de);
 
+#ifdef USE_RCC
     QImage bgimg(":system/button/button.png");
+#else
+    QImage bgimg("image/system/button/button.png");
+#endif
+
     outimg = new QImage(size.toSize(),QImage::Format_ARGB32);
 
     qreal pad = 10;

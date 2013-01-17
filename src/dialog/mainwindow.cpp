@@ -26,7 +26,10 @@
 #include <QSystemTrayIcon>
 #include <QInputDialog>
 #include <QLabel>
+
+#ifdef USE_RCC
 #include <QResource>
+#endif
 
 class FitView : public QGraphicsView
 {
@@ -77,8 +80,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     scene = NULL;
 
+#ifdef USE_RCC
     QResource::registerResource("image/skin.rcc");
     QResource::registerResource("image/card.rcc");
+#endif
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
     connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
@@ -148,8 +153,10 @@ void MainWindow::closeEvent(QCloseEvent *event){
 
 MainWindow::~MainWindow()
 {
+#ifdef USE_RCC
     QResource::unregisterResource("image/card.rcc");
     QResource::unregisterResource("image/skin.rcc");
+#endif
     delete ui;
 }
 

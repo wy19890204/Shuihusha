@@ -23,7 +23,11 @@
 #include "pixmapanimation.h"
 
 Photo::Photo()
+#ifdef USE_RCC
     :Pixmap(":system/photo-back.png"),
+#else
+    :Pixmap("image/system/photo-back.png"),
+#endif
     player(NULL),
     handcard("image/system/handcard.png"),
     action_item(NULL), save_me_item(NULL), permanent(false),
@@ -103,7 +107,11 @@ Photo::Photo()
     kingdom_item->setPos(-12, -11);
     kingdom_item->setZValue(0.5);
 
+#ifdef USE_RCC
     ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), this);
+#else
+    ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
+#endif
     ready_item->setPos(86, 132);
     ready_item->hide();
 

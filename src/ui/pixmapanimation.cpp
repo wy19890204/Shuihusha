@@ -62,9 +62,13 @@ void PixmapAnimation::start(bool permanent,int interval)
 
 PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, const QString &emotion)
 {
-    QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
     PixmapAnimation *pma = new PixmapAnimation();
+#ifdef USE_RCC
+    QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
     pma->setPath(QString(":/%1/").arg(emotion));
+#else
+    pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
+#endif
     if(pma->valid()){
         QStringList emotions;
         emotions << "slash_red" << "slash_black" << "thunder_slash" << "fire_slash"
@@ -88,12 +92,16 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
         pma->setParentItem(parent);
         pma->startTimer(70);
         connect(pma,SIGNAL(finished()),pma,SLOT(deleteLater()));
+#ifdef USE_RCC
         QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
+#endif
         return pma;
     }
     else{
         delete pma;
+#ifdef USE_RCC
         QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
+#endif
         return NULL;
     }
 }

@@ -345,6 +345,10 @@ CONFIG(chatvoice){
 	}
 }
 
+CONFIG(rcc){
+        DEFINES += USE_RCC
+}
+
 TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \

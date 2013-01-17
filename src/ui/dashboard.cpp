@@ -13,7 +13,11 @@
 #include <QPixmapCache>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
+#ifdef USE_RCC
     :left_pixmap(":system/dashboard-equip.png"), right_pixmap(":system/dashboard-avatar.png"),
+#else
+    :left_pixmap("image/system/dashboard-equip.png"), right_pixmap("image/system/dashboard-avatar.png"),
+#endif
     button_widget(button_widget), selected(NULL), avatar(NULL),
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
@@ -58,7 +62,11 @@ int Dashboard::getButtonWidgetWidth() const{
 void Dashboard::createMiddle(){
     middle = new QGraphicsRectItem(this);
 
+#ifdef USE_RCC
     QPixmap middle_pixmap(":system/dashboard-hand.png");
+#else
+    QPixmap middle_pixmap("image/system/dashboard-hand.png");
+#endif
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
@@ -99,7 +107,11 @@ void Dashboard::createRight(){
         kingdom->setPos(91, 54);
     }
 
+#ifdef USE_RCC
     ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), avatar);
+#else
+    ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
+#endif
     ready_item->setPos(2, 43);
     ready_item->hide();
 
