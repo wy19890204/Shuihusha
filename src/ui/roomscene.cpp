@@ -128,7 +128,11 @@ RoomScene::RoomScene(QMainWindow *main_window)
         createControlButtons();
         QGraphicsItem *button_widget = NULL;
         if(ClientInstance->getReplayer() == NULL){
+#ifdef USE_RCC
             QString path = ":system/button/irregular/background.png";
+#else
+            QString path = "image/system/button/irregular/background.png";
+#endif
             button_widget = new QGraphicsPixmapItem(QPixmap(path));
 
             ok_button->setParentItem(button_widget);
@@ -3095,8 +3099,13 @@ void RoomScene::doGongxin(const QList<int> &card_ids, bool enable_heart){
 }
 
 void RoomScene::createStateItem(){
+#ifdef USE_RCC
     QString state_url = Config.CircularView ?
                         ":system/state_c.png" : ":system/state.png";
+#else
+    QString state_url = Config.CircularView ?
+                        "image/system/state_c.png" : "image/system/state.png";
+#endif
     QPixmap state(state_url);
 
     state_item = addPixmap(state);

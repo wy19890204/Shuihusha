@@ -57,7 +57,13 @@ int main(int argc, char *argv[])
     QFile file("shuihusha.qss");
     if(file.open(QIODevice::ReadOnly)){
         QTextStream stream(&file);
-        qApp->setStyleSheet(stream.readAll());
+#ifdef USE_RCC
+        QString content = stream.readAll();
+#else
+        QString content = stream.readAll();
+        content.replace(":system", "image/system");
+#endif
+        qApp->setStyleSheet(content);
     }
 
 #ifdef AUDIO_SUPPORT

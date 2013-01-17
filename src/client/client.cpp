@@ -959,11 +959,16 @@ void Client::askForNullification(const Json::Value &arg){
 
     QString trick_path = trick_card->getPixmapPath();
     QString to = target_player->getGeneral()->getPixmapPath("big");
+#ifdef USE_RCC
+    QString arrow = ":system/arrow.png";
+#else
+    QString arrow = "image/system/arrow.png";
+#endif
     if(source == NULL){
-        prompt_doc->setHtml(QString("<img src='%1' /> <img src=':system/arrow.png' />  <img src='%2' />").arg(trick_path).arg(to));
+        prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2' />  <img src='%3' />").arg(trick_path).arg(arrow).arg(to));
     }else{
         QString from = source->getGeneral()->getPixmapPath("big");
-        prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2'/> <img src=':system/arrow.png' />  <img src='%3' />").arg(trick_path).arg(from).arg(to));
+        prompt_doc->setHtml(QString("<img src='%1' /> <img src='%2'/> <img src='%3' />  <img src='%4' />").arg(trick_path).arg(from).arg(arrow).arg(to));
     }
 
     card_pattern = !trick_card->inherits("SingleTargetTrick") ?

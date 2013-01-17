@@ -78,8 +78,14 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     switch(location()){
     case WeaponLocation: equipped = target->getWeapon(true); break;
     case ArmorLocation: equipped = target->getArmor(true); break;
-    case DefensiveHorseLocation: equipped = target->getDefensiveHorse(true); break;
-    case OffensiveHorseLocation: equipped = target->getOffensiveHorse(true); break;
+    case DefensiveHorseLocation:
+        equipped = target->getDefensiveHorse(true);
+        room->setEmotion(source, "horse");
+        break;
+    case OffensiveHorseLocation:
+        equipped = target->getOffensiveHorse(true);
+        room->setEmotion(source, "horse");
+        break;
     }
 
     if(equipped)
@@ -323,8 +329,8 @@ QString Horse::getEffectPath(bool) const{
     return "audio/card/common/horse.ogg";
 }
 
-void Horse::onInstall(ServerPlayer *player) const{
-    player->getRoom()->setEmotion(player, "horse");
+void Horse::onInstall(ServerPlayer *) const{
+
 }
 
 void Horse::onUninstall(ServerPlayer *) const{
