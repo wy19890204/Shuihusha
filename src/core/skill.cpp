@@ -357,6 +357,10 @@ int ClientSkill::getSlashExtraGoals(const Player *, const Player *, const Card *
     return 0;
 }
 
+bool ClientSkill::isSlashPenetrate(const Player *, const Player *, const Card *) const{
+    return false;
+}
+
 bool ClientSkill::isProhibited(const Player *, const Player *, const Card *) const{
     return false;
 }

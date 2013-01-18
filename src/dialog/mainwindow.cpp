@@ -419,13 +419,12 @@ void MainWindow::on_actionAbout_triggered()
     QString signature = tr("\"A Short Song\" by Cao Cao");
     content.append(QString("<p align='right'><i>%1</i></p>").arg(signature));
 
-    QString email = "moligaloo@gmail.com";
     content.append(tr("This is the open source clone of the popular <b>Sanguosha</b> game,"
                       "totally written in C++ Qt GUI framework <br />"
-                      "My Email: <a href='mailto:%1' style = \"color:#0072c1; \">%1</a> <br/>"
+                      "My Email: moligaloo@gmail.com <br/>"
                       "My QQ: 365840793 <br/>"
                       "My Weibo: http://weibo.com/moligaloo <br/>"
-                      ).arg(email));
+                      ));
 /*
     QString config;
 
@@ -445,10 +444,12 @@ void MainWindow::on_actionAbout_triggered()
     content.append(tr("Compilation time: %1 %2 <br/>").arg(date).arg(time));
 
     QString project_url = "http://github.com/Moligaloo/QSanguosha";
-    content.append(tr("Project home: <a href='%1'>%1</a> <br/>").arg(project_url));
+    content.append(tr("Project home: %1 <br/>").arg(project_url));
+    //content.append(tr("Project home: <a href='%1'>%1</a> <br/>").arg(project_url));
 
     QString forum_url = "http://qsanguosha.org";
-    content.append(tr("Forum: <a href='%1'>%1</a> <br/>").arg(forum_url));
+    content.append(tr("Forum: %1 <br/>").arg(forum_url));
+    //content.append(tr("Forum: <a href='%1'>%1</a> <br/>").arg(forum_url));
 
     Window *window = new Window(tr("About QSanguosha"), QSize(425, 451));
     scene->addItem(window);

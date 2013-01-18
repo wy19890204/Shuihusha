@@ -126,8 +126,7 @@ public:
         room->setPlayerMark(qing, "@stones", 0);
         room->setPlayerMark(qing, "@stoned", 0);
         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
-            tmp->removeMark("qinggang");
-        room->detachSkillFromPlayer(qing, "#yinyu_range", false);
+            tmp->removeMark("yinyuc");
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *qing, QVariant &data) const{
@@ -161,26 +160,22 @@ public:
                 switch(judge.card->getSuit()){
                 case Card::Heart:{
                         room->setPlayerMark(qing, "@stoneh", 1);
-                        room->acquireSkill(qing, "#yinyu_range");
-                        //room->setPlayerFlag(qing, "Longest");
                         log.type = "#Yinyu1";
                         break;
                     }
                 case Card::Diamond:{
                         room->setPlayerMark(qing, "@stoned", 1);
-                        //room->setPlayerFlag(qing, "Hitit");
                         log.type = "#Yinyu2";
                         break;
                     }
                 case Card::Spade:{
                         room->setPlayerMark(qing, "@stones", 1);
-                        //room->setPlayerFlag(qing, "SlashbySlash");
                         log.type = "#Yinyu4";
                         break;
                     }
                 case Card::Club:{
                         foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
-                            tmp->addMark("qinggang");
+                            tmp->addMark("yinyuc");
                         room->setPlayerMark(qing, "@stonec", 1);
                         log.type = "#Yinyu8";
                         break;
@@ -197,9 +192,9 @@ public:
     }
 };
 
-class YinyuSlash: public SlashSkill{
+class YinyuSlash: public ClientSkill{
 public:
-    YinyuSlash(): SlashSkill("#yinyu-slash"){
+    YinyuSlash(): ClientSkill("#yinyu-slash"){
     }
 
     virtual int getSlashRange(const Player *from, const Player *, const Card *) const{
@@ -214,6 +209,10 @@ public:
             return 998;
         else
             return ClientSkill::getSlashResidue(from);
+    }
+
+    virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{
+        return to->hasMark("yinyuc");
     }
 };
 

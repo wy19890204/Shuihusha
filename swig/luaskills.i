@@ -40,6 +40,7 @@ public:
 	virtual int getSlashRange(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
 	virtual int getSlashExtraGoals(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
 	virtual int getSlashResidue(const Player *target) const;
+	virtual bool isSlashPenetrate(const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
 
 	virtual bool isProhibited(const Player *from, const Player *to, const Card *card) const;
 };

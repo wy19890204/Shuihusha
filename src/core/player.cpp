@@ -576,9 +576,9 @@ bool Player::hasWeapon(const QString &weapon_name) const{
 bool Player::hasArmorEffect(const QString &armor_name) const{
     if(hasSkill("qiaogong")){
         CardStar car = tag["qiaogong_a"].value<CardStar>();
-        return car && !hasMark("qinggang") && car->objectName() == armor_name;
+        return car && !isPenetrated() && car->objectName() == armor_name;
     }
-    return armor && !hasMark("qinggang") && armor->objectName() == armor_name;
+    return armor && !isPenetrated() && armor->objectName() == armor_name;
 }
 
 QList<const Card *> Player::getJudgingArea() const{
@@ -623,8 +623,8 @@ int Player::getMaxCards() const{
 }
 
 int Player::getSlashTarget(const Player *other, const Card *slash) const{
-    int rule = 1, extra = 0;
-    extra = Sanguosha->correctClient("extragoals", Self, other, slash);
+    int rule = 1;
+    int extra = Sanguosha->correctClient("extragoals", this, other, slash);
     return rule + extra;
 }
 
@@ -941,6 +941,10 @@ QSet<QString> Player::getAcquiredSkills() const{
 
 bool Player::isProhibited(const Player *to, const Card *card) const{
     return Sanguosha->isProhibited(this, to, card);
+}
+
+bool Player::isPenetrated(const Player *from, const Card *card) const{
+    return Sanguosha->isPenetrate(from, this, card);
 }
 
 void Player::jilei(const QString &type){

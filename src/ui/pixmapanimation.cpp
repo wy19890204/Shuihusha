@@ -69,13 +69,15 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
 #else
     pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
 #endif
+    bool returnpma = false;
     if(pma->valid()){
         QStringList emotions;
-        emotions << "slash_red" << "slash_black" << "thunder_slash" << "fire_slash"
-                << "peach" << "analeptic"
+        emotions //<< "slash_red" << "slash_black" << "thunder_slash" << "fire_slash"
+                //<< "peach" << "analeptic"
                 //<< "chain" << "recover"
                 //<< "weapon" << "armor"
-                << "no-success" << "success";
+                //<< "no-success" << "success"
+                ;
         if(emotions.contains(emotion)){
             pma->moveBy(pma->boundingRect().width()*0.15,
                         pma->boundingRect().height()*0.15);
@@ -92,16 +94,15 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
         pma->setParentItem(parent);
         pma->startTimer(70);
         connect(pma,SIGNAL(finished()),pma,SLOT(deleteLater()));
-#ifdef USE_RCC
-        QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
-#endif
-        return pma;
+        returnpma = true;
     }
+#ifdef USE_RCC
+    QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
+#endif
+    if(returnpma)
+        return pma;
     else{
         delete pma;
-#ifdef USE_RCC
-        QResource::unregisterResource(QString("image/system/emotion/%1.rcc").arg(emotion));
-#endif
         return NULL;
     }
 }

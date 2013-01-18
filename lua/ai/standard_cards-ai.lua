@@ -71,7 +71,7 @@ function SmartAI:slashIsEffective(slash, to)
 	end
 	if not self:damageIsEffective(to, nature) then return false end
 
-	if self.player:hasWeapon("qinggang_sword") or self.player:hasSkill("wuzu") or (self.player:hasSkill("yinyu") and self.player:getMark("qinggang") > 0) then
+	if self.player:isPenetrated() then
 		return true
 	end
 

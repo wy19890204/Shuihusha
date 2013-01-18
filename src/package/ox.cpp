@@ -657,7 +657,7 @@ void DuomingCard::use(Room *m, ServerPlayer *source, const QList<ServerPlayer *>
             index = qrand() % 2 + 1;
         source->playSkillEffect(skill_name, index);
 
-        target->obtainCard(this, false);
+        target->obtainCard(this);
     }
 }
 

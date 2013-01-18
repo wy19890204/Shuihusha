@@ -27,7 +27,7 @@ public:
             bool play = false;
             foreach(ServerPlayer *tmp, use.to){
                 if(tmp->getArmor()){
-                    tmp->addMark("qinggang");
+                    tmp->addMark("wuzuc");
                     LogMessage log;
                     log.type = "$IgnoreArmor";
                     log.from = player;
@@ -43,9 +43,19 @@ public:
         }
         else{
             foreach(ServerPlayer *tmp, use.to)
-                tmp->removeMark("qinggang");
+                tmp->removeMark("wuzuc");
         }
         return false;
+    }
+};
+
+class WuzuSlash: public ClientSkill{
+public:
+    WuzuSlash():ClientSkill("#wuzu_slash"){
+    }
+
+    virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{
+        return to->hasMark("wuzuc");
     }
 };
 
@@ -596,6 +606,7 @@ SnakePackage::SnakePackage()
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     muhong->addSkill("huqi");
+    skills << new WuzuSlash;
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
     oupeng->addSkill("#hp-1");

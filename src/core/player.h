@@ -204,6 +204,7 @@ public:
     int getKingdoms() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
+    virtual bool isPenetrated(const Player *from = NULL, const Card *card = NULL) const;
     virtual bool isLastHandCard(const Card *card) const = 0;
 
     void jilei(const QString &type);

@@ -479,9 +479,10 @@ void Card::onUse(Room *room, const CardUseStruct &card_use) const{
     RoomThread *thread = room->getThread();
 
     if(will_throw){
-        if(owner_discarded)
-            room->throwCard(this, card_use.from);
-        else
+        if(owner_discarded){
+            if(getEffectiveId() > -1 || !getSubcards().isEmpty())
+                room->throwCard(this, card_use.from);
+        }else
             room->moveCardTo(this, NULL, Player::DiscardedPile, true);
     }
 

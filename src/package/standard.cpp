@@ -84,7 +84,8 @@ void EquipCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         break;
     case OffensiveHorseLocation:
         equipped = target->getOffensiveHorse(true);
-        room->setEmotion(source, "horse");
+        if(objectName() != "haiqiu")
+            room->setEmotion(source, "horse");
         break;
     }
 
@@ -181,6 +182,7 @@ bool SingleTargetTrick::targetFilter(const QList<const Player *> &targets, const
 DelayedTrick::DelayedTrick(Suit suit, int number, bool movable)
     :TrickCard(suit, number, true), movable(movable)
 {
+    will_throw = false;
 }
 
 void DelayedTrick::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{

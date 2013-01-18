@@ -809,13 +809,10 @@ public:
                 room->sendLog(log);
 
                 room->playSkillEffect(objectName());
-                room->acquireSkill(huarong, "#kaixian_range");
             }
         }
-        else if(huarong->getPhase() == Player::NotActive){
+        else if(huarong->getPhase() == Player::NotActive)
             room->setPlayerMark(huarong, "kaixian", 0);
-            room->detachSkillFromPlayer(huarong, "#kaixian_range", false);
-        }
 
         return false;
     }
@@ -1367,7 +1364,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return TriggerSkill::triggerable(target) && !target->getArmor() && !target->hasMark("qinggang");
+        return TriggerSkill::triggerable(target) && !target->getArmor() && !target->isPenetrated();
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{

@@ -14,19 +14,16 @@ public:
 
     virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *player, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->getCards("he").length() <= 0)
+        if(damage.to->isNude() || !player->askForSkillInvoke(objectName(), data))
             return false;
-        if(!player->askForSkillInvoke(objectName(), data))
-            return false;
-        int i;
-        for(i=0; i<damage.damage; i++){
+        for(int i=0; i<damage.damage; i++){
             if(damage.to->isNude())
                 break;
-            if(damage.to->getCards("e").length() == 0)
-                room->askForDiscard(damage.to, objectName(), 1, false, false);
+            if(!damage.to->hasEquip())
+                room->askForDiscard(damage.to, objectName(), 1);
             else
                 if(!room->askForDiscard(damage.to, objectName(), 1, true, false))
-                    room->moveCardTo(Sanguosha->getCard(room->askForCardChosen(player, damage.to, "e", objectName())), player, Player::Hand, true);
+                    room->obtainCard(player, room->askForCardChosen(player, damage.to, "e", objectName()));
         }
         return false;
     }
@@ -103,18 +100,16 @@ protected:
 class CBLongNu: public TriggerSkill{
 public:
     CBLongNu():TriggerSkill("cblongnu"){
-        events << SlashProceed ;
+        events << SlashProceed;
         view_as_skill = new CBLongNuViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
-        if(event == SlashProceed){
-            SlashEffectStruct effect = data.value<SlashEffectStruct>();
-            if(player->hasMark("CBLongNu")){
-                room->slashResult(effect, NULL);
-                player->removeMark("CBLongNu");
-                return true;
-            }
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(player->hasMark("CBLongNu")){
+            room->slashResult(effect, NULL);
+            player->removeMark("CBLongNu");
+            return true;
         }
         return false;
     }
@@ -124,14 +119,14 @@ CBYuXueCard::CBYuXueCard(){
     target_fixed = true;
 }
 
-void CBYuXueCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    QList<int> angers = source->getPile("Angers"), redAngers;
+void CBYuXueCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    QList<int> angers = card_use.from->getPile("Angers"), redAngers;
     foreach(int anger, angers){
         if(Sanguosha->getCard(anger)->isRed())
             redAngers << anger;
     }
 
-    ServerPlayer *target = source;
+    PlayerStar target = card_use.from;
     foreach(ServerPlayer *p, room->getAllPlayers()){
         if(p->hasFlag("dying")){
             target = p;
@@ -139,24 +134,24 @@ void CBYuXueCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         }
     }
 
-    room->fillAG(redAngers, source);
-    int card_id = room->askForAG(source, redAngers, true, "cbyuxue");
-    source->invoke("clearAG");
+    room->fillAG(redAngers, card_use.from);
+    int card_id = room->askForAG(card_use.from, redAngers, true, "cbyuxue");
+    card_use.from->invoke("clearAG");
     if(card_id != -1){
         const Card *redAnger = Sanguosha->getCard(card_id);
 
         room->throwCard(redAnger);
         Peach *peach = new Peach(Card::NoSuit, 0);
-        peach->setSkillName("cbyuxue");
+        peach->setSkillName(skill_name);
         CardUseStruct usepeach;
         usepeach.card = peach;
-        usepeach.from = source;
+        usepeach.from = card_use.from;
         usepeach.to << target;
         room->useCard(usepeach);
     }else{
         LogMessage log;
         log.type = "#CBYuXueLog";
-        log.from = source;
+        log.from = card_use.from;
         room->sendLog(log);
     }
 }
@@ -205,11 +200,11 @@ protected:
 class CBLongYin: public TriggerSkill{
 public:
     CBLongYin():TriggerSkill("cblongyin"){
-        events << PhaseChange ;
+        events << PhaseChange;
     }
 
-    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
-        if(event == PhaseChange && player->getPhase() == Player::Start){
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() == Player::Start){
             if(player->getPile("Angers").length() >= 5)
                 return false;
             bool cbzhangfeiIsDead = room->findPlayer("cbzhangfei2") == NULL ? true : false;
@@ -235,46 +230,57 @@ public:
     }
 };
 
-class CBZhengJun: public TriggerSkill{
+class CBZhengJun: public PhaseChangeSkill{
 public:
-    CBZhengJun():TriggerSkill("cbzhengjun"){
-        events << PhaseChange;
+    CBZhengJun():PhaseChangeSkill("cbzhengjun"){
         frequency = Compulsory;
     }
 
-    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
-        if(event == PhaseChange){
-            int x = player->getAttackRange();
-            if(player->getPhase() == Player::Start){
-                if(player->getCards("he").length() <= x)
-                    player->throwAllCards();
-                else
-                    room->askForDiscard(player, objectName(), x, false, true);
-            }else if(player->getPhase() == Player::Finish){
-                player->drawCards(x + 1);
-                player->turnOver();
-            }
+    virtual bool onPhaseChange(ServerPlayer *player) const{
+        int x = player->getAttackRange();
+        Room *room = player->getRoom();
+        if(player->getPhase() == Player::Start){
+            if(player->getCards("he").length() <= x)
+                player->throwAllCards();
+            else
+                room->askForDiscard(player, objectName(), x, false, true);
+        }else if(player->getPhase() == Player::Finish){
+            player->drawCards(x + 1);
+            player->turnOver();
         }
         return false;
     }
 };
 
-class CBBeiLiang: public DrawCardsSkill{
+class CBZhangBa: public SlashSkill{
 public:
-    CBBeiLiang():DrawCardsSkill("cbbeiliang"){
-
+    CBZhangBa():SlashSkill("cbzhangba"){
     }
 
-    virtual int getDrawNum(ServerPlayer *player, int n) const{
+    virtual int getSlashRange(const Player *from, const Player *, const Card *) const{
+        if(from->hasSkill(objectName()) && !from->getWeapon())
+            return -3;
+        else
+            return 0;
+    }
+};
+
+class CBBeiLiang: public PhaseChangeSkill{
+public:
+    CBBeiLiang():PhaseChangeSkill("cbbeiliang"){
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
-        if(player->getHandcardNum() >= 5)
-            return n;
+        if(player->getPhase() != Player::Draw || player->getHandcardNum() >= player->getMaxHp())
+            return false;
         if(room->askForSkillInvoke(player, objectName())){
             room->playSkillEffect(objectName());
             int x = player->getMaxHP() - player->getHandcardNum();
-            return x;
-        }else
-            return n;
+            player->drawCards(x);
+            return true;
+        }
+        return false;
     }
 };
 
@@ -282,17 +288,16 @@ CBJuWuCard::CBJuWuCard(){
     will_throw = false;
 }
 
-bool CBJuWuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return to_select->getGeneralName() == "cbzhaoyun1" || to_select->getGeneralName() == "cbzhaoyun2";
+bool CBJuWuCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *) const{
+    return targets.isEmpty() && to_select->getGeneralName().contains("cbzhaoyun");
 }
 
-void CBJuWuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
-    room->moveCardTo(this, target, Player::Hand, false);
+void CBJuWuCard::onEffect(const CardEffectStruct &effect) const{
+    effect.to->obtainCard(this, false);
 
-    int old_value = source->getMark("cbjuwu");
+    int old_value = effect.from->getMark("cbjuwu");
     int new_value = old_value + subcards.length();
-    room->setPlayerMark(source, "cbjuwu", new_value);
+    effect.from->getRoom()->setPlayerMark(effect.from, "cbjuwu", new_value);
 }
 
 class CBJuWuViewAsSkill: public ViewAsSkill{
@@ -308,7 +313,7 @@ public:
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() == 0 || cards.length() > Self->getHp())
+        if(cards.isEmpty() || cards.length() > Self->getHp())
             return NULL;
 
         CBJuWuCard *card = new CBJuWuCard;
@@ -332,13 +337,11 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *target) const{
         target->getRoom()->setPlayerMark(target, "cbjuwu", 0);
-
         return false;
     }
 };
 
 CBChanSheCard::CBChanSheCard(){
-
 }
 
 bool CBChanSheCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -361,24 +364,33 @@ bool CBChanSheCard::targetFilter(const QList<const Player *> &targets, const Pla
     return canuse;
 }
 
-void CBChanSheCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
-    ServerPlayer *target = targets.first();
+void CBChanSheCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    PlayerStar target = card_use.to.first();
     QList<int> redangers;
-    foreach(int id, source->getPile("Angers")){
-        if(Sanguosha->getCard(id)->isRed())
+    foreach(int id, card_use.from->getPile("Angers")){
+        if(Sanguosha->getCard(id)->getSuit() == Card::Diamond)
             redangers << id;
     }
 
-    room->fillAG(redangers, source);
-    int card_id = room->askForAG(source, redangers, true, "cbchanshe");
-    source->invoke("clearAG");
+    room->fillAG(redangers, card_use.from);
+    int card_id = room->askForAG(card_use.from, redangers, true, "cbchanshe");
+    card_use.from->invoke("clearAG");
     if(card_id != -1){
         const Card *redAnger = Sanguosha->getCard(card_id);
-        room->moveCardTo(redAnger, target, Player::Judging, true);
+
+        Card *new_card = Sanguosha->cloneCard("indulgence", redAnger->getSuit(), redAnger->getNumber());
+        new_card->setSkillName(skill_name);
+        new_card->addSubcard(card_id);
+
+        if(!card_use.from->isProhibited(target, redAnger)){
+            CardUseStruct use = card_use;
+            use.card = new_card;
+            room->useCard(use);
+        }
     }else{
         LogMessage log;
         log.type = "#CBChanSheLog";
-        log.from = source;
+        log.from = card_use.from;
         room->sendLog(log);
     }
 }
@@ -847,10 +859,10 @@ ChangbanScenario::ChangbanScenario()
 
     General *cbzhangfei1 = new General(this, "cbzhangfei1", "god", 10, true, true);
     cbzhangfei1->addSkill(new CBZhengJun);
-    cbzhangfei1->addSkill(new Skill("CBZhangBa", Skill::Compulsory));
+    cbzhangfei1->addSkill(new CBZhangBa);
 
     General *cbzhangfei2 = new General(this, "cbzhangfei2", "god", 5, true, true);
-    cbzhangfei2->addSkill("CBZhangBa");
+    cbzhangfei2->addSkill("cbzhangba");
     cbzhangfei2->addSkill(new CBBeiLiang);
     cbzhangfei2->addSkill(new CBJuWu);
     cbzhangfei2->addSkill(new CBChanShe);

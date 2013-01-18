@@ -807,6 +807,15 @@ const ClientSkill *Engine::isProhibited(const Player *from, const Player *to, co
     return NULL;
 }
 
+const ClientSkill *Engine::isPenetrate(const Player *from, const Player *to, const Card *card) const{
+    foreach(const ClientSkill *skill, client_skills){
+        if(skill->isSlashPenetrate(from, to, card))
+            return skill;
+    }
+
+    return NULL;
+}
+
 int Engine::correctClient(const QString &type, const Player *from, const Player *to, const Card *slash) const{
     int x = 0;
 

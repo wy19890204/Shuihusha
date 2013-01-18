@@ -214,6 +214,7 @@ public:
 	int getKingdoms() const;
 
 	virtual bool isProhibited(const Player *to, const Card *card) const;
+	virtual bool isPenetrated(const Player *from = NULL, const Card *card = NULL) const;
 	virtual bool isLastHandCard(const Card *card) const = 0;
 
 	void jilei(const char *type);
@@ -735,6 +736,7 @@ public:
 	void playSkillEffect(const char *skill_name, int index) const;
 
 	const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+	const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
 	int correctClient(const QString &type, const Player *from, const Player *to = NULL) const;
 };
 

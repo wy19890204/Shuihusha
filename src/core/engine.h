@@ -92,6 +92,7 @@ public:
     void playCardEffect(const QString &card_name, bool is_male) const;
 
     const ClientSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
+    const ClientSkill *isPenetrate(const Player *from, const Player *to, const Card *card) const;
     int correctClient(const QString &type, const Player *from, const Player *to = NULL, const Card *slash = NULL) const;
 
 private:

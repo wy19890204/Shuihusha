@@ -194,6 +194,17 @@ public:
     }
 };
 
+class QingnangSlash: public ClientSkill{
+public:
+    QingnangSlash():ClientSkill("#qinggang_slash"){
+    }
+
+    virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{
+        return to->hasMark("qinggang");
+        //return from->hasEquip("qinggang_sword") && card->isKindOf("Slash");
+    }
+};
+
 QinggangSword::QinggangSword(Suit suit, int number)
     :Weapon(suit, number, 2)
 {
@@ -1119,6 +1130,7 @@ StandardCardPackage::StandardCardPackage()
     skills << EightDiagramSkill::GetInstance();
     skills << new CrossbowSkill;
     skills << new HalberdSkill;
+    skills << new QingnangSlash;
 
     {
         QList<Card *> horses;
