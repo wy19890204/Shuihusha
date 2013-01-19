@@ -169,7 +169,7 @@ public:
     }
 
     virtual bool onPhaseChange(ServerPlayer *target) const{
-        target->getRoom()->setPlayerMark(target, "Yinlang", 0);
+        target->loseAllMarks("Yinlang");
         return false;
     }
 };

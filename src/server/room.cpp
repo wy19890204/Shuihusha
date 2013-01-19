@@ -3030,16 +3030,18 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
         QString dongchaee_name = tag.value("Dongchaee").toString();
         if(!dongchaee_name.isEmpty()){
             ServerPlayer *dongchaee = findChild<ServerPlayer *>(dongchaee_name);
-            bool invoke_dongcha = false;
-            if(dongchaee == from)
-                invoke_dongcha = (from_place == Player::Hand);
-            else if(dongchaee == to)
-                invoke_dongcha = (place == Player::Hand);
+            if(dongchaee){
+                bool invoke_dongcha = false;
+                if(dongchaee == from)
+                    invoke_dongcha = (from_place == Player::Hand);
+                else if(dongchaee == to)
+                    invoke_dongcha = (place == Player::Hand);
 
-            if(invoke_dongcha){
-                QString dongchaer_name = tag.value("Dongchaer").toString();
-                ServerPlayer *dongchaer = findChild<ServerPlayer *>(dongchaer_name);
-                scope.insert(dongchaer);
+                if(invoke_dongcha){
+                    QString dongchaer_name = tag.value("Dongchaer").toString();
+                    ServerPlayer *dongchaer = findChild<ServerPlayer *>(dongchaer_name);
+                    scope.insert(dongchaer);
+                }
             }
         }
 
@@ -3982,7 +3984,7 @@ bool Room::askForYiji(ServerPlayer *guojia, QList<int> &cards){
         moveCardTo(dummy_card, who, Player::Hand, false);
         delete dummy_card;
 
-        setEmotion(who, "draw-card");
+        //setEmotion(who, "draw-card");
 
         return true;
 

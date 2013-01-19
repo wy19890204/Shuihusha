@@ -120,12 +120,10 @@ public:
         events << PhaseChange << SlashProceed;
     }
 
-    static void ClearMarks(Room *room, ServerPlayer *qing){
-        room->setPlayerMark(qing, "@stoneh", 0);
-        room->setPlayerMark(qing, "@stonec", 0);
-        room->setPlayerMark(qing, "@stones", 0);
-        room->setPlayerMark(qing, "@stoned", 0);
-        foreach(ServerPlayer *tmp, room->getOtherPlayers(qing))
+    static void ClearMarks(ServerPlayer *qing){
+        foreach(QString mark, qing->getAllMarkName(1, "@stone"))
+            qing->getRoom()->setPlayerMark(qing, mark, 0);
+        foreach(ServerPlayer *tmp, qing->getRoom()->getOtherPlayers(qing))
             tmp->removeMark("yinyuc");
     }
 
@@ -143,7 +141,7 @@ public:
             return false;
         }
         if(qing->getPhase() == Player::RoundStart){
-            ClearMarks(room, qing);
+            ClearMarks(qing);
             if(qing->askForSkillInvoke(objectName())){
                 int index = qing->hasMark("mengshi_wake") ? 8: qrand() % 2 + 1;
                 room->playSkillEffect(objectName(), index);
@@ -187,7 +185,7 @@ public:
             }
         }
         else if(qing->getPhase() == Player::NotActive)
-            ClearMarks(room, qing);
+            ClearMarks(qing);
         return false;
     }
 };

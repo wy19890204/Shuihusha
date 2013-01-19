@@ -18,12 +18,13 @@ end
 sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 	self:sort(self.enemies, "defense")
 	local target_count=0
+	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	for _, enemy in ipairs(self.enemies) do
 		if ((self.player:canSlash(enemy, not no_distance)) or
 			(use.isDummy and (self.player:distanceTo(enemy)<=self.predictedRange))) and
 			self:objectiveLevel(enemy)>3 and
-			self:slashIsEffective(card, enemy) and
-			not self:slashProhibit(card, enemy) then
+			self:slashIsEffective(slash, enemy) and
+			not self:slashProhibit(slash, enemy) then
 			local cheat_card = sgs.Sanguosha:getCard(self.room:getDrawPile():first())
 			if cheat_card and cheat_card:getSuit() == sgs.Card_Heart and not self.player:hasUsed("HeiwuCard") and not self.player:isKongcheng() then
 				local cards = sgs.QList2Table(self.player:getCards("h"))

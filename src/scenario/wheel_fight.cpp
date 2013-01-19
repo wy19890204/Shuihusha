@@ -72,11 +72,11 @@ public:
                     Oyasumi(room, killer);
                     room->setPlayerMark(killer, "@skull", wheel);
                 }
-                killer->drawCards(3);
+                killer->drawCards(3, false);
                 room->setPlayerStatistics(killer, "kill", 1);
             }
 
-            room->setPlayerMark(player, "wheelon", 0);
+            player->loseAllMarks("wheelon");
             player->addMark("@skull");
             if(player->getMark("@skull") >= Config.value("Scenario/WheelCount", 10).toInt())
                 return false;
@@ -101,7 +101,7 @@ public:
             Oyasumi(room, player);
 
             room->setPlayerMark(player, "@skull", wheel);
-            player->drawCards(4);
+            player->drawCards(4, false);
             return true;
         }
         case GameOverJudge:{

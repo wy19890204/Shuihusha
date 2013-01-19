@@ -767,28 +767,56 @@ public:
     }
 };
 
-class KaixianPattern: public CardPattern{
+KaixianCard::KaixianCard(){
+    will_throw = false;
+    target_fixed = true;
+}
+
+void KaixianCard::use(Room *room, ServerPlayer *huarong, const QList<ServerPlayer *> &) const{
+    const Card *card = Sanguosha->getCard(getSubcards().first());
+    room->showCard(huarong, card->getEffectiveId());
+    room->setPlayerMark(huarong, skill_name, card->getNumber());
+    LogMessage log;
+    log.type = "$Kaixian";
+    log.from = huarong;
+    log.card_str = card->getEffectIdString();
+    room->sendLog(log);
+}
+
+class KaixianViewAsSkill: public OneCardViewAsSkill{
 public:
-    virtual bool match(const Player *player, const Card *card) const{
-        return !player->hasEquip(card) &&
-                card->getNumber() <= 5;
+    KaixianViewAsSkill():OneCardViewAsSkill("kaixian"){
     }
 
-    virtual bool willThrow() const{
+    virtual bool isEnabledAtPlay(const Player *player) const{
         return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+        return pattern == "@@kaixian";
+    }
+
+    virtual bool viewFilter(const CardItem *ie) const{
+        return !ie->isEquipped() && ie->getCard()->getNumber() <= 5;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        KaixianCard *card = new KaixianCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 };
 
 class Kaixian: public PhaseChangeSkill{
 public:
     Kaixian():PhaseChangeSkill("kaixian"){
-
+        view_as_skill = new KaixianViewAsSkill;
     }
 
     virtual bool onPhaseChange(ServerPlayer *huarong) const{
         Room *room = huarong->getRoom();
         if(huarong->getPhase() == Player::RoundStart){
-            room->setPlayerMark(huarong, "kaixian", 0);
+            huarong->loseAllMarks("kaixian");
             if(huarong->isKongcheng())
                 return false;
             bool caninvoke = false;
@@ -798,21 +826,11 @@ public:
                     break;
                 }
             }
-            if(caninvoke && room->askForSkillInvoke(huarong, objectName())){
-                const Card *card = room->askForCard(huarong, ".kaixian!", "@kaixian", true, QVariant(), NonTrigger);
-                room->showCard(huarong, card->getId());
-                room->setPlayerMark(huarong, "kaixian", card->getNumber());
-                LogMessage log;
-                log.type = "$Kaixian";
-                log.from = huarong;
-                log.card_str = card->getEffectIdString();
-                room->sendLog(log);
-
-                room->playSkillEffect(objectName());
-            }
+            if(caninvoke)
+                room->askForUseCard(huarong, "@@kaixian", "@kaixian", true);
         }
         else if(huarong->getPhase() == Player::NotActive)
-            room->setPlayerMark(huarong, "kaixian", 0);
+            huarong->loseAllMarks("kaixian");
 
         return false;
     }
@@ -1465,7 +1483,7 @@ public:
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *likui, QVariant &data) const{
         if(event == PhaseChange){
             if(likui->getPhase() == Player::Discard)
-                room->setPlayerMark(likui, "shalu", 0);
+                likui->loseAllMarks("shalu");
             return false;
         }
         DamageStruct damage = data.value<DamageStruct>();
@@ -2654,7 +2672,6 @@ public:
             if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
                 const Card *card = room->peek();
                 room->playSkillEffect(objectName());
-                room->setEmotion(loli, "draw-card");
                 room->getThread()->delay();
 
                 LogMessage log;
@@ -2706,7 +2723,6 @@ StandardPackage::StandardPackage()
     huarong->addSkill(new Jingzhun);
     huarong->addSkill(new Kaixian);
     skills << new KaixianSlash;
-    patterns.insert(".kaixian!", new KaixianPattern);
 
     General *chaijin = new General(this, "chaijin", "guan", 3);
     chaijin->addSkill(new Danshu);
@@ -2809,6 +2825,7 @@ StandardPackage::StandardPackage()
     addMetaObject<YixingCard>();
     addMetaObject<QimenCard>();
     addMetaObject<DuijueCard>();
+    addMetaObject<KaixianCard>();
     addMetaObject<HaoshenCard>();
     addMetaObject<SijiuCard>();
     addMetaObject<MaidaoCard>();

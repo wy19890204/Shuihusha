@@ -330,7 +330,7 @@ public:
             QString prompt = QString("@cihu:%1::%2").arg(ogami->getGeneralName()).arg(akaziki->getGeneralName());
             room->askForUseCard(tiger, "@@cihu", prompt, true);
             tiger->tag.remove("CihuOgami");
-            room->setPlayerMark(tiger, "CihuNum", 0);
+            tiger->loseAllMarks("CihuNum");
         }
     }
 };

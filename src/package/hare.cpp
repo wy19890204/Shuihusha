@@ -478,7 +478,7 @@ public:
             room->setPlayerMark(pei, "Bingo", num);
             room->askForUseCard(pei, "@@binggong", "@binggong", true);
         }
-        room->setPlayerMark(pei, "Bingo", 0);
+        pei->loseAllMarks("Bingo");
         return false;
     }
 };
@@ -900,7 +900,7 @@ public:
             for(int i = 0; i < damage.damage; i++){
                 room->setPlayerMark(player, "Huatian", 1);
                 room->askForUseCard(player, "@@huatian", "@huatianai", true);
-                room->setPlayerMark(player, "Huatian", 0);
+                player->loseAllMarks("Huatian");
             }
         }
         else{
@@ -908,7 +908,7 @@ public:
             for(int i = rec.recover; i > 0; i--){
                 room->setPlayerMark(player, "Huatian", 2);
                 room->askForUseCard(player, "@@huatian", "@huatiancuo", true);
-                room->setPlayerMark(player, "Huatian", 0);
+                player->loseAllMarks("Huatian");
             }
         }
         return false;
