@@ -555,46 +555,147 @@ public:
     }
 };
 
-class Longao: public TriggerSkill{
+class Konghe: public TriggerSkill{
 public:
-    Longao():TriggerSkill("longao"){
-        events << CardEffected;
+    Konghe():TriggerSkill("konghe"){
+        events << PhaseChange << Damaged;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return true;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        ServerPlayer *zouyuan = room->findPlayerBySkillName(objectName());
-        CardEffectStruct effect = data.value<CardEffectStruct>();
-        if(!zouyuan || !effect.from || effect.from == zouyuan ||
-           effect.multiple || !effect.card->isNDTrick())
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        QList<ServerPlayer *> uglys = room->findPlayersBySkillName(objectName());
+        if(event == PhaseChange){
+            if(uglys.contains(player) || player->getPhase() != Player::RoundStart)
+                return false;
+            foreach(ServerPlayer *ugly, uglys){
+                if(ugly->faceUp())
+                    continue;
+                if(ugly->askForSkillInvoke(objectName())){
+                    ugly->turnOver();
+                    QString choice = room->askForChoice(ugly, objectName(), "k1+k2+k3");
+                    player->skip(Player::Judge);
+                    if(choice == "k1")
+                        player->skip(Player::Draw);
+                    else if(choice == "k2")
+                        player->skip(Player::Play);
+                    else
+                        player->skip(Player::Discard);
+                    break;
+                }
+            }
+        }
+        else{
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.to->isDead() || !uglys.contains(damage.to))
+                return false;
+            if(damage.to->faceUp() && damage.to->askForSkillInvoke(objectName()))
+                damage.to->turnOver();
+        }
+        return false;
+    }
+};
+
+JiejiuCard::JiejiuCard(){
+    target_fixed = true;
+}
+
+void JiejiuCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    const Card *card = Sanguosha->getCard(getSubcards().first());
+    PlayerStar target = source->tag["JiejiuSource"].value<PlayerStar>();
+    source->pindian(target, skill_name, card);
+}
+
+class JiejiuViewAsSkill: public OneCardViewAsSkill{
+public:
+    JiejiuViewAsSkill():OneCardViewAsSkill("jiejiu"){
+
+    }
+
+    virtual bool isEnabledAtPlay(const Player *) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@jiejiu";
+    }
+
+    virtual bool viewFilter(const CardItem *i) const{
+        return !i->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        JiejiuCard *card = new JiejiuCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
+    }
+};
+
+class Jiejiu: public TriggerSkill{
+public:
+    Jiejiu():TriggerSkill("jiejiu"){
+        events << DamageProceed;
+        view_as_skill = new JiejiuViewAsSkill;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
+        QList<ServerPlayer *> huoyansuanni = room->findPlayersBySkillName(objectName());
+        DamageStruct damage = data.value<DamageStruct>();
+        if(!damage.from || damage.from->isKongcheng())
             return false;
-
-        if(!zouyuan->isNude() && room->askForSkillInvoke(zouyuan, objectName(), data)){
-            room->askForDiscard(zouyuan, objectName(), 1, false, true);
-
-            QList<ServerPlayer *> players = room->getOtherPlayers(effect.from), targets;
-            foreach(ServerPlayer *player, players){
-                if(player != effect.to)
-                    targets << player;
+        if(damage.nature != DamageStruct::Normal || damage.to->isDead())
+            return false;
+        foreach(ServerPlayer *suanni, huoyansuanni){
+            if(!suanni->hasMark("@block") && !suanni->isKongcheng()){
+                suanni->tag["JiejiuSource"] = QVariant::fromValue((PlayerStar)damage.from);
+                room->askForUseCard(suanni, "@@jiejiu", "@jiejiu:" + damage.from->objectName(), true);
+                suanni->tag.remove("JiejiuSource");
+                if(suanni->getMark("jiejiu") == 4){
+                    suanni->loseAllMarks("jiejiu");
+                    LogMessage log;
+                    log.type = "#Jiejiu";
+                    log.from = suanni;
+                    log.arg = objectName();
+                    log.to << damage.to;
+                    room->sendLog(log);
+                    return true;
+                }
             }
+        }
+        return false;
+    }
+};
 
-            QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
-            if(choice == "zhuan" && targets.length() > 0){
-                room->playSkillEffect(objectName(), 1);
-                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
+class JiejiuPindian: public TriggerSkill{
+public:
+    JiejiuPindian():TriggerSkill("#jiejiu_pindian"){
+        events << Pindian << PhaseChange;
+    }
 
-                effect.from = effect.from;
-                effect.to = target;
-                data = QVariant::fromValue(effect);
+    virtual int getPriority() const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room*, ServerPlayer *player, QVariant &data) const{
+        if(event == PhaseChange){
+            if(player->getPhase() == Player::RoundStart)
+                player->loseAllMarks("@block");
+            return false;
+        }
+        PindianStar pindian = data.value<PindianStar>();
+        if(pindian->reason == "jiejiu"){
+            if(pindian->isSuccess()){
+                player->setMark("jiejiu", 4);
+                player->obtainCard(pindian->to_card);
             }
-            if(choice == "qi" && !effect.from->isNude()){
-                room->playSkillEffect(objectName(), 2);
-                int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
-                room->throwCard(to_throw, effect.from, zouyuan);
-            }
+            else
+                player->gainMark("@block");
         }
         return false;
     }
@@ -636,12 +737,18 @@ SnakePackage::SnakePackage()
     General *houjian = new General(this, "houjian", "kou", 2);
     houjian->addSkill(new Feizhen);
 
-    General *zouyan = new General(this, "zouyuan", "min");
-    zouyan->addSkill(new Longao);
+    General *xuanzan = new General(this, "xuanzan", "guan");
+    xuanzan->addSkill(new Konghe);
+
+    General *dengfei = new General(this, "dengfei", "kou");
+    dengfei->addSkill(new Jiejiu);
+    dengfei->addSkill(new JiejiuPindian);
+    related_skills.insertMulti("jiejiu", "#jiejiu_pindian");
 
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
+    addMetaObject<JiejiuCard>();
 }
 
 //ADD_PACKAGE(Snake)

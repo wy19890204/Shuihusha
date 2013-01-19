@@ -33,6 +33,14 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
+class JiejiuCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JiejiuCard();
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class SnakePackage: public GeneralPackage{
     Q_OBJECT
 

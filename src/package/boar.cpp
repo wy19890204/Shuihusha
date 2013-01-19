@@ -819,9 +819,57 @@ public:
     }
 };
 
+class Longao: public TriggerSkill{
+public:
+    Longao():TriggerSkill("longao"){
+        events << CardEffected;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        ServerPlayer *zouyuan = room->findPlayerBySkillName(objectName());
+        CardEffectStruct effect = data.value<CardEffectStruct>();
+        if(!zouyuan || !effect.from || effect.from == zouyuan ||
+           effect.multiple || !effect.card->isNDTrick())
+            return false;
+
+        if(!zouyuan->isNude() && room->askForSkillInvoke(zouyuan, objectName(), data)){
+            room->askForDiscard(zouyuan, objectName(), 1, false, true);
+
+            QList<ServerPlayer *> players = room->getOtherPlayers(effect.from), targets;
+            foreach(ServerPlayer *player, players){
+                if(player != effect.to)
+                    targets << player;
+            }
+
+            QString choice = room->askForChoice(zouyuan, objectName(), "zhuan+qi");
+            if(choice == "zhuan" && targets.length() > 0){
+                room->playSkillEffect(objectName(), 1);
+                ServerPlayer *target = room->askForPlayerChosen(zouyuan, targets, objectName());
+
+                effect.from = effect.from;
+                effect.to = target;
+                data = QVariant::fromValue(effect);
+            }
+            if(choice == "qi" && !effect.from->isNude()){
+                room->playSkillEffect(objectName(), 2);
+                int to_throw = room->askForCardChosen(zouyuan, effect.from, "he", objectName());
+                room->throwCard(to_throw, effect.from, zouyuan);
+            }
+        }
+        return false;
+    }
+};
+
 BoarPackage::BoarPackage()
     :GeneralPackage("boar")
 {
+    General *zouyuan = new General(this, "zouyuan", "min");
+    zouyuan->addSkill(new Longao);
+
     General *jiaoting = new General(this, "jiaoting", "kou");
     jiaoting->addSkill(new Qinlong);
 
