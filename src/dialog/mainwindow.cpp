@@ -81,6 +81,9 @@ MainWindow::MainWindow(QWidget *parent)
     QResource::registerResource("image/skin.rcc");
     QResource::registerResource("image/card.rcc");
 #endif
+    connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
+    connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
+
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
     connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));

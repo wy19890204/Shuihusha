@@ -241,9 +241,8 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
     if(!force && thread->trigger(PreDeath, this, victim, data))
         return;
     ServerPlayer *killer = reason ? reason->from : NULL;
-    if(Config.ContestMode && killer){
+    if(Config.ContestMode && killer)
         killer->addVictim(victim);
-    }
 
     victim->setAlive(false);
 
@@ -973,6 +972,8 @@ int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QStrin
 
 const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
                              bool is_skill, const QVariant &data, TriggerEvent trigger_event){
+    if(player->isDead())
+        return NULL;
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
 
@@ -1065,6 +1066,8 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 }
 
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
+    if(player->isDead())
+        return NULL;
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
 

@@ -30,6 +30,10 @@
     <addaction name="actionStart_Game"/>
     <addaction name="actionStart_Server"/>
     <addaction name="actionPC_Console_Start"/>
+    <addaction name="separator"/>
+    <addaction name="actionRestart_game"/>
+    <addaction name="actionReturn_main"/>
+    <addaction name="separator"/>
     <addaction name="actionReplay"/>
     <addaction name="actionExit"/>
    </widget>
@@ -394,6 +398,16 @@
   <action name="actionCrypto_audio">
    <property name="text">
     <string>Crypto audio ...</string>
+   </property>
+  </action>
+  <action name="actionRestart_game">
+   <property name="text">
+    <string>Restart game</string>
+   </property>
+  </action>
+  <action name="actionReturn_main">
+   <property name="text">
+    <string>Return main</string>
    </property>
   </action>
  </widget>
