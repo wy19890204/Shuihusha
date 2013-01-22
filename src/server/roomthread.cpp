@@ -459,9 +459,23 @@ const QList<EventTriplet> *RoomThread::getEventStack() const{
     return &event_stack;
 }
 
-static bool CompareByPriority(const TriggerSkill *a, const TriggerSkill *b){
-    return a->getPriority() > b->getPriority();
-}
+class CompareByPriority{
+public:
+    CompareByPriority(TriggerEvent event){
+        e = event;
+    }
+
+    void setEvent(TriggerEvent event){
+        e = event;
+    }
+
+    bool operator()(const TriggerSkill *a, const TriggerSkill *b){
+        return a->getPriority(e) > b->getPriority(e);
+    }
+
+private:
+    TriggerEvent e;
+};
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data){
     Q_ASSERT(QThread::currentThread() == this);
@@ -508,7 +522,8 @@ void RoomThread::addTriggerSkill(const TriggerSkill *skill){
         QList<const TriggerSkill *> &table = skill_table[event];
 
         table << skill;
-        qStableSort(table.begin(), table.end(), CompareByPriority);
+        CompareByPriority comparator(event);
+        qStableSort(table.begin(), table.end(), comparator);
     }
 
     if(skill->isVisible()){

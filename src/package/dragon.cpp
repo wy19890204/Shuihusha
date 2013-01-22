@@ -240,7 +240,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -387,8 +387,8 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
-        return 2;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == Predamaged ? 2 : -1;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -674,7 +674,7 @@ public:
         events << CardEffected;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 

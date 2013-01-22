@@ -785,7 +785,7 @@ public:
 	const ViewAsSkill *getViewAsSkill() const;
 	QList<TriggerEvent> getTriggerEvents() const;
 
-	virtual int getPriority() const;
+	virtual int getPriority(TriggerEvent event = NonTrigger) const;
 	virtual bool triggerable(const ServerPlayer *target) const;
 	virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const = 0;
 };

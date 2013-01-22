@@ -69,7 +69,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
@@ -286,36 +286,30 @@ public:
     }
 };
 
-class Pushou: public PhaseChangeSkill{
+class Pushou: public TriggerSkill{
 public:
-    Pushou():PhaseChangeSkill("pushou"){
+    Pushou():TriggerSkill("pushou"){
         view_as_skill = new PushouViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        if(target->getPhase() == Player::Start ||
-           target->getPhase() == Player::Finish){
-            target->getRoom()->askForUseCard(target, "@@pushou", "@pushou", true);
-        }
-        return false;
-    }
-};
-
-class PushouPindian: public TriggerSkill{
-public:
-    PushouPindian():TriggerSkill("#pushou_pd"){
-        events << Pindian;
+        events << Pindian << PhaseChange;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
         return true;
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == Pindian ? -1 : 1;
     }
 
-    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
+        if(event == PhaseChange){
+            if(!player->hasSkill(objectName()))
+                return false;
+            if(player->getPhase() == Player::Start ||
+               player->getPhase() == Player::Finish)
+                room->askForUseCard(player, "@@pushou", "@pushou", true);
+            return false;
+        }
         PindianStar pindian = data.value<PindianStar>();
         QList<ServerPlayer *> haras = room->findPlayersBySkillName(objectName());
         foreach(ServerPlayer *hara, haras){
@@ -480,8 +474,6 @@ void MiniScene::addGenerals(int stage, bool show){
     case 23: {
             General *renyuan = new General(this, "renyuan", "jiang", 4, true, true, show);
             renyuan->addSkill(new Pushou);
-            renyuan->addSkill(new PushouPindian);
-            related_skills.insertMulti("pushou", "#pushou_pd");
             addMetaObject<PushouCard>();
             break;
         }

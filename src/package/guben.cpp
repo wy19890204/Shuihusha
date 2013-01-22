@@ -13,7 +13,7 @@ public:
         frequency = Frequent;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -495,7 +495,7 @@ public:
         events << SlashEffect << PhaseChange;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 

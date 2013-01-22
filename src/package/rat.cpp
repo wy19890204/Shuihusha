@@ -259,7 +259,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -421,7 +421,7 @@ public:
         events << DamagedProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -507,7 +507,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -640,7 +640,7 @@ public:
         events << DamageProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -743,7 +743,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -849,7 +849,7 @@ public:
         frequency = Wake;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 

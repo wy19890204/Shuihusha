@@ -213,7 +213,7 @@ QList<TriggerEvent> TriggerSkill::getTriggerEvents() const{
     return events;
 }
 
-int TriggerSkill::getPriority() const{
+int TriggerSkill::getPriority(TriggerEvent) const{
     switch(frequency){
     case Compulsory:
     case Wake: return 2;
@@ -232,7 +232,7 @@ ScenarioRule::ScenarioRule(Scenario *scenario)
     setParent(scenario);
 }
 
-int ScenarioRule::getPriority() const{
+int ScenarioRule::getPriority(TriggerEvent) const{
     return 3;
 }
 
@@ -246,7 +246,7 @@ MasochismSkill::MasochismSkill(const QString &name)
     events << Damaged;
 }
 
-int MasochismSkill::getPriority() const{
+int MasochismSkill::getPriority(TriggerEvent) const{
     return -1;
 }
 
@@ -407,7 +407,7 @@ MarkAssignSkill::MarkAssignSkill(const QString &mark, int n)
 {
 }
 
-int MarkAssignSkill::getPriority() const{
+int MarkAssignSkill::getPriority(TriggerEvent) const{
     return -1;
 }
 
@@ -420,7 +420,7 @@ CutHpSkill::CutHpSkill(int n)
 {
 }
 
-int CutHpSkill::getPriority() const{
+int CutHpSkill::getPriority(TriggerEvent) const{
     return -1;
 }
 

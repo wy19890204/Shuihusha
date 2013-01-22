@@ -115,7 +115,7 @@ public:
     const ViewAsSkill *getViewAsSkill() const;
     QList<TriggerEvent> getTriggerEvents() const;
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual bool triggerable(const ServerPlayer *target) const;
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const = 0;
 
@@ -132,7 +132,7 @@ class ScenarioRule: public TriggerSkill{
 public:
     ScenarioRule(Scenario *scenario);
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual bool triggerable(const ServerPlayer *target) const;
 };
 
@@ -142,7 +142,7 @@ class MasochismSkill: public TriggerSkill{
 public:
     MasochismSkill(const QString &name);
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
     virtual void onDamaged(ServerPlayer *target, const DamageStruct &damage) const = 0;
 };
@@ -259,7 +259,7 @@ class MarkAssignSkill: public GameStartSkill{
 public:
     MarkAssignSkill(const QString &mark, int n);
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual void onGameStart(ServerPlayer *player) const;
 
 private:
@@ -273,7 +273,7 @@ class CutHpSkill: public GameStartSkill{
 public:
     CutHpSkill(int n);
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual void onGameStart(ServerPlayer *player) const;
 
 private:

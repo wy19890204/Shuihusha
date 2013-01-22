@@ -54,7 +54,7 @@ public:
         view_as_skill = new FanwuViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
@@ -378,7 +378,7 @@ public:
         events << HpRecover;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 

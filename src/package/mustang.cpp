@@ -161,7 +161,7 @@ public:
         view_as_skill = new HengsaoViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -311,7 +311,7 @@ public:
         view_as_skill = new HuazhuViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -530,7 +530,7 @@ public:
         view_as_skill = new MaiyiViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
@@ -706,7 +706,7 @@ public:
         view_as_skill = new ZishiViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -751,7 +751,7 @@ public:
         frequency = Frequent;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 

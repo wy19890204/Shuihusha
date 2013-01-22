@@ -211,7 +211,7 @@ public:
     Tancai():PhaseChangeSkill("tancai"){
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -504,7 +504,7 @@ public:
     Xianji():PhaseChangeSkill("xianji"){
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -776,7 +776,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 

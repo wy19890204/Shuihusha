@@ -275,7 +275,7 @@ public:
     Timer():PhaseChangeSkill("timer"){
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -302,7 +302,7 @@ public:
         return hand + fu;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -2;
     }
 
@@ -399,7 +399,7 @@ public:
         return !target->hasSkill(objectName());
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -2;
     }
 

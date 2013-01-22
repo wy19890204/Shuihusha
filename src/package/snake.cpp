@@ -214,7 +214,7 @@ public:
         view_as_skill = new SinueViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -329,9 +329,9 @@ void FangzaoCard::onEffect(const CardEffectStruct &effect) const{
     }
 }
 
-class Fangzao: public ViewAsSkill{
+class FangzaoViewAsSkill: public ViewAsSkill{
 public:
-    Fangzao():ViewAsSkill("fangzao"){
+    FangzaoViewAsSkill():ViewAsSkill("fangzao"){
 
     }
 
@@ -395,9 +395,10 @@ public:
     }
 };
 
-class FangzaoMark: public TriggerSkill{
+class Fangzao: public TriggerSkill{
 public:
-    FangzaoMark():TriggerSkill("#fangzao_mark"){
+    Fangzao():TriggerSkill("fangzao"){
+        view_as_skill = new FangzaoViewAsSkill;
         events << CardUsed;
     }
 
@@ -417,7 +418,7 @@ public:
         events << AskForRetrial;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -2;
     }
 
@@ -502,7 +503,7 @@ public:
         view_as_skill = new FeizhenViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -678,8 +679,8 @@ public:
         events << Pindian << PhaseChange;
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual int getPriority(TriggerEvent event) const{
+        return event == Pindian ? -1 : 1;
     }
 
     virtual bool trigger(TriggerEvent event, Room*, ServerPlayer *player, QVariant &data) const{
@@ -730,9 +731,7 @@ SnakePackage::SnakePackage()
 
     General *jindajian = new General(this, "jindajian", "min", 3);
     jindajian->addSkill(new Fangzao);
-    jindajian->addSkill(new FangzaoMark);
     jindajian->addSkill(new Jiangxin);
-    related_skills.insertMulti("fangzao", "#fangzao_mark");
 
     General *houjian = new General(this, "houjian", "kou", 2);
     houjian->addSkill(new Feizhen);

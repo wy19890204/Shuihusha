@@ -219,7 +219,7 @@ public:
         events << SlashMissed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -446,7 +446,7 @@ public:
         return instance;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 

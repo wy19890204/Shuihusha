@@ -753,8 +753,8 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
-        return 2;
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -962,7 +962,7 @@ public:
         events << DamagedProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -1031,7 +1031,7 @@ public:
         view_as_skill = new ZiyiViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -2;
     }
 

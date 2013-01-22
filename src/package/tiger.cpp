@@ -465,7 +465,7 @@ public:
         frequency = Wake;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -536,7 +536,7 @@ public:
         frequency = Frequent;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
@@ -677,7 +677,7 @@ public:
         events << CardEffected;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -741,7 +741,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
