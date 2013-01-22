@@ -5,8 +5,6 @@ return {
 
 	["sujiang"] = "士兵男",
 	["sujiangf"] = "士兵女",
-	["#sujiang"] = "炮灰",
-	["#sujiangf"] = "炮灰",
 	["$sujiang"] = "T01",
 	["$sujiangf"] = "T02",
 	["illustrator:sujiang"] = "傲视天下",
@@ -21,7 +19,6 @@ return {
 	["~sujiangf"] = "赤条条……流氓啊~!",
 
 	["$ubuntenkei"] = "T03",
-	["#ubuntenkei"] = "",
 	["ubuntenkei"] = "宇文天启",
 	["designer:ubuntenkei"] = "宇文天启 [测试专用]",
 	["cv:ubuntenkei"] = "新月冰冰",

@@ -902,13 +902,39 @@ void ServerDialog::onHttpDone(bool error){
 }
 
 void ServerDialog::onOkButtonClicked(){
-    int genc = Sanguosha->getGeneralCount();
-    int plyc = Sanguosha->getPlayerCount(ServerInfo.GameMode);
-    if(ServerInfo.Enable2ndGeneral)
+    int genc = 0;
+    int car = 0;
+    QList<QAbstractButton *> checkboxes = extension_group->buttons();
+    foreach(QAbstractButton *checkbox, checkboxes){
+        if(checkbox->isChecked()){
+            QString package_name = checkbox->objectName();
+            const Package *package = Sanguosha->findChild<const Package *>(package_name);
+            foreach(General *g, package->findChildren<General *>()){
+                if(g->isHidden() || g->isTotallyHidden())
+                    continue;
+                genc ++;
+            }
+            QList<Card *> cards = package->findChildren<Card *>();
+            car += cards.count();
+        }
+    }
+    QString objname = mode_group->checkedButton()->objectName();
+    if(objname == "scenario")
+        objname = scenario_combobox->itemData(scenario_combobox->currentIndex()).toString();
+    else if(objname == "mini"){
+        if(mini_scene_combobox->isEnabled())
+            objname = mini_scene_combobox->itemData(mini_scene_combobox->currentIndex()).toString();
+        else
+            objname = "custom_scenario";
+    }
+    int plyc = Sanguosha->getPlayerCount(objname);
+    if(second_general_checkbox->isChecked())
         plyc *= 2;
-    //if(genc <= plyc)
-    QMessageBox::warning(this, QString::number(genc), QString::number(plyc));
-    if(announce_ip_checkbox->isChecked() && address_edit->text().isEmpty())
+    if(genc <= plyc)
+        QMessageBox::warning(this, tr("Warning"), tr("The number of choices general deficiency!"));
+    else if(car < 50)
+        QMessageBox::warning(this, tr("Warning"), tr("The number of cards deficiency!"));
+    else if(announce_ip_checkbox->isChecked() && address_edit->text().isEmpty())
         QMessageBox::warning(this, tr("Warning"), tr("Please fill address when you want to annouce your server's IP"));
     else
         accept();

@@ -923,7 +923,7 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
     if(repliedPlayer->hasSkill("pozhen") ||
        (card->getSkillName() == "neiying" && card->hasSameSuit())){
-        if(card->objectName() == "counterplot")
+        if(card->objectName() == "counterplot" && repliedPlayer->isAlive())
             repliedPlayer->obtainCard(last_trick);
         return true;
     }

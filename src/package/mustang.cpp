@@ -819,4 +819,4 @@ MustangPackage::MustangPackage()
     addMetaObject<ZishiCard>();*/
 }
 
-ADD_PACKAGE(Mustang)
+//ADD_PACKAGE(Mustang)

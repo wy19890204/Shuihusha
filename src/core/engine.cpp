@@ -73,9 +73,8 @@ Engine::Engine()
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
-    foreach(QString ban, getBanPackages()){
+    foreach(QString ban, getBanPackages())
         addBanPackage(ban);
-    }
 
     foreach(const Skill *skill, skills.values()){
         Skill *mutable_skill = const_cast<Skill *>(skill);
