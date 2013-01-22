@@ -26,7 +26,10 @@
 #include <QSystemTrayIcon>
 #include <QInputDialog>
 #include <QLabel>
+
+#ifdef USE_RCC
 #include <QResource>
+#endif
 
 class FitView : public QGraphicsView
 {

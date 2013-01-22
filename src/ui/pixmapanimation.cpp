@@ -2,7 +2,10 @@
 #include <QPainter>
 #include <QPixmapCache>
 #include <QDir>
+
+#ifdef USE_RCC
 #include <QResource>
+#endif
 
 PixmapAnimation::PixmapAnimation(QGraphicsScene *scene) :
     QGraphicsItem(0,scene)

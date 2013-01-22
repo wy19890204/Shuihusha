@@ -194,9 +194,9 @@ public:
     }
 };
 
-class QingnangSlash: public ClientSkill{
+class QinggangSlash: public ClientSkill{
 public:
-    QingnangSlash():ClientSkill("#qinggang_slash"){
+    QinggangSlash():ClientSkill("#qinggang_slash"){
     }
 
     virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{
@@ -1130,7 +1130,7 @@ StandardCardPackage::StandardCardPackage()
     skills << EightDiagramSkill::GetInstance();
     skills << new CrossbowSkill;
     skills << new HalberdSkill;
-    skills << new QingnangSlash;
+    skills << new QinggangSlash;
 
     {
         QList<Card *> horses;

@@ -5,7 +5,9 @@
 #include "client.h"
 #include "settings.h"
 
+#ifdef USE_RCC
 #include <QResource>
+#endif
 static CardOverview *Overview;
 
 CardOverview *CardOverview::GetInstance(QWidget *main_window){

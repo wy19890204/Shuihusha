@@ -303,7 +303,7 @@ public:
 
     virtual bool trigger(TriggerEvent event, Room *room, ServerPlayer *player, QVariant &data) const{
         if(event == PhaseChange){
-            if(!player->hasSkill(objectName()))
+            if(!player->hasSkill(objectName()) || player->isKongcheng())
                 return false;
             if(player->getPhase() == Player::Start ||
                player->getPhase() == Player::Finish)
