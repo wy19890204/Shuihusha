@@ -4,7 +4,6 @@
 #include "package.h"
 #include "carditem.h"
 #include "client.h"
-#include "engine.h"
 
 class HarePackage: public GeneralPackage{
     Q_OBJECT

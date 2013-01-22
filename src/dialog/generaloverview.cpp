@@ -50,26 +50,19 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
     for(i=0; i<copy_generals.length(); i++){
         const General *general = copy_generals[i];
 
-        QString name, kingdom, gender, max_hp, package;
+        QString nickname, name, kingdom, gender, max_hp, package, id;
 
+        nickname = general->getNickname();
         name = Sanguosha->translate(general->objectName());
         kingdom = Sanguosha->translate(general->getKingdom());
         gender = Sanguosha->translate(general->getGenderString());
-        max_hp = QString::number(general->getMaxHp());
-        for(int n = 1; n <= 3; n++){
-            if(general->hasSkill("#hp-" + QString::number(n))){
-                max_hp = QString::number(general->getMaxHp() - n) + "/" + QString::number(general->getMaxHp());
-                break;
-            }
-        }
+        max_hp = general->getShowHp();
         package = Sanguosha->translate(general->getPackage());
+        id = general->getId();
 
-        QString nickname = Sanguosha->translate("#" + general->objectName());
-        QTableWidgetItem *nickname_item;
-        if(!nickname.startsWith("#"))
-            nickname_item = new QTableWidgetItem(nickname);
-        else
-            nickname_item = new QTableWidgetItem(Sanguosha->translate("UnknowNick"));
+        if(nickname == "")
+            nickname = Sanguosha->translate("UnknowNick");
+        QTableWidgetItem *nickname_item = new QTableWidgetItem(nickname);
         nickname_item->setData(Qt::UserRole, general->objectName());
         nickname_item->setTextAlignment(Qt::AlignCenter);
 
@@ -101,12 +94,7 @@ void GeneralOverview::fillGenerals(const QList<const General *> &generals){
         QTableWidgetItem *package_item = new QTableWidgetItem(package);
         package_item->setTextAlignment(Qt::AlignCenter);
 
-        QString id = Sanguosha->translate("$" + general->objectName());
-        QTableWidgetItem *id_item;
-        if(!id.startsWith("$"))
-            id_item = new QTableWidgetItem(id);
-        else
-            id_item = new QTableWidgetItem("-1");
+        QTableWidgetItem *id_item = new QTableWidgetItem(id);
         id_item->setTextAlignment(Qt::AlignCenter);
 
         ui->tableWidget->setItem(i, 0, nickname_item);

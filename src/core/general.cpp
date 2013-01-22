@@ -71,6 +71,33 @@ QString General::getGenderString() const{
     }
 }
 
+QString General::getId() const{
+    QString id = Sanguosha->translate("$" + objectName());
+    if(id.startsWith("$"))
+        id = "";
+    return id;
+}
+
+QString General::getNickname(bool full) const{
+    QString nick = Sanguosha->translate("#" + objectName());
+    if(nick.startsWith("#"))
+        nick = "";
+    if(full)
+        nick.append(Sanguosha->translate(objectName()));
+    return nick;
+}
+
+QString General::getShowHp() const{
+    QString max_hp = QString::number(getMaxHp());
+    for(int n = 1; n <= 3; n++){
+        if(hasSkill("#hp-" + QString::number(n))){
+            max_hp = QString::number(getMaxHp() - n) + "/" + QString::number(getMaxHp());
+            break;
+        }
+    }
+    return max_hp;
+}
+
 bool General::isLord() const{
     return lord;
 }

@@ -698,6 +698,38 @@ QString Engine::getRandomGeneralName() const{
     return generals.keys().at(qrand() % generals.size());
 }
 
+QString Engine::getPackageInformation(const Package *package) const{
+    QString info;
+    if(package->getType() == Package::GeneralPack){
+        if(package->objectName() == "customcards")
+            return translate(package->objectName());
+        QList<General *> generals = package->findChildren<General *>();
+        int num = generals.count();
+        foreach(General *general, generals){
+            if(general->isHidden() || general->isTotallyHidden()){
+                num --;
+                continue;
+            }
+            //001 songjiang male 4HP kou
+            QString text = QString("%1 %2 %3 %4 %5")
+                           .arg(general->getId().left(3))
+                           .arg(general->getNickname(true))
+                           .arg(translate(general->getGenderString()))
+                           .arg(general->getShowHp() + "HP")
+                           .arg(translate(general->getKingdom(true)));
+            info = info + "<br/>" + text;
+        }
+        QString head = tr("%1 package, total: %2").arg(translate(package->objectName())).arg(num);
+        info = head + info;
+    }
+    else{
+        QList<Card *> cards = package->findChildren<Card *>();
+        int num = cards.count();
+        info = tr("%1, total: %2").arg(translate(package->objectName())).arg(num);
+    }
+    return info;
+}
+
 void Engine::playAudio(const QString &name) const{
     playEffect(QString("audio/system/%1.ogg").arg(name));
 }

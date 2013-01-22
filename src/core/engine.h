@@ -85,6 +85,7 @@ public:
     QList<int> getRandomCards() const;
     QString getRandomGeneralName() const;
     QStringList getLimitedGeneralNames(bool getall = false) const;
+    QString getPackageInformation(const Package *package) const;
 
     void playAudio(const QString &name) const;
     void playEffect(const QString &filename) const;

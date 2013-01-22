@@ -114,6 +114,7 @@ QWidget *ServerDialog::createPackageTab(){
         QCheckBox *checkbox = new QCheckBox;
         checkbox->setObjectName(extension);
         checkbox->setText(Sanguosha->translate(extension));
+        checkbox->setToolTip(Sanguosha->getPackageInformation(package));
         checkbox->setChecked(!ban_packages.contains(extension) && !forbid_package);
         checkbox->setEnabled(!forbid_package);
 
@@ -901,9 +902,15 @@ void ServerDialog::onHttpDone(bool error){
 }
 
 void ServerDialog::onOkButtonClicked(){
-    if(announce_ip_checkbox->isChecked() && address_edit->text().isEmpty()){
+    int genc = Sanguosha->getGeneralCount();
+    int plyc = Sanguosha->getPlayerCount(ServerInfo.GameMode);
+    if(ServerInfo.Enable2ndGeneral)
+        plyc *= 2;
+    //if(genc <= plyc)
+    QMessageBox::warning(this, QString::number(genc), QString::number(plyc));
+    if(announce_ip_checkbox->isChecked() && address_edit->text().isEmpty())
         QMessageBox::warning(this, tr("Warning"), tr("Please fill address when you want to annouce your server's IP"));
-    }else
+    else
         accept();
 }
 

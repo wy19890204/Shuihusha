@@ -56,6 +56,9 @@ public:
     QString getPackage() const;
     QString getSkillDescription() const;
     QString getWinword() const;
+    QString getId() const;
+    QString getNickname(bool full = false) const;
+    QString getShowHp() const;
 
     static QSize BigIconSize;
     static QSize SmallIconSize;

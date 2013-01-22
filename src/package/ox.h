@@ -4,7 +4,6 @@
 #include "package.h"
 #include "client.h"
 #include "carditem.h"
-#include "engine.h"
 
 class OxPackage : public GeneralPackage{
     Q_OBJECT

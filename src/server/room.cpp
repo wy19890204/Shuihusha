@@ -3681,7 +3681,7 @@ void Room::_setupChooseGeneralRequestArgs(ServerPlayer *player){
 
 QString Room::askForGeneral(ServerPlayer *player, const QStringList &generals, QString default_choice){
     if(default_choice.isEmpty())
-        default_choice = generals.at(qrand() % generals.length());
+        default_choice = !generals.isEmpty() ? generals.at(qrand() % generals.length()) : "sujiang";
 
     if(player->isOnline())
     {
