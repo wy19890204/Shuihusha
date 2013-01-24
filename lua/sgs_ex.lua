@@ -91,6 +91,30 @@ function sgs.CreateMasochismSkill(spec)
 	return sgs.CreateTriggerSkill(spec)
 end
 
+function sgs.CreateMaxCardsSkill(spec)
+	assert(type(spec.name) == "string")
+	assert(type(spec.extra_func) == "function")
+
+	local skill = sgs.LuaMaxCardsSkill(spec.name)
+	skill.extra_func = spec.extra_func
+
+	return skill
+end
+
+function sgs.CreateSlashSkill(spec)
+	assert(type(spec.name) == "string")
+	assert(type(spec.s_range_func) == "function")
+	assert(type(spec.s_extra_func) == "function")
+	assert(type(spec.s_residue_func) == "function")
+
+	local skill = sgs.LuaSlashSkill(spec.name)
+	skill.s_range_func = spec.s_range_func
+	skill.s_extra_func = spec.s_extra_func
+	skill.s_residue_func = spec.s_residue_func
+
+	return skill
+end
+
 --------------------------------------------
 
 -- skill cards

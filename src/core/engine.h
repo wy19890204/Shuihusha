@@ -59,6 +59,7 @@ public:
     QStringList getScenarioNames() const;
     void addScenario(Scenario *scenario);
     const Scenario *getScenario(const QString &name) const;
+    bool getScenarioLordSkill(const QString &mode) const;
 
     void addPackage(const QString &name);
     void addScenario(const QString &name);
