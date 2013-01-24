@@ -347,7 +347,7 @@ bool Player::isLord() const{
 }
 
 bool Player::hasSkill(const QString &skill_name) const{
-    if(property("scarecrow").toBool())
+    if(property("scarecrow").toBool()) //qimen
         return false;
     return hasInnateSkill(skill_name)
             || acquired_skills.contains(skill_name);
@@ -368,21 +368,15 @@ bool Player::hasLordSkill(const QString &skill_name) const{
         return false;
     if(Config.NoLordSkill || Config.EnableAnzhan)
         return false;
-    if(property("scarecrow").toBool()) //qimen
-        return false;
 
-    //QString mode = getGameMode();
-    QString mode = ServerInfo.GameMode;
+    QString mode = getGameMode();
     if(mode == "06_3v3" || mode == "02_1v1")
         return false;
 
-    //const Scenario *scenario = Sanguosha->getScenario(mode);  @todo
-    //if(scenario && scenario->unloadLordSkill())
-    //    return false;
+    if(Sanguosha->getScenarioLordSkill(mode))
+        return false;
 
-    if(ServerInfo.EnableHegemony)
-        return hasInnateSkill(skill_name);
-    return acquired_skills.contains(skill_name);
+    return hasSkill(skill_name);
 }
 
 void Player::acquireSkill(const QString &skill_name){
