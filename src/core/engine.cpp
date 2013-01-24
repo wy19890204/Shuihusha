@@ -862,7 +862,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
             x += skill->getCorrect(from, to);
         else if(type == "residue"){
             int y = skill->getSlashResidue(from);
-            if(y < -200 || y > 200) // use slash never or endless
+            if(y < -200) // use slash never
                 return y;
             x += y;
         }

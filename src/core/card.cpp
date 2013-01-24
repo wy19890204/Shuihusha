@@ -145,6 +145,17 @@ Card::Color Card::getColor() const{
     }
 }
 
+QString Card::getColorString() const{
+    switch(suit){
+    case Spade:
+    case Club: return "black";
+    case Heart:
+    case Diamond: return "red";
+    default:
+        return "colorless";
+    }
+}
+
 bool Card::isEquipped() const{
     return Self->hasEquip(this);
 }
