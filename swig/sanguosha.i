@@ -213,6 +213,7 @@ public:
 	QSet<QString> getAcquiredSkills() const;
 	int getKingdoms() const;
 
+	bool canSlashWithoutCrossbow() const;
 	virtual bool isProhibited(const Player *to, const Card *card) const;
 	virtual bool isPenetrated(const Player *from = NULL, const Card *card = NULL) const;
 	virtual bool isLastHandCard(const Card *card) const = 0;
@@ -509,7 +510,9 @@ enum TriggerEvent{
 
 	JinkUsed,
 
+	CardAsk,
 	CardAsked,
+	CardUseAsk,
 	CardUsed,
 	CardResponsed,
 	CardDiscarded,

@@ -941,6 +941,10 @@ bool Player::isPenetrated(const Player *from, const Card *card) const{
     return Sanguosha->isPenetrate(from, this, card);
 }
 
+bool Player::canSlashWithoutCrossbow() const{
+    return Slash::IsAvailable(this);
+}
+
 void Player::jilei(const QString &type){
     if(type == ".")
         jilei_set.clear();
