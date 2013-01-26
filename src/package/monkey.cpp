@@ -714,8 +714,8 @@ MonkeyPackage::MonkeyPackage()
     related_skills.insertMulti("fanzhan", "#fanzhan-efect");
     related_skills.insertMulti("fanzhan", "#fanzhan-clear");
 
-    General *tongmeng = new General(this, "tongmeng", "min", 3);
-    tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
+    //General *tongmeng = new General(this, "tongmeng", "min", 3);
+    //tongmeng->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *litianrun = new General(this, "litianrun", "jiang");
     litianrun->addSkill(new Jingtian);

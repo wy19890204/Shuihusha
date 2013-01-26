@@ -249,7 +249,7 @@ const DelayedTrick *DelayedTrick::CastFrom(const Card *card){
     int number = card->getNumber();
     if(card->inherits("DelayedTrick"))
         return qobject_cast<const DelayedTrick *>(card);
-    else if(card->getSuit() == Card::Diamond){
+    else if(card->isKindOf("EquipCard")){
         trick = new Indulgence(suit, number);
         trick->addSubcard(card->getId());
     }
