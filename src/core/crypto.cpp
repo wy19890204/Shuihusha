@@ -1,4 +1,5 @@
 #include "crypto.h"
+#include "engine.h"
 
 // keyString 是一个密钥，必须保证长度要超过 16
 // block 是要处理的数据，处理后的数据也同时存放在 block 里，必须保证它的长度为 8 的整倍数
@@ -25,7 +26,7 @@ void DES_Process(const char *keyString, byte *block, size_t length, CryptoPP::Ci
     delete t;
 }
 
-bool Crypto::encryptMusicFile(const QString &filename, const char *GlobalKey){
+bool Crypto::encryptMusicFile(const QString &filename, const QString &key){
     QFileInfo info(filename);
     QString output = QString("%1/%2.dat").arg(info.absolutePath()).arg(info.baseName());
 
@@ -46,7 +47,8 @@ bool Crypto::encryptMusicFile(const QString &filename, const char *GlobalKey){
         return false;
     }
 
-    DES_Process(GlobalKey, buffer, size, CryptoPP::ENCRYPTION);
+    key = Sanguosha->translate(key);
+    DES_Process(key.toLocal8Bit().data(), buffer, size, CryptoPP::ENCRYPTION);
 
     QFile newFile(output);
     if(newFile.open(QIODevice::WriteOnly)){
@@ -62,7 +64,7 @@ bool Crypto::encryptMusicFile(const QString &filename, const char *GlobalKey){
     }
 }
 
-FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const char *GlobalKey){
+FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const QString &key){
     QFile file(filename);
 
     if(file.open(QIODevice::ReadOnly) == false)
@@ -73,7 +75,8 @@ FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filena
 
     file.read((char *)buffer, size);
 
-    DES_Process(GlobalKey, buffer, size, CryptoPP::DECRYPTION);
+    key = Sanguosha->translate(key);
+    DES_Process(key.toLocal8Bit().data(), buffer, size, CryptoPP::DECRYPTION);
 
     FMOD_SOUND *sound;
 
