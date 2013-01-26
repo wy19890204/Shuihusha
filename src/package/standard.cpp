@@ -214,34 +214,33 @@ void DelayedTrick::onEffect(const CardEffectStruct &effect) const{
     else
         burst = judge_struct.isBad();
 
+    bool willthrow = true;
     if(burst)
         takeEffect(effect.to, judge_struct.isGood());
     else if(movable){
+        willthrow = false;
         if(objectName() != "tsunami" || !effect.to->hasEquip("haiqiu"))
             onNullified(effect.to);
     }
-    if(!movable)
+    if(willthrow)
         room->throwCard(this);
 }
 
 void DelayedTrick::onNullified(ServerPlayer *target) const{
     Room *room = target->getRoom();
-    if(movable){
-        QList<ServerPlayer *> players = room->getOtherPlayers(target);
-        players << target;
+    QList<ServerPlayer *> players = room->getOtherPlayers(target);
+    players << target;
 
-        foreach(ServerPlayer *player, players){
-            if(player->containsTrick(objectName()))
-                continue;
+    foreach(ServerPlayer *player, players){
+        if(player->containsTrick(objectName()))
+            continue;
 
-            if(room->isProhibited(target, player, this))
-                continue;
+        if(room->isProhibited(target, player, this))
+            continue;
 
-            room->moveCardTo(this, player, Player::Judging, true);
-            break;
-        }
-    }else
-        room->throwCard(this);
+        room->moveCardTo(this, player, Player::Judging, true);
+        break;
+    }
 }
 
 const DelayedTrick *DelayedTrick::CastFrom(const Card *card){
@@ -675,7 +674,11 @@ TestPackage::TestPackage()
     addMetaObject<UbundCard>();
     ubuntenkei->addSkill(new Ubunf);
 
-    new General(this, "catty", "god", 2, false, true, true);
+    General *catty = new General(this, "catty", "god", 2, false, true, true);
+    catty->addSkill("change");
+    catty->addSkill("ubunf");
+    catty->addSkill("#ubuna");
+
     new General(this, "sujiang", "god", 5, true, true);
     new General(this, "sujiangf", "god", 5, false, true);
     new General(this, "anjiang", "god", 4, true, true, true);

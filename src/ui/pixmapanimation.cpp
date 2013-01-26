@@ -86,11 +86,10 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
                         pma->boundingRect().height()*0.15);
             pma->setScale(0.7);
         }
-        else if(emotion == "horse"){
-            pma->setZValue(pma->zValue() + 0.5);
+        else if(emotion == "horse")
             pma->moveBy(90,0);
-        }
 
+        pma->setZValue(pma->zValue() + 0.5);
         pma->moveBy((parent->boundingRect().width() - pma->boundingRect().width())/2,
                 (parent->boundingRect().height() - pma->boundingRect().height())/2);
 

@@ -55,5 +55,7 @@ return {
 	["catty"] = "蒲小猫",
 	["designer:catty"] = "宇文天启 [测试专用]",
 	["coder:catty"] = "宇文天启",
+	["change"] = "嫦娥",
+	[":change"] = "你可以将红桃牌当【月饼】使用。",
 
 }

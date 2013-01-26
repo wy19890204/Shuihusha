@@ -546,7 +546,7 @@ public:
         const Card *card = card_item->getCard();
         Ecstasy *ecstasy = new Ecstasy(card->getSuit(), card->getNumber());
         ecstasy->setSkillName(objectName());
-        ecstasy->addSubcard(card->getId());
+        ecstasy->addSubcard(card_item->getFilteredCard());
 
         return ecstasy;
     }
@@ -674,6 +674,7 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
 
     JudgeStruct judge;
     judge.reason = "huanshu1";
+    judge.pattern = QRegExp("(.*):(.*):(.*)");
     judge.who = effect.to;
     room->judge(judge);
     ichi = judge.card->isRed();
