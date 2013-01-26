@@ -184,7 +184,7 @@ public:
         events << CardUsed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 

@@ -14,7 +14,7 @@ void LuaTriggerSkill::setViewAsSkill(ViewAsSkill *view_as_skill){
     this->view_as_skill = view_as_skill;
 }
 
-int LuaTriggerSkill::getPriority() const{
+int LuaTriggerSkill::getPriority(TriggerEvent) const{
     return priority;
 }
 

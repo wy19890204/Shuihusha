@@ -3,6 +3,7 @@ extension = sgs.Package("personal")
 
 tianqi = sgs.General(extension, "tianqi", "god", 5, false)
 tianyin = sgs.General(extension, "tianyin", "god", 3)
+tianshuang = sgs.General(extension, "tianshuang", "god", 5)
 
 eatdeath=sgs.CreateTriggerSkill{
 	name="eatdeath",
@@ -111,9 +112,25 @@ noqing=sgs.CreateTriggerSkill{
 	end
 }
 
+doubledao = sgs.CreateSlashSkill
+{
+	name = "doubledao",
+	s_extra_func = function(self, from, to, slash)
+		if from:hasSkill("doubledao") and slash:getSuit() == sgs.Card_Club then
+			return 1
+		end
+	end,
+	s_range_func = function(self, from, to, slash)
+		if from:hasSkill("doubledao") and slash:getSuit() == sgs.Card_Heart then
+			return -4
+		end
+	end,
+}
+
 tianqi:addSkill(eatdeath)
 tianyin:addSkill(skydao)
 tianyin:addSkill(noqing)
+tianshuang:addSkill(doubledao)
 
 sgs.LoadTranslationTable{
 	["personal"] = "Pesonal",
@@ -140,4 +157,9 @@ sgs.LoadTranslationTable{
 	["illustrator:tianqi"] = "火影忍者",
 	["eatdeath"] = "拾尸",
 	[":eatdeath"] = "当有角色死亡时，你可以失去一个因“拾尸”获得的技能(如果有的话)，然后失去一点体力上限并获得该角色当前的所有武将技(限定技、觉醒技除外)",
+
+	["#tianshuang"] = "静流",
+	["tianshuang"] = "天霜",
+	["doubledao"] = "双刀",
+	[":doubledao"] = "LUA演示：你的草花杀可额外指定一个目标；你使用红桃杀的攻击范围锁定为4.",
 }

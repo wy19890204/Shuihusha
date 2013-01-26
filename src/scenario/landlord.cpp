@@ -189,7 +189,7 @@ public:
         view_as_skill = new LesuoPindian;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 

@@ -11,7 +11,7 @@ public:
     void setGameProcess(Room *room) const;
 
     virtual bool triggerable(const ServerPlayer *target) const;
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 
 private:
@@ -27,7 +27,7 @@ public:
     BasaraMode(QObject *parent);
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     void playerShowed(ServerPlayer *player) const;
     void generalShowed(ServerPlayer *player,QString general_name) const;
     static QString getMappedRole(const QString& role);

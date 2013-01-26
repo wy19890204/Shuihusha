@@ -489,7 +489,7 @@ public:
         events << SlashMissed << SlashHit;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -673,7 +673,7 @@ public:
         events << CardEffect;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 

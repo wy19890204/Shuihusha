@@ -47,8 +47,7 @@ bool Crypto::encryptMusicFile(const QString &filename, const QString &key){
         return false;
     }
 
-    key = Sanguosha->translate(key);
-    DES_Process(key.toLocal8Bit().data(), buffer, size, CryptoPP::ENCRYPTION);
+    DES_Process(Sanguosha->translate(key).toLocal8Bit().data(), buffer, size, CryptoPP::ENCRYPTION);
 
     QFile newFile(output);
     if(newFile.open(QIODevice::WriteOnly)){
@@ -75,8 +74,7 @@ FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filena
 
     file.read((char *)buffer, size);
 
-    key = Sanguosha->translate(key);
-    DES_Process(key.toLocal8Bit().data(), buffer, size, CryptoPP::DECRYPTION);
+    DES_Process(Sanguosha->translate(key).toLocal8Bit().data(), buffer, size, CryptoPP::DECRYPTION);
 
     FMOD_SOUND *sound;
 

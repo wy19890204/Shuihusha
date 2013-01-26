@@ -13,7 +13,7 @@ public:
     void addEvent(TriggerEvent event);
     void setViewAsSkill(ViewAsSkill *view_as_skill);
 
-    virtual int getPriority() const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
     virtual bool triggerable(const ServerPlayer *target) const;
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
 

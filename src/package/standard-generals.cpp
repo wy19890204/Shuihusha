@@ -49,7 +49,7 @@ public:
         view_as_skill = new GanlinViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -171,8 +171,11 @@ public:
         return false;
     }
     
-    virtual int getPriority() const{
-        return 2;
+    virtual int getPriority(TriggerEvent event) const{
+        if(event == Damaged)
+            return -1;
+        else
+            return 2;
     }
 };
 
@@ -643,7 +646,7 @@ public:
         events << SlashMissed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -941,7 +944,7 @@ public:
         view_as_skill = new HaoshenViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 3;
     }
 
@@ -1000,7 +1003,7 @@ public:
         events << DamageProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -1476,8 +1479,11 @@ public:
         events << Damage << PhaseChange;
     }
 
-    virtual int getPriority() const{
-        return -1;
+    virtual int getPriority(TriggerEvent event) const{
+        if(event == Damage)
+            return -1;
+        else
+            return 1;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *likui, QVariant &data) const{
@@ -1795,7 +1801,7 @@ public:
         frequency = Frequent;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -1992,7 +1998,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -2087,7 +2093,7 @@ public:
         view_as_skill = new CujuViewAsSkill;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -2201,7 +2207,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -2307,7 +2313,7 @@ public:
         events << CardLost;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -2627,7 +2633,7 @@ public:
         view_as_skill = new SuocaiPindian;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -2686,8 +2692,11 @@ public:
         return false;
     }
 
-    virtual int getPriority() const{
-        return 2;
+    virtual int getPriority(TriggerEvent event) const{
+        if(event == Damaged)
+            return -1;
+        else
+            return 2;
     }
 };
 

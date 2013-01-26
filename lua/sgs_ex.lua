@@ -36,10 +36,14 @@ end
 function sgs.CreateGameStartSkill(spec)
 	assert(type(spec.on_gamestart) == "function")
 	
-	spec.events = sgs.GameStart
+	spec.events = {sgs.GameStart, sgs.Death}
 	
 	function spec.on_trigger(skill, event, player, data)
-		spec.on_gamestart(skill, player)
+		if event == sgs.GameStart then
+			spec.on_gamestart(skill, player)
+		else
+			spec.on_idied(skill, player, data)
+		end
 		return false
 	end
 	
@@ -89,6 +93,36 @@ function sgs.CreateMasochismSkill(spec)
 	end
 	
 	return sgs.CreateTriggerSkill(spec)
+end
+
+function sgs.CreateMaxCardsSkill(spec)
+	assert(type(spec.name) == "string")
+	assert(type(spec.extra_func) == "function")
+
+	local skill = sgs.LuaMaxCardsSkill(spec.name)
+	skill.extra_func = spec.extra_func
+
+	return skill
+end
+
+function sgs.CreateSlashSkill(spec)
+	assert(type(spec.name) == "string")
+	local skill = sgs.LuaSlashSkill(spec.name)
+
+	if spec.s_range_func then
+		assert(type(spec.s_range_func) == "function")
+		skill.s_range_func = spec.s_range_func
+	end
+	if spec.s_extra_func then
+		assert(type(spec.s_extra_func) == "function")
+		skill.s_extra_func = spec.s_extra_func
+	end
+	if spec.s_residue_func then
+		assert(type(spec.s_residue_func) == "function")
+		skill.s_residue_func = spec.s_residue_func
+	end
+
+	return skill
 end
 
 --------------------------------------------

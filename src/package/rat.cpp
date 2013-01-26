@@ -259,7 +259,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -421,7 +421,7 @@ public:
         events << DamagedProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -507,7 +507,7 @@ public:
         return true;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -546,7 +546,7 @@ public:
         const Card *card = card_item->getCard();
         Ecstasy *ecstasy = new Ecstasy(card->getSuit(), card->getNumber());
         ecstasy->setSkillName(objectName());
-        ecstasy->addSubcard(card->getId());
+        ecstasy->addSubcard(card_item->getFilteredCard());
 
         return ecstasy;
     }
@@ -640,7 +640,7 @@ public:
         events << DamageProceed;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 
@@ -674,6 +674,7 @@ void HuanshuCard::onEffect(const CardEffectStruct &effect) const{
 
     JudgeStruct judge;
     judge.reason = "huanshu1";
+    judge.pattern = QRegExp("(.*):(.*):(.*)");
     judge.who = effect.to;
     room->judge(judge);
     ichi = judge.card->isRed();
@@ -743,7 +744,7 @@ public:
         frequency = Compulsory;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return -1;
     }
 
@@ -849,7 +850,7 @@ public:
         frequency = Wake;
     }
 
-    virtual int getPriority() const{
+    virtual int getPriority(TriggerEvent) const{
         return 2;
     }
 

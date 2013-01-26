@@ -145,10 +145,30 @@ public:
     }
 };
 
+class Change: public OneCardViewAsSkill{
+public:
+    Change():OneCardViewAsSkill("change"){
+    }
+
+    virtual bool viewFilter(const CardItem *to_select) const{
+        return to_select->getFilteredCard()->getSuit() == Card::Heart;
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        const Card *card = card_item->getCard();
+        Moonpie *moon = new Moonpie(card->getSuit(), card->getNumber());
+        moon->setSkillName(objectName());
+        moon->addSubcard(card_item->getFilteredCard());
+
+        return moon;
+    }
+};
+
 GiftPackage::GiftPackage()
     :CardPackage("gift")
 {
-    skills << new Lisao << new Yaoyue << new YaoyueEffect << new BeatJapan;
+    skills << new Lisao << new Yaoyue << new YaoyueEffect << new BeatJapan
+            << new Change;
     related_skills.insertMulti("yaoyue", "#yaoyue-effect");
     QList<Card *> cards;
 

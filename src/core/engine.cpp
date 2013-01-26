@@ -117,6 +117,13 @@ const Scenario *Engine::getScenario(const QString &name) const{
     return scenarios.value(name, NULL);
 }
 
+bool Engine::getScenarioLordSkill(const QString &mode) const{
+    const Scenario *scenario = getScenario(mode);
+    if(!scenario)
+        return false;
+    return scenario->unloadLordSkill();
+}
+
 void Engine::addSkills(const QList<const Skill *> &all_skills){
     foreach(const Skill *skill, all_skills){
         if(skills.contains(skill->objectName())){
@@ -862,7 +869,7 @@ int Engine::correctClient(const QString &type, const Player *from, const Player 
             x += skill->getCorrect(from, to);
         else if(type == "residue"){
             int y = skill->getSlashResidue(from);
-            if(y < -200 || y > 200) // use slash never or endless
+            if(y < -200) // use slash never
                 return y;
             x += y;
         }
