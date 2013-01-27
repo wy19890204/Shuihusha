@@ -1,3 +1,4 @@
+@echo Clean skin files...
 del system\dashboard-equip.png
 del system\dashboard-hand.png
 del system\photo-back.png

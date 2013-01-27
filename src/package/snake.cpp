@@ -59,6 +59,19 @@ public:
     }
 };
 
+class WuzuDistance: public DistanceSkill{
+public:
+    WuzuDistance(): DistanceSkill("#wuzu_distance"){
+    }
+
+    virtual int getCorrect(const Player *from, const Player *to) const{
+        if(from->hasSkill("wuzu"))
+            return - qMax(from->getLostHp(), 1);
+        else
+            return 0;
+    }
+};
+
 class Zhanchi:public PhaseChangeSkill{
 public:
     Zhanchi():PhaseChangeSkill("zhanchi"){
@@ -707,8 +720,7 @@ SnakePackage::SnakePackage()
 {
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
-    muhong->addSkill("huqi");
-    skills << new WuzuSlash;
+    skills << new WuzuSlash << new WuzuDistance;
 
     General *oupeng = new General(this, "oupeng", "jiang", 5);
     oupeng->addSkill("#hp-1");
