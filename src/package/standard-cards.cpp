@@ -506,9 +506,8 @@ void AmazingGrace::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     ag_list = room->getTag("AmazingGrace").toList();
 
     // throw the rest cards
-    foreach(QVariant card_id, ag_list){
+    foreach(QVariant card_id, ag_list)
         room->takeAG(NULL, card_id.toInt());
-    }
 
     room->broadcastInvoke("clearAG");
     room->removeTag("Jiayao");

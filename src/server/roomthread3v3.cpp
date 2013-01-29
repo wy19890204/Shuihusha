@@ -29,18 +29,17 @@ QStringList RoomThread3v3::getGeneralsWithoutExtension() const{
     QMutableListIterator<const General *> itor(generals);
     while(itor.hasNext()){
         itor.next();
-
         if(itor.value()->isHidden())
             itor.remove();
     }
 
-    QStringList bans = GetConfigFromLuaState(lua, "savsa_ban", "ban_list").toStringList();
-    foreach(QString ban, bans)
-        generals.removeOne(Sanguosha->getGeneral(ban));
-
     QStringList general_names;
     foreach(const General *general, generals)
         general_names << general->objectName();
+
+    QStringList bans = GetConfigFromLuaState(lua, "savsa_ban", "ban_list").toStringList();
+    foreach(QString ban, bans)
+        general_names.removeOne(ban);
 
     return general_names;
 }

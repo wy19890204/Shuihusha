@@ -160,7 +160,8 @@ public:
                 room->playSkillEffect(objectName(), 3);
                 n--;
             }
-            return qMax(n, 0);
+            data = qMax(n, 0);
+            return false;
         }
         else{
             if(player->getPhase() == Player::RoundStart && player->askForSkillInvoke(objectName())){
