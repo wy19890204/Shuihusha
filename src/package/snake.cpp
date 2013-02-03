@@ -150,7 +150,7 @@ public:
         const Card *c = card_item->getCard();
         ThunderSlash *bs = new ThunderSlash(c->getSuit(), c->getNumber());
         bs->setSkillName(objectName());
-        bs->addSubcard(card_item->getCard());
+        bs->addSubcard(c);
         return bs;
     }
 };
