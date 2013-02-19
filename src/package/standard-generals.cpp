@@ -1834,8 +1834,9 @@ void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     log.from = effect.from;
     log.to << effect.to;
     log.arg = QString::number(1);
-
     room->sendLog(log);
+    room->getThread()->delay();
+    room->setEmotion(effect.from, "limited");
     room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
 }
 
@@ -2237,16 +2238,17 @@ public:
                 room->playSkillEffect(objectName());
                 room->broadcastInvoke("animate", "lightbox:$duoquan");
                 caijing->loseMark("@power");
+                room->getThread()->delay();
+                room->setEmotion(caijing, "limited");
 
                 caijing->obtainCard(player->getWeapon());
                 caijing->obtainCard(player->getArmor());
                 caijing->obtainCard(player->getDefensiveHorse());
                 caijing->obtainCard(player->getOffensiveHorse());
                 DummyCard *all_cards = player->wholeHandCards();
-                if(all_cards){
+                if(all_cards)
                     room->obtainCard(caijing, all_cards, false);
-                    delete all_cards;
-                }
+                delete all_cards;
             }
         }
         return false;
@@ -2466,6 +2468,8 @@ public:
 
                 room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
                 room->playSkillEffect(objectName());
+                room->getThread()->delay(2000);
+                room->setEmotion(player, "limited");
                 room->loseMaxHp(player, player->getLostHp());
                 if(player->isDead())
                     return true;

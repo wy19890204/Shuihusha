@@ -2472,8 +2472,12 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         if(photo){
             if(nature == DamageStruct::Fire)
                 setEmotion(who, "fire_damage");
-            else if(nature == DamageStruct::Thunder)
-                setEmotion(who, "thunder_damage");
+            else if(nature == DamageStruct::Thunder){
+                if(delta <= -3)
+                    setEmotion(who, "lightning");
+                else
+                    setEmotion(who, "thunder_damage");
+            }
             else
                 setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
             photo->tremble();

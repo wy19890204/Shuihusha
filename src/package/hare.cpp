@@ -700,9 +700,11 @@ public:
 
         room->playSkillEffect(objectName());
         sq->drawCards(a + 1);
-        RecoverStruct rev;
-        rev.recover = a;
-        room->recover(sq, rev, a > 0);
+        if(sq->isWounded()){
+            RecoverStruct rev;
+            rev.recover = a;
+            room->recover(sq, rev, a > 0);
+        }
         return false;
     }
 };

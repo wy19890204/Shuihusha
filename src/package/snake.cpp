@@ -88,6 +88,8 @@ public:
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->acquireSkill(opt, "tengfei");
                 opt->loseMark("@wings");
+                room->getThread()->delay();
+                room->setEmotion(opt, "limited");
             }
         }
         return false;
