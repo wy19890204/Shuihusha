@@ -177,6 +177,8 @@ void ServerPlayer::drawCards(int n, bool set_emotion, const QString &reason){
 
     if(set_emotion && n > 1)
         room->setEmotion(this, "draw-card");
+    if(n > 0)
+        room->broadcastInvoke("playAudio", "draw-card");
 }
 
 // a convenient way to ask player

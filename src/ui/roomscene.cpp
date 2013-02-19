@@ -2449,20 +2449,36 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         switch(delta){
         case 0: break;
         case -1: {
-                ClientPlayer *player = ClientInstance->getPlayer(who);
-                int r = qrand() % 3 + 1;
-                damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure1-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure1-fire";
+                else{
+                    ClientPlayer *player = ClientInstance->getPlayer(who);
+                    int r = qrand() % 3 + 1;
+                    damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
+                }
                 break;
             }
 
         case -2:{
-                damage_effect = "injure2";
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure2-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure2-fire";
+                else
+                    damage_effect = "injure2";
                 break;
             }
 
         case -3:
         default:{
-                damage_effect = "injure3";
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure3-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure3-fire";
+                else
+                    damage_effect = "injure3";
                 break;
             }
         }
