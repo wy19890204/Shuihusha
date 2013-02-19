@@ -1,0 +1,7 @@
+
+general:linchong role:loyalist 
+general:sujiang role:rebel maxhp:2 hp:2 
+general:gaoyanei role:rebel starter:true 
+general:linniangzi role:lord maxhp:3 hp:3 
+general:sujiang role:rebel maxhp:2 hp:2 
+general:sujiang role:rebel maxhp:2 hp:2 

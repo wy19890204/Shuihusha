@@ -1,0 +1,8 @@
+
+general:select general2:select role:loyalist 
+general:wangqing role:lord maxhp:4 hp:3 
+general:lizhu role:loyalist 
+general:gongsunsheng role:rebel 
+general:lujunyi role:rebel 
+general:yangxiong role:rebel 
+general:shixiu role:rebel starter:true 

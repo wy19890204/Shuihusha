@@ -1,0 +1,6 @@
+
+general:select general2:select role:loyalist 
+general:lijun role:rebel 
+general:songjiang role:rebel starter:true 
+general:zhangshun role:rebel equip:56 
+general:suochao role:lord maxhp:4 hp:3 

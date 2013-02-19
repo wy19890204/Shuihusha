@@ -1,0 +1,4 @@
+
+general:qiongyaonayan role:rebel starter:true 
+general:shijin role:lord maxhp:4 hp:3 chained:true 
+general:huarong role:loyalist maxhp:4 hp:3 turned:true chained:true 

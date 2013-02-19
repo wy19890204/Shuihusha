@@ -1,0 +1,5 @@
+
+general:songjiang role:renegade starter:true maxhp:4 hp:3 
+general:wangying role:rebel 
+general:yanshun role:lord maxhp:4 hp:4 
+general:zhengtianshou role:rebel 

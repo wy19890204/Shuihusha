@@ -1191,8 +1191,8 @@ void Client::setCardFlag(const QString &pattern_str){
         return;
 
     QStringList texts = rx.capturedTexts();
-    QString object = texts.at(1);
-    QString card_str = texts.at(2);
+    QString card_str = texts.at(1);
+    QString object = texts.at(2);
 
     Sanguosha->getCard(card_str.toInt())->setFlags(object);
 }
