@@ -382,7 +382,9 @@ RESOURCES += \
     image/system/emotion/slash_red.qrc \
     image/system/emotion/slash_black.qrc \
     image/system/emotion/fire_slash.qrc \
-    image/system/emotion/pindian.qrc
+    image/system/emotion/pindian.qrc \
+    backdrop/shuihu-cover.qrc \
+    backdrop/shuihu.qrc
 }
 
 TRANSLATIONS += shuihusha.ts
@@ -392,4 +394,3 @@ OTHER_FILES += \
         acknowledgement/main.qml \
         acknowledgement/list.png \
         acknowledgement/back.png
-
