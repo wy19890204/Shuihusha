@@ -349,7 +349,7 @@ CONFIG(rcc){
         DEFINES += USE_RCC
 }
 
-CONFIG(qrc){
+#CONFIG(qrc){
 RESOURCES += \
     image/big-card.qrc \
     image/skin.qrc \
@@ -385,7 +385,7 @@ RESOURCES += \
     image/system/emotion/pindian.qrc \
     backdrop/shuihu-cover.qrc \
     backdrop/shuihu.qrc
-}
+#}
 
 TRANSLATIONS += shuihusha.ts
 
