@@ -88,7 +88,9 @@ void Card::setId(int id){
 }
 
 int Card::getEffectiveId() const{
-    if(isVirtualCard()){
+    if(this == NULL)
+        return -2;
+    else if(isVirtualCard()){
         if(subcards.isEmpty())
             return -1;
         else
@@ -603,8 +605,6 @@ void Card::setFlags(const QString &flag) const{
 
     if(flag.isEmpty())
         return;
-    else if(flag == ".")
-        flags.clear();
     else if(flag.startsWith(symbol_c)){
         QString copy = flag;
         copy.remove(symbol_c);
@@ -614,12 +614,24 @@ void Card::setFlags(const QString &flag) const{
         flags << flag;
 }
 
+void Card::clearFlags() const{
+    flags.clear();
+}
+
 bool Card::hasFlag(const QString &flag) const{
     return flags.contains(flag);
 }
 
-void Card::clearFlags() const{
-    flags.clear();
+bool Card::hasFlag(const QString &flag, bool getreal) const{
+    if(!getreal)
+        return hasFlag(flag);
+    QList<int> card_ids = subcards;
+    card_ids << getEffectiveId();
+    foreach(int id, card_ids){
+        if(Sanguosha->getCard(id)->hasFlag(flag))
+            return true;
+    }
+    return false;
 }
 
 bool Card::hasSameSuit() const{

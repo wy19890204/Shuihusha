@@ -1189,10 +1189,12 @@ CardItem *RoomScene::takeCardItem(ClientPlayer *src, Player::Place src_place, in
 
     if(src_place == Player::Special){
         card_item = special_card;
-        card_item->hideFrame();
-        card_item->showAvatar(NULL);
-        special_card = NULL;
-        return card_item;
+        if(card_item){
+            card_item->hideFrame();
+            card_item->showAvatar(NULL);
+            special_card = NULL;
+            return card_item;
+        }
     }
 
     // from discard pile
@@ -1523,9 +1525,8 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 
     log_box->appendLog(type, from_general, QStringList(), QString(), arg);
 
-    if(player == Self){
+    if(player == Self)
         addSkillButton(Sanguosha->getSkill(skill_name));
-    }
 }
 
 void RoomScene::updateSkillButtons(){
@@ -1739,7 +1740,7 @@ void RoomScene::useSelectedCard(){
             return;
         }
     case Client::AskForAG:{
-        ClientInstance->onPlayerChooseAG(-1);
+            ClientInstance->onPlayerChooseAG(-1);
             return;
         }
 
@@ -2087,7 +2088,7 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                //dashboard->selectCard(pattern);
+                //dashboard->selectCard(pattern); @todo
             }
 
             break;
@@ -3218,8 +3219,7 @@ void KOFOrderBox::revealGeneral(const QString &name){
 }
 
 void KOFOrderBox::killPlayer(const QString &general_name){
-    int i;
-    for(i=0; i<revealed; i++){
+    for(int i = 0; i < revealed; i++) {
         Pixmap *avatar = avatars[i];
         if(avatar->isEnabled() && avatar->objectName() == general_name){
             QPixmap pixmap("image/system/death/unknown.png");
