@@ -1002,10 +1002,7 @@ void ZiyiCard::onEffect(const CardEffectStruct &effect) const{
     RecoverStruct r;
     r.who = effect.from;
     r.recover = 2;
-    o->broadcastInvoke("animate", "lightbox:$Ziyi:5000");
-    o->getThread()->delay(2500);
-    o->setEmotion(effect.from, "limited");
-    o->broadcastInvoke("playAudio", "limited");
+    o->playLightbox(effect.from, "Ziyi", "5000", 2500);
     o->recover(effect.to, r, true);
     o->getThread()->delay(2500);
     effect.from->setFlags("Hanging");

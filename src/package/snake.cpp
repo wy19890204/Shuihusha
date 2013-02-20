@@ -83,14 +83,11 @@ public:
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
                 room->playSkillEffect(objectName(), 1);
-                room->broadcastInvoke("animate", "lightbox:$zhanchi");
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
+                room->playLightbox(opt, "zhanchi", "");
                 room->acquireSkill(opt, "tengfei");
                 opt->loseMark("@wings");
-                room->getThread()->delay();
-                room->setEmotion(opt, "limited");
-                room->broadcastInvoke("playAudio", "limited");
             }
         }
         return false;

@@ -3618,6 +3618,7 @@ void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const Q
     broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
     thread->delay(delay);
     setEmotion(player, "limited");
+    broadcastInvoke("playAudio", "limited");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)

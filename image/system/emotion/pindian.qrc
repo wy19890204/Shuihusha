@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource>
         <file>pindian/0.png</file>
         <file>pindian/1.png</file>
         <file>pindian/2.png</file>
