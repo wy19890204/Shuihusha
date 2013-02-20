@@ -1837,6 +1837,7 @@ void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     room->sendLog(log);
     room->getThread()->delay();
     room->setEmotion(effect.from, "limited");
+    room->broadcastInvoke("playAudio", "limited");
     room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
 }
 
@@ -2240,6 +2241,7 @@ public:
                 caijing->loseMark("@power");
                 room->getThread()->delay();
                 room->setEmotion(caijing, "limited");
+                room->broadcastInvoke("playAudio", "limited");
 
                 caijing->obtainCard(player->getWeapon());
                 caijing->obtainCard(player->getArmor());
@@ -2470,6 +2472,7 @@ public:
                 room->playSkillEffect(objectName());
                 room->getThread()->delay(2000);
                 room->setEmotion(player, "limited");
+                room->broadcastInvoke("playAudio", "limited");
                 room->loseMaxHp(player, player->getLostHp());
                 if(player->isDead())
                     return true;

@@ -90,6 +90,7 @@ public:
                 opt->loseMark("@wings");
                 room->getThread()->delay();
                 room->setEmotion(opt, "limited");
+                room->broadcastInvoke("playAudio", "limited");
             }
         }
         return false;

@@ -3606,6 +3606,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
     setEmotion(player, "awake");
+    broadcastInvoke("playAudio", "awake");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)
