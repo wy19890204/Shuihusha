@@ -160,7 +160,7 @@ public:
                         player = room->getLord();
 
                         room->broadcastInvoke("animate", "lightbox:$shapeshift:3000");
-                        room->broadcastInvoke("playAudio", "shapeshift");
+                        room->broadcastInvoke("playAudio", "skill/shapeshift");
                         room->getThread()->delay(1500);
                         room->transfigure(player, "zhang2dong", true, true, "zhang1dong");
 

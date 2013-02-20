@@ -2582,7 +2582,7 @@ void Room::loseMaxHp(ServerPlayer *victim, int lose){
 
     bool hp_changed = hp - victim->getHp() != 0;
 
-    //broadcastInvoke("playAudio", "maxhplost");
+    //broadcastInvoke("playAudio", "damage/maxhplost");
 
     setPlayerProperty(victim, "maxhp", maxhp);
 
@@ -3606,7 +3606,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
     setEmotion(player, "awake");
-    broadcastInvoke("playAudio", "awake");
+    broadcastInvoke("playAudio", "skill/awake");
 }
 
 void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
@@ -3618,7 +3618,7 @@ void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const Q
     broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
     thread->delay(delay);
     setEmotion(player, "limited");
-    broadcastInvoke("playAudio", "limited");
+    broadcastInvoke("playAudio", "skill/limited");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)

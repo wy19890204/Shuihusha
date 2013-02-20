@@ -2440,46 +2440,49 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     doAnimation("hpChange",list);
 
     if(delta <= 0){
+        QString damage_effect = "damage/";
         if(losthp){
-            Sanguosha->playAudio("hplost");
+            Sanguosha->playAudio(damage_effect + "hplost");
             setEmotion(who, "hplost");
             return;
         }
 
-        QString damage_effect;
         switch(delta){
         case 0: break;
         case -1: {
+                damage_effect.append("injure1-");
                 if(nature == DamageStruct::Thunder)
-                    damage_effect = "injure1-thunder";
+                    damage_effect.append("thunder");
                 else if(nature == DamageStruct::Fire)
-                    damage_effect = "injure1-fire";
+                    damage_effect.append("fire");
                 else{
                     ClientPlayer *player = ClientInstance->getPlayer(who);
                     int r = qrand() % 3 + 1;
-                    damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
+                    damage_effect.append(QString("%1%2").arg(player->getGenderString()).arg(r));
                 }
                 break;
             }
 
         case -2:{
+                damage_effect.append("injure2-");
                 if(nature == DamageStruct::Thunder)
-                    damage_effect = "injure2-thunder";
+                    damage_effect.append("thunder");
                 else if(nature == DamageStruct::Fire)
-                    damage_effect = "injure2-fire";
+                    damage_effect.append("fire");
                 else
-                    damage_effect = "injure2";
+                    damage_effect.chop(1);
                 break;
             }
 
         case -3:
         default:{
+                damage_effect.append("injure3-");
                 if(nature == DamageStruct::Thunder)
-                    damage_effect = "injure3-thunder";
+                    damage_effect.append("thunder");
                 else if(nature == DamageStruct::Fire)
-                    damage_effect = "injure3-fire";
+                    damage_effect.append("fire");
                 else
-                    damage_effect = "injure3";
+                    damage_effect.chop(1);
                 break;
             }
         }
@@ -2509,9 +2512,9 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
     }
 }
 
-void RoomScene::changeMaxHp(const QString &who, int delta) {
-    if (delta < 0)
-        Sanguosha->playAudio("maxhplost");
+void RoomScene::changeMaxHp(const QString &, int delta) {
+    if(delta < 0)
+        Sanguosha->playAudio("damage/maxhplost");
 }
 
 void RoomScene::clearPile(){
