@@ -90,7 +90,7 @@ config = {
 	color_kou = "#8A807A",
 	color_god = "#96943D",
 
-	mini_max = 25 -- 此处以Config.S_MINI_MAX_COUNT为准
+	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
 
 scenario = { -- 非身份局模式下的一些设置

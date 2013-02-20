@@ -2851,8 +2851,7 @@ void RoomScene::doScript(){
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){
-    int n = Config.Statistic ? 9 : 4;
-    table->setColumnCount(n);
+    table->setColumnCount(9);
     table->setRowCount(players.length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -2864,8 +2863,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         else
             labels << tr("Role");
 
-        if(Config.Statistic)
-            labels << /*tr("Designation") <<*/ tr("Kill")
+        labels << /*tr("Designation") <<*/ tr("Kill")
                 << tr("Save") << tr("Damage") << tr("Recover") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
@@ -2911,9 +2909,6 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         if(!player->isAlive())
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
         table->setItem(i, 3, item);
-
-        if(!Config.Statistic)
-            continue;
 
         StatisticsStruct *statistics = player->getStatistics();
         /*

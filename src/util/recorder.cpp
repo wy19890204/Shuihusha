@@ -107,9 +107,8 @@ Replayer::Replayer(QObject *parent, const QString &filename)
         pairs << pair;
     }
 
-    if(m_isOldVersion){
+    if(m_isOldVersion)
         QMessageBox::warning(NULL, tr("Warning"), tr("The replay use old protocol"));
-    }
 
     delete device;
 }

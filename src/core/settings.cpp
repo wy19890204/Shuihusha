@@ -20,7 +20,7 @@ static const qreal ViewHeight = 800 * 0.8;
 const int Settings::S_CHOOSE_GENERAL_TIMEOUT = 15;
 const int Settings::S_GUANXING_TIMEOUT = 20;
 const int Settings::S_SURRNDER_REQUEST_MIN_INTERVAL = 60;
-const int Settings::S_MINI_MAX_COUNT = 25;
+const int Settings::S_MINI_MAX_COUNT = 30;
 
 Settings::Settings()
 
@@ -72,7 +72,6 @@ void Settings::init(){
     BanPackages = value("BanPackages").toStringList();
 
     ContestMode = value("ContestMode", false).toBool();
-    Statistic = value("Statistic", false).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
     DisableChat = value("DisableChat", false).toBool();
     Enable2ndGeneral = value("Enable2ndGeneral", false).toBool();

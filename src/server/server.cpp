@@ -158,8 +158,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     contest_mode_checkbox->setChecked(Config.ContestMode);
     contest_mode_checkbox->setToolTip(tr("Requires password to login, hide screen name and disable kicking"));
 
-    advanced_statistic_checkbox = new QCheckBox(tr("Advanced statistics"));
-    advanced_statistic_checkbox->setChecked(Config.Statistic);
 
     maxchoice_spinbox = new QSpinBox;
     maxchoice_spinbox->setRange(3, 10);
@@ -226,7 +224,7 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
-    layout->addLayout(HLay(contest_mode_checkbox, advanced_statistic_checkbox));
+    layout->addWidget(contest_mode_checkbox);
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addLayout(HLay(second_general_checkbox, nolordskill_checkbox));
@@ -1085,7 +1083,6 @@ bool ServerDialog::config(){
     Config.OperationTimeout = timeout_spinbox->value();
     Config.OperationNoLimit = nolimit_checkbox->isChecked();
     Config.ContestMode = contest_mode_checkbox->isChecked();
-    Config.Statistic = advanced_statistic_checkbox->isChecked();
     Config.ForbidSIMC = forbid_same_ip_checkbox->isChecked();
     Config.DisableChat = disable_chat_checkbox->isChecked();
     Config.Enable2ndGeneral = second_general_checkbox->isChecked();
@@ -1125,7 +1122,6 @@ bool ServerDialog::config(){
     Config.setValue("OperationTimeout", Config.OperationTimeout);
     Config.setValue("OperationNoLimit", Config.OperationNoLimit);
     Config.setValue("ContestMode", Config.ContestMode);
-    Config.setValue("Statistic", Config.Statistic);
     Config.setValue("MaxChoice", maxchoice_spinbox->value());
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);
