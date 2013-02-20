@@ -1,16 +1,29 @@
-<!DOCTYPE RCC><RCC version="1.0">
-	<qresource>
-		<file>death/0.png</file>
-		<file>death/1.png</file>
-		<file>death/2.png</file>
-		<file>death/3.png</file>
-		<file>death/4.png</file>
-		<file>death/5.png</file>
-		<file>death/6.png</file>
-		<file>death/7.png</file>
-		<file>death/8.png</file>
-		<file>death/9.png</file>
-		<file>death/10.png</file>
-		<file>death/11.png</file>
-	</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>death/0.png</file>
+        <file>death/1.png</file>
+        <file>death/2.png</file>
+        <file>death/3.png</file>
+        <file>death/4.png</file>
+        <file>death/5.png</file>
+        <file>death/6.png</file>
+        <file>death/7.png</file>
+        <file>death/8.png</file>
+        <file>death/9.png</file>
+        <file>death/10.png</file>
+        <file>death/11.png</file>
+        <file>death/12.png</file>
+        <file>death/13.png</file>
+        <file>death/14.png</file>
+        <file>death/15.png</file>
+        <file>death/16.png</file>
+        <file>death/17.png</file>
+        <file>death/18.png</file>
+        <file>death/19.png</file>
+        <file>death/20.png</file>
+        <file>death/21.png</file>
+        <file>death/22.png</file>
+        <file>death/23.png</file>
+        <file>death/24.png</file>
+    </qresource>
 </RCC>

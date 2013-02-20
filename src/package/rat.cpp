@@ -409,6 +409,8 @@ public:
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
                 room->getThread()->delay(5000);
+                room->setEmotion(zhuwu, "limited");
+                room->broadcastInvoke("playAudio", "limited");
             }
         }
         return false;

@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20121212",
-	version_name = "终结版F3.7",
+	version = "20130224",
+	version_name = "终结版F4.0",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -54,14 +54,10 @@ config = {
 		"KenKic的充气女仆",
 		"海泡叉的乱码",
 		"威廉古堡",
-		"逮捕麻麻的手铐",
-		"安歧的小黑屋",
-		"妙妙的思绪",
-		"氢弹的狂风甲",
 		"葱娘家的灵魂手办",
 		"donle的最后之作",
-		"天霜雪舞的烤萝莉",
-		"七爷的觉醒",
+		"安歧的小黑屋",
+		"战栗的乐谱",
 		"中国的钓鱼岛",
 		"科比挂的柯南",
 		"贝克街的亡灵",
@@ -76,11 +72,15 @@ config = {
 		"被和谐的XX生",
 		"沾血的青苹果",
 		"海南的椰子",
-		"卖萌的小猫",
+		"喵一夏的幸福",
+		"卖萌的豚纸",
 		"江西安义的雷海",
 		"中条老道的大头贴",
 		"超级塞克洛",
 		"TLK的EH",
+		"爱上小衣的殃",
+		"总司令的拆迁队",
+		"纠结的金田一君",
 		"肉酱茧",
 	},
 
@@ -90,7 +90,7 @@ config = {
 	color_kou = "#8A807A",
 	color_god = "#96943D",
 
-	mini_max = 25 -- 此处以Config.S_MINI_MAX_COUNT为准
+	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
 }
 
 scenario = { -- 非身份局模式下的一些设置

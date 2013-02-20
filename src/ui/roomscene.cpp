@@ -1189,10 +1189,12 @@ CardItem *RoomScene::takeCardItem(ClientPlayer *src, Player::Place src_place, in
 
     if(src_place == Player::Special){
         card_item = special_card;
-        card_item->hideFrame();
-        card_item->showAvatar(NULL);
-        special_card = NULL;
-        return card_item;
+        if(card_item){
+            card_item->hideFrame();
+            card_item->showAvatar(NULL);
+            special_card = NULL;
+            return card_item;
+        }
     }
 
     // from discard pile
@@ -1523,9 +1525,8 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 
     log_box->appendLog(type, from_general, QStringList(), QString(), arg);
 
-    if(player == Self){
+    if(player == Self)
         addSkillButton(Sanguosha->getSkill(skill_name));
-    }
 }
 
 void RoomScene::updateSkillButtons(){
@@ -1739,7 +1740,7 @@ void RoomScene::useSelectedCard(){
             return;
         }
     case Client::AskForAG:{
-        ClientInstance->onPlayerChooseAG(-1);
+            ClientInstance->onPlayerChooseAG(-1);
             return;
         }
 
@@ -2087,7 +2088,7 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                //dashboard->selectCard(pattern);
+                //dashboard->selectCard(pattern); @todo
             }
 
             break;
@@ -2449,20 +2450,36 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         switch(delta){
         case 0: break;
         case -1: {
-                ClientPlayer *player = ClientInstance->getPlayer(who);
-                int r = qrand() % 3 + 1;
-                damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure1-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure1-fire";
+                else{
+                    ClientPlayer *player = ClientInstance->getPlayer(who);
+                    int r = qrand() % 3 + 1;
+                    damage_effect = QString("injure1-%1%2").arg(player->getGenderString()).arg(r);
+                }
                 break;
             }
 
         case -2:{
-                damage_effect = "injure2";
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure2-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure2-fire";
+                else
+                    damage_effect = "injure2";
                 break;
             }
 
         case -3:
         default:{
-                damage_effect = "injure3";
+                if(nature == DamageStruct::Thunder)
+                    damage_effect = "injure3-thunder";
+                else if(nature == DamageStruct::Fire)
+                    damage_effect = "injure3-fire";
+                else
+                    damage_effect = "injure3";
                 break;
             }
         }
@@ -2472,8 +2489,12 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
         if(photo){
             if(nature == DamageStruct::Fire)
                 setEmotion(who, "fire_damage");
-            else if(nature == DamageStruct::Thunder)
-                setEmotion(who, "thunder_damage");
+            else if(nature == DamageStruct::Thunder){
+                if(delta <= -3)
+                    setEmotion(who, "lightning");
+                else
+                    setEmotion(who, "thunder_damage");
+            }
             else
                 setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
             photo->tremble();
@@ -2847,8 +2868,7 @@ void RoomScene::doScript(){
 }
 
 void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *> &players){
-    int n = Config.Statistic ? 9 : 4;
-    table->setColumnCount(n);
+    table->setColumnCount(9);
     table->setRowCount(players.length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -2860,8 +2880,7 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         else
             labels << tr("Role");
 
-        if(Config.Statistic)
-            labels << /*tr("Designation") <<*/ tr("Kill")
+        labels << /*tr("Designation") <<*/ tr("Kill")
                 << tr("Save") << tr("Damage") << tr("Recover") << tr("Cheat");
     }
     table->setHorizontalHeaderLabels(labels);
@@ -2907,9 +2926,6 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         if(!player->isAlive())
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
         table->setItem(i, 3, item);
-
-        if(!Config.Statistic)
-            continue;
 
         StatisticsStruct *statistics = player->getStatistics();
         /*
@@ -3219,8 +3235,7 @@ void KOFOrderBox::revealGeneral(const QString &name){
 }
 
 void KOFOrderBox::killPlayer(const QString &general_name){
-    int i;
-    for(i=0; i<revealed; i++){
+    for(int i = 0; i < revealed; i++) {
         Pixmap *avatar = avatars[i];
         if(avatar->isEnabled() && avatar->objectName() == general_name){
             QPixmap pixmap("image/system/death/unknown.png");
