@@ -3,7 +3,7 @@
 for /R %%s in (*.qrc) do (
 call :RCC %%s
 )
-pause
+;pause
 GOTO :EOF
 
 :RCC

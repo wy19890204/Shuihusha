@@ -349,6 +349,7 @@ CONFIG(rcc){
         DEFINES += USE_RCC
 }
 
+CONFIG(qrc){
 RESOURCES += \
     image/big-card.qrc \
     image/skin.qrc \
@@ -382,6 +383,7 @@ RESOURCES += \
     image/system/emotion/slash_black.qrc \
     image/system/emotion/fire_slash.qrc \
     image/system/emotion/pindian.qrc
+}
 
 TRANSLATIONS += shuihusha.ts
 
