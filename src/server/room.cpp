@@ -3608,6 +3608,17 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     setEmotion(player, "awake");
 }
 
+void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
+    QString skillname = skill_name;
+    if(skillname.at(0).isUpper())
+        skillname[0] = skillname.at(0).toLower();
+    playSkillEffect(skillname);
+    QString bro = broad == "" ? "" : ":" + broad;
+    broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
+    thread->delay(delay);
+    setEmotion(player, "limited");
+}
+
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)
 {
     if(player->getHandcardNum() == 1){

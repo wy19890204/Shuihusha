@@ -507,6 +507,7 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
         card1 = Sanguosha->getCard(card_id);
     }
 
+    room->setEmotion(this, "pindian");
     const Card *card2 = room->askForPindian(target, this, target, reason);
 
     PindianStruct pindian_struct;
