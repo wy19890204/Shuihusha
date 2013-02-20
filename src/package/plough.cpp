@@ -48,7 +48,7 @@ public:
         if(t->hasFlag("ecst"))
             return -998;
         else
-            return ClientSkill::getSlashResidue(t);
+            return 0;
     }
 };
 

@@ -98,7 +98,7 @@ public:
         if(t->hasSkill("guibing") && t->hasFlag("Guibing"))
             return -998;
         else
-            return ClientSkill::getSlashResidue(t);
+            return 0;
     }
 };
 

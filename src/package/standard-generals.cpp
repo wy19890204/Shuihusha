@@ -1526,7 +1526,7 @@ public:
             return init + likui->getMark("shalu");
         }
         else
-            return ClientSkill::getSlashResidue(likui);
+            return 0;
     }
 };
 

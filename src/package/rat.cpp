@@ -206,7 +206,7 @@ public:
         if(from->hasMark("@stones"))
             return 998;
         else
-            return ClientSkill::getSlashResidue(from);
+            return 0;
     }
 
     virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{

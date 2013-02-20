@@ -1012,7 +1012,7 @@ public:
         if(target->hasWeapon("crossbow"))
             return 998;
         else
-            return ClientSkill::getSlashResidue(target);
+            return 0;
     }
 };
 
