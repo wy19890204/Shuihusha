@@ -510,6 +510,7 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
     }
 
     room->setEmotion(this, "pindian");
+    room->broadcastInvoke("playAudio", "pindian");
     const Card *card2 = room->askForPindian(target, this, target, reason);
 
     PindianStruct pindian_struct;
@@ -531,11 +532,14 @@ bool ServerPlayer::pindian(ServerPlayer *target, const QString &reason, const Ca
     log.card_str.clear();
     room->sendLog(log);
 
-    if(success)
+    if(success){
         room->setEmotion(this, "success");
-    else
+        room->broadcastInvoke("playAudio", "lucky");
+    }
+    else{
         room->setEmotion(this, "no-success");
-
+        room->broadcastInvoke("playAudio", "adversity");
+    }
     return success;
 }
 

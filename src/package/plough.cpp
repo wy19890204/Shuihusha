@@ -119,7 +119,7 @@ void Assassinate::onEffect(const CardEffectStruct &effect) const{
         dmae.card = this;
         dmae.from = effect.from;
         if(effect.to->hasSkill("huoshui")){
-            room->broadcastInvoke("playAudio", "scream");
+            room->broadcastInvoke("playAudio", "skill/scream");
             LogMessage ogg;
             ogg.type = "#Huoshui";
             ogg.from = effect.to;
@@ -180,7 +180,7 @@ Treasury::Treasury(Suit suit, int number):Disaster(suit, number){
 void Treasury::takeEffect(ServerPlayer *target, bool good) const{
     if(good){
         //room->broadcastInvoke("animate", "treasury:" + target->objectName());
-        target->getRoom()->broadcastInvoke("playAudio", "treasury");
+        target->getRoom()->broadcastInvoke("playAudio", "card/treasury");
         target->drawCards(5);
     }
 }
@@ -196,7 +196,7 @@ Tsunami::Tsunami(Suit suit, int number):Disaster(suit, number){
 void Tsunami::takeEffect(ServerPlayer *target, bool good) const{
     if(!good){
         Room *room = target->getRoom();
-        room->broadcastInvoke("playAudio", "tsunami");
+        room->broadcastInvoke("playAudio", "card/tsunami");
         room->setEmotion(target, "tsunami");
         target->throwAllCards();
     }

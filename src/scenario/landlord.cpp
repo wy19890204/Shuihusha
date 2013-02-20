@@ -48,7 +48,7 @@ public:
 
                 foreach(ServerPlayer *fmr, players){
                     QString choice = room->askForChoice(fmr, "landlord", "light+pass");
-                    room->broadcastInvoke("playAudio", QString("landlord-%1-%2").arg(choice).arg(fmr->getGenderString()));
+                    room->broadcastInvoke("playAudio", QString("mode/landlord-%1-%2").arg(choice).arg(fmr->getGenderString()));
                     log.type = "#LandLord_" + choice;
                     log.from = fmr;
                     log.arg = choice;

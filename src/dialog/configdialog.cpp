@@ -17,6 +17,9 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     QString bg_path = Config.value("BackgroundBrush").toString();
     if(!bg_path.startsWith(":"))
         ui->bgPathLineEdit->setText(bg_path);
+    ui->bgPathLineEdit->setEnabled(false);
+    ui->browseBgButton->setEnabled(false);
+    ui->resetBgButton->setEnabled(false);
 
     ui->bgMusicPathLineEdit->setText(Config.value("BackgroundMusic").toString());
 
@@ -101,7 +104,7 @@ void ConfigDialog::on_resetBgButton_clicked()
 {
     ui->bgPathLineEdit->clear();
 
-    QString filename = "backdrop/shuihu.jpg";
+    QString filename = ":shuihu.jpg";
     Config.BackgroundBrush = filename;
     Config.setValue("BackgroundBrush", filename);
 

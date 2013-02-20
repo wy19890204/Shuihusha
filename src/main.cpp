@@ -5,6 +5,7 @@
 #include <QDir>
 #include <cstring>
 #include <QDateTime>
+#include <QResource>
 
 #include "mainwindow.h"
 #include "settings.h"
@@ -88,6 +89,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
+    QResource::registerResource("backdrop/shuihu.rcc");
 
     return qApp->exec();
 }

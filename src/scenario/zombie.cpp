@@ -26,7 +26,7 @@ public:
         log.from = player;
         room->sendLog(log);
 
-        room->broadcastInvoke("playAudio", QString("zombify-%1").arg(player->getGenderString()));
+        room->broadcastInvoke("playAudio", QString("mode/zombify-%1").arg(player->getGenderString()));
         room->updateStateItem();
 
         player->tag.remove("zombie");

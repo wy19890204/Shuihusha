@@ -26,10 +26,7 @@
 #include <QSystemTrayIcon>
 #include <QInputDialog>
 #include <QLabel>
-
-#ifdef USE_RCC
 #include <QResource>
-#endif
 
 class FitView : public QGraphicsView
 {
@@ -84,6 +81,8 @@ MainWindow::MainWindow(QWidget *parent)
     QResource::registerResource("image/skin.rcc");
     QResource::registerResource("image/card.rcc");
 #endif
+    QResource::registerResource("backdrop/shuihu-cover.rcc");
+
     connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
     connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
 
@@ -469,7 +468,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::setBackgroundBrush(){
     if(scene){
-        QPixmap pixmap("backdrop/shuihu-cover.jpg");
+        QPixmap pixmap(":shuihu-cover.jpg");
         QBrush brush(pixmap);
 
         if(pixmap.width() > 100 && pixmap.height() > 100){

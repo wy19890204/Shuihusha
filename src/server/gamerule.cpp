@@ -181,7 +181,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         log.from = next;
                         room->sendLog(log);
 
-                        room->broadcastInvoke("playAudio", "reincarnation");
+                        room->broadcastInvoke("playAudio", "mode/reincarnation");
                         room->revivePlayer(next);
 
                         if(!Config.value("ReincaPersist", false).toBool()){
@@ -909,6 +909,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         room->sendLog(log);
 
         room->sendJudgeResult(judge, true);
+        room->broadcastInvoke("playAudio", judge->isBad() ? "adversity" : "lucky");
 
         if(!Config.BanPackages.contains("events")){
             if(judge->card->getSuit() == Card::Spade){
@@ -1155,7 +1156,7 @@ void BasaraMode::generalShowed(ServerPlayer *player, QString general_name) const
     log.arg2 = player->getGeneral2Name();
 
     room->sendLog(log);
-    room->broadcastInvoke("playAudio","choose-item");
+    room->broadcastInvoke("playAudio", "choose-item");
 }
 
 bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{

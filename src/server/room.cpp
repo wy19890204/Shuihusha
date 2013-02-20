@@ -2582,7 +2582,7 @@ void Room::loseMaxHp(ServerPlayer *victim, int lose){
 
     bool hp_changed = hp - victim->getHp() != 0;
 
-    //broadcastInvoke("playAudio", "maxhplost");
+    //broadcastInvoke("playAudio", "damage/maxhplost");
 
     setPlayerProperty(victim, "maxhp", maxhp);
 
@@ -3606,7 +3606,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
     setEmotion(player, "awake");
-    broadcastInvoke("playAudio", "awake");
+    broadcastInvoke("playAudio", "skill/awake");
 }
 
 void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
@@ -3618,7 +3618,7 @@ void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const Q
     broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
     thread->delay(delay);
     setEmotion(player, "limited");
-    broadcastInvoke("playAudio", "limited");
+    broadcastInvoke("playAudio", "skill/limited");
 }
 
 const Card *Room::askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const QString &reason)
@@ -4193,6 +4193,20 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             }
         }
         player->playCardEffect(card_use.card, mute);
+        if(card_use.card->isKindOf("Inspiration"))
+            broadcastInvoke("playAudio", "card/inspiration");
+        if(card_use.card->isKindOf("Duel"))
+            broadcastInvoke("playAudio", "card/duel");
+        if(card_use.card->isKindOf("Assassinate"))
+            broadcastInvoke("playAudio", "card/assassinate");
+        if(card_use.card->isKindOf("GodSalvation"))
+            broadcastInvoke("playAudio", "card/god_salvation");
+        if(card_use.card->isKindOf("AmazingGrace"))
+            broadcastInvoke("playAudio", "card/amazing_grace");
+        if(card_use.card->isKindOf("SavageAssault"))
+            broadcastInvoke("playAudio", "card/savage_assault");
+        if(card_use.card->isKindOf("ArcheryAttack"))
+            broadcastInvoke("playAudio", "card/archery_attack");
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
