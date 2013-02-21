@@ -465,12 +465,9 @@ public:
                     Jink *jink = new Jink(Card::NoSuit, 0);
                     jink->setSkillName(objectName());
                     room->provide(jink);
-                    room->setEmotion(player, "good");
                     player->playCardEffect("Eeight_diagram1");
-                }else{
+                }else
                     player->playCardEffect("Eeight_diagram2");
-                    room->setEmotion(player, "bad");
-                }
             }
         }
         return false;

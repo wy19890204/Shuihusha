@@ -83,9 +83,6 @@ void JiebaoCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
     int card_id = room->askForCardChosen(effect.from, effect.to, "he", "jiebao");
     room->obtainCard(effect.from, card_id, room->getCardPlace(card_id) != Player::Hand);
-
-    room->setEmotion(effect.to, "bad");
-    room->setEmotion(effect.from, "good");
 }
 
 class JiebaoViewAsSkill: public ZeroCardViewAsSkill{

@@ -406,7 +406,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             int index = qrand() % 5;
             if(index == 4){
                 room->setPlayerMark(player, "poison", 0);
-                room->setEmotion(player, "good");
+                //room->setEmotion(player, "good");
                 LogMessage log;
                 log.type = "#Poison_out";
                 log.from = player;

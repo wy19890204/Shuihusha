@@ -567,30 +567,6 @@ public:
     }
 };
 
-class Shenyong:public TriggerSkill{
-public:
-    Shenyong():TriggerSkill("shenyong"){
-        events << CardAsked;
-    }
-
-    virtual int getPriority(TriggerEvent) const{
-        return 2;
-    }
-
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *shibao, QVariant &data) const{
-        QString asked = data.toString();
-        if(asked == "jink" && shibao->askForSkillInvoke(objectName())){
-            if(room->askForUseCard(shibao, "slash", "@askforslash", true)){
-                Jink *jink = new Jink(Card::NoSuit, 0);
-                jink->setSkillName(objectName());
-                room->provide(jink);
-                room->setEmotion(shibao, "good");
-            }
-        }
-        return false;
-    }
-};
-
 class Qingdong: public TriggerSkill{
 public:
     Qingdong():TriggerSkill("qingdong"){
@@ -726,9 +702,6 @@ MonkeyPackage::MonkeyPackage()
     General *fuan = new General(this, "fuan", "guan", 3);
     fuan->addSkill(new Tongmou);
     fuan->addSkill(new Xianhai);
-
-    General *shibao = new General(this, "shibao", "jiang");
-    shibao->addSkill(new Shenyong);
 
     General *yulan = new General(this, "yulan", "guan", 3, false);
     yulan->addSkill(new Qingdong);

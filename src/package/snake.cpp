@@ -563,7 +563,6 @@ public:
                 feizhen_card->addSubcard(card);
                 room->provide(feizhen_card);
             }
-            room->setEmotion(player, "good");
         }
         return false;
     }
