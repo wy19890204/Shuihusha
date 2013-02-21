@@ -26,7 +26,7 @@ function SmartAI:useEventsCard(card, use)
 		for _, target in sgs.qlist(self.room:getAllPlayers()) do
 			local juds = target:getJudgingArea():length()
 			if juds > 0 and self:isFriend(target) then
-				if target:containsTrick("indulgence") or target:containsTrick("supply_shortage") then
+				if target:containsTrick("indulgence", false) or target:containsTrick("supply_shortage", false) then
 					use.card = card
 					if use.to then use.to:append(target) end
 					return
@@ -116,7 +116,7 @@ sgs.dynamic_value.benefit.NanaStars = true
 sgs.ai_skill_use["NanaStars"] = function(self, prompt)
 	local evc = self:getCard("NanaStars")
 	for _, target in sgs.qlist(self.room:getAllPlayers()) do
-		if target:containsTrick("treasury") then
+		if target:containsTrick("treasury", false) then
 			return ("%s->%s"):format(evc:toString(), target:objectName())
 		end
 	end

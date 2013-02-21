@@ -147,7 +147,7 @@ cbjuwu_skill.getTurnUseCard=function(self)
 	if self.player:isKongcheng() then return end
 	local cbzhaoyun = self.room:findPlayer("cbzhaoyun1")
 	if not cbzhaoyun then cbzhaoyun = self.room:findPlayer("cbzhaoyun2") end
-	if (not cbzhaoyun:containsTrick("supply_shortage") or not cbzhaoyun:containsTrick("indulgence")) and cbzhaoyun:faceUp() then
+	if (not cbzhaoyun:containsTrick("supply_shortage", false) or not cbzhaoyun:containsTrick("indulgence", false)) and cbzhaoyun:faceUp() then
 		return sgs.Card_Parse("@CBJuWuCard=.")
 	end
 	

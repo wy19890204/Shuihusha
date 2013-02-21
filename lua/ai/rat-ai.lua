@@ -129,7 +129,7 @@ end
 -- caiyuanzizhangqing
 -- shouge
 sgs.ai_skill_invoke["shouge"] = function(self, data)
-	return not self.player:containsTrick("indulgence")
+	return not self.player:containsTrick("indulgence", false)
 end
 shouge_skill={}
 shouge_skill.name = "shouge"

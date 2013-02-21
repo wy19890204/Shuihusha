@@ -266,7 +266,7 @@ end
 sgs.ai_skill_invoke["dalang"] = function(self, data)
 	if self.player:getHandcardNum() < 2 then return false end
 	for _, friend in ipairs(self.friends_noself) do
-		if (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage"))
+		if (friend:containsTrick("indulgence", false) or friend:containsTrick("supply_shortage", false))
 			and friend:getHandcardNum() > friend:getHp() then
 			self.dalangtarget = friend
 			return true

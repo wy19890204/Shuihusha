@@ -123,10 +123,6 @@ public:
     virtual bool isEnabledAtPlay(const Player *player) const{
         return player->hasFlag("Bark");
     }
-
-    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
-        return qrand() % 2 + 4;
-    }
 };
 
 class Jiaozhen: public TriggerSkill{
@@ -185,6 +181,10 @@ public:
             }
         }
         return false;
+    }
+
+    virtual int getEffectIndex(const ServerPlayer *, const Card *) const{
+        return qrand() % 2 + 4;
     }
 };
 
@@ -781,7 +781,7 @@ public:
                     use.to << target;
                     use.from = player;
                     room->useCard(use);
-                    break;
+                    //break;
                 }
             }
         }

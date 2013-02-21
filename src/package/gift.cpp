@@ -1,4 +1,5 @@
 #include "gift.h"
+#include "maneuvering.h"
 
 Zongzi::Zongzi(Suit suit, int number):BasicCard(suit, number){
     setObjectName("zongzi");
@@ -109,7 +110,6 @@ public:
     }
 };
 
-#include "maneuvering.h"
 class BeatJapan:public TriggerSkill{
 public:
     BeatJapan():TriggerSkill("beatjapan"){
@@ -164,6 +164,24 @@ public:
     }
 };
 
+RiceBall::RiceBall(Suit suit, int number):BasicCard(suit, number){
+    setObjectName("rice_ball");
+}
+
+QString RiceBall::getSubtype() const{
+    return "gift_card";
+}
+
+bool RiceBall::isAvailable(const Player *quyuan) const{
+    if(ServerInfo.GameMode != "dusong")
+        return !quyuan->hasMark("HaveEaten3");
+    else
+        return true;
+}
+
+void RiceBall::onEffect(const CardEffectStruct &effect) const{
+}
+
 GiftPackage::GiftPackage()
     :CardPackage("gift")
 {
@@ -174,9 +192,9 @@ GiftPackage::GiftPackage()
 
     cards
             << new Zongzi(Card::Heart, 5)
-            << new Zongzi(Card::Club, 5)
             << new Moonpie(Card::Diamond, 5)
-            << new Moonpie(Card::Spade, 5)
+            << new RiceBall(Card::Club, 5)
+            << new RiceBall(Card::Spade, 5)
             ;
 
     foreach(Card *card, cards)

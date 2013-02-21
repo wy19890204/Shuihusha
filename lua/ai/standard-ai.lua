@@ -35,8 +35,8 @@ ganlin_skill.getTurnUseCard = function(self)
 	end
 	if self:slashIsAvailable() and self:getCardsNum("Slash") > 0 then return end
 	for _, player in ipairs(self.friends_noself) do
-		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage"))
-			or (not player:containsTrick("indulgence") and (self:hasSkills("banzhuang|shouge", player)))
+		if ((self:hasSkills("butian|qimen|longluo", player) or player:containsTrick("supply_shortage", false))
+			or (not player:containsTrick("indulgence", false) and (self:hasSkills("banzhuang|shouge", player)))
 			)
 			and player:faceUp() then
 			return sgs.Card_Parse("@GanlinCard=.")
@@ -94,7 +94,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 					return
 				end
 				if weidingguo and self:isFriend(weidingguo) and hcard:inherits("TrickCard") and hcard:isRed() and weidingguo:objectName() ~= name and
-					not (weidingguo:containsTrick("indulgence") and not hcard:inherits("Nullification")) then
+					not (weidingguo:containsTrick("indulgence", false) and not hcard:inherits("Nullification")) then
 					use.card = sgs.Card_Parse("@GanlinCard=" .. hcard:getId())
 					if use.to then use.to:append(weidingguo) end
 					return
@@ -127,7 +127,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 					local v = 0
 					local target
 					for _, friend in ipairs(self.friends_noself) do
-						if not friend:getArmor() and self:evaluateArmor(hcard, friend) > v and not friend:containsTrick("indulgence") then
+						if not friend:getArmor() and self:evaluateArmor(hcard, friend) > v and not friend:containsTrick("indulgence", false) then
 							v = self:evaluateArmor(hcard, friend)
 							target = friend
 						end
@@ -142,7 +142,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 					self:sort(self.friends_noself)
 					for _, friend in ipairs(self.friends_noself) do
 						if not self:getSameEquip(hcard, friend) or friend:hasSkill("xiagu")
-							or (self:hasSkills("feiqiang|cuihuo|yinlang|huxiao", friend) and not friend:containsTrick("indulgence"))  then
+							or (self:hasSkills("feiqiang|cuihuo|yinlang|huxiao", friend) and not friend:containsTrick("indulgence", false))  then
 							use.card = sgs.Card_Parse("@GanlinCard=" .. hcard:getId())
 							if use.to then use.to:append(friend) end
 							return
@@ -195,8 +195,8 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 			self:sort(self.friends_noself, "handcard")
 			for _, friend in ipairs(self.friends_noself) do
 				local draw = 2
-				if friend:containsTrick("supply_shortage") then draw = 0 end
-				if friend:getHandcardNum() + draw < friend:getMaxCards() and not friend:containsTrick("indulgence") and	(not self:isWeak(friend) and self:hasSkills(sgs.need_kongcheng,friend)) then
+				if friend:containsTrick("supply_shortage", false) then draw = 0 end
+				if friend:getHandcardNum() + draw < friend:getMaxCards() and not friend:containsTrick("indulgence", false) and (not self:isWeak(friend) and self:hasSkills(sgs.need_kongcheng,friend)) then
 					use.card = sgs.Card_Parse("@GanlinCard=" .. card:getId())
 					if use.to then use.to:append(friend) end
 					return
@@ -204,7 +204,7 @@ sgs.ai_skill_use_func["GanlinCard"] = function(card, use, self)
 			end
 			self:sort(self.friends_noself, "handcard")
 			for _, friend in ipairs(self.friends_noself) do
-				if not friend:containsTrick("indulgence") then
+				if not friend:containsTrick("indulgence", false) then
 					use.card = sgs.Card_Parse("@GanlinCard=" .. card:getId())
 					if use.to then use.to:append(self.friends_noself[1]) end
 					return

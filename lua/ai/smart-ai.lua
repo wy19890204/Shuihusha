@@ -488,9 +488,9 @@ function SmartAI:cardNeed(card)
 	if card:inherits("Axe") and  self:hasSkills("liba|meicha|juesi|manli", self.player) then return 15 end
 	if card:inherits("Weapon") and (not self.player:getWeapon()) and (self:getCardsNum("Slash") > 1) then return 6 end
 	if card:inherits("Nullification") and self:getCardsNum("Nullification") == 0 then
-		if self.player:containsTrick("indulgence") or self.player:containsTrick("supply_shortage") then return 10 end
+		if self.player:containsTrick("indulgence", false) or self.player:containsTrick("supply_shortage", false) then return 10 end
 		for _,friend in ipairs(self.friends) do
-			if friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage") then return 7 end
+			if friend:containsTrick("indulgence", false) or friend:containsTrick("supply_shortage", false) then return 7 end
 		end
 		return 6
 	end
@@ -2095,7 +2095,7 @@ function SmartAI:askForAG(card_ids, refusable, reason)
 
 	if refusable and self:hasSkill("xinzhan") then
 		local next_player = self.player:getNextAlive()
-		if self:isFriend(next_player) and next_player:containsTrick("indulgence") then
+		if self:isFriend(next_player) and next_player:containsTrick("indulgence", false) then
 			if #card_ids == 1 then return -1 end
 		end
 		for _, card_id in ipairs(card_ids) do
@@ -2129,13 +2129,13 @@ function SmartAI:askForCardShow(requestor, reason)
 end
 
 function sgs.ai_cardneed.bignumber(to, card, self)
-	if not to:containsTrick("indulgence") and self:getUseValue(card) < 6 then
+	if not to:containsTrick("indulgence", false) and self:getUseValue(card) < 6 then
 		return card:getNumber() > 10
 	end
 end
 
 function sgs.ai_cardneed.equip(to, card, self)
-	if not to:containsTrick("indulgence") then
+	if not to:containsTrick("indulgence", false) then
 		return card:getTypeId() == sgs.Card_Equip
 	end
 end
@@ -2200,7 +2200,7 @@ function SmartAI:getCardNeedPlayer(cards)
 					local v = 0
 					local target
 					for _, friend in ipairs(self.friends_noself) do
-						if not friend:getArmor() and self:evaluateArmor(hcard, friend) > v and not friend:containsTrick("indulgence")
+						if not friend:getArmor() and self:evaluateArmor(hcard, friend) > v and not friend:containsTrick("indulgence", false)
 							and not self:needKongcheng(friend) then
 							v = self:evaluateArmor(hcard, friend)
 							target = friend
@@ -2214,7 +2214,7 @@ function SmartAI:getCardNeedPlayer(cards)
 					self:sort(self.friends_noself)
 					for _, friend in ipairs(self.friends_noself) do
 						if (not self:hasSameEquip(hcard, friend)
-							or (self:hasSkills(sgs.lose_equip_skill, friend) and not friend:containsTrick("indulgence"))) and
+							or (self:hasSkills(sgs.lose_equip_skill, friend) and not friend:containsTrick("indulgence", false))) and
 							not self:needKongcheng(friend) then
 							return hcard, friend
 						end
@@ -3300,12 +3300,6 @@ function SmartAI:useTrickCard(card, use)
 			use.card = nil
 		end
 	end
-end
-
-function SmartAI:containsTrick(name, player)
-	player = player or self.player
-	return (not player:hasEquip("haiqiu") and player:containsTrick(name))
-		or (player:hasEquip("haiqiu") and name == "tsunami")
 end
 
 sgs.weapon_range = {}

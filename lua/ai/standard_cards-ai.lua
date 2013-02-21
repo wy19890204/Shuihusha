@@ -208,7 +208,7 @@ function SmartAI:useCardSlash(card, use)
 
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:hasSkill("longluo") and friend:getHp() > 1 and
-			not (self:containsTrick("indulgence", friend) or self:containsTrick("supply_shortage", friend)) then
+			not (friend:containsTrick("indulgence", false) or friend:containsTrick("supply_shortage", false)) then
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card, friend)
 			if not slash_prohibit then
@@ -594,7 +594,7 @@ end
 function sgs.ai_armor_value.silver_lion(player, self)
 	if self:hasWizard(self:getEnemies(player), true) then
 		for _, player in sgs.qlist(self.room:getAlivePlayers()) do
-			if self:containsTrick("lightning", player) then return 5 end
+			if player:containsTrick("lightning", false) then return 5 end
 		end
 	end
 	return 1
@@ -873,7 +873,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 	local tricks
 	players = self:exclude(players, card)
 	for _, player in ipairs(players) do
-		if self:containsTrick("lightning", player) and self:getFinalRetrial(player) ==2 and self:hasTrickEffective(card, player) then
+		if player:containsTrick("lightning", false) and self:getFinalRetrial(player) ==2 and self:hasTrickEffective(card, player) then
 			use.card = card
 			if use.to then
 				tricks = player:getCards("j")
@@ -909,7 +909,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 	end
 
 	for _, friend in ipairs(friends) do
-		if (self:containsTrick("indulgence", friend) or self:containsTrick("supply_shortage", friend)) and self:hasTrickEffective(card, friend) then
+		if (friend:containsTrick("indulgence", false) or friend:containsTrick("supply_shortage", false)) and self:hasTrickEffective(card, friend) then
 			use.card = card
 			if use.to then
 				tricks = friend:delayedTricks()

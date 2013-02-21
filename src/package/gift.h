@@ -34,4 +34,14 @@ public:
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 
+class RiceBall: public BasicCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE RiceBall(Card::Suit suit, int number);
+    virtual QString getSubtype() const;
+    virtual bool isAvailable(const Player *change) const;
+    virtual void onEffect(const CardEffectStruct &effect) const;
+};
+
 #endif // GIFTPACKAGE_H
