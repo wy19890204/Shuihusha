@@ -22,6 +22,11 @@ sgs.ai_skill_use_func["XiashuCard"]=function(card,use,self)
 end
 
 -- hantao
+sgs.hantao_suit_value = 
+{
+	spade = 5,
+}
+
 -- taolue
 local taolue_skill={}
 taolue_skill.name = "taolue"
@@ -70,6 +75,8 @@ end
 
 -- ruanxiaowu
 -- anxi
+sgs.ai_card_intention.AnxiCard = 100
+
 sgs.ai_skill_use["@@anxi"] = function(self, prompt)
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
@@ -231,6 +238,8 @@ end
 
 -- yangchun
 -- shexin
+sgs.ai_card_intention.ShexinCard = 100
+
 local shexin_skill={}
 shexin_skill.name = "shexin"
 table.insert(sgs.ai_skills, shexin_skill)
@@ -257,13 +266,58 @@ sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
 end
 
 -- qiongyaonayan
+sgs.qiongyaonayan_suit_value = 
+{
+	spade = 6,
+	club = 6,
+}
+
 -- jiaozhen
+sgs.ai_skill_invoke["jiaozhen"] = function(self, data)
+	local hole = self.player:getHandcardNum()
+	if hole < 2 then return false end
+	local cards = sgs.QList2Table(self.player:getCards("h"))
+	local black = 0
+	for _, card in ipairs(cards) do
+		if card:isBlack() then
+			black = black + 1
+		end
+	end
+	return black * 2 >= hole
+end
+jiaozhen_skill={}
+jiaozhen_skill.name = "jiaozhen"
+table.insert(sgs.ai_skills, jiaozhen_skill)
+jiaozhen_skill.getTurnUseCard = function(self)
+	if not self.player:hasFlag("Bark") then return end
+	local cards = self.player:getCards("h")
+	cards=sgs.QList2Table(cards)
+	local card
+	self:sortByUseValue(cards,true)
+	for _,acard in ipairs(cards)  do
+		if acard:isBlack() then
+			card = acard
+			break
+		end
+	end
+	if not card then return nil end
+	local suit, number, card_id = card:getSuitString(), card:getNumberString(), card:getEffectiveId()
+	local card_str = ("duel:jiaozhen[%s:%s]=%d"):format(suit, number, card_id)
+	local duel = sgs.Card_Parse(card_str)
+	assert(duel)
+	return duel
+end
 
 -- suochao
 -- chongfeng
 sgs.ai_skill_invoke["chongfeng"] = true
 
 -- wangpo
+sgs.wangpo_suit_value = 
+{
+	club = 6,
+}
+
 -- qianxian
 local qianxian_skill={}
 qianxian_skill.name = "qianxian"
