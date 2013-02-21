@@ -181,6 +181,11 @@ bool RiceBall::isAvailable(const Player *quyuan) const{
 
 void RiceBall::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+    // do animation
+    room->broadcastInvoke("animate", QString("riceball:%1:%2")
+                          .arg(effect.from->objectName())
+                          .arg(effect.to->objectName()));
+    room->getThread()->delay();
     room->jumpSeat(effect.from, effect.to, qrand() % 2);
     room->setPlayerMark(effect.from, "HaveEaten3", 1);
     PlayerStar pre, nex;

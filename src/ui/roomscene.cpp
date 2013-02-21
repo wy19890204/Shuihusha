@@ -2609,9 +2609,8 @@ void RoomScene::onGameOver(){
         else
             loser_list << player;
 
-        if(player != Self){
-            setEmotion(player->objectName(),win ? "good" : "bad",true);
-        }
+        if(player != Self)
+            setEmotion(player->objectName(), win ? "win" : "lose", true);
     }
 
     fillTable(winner_table, winner_list);

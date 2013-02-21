@@ -80,7 +80,7 @@ QString Stink::getEffectPath(bool is_male) const{
 
 void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *nextfriend = targets.isEmpty() ? source->getNextAlive() : targets.first();
-    room->setEmotion(nextfriend, "bad");
+    //room->setEmotion(nextfriend, "bad");
     const Card *pipi = room->askForCard(nextfriend, "Jink,Assassinate", "@haochou:" + source->objectName(), QVariant::fromValue((PlayerStar)source));
     LogMessage log;
     log.from = nextfriend;
@@ -96,7 +96,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
         damage.from = nextfriend;
         damage.to = source;
         damage.card = pipi;
-        room->setEmotion(nextfriend, "good");
+        //room->setEmotion(nextfriend, "good");
         log.type = "#StinkHit";
         log.to << source;
         room->sendLog(log);
@@ -106,7 +106,7 @@ void Stink::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &t
         log.type = "#StinkJink";
         log.to << source;
         room->sendLog(log);
-        room->setEmotion(nextfriend, "good");
+        //room->setEmotion(nextfriend, "good");
     }
 }
 
@@ -240,14 +240,14 @@ void Poison::onEffect(const CardEffectStruct &card_effect) const{
     log.from = card_effect.to;
     if(!card_effect.to->hasMark("poison")){
         room->setPlayerMark(card_effect.to, "poison", 1);
-        room->setEmotion(card_effect.to, "bad");
+        //room->setEmotion(card_effect.to, "bad");
 
         log.type = "#Poison_in";
         room->sendLog(log);
     }
     else{
         room->setPlayerMark(card_effect.to, "poison", 0);
-        room->setEmotion(card_effect.to, "good");
+        //room->setEmotion(card_effect.to, "good");
 
         log.type = "#Poison_out";
         room->sendLog(log);
@@ -580,22 +580,22 @@ void ChuiniuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     log.type = "#ChuiniuWin";
     if(win){
         log.from = source;
-        room->setEmotion(source, "good");
+        //room->setEmotion(source, "good");
         room->sendLog(log);
         foreach(int x, uvnn)
             room->throwCard(x);
         DummyCard *cards = target->wholeHandCards();
         room->obtainCard(source, cards, false);
-        room->setEmotion(target, "bad");
+        //room->setEmotion(target, "bad");
     }
     else{
         log.from = target;
-        room->setEmotion(target, "good");
+        //room->setEmotion(target, "good");
         room->sendLog(log);
         target->throwAllHandCards();
         foreach(int x, uvnn)
             room->obtainCard(target, x, false);
-        room->setEmotion(source, "bad");
+        //room->setEmotion(source, "bad");
         room->setPlayerFlag(source, "drank");
     }
 }

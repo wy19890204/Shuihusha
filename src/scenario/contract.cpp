@@ -216,7 +216,7 @@ public:
             room->sendLog(log);
             //room->playSkillEffect(objectName());
 
-            room->setEmotion(effect.to, "bad");
+            room->setEmotion(effect.to, "victim");
             room->getThread()->delay();
             room->slashResult(effect, NULL);
             return true;
@@ -245,7 +245,7 @@ public:
             //room->playSkillEffect(objectName());
 
             damage.damage --;
-            room->setEmotion(player, "good");
+            //room->setEmotion(player, "good");
             room->getThread()->delay();
             data = QVariant::fromValue(damage);;
         }

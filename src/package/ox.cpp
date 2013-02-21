@@ -908,8 +908,6 @@ void XunlieCard::onEffect(const CardEffectStruct &effect) const{
         room->obtainCard(effect.from, card_id, false);
         if(!getSubcards().isEmpty() && !effect.to->isKongcheng())
             room->obtainCard(effect.from, effect.to->getRandomHandCardId(), false);
-        room->setEmotion(effect.to, "bad");
-        room->setEmotion(effect.from, "good");
     }
 }
 

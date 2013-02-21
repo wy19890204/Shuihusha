@@ -307,7 +307,7 @@ void LuanjunCard::onEffect(const CardEffectStruct &effect) const{
     room->playSkillEffect(skill_name, qrand() % 2 + 3);
     int card_id = room->askForCardChosen(effect.from, effect.to, "he", skill_name);
     room->throwCard(card_id, effect.to, effect.from);
-    room->setEmotion(effect.to, "bad");
+    //room->setEmotion(effect.to, "bad");
 }
 
 class LuanjunViewAsSkill: public ZeroCardViewAsSkill{
