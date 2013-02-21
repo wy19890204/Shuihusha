@@ -181,7 +181,7 @@ bool RiceBall::isAvailable(const Player *quyuan) const{
 
 void RiceBall::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->swapSeat(effect.from, effect.to, qrand() % 2 + 1);
+    room->jumpSeat(effect.from, effect.to, qrand() % 2);
     room->setPlayerMark(effect.from, "HaveEaten3", 1);
     PlayerStar pre, nex;
     foreach(ServerPlayer *tmp, room->getOtherPlayers(effect.from)){

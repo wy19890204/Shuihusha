@@ -2318,23 +2318,7 @@ void Room::assignRoles(){
     }
 }
 
-void Room::swapSeat(ServerPlayer *a, ServerPlayer *b, int flag){
-    //flag = 1: before; flag = 2: next
-    int seat1 = m_players.indexOf(a);
-    int seat2 = m_players.indexOf(b);
-    if(seat1 > seat2){
-        int tmp = seat1;
-        seat1 = seat2;
-        seat2 = tmp;
-    }
-
-    switch(flag){
-    case 1: m_players.move(seat1, seat2 - 1); break;
-    case 2: m_players.move(seat1, seat2); break;
-    default :
-        m_players.swap(seat1, seat2);
-    }
-
+void Room::doSwap(){
     QStringList player_circle;
     foreach(ServerPlayer *player, m_players)
         player_circle << player->objectName();
@@ -2355,6 +2339,27 @@ void Room::swapSeat(ServerPlayer *a, ServerPlayer *b, int flag){
 
         player->setNext(m_players.at((i+1) % m_players.length()));
     }
+}
+
+void Room::swapSeat(ServerPlayer *a, ServerPlayer *b){
+    int seat1 = m_players.indexOf(a);
+    int seat2 = m_players.indexOf(b);
+
+    m_players.swap(seat1, seat2);
+    doSwap();
+}
+
+void Room::jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag){
+    //flag = 0: before; flag = 1: next
+    int seat1 = m_players.indexOf(a);
+    int seat2 = m_players.indexOf(b);
+    if(seat1 > seat2){
+        int tmp = seat1;
+        seat1 = seat2;
+        seat2 = tmp;
+    }
+    m_players.move(seat1, seat2 + (flag-1));
+    doSwap();
 }
 
 void Room::swapHandcards(ServerPlayer *source, ServerPlayer *target){
