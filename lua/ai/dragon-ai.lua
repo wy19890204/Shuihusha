@@ -84,15 +84,21 @@ sgs.ai_skill_use["@@anxi"] = function(self, prompt)
 	local card
 	for _, c in ipairs(cards) do
 		if c:isRed() then
-			card = c:getEffectiveId()
-			break
+			if self:getUseValue(c) < 6 then
+				card = c
+			elseif self:getCardsNum("Peach") > 2 then
+				card = c
+			elseif not self.player:isWounded() and self.player:getHandcardNum() > 2 then
+				card = c
+			end
+			if card then break end
 		end
 	end
 	if not card then return "." end
 	self:sort(self.enemies, "hp2")
 	for _, enemy in ipairs(self.enemies) do
 		if enemy:getHp() >= self.player:getHp() then
-			return "@AnxiCard=" .. card .. "->" .. enemy:objectName()
+			return "@AnxiCard=" .. card:getEffectiveId() .. "->" .. enemy:objectName()
 		end
 	end
 	return "."
@@ -108,7 +114,8 @@ shuilao_skill.getTurnUseCard=function(self,inclusive)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if (acard:inherits("EquipCard")) and ((self:getUseValue(acard)<sgs.ai_use_value.Indulgence) or inclusive) then
+		if acard:inherits("EquipCard") and
+		((self:getUseValue(acard) < sgs.ai_use_value.Indulgence) or inclusive) then
 			card = acard
 			break
 		end
@@ -168,25 +175,27 @@ end
 local qiaojiang_skill={}
 qiaojiang_skill.name = "qiaojiang"
 table.insert(sgs.ai_skills, qiaojiang_skill)
-qiaojiang_skill.getTurnUseCard = function(self)
+qiaojiang_skill.getTurnUseCard = function(self, inclusive)
 	local cards = self.player:getCards("h")
 	cards=sgs.QList2Table(cards)
-	local jink_card
+	local card
 	self:sortByUseValue(cards, true)
-	for _,card in ipairs(cards)  do
-		if card:isBlack() and card:inherits("TrickCard") then
-			jink_card = card
+	for _, car in ipairs(cards)  do
+		if car:isBlack() and car:inherits("TrickCard") and
+			((self:getUseValue(car) < sgs.ai_use_value.Slash) or inclusive) then
+			card = car
 			break
 		end
 	end
-	if not jink_card then return nil end
-	local suit = jink_card:getSuitString()
-	local number = jink_card:getNumberString()
-	local card_id = jink_card:getEffectiveId()
-	local card_str = ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
-	local slash = sgs.Card_Parse(card_str)
-	assert(slash)
-	return slash
+	if card then
+		local suit = card:getSuitString()
+		local number = card:getNumberString()
+		local card_id = card:getEffectiveId()
+		local card_str = ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
+		local slash = sgs.Card_Parse(card_str)
+		assert(slash)
+		return slash
+	end
 end
 sgs.ai_view_as["qiaojiang"] = function(card, player, card_place)
 	local suit = card:getSuitString()
@@ -229,9 +238,9 @@ sgs.ai_skill_invoke["chuqiao"] = true
 sgs.ai_skill_invoke["jianwu"] = sgs.ai_skill_invoke["lihun"]
 sgs.ai_skill_cardask["@jianwu-slash"] = function(self, data)
 	local target = data:toPlayer()
-	local card = self:getCardId("Slash")
-	if self:isEnemy(target) and card > -1 then
-		return card
+	local card = self:getCard("Slash")
+	if self:isEnemy(target) and card then
+		return card:getEffectiveId()
 	end
 	return "."
 end

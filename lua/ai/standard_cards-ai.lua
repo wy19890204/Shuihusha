@@ -208,7 +208,7 @@ function SmartAI:useCardSlash(card, use)
 
 	for _, friend in ipairs(self.friends_noself) do
 		if friend:hasSkill("longluo") and friend:getHp() > 1 and
-			not (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage")) then
+			not (self:containsTrick("indulgence", friend) or self:containsTrick("supply_shortage", friend)) then
 			local slash_prohibit = false
 			slash_prohibit = self:slashProhibit(card, friend)
 			if not slash_prohibit then
@@ -594,7 +594,7 @@ end
 function sgs.ai_armor_value.silver_lion(player, self)
 	if self:hasWizard(self:getEnemies(player), true) then
 		for _, player in sgs.qlist(self.room:getAlivePlayers()) do
-			if player:containsTrick("lightning") then return 5 end
+			if self:containsTrick("lightning", player) then return 5 end
 		end
 	end
 	return 1
@@ -873,7 +873,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 	local tricks
 	players = self:exclude(players, card)
 	for _, player in ipairs(players) do
-		if player:containsTrick("lightning") and self:getFinalRetrial(player) ==2 and self:hasTrickEffective(card, player) then
+		if self:containsTrick("lightning", player) and self:getFinalRetrial(player) ==2 and self:hasTrickEffective(card, player) then
 			use.card = card
 			if use.to then
 				tricks = player:getCards("j")
@@ -909,7 +909,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 	end
 
 	for _, friend in ipairs(friends) do
-		if (friend:containsTrick("indulgence") or friend:containsTrick("supply_shortage")) and self:hasTrickEffective(card, friend) then
+		if (self:containsTrick("indulgence", friend) or self:containsTrick("supply_shortage", friend)) and self:hasTrickEffective(card, friend) then
 			use.card = card
 			if use.to then
 				tricks = friend:delayedTricks()
@@ -1159,10 +1159,8 @@ sgs.dynamic_value.control_usecard.Indulgence = true
 
 function SmartAI:useCardLightning(card, use)
 	if self.player:containsTrick("lightning") then return end
-	--if self.player:hasSkill("weimu") and card:isBlack() then return end
 	if self.room:isProhibited(self.player, self.player, card) then end
-
-	--if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
+--	if not self:hasWizard(self.enemies) then--and self.room:isProhibited(self.player, self.player, card) then
 	local function hasDangerousFriend()
 		local hashy = false
 		for _, aplayer in ipairs(self.enemies) do

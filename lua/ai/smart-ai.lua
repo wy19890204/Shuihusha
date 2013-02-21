@@ -3302,6 +3302,12 @@ function SmartAI:useTrickCard(card, use)
 	end
 end
 
+function SmartAI:containsTrick(name, player)
+	player = player or self.player
+	return (not player:hasEquip("haiqiu") and player:containsTrick(name))
+		or (player:hasEquip("haiqiu") and name == "tsunami")
+end
+
 sgs.weapon_range = {}
 
 function SmartAI:hasEquip(card)
