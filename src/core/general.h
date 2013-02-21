@@ -55,6 +55,7 @@ public:
     QString getPixmapPath(const QString &category) const;
     QString getPackage() const;
     QString getSkillDescription() const;
+    QString getLastword() const;
     QString getWinword() const;
     QString getId() const;
     QString getNickname(bool full = false) const;

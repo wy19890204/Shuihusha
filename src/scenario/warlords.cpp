@@ -175,8 +175,14 @@ int WarlordsScenario::lordGeneralCount() const{
 
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
-       WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5)
-        return AI::Neutrality;
+       WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5){
+        switch(qrand() % 4){
+        case 0:
+        case 1: return AI::Neutrality;
+        case 2: return AI::Enemy;
+        default: return AI::Friend;
+        }
+    }
     else
         return AI::GetRelation(a, b);
 }

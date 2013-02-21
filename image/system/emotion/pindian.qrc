@@ -1,0 +1,21 @@
+<RCC>
+    <qresource>
+        <file>pindian/0.png</file>
+        <file>pindian/1.png</file>
+        <file>pindian/2.png</file>
+        <file>pindian/3.png</file>
+        <file>pindian/4.png</file>
+        <file>pindian/5.png</file>
+        <file>pindian/6.png</file>
+        <file>pindian/7.png</file>
+        <file>pindian/8.png</file>
+        <file>pindian/9.png</file>
+        <file>pindian/10.png</file>
+        <file>pindian/11.png</file>
+        <file>pindian/12.png</file>
+        <file>pindian/13.png</file>
+        <file>pindian/14.png</file>
+        <file>pindian/15.png</file>
+        <file>pindian/16.png</file>
+    </qresource>
+</RCC>

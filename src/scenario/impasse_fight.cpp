@@ -193,7 +193,7 @@ public:
         if(zom->hasSkill(objectName()) && !zom->getWeapon())
             return 998;
         else
-            return ClientSkill::getSlashResidue(zom);
+            return 0;
     }
 };
 

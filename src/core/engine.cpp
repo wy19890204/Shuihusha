@@ -153,6 +153,8 @@ void Engine::addPackage(Package *package){
 
     QList<Card *> all_cards = package->findChildren<Card *>();
     foreach(Card *card, all_cards){
+        if(card->getNumber() < 0)
+            continue;
         card->setId(cards.length());
         cards << card;
 
@@ -272,7 +274,8 @@ int Engine::getGeneralCount(bool include_banned) const{
             total--;
 
         else if( (ServerInfo.GameMode.endsWith("p") ||
-                  ServerInfo.GameMode.endsWith("pd"))
+                  ServerInfo.GameMode.endsWith("pd") ||
+                  ServerInfo.GameMode.endsWith("pz"))
                   && Config.value("Banlist/Roles").toStringList().contains(general->objectName()))
             total--;
 
@@ -587,7 +590,8 @@ QStringList Engine::getRandomLords() const{
     QStringList lords;
 
     foreach(QString alord, getLords()){
-        if(banlist_ban.contains(alord))continue;
+        if(banlist_ban.contains(alord))
+            continue;
 
         lords << alord;
     }
@@ -655,7 +659,7 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
     if(Config.EnableHegemony)
         general_set = general_set.subtract(Config.value("Banlist/Hegemony", "").toStringList().toSet());
 
-    if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd"))
+    if(ServerInfo.GameMode.endsWith("p") || ServerInfo.GameMode.endsWith("pd") || ServerInfo.GameMode.endsWith("pz"))
         general_set.subtract(Config.value("Banlist/Roles", "").toStringList().toSet());
 
     all_generals = general_set.subtract(ban_set).toList();

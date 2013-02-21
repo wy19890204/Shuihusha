@@ -86,7 +86,8 @@ public:
     ServerPlayer *getLord() const;
     void askForGuanxing(ServerPlayer *zhuge, const QList<int> &cards, bool up_only);
     void doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target);
-    void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay);
+    void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
+    void playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
     int drawCard();
     const Card *peek();
     void fillAG(const QList<int> &card_ids, ServerPlayer *who = NULL);

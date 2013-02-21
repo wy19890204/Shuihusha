@@ -1305,17 +1305,11 @@ void Client::killPlayer(const QString &player_name){
 
     if(!Self->hasFlag("marshalling")){
         QString general_name = player->getGeneralName();
-        QString last_word = Sanguosha->translate(QString("~%1").arg(general_name));
-        /*if(last_word.startsWith("~")){
-            QStringList origin_generals = general_name.split("_");
-            if(origin_generals.length()>1)
-                last_word = Sanguosha->translate(("~") +  origin_generals.at(1));
-        }*/
+        QString last_word = player->getGeneral()->getLastword();
         if(!last_word.startsWith("~")){
             skill_title = tr("%1[dead]").arg(Sanguosha->translate(general_name));
             skill_line = last_word;
         }
-
         updatePileNum();
     }
 

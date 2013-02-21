@@ -349,10 +349,48 @@ CONFIG(rcc){
         DEFINES += USE_RCC
 }
 
+#CONFIG(qrc){
+RESOURCES += \
+    image/big-card.qrc \
+    image/skin.qrc \
+    image/card.qrc \
+    image/system/emotion/weapon.qrc \
+    image/system/emotion/success.qrc \
+    image/system/emotion/peach.qrc \
+    image/system/emotion/no-success.qrc \
+    image/system/emotion/death.qrc \
+    image/system/emotion/damage.qrc \
+    image/system/emotion/chain.qrc \
+    image/system/emotion/armor.qrc \
+    image/system/emotion/analeptic.qrc \
+    image/system/emotion/tsunami.qrc \
+    image/system/emotion/hplost.qrc \
+    image/system/emotion/awake.qrc \
+    image/system/emotion/thunder_damage.qrc \
+    image/system/emotion/fire_damage.qrc \
+    image/system/emotion/judgegood.qrc \
+    image/system/emotion/judgebad.qrc \
+    image/system/emotion/horse.qrc \
+    image/system/emotion/draw-card.qrc \
+    image/system/emotion/lightning.qrc \
+    image/system/emotion/killer.qrc \
+    image/system/emotion/jink.qrc \
+    image/system/emotion/recover.qrc \
+    image/system/emotion/limited.qrc \
+    image/system/emotion/duel.qrc \
+    image/system/emotion/thunder_slash.qrc \
+    image/system/emotion/slash_red.qrc \
+    image/system/emotion/slash_black.qrc \
+    image/system/emotion/fire_slash.qrc \
+    image/system/emotion/pindian.qrc \
+    backdrop/shuihu-cover.qrc \
+    backdrop/shuihu.qrc
+#}
+
 TRANSLATIONS += shuihusha.ts
 
 OTHER_FILES += \
-	shuihusha.qss \
-	acknowledgement/main.qml \
-	acknowledgement/list.png \
-	acknowledgement/back.png
+        shuihusha.qss \
+        acknowledgement/main.qml \
+        acknowledgement/list.png \
+        acknowledgement/back.png

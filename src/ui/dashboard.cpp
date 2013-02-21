@@ -382,11 +382,10 @@ void Dashboard::installDelayedTrick(CardItem *card){
     const DelayedTrick *trick = DelayedTrick::CastFrom(card->getCard());
     QGraphicsPixmapItem *item = new QGraphicsPixmapItem(this);
     item->setPixmap(QPixmap(trick->getIconPath()));
-    QString tooltip;
+    QString tooltip = trick->getDescription();
     if(trick->isVirtualCard())
-        tooltip=Sanguosha->getCard((trick->getSubcards()).at(0))->getDescription();
-    else
-        tooltip=trick->getDescription();
+        tooltip = QString("%1<br/>----------<br/>%2").arg(tooltip)
+                .arg(Sanguosha->getCard((trick->getSubcards()).at(0))->getDescription());
     item->setToolTip(tooltip);
     item->setPos(3 + delayed_tricks.length() * 27, 5);
     delayed_tricks << item;
@@ -739,8 +738,8 @@ CardItem *Dashboard::takeCardItem(int card_id, Player::Place place){
         else{
             handcard_num->setText(QString::number(Self->getHandcardNum()));
         }
-
-        card_item->hideFrame();
+        if(card_item)
+            card_item->hideFrame();
     }else if(place == Player::Equip){
         foreach(CardItem **equip_ptr, equips){
             CardItem *equip = *equip_ptr;

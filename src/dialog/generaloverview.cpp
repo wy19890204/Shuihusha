@@ -335,7 +335,7 @@ void GeneralOverview::askChange(){
 
     int row = ui->tableWidget->currentRow();
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-    if(general_name != Self->getGeneralName()){
+    if(Self && general_name != Self->getGeneralName()){
         ClientInstance->requestCheatChangeGeneral(general_name);
         ui->changeGeneralButton->setEnabled(false);
     }

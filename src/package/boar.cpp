@@ -15,7 +15,7 @@ public:
         if(jiao->hasSkill(objectName()) && !jiao->hasEquip())
             return 998;
         else
-            return ClientSkill::getSlashResidue(jiao);
+            return 0;
     }
 
     virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{

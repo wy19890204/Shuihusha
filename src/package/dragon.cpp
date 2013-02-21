@@ -771,10 +771,10 @@ public:
 
         QList<ServerPlayer *> others = room->getOtherPlayers(player);
         others.removeOne(target);
-        if(!others.isEmpty() && player->askForSkillInvoke(objectName())){
+        if(!others.isEmpty() && player->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
             foreach(ServerPlayer *p, others){
                 QString prompt = QString("@jianwu-slash:%1:%2").arg(player->objectName()).arg(target->objectName());
-                const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(damage));
+                const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(target));
                 if(slash) {
                     CardUseStruct use;
                     use.card = slash;

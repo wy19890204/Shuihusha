@@ -1526,7 +1526,7 @@ public:
             return init + likui->getMark("shalu");
         }
         else
-            return ClientSkill::getSlashResidue(likui);
+            return 0;
     }
 };
 
@@ -1827,7 +1827,7 @@ bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    room->broadcastInvoke("animate", "lightbox:$yanshou");
+    room->playLightbox(effect.from, "yanshou", "");
     effect.from->loseMark("@relic");
     LogMessage log;
     log.type = "#Yanshou";
@@ -1835,9 +1835,6 @@ void YanshouCard::onEffect(const CardEffectStruct &effect) const{
     log.to << effect.to;
     log.arg = QString::number(1);
     room->sendLog(log);
-    room->getThread()->delay();
-    room->setEmotion(effect.from, "limited");
-    room->broadcastInvoke("playAudio", "limited");
     room->setPlayerProperty(effect.to, "maxhp", effect.to->getMaxHP() + 1);
 }
 
@@ -2237,12 +2234,10 @@ public:
                     room->acquireSkill(caijing, skill);
                 }
                 room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$duoquan");
-                caijing->loseMark("@power");
-                room->getThread()->delay();
-                room->setEmotion(caijing, "limited");
-                room->broadcastInvoke("playAudio", "limited");
 
+                room->playLightbox(caijing, "duoquan", "");
+
+                caijing->loseMark("@power");
                 caijing->obtainCard(player->getWeapon());
                 caijing->obtainCard(player->getArmor());
                 caijing->obtainCard(player->getDefensiveHorse());
@@ -2461,6 +2456,7 @@ public:
                 continue;
             if(room->askForCard(xing, ".S", "@zhensha:" + player->objectName(), true, data, CardDiscarded)){
                 LogMessage log;
+                room->playSkillEffect(objectName());
                 log.type = "#UseSkill";
                 log.from = xing;
                 log.to << player;
@@ -2468,12 +2464,8 @@ public:
                 room->sendLog(log);
                 xing->loseMark("@methanol");
 
-                room->broadcastInvoke("animate", "lightbox:$zhensha:2000");
-                room->playSkillEffect(objectName());
-                room->getThread()->delay(2000);
-                room->setEmotion(player, "limited");
-                room->broadcastInvoke("playAudio", "limited");
                 room->loseMaxHp(player, player->getLostHp());
+                room->playLightbox(player, "zhensha", "2000", 2000);
                 if(player->isDead())
                     return true;
             }

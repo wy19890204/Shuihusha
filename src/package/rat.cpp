@@ -206,7 +206,7 @@ public:
         if(from->hasMark("@stones"))
             return 998;
         else
-            return ClientSkill::getSlashResidue(from);
+            return 0;
     }
 
     virtual bool isSlashPenetrate(const Player *, const Player *to, const Card *) const{
@@ -404,13 +404,10 @@ public:
             }
             if(n < 5){
                 room->playSkillEffect(objectName());
-                room->broadcastInvoke("animate", "lightbox:$buzhen:5500");
                 zhuwu->loseMark("@embattle");
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
-                room->getThread()->delay(5000);
-                room->setEmotion(zhuwu, "limited");
-                room->broadcastInvoke("playAudio", "limited");
+                room->playLightbox(zhuwu, "buzhen", "5500", 5000);
             }
         }
         return false;
