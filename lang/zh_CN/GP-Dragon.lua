@@ -7,6 +7,7 @@ return {
 	["$liutang"] = "021",
 	["#liutang"] = "赤发鬼", -- kou 4hp
 	["liutang"] = "刘唐",
+	["illustrator:liutang"] = "梁山豪杰",
 	["cv:liutang"] = "莫名【忆昔端华工作室】",
 	["coder:liutang"] = "Slob",
 	["xiashu"] = "下书",
@@ -20,6 +21,7 @@ return {
 	["#hantao"] = "百胜将", -- guan 4hp (qjwm)
 	["hantao"] = "韩滔",
 	["taolue"] = "韬略",
+	["illustrator:hantao"] = "龙魂",
 	["cv:hantao"] = "Sin柠檬【月玲珑】",
 	[":taolue"] = "出牌阶段，你可以和一名角色拼点。若你赢，则你可以将其判定区或装备区里的一张牌移动到另一名角色区域内的相应位置。若你没赢，则你须弃置一张牌。每阶段限一次。",
 	["changsheng"] = "常胜",
@@ -35,6 +37,7 @@ return {
 	["$shibao"] = "117",
 	["#shibao"] = "南离大将军", -- jiang 4hp
 	["shibao"] = "石宝",
+	["illustrator:shibao"] = "傲视千雄",
 	["cv:shibao"] = "唐银【唐音传媒】",
 	["designer:shibao"] = "宇文天启&烨子",
 	["coder:shibao"] = "Slob",
@@ -51,8 +54,9 @@ return {
 	["$ruanxiaowu"] = "029",
 	["#ruanxiaowu"] = "短命二郎", -- min 3/4hp
 	["ruanxiaowu"] = "阮小五",
-	["designer:ruanxiaowu"] = "烨子&宇文天启",
+	["illustrator:ruanxiaowu"] = "黄玉郎",
 	["cv:ruanxiaowu"] = "烨子风暴【天子会工作室】",
+	["designer:ruanxiaowu"] = "烨子&宇文天启",
 	["coder:ruanxiaowu"] = "凌天翼、宇文天启",
 	["anxi"] = "暗袭",
 	[":anxi"] = "任一角色每受到一次锦囊牌造成的伤害，你可以弃置一张♥或♦手牌，对任一体力不少于你的其他角色造成1点伤害。",
@@ -68,6 +72,7 @@ return {
 	["$zhengtianshou"] = "074",
 	["#zhengtianshou"] = "白面郎君", -- kou 3hp (cgdk)
 	["zhengtianshou"] = "郑天寿",
+	["illustrator:zhengtianshou"] = "王寻",
 	["cv:zhengtianshou"] = "鸢飞【天子会工作室】",
 	["coder:zhengtianshou"] = "凌天翼",
 	["wugou"] = "吴钩",
@@ -84,6 +89,7 @@ return {
 	["$gaoyanei"] = "159",
 	["#gaoyanei"] = "花花太岁", -- guan 3hp
 	["gaoyanei"] = "高衙内",
+	["illustrator:gaoyanei"] = "十年一剑",
 	["cv:gaoyanei"] = "疯狂牛魔王【风行天下】",
 	["xixue"] = "戏谑",
 	[":xixue"] = "<b>锁定技</b>，你对女性角色即将造成的伤害、女性角色即将对你造成的伤害均为体力流失；当任一女性角色死亡时，你回复1点体力。",
@@ -106,8 +112,9 @@ return {
 	["$shantinggui"] = "044",
 	["#shantinggui"] = "圣水将", -- jiang 3hp (bwqz)
 	["shantinggui"] = "单廷珪",
-	["designer:shantinggui"] = "烨子&宇文天启",
+	["illustrator:shantinggui"] = "黄玉郎",
 	["cv:shantinggui"] = "宇文天启【天子会工作室】",
+	["designer:shantinggui"] = "烨子&宇文天启",
 	["xiaofang"] = "消防",
 	[":xiaofang"] = "绝密技能，效果不详",
 	["#Xiaofang"] = "%from 发动了技能【%arg】，消除了 %to 受到伤害的火焰属性",
@@ -129,6 +136,7 @@ return {
 	["$lizhu"] = "123",
 	["#lizhu"] = "金剑先生", -- min 3hp
 	["lizhu"] = "李助",
+	["illustrator:lizhu"] = "大熊",
 	["cv:lizhu"] = "雨过天青【华人之声】",
 	["coder:lizhu"] = "Slob",
 	["chuqiao"] = "出鞘",
@@ -146,6 +154,7 @@ return {
 	["$yangchun"] = "073",
 	["#yangchun"] = "白花蛇", -- kou 4hp (ybyt)
 	["yangchun"] = "杨春",
+	["illustrator:yangchun"] = "黄玉郎",
 	["cv:yangchun"] = "倔强的小红军【剪刀剧团】",
 	["coder:yangchun"] = "战栗贵公子",
 	["shexin"] = "蛇信",
@@ -157,6 +166,7 @@ return {
 	["$qiongyaonayan"] = "164",
 	["#qiongyaonayan"] = "狼先锋", -- guan 4hp
 	["qiongyaonayan"] = "琼妖纳延",
+	["illustrator:qiongyaonayan"] = "成吉思汗",
 	["cv:qiongyaonayan"] = "裤衩【浮声未歇】",
 	["jiaozhen"] = "叫阵",
 	[":jiaozhen"] = "回合开始时，你可以进行一次判定：若结果为♠或♣，则你获得以下技能，直到回合结束：摸牌阶段，你少摸一张牌；出牌阶段，你可以将你的任一♠或♣手牌当【决斗】使用；你造成的伤害均视为雷电伤害。",
@@ -174,6 +184,7 @@ return {
 	["$suochao"] = "019",
 	["#suochao"] = "急先锋", -- jiang 4hp
 	["suochao"] = "索超",
+	["illustrator:suochao"] = "楚河汉界",
 	["cv:suochao"] = "大宝今天见【淅雨听风】",
 	["chongfeng"] = "冲锋",
 	[":chongfeng"] = "若你于一回合内受到和造成不少于2点伤害，则该回合结束后，你可以进行一个额外的回合。",
@@ -186,6 +197,7 @@ return {
 	["$wangpo"] = "147",
 	["#wangpo"] = "枯藤蔓", -- min 3hp (qlfd)
 	["wangpo"] = "王婆",
+	["illustrator:wangpo"] = "十面埋伏",
 	["cv:wangpo"] = "九辨【重华广播剧团】",
 	["qianxian"] = "牵线",
 	[":qianxian"] = "出牌阶段，你可以弃置一张♠或♣非延时类锦囊，指定两名体力上限不相等的其他角色。若其交给你一张♣手牌，则将其武将牌翻至正面向上，并重置之；否则将其武将牌翻至背面向上，并横置之。每阶段限一次。",

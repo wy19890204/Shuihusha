@@ -65,8 +65,11 @@ protected:
         }
         else{
             MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
-            if(main_window)
+            if(main_window){
                 main_window->setBackgroundBrush();
+                //QCursor my(QPixmap("backdrop/arrow.cur"));
+                //main_window->setCursor(my);
+            }
         }
     }
 };
