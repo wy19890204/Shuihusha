@@ -904,7 +904,7 @@ public:
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
-	void swapSeat(ServerPlayer *a, ServerPlayer *b);
+	void swapSeat(ServerPlayer *a, ServerPlayer *b, int flag = 0);
 	void swapHandcards(ServerPlayer *source, ServerPlayer *target);
 	lua_State *getLuaState() const;
 	void setFixedDistance(Player *from, const Player *to, int distance);

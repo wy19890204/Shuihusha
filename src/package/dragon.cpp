@@ -144,6 +144,7 @@ public:
                 log.arg = objectName();
                 log.arg2 = QString::number(damage.damage);
                 room->sendLog(log);
+                room->getThread()->delay();
                 room->playSkillEffect(objectName(), qrand() % 2 + 6);
 
                 data = QVariant::fromValue(damage);

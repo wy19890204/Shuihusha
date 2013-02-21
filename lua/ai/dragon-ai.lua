@@ -17,7 +17,7 @@ xiashu_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["XiashuCard"]=function(card,use,self)
 	self:sort(self.friends)
-	if use.to then use.to:append(enemy) end
+	if use.to then use.to:append(self.friends[1]) end
 	use.card=card
 end
 

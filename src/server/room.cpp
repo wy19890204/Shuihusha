@@ -2318,11 +2318,22 @@ void Room::assignRoles(){
     }
 }
 
-void Room::swapSeat(ServerPlayer *a, ServerPlayer *b){
+void Room::swapSeat(ServerPlayer *a, ServerPlayer *b, int flag){
+    //flag = 1: before; flag = 2: next
     int seat1 = m_players.indexOf(a);
     int seat2 = m_players.indexOf(b);
+    if(seat1 > seat2){
+        int tmp = seat1;
+        seat1 = seat2;
+        seat2 = tmp;
+    }
 
-    m_players.swap(seat1, seat2);
+    switch(flag){
+    case 1: m_players.move(seat1, seat2 - 1); break;
+    case 2: m_players.move(seat1, seat2); break;
+    default :
+        m_players.swap(seat1, seat2);
+    }
 
     QStringList player_circle;
     foreach(ServerPlayer *player, m_players)

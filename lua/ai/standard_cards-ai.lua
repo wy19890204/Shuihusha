@@ -227,7 +227,7 @@ function SmartAI:useCardSlash(card, use)
 end
 
 sgs.ai_skill_use.slash = function(self, prompt)
-	if prompt ~= "@askforslash" then return "." end
+--	if prompt ~= "@askforslash" then return "." end
 	local slash = self:getCard("Slash")
 	if not slash then return "." end
 	for _, enemy in ipairs(self.enemies) do
