@@ -134,10 +134,6 @@ int WheelFightScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
 }
 
-bool WheelFightScenario::unloadLordSkill() const{
-    return true;
-}
-
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);

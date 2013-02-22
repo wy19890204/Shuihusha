@@ -63,7 +63,7 @@ int Scenario::lordGeneralCount() const{ //lord can choice generals count return 
 }
 
 bool Scenario::unloadLordSkill() const{ // if use not lord skill rule, return true
-    return Config.NoLordSkill;
+    return Config.NoLordSkill || getPlayerCount() <= 4;
 }
 
 bool Scenario::generalSelection(Room *) const{ // if need choose general freely, return true

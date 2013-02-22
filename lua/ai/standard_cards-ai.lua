@@ -800,7 +800,7 @@ function SmartAI:getDangerousCard(who)
 	if (weapon and weapon:inherits("Crossbow")) then return  weapon:getEffectiveId() end
 	if (weapon and weapon:inherits("Spear") and who:hasSkill("shalu"))  then return  weapon:getEffectiveId() end
 	if (weapon and weapon:inherits("Axe") and self:hasSkills("manli|liba|meicha|juesi", who)) then return weapon:getEffectiveId() end
-	if (who:getArmor() and who:getArmor():inherits("EightDiagram") and who:getArmor():getSuit() == sgs.Card_Spade and who:hasSkill("kongying")) then return who:getArmor():getEffectiveId() end
+	if (who:getArmor() and who:hasEquip("eight_diagram") and who:getArmor():getSuit() == sgs.Card_Spade and who:hasSkill("kongying")) then return who:getArmor():getEffectiveId() end
 end
 
 function SmartAI:getValuableCard(who)
@@ -831,7 +831,6 @@ function SmartAI:getValuableCard(who)
 	if self:isEquip("Saru", who) then
 		return offhorse:getEffectiveId()
 	end
-
 
 	local equips = sgs.QList2Table(who:getEquips())
 	for _,equip in ipairs(equips) do

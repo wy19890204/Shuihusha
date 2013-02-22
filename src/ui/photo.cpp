@@ -732,7 +732,7 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     if(!equip)
         return;
 
-    QRect suit_rect(4, 105 + 15 + order * 17, 12.5, 12.5);
+    QRect suit_rect(6, 105 + 19 + order * 15, 12.5, 12.5);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
@@ -740,8 +740,8 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     QFont bold_font;
     bold_font.setBold(true);
     //painter->setFont(bold_font);
-    painter->drawText(22, 115 + 15 + order * 17, card->getNumberString());
-    painter->drawText(37, 115 + 15 + order * 17, card->label());
+    painter->drawText(25, 115 + 19 + order * 15, card->getNumberString());
+    painter->drawText(39, 115 + 20 + order * 15, card->label());
 }
 
 QVariant Photo::itemChange(GraphicsItemChange change, const QVariant &value){

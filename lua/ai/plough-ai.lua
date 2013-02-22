@@ -197,6 +197,7 @@ function SmartAI:useCardAssassinate(ass, use)
 			end
 		end
 	end
+	if #self.enemies == 0 then return "." end
 	use.card = ass
 	if target then
 		if use.to then
@@ -268,10 +269,9 @@ sgs.dynamic_value.lucky_chance.Tsunami = true
 
 -- ji cao tun liang
 function SmartAI:useCardProvistore(provistore, use)
---	if self.player:hasSkill("wuyan") then return end
-	use.card = provistore
 	for _, friend in ipairs(self.friends) do
 		if not friend:containsTrick("provistore") and friend:getHandcardNum() > 3 then
+			use.card = provistore
 			if use.to then
 				use.to:append(friend)
 			end

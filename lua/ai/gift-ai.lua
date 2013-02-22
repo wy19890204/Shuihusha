@@ -1,14 +1,14 @@
 -- ai for gift-package
 
 function SmartAI:useCardZongzi(card, use)
-	if self.player:hasSkill("lisao") then return end
+	if self.player:hasMark("HaveEaten") then return end
 	use.card = card
 	if not use.isDummy then
 		self:speak("zongzi")
 	end
 end
 
-sgs.ai_use_value.Zongzi = 5.5
+sgs.ai_use_value.Zongzi = 4.4
 sgs.ai_keep_value.Zongzi = 0
 sgs.dynamic_value.benefit.Zongzi = true
 
@@ -32,4 +32,24 @@ sgs.ai_keep_value.Moonpie = 0
 sgs.dynamic_value.control_card.Moonpie = true
 sgs.ai_card_intention.Moonpie = function(card, from, tos)
 	speak(tos[1], "moonpie")
+end
+
+function SmartAI:useCardRiceBall(card, use)
+	if self.player:hasMark("HaveEaten3") then return end
+	self:sort(self.friends_noself)
+	for _, friend in ipairs(self.friends_noself) do
+		if self.player:distanceTo(friend) > 2 then
+			use.card = card
+			if use.to then
+				use.to:append(friend)
+			end
+			return
+		end
+	end
+end
+
+sgs.ai_use_value.RiceBall = 0.3
+sgs.ai_keep_value.RiceBall = 0
+sgs.ai_card_intention.RiceBall = function(card, from, tos)
+	speak(tos[1], "riceball")
 end
