@@ -150,6 +150,7 @@ enum TriggerEvent{
     TurnStart,
     PhaseChange,
     InPhase,
+    PhaseEnd,
     DrawNCards,
     DrawNCardsDone,
     HpRecover,
@@ -211,7 +212,7 @@ enum TriggerEvent{
     ChoiceMade,
     QiaogongTrigger,
 
-    NumOfEvents,
+    NumOfEvents
 };
 
 typedef const Card *CardStar;

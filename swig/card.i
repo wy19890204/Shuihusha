@@ -55,7 +55,7 @@ public:
 	};
 
 	EquipCard(Suit suit, int number):Card(suit, number, true), skill(NULL){}
-	TriggerSkill *getSkill() const;    
+	TriggerSkill *getSkill() const;
 
 	virtual QString getType() const;
 	virtual CardType getTypeId() const;
@@ -134,7 +134,7 @@ public:
 	void setNature(DamageStruct::Nature nature);
 
 	static bool IsAvailable(const Player *player);
-	
+
 protected:
 	DamageStruct::Nature nature;
 };

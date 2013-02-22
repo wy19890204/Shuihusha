@@ -135,7 +135,6 @@ public:
 	bool hasFlag(const char *flag) const;
 	void clearFlags();
 
-
 	bool faceUp() const;
 	void setFaceUp(bool face_up);
 
@@ -241,6 +240,14 @@ public:
 
 	void removeTag(const char *tag_name){
 		$self->tag.remove(tag_name);
+	}
+
+	bool isFemale(){
+		return $self->getGeneral()->isFemale();
+	}
+
+	bool isMale(){
+		return $self->getGeneral()->isMale();
 	}
 };
 
@@ -470,12 +477,15 @@ enum TriggerEvent{
 	GameStarted,
 	TurnStart,
 	PhaseChange,
+	InPhase,
+	PhaseEnd,
 	DrawNCards,
 	DrawNCardsDone,
 	HpRecover,
 	HpRecovered,
 	HpLost,
 	HpChanged,
+	MaxHpChanged,
 
 	StartJudge,
 	AskForRetrial,
@@ -569,6 +579,7 @@ public:
 	void setSuit(Suit suit);
 
 	Color getColor() const;
+	QString getColorString() const;
 	bool sameColorWith(const Card *other) const;
 	bool isEquipped() const;
 
@@ -904,8 +915,8 @@ public:
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
-    void swapSeat(ServerPlayer *a, ServerPlayer *b);
-    void jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag = 1);
+	void swapSeat(ServerPlayer *a, ServerPlayer *b);
+	void jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag = 1);
 	void swapHandcards(ServerPlayer *source, ServerPlayer *target);
 	lua_State *getLuaState() const;
 	void setFixedDistance(Player *from, const Player *to, int distance);

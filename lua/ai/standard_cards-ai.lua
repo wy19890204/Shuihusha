@@ -107,7 +107,7 @@ function SmartAI:useCardSlash(card, use)
 	for _, friend in ipairs(self.friends_noself) do
 		local slash_prohibit = false
 		slash_prohibit = self:slashProhibit(card,friend)
-		if (self.player:hasSkill("qiangqu") and friend:getGeneral():isFemale() and friend:isWounded() and not friend:isNude())
+		if (self.player:hasSkill("qiangqu") and friend:isFemale() and friend:isWounded() and not friend:isNude())
 		or (friend:hasSkill("kongying")
 		and (self:getCardsNum("Jink", friend) > 0 or (not self:isWeak(friend) and self:isEquip("EightDiagram",friend)))
 		and (hasExplicitRebel(self.room) or not friend:isLord()))
@@ -119,7 +119,7 @@ function SmartAI:useCardSlash(card, use)
 					use.card = card
 					if use.to then
 						use.to:append(friend)
-						self:speak("hostile", self.player:getGeneral():isFemale())
+						self:speak("hostile", self.player:isFemale())
 						if self.slash_targets <= use.to:length() then return end
 					end
 				end
@@ -328,7 +328,7 @@ function SmartAI:useCardPeach(card, use)
 	if self.player:hasSkill("meihuo") and self:getOverflow() > 0 then
 		self:sort(self.friends, "hp")
 		for _, friend in ipairs(self.friends) do
-			if friend:isWounded() and friend:getGeneral():isMale() then return end
+			if friend:isWounded() and friend:isMale() then return end
 		end
 	end
 
@@ -364,7 +364,7 @@ function sgs.ai_slash_weaponfilter.double_sword(to, self)
 end
 
 function sgs.ai_weapon_value.double_sword(self, enemy)
-	if enemy and enemy:getGeneral():isMale() ~= self.player:getGeneral():isMale() then return 3 end
+	if enemy and enemy:isMale() ~= self.player:isMale() then return 3 end
 end
 
 sgs.ai_skill_cardask["double-sword-card"] = function(self, data, pattern, target)
@@ -722,7 +722,7 @@ function SmartAI:useCardDuel(duel, use)
 				use.card = duel
 				if use.to then
 					use.to:append(target)
-					self:speak("duel", self.player:getGeneral():isFemale())
+					self:speak("duel", self.player:isFemale())
 				end
 				return
 			end
@@ -756,7 +756,7 @@ function SmartAI:useCardDuel(duel, use)
 			use.card = duel
 			if use.to then
 				use.to:append(target)
-				self:speak("duel", self.player:getGeneral():isFemale())
+				self:speak("duel", self.player:isFemale())
 			end
 			return
 		end
@@ -901,7 +901,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getDangerousCard(enemy)
 					use.to:append(enemy)
-					self:speak("hostile", self.player:getGeneral():isFemale())
+					self:speak("hostile", self.player:isFemale())
 				end
 				return
 			end
@@ -944,7 +944,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getValuableCard(enemy)
 					use.to:append(enemy)
-					self:speak("hostile", self.player:getGeneral():isFemale())
+					self:speak("hostile", self.player:isFemale())
 				end
 				return
 			end
@@ -958,7 +958,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "h")
 					use.to:append(enemy)
-					self:speak("hostile", self.player:getGeneral():isFemale())
+					self:speak("hostile", self.player:isFemale())
 				end
 				return
 			end
@@ -988,7 +988,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 					if use.to then
 						sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "he")
 						use.to:append(enemy)
-						self:speak("hostile", self.player:getGeneral():isFemale())
+						self:speak("hostile", self.player:isFemale())
 					end
 					return
 				else
@@ -999,7 +999,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 						else
 							sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "h") end
 						use.to:append(enemy)
-						self:speak("hostile", self.player:getGeneral():isFemale())
+						self:speak("hostile", self.player:isFemale())
 					end
 					return
 				end
@@ -1116,7 +1116,7 @@ sgs.ai_skill_cardask["collateral-slash"] = function(self, data, pattern, target,
 			end
 		end
 	end
-	self:speak("collateral", self.player:getGeneral():isFemale())
+	self:speak("collateral", self.player:isFemale())
 	return "."
 end
 
