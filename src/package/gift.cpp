@@ -80,7 +80,7 @@ void Moonpie::onEffect(const CardEffectStruct &effect) const{
                           .arg(effect.to->objectName()));
 
     room->acquireSkill(effect.to, "yaoyue");
-    room->acquireSkill(effect.to, "beatjapan");
+    room->acquireSkill(effect.to, "sheri");
     room->setPlayerMark(effect.to, "HaveEaten2", 1);
 }
 
@@ -110,9 +110,9 @@ public:
     }
 };
 
-class BeatJapan:public TriggerSkill{
+class Sheri:public TriggerSkill{
 public:
-    BeatJapan():TriggerSkill("beatjapan"){
+    Sheri():TriggerSkill("sheri"){
         events << CardUsed;
     }
 
@@ -205,7 +205,7 @@ void RiceBall::onEffect(const CardEffectStruct &effect) const{
 GiftPackage::GiftPackage()
     :CardPackage("gift")
 {
-    skills << new Lisao << new Yaoyue << new YaoyueEffect << new BeatJapan
+    skills << new Lisao << new Yaoyue << new YaoyueEffect << new Sheri
             << new Change;
     related_skills.insertMulti("yaoyue", "#yaoyue-effect");
     QList<Card *> cards;

@@ -3,7 +3,7 @@ extension = sgs.Package("personal")
 
 tianqi = sgs.General(extension, "tianqi", "god", 5, false)
 tianyin = sgs.General(extension, "tianyin", "god", 3)
-tianshuang = sgs.General(extension, "tianshuang", "god", 5)
+tianshuang = sgs.General(extension, "tianshuang", "god", 3)
 
 eatdeath=sgs.CreateTriggerSkill{
 	name="eatdeath",
@@ -115,22 +115,61 @@ noqing=sgs.CreateTriggerSkill{
 doubledao = sgs.CreateSlashSkill
 {
 	name = "doubledao",
-	s_extra_func = function(self, from, to, slash)
-		if from:hasSkill("doubledao") and slash:getSuit() == sgs.Card_Club then
-			return 1
+-- 额外目标
+	s_extra_func = function(self, from, to, slash) -- from：使用者；to：目标；slash：所用的杀。这三个参数除了from，其余都是可有可无的
+		if from:hasSkill("doubledao") and slash:getSuit() == sgs.Card_Club then --注意必须先判断from是否有这个技能，否则谁都会发动的
+			return 1 -- 这张杀可以指定一个额外目标，注意加上原本的，一共两个目标
 		end
 	end,
+-- 攻击范围
 	s_range_func = function(self, from, to, slash)
 		if from:hasSkill("doubledao") and slash:getSuit() == sgs.Card_Heart then
-			return -4
+			return -4 -- 注意这里因为是锁定攻击范围，所以前面要加个负号，如果不加，则累加攻击范围
 		end
 	end,
+}
+
+dragonfist = sgs.CreateSlashSkill
+{
+	name = "dragonfist",
+-- 额外出杀（返回还能再使用的杀的数量）
+	s_residue_func = function(self, from)
+	    if from:hasSkill("dragonfist") then
+                local init =  1 - from:getSlashCount() -- 还能再使用的杀的数量，若已经使用了1张杀，则init=1-1=0，不能使用杀了
+                return init + from:getMark("Fist") -- 如果获得了1个Fist标记，则在可用杀的基础上+1，本例中未0+1=1，有多少Fist标记可再使用多少张杀
+			-- 返回值为998，表示使用杀无次数限制（如连弩、咆哮）
+			-- 返回值为-998，表示不能再使用杀（如天义拼点失败）
+            else
+                return 0
+	    end
+	end,
+}
+
+dragonfistt=sgs.CreateTriggerSkill{
+	name="#dragonfist",
+	events={sgs.Damage, sgs.PhaseChange},
+	priority = -1,
+
+	on_trigger=function(self,event,player,data)
+		local room = player:getRoom()
+		if event == sgs.PhaseChange then
+			room:setPlayerMark(player, "Fist", 0) -- 阶段转换时清除标记
+		else
+			local damage = data:toDamage()
+			if damage.card:isKindOf("Slash") then
+				room:setPlayerMark(player, "Fist", player:getMark("Fist")+1)
+			end
+		end
+		return false
+	end
 }
 
 tianqi:addSkill(eatdeath)
 tianyin:addSkill(skydao)
 tianyin:addSkill(noqing)
 tianshuang:addSkill(doubledao)
+tianshuang:addSkill(dragonfist)
+tianshuang:addSkill(dragonfistt)
 
 sgs.LoadTranslationTable{
 	["personal"] = "Pesonal",
@@ -162,4 +201,6 @@ sgs.LoadTranslationTable{
 	["tianshuang"] = "天霜",
 	["doubledao"] = "双刀",
 	[":doubledao"] = "LUA演示：你的草花杀可额外指定一个目标；你使用红桃杀的攻击范围锁定为4.",
+	["dragonfist"] = "龙拳",
+	[":dragonfist"] = "LUA演示：出牌阶段，当你的【杀】造成伤害时，可额外出一次【杀】",
 }

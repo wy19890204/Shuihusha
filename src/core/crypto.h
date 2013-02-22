@@ -9,8 +9,11 @@
 class Crypto{
 public:
     bool encryptMusicFile(const QString &filename, const QString &key = "DefaultKey");
+    bool decryptMusicFile(const QString &filename, const QString &GlobalKey);
     FMOD_SOUND *initEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const QString &key = "DefaultKey");
-    //void playEncryptedFile(FMOD_SYSTEM *System, FMOD_SOUND *sound) = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, sound, false, NULL);
+    const uchar *getEncryptedFile(const QString &filename, const QString &key = "DefaultKey");
+private:
+    qint64 size;
 };
 
 #endif // CRYPTO_H

@@ -63,18 +63,49 @@ bool Crypto::encryptMusicFile(const QString &filename, const QString &key){
     }
 }
 
-FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const QString &key){
+bool Crypto::decryptMusicFile(const QString &filename, const QString &GlobalKey){
+    QFile file(filename);
+    QFileInfo info(filename);
+    QString output = QString("%1/%2.ogg").arg(info.absolutePath()).arg(info.baseName());
+
+    if(file.open(QIODevice::ReadOnly) == false)
+        return NULL;
+
+    const char *key = GlobalKey.toLocal8Bit().data();
+    qint64 size = file.size();
+    byte *buffer = new byte[size];
+
+    file.read((char *)buffer, size);
+    DES_Process(key, buffer, size, CryptoPP::DECRYPTION);
+
+    QFile newFile(output);
+    if(newFile.open(QIODevice::WriteOnly)){
+        newFile.write((char *)buffer, size);
+        delete buffer;
+        return true;
+    }else{
+        delete buffer;
+        return false;
+    }
+}
+
+const uchar *Crypto::getEncryptedFile(const QString &filename, const QString &key){
     QFile file(filename);
 
     if(file.open(QIODevice::ReadOnly) == false)
         return NULL;
 
-    qint64 size = file.size();
+    size = file.size();
     byte *buffer = new byte[size];
 
     file.read((char *)buffer, size);
-
     DES_Process(Sanguosha->translate(key).toLocal8Bit().data(), buffer, size, CryptoPP::DECRYPTION);
+
+    return (const uchar *)buffer;
+}
+
+FMOD_SOUND *Crypto::initEncryptedFile(FMOD_SYSTEM *System, const QString &filename, const QString &key){
+    const uchar *buffer = getEncryptedFile(filename, key);
 
     FMOD_SOUND *sound;
 

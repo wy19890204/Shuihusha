@@ -163,7 +163,7 @@ public:
 	void setWillThrow(bool will_throw);
 	LuaSkillCard *clone() const;
 
-	LuaFunction filter;    
+	LuaFunction filter;
 	LuaFunction feasible;
 	LuaFunction on_use;
 	LuaFunction on_effect;
@@ -547,7 +547,7 @@ bool LuaViewAsSkill::isEnabledAtResponse(const Player *player, const QString &pa
 	pushSelf(L);
 
 	SWIG_NewPointerObj(L, player, SWIGTYPE_p_Player, 0);
-	
+
 	lua_pushstring(L, pattern.toAscii());
 
 	int error = lua_pcall(L, 3, 1, 0);

@@ -101,7 +101,7 @@ QString GeneralSelector::select1v1(const QStringList &candidates){
 
 QString GeneralSelector::selectHighest(const QHash<QString, int> &table, const QStringList &candidates, int default_value){
     int max = -1;
-    QString max_general;
+    QString max_general = "sujiang";
 
     foreach(QString candidate, candidates){
         int value = table.value(candidate, default_value);
@@ -149,7 +149,24 @@ int GeneralSelector::get1v1ArrangeValue(const QString &name){
 QStringList GeneralSelector::arrange1v1(ServerPlayer *player){
     QStringList arranged = player->getSelected();
     qSort(arranged.begin(), arranged.end(), CompareFunction);
-    return arranged.mid(0, 3);
+
+    QStringList result;
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (get1v1ArrangeValue(arranged[i]) > 100) {
+            result << arranged[i];
+            break;
+        }
+    }
+    if (!result.isEmpty()) {
+        int strong = (i == 0) ? 1 : 0;
+        int weak = (i == 2) ? 1 : 2;
+        result << arranged[weak] << arranged[strong];
+    } else {
+        result << arranged[1] << arranged[2] << arranged[0];
+    }
+
+    return result;
 }
 
 void GeneralSelector::loadFirstGeneralTable(){
@@ -168,9 +185,7 @@ void GeneralSelector::loadFirstGeneralTable(const QString &role){
             while(!stream.atEnd()){
                 QString name;
                 stream >> name;
-
-                int i;
-                for(i=0; i<7; i++){
+                for(int i = 0; i < 7; i++){
                     qreal value;
                     stream >> value;
 

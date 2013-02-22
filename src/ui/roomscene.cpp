@@ -2787,7 +2787,7 @@ DamageMakerDialog::DamageMakerDialog(QWidget *parent)
 
 void DamageMakerDialog::disableSource(){
     QString nature = damage_nature->itemData(damage_nature->currentIndex()).toString();
-    damage_source->setEnabled(nature != "L");
+    damage_source->setEnabled(nature != "L" && nature != "M" && nature != "E");
 }
 
 void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){
@@ -3164,6 +3164,11 @@ void RoomScene::createStateItem(){
         connect(add_robot, SIGNAL(clicked()), ClientInstance, SLOT(addRobot()));
         connect(fill_robots, SIGNAL(clicked()), ClientInstance, SLOT(fillRobots()));
         connect(Self, SIGNAL(owner_changed(bool)), this, SLOT(showOwnerButtons(bool)));
+//@todo circular
+        if(Config.CircularView){
+            add_robot->setPos(-565,205);
+            fill_robots->setPos(-565, 260);
+        }
     }else
         control_panel = NULL;
 }
@@ -3751,6 +3756,7 @@ void RoomScene::doAnimation(const QString &name, const QStringList &args){
         map["counterplot"] = &RoomScene::doMovingAnimation;
         map["ecstasy"] = &RoomScene::doMovingAnimation;
         map["moonpie"] = &RoomScene::doMovingAnimation;
+        map["riceball"] = &RoomScene::doMovingAnimation;
 
         map["analeptic"] = &RoomScene::doAppearingAnimation;
 

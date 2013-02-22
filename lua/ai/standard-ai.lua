@@ -916,7 +916,7 @@ sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
 	if self.player:getHp() > 1 then
 		self:sort(self.enemies, "handcard")
 		for _, enemy in ipairs(self.enemies) do
-			if not enemy:isKongcheng() and enemy:getGeneral():isMale()
+			if not enemy:isKongcheng() and enemy:isMale()
 				and self.player:inMyAttackRange(enemy) then
 				target = enemy
 				break
@@ -929,7 +929,7 @@ sgs.ai_skill_use_func["DaleiCard"] = function(card, use, self)
 		else
 			for _, friend in ipairs(self.friends_noself) do
 				if friend:getHandcardNum() > 5 and not friend:isWounded()
-					and friend:getGeneral():isMale() then
+					and friend:isMale() then
 					target = friend
 					break
 				end
@@ -1326,14 +1326,14 @@ end
 sgs.ai_skill_use_func["MeihuoCard"] = function(card, use, self)
 	self:sort(self.friends, "hp")
 	for _, friend in ipairs(self.friends) do
-		if friend:getGeneral():isMale() and self:isWeak(friend) then
+		if friend:isMale() and self:isWeak(friend) then
 			use.card = card
 			if use.to then use.to:append(friend) end
 			return
 		end
 	end
 	for _, friend in ipairs(self.friends_noself) do
-		if friend:getGeneral():isMale() and friend:isWounded() then
+		if friend:isMale() and friend:isWounded() then
 			use.card = card
 			if use.to then use.to:append(friend) end
 			return
@@ -1382,14 +1382,14 @@ end
 sgs.ai_skill_use_func["YinjianCard"] = function(card, use, self)
 	local from, to
 	for _, friend in ipairs(self.friends_noself) do
-		if friend:getGeneral():isMale() then
+		if friend:isMale() then
 			from = friend
 			break
 		end
 	end
 	if from then
 		for _, friend in ipairs(self.friends) do
-			if friend:getGeneral():isMale() and friend ~= from
+			if friend:isMale() and friend ~= from
 				and friend:getKingdom() ~= from:getKingdom() then
 				to = friend
 				break
@@ -1430,7 +1430,7 @@ end
 sgs.ai_skill_use_func["SuocaiCard"]=function(card,use,self)
 	self:sort(self.enemies, "handcard")
 	for _, enemy in ipairs(self.enemies) do
-		if not enemy:isKongcheng() and enemy:getGeneral():isMale() then
+		if not enemy:isKongcheng() and enemy:isMale() then
 			use.card = card
 			if use.to then
 				self:speak("suocai")

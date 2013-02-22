@@ -57,8 +57,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
             }
         }
 
-        if(player->getPhase() == Player::Start && this->players.first()["beforeNext"] != NULL)
-        {
+        if(player->getPhase()==Player::Start && this->players.first()["beforeNext"] != NULL){
             if(player->tag["playerHasPlayed"].toBool())
                 room->gameOver(this->players.first()["beforeNext"]);
             else player->tag["playerHasPlayed"] = true;
@@ -75,7 +74,7 @@ bool MiniSceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player
         }
         return false;
     }
-    if(player->getRoom()->getTag("WaitForPlayer").toBool())
+    if(room->getTag("WaitForPlayer").toBool())
         return true;
 
     if(event == GameStart){

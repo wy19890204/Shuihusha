@@ -73,7 +73,7 @@ public:
 	virtual const Card *askForSinglePeach(ServerPlayer *dying);
 	virtual const Card *askForPindian(ServerPlayer *requestor, const char *reanson);
 	virtual Card::Suit askForSuit(const QString&);
-	
+
 	LuaFunction callback;
 };
 
@@ -380,7 +380,7 @@ const Card *LuaAI::askForSinglePeach(ServerPlayer *dying){
 	lua_pop(L, 1);
 	if(result == NULL)
 		return TrustAI::askForSinglePeach(dying);
-		
+
 	return Card::Parse(result);
 }
 

@@ -3063,7 +3063,7 @@ function SmartAI:aoeIsEffective(card, to)
 		return false
 	end
 	--Panjinlian's shengui
-	if to:hasSkill("shengui") and self.player:getGeneral():isMale() and not to:getArmor() then
+	if to:hasSkill("shengui") and self.player:isMale() and not to:getArmor() then
 		return false
 	end
 	--πyanguang's jintang
@@ -3244,10 +3244,10 @@ function SmartAI:hasTrickEffective(card, player) -- 返回false说明有保护�
 		if (player:hasSkill("shudan") and self.room:getTag("Shudan"):toString() == player:objectName()) or player:hasSkill("wuyan") then
 			if card and not (card:inherits("Indulgence") or card:inherits("SupplyShortage")) then return false end
 		end
-		if player:hasSkill("shengui") and self.player:getGeneral():isMale() and not player:getArmor() then
+		if player:hasSkill("shengui") and self.player:isMale() and not player:getArmor() then
 			return false
 		end
-		if player:hasSkill("foyuan") and self.player:getGeneral():isMale() and not self.player:hasEquip() then
+		if player:hasSkill("foyuan") and self.player:isMale() and not self.player:hasEquip() then
 			return false
 		end
 		if player:hasSkill("fenhui") and (self.player:hasSkill("fenhui") or card:inherits("FireAttack") or card:inherits("FireSlash")) then

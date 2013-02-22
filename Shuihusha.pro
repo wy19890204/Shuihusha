@@ -5,7 +5,7 @@ TARGET = Shuihusha
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
-CONFIG += rcc
+DEFINES += USE_RCC
 
 # If you want to enable joystick support, please uncomment the following line:
 # CONFIG += joystick
@@ -312,16 +312,24 @@ INCLUDEPATH += src/util
 INCLUDEPATH += src/lua
 INCLUDEPATH += src/jsoncpp/include
 
+LIBS += -Llib -lcryptopp
+LIBS += -L.
+
+TRANSLATIONS += shuihusha.ts
+
+OTHER_FILES += \
+        shuihusha.qss \
+        acknowledgement/main.qml \
+        acknowledgement/list.png \
+        acknowledgement/back.png
+
 win32{
-	RC_FILE += resource/icon.rc
+        RC_FILE += resource/icon.rc
 }
 
 macx{
-	ICON = resource/icon/sgs.icns
+        ICON = resource/icon/sgs.icns
 }
-
-LIBS += -Llib -lcryptopp
-LIBS += -L.
 
 CONFIG(audio){
 	DEFINES += AUDIO_SUPPORT
@@ -343,10 +351,6 @@ CONFIG(chatvoice){
 		CONFIG += qaxcontainer
 		DEFINES += CHAT_VOICE
 	}
-}
-
-CONFIG(rcc){
-        DEFINES += USE_RCC
 }
 
 #CONFIG(qrc){
@@ -386,11 +390,3 @@ RESOURCES += \
     backdrop/shuihu-cover.qrc \
     backdrop/shuihu.qrc
 #}
-
-TRANSLATIONS += shuihusha.ts
-
-OTHER_FILES += \
-        shuihusha.qss \
-        acknowledgement/main.qml \
-        acknowledgement/list.png \
-        acknowledgement/back.png
