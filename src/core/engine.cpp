@@ -623,28 +623,21 @@ QStringList Engine::getRandomLords() const{
 
 QStringList Engine::getLimitedGeneralNames(bool getall) const{
     QStringList general_names;
-    if(getall){
-        QHashIterator<QString, const General *> itor(generals);
-        while(itor.hasNext()){
-            itor.next();
+    QHashIterator<QString, const General *> itor(generals);
+    while(itor.hasNext()){
+        itor.next();
+        if(getall || !ban_package.contains(itor.value()->getPackage()))
             general_names << itor.key();
-        }
+    }
+    if(getall){
         QHashIterator<QString, const General *> itpr(hidden_generals);
         while(itpr.hasNext()){
             itpr.next();
             general_names << itpr.key();
         }
-        return general_names;
     }
-    QHashIterator<QString, const General *> itor(generals);
-    while(itor.hasNext()){
-        itor.next();
-        if(Config.value("DisableQimen", false).toBool() && itor.key() == "gongsunsheng")
-            continue;
-        if(!ban_package.contains(itor.value()->getPackage()))
-            general_names << itor.key();
-    }
-
+    if(Config.value("DisableQimen", false).toBool())
+        general_names.removeOne("gongsunsheng");
     return general_names;
 }
 

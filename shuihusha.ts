@@ -2411,6 +2411,36 @@
         <translation>是否删除全部源文件？</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1094"/>
+        <source>Please select crypto files</source>
+        <translation>请选择一个或多个dat加密文件</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1095"/>
+        <source>Crypto files (*.dat)</source>
+        <translation>太阳神三国杀资源加密文件 (*.dat)</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1099"/>
+        <source>The key for decrypt</source>
+        <translation>密钥输入</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1099"/>
+        <source>Please input the key</source>
+        <translation>请输入密钥</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1100"/>
+        <source>Decrypt music file %1 failed!</source>
+        <translation>加密文件 %1 解密失败！</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1103"/>
+        <source>Decrypt %1 music files done!</source>
+        <translation>%1 个加密文件解密完成！</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.cpp" line="628"/>
         <source>Server is not started yet!</source>
         <translation>服务器尚未启动!</translation>
@@ -2492,8 +2522,18 @@
         <translation> (双内奸)</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.cpp" line="148"/>
-        <location filename="src/dialog/mainwindow.cpp" line="537"/>
+        <location filename="src/dialog/mainwindow.cpp" line="553"/>
+        <source> (single renegade)</source>
+        <translation> (单内奸)</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="557"/>
+        <source> (no renegade)</source>
+        <translation> (无内奸)</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.cpp" line="133"/>
+        <location filename="src/dialog/mainwindow.cpp" line="520"/>
         <source>Game is minimized</source>
         <translation>游戏已经最小化到系统托盘</translation>
     </message>

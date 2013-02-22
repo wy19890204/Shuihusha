@@ -10,9 +10,6 @@
     <height>400</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Shuihusha</string>
-  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -46,10 +43,13 @@
     <addaction name="actionCard_Overview"/>
     <addaction name="actionScenario_Overview"/>
     <addaction name="actionView_ban_list"/>
+    <addaction name="actionRole_assign_table"/>
+    <addaction name="separator"/>
     <addaction name="actionBroadcast"/>
     <addaction name="actionAI_Melee"/>
     <addaction name="actionReplay_file_convert"/>
     <addaction name="actionCrypto_audio"/>
+    <addaction name="actionDecrypto_audio"/>
     <addaction name="separator"/>
     <addaction name="actionEnable_Hotkey"/>
     <addaction name="actionExpand_dashboard"/>
@@ -69,8 +69,6 @@
     <addaction name="actionAbout_Lua"/>
     <addaction name="actionAbout_fmod"/>
     <addaction name="actionAcknowledgement"/>
-    <addaction name="separator"/>
-    <addaction name="actionRole_assign_table"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -408,6 +406,11 @@
   <action name="actionReturn_main">
    <property name="text">
     <string>Return main</string>
+   </property>
+  </action>
+  <action name="actionDecrypto_audio">
+   <property name="text">
+    <string>Decrypto audio ...</string>
    </property>
   </action>
  </widget>

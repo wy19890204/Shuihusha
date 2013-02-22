@@ -10,6 +10,7 @@
 #include "window.h"
 #include "halldialog.h"
 #include "pixmapanimation.h"
+#include "crypto.h"
 
 #include <cmath>
 #include <QGraphicsView>
@@ -85,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent)
     QResource::registerResource("image/card.rcc");
 #endif
     QResource::registerResource("backdrop/shuihu-cover.rcc");
+
+    setWindowTitle(Sanguosha->translate("Shuihusha"));
 
     connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
     connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
@@ -560,7 +563,8 @@ void MainWindow::on_actionRole_assign_table_triggered()
     rows << "2 1 0 1 0" << "3 1 0 1 1" << "4 1 0 2 1"
             << "5 1 1 2 1" << "6 1 1 3 1" << "6d 1 1 2 2"
             << "7 1 2 3 1" << "8 1 2 4 1" << "8d 1 2 3 2"
-            << "9 1 3 4 1" << "10 1 3 4 2";
+            << "8z 1 3 4 0" << "9 1 3 4 1" << "10d 1 3 4 2"
+            << "10s 1 4 4 1" << "10z 1 4 5 0";
 
     foreach(QString row, rows){
         QStringList cells = row.split(" ");
@@ -568,6 +572,14 @@ void MainWindow::on_actionRole_assign_table_triggered()
         if(header.endsWith("d")){
             header.chop(1);
             header += tr(" (double renegade)");
+        }
+        else if(header.endsWith("s")){
+            header.chop(1);
+            header += tr(" (single renegade)");
+        }
+        else if(header.endsWith("z")){
+            header.chop(1);
+            header += tr(" (no renegade)");
         }
 
         QString row_content;
@@ -949,7 +961,6 @@ AcknowledgementScene::AcknowledgementScene(QObject *parent) :
     connect(item,SIGNAL(go_back()),this,SIGNAL(go_back()));
 }
 
-
 void MainWindow::on_actionAI_Melee_triggered()
 {
     MeleeDialog *dialog = new MeleeDialog(this);
@@ -1074,7 +1085,6 @@ void MainWindow::on_actionAbout_Lua_triggered()
     window->appear();
 }
 
-#include "crypto.h"
 void MainWindow::on_actionCrypto_audio_triggered(){
     QStringList filenames = QFileDialog::getOpenFileNames(
             this, tr("Please select audio files"),
@@ -1097,5 +1107,28 @@ void MainWindow::on_actionCrypto_audio_triggered(){
         == QMessageBox::Yes){
         foreach(QString filename, filenames)
             QFile::remove(filename);
+    }
+}
+
+void MainWindow::on_actionDecrypto_audio_triggered(){
+    QStringList filenames = QFileDialog::getOpenFileNames(
+            this, tr("Please select crypto files"),
+            QString(),
+            tr("Crypto files (*.dat)"));
+
+    if(filenames.isEmpty())
+        return;
+
+    QString key = QInputDialog::getText(this, tr("The key for decrypt"), tr("Please input the key"));
+    if(!key.isEmpty()){
+        Crypto cry;
+        int count = 0;
+        foreach(QString filename, filenames){
+            if(!cry.decryptMusicFile(filename, key))
+                QMessageBox::warning(this, tr("Notice"), tr("Decrypt music file %1 failed!").arg(filename));
+            else
+                count++;
+        }
+        QMessageBox::information(this, tr("Notice"), tr("Decrypt %1 music files done!").arg(QString::number(count)));
     }
 }
