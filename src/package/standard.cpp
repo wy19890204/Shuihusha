@@ -254,11 +254,11 @@ const DelayedTrick *DelayedTrick::CastFrom(const Card *card){
         return qobject_cast<const DelayedTrick *>(card);
     else if(card->isKindOf("EquipCard")){
         trick = new Indulgence(suit, number);
-        trick->addSubcard(card->getId());
+        trick->addSubcard(card);
     }
     else if(card->isBlack() && (card->inherits("BasicCard") || card->inherits("EquipCard"))){
         trick = new SupplyShortage(suit, number);
-        trick->addSubcard(card->getId());
+        trick->addSubcard(card);
     }
 
     return trick;
