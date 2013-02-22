@@ -300,6 +300,9 @@ FORMS += \
 	src/dialog/generaloverview.ui \
 	src/dialog/mainwindow.ui 
 
+RESOURCES += \
+    image/skin.qrc
+
 INCLUDEPATH += include
 INCLUDEPATH += src/client
 INCLUDEPATH += src/core
@@ -356,7 +359,6 @@ CONFIG(chatvoice){
 #CONFIG(qrc){
 RESOURCES += \
     image/big-card.qrc \
-    image/skin.qrc \
     image/card.qrc \
     image/system/emotion/weapon.qrc \
     image/system/emotion/success.qrc \

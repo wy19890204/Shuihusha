@@ -82,7 +82,6 @@ MainWindow::MainWindow(QWidget *parent)
     scene = NULL;
 
 #ifdef USE_RCC
-    QResource::registerResource("image/skin.rcc");
     QResource::registerResource("image/card.rcc");
 #endif
     QResource::registerResource("backdrop/shuihu-cover.rcc");
@@ -163,7 +162,6 @@ MainWindow::~MainWindow()
 {
 #ifdef USE_RCC
     QResource::unregisterResource("image/card.rcc");
-    QResource::unregisterResource("image/skin.rcc");
 #endif
     delete ui;
 }

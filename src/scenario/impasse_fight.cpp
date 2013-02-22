@@ -295,14 +295,20 @@ public:
 
         QString got_skill;
         do{
+            if(all_skills.isEmpty())
+                break;
             int index;
             do{
                 index = qrand() % all_skills.length();
             }while(player->isLord() && boss_skillbanned.contains(all_skills[index]));
             got_skill = all_skills[index];
+            all_skills.removeAt(index);
         }while(hasSameSkill(room, got_skill));
 
-        room->acquireSkill(player, got_skill);
+        if(!got_skill.isEmpty())
+            room->acquireSkill(player, got_skill);
+        else
+            room->acquireSkill(player, "wusheng");
     }
 
     bool hasSameSkill(Room *room, QString skill_name) const{
