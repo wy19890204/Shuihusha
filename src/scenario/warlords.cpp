@@ -173,6 +173,10 @@ int WarlordsScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
 }
 
+bool WarlordsScenario::unloadLordSkill() const{
+    return true;
+}
+
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
        WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5){

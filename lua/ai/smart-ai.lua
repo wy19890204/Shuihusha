@@ -1181,6 +1181,7 @@ function sgs.gameProcess(room)
 end
 
 function SmartAI:objectiveLevel(player)
+	player = player or self.player
 	if player:objectName() == self.player:objectName() then return -2 end
 
 	local players = self.room:getOtherPlayers(self.player)
