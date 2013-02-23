@@ -16,6 +16,8 @@ public:
     virtual int lordGeneralCount() const;
     virtual bool unloadLordSkill() const;
     virtual AI::Relation relationTo(const ServerPlayer *a, const ServerPlayer *b) const;
+
+    static QList<ServerPlayer *> getPlayersbyRole(Room *room, const QString &role);
 };
 
 #endif // WARLORDS_MODE_H

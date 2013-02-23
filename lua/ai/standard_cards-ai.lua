@@ -13,7 +13,8 @@ local function hasGoldArmor(self, enemy)
 	return self:isEquip("GoldArmor", enemy)
 end
 
-function SmartAI:slashProhibit(card,enemy)
+function SmartAI:slashProhibit(card,enemy,from)
+	from = from or self.player
 	card = card or sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	for _, askill in sgs.qlist(enemy:getVisibleSkillList()) do
 		local filter = sgs.ai_slash_prohibit[askill:objectName()]
@@ -24,7 +25,7 @@ function SmartAI:slashProhibit(card,enemy)
 		return true
 	end
 	if self:isFriend(enemy) then
-		if card:inherits("FireSlash") or self.player:hasWeapon("fan") or self.player:hasSkill("fenhui") then
+		if card:inherits("FireSlash") or from:hasWeapon("fan") or from:hasSkill("fenhui") then
 			if self:isEquip("Vine", enemy) and not (enemy:isChained() and self:isGoodChainTarget(enemy)) then return true end
 		end
 		if enemy:isChained() and (card:inherits("NatureSlash") or self:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
@@ -32,30 +33,31 @@ function SmartAI:slashProhibit(card,enemy)
 		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(card,enemy) then return true end
 		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
-		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:inherits("NatureSlash") or self.player:hasWeapon("fan")) then
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:inherits("NatureSlash") or from:hasWeapon("fan")) then
 			return true
 		end
 	else
 		if enemy:isChained() and not self:isGoodChainTarget(enemy) and self:slashIsEffective(card,enemy)
-			and (card:inherits("NatureSlash") or self.player:hasSkill("fenhui")) then
+			and (card:inherits("NatureSlash") or from:hasSkill("fenhui")) then
 			return true
 		end
-		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and not card:inherits("NatureSlash") and not self.player:hasWeapon("fan") then
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and not card:inherits("NatureSlash") and not from:hasWeapon("fan") then
 			return true
 		end
 	end
 
-	return self.room:isProhibited(self.player, enemy, card) or not self:slashIsEffective(card, enemy)
+	return self.room:isProhibited(from, enemy, card) or not self:slashIsEffective(card, enemy)
 end
 
-function SmartAI:slashIsEffective(slash, to)
+function SmartAI:slashIsEffective(slash, to, from)
+	from = from or self.player
 	if to:hasSkill("jueming") and to:getHp() == 1 then
 		return false
 	end
 	if to:hasSkill("jintang") and to:getHp() == 1 and not slash:inherits("NatureSlash") then
 		return false
 	end
-	if to:hasSkill("qianshui") and not self.player:getWeapon() then
+	if to:hasSkill("qianshui") and not from:getWeapon() then
 		return false
 	end
 
@@ -66,12 +68,12 @@ function SmartAI:slashIsEffective(slash, to)
 	}
 
 	local nature = natures[slash:className()]
-	if self.player:hasSkill("fenhui") and nature ~= sgs.DamageStruct_Thunder then
+	if from:hasSkill("fenhui") and nature ~= sgs.DamageStruct_Thunder then
 		nature = sgs.DamageStruct_Fire
 	end
 	if not self:damageIsEffective(to, nature) then return false end
 
-	if self.player:isPenetrated() then
+	if from:isPenetrated() then
 		return true
 	end
 
@@ -80,9 +82,9 @@ function SmartAI:slashIsEffective(slash, to)
 		if armor:objectName() == "renwang_shield" then
 			return not slash:isBlack()
 		elseif armor:objectName() == "vine" then
-			return nature ~= sgs.DamageStruct_Normal or self.player:hasWeapon("fan")
+			return nature ~= sgs.DamageStruct_Normal or from:hasWeapon("fan")
 		elseif armor:objectName() == "gold_armor" then
-			return not self.player:getWeapon() and nature == sgs.DamageStruct_Normal
+			return not from:getWeapon() and nature == sgs.DamageStruct_Normal
 		end
 	end
 

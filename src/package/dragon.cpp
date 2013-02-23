@@ -169,7 +169,7 @@ public:
                 judge.reason = objectName();
                 judge.who = player;
                 room->playSkillEffect(objectName(), 1);
-
+                room->getThread()->delay();
                 room->judge(judge);
                 if(judge.isGood()){
                     LogMessage log;
@@ -778,8 +778,11 @@ public:
                 QString prompt = QString("@jianwu-slash:%1:%2").arg(player->objectName()).arg(target->objectName());
                 const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(target));
                 if(slash) {
+                    Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
+                    slas->setSkillName(objectName());
+                    slas->addSubcard(slash);
                     CardUseStruct use;
-                    use.card = slash;
+                    use.card = slas;
                     use.to << target;
                     use.from = player;
                     room->useCard(use);

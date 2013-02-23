@@ -150,8 +150,11 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
         slash = room->askForCard(target, "slash", "@eyan:" + effect.from->objectName(), source, NonTrigger);
     }
     if(slash){
+        Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
+        slas->setSkillName(skill_name);
+        slas->addSubcard(slash);
         CardUseStruct use;
-        use.card = slash;
+        use.card = slas;
         use.from = target;
         use.to << effect.from;
         room->useCard(use);
@@ -177,8 +180,11 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
 
     const Card *slash = room->askForCard(card_use.from, "slash", "@eyan-slash", true, QVariant(), NonTrigger);
     if(slash){
+        Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
+        slas->setSkillName(skill_name);
+        slas->addSubcard(slash);
         CardUseStruct use;
-        use.card = slash;
+        use.card = slas;
         use.from = card_use.from;
         use.to << target;
         room->useCard(use);
@@ -243,8 +249,11 @@ void ZhangshiCard::use(Room *room, ServerPlayer *white, const QList<ServerPlayer
             continue;
         slash = room->askForCard(man, "slash", "@zhangshi:" + white->objectName(), tohelp);
         if(slash){
+            Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
+            slas->setSkillName(skill_name);
+            slas->addSubcard(slash);
             CardUseStruct card_use;
-            card_use.card = slash;
+            card_use.card = slas;
             card_use.from = white;
             card_use.to << targets.first();
             room->useCard(card_use);

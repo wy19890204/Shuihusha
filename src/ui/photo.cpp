@@ -741,7 +741,7 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     bold_font.setBold(true);
     //painter->setFont(bold_font);
     painter->drawText(25, 115 + 19 + order * 15, card->getNumberString());
-    painter->drawText(39, 115 + 20 + order * 15, card->label());
+    painter->drawText(39, 115 + 19 + order * 15, card->label());
 }
 
 QVariant Photo::itemChange(GraphicsItemChange change, const QVariant &value){
