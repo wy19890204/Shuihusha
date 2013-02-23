@@ -89,6 +89,7 @@ public:
     static const int S_GUANXING_TIMEOUT;
     static const int S_SURRNDER_REQUEST_MIN_INTERVAL;
     static const int S_MINI_MAX_COUNT;
+    static const int S_MINI_STAGE_START;
 };
 
 extern Settings Config;
