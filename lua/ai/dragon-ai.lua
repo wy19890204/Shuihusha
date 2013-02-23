@@ -235,12 +235,18 @@ end
 sgs.ai_skill_invoke["chuqiao"] = true
 
 -- jianwu
-sgs.ai_skill_invoke["jianwu"] = sgs.ai_skill_invoke["lihun"]
+sgs.ai_skill_invoke["jianwu"] = function(self, data)
+	local from = data:toPlayer()
+	self.lizhu = self.player
+	return self:isEnemy(from)
+end
 sgs.ai_skill_cardask["@jianwu-slash"] = function(self, data)
 	local target = data:toPlayer()
 	local card = self:getCard("Slash")
 	if self:isEnemy(target) and card then
-		return card:getEffectiveId()
+		if not self:slashProhibit(card, target, self.lizhu) and self:slashIsEffective(card, target, self.lizhu) then
+			return card:getEffectiveId()
+		end
 	end
 	return "."
 end

@@ -241,9 +241,11 @@ public:
         events << GameStart << TurnStart << PhaseChange
                << Death << GameOverJudge << HpChanged << RewardAndPunish;
 
-        boss_banlist << "songjiang" << "yanxijiao" << "shijin" << "qiongying" << "caijing" << "zhuwu" << "gaoqiu" << "zhaoji";
+        boss_banlist << "songjiang" << "yanxijiao" << "shijin" << "qiongying" << "caijing" << "zhuwu" << "gaoqiu" << "zhaoji"
+                     << "suochao" << "tianhu" << "qiongyaonayan";
 
-        boss_skillbanned << "ganlin" << "huakui" << "yuanpei" << "shalu" << "fangzhen" << "cuju" << "shemi";
+        boss_skillbanned << "ganlin" << "huakui" << "yuanpei" << "shalu" << "fangzhen" << "cuju" << "shemi"
+                         << "chongfeng" << "jiaozhen" << "wuzhou";
 
         dummy_skills << "mozhang" << "maidao" << "fengmang" << "shouge" << "jielue"
                      << "qimen" << "wuzhou" << "ganlin" << "beishui" << "huatian"

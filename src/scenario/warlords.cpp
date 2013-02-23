@@ -8,16 +8,8 @@ public:
         events << GameStarted << Damage << Death << GameOverJudge;
     }
 
-    static QList<ServerPlayer *> getPlayersbyRole(Room *room, const QString &role){
-        QList<ServerPlayer *> players;
-        foreach(ServerPlayer *player, room->getAlivePlayers()){
-            if(player->getRole() == role)
-                players << player;
-        }
-        return players;
-    }
-
     virtual bool trigger(TriggerEvent triggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        const WarlordsScenario *scenario = qobject_cast<const WarlordsScenario *>(parent());
         switch(triggerEvent){
         case GameStarted:{
             if(player->isLord()){
@@ -29,14 +21,14 @@ public:
 
         case Damage:{
             DamageStruct damage = data.value<DamageStruct>();
-            if(damage.from && !getPlayersbyRole(room, "loyalist").isEmpty())
+            if(damage.from && !scenario->getPlayersbyRole(room, "loyalist").isEmpty())
                 damage.from->gainMark("@blood", damage.damage);
 
             break;
         }
 
         case Death:{
-            if(getPlayersbyRole(room, "lord").isEmpty()){
+            if(scenario->getPlayersbyRole(room, "lord").isEmpty()){
                 QList<ServerPlayer *> players = room->getAlivePlayers();
                 qShuffle(players);
 
@@ -50,7 +42,7 @@ public:
 
                 room->setPlayerProperty(target, "role", "lord");
             }
-            else if(room->getLord() && getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
+            else if(room->getLord() && scenario->getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
                 QList<ServerPlayer *> players = room->getAlivePlayers();
                 players.removeOne(room->getLord());
                 if(players.length() > 1) {
@@ -62,13 +54,13 @@ public:
                     log.arg = junshi->getScreenRole();
                     room->sendLog(log);
 
-                    if(!getPlayersbyRole(room, "loyalist").isEmpty())
-                        room->setPlayerProperty(getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
+                    if(!scenario->getPlayersbyRole(room, "loyalist").isEmpty())
+                        room->setPlayerProperty(scenario->getPlayersbyRole(room, "loyalist").first(), "role", "rebel");
                     room->setPlayerProperty(junshi, "role", "loyalist");
                 }
             }
 
-            if(getPlayersbyRole(room, "rebel").isEmpty()){
+            if(scenario->getPlayersbyRole(room, "rebel").isEmpty()){
                 QStringList players;
                 foreach(ServerPlayer *tmp, room->getAlivePlayers())
                     players << tmp->objectName();
@@ -149,6 +141,15 @@ public:
     }
 };
 
+QList<ServerPlayer *> WarlordsScenario::getPlayersbyRole(Room *room, const QString &role){
+    QList<ServerPlayer *> players;
+    foreach(ServerPlayer *player, room->getAlivePlayers()){
+        if(player->getRole() == role)
+            players << player;
+    }
+    return players;
+}
+
 void WarlordsScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
@@ -178,8 +179,9 @@ bool WarlordsScenario::unloadLordSkill() const{
 }
 
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
+    return AI::Enemy;
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
-       WarlordsScenarioRule::getPlayersbyRole(a->getRoom(), "rebel").length() > 5){
+       getPlayersbyRole(a->getRoom(), "rebel").length() > 5){
         switch(qrand() % 4){
         case 0:
         case 1: return AI::Neutrality;

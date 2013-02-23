@@ -2629,7 +2629,7 @@ void RoomScene::addRestartButton(QDialog *dialog){
     {
         QString id = Config.GameMode;
         id.replace("_mini_","");
-        //int stage = Config.value("MiniSceneStage", 1).toInt();
+        //int stage = Config.value("MiniSceneStage", Config.S_MINI_STAGE_START).toInt();
         int current = id.toInt();
         //if(stage == current && stage < Config.S_MINI_MAX_COUNT)
         if(current < Config.S_MINI_MAX_COUNT)
