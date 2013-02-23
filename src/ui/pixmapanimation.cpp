@@ -76,6 +76,8 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
     if(pma->valid()){
         if(emotion == "horse")
             pma->moveBy(90,0);
+        if(emotion == "judgebad")
+            pma->moveBy(-10,0);
 
         //pma->setZValue(pma->zValue() + 0.5);
         pma->setZValue(8.0);

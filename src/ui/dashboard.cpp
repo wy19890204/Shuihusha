@@ -424,17 +424,23 @@ void Dashboard::setMiddleWidth(int middle_width){
 }
 
 void Dashboard::setWidth(int width){
-    qreal left_width = left->boundingRect().width();
-    qreal right_width = right->boundingRect().width();
-    qreal button_width = getButtonWidgetWidth();
-    qreal middle_width = width - left_width - right_width - button_width;
+    if(width == 0){
+        setMiddleWidth(middle->brush().texture().width());
 
-    setMiddleWidth(middle_width);
+        prepareGeometryChange();
+        adjustCards();
 
-    prepareGeometryChange();
-    adjustCards();
+    }else if(width > 500){
+        qreal left_width = left->boundingRect().width();
+        qreal right_width = right->boundingRect().width();
+        qreal button_width = getButtonWidgetWidth();
+        qreal middle_width = width - left_width - right_width - button_width;
 
-    setX(- boundingRect().width()/2);
+        setMiddleWidth(middle_width);
+
+        prepareGeometryChange();
+        adjustCards();
+    }
 }
 
 QGraphicsProxyWidget *Dashboard::addWidget(QWidget *widget, int x, bool from_left){
