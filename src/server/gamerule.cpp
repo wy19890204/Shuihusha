@@ -945,6 +945,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     case Pindian:{
         PindianStar pindian = data.value<PindianStar>();
 
+        room->setEmotion(pindian->from, "pindian");
+        room->setEmotion(pindian->to, "pindian");
+        room->broadcastInvoke("playAudio", "pindian");
         LogMessage log;
 
         room->moveCardTo(pindian->from_card, NULL, Player::DiscardedPile);
