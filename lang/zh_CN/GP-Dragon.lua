@@ -179,7 +179,7 @@ return {
 	["$jiaozhen5"] = "你这山氓草寇，敢犯我大辽！", --决斗
 	["$jiaozhen6"] = "冲锋陷阵，势若闪电！", --雷电
 	["$jiaozhen7"] = "雷厉风行，势如破竹！", --雷电
-	["~qiongyaonayan"] = "啊，是谁放的冷箭……",
+	["~qiongyaonayan"] = "是谁放的冷箭～",
 
 	["$suochao"] = "019",
 	["#suochao"] = "急先锋", -- jiang 4hp

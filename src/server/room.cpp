@@ -3868,7 +3868,6 @@ void Room::fillAG(const QList<int> &card_ids, ServerPlayer *who){
     foreach(int card_id, card_ids)
         card_str << QString::number(card_id);
 
-    broadcastInvoke("clearAG");
     if(who)
         who->invoke("fillAG", card_str.join("+"));
     else{

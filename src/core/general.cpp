@@ -231,7 +231,7 @@ void General::lastWord() const{
                 filename = QString("audio/death/%1.ogg").arg(origin_generals.at(1));
         }
     }
-    if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
+    /*if(!file.open(QIODevice::ReadOnly) && objectName().endsWith("f")){
         QString origin_general = objectName();
         origin_general.chop(1);
         if(Sanguosha->getGeneral(origin_general)){
@@ -240,6 +240,7 @@ void General::lastWord() const{
                 filename = QString("audio/death/%1.ogg").arg(origin_general);
         }
     }
+    */
     Sanguosha->playEffect(filename);
 }
 

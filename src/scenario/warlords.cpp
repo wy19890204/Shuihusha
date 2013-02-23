@@ -187,6 +187,8 @@ AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPla
         default: return AI::Friend;
         }
     }
+    else if(a->getRole() == "loyalist" && b->isLord())
+        return AI::Friend;
     else
         return AI::GetRelation(a, b);
 }

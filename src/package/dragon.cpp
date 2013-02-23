@@ -892,23 +892,30 @@ public:
         events << PhaseChange << Damage << Damaged;
     }
 
-    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *suoch, QVariant &data) const{
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target != NULL;
+    }
+
+    virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *player, QVariant &data) const{
         if(e == PhaseChange){
-            if(suoch->getPhase() == Player::RoundStart)
-                room->setPlayerMark(suoch, "@hatchet", 0);
-            else if(suoch->getPhase() == Player::NotActive){
-                int fist = suoch->getMark("@hatchet");
-                room->setPlayerMark(suoch, "@hatchet", 0);
-                if(fist >= 2 && suoch->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    suoch->gainAnExtraTurn(suoch);
+            QList<ServerPlayer *> suochaos = room->findPlayersBySkillName(objectName());
+            foreach(ServerPlayer *suoch, suochaos){
+                if(player->getPhase() == Player::RoundStart)
+                    room->setPlayerMark(suoch, "@hatchet", 0);
+                else if(player->getPhase() == Player::NotActive){
+                    int fist = suoch->getMark("@hatchet");
+                    room->setPlayerMark(suoch, "@hatchet", 0);
+                    if(fist >= 2 && suoch->askForSkillInvoke(objectName())){
+                        room->playSkillEffect(objectName());
+                        suoch->gainAnExtraTurn(suoch);
+                    }
                 }
             }
             return false;
         }
-        else if(suoch->getPhase() != Player::NotActive){
+        else if(player->hasSkill(objectName())){
             DamageStruct damage = data.value<DamageStruct>();
-            suoch->gainMark("@hatchet", damage.damage);
+            player->gainMark("@hatchet", damage.damage);
         }
         return false;
     }
