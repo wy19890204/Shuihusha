@@ -333,6 +333,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(data.canConvert<CardUseStruct>()){
             CardUseStruct card_use = data.value<CardUseStruct>();
             const Card *card = card_use.card;
+
+            if(!card->getSkillName().isEmpty() && Config.EnableSkillEmotion)
+                room->setEmotion(player, "skill/" + card->getSkillName());
             room->playExtra(CardUsed, data);
             card->use(room, card_use.from, card_use.to);
         }

@@ -51,6 +51,37 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->langComboBox->addItems(lang.split("+"));
     ui->langComboBox->lineEdit()->setText(Config.value("Language", "zh_cn").toString());
 
+    // tab 3
+    ui->skillEmotionBox->setChecked(Config.EnableSkillEmotion);
+
+    QVBoxLayout *layout1 = new QVBoxLayout;
+    ui->emoGroupBox->setLayout(layout1);
+    QButtonGroup *extension_group = new QButtonGroup;
+    extension_group->setExclusive(false);
+
+    QStringList extensions;
+    extensions << "ox" << "rat" << "sp";
+    foreach(QString extension, extensions){
+        QCheckBox *checkbox = new QCheckBox;
+        checkbox->setObjectName(extension);
+        checkbox->setText(extension);
+        //checkbox->setChecked(!ban_packages.contains(extension) && !forbid_package);
+
+        extension_group->addButton(checkbox);
+
+        layout1->addWidget(checkbox);
+    }
+
+    layout1->addStretch();
+
+    // tab 4
+    ui->smtpServerLineEdit->setText(Config.value("Contest/SMTPServer").toString());
+    ui->senderLineEdit->setText(Config.value("Contest/Sender").toString());
+    ui->passwordLineEdit->setText(Config.value("Contest/Password").toString());
+    ui->receiverLineEdit->setText(Config.value("Contest/Receiver").toString());
+
+    ui->onlySaveLordCheckBox->setChecked(Config.value("Contest/OnlySaveLordRecord", true).toBool());
+
     connect(this, SIGNAL(accepted()), this, SLOT(saveConfig()));
 
     QFont font = Config.AppFont;
@@ -62,14 +93,6 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     QPalette palette;
     palette.setColor(QPalette::Text, Config.TextEditColor);
     ui->textEditFontLineEdit->setPalette(palette);
-
-    // tab 3
-    ui->smtpServerLineEdit->setText(Config.value("Contest/SMTPServer").toString());
-    ui->senderLineEdit->setText(Config.value("Contest/Sender").toString());
-    ui->passwordLineEdit->setText(Config.value("Contest/Password").toString());
-    ui->receiverLineEdit->setText(Config.value("Contest/Receiver").toString());
-
-    ui->onlySaveLordCheckBox->setChecked(Config.value("Contest/OnlySaveLordRecord", true).toBool());
 }
 
 void ConfigDialog::showFont(QLineEdit *lineedit, const QFont &font){
@@ -175,6 +198,9 @@ void ConfigDialog::saveConfig()
     Config.setValue("EnableLua", Config.EnableLua);
 
     Config.setValue("MuteLoad", ui->muteLoad->isChecked());
+
+    Config.EnableSkillEmotion = ui->skillEmotionBox->isChecked();
+    Config.setValue("EnableSkillEmotion", Config.EnableSkillEmotion);
 
     Config.setValue("Language", ui->langComboBox->lineEdit()->text());
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());

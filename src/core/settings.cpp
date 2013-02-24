@@ -132,6 +132,8 @@ void Settings::init(){
     EffectVolume = value("EffectVolume", 1.0f).toFloat();
     EnableLua = value("EnableLua", false).toBool();
 
+    EnableSkillEmotion = value("EnableSkillEmotion", false).toBool();
+
 //banlist
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
 

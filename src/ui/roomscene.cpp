@@ -2489,7 +2489,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
 
         Sanguosha->playAudio(damage_effect);
 
-        if(photo){
+        //if(photo){
             if(nature == DamageStruct::Fire)
                 setEmotion(who, "fire_damage");
             else if(nature == DamageStruct::Thunder){
@@ -2500,8 +2500,9 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
             }
             else
                 setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
-            photo->tremble();
-        }
+            if(photo)
+                photo->tremble();
+        //}
 
     }else{
         QString type = "#Recover";

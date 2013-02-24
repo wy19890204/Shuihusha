@@ -82,6 +82,8 @@ public:
     float EffectVolume;
     bool EnableLua;
 
+    bool EnableSkillEmotion;
+
     QString BackgroundBrush;
 
     // consts

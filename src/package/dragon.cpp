@@ -954,7 +954,7 @@ DragonPackage::DragonPackage()
     General *shantinggui = new General(this, "shantinggui", "jiang", 3, true, true);
     shantinggui->addSkill(new Shuizhen);
     shantinggui->addSkill(new Yanmo);
-    shantinggui->addSkill(new Skill("shuizhan", Skill::Compulsory));
+    //shantinggui->addSkill(new Skill("shuizhan", Skill::Compulsory));
 
     General *lizhu = new General(this, "lizhu", "min", 3);
     lizhu->addSkill(new Chuqiao);

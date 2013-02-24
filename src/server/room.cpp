@@ -765,8 +765,9 @@ bool Room::askForSkillInvoke(ServerPlayer *player, const QString &skill_name, co
         }
     }
 
-    if(invoked)
-    {
+    if(invoked){
+        if(Config.EnableSkillEmotion)
+            setEmotion(player, "skill/" + skill_name);
         Json::Value msg = toJsonArray(skill_name, player->objectName());
         doBroadcastNotify(S_COMMAND_INVOKE_SKILL, msg);
     }
@@ -3621,7 +3622,10 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     broadcastInvoke("animate", "lightbox:$" + skill_name + ":" + broad);
     thread->delay(delay);
     setPlayerMark(player, skill_name + "_wake", 1);
-    setEmotion(player, "awake");
+    if(!Config.EnableSkillEmotion)
+        setEmotion(player, "awake");
+    else
+        setEmotion(player, "skill/" + skill_name);
     broadcastInvoke("playAudio", "skill/awake");
 }
 
@@ -3633,7 +3637,10 @@ void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const Q
     QString bro = broad == "" ? "" : ":" + broad;
     broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
     thread->delay(delay);
-    setEmotion(player, "limited");
+    if(!Config.EnableSkillEmotion)
+        setEmotion(player, "limited");
+    else
+        setEmotion(player, "skill/" + skill_name);
     broadcastInvoke("playAudio", "skill/limited");
 }
 
