@@ -133,6 +133,7 @@ void Settings::init(){
     EnableLua = value("EnableLua", false).toBool();
 
     EnableSkillEmotion = value("EnableSkillEmotion", false).toBool();
+    BanEmotions = value("BanEmotions").toStringList();
 
 //banlist
     QStringList roles_ban, kof_ban, basara_ban, hegemony_ban, pairs_ban;
@@ -192,4 +193,8 @@ void Settings::init(){
 
 //ui
     setValue("UI/ExpandDashboard", value("UI/ExpandDashboard", true).toBool());
+}
+
+QString Settings::translate(const QString &to_translate) const{
+    return Sanguosha->translate(to_translate);
 }

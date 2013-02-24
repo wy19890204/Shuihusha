@@ -3453,14 +3453,15 @@ void RoomScene::moveFocus(const QString &who){
 }
 
 void RoomScene::setEmotion(const QString &who, const QString &emotion ,bool permanent){
+    if(Config.BanEmotions.contains(emotion))
+        return;
     Photo *photo = name2photo[who];
     if(photo){
         photo->setEmotion(emotion,permanent);
         return;
     }
     PixmapAnimation * pma = PixmapAnimation::GetPixmapAnimation(dashboard,emotion);
-    if(pma)
-    {
+    if(pma){
         pma->moveBy(0,- dashboard->boundingRect().height()/2);
         pma->setZValue(8.0);
     }

@@ -85,6 +85,8 @@ public:
     bool EnableSkillEmotion;
 
     QString BackgroundBrush;
+    QStringList BanEmotions;
+    QString translate(const QString &to_translate) const;
 
     // consts
     static const int S_CHOOSE_GENERAL_TIMEOUT;

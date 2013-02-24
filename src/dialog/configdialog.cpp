@@ -1,5 +1,4 @@
 #include "configdialog.h"
-#include "ui_configdialog.h"
 #include "settings.h"
 
 #include <QFileDialog>
@@ -54,25 +53,31 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     // tab 3
     ui->skillEmotionBox->setChecked(Config.EnableSkillEmotion);
 
-    QVBoxLayout *layout1 = new QVBoxLayout;
-    ui->emoGroupBox->setLayout(layout1);
-    QButtonGroup *extension_group = new QButtonGroup;
+    QSet<QString> ban_emotions = Config.BanEmotions.toSet();
+    QGridLayout *layout = new QGridLayout;
+    layout->setOriginCorner(Qt::TopLeftCorner);
+    ui->emoGroupBox->setLayout(layout);
+    extension_group = new QButtonGroup;
     extension_group->setExclusive(false);
-
-    QStringList extensions;
-    extensions << "ox" << "rat" << "sp";
-    foreach(QString extension, extensions){
+    const int columns = 4;
+    QStringList emotions;
+    QDir dir("image/system/emotion");
+    foreach(QFileInfo info, dir.entryInfoList(QStringList() << "*.rcc" << "*.png")){
+        if(QFile::exists(info.filePath()))
+            emotions << info.baseName();
+    }
+    foreach(QString emotion, emotions){
         QCheckBox *checkbox = new QCheckBox;
-        checkbox->setObjectName(extension);
-        checkbox->setText(extension);
-        //checkbox->setChecked(!ban_packages.contains(extension) && !forbid_package);
+        checkbox->setObjectName(emotion);
+        checkbox->setText(Config.translate(emotion));
+        checkbox->setChecked(!ban_emotions.contains(emotion));
 
         extension_group->addButton(checkbox);
 
-        layout1->addWidget(checkbox);
+        int row = emotions.indexOf(emotion) / columns;
+        int column = emotions.indexOf(emotion) % columns;
+        layout->addWidget(checkbox, row, column);
     }
-
-    layout1->addStretch();
 
     // tab 4
     ui->smtpServerLineEdit->setText(Config.value("Contest/SMTPServer").toString());
@@ -201,6 +206,18 @@ void ConfigDialog::saveConfig()
 
     Config.EnableSkillEmotion = ui->skillEmotionBox->isChecked();
     Config.setValue("EnableSkillEmotion", Config.EnableSkillEmotion);
+
+    QSet<QString> ban_emotions;
+    QList<QAbstractButton *> checkboxes = extension_group->buttons();
+    foreach(QAbstractButton *checkbox, checkboxes){
+        if(!checkbox->isChecked()){
+            QString emotion = checkbox->objectName();
+            ban_emotions.insert(emotion);
+        }
+    }
+
+    Config.BanEmotions = ban_emotions.toList();
+    Config.setValue("BanEmotions", Config.BanEmotions);
 
     Config.setValue("Language", ui->langComboBox->lineEdit()->text());
     Config.setValue("Contest/SMTPServer", ui->smtpServerLineEdit->text());

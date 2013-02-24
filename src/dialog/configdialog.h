@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QLineEdit>
+#include "ui_configdialog.h"
 
 namespace Ui {
     class ConfigDialog;
@@ -17,6 +18,7 @@ public:
 private:
     Ui::ConfigDialog *ui;
 
+    QButtonGroup *extension_group;
     void showFont(QLineEdit *lineedit, const QFont &font);
 
 private slots:
