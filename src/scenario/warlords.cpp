@@ -1,4 +1,5 @@
 #include "warlords.h"
+#include "standard.h"
 
 class WarlordsScenarioRule: public ScenarioRule{
 public:
@@ -44,9 +45,10 @@ public:
             }
             else if(room->getLord() && scenario->getPlayersbyRole(room, "loyalist").isEmpty() && !player->isLord()) {
                 QList<ServerPlayer *> players = room->getAlivePlayers();
-                players.removeOne(room->getLord());
+                PlayerStar lord = room->getLord();
+                players.removeOne(lord);
                 if(players.length() > 1) {
-                    ServerPlayer *junshi = room->askForPlayerChosen(room->getLord(), players, "getJunShi");
+                    ServerPlayer *junshi = room->askForPlayerChosen(lord, players, "getJunShi");
 
                     LogMessage log;
                     log.type = "#NewLoya";
@@ -179,7 +181,6 @@ bool WarlordsScenario::unloadLordSkill() const{
 }
 
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
-    return AI::Enemy;
     if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
        getPlayersbyRole(a->getRoom(), "rebel").length() > 5){
         switch(qrand() % 4){
@@ -206,15 +207,15 @@ WarlordsScenario::WarlordsScenario()
 class ArthurFerrisScenarioRule: public ScenarioRule{
 public:
     ArthurFerrisScenarioRule(Scenario *scenario)
-        :ScenarioRule(scenario)
-    {
+        :ScenarioRule(scenario){
         events << GameOverJudge;
     }
 
     virtual bool trigger(TriggerEvent triggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        const ArthurFerrisScenario *scenario = qobject_cast<const ArthurFerrisScenario *>(parent());
         switch(triggerEvent){
         case GameOverJudge:{
-            if(room->getAlivePlayers().length() == 2){
+            if(room->getAlivePlayers().length() == scenario->getPlayerCount() - 1){
                 room->gameOver(player->getNextAlive()->objectName());
                 return true;
             }
@@ -230,25 +231,42 @@ public:
 };
 
 bool ArthurFerrisScenario::setCardPiles(const Card *card) const{
-    return card->inherits("Halberd") || card->inherits("KylinBow");
+    const Weapon *weapon = qobject_cast<const Weapon*>(card);
+    if(weapon)
+        return weapon->getRange() > getPlayerCount();
+    else
+        return false;
 }
 
 void ArthurFerrisScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
     roles << "lord" << "renegade" << "rebel";
+    if(getPlayerCount() == 4)
+        roles << "loyalist";
+    if(getPlayerCount() == 5)
+        roles << "renegade";
 }
 
 int ArthurFerrisScenario::getPlayerCount() const{
-    return 3;
+    int count = Config.value("Scenario/ArthurCount", 3).toInt();
+    return qMin(qMax(count, 3), 5);
 }
 
 void ArthurFerrisScenario::getRoles(char *roles) const{
-    strcpy(roles, "ZNF");
+    switch(getPlayerCount()){
+    case 3: strcpy(roles, "ZNF"); break;
+    case 4: strcpy(roles, "ZCNF"); break;
+    default: strcpy(roles, "ZCNFZ");
+    }
 }
 
 int ArthurFerrisScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
+}
+
+bool ArthurFerrisScenario::unloadLordSkill() const{
+    return true;
 }
 
 AI::Relation ArthurFerrisScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{

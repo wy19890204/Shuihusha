@@ -211,7 +211,10 @@ QString TrustAI::askForKingdom(){
     case Player::Rebel: role = "guan"; break;
     case Player::Loyalist:
     case Player::Renegade:
-        role = room->getLord()->getKingdom(); break;
+        if(room->getLord()){
+            role = room->getLord()->getKingdom();
+            break;
+        }
     default: break;
     }
 

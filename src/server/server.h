@@ -76,6 +76,7 @@ public:
 
 private:
     QLineEdit *wheel_count;
+    QLineEdit *arthur_count;
 
 private slots:
     void save();
@@ -157,7 +158,10 @@ private slots:
     void onHttpDone(bool error);
     void select3v3Generals();
     void edit1v1Banlist();
+    void packageCheckAll();
+    void packageInverseCheckAll();
     void updateButtonEnablility(QAbstractButton* button);
+    void doCheat(bool enable);
 
     void doCustomAssign();
     void doScenarioAdvanced();

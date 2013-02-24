@@ -139,8 +139,16 @@ QWidget *ServerDialog::createPackageTab(){
         }
     }
 
+    QPushButton *checkall = new QPushButton(tr("Check All"));
+    //selectall->setFixedWidth(100);
+    connect(checkall, SIGNAL(clicked()), this, SLOT(packageCheckAll()));
+    QPushButton *inverseall = new QPushButton(tr("Inverse Check All"));
+    connect(inverseall, SIGNAL(clicked()), this, SLOT(packageInverseCheckAll()));
+
     layout1->addStretch();
+    layout1->addWidget(checkall);
     layout2->addStretch();
+    layout2->addWidget(inverseall);
 
     QWidget *widget = new QWidget;
     QHBoxLayout *layout = new QHBoxLayout;
@@ -267,6 +275,7 @@ QWidget *ServerDialog::createCheatTab(){
     QGroupBox *box = new QGroupBox(tr("cheat options"));
     box->setEnabled(cheat_enable_checkbox->isChecked());
     connect(cheat_enable_checkbox, SIGNAL(toggled(bool)), box, SLOT(setEnabled(bool)));
+    connect(cheat_enable_checkbox, SIGNAL(toggled(bool)), this, SLOT(doCheat(bool)));
 
     QVBoxLayout *laybox = new QVBoxLayout;
 
@@ -379,6 +388,27 @@ QWidget *ServerDialog::createAITab(){
 
 void ServerDialog::ensureEnableAI(){
     ai_enable_checkbox->setChecked(true);
+}
+
+void ServerDialog::packageCheckAll(){
+    QList<QAbstractButton *> checkboxes = extension_group->buttons();
+    foreach(QAbstractButton *checkbox, checkboxes)
+        checkbox->setChecked(true);
+}
+
+void ServerDialog::packageInverseCheckAll(){
+    QList<QAbstractButton *> checkboxes = extension_group->buttons();
+    foreach(QAbstractButton *checkbox, checkboxes)
+        checkbox->setChecked(!checkbox->isChecked());
+}
+
+void ServerDialog::doCheat(bool enable){
+    if(enable){
+        free_choose_generals_checkbox->setChecked(true);
+        free_choose_cards_checkbox->setChecked(true);
+        free_discard_checkbox->setChecked(true);
+        free_change_general_checkbox->setChecked(true);
+    }
 }
 
 void ServerDialog::updateButtonEnablility(QAbstractButton *button)
@@ -655,6 +685,16 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     page_layout->addStretch();
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("wheel_fight"));
+
+    apage = new QWidget;
+    page_layout = new QVBoxLayout;
+    arthur_count = new QLineEdit;
+    arthur_count->setText(QString::number(Config.value("Scenario/ArthurCount", 3).toInt()));
+    arthur_count->setValidator(new QIntValidator(3, 5, arthur_count));
+    page_layout->addLayout(HLay(new QLabel(tr("Arthur Count")), arthur_count));
+    page_layout->addStretch();
+    apage->setLayout(page_layout);
+    tab->addTab(apage, Sanguosha->translate("arthur_ferris"));
 /*
     QStringList names = Sanguosha->getScenarioNames();
     foreach(QString name, names){
@@ -677,6 +717,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
 
 void ScenarioDialog::save(){
     Config.setValue("Scenario/WheelCount", wheel_count->text());
+    Config.setValue("Scenario/ArthurCount", arthur_count->text());
 }
 
 QGroupBox *ServerDialog::create3v3Box(){

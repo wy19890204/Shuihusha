@@ -217,7 +217,7 @@ end
 -- juyi
 sgs.ai_card_intention.JuyiCard = function(card, from, tos)
 	local songjiang = from:getRoom():getLord()
-	if songjiang:getHandcardNum() >= from:getHandcardNum() then
+	if songjiang and songjiang:getHandcardNum() >= from:getHandcardNum() then
 		sgs.updateIntention(from, songjiang, 40)
 	else
 		sgs.updateIntention(from, songjiang, -50)

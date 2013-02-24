@@ -116,7 +116,7 @@ QList<ServerPlayer *> Room::getAllPlayers() const{ //current is start
 
 QList<ServerPlayer *> Room::getOtherPlayers(ServerPlayer *except) const{
     QList<ServerPlayer *> other_players = getAllPlayers();
-    if (except && except->isAlive())
+    if(except && except->isAlive())
         other_players.removeOne(except);
     return other_players;
 }
@@ -2169,7 +2169,7 @@ void Room::chooseGenerals(){
             lord_list = Sanguosha->getRandomGenerals(Config.value("MaxChoice", 5).toInt());
             the_lord = getOwner();
         }
-        else if(the_lord->getState() == "robot")
+        else if(the_lord && the_lord->getState() == "robot")
             if(qrand()%100 < nonlord_prob)
                 lord_list = Sanguosha->getRandomGenerals(1);
             else
@@ -3708,7 +3708,7 @@ ServerPlayer *Room::askForPlayerChosen(ServerPlayer *player, const QList<ServerP
 
 void Room::_setupChooseGeneralRequestArgs(ServerPlayer *player){
     Json::Value options = toJsonArray(player->getSelected());
-    if(!Config.EnableBasara)
+    if(!Config.EnableBasara && getLord())
         options.append(toJsonString(QString("%1(lord)").arg(getLord()->getGeneralName())));
     else
         options.append("anjiang(lord)");

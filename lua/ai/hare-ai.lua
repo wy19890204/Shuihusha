@@ -418,7 +418,7 @@ end
 -- nongquan
 sgs.ai_skill_invoke["nongquan"] = function(self, data)
 	local lord = self.room:getLord()
-	if lord:hasLordSkill("nongquan") then
+	if lord and lord:hasLordSkill("nongquan") then
 		if self:isFriend(lord) and not lord:faceUp() then
 			return self.player:getHandcardNum() > 1
 		elseif self:isEnemy(lord) and lord:faceUp() and lord:getHandcardNum() < 3 then
