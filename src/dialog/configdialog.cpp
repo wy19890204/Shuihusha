@@ -52,6 +52,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
 
     // tab 3
     ui->skillEmotionBox->setChecked(Config.EnableSkillEmotion);
+    ui->closelightBox->setChecked(Config.DisableLightbox);
 
     QSet<QString> ban_emotions = Config.BanEmotions.toSet();
     QGridLayout *layout = new QGridLayout;
@@ -70,6 +71,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
         QCheckBox *checkbox = new QCheckBox;
         checkbox->setObjectName(emotion);
         checkbox->setText(Config.translate(emotion));
+        checkbox->setToolTip(Config.translate("^" + emotion));
         checkbox->setChecked(!ban_emotions.contains(emotion));
 
         extension_group->addButton(checkbox);
@@ -206,6 +208,9 @@ void ConfigDialog::saveConfig()
 
     Config.EnableSkillEmotion = ui->skillEmotionBox->isChecked();
     Config.setValue("EnableSkillEmotion", Config.EnableSkillEmotion);
+
+    Config.DisableLightbox = ui->closelightBox->isChecked();
+    Config.setValue("DisableLightbox", Config.DisableLightbox);
 
     QSet<QString> ban_emotions;
     QList<QAbstractButton *> checkboxes = extension_group->buttons();

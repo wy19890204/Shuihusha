@@ -996,6 +996,21 @@
         <translation>切换界面语言。默认为简体中文</translation>
     </message>
     <message>
+        <location filename="src/dialog/configdialog.ui" line="676"/>
+        <source>Enabled Skill Emotion</source>
+        <translation>开启自定义技能动画接口</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="677"/>
+        <source>url for skill emotion</source>
+        <translation>请将自定义动画放在image\system\emotion\skill文件夹下</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/configdialog.ui" line="678"/>
+        <source>Close Light Box</source>
+        <translation>关闭限定技和觉醒技的大屏字幕</translation>
+    </message>
+    <message>
         <location filename="src/dialog/configdialog.ui" line="682"/>
         <source>Contest mode</source>
         <translation>竞赛模式</translation>

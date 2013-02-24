@@ -151,18 +151,7 @@ public:
     virtual bool onPhaseChange(ServerPlayer *tg) const{
         Room *room = tg->getRoom();
 
-        /*
-        LogMessage log;
-        log.type = "#WakeUp";
-        log.from = tg;
-        log.arg = objectName();
-        room->sendLog(log);
-        */
-
         room->awake(tg, objectName(), "5000", 2500);
-        //room->playSkillEffect(objectName());
-        //room->broadcastInvoke("animate", "lightbox:$aoxiang:5000");
-        //room->getThread()->delay(2500);
         room->acquireSkill(tg, "wanghuan");
         room->loseMaxHp(tg, 1);
 

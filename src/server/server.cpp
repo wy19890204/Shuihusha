@@ -393,13 +393,15 @@ void ServerDialog::ensureEnableAI(){
 void ServerDialog::packageCheckAll(){
     QList<QAbstractButton *> checkboxes = extension_group->buttons();
     foreach(QAbstractButton *checkbox, checkboxes)
-        checkbox->setChecked(true);
+        if(checkbox->isEnabled())
+            checkbox->setChecked(true);
 }
 
 void ServerDialog::packageInverseCheckAll(){
     QList<QAbstractButton *> checkboxes = extension_group->buttons();
     foreach(QAbstractButton *checkbox, checkboxes)
-        checkbox->setChecked(!checkbox->isChecked());
+        if(checkbox->isEnabled())
+            checkbox->setChecked(!checkbox->isChecked());
 }
 
 void ServerDialog::doCheat(bool enable){

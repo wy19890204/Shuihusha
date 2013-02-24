@@ -62,10 +62,7 @@ void Analeptic::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
 void Analeptic::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
 
-    // do animation
-    QString who = effect.to->objectName();
-    QString animation_str = QString("analeptic:%1:%2").arg(who).arg(who);
-    room->broadcastInvoke("animate", animation_str);
+    room->setEmotion(effect.from, "analeptic");
 
     if(effect.to->hasMark("poison")){
         LogMessage log;

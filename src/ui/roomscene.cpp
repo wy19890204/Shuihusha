@@ -3639,13 +3639,13 @@ void RoomScene::animatePopup(const QString &name, const QStringList &args)
 }
 
 void RoomScene::doAppearingAnimation(const QString &name, const QStringList &args){
-
+/*
     if(name == "analeptic"
             || name == "peach")
     {
         setEmotion(args.at(0),name);
         return;
-    }
+    }*/
     Pixmap *item = new Pixmap(QString("image/system/animation/%1.png").arg(name));
     addItem(item);
 
@@ -3752,15 +3752,14 @@ void RoomScene::doIndicate(const QString &, const QStringList &args){
 void RoomScene::doAnimation(const QString &name, const QStringList &args){
     static QMap<QString, AnimationFunc> map;
     if(map.isEmpty()){
-        map["peach"] = &RoomScene::doAppearingAnimation;
-        map["jink"] = &RoomScene::animatePopup;
+        //map["peach"] = &RoomScene::doAppearingAnimation;
+        //map["jink"] = &RoomScene::animatePopup;
         map["nullification"] = &RoomScene::doMovingAnimation;
         map["counterplot"] = &RoomScene::doMovingAnimation;
         map["ecstasy"] = &RoomScene::doMovingAnimation;
+        map["zongzi"] = &RoomScene::doAppearingAnimation;
         map["moonpie"] = &RoomScene::doMovingAnimation;
         map["riceball"] = &RoomScene::doMovingAnimation;
-
-        map["analeptic"] = &RoomScene::doAppearingAnimation;
 
         map["lightbox"] = &RoomScene::doLightboxAnimation;
         map["indicate"] = &RoomScene::doIndicate;

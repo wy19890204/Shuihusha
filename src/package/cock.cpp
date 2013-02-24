@@ -117,15 +117,13 @@ public:
         if(!qiaoyun || qiaoyun->isLord() || player->isLord() || qiaoyun == player)
             return false;
         if(qiaoyun->hasMark("@spray") && qiaoyun->askForSkillInvoke(objectName())){
-            room->playSkillEffect(objectName());
-            room->broadcastInvoke("animate", "lightbox:$panxin:2000");
             QString role = player->getRole();
             player->setRole(qiaoyun->getRole());
             room->setPlayerProperty(player, "panxin", true);
+            room->playLightbox(qiaoyun, objectName(), "2000", 2000);
             qiaoyun->loseMark("@spray");
             qiaoyun->setRole(role);
             qiaoyun->drawCards(1);
-            room->getThread()->delay(1500);
         }
         return false;
     }

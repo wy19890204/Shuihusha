@@ -3613,19 +3613,29 @@ void Room::doGongxin(ServerPlayer *shenlvmeng, ServerPlayer *target){
 }
 
 void Room::awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay){
+    QString skillname = skill_name;
+    if(skillname.at(0).isUpper())
+        skillname[0] = skillname.at(0).toLower();
+
     LogMessage log;
     log.type = "#WakeUp";
     log.from = player;
-    log.arg = skill_name;
+    log.arg = skillname;
     sendLog(log);
-    playSkillEffect(skill_name);
-    broadcastInvoke("animate", "lightbox:$" + skill_name + ":" + broad);
-    thread->delay(delay);
-    setPlayerMark(player, skill_name + "_wake", 1);
+    playSkillEffect(skillname);
+
+    if(!Config.DisableLightbox){
+        QString bro = broad == "" ? "" : ":" + broad;
+        broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
+        thread->delay(delay);
+    }
+    else
+        thread->delay(qMin(delay / 2, 1000));
+    setPlayerMark(player, skillname + "_wake", 1);
     if(!Config.EnableSkillEmotion)
         setEmotion(player, "awake");
     else
-        setEmotion(player, "skill/" + skill_name);
+        setEmotion(player, "skill/" + skillname);
     broadcastInvoke("playAudio", "skill/awake");
 }
 
@@ -3634,13 +3644,19 @@ void Room::playLightbox(ServerPlayer *player, const QString &skill_name, const Q
     if(skillname.at(0).isUpper())
         skillname[0] = skillname.at(0).toLower();
     playSkillEffect(skillname);
-    QString bro = broad == "" ? "" : ":" + broad;
-    broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
-    thread->delay(delay);
+
+    if(!Config.DisableLightbox){
+        QString bro = broad == "" ? "" : ":" + broad;
+        broadcastInvoke("animate", "lightbox:$" + skill_name + bro);
+        thread->delay(delay);
+    }
+    else
+        thread->delay(qMin(delay / 2, 1000));
+
     if(!Config.EnableSkillEmotion)
         setEmotion(player, "limited");
     else
-        setEmotion(player, "skill/" + skill_name);
+        setEmotion(player, "skill/" + skillname);
     broadcastInvoke("playAudio", "skill/limited");
 }
 

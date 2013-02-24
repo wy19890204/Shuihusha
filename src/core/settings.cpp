@@ -133,6 +133,7 @@ void Settings::init(){
     EnableLua = value("EnableLua", false).toBool();
 
     EnableSkillEmotion = value("EnableSkillEmotion", false).toBool();
+    DisableLightbox = value("DisableLightbox", false).toBool();
     BanEmotions = value("BanEmotions").toStringList();
 
 //banlist

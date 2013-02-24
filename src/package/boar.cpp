@@ -336,18 +336,15 @@ public:
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
                 && target->getPhase() == Player::Start
-                && !target->hasMark("wujie")
+                && !target->hasMark("wujie_wake")
                 && target->getPile("chou").length() >= 3;
     }
 
     virtual bool onPhaseChange(ServerPlayer *wusong) const{
         Room *room = wusong->getRoom();
 
-        room->broadcastInvoke("animate", "lightbox:$wujie");
-        room->setPlayerMark(wusong, "wujie", 1);
+        room->awake(wusong, objectName(), "");
         room->setPlayerProperty(wusong, "maxhp", QVariant(wusong->getMaxHp() + 1));
-
-        room->playSkillEffect(objectName());
         room->acquireSkill(wusong, "zhusha");
 
         return false;
@@ -426,7 +423,7 @@ public:
 };
 
 DuanbiCard::DuanbiCard(){
-
+    mute = true;
 }
 
 bool DuanbiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -435,7 +432,7 @@ bool DuanbiCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void DuanbiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     ServerPlayer *target = targets.first();
-    room->broadcastInvoke("animate", "lightbox:$duanbi");
+    room->playLightbox(source, skill_name, "");
     source->loseMark("@arm");
     room->setPlayerProperty(source, "maxhp", 1);
     DamageStruct damage;

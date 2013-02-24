@@ -83,6 +83,7 @@ public:
     bool EnableLua;
 
     bool EnableSkillEmotion;
+    bool DisableLightbox;
 
     QString BackgroundBrush;
     QStringList BanEmotions;

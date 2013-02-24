@@ -27,7 +27,10 @@ void Zongzi::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &
     room->acquireSkill(source, "lisao");
     room->setPlayerMark(source, "HaveEaten", 1);
 
-    room->setEmotion(source, "zongzi");
+    // do animation
+    room->broadcastInvoke("animate", QString("zongzi:%1")
+                          .arg(source->objectName()));
+    //room->setEmotion(source, "zongzi");
 }
 
 class Lisao: public TriggerSkill{
