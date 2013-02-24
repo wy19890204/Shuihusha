@@ -35,7 +35,7 @@ return {
 	["thunder_damage"] = "雷电伤害",
 	["recover"] = "回复体力",
 	["hplost"] = "体力流失",
-	["killer"] = "凶手",
+	["killer"] = "打出杀",
 	["death"] = "死亡",
 
 	["^analeptic"] = "使用酒时播放",
@@ -67,5 +67,4 @@ return {
 	["^thunder_slash"] = "使用雷杀时播放",
 	["^tsunami"] = "被海啸席卷时播放",
 	["^weapon"] = "武器通用动画，发动武器效果时播放",
---	关闭大屏字幕 选项
 }

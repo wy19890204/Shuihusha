@@ -3752,8 +3752,9 @@ void RoomScene::doIndicate(const QString &, const QStringList &args){
 void RoomScene::doAnimation(const QString &name, const QStringList &args){
     static QMap<QString, AnimationFunc> map;
     if(map.isEmpty()){
-        //map["peach"] = &RoomScene::doAppearingAnimation;
         //map["jink"] = &RoomScene::animatePopup;
+        map["peach"] = &RoomScene::doMovingAnimation;
+        map["analeptic"] = &RoomScene::doMovingAnimation;
         map["nullification"] = &RoomScene::doMovingAnimation;
         map["counterplot"] = &RoomScene::doMovingAnimation;
         map["ecstasy"] = &RoomScene::doMovingAnimation;
