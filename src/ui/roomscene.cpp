@@ -63,40 +63,46 @@ struct RoomLayout {
 
 struct NormalRoomLayout : public RoomLayout{
     NormalRoomLayout(){
-        discard = QPointF(-6, 8);
-        drawpile = QPointF(-108, 8);
-        enemy_box = QPointF(-246, -307);
-        self_box = QPointF(360, -90);
-        chat_box_size = QSize(230, 175);
-        chat_box_pos = QPointF(-343, -83);
-        button1_pos = QPointF(15, 5);
-        button2_pos = QPointF(15, 60);
-        state_item_pos = QPointF(-110, -80);
-    }
-};
+        QString type = Config.CircularView ? "circular" : "normal";
+        QString spec_name = QString("image/system/coord_%1.ini").arg(type);
+        QSettings settings(spec_name, QSettings::IniFormat);
 
-struct CircularRoomLayout : public RoomLayout{
-    CircularRoomLayout(){
-        discard = QPointF(-140, 30);
-        drawpile = QPointF(-260, 30);
-        enemy_box = QPointF(-391, -323);
-        self_box = QPointF(201, -90);
-        chat_box_size = QSize(268, 165);
-        chat_box_pos = QPointF(367, -38);
-        button1_pos = QPointF(-565,205);
-        button2_pos = QPointF(-565, 260);
-        state_item_pos = QPointF(367, -325); // -320
+        settings.beginGroup("RoomLayout");
+        QList<QVariant> coord = settings.value("discard").toList();
+        discard = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("drawpile").toList();
+        drawpile = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("enemy_box").toList();
+        enemy_box = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("self_box").toList();
+        self_box = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("chat_box_size").toList();
+        chat_box_size = QSize(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("chat_box_pos").toList();
+        chat_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("button1_pos").toList();
+        button1_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("button2_pos").toList();
+        button2_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("state_item_pos").toList();
+        state_item_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        settings.endGroup();
+        settings.deleteLater();
     }
 };
 
 static RoomLayout *GetRoomLayout(){
     static NormalRoomLayout normal;
-    static CircularRoomLayout circular;
-    //return Config.CircularView ? &circular : &normal;
-    if(Config.CircularView){
-        return &circular;
-    }else
-        return &normal;
+    return &normal;
 }
 
 RoomScene *RoomSceneInstance;
@@ -559,6 +565,8 @@ void RoomScene::createReplayControlBar(){
 
 void RoomScene::adjustItems(QMatrix matrix){
     if(matrix.m11()>1)matrix.setMatrix(1,0,0,1,matrix.dx(),matrix.dy());
+
+    //dashboard->setWidth((main_window->width()-10)/ matrix.m11()) ;
 
     qreal dashboard_width = dashboard->boundingRect().width();
     qreal x = - dashboard_width/2;

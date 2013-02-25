@@ -70,6 +70,7 @@ Engine::Engine()
     modes["10pd"] = tr("10 players");
     modes["10p"] = tr("10 players (1 renegade)");
     modes["10pz"] = tr("10 players (0 renegade)");
+    modes["11p"] = tr("11 players");
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -493,6 +494,7 @@ void Engine::getRoles(const QString &mode, char *roles) const{
             "ZCCFFFFN", // 8
             "ZCCCFFFFN", // 9
             "ZCCCFFFFFN" // 10
+            "ZCCCFFFFFNN" // 11
         };
 
         static const char *table2[] = {
