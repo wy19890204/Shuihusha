@@ -57,7 +57,7 @@
        <item>
         <widget class="QLineEdit" name="bgMusicPathLineEdit">
          <property name="whatsThis">
-          <string>设置默认背景音乐。剧情模式的音乐另有指定，不受此设置影响</string>
+          <string>hint: set bg music</string>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -282,7 +282,7 @@
          <item>
           <widget class="QLineEdit" name="bgPathLineEdit">
            <property name="whatsThis">
-            <string>设置背景图片</string>
+            <string>hint: set bgmp</string>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -347,7 +347,7 @@
        <item>
         <widget class="QCheckBox" name="circularViewCheckBox">
          <property name="whatsThis">
-          <string>仿OL的环状视图。聊天框和信息框靠右。适合大分辨率用户</string>
+          <string>hint: for circular</string>
          </property>
          <property name="text">
           <string>Circular view</string>
@@ -587,7 +587,7 @@
       </rect>
      </property>
      <property name="whatsThis">
-      <string>不勾选此项，SP武将无法被自由选将。</string>
+      <string>hint: sp</string>
      </property>
      <property name="text">
       <string>Open the SP package</string>
@@ -606,7 +606,7 @@
       </rect>
      </property>
      <property name="whatsThis">
-      <string>不勾选此项，LUA扩展将不可用。</string>
+      <string>hint: lua</string>
      </property>
      <property name="text">
       <string>Enable Lua Generals</string>
@@ -654,7 +654,7 @@
       </rect>
      </property>
      <property name="whatsThis">
-      <string>切换界面语言。默认为简体中文</string>
+      <string>hint: lang</string>
      </property>
      <property name="editable">
       <bool>true</bool>

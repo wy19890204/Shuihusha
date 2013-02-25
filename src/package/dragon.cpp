@@ -87,18 +87,18 @@ public:
         log.from = lese;
         log.arg = objectName();
         if(choice == "jian"){
-            room->playSkillEffect(objectName(), qrand() % 2 + 1);
-            int card_id = room->askForCardChosen(lese, damage.from, "he", objectName());
-            room->obtainCard(lese, card_id, room->getCardPlace(card_id) != Player::Hand);
             log.to << damage.from;
             log.type = "#UseSkill";
             room->sendLog(log);
+            room->playSkillEffect(objectName(), qrand() % 2 + 1);
+            int card_id = room->askForCardChosen(lese, damage.from, "he", objectName());
+            room->obtainCard(lese, card_id, room->getCardPlace(card_id) != Player::Hand);
         }
         else{
-            room->playSkillEffect(objectName(), qrand() % 2 + 3);
-            lese->drawCards(lstn);
             log.type = "#InvokeSkill";
             room->sendLog(log);
+            room->playSkillEffect(objectName(), qrand() % 2 + 3);
+            lese->drawCards(lstn);
         }
     }
 };
