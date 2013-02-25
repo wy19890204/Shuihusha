@@ -63,40 +63,46 @@ struct RoomLayout {
 
 struct NormalRoomLayout : public RoomLayout{
     NormalRoomLayout(){
-        discard = QPointF(-6, 8);
-        drawpile = QPointF(-108, 8);
-        enemy_box = QPointF(-246, -307);
-        self_box = QPointF(360, -90);
-        chat_box_size = QSize(230, 175);
-        chat_box_pos = QPointF(-343, -83);
-        button1_pos = QPointF(15, 5);
-        button2_pos = QPointF(15, 60);
-        state_item_pos = QPointF(-110, -80);
-    }
-};
+        QString type = Config.CircularView ? "circular" : "normal";
+        QString spec_name = QString("image/system/coord_%1.ini").arg(type);
+        QSettings settings(spec_name, QSettings::IniFormat);
 
-struct CircularRoomLayout : public RoomLayout{
-    CircularRoomLayout(){
-        discard = QPointF(-140, 30);
-        drawpile = QPointF(-260, 30);
-        enemy_box = QPointF(-391, -323);
-        self_box = QPointF(201, -90);
-        chat_box_size = QSize(268, 165);
-        chat_box_pos = QPointF(367, -38);
-        button1_pos = QPointF(-565,205);
-        button2_pos = QPointF(-565, 260);
-        state_item_pos = QPointF(367, -325); // -320
+        settings.beginGroup("RoomLayout");
+        QList<QVariant> coord = settings.value("discard").toList();
+        discard = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("drawpile").toList();
+        drawpile = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("enemy_box").toList();
+        enemy_box = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("self_box").toList();
+        self_box = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("chat_box_size").toList();
+        chat_box_size = QSize(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("chat_box_pos").toList();
+        chat_box_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("button1_pos").toList();
+        button1_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("button2_pos").toList();
+        button2_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        coord = settings.value("state_item_pos").toList();
+        state_item_pos = QPointF(coord.first().toReal(), coord.last().toReal());
+
+        settings.endGroup();
+        settings.deleteLater();
     }
 };
 
 static RoomLayout *GetRoomLayout(){
     static NormalRoomLayout normal;
-    static CircularRoomLayout circular;
-    //return Config.CircularView ? &circular : &normal;
-    if(Config.CircularView){
-        return &circular;
-    }else
-        return &normal;
+    return &normal;
 }
 
 RoomScene *RoomSceneInstance;
@@ -560,6 +566,8 @@ void RoomScene::createReplayControlBar(){
 void RoomScene::adjustItems(QMatrix matrix){
     if(matrix.m11()>1)matrix.setMatrix(1,0,0,1,matrix.dx(),matrix.dy());
 
+    //dashboard->setWidth((main_window->width()-10)/ matrix.m11()) ;
+
     qreal dashboard_width = dashboard->boundingRect().width();
     qreal x = - dashboard_width/2;
     qreal main_height = main_window->centralWidget()->height() / matrix.m22();
@@ -576,16 +584,17 @@ void RoomScene::adjustItems(QMatrix matrix){
 }
 
 QList<QPointF> RoomScene::getPhotoPositions() const{
+    int player_count = photos.length() + 1;
+    static int cxw=0;
+    static int cxw2=1;
+/*
     static int four=0;
     static int five=0;
     static int six=0;
     static int seven=0;
     static int eight=0;
     static int nine=0;
-    static int cxw=0;
-    static int cxw2=1;
 
-    int player_count = photos.length() + 1;
     switch(player_count){
     case 4: four = 1; break;
     case 5: five = 1; break;
@@ -600,12 +609,17 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
         six   = 0;
         nine = 1;
     }
+*/
 
+    QString type = "normal";
     if(Config.CircularView){
         cxw=1;
         cxw2=0;
+        type = "circular";
     }
-
+    QString spec_name = QString("image/system/coord_%1.ini").arg(type);
+    QSettings settings(spec_name, QSettings::IniFormat);
+/*
     static const QPointF pos[] = {
         QPointF((-630+cxw2*129)+(cxw*four*70)+(cxw*six*50), (-70+cxw2)+(-four*cxw*80)+(-six*cxw*50)), // 0:zhugeliang
         QPointF((-630+cxw2*129)+(cxw*eight*50)+(cxw*five*50)+(cxw*nine*20), (-270-cxw2*3)+(cxw*five*100)), // 1:wolong
@@ -617,7 +631,7 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
         QPointF((228+cxw2*141)+(-eight*cxw*50)+(-five*cxw*50)+(-nine*cxw*20), (-270-cxw2*3)+(five*cxw*100)), // 7:shenguanyu
         QPointF((228+cxw2*141)+(-four*cxw*70)+(-six*cxw*50), (-70+cxw2)+(-four*cxw*80)+(-six*cxw*50)), // 8:xiaoqiao
     };
-
+*/
     static int indices_table[][9] = {
         {4 }, // 2
         {3, 5}, // 3
@@ -641,8 +655,11 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
 
     QList<QPointF> positions;
     int *indices;
-    if(ServerInfo.GameMode == "06_3v3" && !Self->getRole().isEmpty())
+    bool is33 = false;
+    if(ServerInfo.GameMode == "06_3v3" && !Self->getRole().isEmpty()){
         indices = indices_table_3v3[Self->getSeat() - 1];
+        is33 = true;
+    }
     else
         indices = indices_table[photos.length() - 1];
 
@@ -667,8 +684,15 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
     int i;
     for(i=0; i<photos.length(); i++){
         int index = indices[i];
-        QPointF aposition = pos[index];
-
+        QList<QVariant> coord = settings.value(QString("%1/sgs%2").arg(is33 ? "3v3" : QString::number(player_count)).arg(index)).toList();
+        QPointF aposition = QPointF(coord.first().toReal(), coord.last().toReal());
+/*
+#ifdef QT_DEBUG
+        QString dg = QString("sgs%1 = %2, %3").arg(index).arg(pos[index].x()).arg(pos[index].y());
+        qDebug() << dg;
+        settings.setValue(QString("%1/sgs%2").arg(is33 ? "3v3" : QString::number(player_count)).arg(index), QString("%1, %2").arg(pos[index].x()).arg(pos[index].y()));
+#endif
+*/
         aposition.rx()*=stretch_x;
         aposition.ry()*=stretch_y;
 
@@ -677,7 +701,7 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
 
         positions << aposition;
     }
-
+    settings.deleteLater();
     return positions;
 }
 
@@ -778,10 +802,12 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
     Photo *photo = name2photo[player->objectName()];
     int i;
     for(i=0; i<n; i++){
+        QString backname = ServerInfo.GameMode == "06_3v3" ?
+                           "card-back-3v3" : "card-back";
 #ifdef USE_RCC
-        Pixmap *pixmap = new Pixmap(":system/card-back.png");
+        Pixmap *pixmap = new Pixmap(QString(":system/%1.png").arg(backname));
 #else
-        Pixmap *pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *pixmap = new Pixmap(QString("image/system/%1.png").arg(backname));
 #endif
         addItem(pixmap);
 
@@ -1229,10 +1255,12 @@ void RoomScene::moveNCards(int n, const QString &from, const QString &to){
 
     int i;
     for(i=0; i<n; i++){
+        QString backname = ServerInfo.GameMode == "06_3v3" ?
+                           "card-back-3v3" : "card-back";
 #ifdef USE_RCC
-        Pixmap *card_pixmap = new Pixmap(":system/card-back.png");
+        Pixmap *card_pixmap = new Pixmap(QString(":system/%1.png").arg(backname));
 #else
-        Pixmap *card_pixmap = new Pixmap("image/system/card-back.png");
+        Pixmap *card_pixmap = new Pixmap(QString("image/system/%1.png").arg(backname));
 #endif
         addItem(card_pixmap);
 
@@ -3399,10 +3427,12 @@ void RoomScene::onGameStart(){
 #endif
 
     game_started = true;
+    QString backname = ServerInfo.GameMode == "06_3v3" ?
+                       "card-back-3v3" : "card-back";
 #ifdef USE_RCC
-    drawPile = new Pixmap(":system/card-back.png");
+    drawPile = new Pixmap(QString(":system/%1.png").arg(backname));
 #else
-    drawPile = new Pixmap("image/system/card-back.png");
+    drawPile = new Pixmap(QString("image/system/%1.png").arg(backname));
 #endif
     addItem(drawPile);
     drawPile->setZValue(-2.0);

@@ -120,7 +120,9 @@ ban_list = { -- 初始禁表设置
 --		"wangdingliu",
 	},
 	savsa_ban = { -- 3v3模式
+		"gongsunsheng",
 		"yanxijiao",
+		"zhuwu",
 	},
 	basara_ban = { -- 暗将模式
 		"dingdesun",

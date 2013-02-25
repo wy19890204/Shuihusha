@@ -6,6 +6,7 @@ del system\dashboard-avatar.png
 del system\state.png
 del system\state_c.png
 del system\card-back.png
+del system\card-back-3v3.png
 del system\card-container.png
 del system\ready.png
 del system\arrow.png
