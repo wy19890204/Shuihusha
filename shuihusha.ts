@@ -860,9 +860,9 @@
         <source>Effect Volume</source>
         <translation>声音效果音量</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="60"/>
-        <source>设置默认背景音乐。剧情模式的音乐另有指定，不受此设置影响</source>
+        <source>hint: set bg music</source>
         <translation>设置默认背景音乐。剧情模式的音乐另有指定，不受此设置影响</translation>
     </message>
     <message>
@@ -870,9 +870,9 @@
         <source>Background</source>
         <translation>背景</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="285"/>
-        <source>设置背景图片</source>
+        <source>hint: set bgmp</source>
         <translation>设置背景图片</translation>
     </message>
     <message>
@@ -880,9 +880,9 @@
         <source>Fit in view</source>
         <translation>场景随窗口缩放</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="350"/>
-        <source>仿OL的环状视图。聊天框和信息框靠右。适合大分辨率用户</source>
+        <source>hint: for circular</source>
         <translation>仿OL的环状视图。聊天框和信息框靠右。适合大分辨率用户</translation>
     </message>
     <message>
@@ -960,9 +960,9 @@
         <source>Show nick name and true name</source>
         <translation>以绰号+姓名方式显示日志</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="590"/>
-        <source>不勾选此项，SP武将无法被自由选将。</source>
+        <source>hint: sp</source>
         <translation>不勾选此项，SP武将无法被自由选将。</translation>
     </message>
     <message>
@@ -970,9 +970,9 @@
         <source>Open the SP package</source>
         <translation>完全开放SP包</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="609"/>
-        <source>不勾选此项，LUA扩展将不可用。</source>
+        <source>hint: lua</source>
         <translation>不勾选此项，LUA扩展将不可用。</translation>
     </message>
     <message>
@@ -990,9 +990,9 @@
         <source>Language:</source>
         <translation>语言：</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="src/dialog/configdialog.ui" line="657"/>
-        <source>切换界面语言。默认为简体中文</source>
+        <source>hint: lang</source>
         <translation>切换界面语言。默认为简体中文</translation>
     </message>
     <message>

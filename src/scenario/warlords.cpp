@@ -181,14 +181,18 @@ bool WarlordsScenario::unloadLordSkill() const{
 }
 
 AI::Relation WarlordsScenario::relationTo(const ServerPlayer *a, const ServerPlayer *b) const{
-    if(a->getRole() == "rebel" && b->getRole() == "rebel" &&
-       getPlayersbyRole(a->getRoom(), "rebel").length() > 5){
-        switch(qrand() % 4){
-        case 0:
-        case 1: return AI::Neutrality;
-        case 2: return AI::Enemy;
-        default: return AI::Friend;
+    if(a->getRole() == "rebel" && b->getRole() == "rebel"){
+        QList<ServerPlayer *> players = getPlayersbyRole(a->getRoom(), "rebel");
+        if(players.count() > 5){
+            if(a->distanceTo(b) > 2)
+                return AI::Neutrality;
+            else
+                return AI::Enemy;
         }
+        else if(players.count() > 3)
+            return AI::Neutrality;
+        else
+            return AI::Friend;
     }
     else if(a->getRole() == "loyalist" && b->isLord())
         return AI::Friend;
