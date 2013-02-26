@@ -449,11 +449,11 @@ public:
 
         return instance;
     }
-
+/*
     virtual int getPriority(TriggerEvent) const{
         return 2;
     }
-
+*/
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QString asked = data.toString();
         if(asked == "jink"){

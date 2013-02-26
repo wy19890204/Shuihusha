@@ -125,9 +125,12 @@ QString ClientPlayer::getDeathPixmapPath() const{
             basename = "marshal";
         else
             basename = "guard";
-    }else if(ServerInfo.EnableHegemony){
+    }
+    else if(ServerInfo.GameMode == "warlords")
+        basename = getScreenRole();
+    else if(ServerInfo.EnableHegemony)
         basename.clear();
-    }else
+    else
         basename = getRole();
 
     if(property("panxin").toBool())

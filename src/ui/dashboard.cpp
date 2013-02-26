@@ -43,16 +43,30 @@ Dashboard::Dashboard(QGraphicsItem *button_widget)
 void Dashboard::createLeft(){
     left = new QGraphicsRectItem(QRectF(left_pixmap.rect()), this);
 
-    plate = new Pixmap("image/equips/axe.png");
+    plate = new Pixmap("image/mode/02p.png");
     plate->setParentItem(left);
-    plate->setPos(17, -4);
     //plate->setZValue(0.4);
-    QString plate_path = QString("image/mode/%1.png").arg(ServerInfo.GameMode);
+    QString game_mode = ServerInfo.GameMode;
+    QString plate_path = QString("image/mode/%1.png").arg(game_mode);
+    if(ServerInfo.EnableHegemony)
+        plate_path = "image/mode/hegemony.png";
+    else if(ServerInfo.EnableEndless)
+        plate_path = "image/mode/endless.png";
+    if(!QFile::exists(plate_path)){
+        QString gm = game_mode;
+        gm.chop(1);
+        plate_path = QString("image/mode/%1.png").arg(gm);
+    }
     if(!QFile::exists(plate_path))
         plate->hide();
     else{
         plate->show();
         plate->setPixmap(QPixmap(plate_path));
+        plate->setToolTip(Sanguosha->translate(":" + game_mode));
+        if(game_mode.startsWith("_"))
+            plate->setPos(17, -4);
+        else
+            plate->setPos(17, 0);
     }
 
     equips << &weapon << &armor << &defensive_horse << &offensive_horse;

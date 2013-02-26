@@ -388,7 +388,7 @@ public:
                     targets << tmp;
             }
             if(!targets.isEmpty())
-                room->askForUseCard(ruangorou, "@@anxi", "@anxi:" + player->objectName(), true);
+                room->askForUseCard(ruangorou, "@@anxi", "@anxi:" + damage.to->objectName(), true);
         }
         return false;
     }
