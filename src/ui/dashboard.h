@@ -101,6 +101,7 @@ private:
 
     QGraphicsRectItem *trusting_item;
     QGraphicsSimpleTextItem *trusting_text;
+    Pixmap *plate;
 
     //for animated effects
     EffectAnimation *animations;

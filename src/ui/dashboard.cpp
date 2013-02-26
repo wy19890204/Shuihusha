@@ -11,6 +11,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QPixmapCache>
+#include <QFile>
 
 Dashboard::Dashboard(QGraphicsItem *button_widget)
 #ifdef USE_RCC
@@ -41,6 +42,18 @@ Dashboard::Dashboard(QGraphicsItem *button_widget)
 
 void Dashboard::createLeft(){
     left = new QGraphicsRectItem(QRectF(left_pixmap.rect()), this);
+
+    plate = new Pixmap("image/equips/axe.png");
+    plate->setParentItem(left);
+    plate->setPos(17, -4);
+    //plate->setZValue(0.4);
+    QString plate_path = QString("image/mode/%1.png").arg(ServerInfo.GameMode);
+    if(!QFile::exists(plate_path))
+        plate->hide();
+    else{
+        plate->show();
+        plate->setPixmap(QPixmap(plate_path));
+    }
 
     equips << &weapon << &armor << &defensive_horse << &offensive_horse;
 

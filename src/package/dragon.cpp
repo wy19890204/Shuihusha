@@ -911,7 +911,7 @@ public:
                     room->setPlayerMark(suoch, "@hatchet", 0);
                     if(fist >= 2 && suoch->askForSkillInvoke(objectName())){
                         room->playSkillEffect(objectName());
-                        suoch->gainAnExtraTurn(suoch);
+                        suoch->gainAnExtraTurn(player);
                     }
                 }
             }
