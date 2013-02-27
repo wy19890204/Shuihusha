@@ -120,13 +120,7 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
 
 QString ClientPlayer::getDeathPixmapPath() const{
     QString basename = "unknown";
-    if(ServerInfo.GameMode == "06_3v3"){
-        if(getRole() == "lord" || getRole() == "renegade")
-            basename = "marshal";
-        else
-            basename = "guard";
-    }
-    else if(ServerInfo.GameMode == "warlords")
+    if(ServerInfo.GameMode == "06_3v3" || ServerInfo.GameMode == "warlords")
         basename = getScreenRole();
     else if(ServerInfo.EnableHegemony)
         basename.clear();

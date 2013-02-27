@@ -404,7 +404,7 @@ void Photo::refresh(){
         if(save_me_item == NULL){
             QPixmap save_me("image/system/death/save-me.png");
             save_me_item = new QGraphicsPixmapItem(save_me, this);
-            save_me_item->setPos(5, 15);
+            save_me_item->setPos(5, 20);
         }
         save_me_item->show();
     }else{
@@ -672,19 +672,20 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawPixmap(3, 13, kingdom_frame);
 
     if(player->isDead()){
-        int death_x = 5;
+        int death_x = 0;
 
         if(death_pixmap.isNull()){
             QString path = player->getDeathPixmapPath();
             death_pixmap.load(path);
 
-            if(path.contains("unknown"))
+            /*if(path.contains("unknown"))
                 death_x = 23;
-            else
-                death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.5));
+            else*/
+                death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
         }
 
-        painter->drawPixmap(death_x, 25, death_pixmap);
+        painter->drawPixmap(death_x, 15, death_pixmap);
+        painter->setOpacity(4.0);
     }
 
     int n = player->getHandcardNum();
