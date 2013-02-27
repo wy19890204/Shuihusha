@@ -63,8 +63,10 @@ void Dashboard::createLeft(){
         plate->show();
         plate->setPixmap(QPixmap(plate_path));
         plate->setToolTip(Sanguosha->translate(":" + game_mode));
-        if(game_mode.startsWith("_"))
+        if(game_mode.startsWith("_")){
+            plate->setToolTip(Sanguosha->translate("#Mini" + game_mode.right(2)));
             plate->setPos(17, -4);
+        }
         else
             plate->setPos(17, 0);
     }
