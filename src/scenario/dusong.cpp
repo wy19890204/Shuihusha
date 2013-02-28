@@ -371,6 +371,10 @@ bool DusongScenario::setCardPiles(const Card *card) const{
     return card->inherits("Disaster");
 }
 
+int DusongScenario::swapCount() const{
+    return Config.BanPackages.contains("maneuvering") ? 3 : 2;
+}
+
 bool DusongScenario::generalSelection(Room *room) const{
     ServerPlayer *lord = room->getPlayers().first();
     room->setPlayerProperty(lord, "general", "zhang1dong");

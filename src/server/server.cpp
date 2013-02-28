@@ -166,6 +166,9 @@ QWidget *ServerDialog::createAdvancedTab(){
     contest_mode_checkbox->setChecked(Config.ContestMode);
     contest_mode_checkbox->setToolTip(tr("Requires password to login, hide screen name and disable kicking"));
 
+    swap_spinbox = new QSpinBox;
+    swap_spinbox->setRange(1, 1000);
+    swap_spinbox->setValue(Config.value("SwapCount", 6).toInt());
 
     maxchoice_spinbox = new QSpinBox;
     maxchoice_spinbox->setRange(3, 10);
@@ -234,6 +237,7 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addWidget(contest_mode_checkbox);
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
+    layout->addLayout(HLay(new QLabel(tr("Swap pile count")), swap_spinbox));
     layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
     layout->addLayout(HLay(second_general_checkbox, nolordskill_checkbox));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
@@ -1165,6 +1169,7 @@ bool ServerDialog::config(){
     Config.setValue("OperationTimeout", Config.OperationTimeout);
     Config.setValue("OperationNoLimit", Config.OperationNoLimit);
     Config.setValue("ContestMode", Config.ContestMode);
+    Config.setValue("SwapCount", swap_spinbox->value());
     Config.setValue("MaxChoice", maxchoice_spinbox->value());
     Config.setValue("ForbidSIMC", Config.ForbidSIMC);
     Config.setValue("DisableChat", Config.DisableChat);

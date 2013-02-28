@@ -134,6 +134,10 @@ int WheelFightScenario::lordGeneralCount() const{
     return Config.value("MaxChoice", 5).toInt();
 }
 
+int WheelFightScenario::swapCount() const{
+    return 998;
+}
+
 WheelFightScenario::WheelFightScenario()
     :Scenario("wheel_fight"){
     rule = new WheelFightScenarioRule(this);

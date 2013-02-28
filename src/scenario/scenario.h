@@ -31,6 +31,7 @@ public:
     virtual bool unloadLordSkill() const;
     virtual bool generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
+    virtual int swapCount() const;
     virtual QString setBackgroundMusic() const;
 
 protected:

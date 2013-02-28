@@ -15,7 +15,7 @@ return {
 	["Adviser"] = "军师",
 	["Peasant"] = "草寇",
 
-	["arthur_ferris"] = "三角含树", -- 杀上保下模式
+	["arthur_ferris"] = "杀上保下",
 --	["arthur_ferris"] = "圆桌骑士",
 
 -- 隐藏武将

@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>amazing_grace/0.png</file>
+		<file>amazing_grace/1.png</file>
+		<file>amazing_grace/2.png</file>
+		<file>amazing_grace/3.png</file>
+		<file>amazing_grace/4.png</file>
+		<file>amazing_grace/5.png</file>
+		<file>amazing_grace/6.png</file>
+		<file>amazing_grace/7.png</file>
+		<file>amazing_grace/8.png</file>
+		<file>amazing_grace/9.png</file>
+		<file>amazing_grace/10.png</file>
+		<file>amazing_grace/11.png</file>
+		<file>amazing_grace/12.png</file>
+		<file>amazing_grace/13.png</file>
+		<file>amazing_grace/14.png</file>
+		<file>amazing_grace/15.png</file>
+		<file>amazing_grace/16.png</file>
+		<file>amazing_grace/17.png</file>
+		<file>amazing_grace/18.png</file>
+		<file>amazing_grace/19.png</file>
+		<file>amazing_grace/20.png</file>
+		<file>amazing_grace/21.png</file>
+		<file>amazing_grace/22.png</file>
+		<file>amazing_grace/23.png</file>
+	</qresource>
+</RCC>

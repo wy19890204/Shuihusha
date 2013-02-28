@@ -112,8 +112,6 @@ Assassinate::Assassinate(Suit suit, int number)
 void Assassinate::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
 
-    room->setEmotion(effect.from, "assassinate");
-
     const Card *card1 = room->askForCard(effect.to, "jink", "@assas1:" + effect.from->objectName());
     const Card *card2;
     if(card1)

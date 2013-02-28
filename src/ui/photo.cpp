@@ -39,8 +39,9 @@ Photo::Photo()
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
     back_icon->setPos(3, 13);
-    back_icon->hide();
     back_icon->setZValue(0.2);
+    back_icon->setOpacity(0.6);
+    back_icon->hide();
 
     chain_icon = new Pixmap("image/system/chain.png");
     chain_icon->setParentItem(this);
@@ -671,23 +672,6 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // kingdom related
     painter->drawPixmap(3, 13, kingdom_frame);
 
-    if(player->isDead()){
-        int death_x = 0;
-
-        if(death_pixmap.isNull()){
-            QString path = player->getDeathPixmapPath();
-            death_pixmap.load(path);
-
-            /*if(path.contains("unknown"))
-                death_x = 23;
-            else*/
-                death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
-        }
-
-        painter->drawPixmap(death_x, 15, death_pixmap);
-        painter->setOpacity(4.0);
-    }
-
     int n = player->getHandcardNum();
     if(n > 0){
         painter->drawPixmap(2, 68, handcard);
@@ -697,9 +681,8 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     painter->setPen(Qt::white);
     QString state_str = player->getState();
-    if(!state_str.isEmpty() && state_str != "online"){
+    if(!state_str.isEmpty() && state_str != "online")
         painter->drawText(1, 100, Sanguosha->translate(state_str));
-    }
 
     drawHp(painter);
 
@@ -727,6 +710,22 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     chain_icon->setVisible(player->isChained());
     back_icon->setVisible(! player->faceUp());
     wake_icon->setVisible(!player->getWakeSkills().isEmpty());
+
+    if(player->isDead()){
+        int death_x = 0;
+
+        if(death_pixmap.isNull()){
+            QString path = player->getDeathPixmapPath();
+            death_pixmap.load(path);
+
+            /*if(path.contains("unknown"))
+                death_x = 23;
+            else*/
+                death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
+        }
+
+        painter->drawPixmap(death_x, 15, death_pixmap);
+    }
 }
 
 void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){

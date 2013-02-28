@@ -18,6 +18,7 @@ return {
 	["limited"] = "限定效果",
 	["chain"] = "铁索连环",
 	["draw-card"] = "摸牌",
+	["damage"] = "伤害",
 	["damage2"] = "伤害2",
 	["judgegood"] = "判定有利",
 	["judgebad"] = "判定有害",
@@ -66,4 +67,8 @@ return {
 	["^thunder_slash"] = "使用雷杀时播放",
 	["^tsunami"] = "被海啸席卷时播放",
 	["^weapon"] = "武器通用动画，发动武器效果时播放",
+	["^god_salvation"] = "使用梁山聚义时播放",
+	["^amazing_grace"] = "使用五谷丰登时播放",
+	["^archery_attack"] = "使用万箭齐发时播放",
+	["^inspiration"] = "使用逢凶化吉时播放",
 }

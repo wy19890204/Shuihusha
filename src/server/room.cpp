@@ -1393,14 +1393,13 @@ void Room::swapPile(){
             gameOver(winner_names.join("+"));
         }
     }
-    else{
-        if(mode != "wheel_fight" && times == 6)
+    else if(scenario){
+        if(times == scenario->swapCount())
             gameOver(".");
-        if(mode == "dusong"){
-            int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
-            if(times == limit)
-                gameOver(".");
-        }
+    }
+    else{
+        if(times == Config.value("SwapCount", 6).toInt())
+            gameOver(".");
     }
 
     qSwap(draw_pile, discard_pile);
@@ -1410,9 +1409,8 @@ void Room::swapPile(){
 
     qShuffle(*draw_pile);
 
-    foreach(int card_id, *draw_pile){
+    foreach(int card_id, *draw_pile)
         setCardMapping(card_id, NULL, Player::DrawPile);
-    }
 }
 
 QList<int> Room::getDiscardPile(){
@@ -4239,20 +4237,32 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             }
         }
         player->playCardEffect(card_use.card, mute);
-        if(card_use.card->isKindOf("Inspiration"))
-            broadcastInvoke("playAudio", "card/inspiration");
         if(card_use.card->isKindOf("Duel"))
             broadcastInvoke("playAudio", "card/duel");
-        if(card_use.card->isKindOf("Assassinate"))
+        if(card_use.card->isKindOf("Assassinate")){
             broadcastInvoke("playAudio", "card/assassinate");
-        if(card_use.card->isKindOf("GodSalvation"))
+            setEmotion(card_use.from, "assassinate");
+        }
+        if(card_use.card->isKindOf("GodSalvation")){
             broadcastInvoke("playAudio", "card/god_salvation");
-        if(card_use.card->isKindOf("AmazingGrace"))
+            setEmotion(card_use.from, "god_salvation");
+        }
+        if(card_use.card->isKindOf("AmazingGrace")){
             broadcastInvoke("playAudio", "card/amazing_grace");
-        if(card_use.card->isKindOf("SavageAssault"))
+            setEmotion(card_use.from, "amazing_grace");
+        }
+        if(card_use.card->isKindOf("SavageAssault")){
             broadcastInvoke("playAudio", "card/savage_assault");
-        if(card_use.card->isKindOf("ArcheryAttack"))
+            setEmotion(card_use.from, "savage_assault");
+        }
+        if(card_use.card->isKindOf("ArcheryAttack")){
             broadcastInvoke("playAudio", "card/archery_attack");
+            setEmotion(card_use.from, "archery_attack");
+        }
+        if(card_use.card->isKindOf("Inspiration")){
+            broadcastInvoke("playAudio", "card/inspiration");
+            setEmotion(card_use.from, "inspiration");
+        }
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
