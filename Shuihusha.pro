@@ -366,6 +366,7 @@ RESOURCES += \
     image/system/emotion/no-success.qrc \
     image/system/emotion/death.qrc \
     image/system/emotion/damage.qrc \
+    image/system/emotion/damage2.qrc \
     image/system/emotion/chain.qrc \
     image/system/emotion/armor.qrc \
     image/system/emotion/analeptic.qrc \

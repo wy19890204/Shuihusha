@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>damage2/0.png</file>
+		<file>damage2/1.png</file>
+		<file>damage2/2.png</file>
+		<file>damage2/3.png</file>
+		<file>damage2/4.png</file>
+		<file>damage2/5.png</file>
+		<file>damage2/6.png</file>
+		<file>damage2/7.png</file>
+		<file>damage2/8.png</file>
+		<file>damage2/9.png</file>
+		<file>damage2/10.png</file>
+		<file>damage2/11.png</file>
+		<file>damage2/12.png</file>
+		<file>damage2/13.png</file>
+		<file>damage2/14.png</file>
+	</qresource>
+</RCC>

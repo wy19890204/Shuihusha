@@ -2,16 +2,12 @@
 
 return {
 -- png emotions
-	["assassinate-b"] = "决斗(攻)",
-	["assassinate-a"] = "决斗(受)",
-	["damage2"] = "伤害2",
 	["win"] = "胜利",
 	["lose"] = "失败",
 	["victim"] = "好汉饶命",
 	["question"] = "质疑",
 	["no-question"] = "不质疑",
 
-	["^damage2"] = "第二种伤害效果",
 	["^win"] = "游戏结束时，胜利者播放",
 	["^lose"] = "游戏结束时，失败者播放",
 	["^question"] = "质疑",
@@ -22,6 +18,7 @@ return {
 	["limited"] = "限定效果",
 	["chain"] = "铁索连环",
 	["draw-card"] = "摸牌",
+	["damage2"] = "伤害2",
 	["judgegood"] = "判定有利",
 	["judgebad"] = "判定有害",
 	["pindian"] = "拼点",
@@ -43,6 +40,7 @@ return {
 	["^avoid"] = "当你受到的伤害被防止时播放",
 	["^chain"] = "使用铁索连环时播放",
 	["^damage"] = "受到普通伤害时播放",
+	["^damage2"] = "第二种伤害效果",
 	["^death"] = "阵亡时播放",
 	["^draw-card"] = "从牌堆摸一张以上的牌时播放",
 	["^duel"] = "决斗时播放",
