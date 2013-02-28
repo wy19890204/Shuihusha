@@ -4245,10 +4245,14 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             broadcastInvoke("playAudio", "card/duel");
         if(card_use.card->isKindOf("Assassinate"))
             broadcastInvoke("playAudio", "card/assassinate");
-        if(card_use.card->isKindOf("GodSalvation"))
+        if(card_use.card->isKindOf("GodSalvation")){
             broadcastInvoke("playAudio", "card/god_salvation");
-        if(card_use.card->isKindOf("AmazingGrace"))
+            setEmotion(card_use.from, "god_salvation");
+        }
+        if(card_use.card->isKindOf("AmazingGrace")){
             broadcastInvoke("playAudio", "card/amazing_grace");
+            setEmotion(card_use.from, "amazing_grace");
+        }
         if(card_use.card->isKindOf("SavageAssault"))
             broadcastInvoke("playAudio", "card/savage_assault");
         if(card_use.card->isKindOf("ArcheryAttack"))

@@ -3194,7 +3194,7 @@ void RoomScene::createStateItem(){
         connect(add_robot, SIGNAL(clicked()), ClientInstance, SLOT(addRobot()));
         connect(fill_robots, SIGNAL(clicked()), ClientInstance, SLOT(fillRobots()));
         connect(Self, SIGNAL(owner_changed(bool)), this, SLOT(showOwnerButtons(bool)));
-//@todo circular
+
         if(Config.CircularView){
             add_robot->setPos(-615, 205);
             fill_robots->setPos(-615, 260);
