@@ -2681,26 +2681,34 @@ void Room::damage(const DamageStruct &damage_data){
 
     if(!damage_data.chain && damage_data.from){
         // predamage
-        if(thread->trigger(Predamage, this, damage_data.from, data))
+        if(thread->trigger(Predamage, this, damage_data.from, data)){
+            setEmotion(damage_data.to, "avoid");
             return;
+        }
     }
 
     do{
         // DamagedProceed
         bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
-        if(prevent)
+        if(prevent){
+            setEmotion(damage_data.to, "avoid");
             break;
+        }
 
         // DamageProceed
         if(damage_data.from){
-            if(thread->trigger(DamageProceed, this, damage_data.from, data))
+            if(thread->trigger(DamageProceed, this, damage_data.from, data)){
+                setEmotion(damage_data.to, "avoid");
                 break;
+            }
         }
 
         // predamaged
         bool broken = thread->trigger(Predamaged, this, damage_data.to, data);
-        if(broken)
+        if(broken){
+            setEmotion(damage_data.to, "avoid");
             break;
+        }
 
         // damage done, should not cause damage process broken
         thread->trigger(DamageDone, this, damage_data.to, data);

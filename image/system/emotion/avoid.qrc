@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>avoid/0.png</file>
+		<file>avoid/1.png</file>
+		<file>avoid/2.png</file>
+		<file>avoid/3.png</file>
+		<file>avoid/4.png</file>
+		<file>avoid/5.png</file>
+		<file>avoid/6.png</file>
+		<file>avoid/7.png</file>
+		<file>avoid/8.png</file>
+		<file>avoid/9.png</file>
+		<file>avoid/10.png</file>
+		<file>avoid/11.png</file>
+		<file>avoid/12.png</file>
+		<file>avoid/13.png</file>
+		<file>avoid/14.png</file>
+	</qresource>
+</RCC>

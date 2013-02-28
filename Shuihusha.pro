@@ -375,6 +375,7 @@ RESOURCES += \
     image/system/emotion/assassinate.qrc \
     image/system/emotion/thunder_damage.qrc \
     image/system/emotion/fire_damage.qrc \
+    image/system/emotion/avoid.qrc \
     image/system/emotion/judgegood.qrc \
     image/system/emotion/judgebad.qrc \
     image/system/emotion/horse.qrc \
