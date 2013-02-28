@@ -394,6 +394,7 @@ RESOURCES += \
     image/system/emotion/pindian.qrc \
     image/system/emotion/god_salvation.qrc \
     image/system/emotion/amazing_grace.qrc \
+    image/system/emotion/archery_attack.qrc \
     backdrop/shuihu-cover.qrc \
     backdrop/shuihu.qrc
 }

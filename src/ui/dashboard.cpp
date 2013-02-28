@@ -153,9 +153,9 @@ void Dashboard::createRight(){
 
     back_icon = new Pixmap("image/system/big-back.png");
     back_icon->setParentItem(right);
-    //back_icon->setPos(59, 105);
     back_icon->setPos(22, 64);
     back_icon->setZValue(0.2);
+    back_icon->setOpacity(0.6);
     back_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);

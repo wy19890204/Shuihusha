@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>archery_attack/0.png</file>
+		<file>archery_attack/1.png</file>
+		<file>archery_attack/2.png</file>
+		<file>archery_attack/3.png</file>
+		<file>archery_attack/4.png</file>
+		<file>archery_attack/5.png</file>
+		<file>archery_attack/6.png</file>
+		<file>archery_attack/7.png</file>
+		<file>archery_attack/8.png</file>
+		<file>archery_attack/9.png</file>
+		<file>archery_attack/10.png</file>
+		<file>archery_attack/11.png</file>
+		<file>archery_attack/12.png</file>
+		<file>archery_attack/13.png</file>
+		<file>archery_attack/14.png</file>
+	</qresource>
+</RCC>

@@ -4253,8 +4253,10 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
         }
         if(card_use.card->isKindOf("SavageAssault"))
             broadcastInvoke("playAudio", "card/savage_assault");
-        if(card_use.card->isKindOf("ArcheryAttack"))
+        if(card_use.card->isKindOf("ArcheryAttack")){
             broadcastInvoke("playAudio", "card/archery_attack");
+            setEmotion(card_use.from, "archery_attack");
+        }
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();

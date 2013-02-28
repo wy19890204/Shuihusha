@@ -2528,7 +2528,7 @@ void RoomScene::changeHp(const QString &who, int delta, DamageStruct::Nature nat
             }
             else
                 setEmotion(who, qrand() % 2 == 0 ? "damage" : "damage2");
-            if(photo)
+            if(photo && delta != 0)
                 photo->tremble();
         //}
 
