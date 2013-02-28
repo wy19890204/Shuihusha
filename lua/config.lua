@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130224",
-	version_name = "终结版F4.0",
+	version = "20130228",
+	version_name = "终结版F4.2",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -40,9 +40,9 @@ config = {
 		"WheelFight",
 		"Warlords",
 		"ArthurFerris",
---		"Changban",
---		"Contract",
+		"Contract",
 		"Impasse",
+--		"Changban",
 --[[	"Zombie",
 		"Legend",]]
 		"Custom",

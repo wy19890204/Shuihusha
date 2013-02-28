@@ -1410,9 +1410,8 @@ void Room::swapPile(){
 
     qShuffle(*draw_pile);
 
-    foreach(int card_id, *draw_pile){
+    foreach(int card_id, *draw_pile)
         setCardMapping(card_id, NULL, Player::DrawPile);
-    }
 }
 
 QList<int> Room::getDiscardPile(){

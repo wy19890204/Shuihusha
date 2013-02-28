@@ -18,6 +18,7 @@ return {
 	["limited"] = "限定效果",
 	["chain"] = "铁索连环",
 	["draw-card"] = "摸牌",
+	["damage"] = "伤害",
 	["damage2"] = "伤害2",
 	["judgegood"] = "判定有利",
 	["judgebad"] = "判定有害",
