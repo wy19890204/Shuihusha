@@ -1393,14 +1393,13 @@ void Room::swapPile(){
             gameOver(winner_names.join("+"));
         }
     }
-    else{
-        if(mode != "wheel_fight" && times == 6)
+    else if(scenario){
+        if(times == scenario->swapCount())
             gameOver(".");
-        if(mode == "dusong"){
-            int limit = Config.BanPackages.contains("maneuvering") ? 3 : 2;
-            if(times == limit)
-                gameOver(".");
-        }
+    }
+    else{
+        if(times == Config.value("SwapCount", 6).toInt())
+            gameOver(".");
     }
 
     qSwap(draw_pile, discard_pile);
@@ -1410,9 +1409,8 @@ void Room::swapPile(){
 
     qShuffle(*draw_pile);
 
-    foreach(int card_id, *draw_pile){
+    foreach(int card_id, *draw_pile)
         setCardMapping(card_id, NULL, Player::DrawPile);
-    }
 }
 
 QList<int> Room::getDiscardPile(){

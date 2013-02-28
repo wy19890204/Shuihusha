@@ -18,6 +18,7 @@ public:
     virtual bool lordWelfare(const ServerPlayer *player) const;
     virtual bool generalSelection(Room *room) const;
     virtual bool setCardPiles(const Card *card) const;
+    virtual int swapCount() const;
 };
 
 #endif // DUSONGSCENARIO_H

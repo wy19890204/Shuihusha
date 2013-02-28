@@ -75,6 +75,10 @@ bool Scenario::setCardPiles(const Card *card) const{ // if the unuse this card, 
     //return false;
 }
 
+int Scenario::swapCount() const{  // game over in swap count, if max then return 998
+    return Config.value("SwapCount", 6).toInt();
+}
+
 void Scenario::onTagSet(Room *, const QString &) const{
     // dummy
 }
