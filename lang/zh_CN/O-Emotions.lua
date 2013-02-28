@@ -11,8 +11,7 @@ return {
 	["question"] = "质疑",
 	["no-question"] = "不质疑",
 
-	["^assassinate-b"] = "发动决斗者播放",
-	["^assassinate-a"] = "被决斗者播放",
+	["^assassinate"] = "发动决斗时播放",
 	["^damage2"] = "第二种伤害效果",
 	["^win"] = "游戏结束时，胜利者播放",
 	["^lose"] = "游戏结束时，失败者播放",

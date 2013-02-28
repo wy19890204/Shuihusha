@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>assassinate/0.png</file>
+		<file>assassinate/1.png</file>
+		<file>assassinate/2.png</file>
+		<file>assassinate/3.png</file>
+		<file>assassinate/4.png</file>
+		<file>assassinate/5.png</file>
+		<file>assassinate/6.png</file>
+		<file>assassinate/7.png</file>
+		<file>assassinate/8.png</file>
+		<file>assassinate/9.png</file>
+		<file>assassinate/10.png</file>
+		<file>assassinate/11.png</file>
+		<file>assassinate/12.png</file>
+		<file>assassinate/13.png</file>
+		<file>assassinate/14.png</file>
+		<file>assassinate/15.png</file>
+	</qresource>
+</RCC>

@@ -372,6 +372,7 @@ RESOURCES += \
     image/system/emotion/tsunami.qrc \
     image/system/emotion/hplost.qrc \
     image/system/emotion/awake.qrc \
+    image/system/emotion/assassinate.qrc \
     image/system/emotion/thunder_damage.qrc \
     image/system/emotion/fire_damage.qrc \
     image/system/emotion/judgegood.qrc \

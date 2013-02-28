@@ -140,10 +140,10 @@ return {
 	["#ShudanDamaged"] = "%from 受到了伤害，本回合内【杀】和非延时锦囊都将对其无效",
 	["#ShudanAvoid"] = "%from 的锁定技【%arg】被触发，【杀】和非延时锦囊对其无效",
 	["$xiayao1"] = "睡个好觉吧～",
-	["$xiayao2"] = "倒～倒了！",
+	["$xiayao2"] = "倒～倒～倒了！",
 	["$shudan1"] = "我逃～",
-	["$shudan2"] = "别～别杀我！",
-	["~baisheng"] = "我招～我全招了！",
+	["$shudan2"] = "别别～别杀我！",
+	["~baisheng"] = "我招我招～我全招了！",
 
 	["$shiqian"] = "107",
 	["#shiqian"] = "鼓上蚤", -- kou 3hp (xzdd)
