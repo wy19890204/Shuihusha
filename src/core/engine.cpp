@@ -70,7 +70,8 @@ Engine::Engine()
     modes["10pd"] = tr("10 players");
     modes["10p"] = tr("10 players (1 renegade)");
     modes["10pz"] = tr("10 players (0 renegade)");
-    modes["11p"] = tr("11 players");
+    //modes["11p"] = tr("11 players");
+    modes["12p"] = tr("12 players");
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(deleteLater()));
 
@@ -493,8 +494,9 @@ void Engine::getRoles(const QString &mode, char *roles) const{
             "ZCCFFFN", // 7
             "ZCCFFFFN", // 8
             "ZCCCFFFFN", // 9
-            "ZCCCFFFFFN" // 10
-            "ZCCCFFFFFNN" // 11
+            "ZCCCFFFFFN", // 10
+            "ZCCCFFFFFNN", // 11
+            "ZCCCFFFFFNNN"  // 12
         };
 
         static const char *table2[] = {
@@ -509,7 +511,9 @@ void Engine::getRoles(const QString &mode, char *roles) const{
             "ZCCFFFN", // 7
             "ZCCFFFNN", // 8
             "ZCCCFFFFN", // 9
-            "ZCCCFFFFNN" // 10
+            "ZCCCFFFFNN", // 10
+            "ZCCCFFFFFNN", // 11
+            "ZCCCFFFFFNNN"  // 12
         };
 
         const char **table = mode.endsWith("d") ? table2 : table1;

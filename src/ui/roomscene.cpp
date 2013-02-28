@@ -630,7 +630,7 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
         QPointF(( 228+stw*141)-(cxw*five*50)-(cxw*six_3v3*50)-(cxw*six*100)-(cxw*seven*100)-(cxw*eight*50)-(cxw*nine*20), (-70+stw)-(cxw*four*80)), // 8:xiaoqiao
     };
 */
-    static int indices_table[][9] = {
+    static int indices_table[][11] = {
         {4 }, // 2
         {3, 5}, // 3
         {2-cxw*2, 4, 6+cxw*2}, // 4
@@ -639,16 +639,18 @@ QList<QPointF> RoomScene::getPhotoPositions() const{
         {1-cxw, 2, 3, 5, 6, 7+cxw}, // 7
         {1-cxw, 2-cxw, 3, 4, 5, 6+cxw, 7+cxw}, // 8
         {0, 1, 2, 3, 5, 6, 7, 8}, // 9
-        {0, 1, 2, 3, 4, 5, 6, 7, 8} // 10
+        {0, 1, 2, 3, 4, 5, 6, 7, 8}, // 10
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, // 11
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10} // 12
     };
 
     static int indices_table_3v3[][5] = {
-        {0, 3, 4, 5, 8}, // lord
-        {0, 1, 3, 4, 5}, // loyalist (right), same with rebel (right)
-        {3, 4, 5, 7, 8}, // rebel (left), same with loyalist (left)
-        {0, 3, 4, 5, 8}, // renegade, same with lord
-        {0, 1, 3, 4, 5}, // rebel (right)
-        {3, 4, 5, 7, 8}, // loyalist (left)
+        {0, 2, 4, 6, 8}, // lord
+        {0, 1, 5, 6, 7}, // loyalist (right), same with rebel (right)
+        {1, 2, 3, 7, 8}, // rebel (left), same with loyalist (left)
+        {0, 2, 4, 6, 8}, // renegade, same with lord
+        {0, 1, 5, 6, 7}, // rebel (right)
+        {1, 2, 3, 7, 8}, // loyalist (left)
     };
 
     QList<QPointF> positions;
@@ -3159,7 +3161,8 @@ void RoomScene::createStateItem(){
     state_item->setZValue(-1.0);
     char roles[100] = {0};
     Sanguosha->getRoles(ServerInfo.GameMode, roles);
-    updateStateItem(roles);
+    if(photos.count() < 11 || Config.CircularView)
+        updateStateItem(roles);
 
     QGraphicsTextItem *text_item = addText("");
     text_item->setParentItem(state_item);
@@ -3193,8 +3196,8 @@ void RoomScene::createStateItem(){
         connect(Self, SIGNAL(owner_changed(bool)), this, SLOT(showOwnerButtons(bool)));
 //@todo circular
         if(Config.CircularView){
-            add_robot->setPos(-565,205);
-            fill_robots->setPos(-565, 260);
+            add_robot->setPos(-615, 205);
+            fill_robots->setPos(-615, 260);
         }
     }else
         control_panel = NULL;
