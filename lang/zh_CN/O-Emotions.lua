@@ -66,4 +66,6 @@ return {
 	["^thunder_slash"] = "使用雷杀时播放",
 	["^tsunami"] = "被海啸席卷时播放",
 	["^weapon"] = "武器通用动画，发动武器效果时播放",
+	["^god_salvation"] = "使用梁山聚义时播放",
+	["^amazing_grace"] = "使用五谷丰登时播放",
 }
