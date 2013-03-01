@@ -166,8 +166,8 @@ QWidget *CustomAssignDialog::createPileTab(){
 QVBoxLayout *CustomAssignDialog::createRight(){
     QVBoxLayout *vlayout = new QVBoxLayout;
     num_combobox = new QComboBox;
-    for(int i = 0; i <= 9; i++){
-        if(i < 9)
+    for(int i = 0; i <= 11; i++){
+        if(i < 11)
             num_combobox->addItem(tr("%1 persons").arg(QString::number(i+2)), i+2);
 
         QString player = (i == 0 ? "Player" : "AI");

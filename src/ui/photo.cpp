@@ -1,6 +1,5 @@
 #include "photo.h"
 #include "clientplayer.h"
-#include "settings.h"
 #include "carditem.h"
 #include "engine.h"
 #include "standard.h"
@@ -36,12 +35,17 @@ Photo::Photo()
 {
     setAcceptHoverEvents(true);
 
+    QSettings settings("image/system/photo.ini", QSettings::IniFormat);
+
     back_icon = new Pixmap("image/system/small-back.png");
     back_icon->setParentItem(this);
-    back_icon->setPos(3, 13);
-    back_icon->setZValue(0.2);
-    back_icon->setOpacity(0.6);
+    settings.beginGroup("back_icon");
+    QList<QVariant> coord = settings.value("pos").toList();
+    back_icon->setPos(coord.first().toReal(), coord.last().toReal());
+    back_icon->setZValue(settings.value("zvalue").toReal());
+    back_icon->setOpacity(settings.value("opacity").toReal());
     back_icon->hide();
+    settings.endGroup();
 
     chain_icon = new Pixmap("image/system/chain.png");
     chain_icon->setParentItem(this);
@@ -50,9 +54,13 @@ Photo::Photo()
 
     wake_icon = new Pixmap("image/system/sleep.png");
     wake_icon->setParentItem(this);
-    wake_icon->setPos(50, 8);
+    settings.beginGroup("wake_icon");
+    coord = settings.value("pos").toList();
+    wake_icon->setPos(coord.first().toReal(), coord.last().toReal());
+    wake_icon->setZValue(settings.value("zvalue").toReal());
+    wake_icon->setOpacity(settings.value("opacity").toReal());
     wake_icon->hide();
-    wake_icon->setZValue(0.4);
+    settings.endGroup();
 
     progress_bar = new QProgressBar;
     progress_bar->setMinimum(0);
@@ -65,8 +73,12 @@ Photo::Photo()
     timer_id = 0;
 
     frame_item = new QGraphicsPixmapItem(this);
-    frame_item->setPos(-6, -6);
-    frame_item->setZValue(-1.0);
+    settings.beginGroup("frame_item");
+    coord = settings.value("pos").toList();
+    frame_item->setPos(coord.first().toReal(), coord.last().toReal());
+    frame_item->setZValue(settings.value("zvalue").toReal());
+    frame_item->setOpacity(settings.value("opacity").toReal());
+    settings.endGroup();
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(this);
     widget->setWidget(progress_bar);
@@ -84,8 +96,12 @@ Photo::Photo()
     skill_name_item->setGraphicsEffect(drp);
 
     emotion_item = new QGraphicsPixmapItem(this);
-    emotion_item->moveBy(10, 0);
-    emotion_item->setZValue(0.9);
+    settings.beginGroup("emotion_item");
+    coord = settings.value("moveby").toList();
+    emotion_item->moveBy(coord.first().toReal(), coord.last().toReal());
+    emotion_item->setZValue(settings.value("zvalue").toReal());
+    emotion_item->setOpacity(settings.value("opacity").toReal());
+    settings.endGroup();
 
     avatar_area = new QGraphicsRectItem(0, 0, 122, 50, this);
     avatar_area->setPos(5, 15);
@@ -105,23 +121,38 @@ Photo::Photo()
     }
 
     kingdom_item = new QGraphicsPixmapItem(this);
-    kingdom_item->setPos(-12, -11);
-    kingdom_item->setZValue(0.5);
+    settings.beginGroup("kingdom_item");
+    coord = settings.value("pos").toList();
+    kingdom_item->setPos(coord.first().toReal(), coord.last().toReal());
+    kingdom_item->setZValue(settings.value("zvalue").toReal());
+    kingdom_item->setOpacity(settings.value("opacity").toReal());
+    settings.endGroup();
 
 #ifdef USE_RCC
     ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), this);
 #else
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), this);
 #endif
-    ready_item->setPos(86, 132);
+    settings.beginGroup("ready_item");
+    coord = settings.value("pos").toList();
+    ready_item->setPos(coord.first().toReal(), coord.last().toReal());
+    ready_item->setZValue(settings.value("zvalue").toReal());
+    ready_item->setOpacity(settings.value("opacity").toReal());
     ready_item->hide();
+    settings.endGroup();
 
     mark_item = new QGraphicsTextItem(this);
-    mark_item->setPos(0, 178);
+    settings.beginGroup("mark_item");
+    coord = settings.value("pos").toList();
+    mark_item->setPos(coord.first().toReal(), coord.last().toReal());
+    mark_item->setZValue(settings.value("zvalue").toReal());
+    mark_item->setOpacity(settings.value("opacity").toReal());
+    settings.endGroup();
     mark_item->setDefaultTextColor(Qt::white);
 
     role_combobox = NULL;
     pile_button = NULL;
+    settings.deleteLater();
 }
 
 void Photo::setOrder(int order){
@@ -503,10 +534,12 @@ void Photo::addCardItem(CardItem *card_item){
     update();
 }
 
-void Photo::drawMagatama(QPainter *painter, int index, const QPixmap &pixmap){
-    static const QPoint first_row(42, 67);
-    static const QPoint second_row(26, 84);
-    static const int skip =  16;
+void Photo::drawMagatama(QPainter *painter, int index, const QPixmap &pixmap, QSettings &settings){
+    QList<QVariant> coord = settings.value("magatama_item/first").toList();
+    static const QPoint first_row(coord.first().toReal(), coord.last().toReal());
+    coord = settings.value("magatama_item/second").toList();
+    static const QPoint second_row(coord.first().toReal(), coord.last().toReal());
+    static const int skip = settings.value("magatama_item/skip").toInt();
 
     // index is count from 0
     if(index >= 5){
@@ -522,7 +555,7 @@ void Photo::drawMagatama(QPainter *painter, int index, const QPixmap &pixmap){
     }
 }
 
-void Photo::drawHp(QPainter *painter){
+void Photo::drawHp(QPainter *painter, QSettings &settings){
     int hp = qMax(0, player->getHp());
 
     int index = 5;
@@ -535,9 +568,9 @@ void Photo::drawHp(QPainter *painter){
     int max_hp = player->getMaxHP();
     int i;
     for(i=0; i< hp; i++)
-        drawMagatama(painter, i, *magatama);
+        drawMagatama(painter, i, *magatama, settings);
     for(i=hp; i< max_hp; i++)
-        drawMagatama(painter, i, *zero_magatama);
+        drawMagatama(painter, i, *zero_magatama, settings);
 }
 
 void Photo::setFrame(FrameType type){
@@ -653,6 +686,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     if(!player)
         return;
+    QSettings settings("image/system/photo.ini", QSettings::IniFormat);
 
     painter->setPen(Qt::white);
     QString title = player->screenName();
@@ -674,17 +708,23 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     int n = player->getHandcardNum();
     if(n > 0){
-        painter->drawPixmap(2, 68, handcard);
+        settings.beginGroup("handcard_item");
+        QList<QVariant> coord = settings.value("pos").toList();
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
         painter->setPen(Qt::yellow);
-        painter->drawText(8, 86, QString::number(n));
+        coord = settings.value("text_pos").toList();
+        painter->drawText(coord.first().toReal(), coord.last().toReal(), QString::number(n));
+        settings.endGroup();
     }
 
     painter->setPen(Qt::white);
     QString state_str = player->getState();
-    if(!state_str.isEmpty() && state_str != "online")
-        painter->drawText(1, 100, Sanguosha->translate(state_str));
+    if(!state_str.isEmpty() && state_str != "online"){
+        QList<QVariant> coord = settings.value("state_item/pos").toList();
+        painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
+    }
 
-    drawHp(painter);
+    drawHp(painter, settings);
 
     if(player->getPhase() != Player::NotActive){
         static QList<QPixmap> phase_pixmaps;
@@ -712,20 +752,15 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 
     if(player->isDead()){
-        int death_x = 0;
-
         if(death_pixmap.isNull()){
             QString path = player->getDeathPixmapPath();
             death_pixmap.load(path);
-
-            /*if(path.contains("unknown"))
-                death_x = 23;
-            else*/
-                death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
+            death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
         }
-
-        painter->drawPixmap(death_x, 15, death_pixmap);
+        QList<QVariant> coord = settings.value("death_pixmap/pos").toList();
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), death_pixmap);
     }
+    settings.deleteLater();
 }
 
 void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){

@@ -4139,7 +4139,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="865"/>
         <source>Custom Mini Scene</source>
-        <translation>自定义小型场景</translation>
+        <translation>自定义模式...</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="836"/>

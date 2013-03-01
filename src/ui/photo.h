@@ -4,6 +4,7 @@
 #include "pixmap.h"
 #include "player.h"
 #include "carditem.h"
+#include "settings.h"
 
 #include <QGraphicsObject>
 #include <QPixmap>
@@ -103,8 +104,8 @@ private:
     QGraphicsRectItem *avatar_area, *small_avatar_area;
 
     void drawEquip(QPainter *painter, CardItem *equip, int order);
-    void drawHp(QPainter *painter);
-    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap);
+    void drawHp(QPainter *painter, QSettings &settings);
+    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap, QSettings &settings);
 };
 
 #endif // PHOTOBACK_H
