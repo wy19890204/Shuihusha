@@ -3335,6 +3335,11 @@ void Room::setEmotion(ServerPlayer *target, const QString &emotion){
         QString("%1:%2").arg(target->objectName()).arg(emotion.isEmpty() ? "." : emotion));
 }
 
+void Room::setEmotion(QList<ServerPlayer *> targets, const QString &emotion){
+    foreach(ServerPlayer *target, targets)
+        broadcastInvoke("setEmotion", QString("%1:%2").arg(target->objectName()).arg(emotion.isEmpty() ? "." : emotion));
+}
+
 #include <QElapsedTimer>
 
 void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
@@ -4241,27 +4246,27 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             broadcastInvoke("playAudio", "card/duel");
         if(card_use.card->isKindOf("Assassinate")){
             broadcastInvoke("playAudio", "card/assassinate");
-            setEmotion(card_use.from, "assassinate");
+            setEmotion(card_use.to, "assassinate");
         }
         if(card_use.card->isKindOf("GodSalvation")){
             broadcastInvoke("playAudio", "card/god_salvation");
-            setEmotion(card_use.from, "god_salvation");
+            setEmotion(card_use.to, "god_salvation");
         }
         if(card_use.card->isKindOf("AmazingGrace")){
             broadcastInvoke("playAudio", "card/amazing_grace");
-            setEmotion(card_use.from, "amazing_grace");
+            setEmotion(card_use.to, "amazing_grace");
         }
         if(card_use.card->isKindOf("SavageAssault")){
             broadcastInvoke("playAudio", "card/savage_assault");
-            setEmotion(card_use.from, "savage_assault");
+            setEmotion(card_use.to, "savage_assault");
         }
         if(card_use.card->isKindOf("ArcheryAttack")){
             broadcastInvoke("playAudio", "card/archery_attack");
-            setEmotion(card_use.from, "archery_attack");
+            setEmotion(card_use.to, "archery_attack");
         }
         if(card_use.card->isKindOf("Inspiration")){
             broadcastInvoke("playAudio", "card/inspiration");
-            setEmotion(card_use.from, "inspiration");
+            setEmotion(card_use.to, "inspiration");
         }
     }
     if(event == SlashEffect){

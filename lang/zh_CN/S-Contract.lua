@@ -2,7 +2,7 @@
 
 return {
 --	["contract"] = "魔法少女",
-	["contract"] = "佣兵天下",
+	["contract"] = "兄弟联",
 	["@contract"] = "你已经将 %src 彻底击溃，是否交给其一张牌，签订战友契约？",
 	["#Annex"] = "%from 与 %to 签订契约！成为一起战斗的同伴！",
 	["#Rupture"] = "%from 先走一步，和 %to 的契约解除",

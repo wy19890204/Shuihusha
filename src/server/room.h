@@ -228,6 +228,7 @@ public:
     void removeTag(const QString &key);
 
     void setEmotion(ServerPlayer *target, const QString &emotion);
+    void setEmotion(QList<ServerPlayer *> targets, const QString &emotion);
 
     Player::Place getCardPlace(int card_id) const;
     ServerPlayer *getCardOwner(int card_id) const;
