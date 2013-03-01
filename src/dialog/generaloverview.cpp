@@ -242,11 +242,20 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
 
-    QString resume = Sanguosha->translate("resume:" + general->objectName());
-    if(!resume.startsWith("resume:"))
+    QString resum = Sanguosha->translate("resume:" + general->objectName());
+    if(!resum.startsWith("resume:")){
+        QString resume = Sanguosha->translate("resume::");
+        if(general_name == "tora")
+            resume = Sanguosha->translate("resume:;");
+        for(int i=0; i < resum.length();i ++){
+            resume.append(resum.at(i));
+            if((i + 1) % 25 == 0)
+                resume.append("<br />");
+        }
         ui->generalPhoto->setToolTip(resume);
+    }
     else
-        ui->generalPhoto->setToolTip(Sanguosha->translate("DefaultResume"));
+        ui->generalPhoto->setToolTip(QString());
     ui->generalPhoto->setWhatsThis("FAQ:"); //@todo
     if(Self && general->objectName() == Self->getGeneralName())
         ui->changeGeneralButton->setEnabled(false);
