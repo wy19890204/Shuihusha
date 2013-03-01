@@ -41,8 +41,8 @@ Photo::Photo()
     back_icon->setParentItem(this);
     settings.beginGroup("back_icon");
     QList<QVariant> coord = settings.value("pos").toList();
-    back_icon->setPos(coord.first().toReal(), coord.last().toReal());
-    back_icon->setZValue(settings.value("zvalue").toReal());
+    back_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    back_icon->setZValue(coord.at(2).toReal());
     back_icon->setOpacity(settings.value("opacity").toReal());
     back_icon->hide();
     settings.endGroup();
@@ -56,8 +56,8 @@ Photo::Photo()
     wake_icon->setParentItem(this);
     settings.beginGroup("wake_icon");
     coord = settings.value("pos").toList();
-    wake_icon->setPos(coord.first().toReal(), coord.last().toReal());
-    wake_icon->setZValue(settings.value("zvalue").toReal());
+    wake_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    wake_icon->setZValue(coord.at(2).toReal());
     wake_icon->setOpacity(settings.value("opacity").toReal());
     wake_icon->hide();
     settings.endGroup();
@@ -75,8 +75,8 @@ Photo::Photo()
     frame_item = new QGraphicsPixmapItem(this);
     settings.beginGroup("frame_item");
     coord = settings.value("pos").toList();
-    frame_item->setPos(coord.first().toReal(), coord.last().toReal());
-    frame_item->setZValue(settings.value("zvalue").toReal());
+    frame_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    frame_item->setZValue(coord.at(2).toReal());
     frame_item->setOpacity(settings.value("opacity").toReal());
     settings.endGroup();
 
@@ -123,8 +123,8 @@ Photo::Photo()
     kingdom_item = new QGraphicsPixmapItem(this);
     settings.beginGroup("kingdom_item");
     coord = settings.value("pos").toList();
-    kingdom_item->setPos(coord.first().toReal(), coord.last().toReal());
-    kingdom_item->setZValue(settings.value("zvalue").toReal());
+    kingdom_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    kingdom_item->setZValue(coord.at(2).toReal());
     kingdom_item->setOpacity(settings.value("opacity").toReal());
     settings.endGroup();
 
@@ -135,8 +135,8 @@ Photo::Photo()
 #endif
     settings.beginGroup("ready_item");
     coord = settings.value("pos").toList();
-    ready_item->setPos(coord.first().toReal(), coord.last().toReal());
-    ready_item->setZValue(settings.value("zvalue").toReal());
+    ready_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    ready_item->setZValue(coord.at(2).toReal());
     ready_item->setOpacity(settings.value("opacity").toReal());
     ready_item->hide();
     settings.endGroup();
@@ -144,8 +144,8 @@ Photo::Photo()
     mark_item = new QGraphicsTextItem(this);
     settings.beginGroup("mark_item");
     coord = settings.value("pos").toList();
-    mark_item->setPos(coord.first().toReal(), coord.last().toReal());
-    mark_item->setZValue(settings.value("zvalue").toReal());
+    mark_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    mark_item->setZValue(coord.at(2).toReal());
     mark_item->setOpacity(settings.value("opacity").toReal());
     settings.endGroup();
     mark_item->setDefaultTextColor(Qt::white);

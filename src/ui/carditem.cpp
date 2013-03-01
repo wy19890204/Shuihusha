@@ -20,8 +20,8 @@ CardItem::CardItem(const Card *card)
     Q_ASSERT(card != NULL);
 
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
-    cardsuit_pixmap.load(QString("image/system/cardsuit/%1.png").arg(card->getSuitString()));
-    number_pixmap.load(QString("image/system/%1/%2.png").arg(card->isBlack()?"black":"red").arg(card->getNumberString()));
+    cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
+    number_pixmap.load(QString("image/system/card/%1/%2.png").arg(card->isBlack() ? "black" : "red").arg(card->getNumberString()));
     icon_pixmap.load(card->getIconPath());
     setTransformOriginPoint(pixmap.width()/2, pixmap.height()/2);
 
