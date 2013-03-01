@@ -216,7 +216,7 @@ public:
             room->sendLog(log);
             //room->playSkillEffect(objectName());
 
-            room->setEmotion(effect.to, "victim");
+            room->setEmotion(effect.to, effect.to->getGeneral()->isMale() ? "victim" : "victimf");
             room->getThread()->delay();
             room->slashResult(effect, NULL);
             return true;

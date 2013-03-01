@@ -364,6 +364,7 @@ RESOURCES += \
     image/system/emotion/success.qrc \
     image/system/emotion/peach.qrc \
     image/system/emotion/no-success.qrc \
+    image/system/emotion/revive.qrc \
     image/system/emotion/death.qrc \
     image/system/emotion/damage.qrc \
     image/system/emotion/damage2.qrc \

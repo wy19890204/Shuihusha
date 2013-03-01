@@ -1,0 +1,22 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>revive/0.png</file>
+		<file>revive/1.png</file>
+		<file>revive/2.png</file>
+		<file>revive/3.png</file>
+		<file>revive/4.png</file>
+		<file>revive/5.png</file>
+		<file>revive/6.png</file>
+		<file>revive/7.png</file>
+		<file>revive/8.png</file>
+		<file>revive/9.png</file>
+		<file>revive/10.png</file>
+		<file>revive/11.png</file>
+		<file>revive/12.png</file>
+		<file>revive/13.png</file>
+		<file>revive/14.png</file>
+		<file>revive/15.png</file>
+		<file>revive/16.png</file>
+		<file>revive/17.png</file>
+	</qresource>
+</RCC>

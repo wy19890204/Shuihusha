@@ -201,6 +201,7 @@ void Room::revivePlayer(ServerPlayer *player){
 
     broadcastInvoke("revivePlayer", player->objectName());
     updateStateItem();
+    setEmotion(player, "revive");
 
     thread->addPlayerSkills(player, true);
 
@@ -475,7 +476,7 @@ void Room::slashEffect(const SlashEffectStruct &effect){
             setEmotion(effect.from, "killer");
         break;
     }
-    setEmotion(effect.to, "victim");
+    setEmotion(effect.to, effect.to->getGeneral()->isMale() ? "victim" : "victimf");
 
     setTag("LastSlashEffect", data);
     bool broken = thread->trigger(SlashEffect, this, effect.from, data);
