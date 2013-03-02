@@ -5,7 +5,8 @@ public:
     ContractScenarioRule(Scenario *scenario)
         :ScenarioRule(scenario)
     {
-        events << GameStart << GameStarted << GameOverJudge << PreDeath << Death;
+        events << GameStart << GameStarted << GameOverJudge
+                << RewardAndPunish << PreDeath << Death;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -42,6 +43,9 @@ public:
                     room->gameOver(players.first()->objectName());
                     return true;
                 }
+                return true;
+            }
+        case RewardAndPunish:{
                 return true;
             }
         case PreDeath:{

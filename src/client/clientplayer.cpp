@@ -120,7 +120,9 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
 
 QString ClientPlayer::getDeathPixmapPath() const{
     QString basename = "unknown";
-    if(ServerInfo.GameMode == "06_3v3" || ServerInfo.GameMode == "warlords")
+    if(ServerInfo.GameMode == "06_3v3" ||
+       ServerInfo.GameMode == "warlords" ||
+       ServerInfo.GameMode == "landlord")
         basename = getScreenRole();
     else if(ServerInfo.EnableHegemony)
         basename.clear();
@@ -177,7 +179,8 @@ void ClientPlayer::setMark(const QString &mark, int value){
             if(!QFile::exists(path))
                 path = QString("extensions/generals/mark/%1.png").arg(itor.key());
             QString mark_text = QString("<img src='%1' />").arg(path);
-            QString mark_text_small = QString("<img src='%1' width='15' height='15' />").arg(path);
+            QString wid = itor.key().startsWith("@ctt") ? "" : "width='15' ";
+            QString mark_text_small = QString("<img src='%1' %2height='15' />").arg(path).arg(wid);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
                 mark_text_small.append(QString("x%1").arg(itor.value()));

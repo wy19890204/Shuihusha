@@ -840,8 +840,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(room->getMode() == "06_3v3")
             killer->drawCards(3);
         else{
-            if(room->getMode() == "contract")
-                return true;
             if(victim->getRole() == "rebel" && killer != victim){
                 killer->drawCards(3);
             }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){

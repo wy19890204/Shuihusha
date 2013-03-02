@@ -311,9 +311,8 @@ QString Player::getScreenRole() const{
     case 4: return landlord_mode[role]; break;
     case 5: return warlords_mode[role]; break;
     default:
-        break;
+        return role;
     }
-    return role;
 }
 
 Player::Role Player::getRoleEnum() const{

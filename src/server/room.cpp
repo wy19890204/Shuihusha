@@ -260,7 +260,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
     LogMessage log;
     log.to << victim;
 	QString rol = Config.EnableHegemony ? victim->getKingdom() :
-		victim->property("panxin").toBool() ? "unknown" : victim->getRole();
+                victim->property("panxin").toBool() ? "unknown" : victim->getScreenRole();
     log.arg = rol;
     log.from = killer;
 
