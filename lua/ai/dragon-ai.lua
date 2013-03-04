@@ -228,7 +228,67 @@ end
 
 -- shantinggui
 -- shuizhen
+sgs.ai_skill_cardask["@shuizhen1"] = function(self, data)
+	local damage = data:toDamage()
+	if not self:isFriend(damage.to) or damage.damage < 1 then return "." end
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, false)
+	return cards[1]:getEffectiveId()
+end
+sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
+	local damage = data:toDamage()
+--	local players = {}
+	local fri = #(self:getChainedEnemies())
+	local eni = #(self:getChainedFriends())
+	local fri, eni = 0, 0
+	for _, t in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+		if t ~= damage.to and self:damageIsEffective(t, sgs.DamageStruct_Thunder, damage.from) then
+			if self:isEnemy(t) then
+				eni = eni + 1
+			else
+				fri = fri + 1
+			end
+--			table.insert(players, t)
+		end
+	end
+	if eni > fri then return "." end
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, false)
+	for _, fcard in ipairs(cards) do
+		if fcard:inherits("BasicCard") and
+			not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+			return fcard:getEffectiveId()
+		end
+	end
+	return "."
+end
+
 -- yanmo
+sgs.ai_skill_choice["yanmo"] = function(self, choice, data)
+	local yan, mo = {}, {}
+	for _, tmp in sgs.qlist(self.room:getAlivePlayers()) do
+		if tmp:getWeapon() or tmp:getArmor() then
+			table.insert(yan, tmp)
+		end
+		if tmp:getOffensiveHorse() or tmp:getDefensiveHorse() then
+			table.insert(mo, tmp)
+		end
+	end
+	if choice:match("yan") then
+		for _, tmp in ipairs(yan) do
+			if self:isEnemy(tmp) then
+				return "yan"
+			end
+		end
+	elseif choice:match("mo") then
+		for _, tmp in ipairs(mo) do
+			if self:isEnemy(tmp) then
+				return "mo"
+			end
+		end
+	end
+	return "nil"
+end
 
 -- lizhu
 -- chuqiao

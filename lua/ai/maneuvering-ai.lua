@@ -163,9 +163,9 @@ end
 
 function SmartAI:isGoodChainTarget(who)
 	local haslord
-	local good = #(self:getChainedEnemies(self.player))
-	local bad = #(self:getChainedFriends(self.player))
-	for _, friend in ipairs(self:getChainedFriends(self.player)) do
+	local good = #(self:getChainedEnemies())
+	local bad = #(self:getChainedFriends())
+	for _, friend in ipairs(self:getChainedFriends()) do
 		if friend:getRole() == "lord" then
 			return false
 		end

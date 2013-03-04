@@ -448,8 +448,9 @@ public:
                 }
             }
             else{
-                if(damage.nature == DamageStruct::Thunder &&
-                   room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
+                if(damage.nature != DamageStruct::Thunder || water == damage.from || water == damage.to)
+                    return false;
+                if(room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
                     foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
                         if(tmp == forbider)

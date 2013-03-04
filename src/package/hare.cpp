@@ -1042,7 +1042,7 @@ public:
 
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *emperor, QVariant &data) const{
         if(e == PhaseChange){
-            return emperor->getPhase() == Player::Discard &&
+            return emperor->getPhase() == Player::Discard && !emperor->isNude() &&
                room->askForUseCard(emperor, "@@shemi", "@shemi", true);
         }
         else{
