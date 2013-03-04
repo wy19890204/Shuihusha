@@ -313,6 +313,7 @@ QString Player::getScreenRole() const{
     default:
         return role;
     }
+    return role;
 }
 
 Player::Role Player::getRoleEnum() const{

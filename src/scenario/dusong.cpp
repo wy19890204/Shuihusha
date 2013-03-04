@@ -183,6 +183,7 @@ public:
                 CardUseStruct use = data.value<CardUseStruct>();
                 if(use.card->inherits("Weapon") && player->askForSkillInvoke("weapon_recast", data)){
                     player->playCardEffect("@recast");
+                    room->setEmotion(use.from, "cards/recast");
                     room->throwCard(use.card, use.from);
                     player->drawCards(1, false);
                     return true;

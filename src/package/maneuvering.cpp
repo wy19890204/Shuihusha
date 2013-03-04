@@ -338,6 +338,7 @@ void IronChain::onUse(Room *room, const CardUseStruct &card_use) const{
     if(card_use.to.isEmpty()){
         room->moveCardTo(this, NULL, Player::DiscardedPile);
         card_use.from->playCardEffect("@recast");
+        room->setEmotion(card_use.from, "cards/recast");
         card_use.from->drawCards(1);
     }else
         TrickCard::onUse(room, card_use);

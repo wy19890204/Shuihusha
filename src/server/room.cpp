@@ -4269,6 +4269,8 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
             broadcastInvoke("playAudio", "card/inspiration");
             setEmotion(card_use.to, "inspiration");
         }
+        if(!card_use.card->isVirtualCard())
+            setEmotion(card_use.from, "cards/" + card_use.card->objectName());
     }
     if(event == SlashEffect){
         SlashEffectStruct effect = data.value<SlashEffectStruct>();

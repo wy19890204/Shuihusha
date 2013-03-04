@@ -66,12 +66,16 @@ void PixmapAnimation::start(bool permanent,int interval)
 PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, const QString &emotion)
 {
     PixmapAnimation *pma = new PixmapAnimation();
+    if(emotion.contains("skill"))
+        pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
+    else{
 #ifdef USE_RCC
-    QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
-    pma->setPath(QString(":/%1/").arg(emotion));
+        QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
+        pma->setPath(QString(":/%1/").arg(emotion));
 #else
-    pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
+        pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
 #endif
+    }
     bool returnpma = false;
     if(pma->valid()){
         if(emotion == "horse")
