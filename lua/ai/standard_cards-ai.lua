@@ -1063,7 +1063,7 @@ function SmartAI:useCardCollateral(card, use)
 						if use.to then use.to:append(enemy2) end
 						return
 					else
-						n = 1;
+						n = 1
 						final_enemy = enemy2
 					end
 				end

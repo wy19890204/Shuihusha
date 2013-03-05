@@ -103,11 +103,11 @@ function SmartAI:initialize(player)
 	self.lua_ai.callback = function(full_method_name, ...)
 		--The __FUNCTION__ macro is defined as CLASS_NAME::SUBCLASS_NAME::FUNCTION_NAME
 		--in MSVC, while in gcc only FUNCTION_NAME is in place.
-		local method_name_start = 1;
+		local method_name_start = 1
 		while true do
-			local found = string.find(full_method_name, "::", method_name_start);
+			local found = string.find(full_method_name, "::", method_name_start)
 			if found ~= nil then
-				method_name_start = found + 2;
+				method_name_start = found + 2
 			else
 				break
 			end
@@ -238,12 +238,15 @@ end
 
 function SmartAI:getUseValue(card)
 	local class_name = card:className()
-	local v = 0
+	local v = sgs.ai_use_value[class_name] or 0
+	if class_name == "LuaSkillCard" and card:isKindOf("LuaSkillCard") then
+		v = sgs.ai_use_value[card:objectName()] or 0
+	end
 
 	if card:getTypeId() == sgs.Card_Equip then
 		if self:hasEquip(card) then
-			if card:inherits("OffensiveHorse") and self.player:getAttackRange()>2 then return 5.5 end
-			if card:inherits("DefensiveHorse") and self:isEquip("EightDiagram") then return 5.5 end
+			if card:isKindOf("OffensiveHorse") and self.player:getAttackRange()>2 then return 5.5 end
+			if card:isKindOf("DefensiveHorse") and self:isEquip("EightDiagram") then return 5.5 end
 			return 9
 		end
 		if not self:getSameEquip(card) then v = 6.7 end
@@ -280,14 +283,13 @@ function SmartAI:getUseValue(card)
 		if v == 0 then v = 10 end
 	end
 
-	if v == 0 then v = sgs.ai_use_value[class_name] or 0 end
 	return v
 end
 
 function SmartAI:getUsePriority(card)
 	local class_name = card:className()
 	local v = 0
-	if card:inherits("EquipCard") then
+	if card:isKindOf("EquipCard") then
 		if self:hasSkills(sgs.lose_equip_skill) then return 10 end
 		if card:inherits("Armor") and not self.player:getArmor() then v = 6
 		elseif card:inherits("Weapon") and not self.player:getWeapon() then v = 5.7
@@ -500,11 +502,23 @@ end
 -- compare functions
 sgs.ai_compare_funcs = {
 	hp = function(a, b)
-		return a:getHp() < b:getHp()
+		local c1 = a:getHp()
+		local c2 = b:getHp()
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 < c2
+		end
 	end,
 
 	hp2 = function(a, b)
-		return a:getHp() > b:getHp()
+		local c1 = a:getHp()
+		local c2 = b:getHp()
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 > c2
+		end
 	end,
 
 	maxhp = function(a, b)
@@ -512,19 +526,43 @@ sgs.ai_compare_funcs = {
 	end,
 
 	handcard = function(a, b)
-		return a:getHandcardNum() < b:getHandcardNum()
+		local c1 = a:getHandcardNum()
+		local c2 = b:getHandcardNum()
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 < c2
+		end
 	end,
 
 	handcard2 = function(a, b)
-		return a:getHandcardNum() > b:getHandcardNum()
+		local c1 = a:getHandcardNum()
+		local c2 = b:getHandcardNum()
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 > c2
+		end
 	end,
 
 	hp_handcard = function(a, b)
-		return a:getHandcardNum() + a:getHp() * 2 < b:getHandcardNum() + b:getHp() * 2
+		local c1 = a:getHandcardNum() + a:getHp() * 2
+		local c2 = b:getHandcardNum() + b:getHp() * 2
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 < c2
+		end
 	end,
 
 	hp_handcard2 = function(a, b)
-		return a:getHandcardNum() + a:getHp() * 2 > b:getHandcardNum() + b:getHp() * 2
+		local c1 = a:getHandcardNum() + a:getHp() * 2
+		local c2 = b:getHandcardNum() + b:getHp() * 2
+		if c1 == c2 then
+			return sgs.ai_compare_funcs.defense(a, b)
+		else
+			return c1 > c2
+		end
 	end,
 
 	equip = function(a, b)
@@ -602,11 +640,11 @@ function SmartAI:sortByUseValue(cards,inverse)
 		local value2 = self:getUseValue(b)
 
 		if value1 ~= value2 then
-				if not inverse then return value1 > value2
-				else return value1 < value2
-				end
+			if not inverse then return value1 > value2 end
+			return value1 < value2
 		else
-				return a:getNumber() > b:getNumber()
+			if not inverse then return a:getNumber() > b:getNumber() end
+			return a:getNumber() < b:getNumber()
 		end
 	end
 
@@ -644,15 +682,23 @@ function SmartAI:sortByDynamicUsePriority(cards)
 	table.sort(cards, compare_func)
 end
 
-function SmartAI:sortByCardNeed(cards)
+function SmartAI:sortByCardNeed(cards, inverse)
 	local compare_func = function(a,b)
 		local value1 = self:cardNeed(a)
 		local value2 = self:cardNeed(b)
-
-		if value1 ~= value2 then
-			return value1 < value2
+		
+		if not inverse then
+			if value1 ~= value2 then
+				return value1 < value2
+			else
+				return a:getNumber() < b:getNumber()
+			end
 		else
-			return a:getNumber() > b:getNumber()
+			if value1 ~= value2 then
+				return value1 > value2
+			else
+				return a:getNumber() > b:getNumber()
+			end
 		end
 	end
 
@@ -903,7 +949,8 @@ end
 function sgs.isRolePredictable()
 	if sgs.GetConfig("RolePredictable", true) then return true end
 	local mode = string.lower(global_room:getMode())
-	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("dusong") or mode == "06_3v3" or mode:find("mini") then return true end
+	if (mode:find("p") and mode < "04p") or (not mode:find("p")) then return true end
+--	if not mode:find("0") or mode:find("03p") or mode:find("02_1v1") or mode:find("dusong") or mode == "06_3v3" or mode:find("mini") then return true end
 	return false
 end
 
@@ -936,7 +983,7 @@ end
 sgs.ai_card_intention.general=function(from,to,level)
 	if sgs.isRolePredictable() then return end
 	if not to then global_room:writeToConsole(debug.traceback()) return end
-	if from:isLord() then return end
+	if from:isLord() or level == 0 then return end
 	--sgs.outputProcessValues(from:getRoom())
 	sgs.outputRoleValues(from, level)
 
@@ -1164,6 +1211,7 @@ function sgs.gameProcess(room)
 		--end
 	end
 	local diff = loyal_value - rebel_value
+	if #arg>0 and arg[1]==1 then return diff end
 
 	if diff >= 2 then
 		if health then return "loyalist"
@@ -1731,7 +1779,7 @@ function SmartAI:askForChoice(skill_name, choices, data)
 		if skill and choices:match(skill:getDefaultChoice(self.player)) then
 			return skill:getDefaultChoice(self.player)
 		else
-			local choice_table = choices:split("+");
+			local choice_table = choices:split("+")
 			local r = math.random(1, #choice_table)
 			return choice_table[r]
 		end
@@ -2933,7 +2981,7 @@ function SmartAI:evaluatePlayerCardsNum(class_name, player)
 	end
 
 	local percentage = (#(self:getCardsFromGame(class_name)) - #(self:getCardsFromDiscardPile(class_name)))/length
-	local modified = 1;
+	local modified = 1
 	if class_name == "Jink" then modified = 1.23
 	elseif class_name == "Analeptic" then modified = 1.17
 	elseif class_name == "Peach" then modified = 1.19

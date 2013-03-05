@@ -5740,6 +5740,7 @@ zgzhangong1 = sgs.CreateTriggerSkill{
 
 	on_trigger = function(self, event, player, data)
 		local room = player:getRoom()
+		if not room:getOwner() then return false end
 		local owner= room:getOwner():objectName()==player:objectName()
 
 		if event ==sgs.GameStart and owner and not room:getTag("zg_init_game"):toBool() then
@@ -5793,6 +5794,7 @@ zgzhangong2 = sgs.CreateTriggerSkill{
 	priority = 6,
 	on_trigger = function(self, event, player, data)
 		local room = player:getRoom()
+		if not room:getOwner() then return false end
 		local owner= room:getOwner():objectName()==player:objectName()
 
 		local callbacks=zgfunc[event]

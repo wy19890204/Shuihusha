@@ -1,6 +1,7 @@
 function speak(to,type)
 	if not sgs.GetConfig("AIChat", true) then return end
 	if not to or to:getState() ~= "robot" then return end
+	type = type or "no_type"
 	
 	local i =math.random(1,#sgs.ai_chat[type])
 	to:speak(sgs.ai_chat[type][i])
@@ -77,6 +78,10 @@ end
 
 sgs.ai_chat={}
 
+sgs.ai_chat.no_type=
+{
+"我无话可说。"
+}
 -- snatch dismantlement
 sgs.ai_chat.hostile_female=
 {

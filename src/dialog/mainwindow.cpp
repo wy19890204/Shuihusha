@@ -799,9 +799,8 @@ public:
     }
 
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *){
-        foreach(QGraphicsItem *item, childItems()){
+        foreach(QGraphicsItem *item, childItems())
             item->setVisible(! item->isVisible());
-        }
     }
 };
 
@@ -859,7 +858,6 @@ void MeleeDialog::onGameOver(const QString &winner){
             losers << Sanguosha->translate(p->getGeneralName());
 
         if(p->getGeneralName() == to_test){
-
             if(won){
                 if(room_item) room_item->changePixmap("image/system/frog/good.png");
                 updateResultBox(p->getRole(),1);

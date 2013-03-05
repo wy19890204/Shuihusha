@@ -339,8 +339,10 @@ public:
 
 %extend ServerPlayer{
 	void speak(const char *msg){
-		QString str = QByteArray(msg).toBase64();
-		$self->getRoom()->speakCommand($self, str);
+		if(msg){
+			QString str = QByteArray(msg).toBase64();
+			$self->getRoom()->speakCommand($self, str);
+		}
 	}
 
 	bool isSkipped(Player::Phase phase){
