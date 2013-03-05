@@ -694,21 +694,22 @@ MeleeDialog::MeleeDialog(QWidget *parent)
     stage_count = 0;
 
     setWindowTitle(tr("AI Melee"));
+    setSizeGripEnabled(true);
+    setMaximumHeight(550);
+//    setMinimumSize(200, 200);
 
-//    QGroupBox *general_box = createGeneralBox();
-//    QGroupBox *result_box = createResultBox();
     general_box = createGeneralBox();
     result_box = createResultBox();
     server_log = new QTextEdit;
     QGraphicsView *record_view = new QGraphicsView;
-    record_view->setMinimumWidth(500);
+    record_view->setMinimumWidth(300);
 
     record_scene = new QGraphicsScene;
     record_view->setScene(record_scene);
 
     general_box->setMaximumWidth(250);
     result_box->setMaximumWidth(250);
-    server_log->setMinimumWidth(400);
+    server_log->setMinimumWidth(300);
     server_log->setReadOnly(true);
     server_log->setFrameStyle(QFrame::Box);
     server_log->setProperty("description", true);
@@ -808,14 +809,14 @@ typedef RoomItem *RoomItemStar;
 Q_DECLARE_METATYPE(RoomItemStar);
 
 void MeleeDialog::startTest(){
-    foreach(RoomItemStar room_item, room_items){
+    foreach(RoomItemStar room_item, room_items)
         if(room_item) delete room_item;
-    }
+
     room_items.clear();
 
-    if(server){
+    if(server)
         server->gamesOver();
-    }else{
+    else{
         server = new Server(this->parentWidget());
         server->listen();
         connect(server, SIGNAL(server_message(QString)), server_log,SLOT(append(QString)));
@@ -938,6 +939,7 @@ void MeleeDialog::setGeneral(const QString &general_name){
 
     if(general){
         avatar_button->setIcon(QIcon(general->getPixmapPath("card")));
+        avatar_button->setToolTip(general->getSkillDescription());
         Config.setValue("MeleeGeneral", general_name);
         avatar_button->setProperty("to_test", general_name);
     }

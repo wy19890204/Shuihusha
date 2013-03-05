@@ -438,7 +438,7 @@ public:
                    room->askForCard(water, ".", "@shuizhen1", true, data, CardDiscarded)){
                     room->playSkillEffect(objectName(), qrand() % 3 + 1);
                     LogMessage log;
-                    log.type = "#Shuizhen";
+                    log.type = "#Shuizhen1";
                     log.from = water;
                     log.arg = objectName();
                     log.to << damage.to;
@@ -452,6 +452,12 @@ public:
                     return false;
                 if(room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
+                    LogMessage log;
+                    log.type = "#Shuizhen2";
+                    log.from = water;
+                    log.arg = objectName();
+                    room->sendLog(log);
+
                     foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
                         if(tmp == forbider)
                             continue;

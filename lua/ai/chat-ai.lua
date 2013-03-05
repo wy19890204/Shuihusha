@@ -1,10 +1,10 @@
-function speak(to,type)
+function speak(to, typpe)
 	if not sgs.GetConfig("AIChat", true) then return end
 	if not to or to:getState() ~= "robot" then return end
-	type = type or "no_type"
+	typpe = typpe or "no_type"
 	
-	local i =math.random(1,#sgs.ai_chat[type])
-	to:speak(sgs.ai_chat[type][i])
+	local i =math.random(1,#sgs.ai_chat[typpe])
+	to:speak(sgs.ai_chat[typpe][i])
 end
 
 function speakTrigger(card,from,to,event)
@@ -64,16 +64,16 @@ function speakTrigger(card,from,to,event)
 	end
 end
 
-function SmartAI:speak(type, isFemale, to)
+function SmartAI:speak(typpe, isFemale, to)
 	if not sgs.GetConfig("AIChat", true) then return end
 	to = to or self.player
 	if to:getState() ~= "robot" then return end
 	
-	local i =math.random(1,#sgs.ai_chat[type])
+	local i =math.random(1,#sgs.ai_chat[typpe])
 	if isFemale then
-		type = type .. "_female"
+		typpe = typpe .. "_female"
 	end
-	to:speak(sgs.ai_chat[type][i])
+	to:speak(sgs.ai_chat[typpe][i])
 end
 
 sgs.ai_chat={}
