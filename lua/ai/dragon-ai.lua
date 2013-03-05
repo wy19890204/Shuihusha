@@ -264,30 +264,37 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 end
 
 -- yanmo
+sgs.ai_skill_use["@@yanmo"] = function(self, prompt)
+	local ene2, ene1 = {}, {}
+	for _, enemy in ipairs(self.enemies) do
+		if (enemy:getWeapon() and enemy:getArmor()) or
+			(enemy:getOffensiveHorse() and enemy:getDefensiveHorse()) then
+			table.insert(ene2, enemy)
+		end
+	end
+	if #ene2 > 0 then
+		self:sort(ene2)
+		return "@YanmoCard=.->" .. ene2[1]:objectName()
+	end
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:hasEquip() then
+			table.insert(ene1, enemy)
+		end
+	end
+	if #ene1 > 0 then
+		self:sort(ene1)
+		return "@YanmoCard=.->" .. ene1[1]:objectName()
+	end
+	return "."
+end
 sgs.ai_skill_choice["yanmo"] = function(self, choice, data)
-	local yan, mo = {}, {}
-	for _, tmp in sgs.qlist(self.room:getAlivePlayers()) do
-		if tmp:getWeapon() or tmp:getArmor() then
-			table.insert(yan, tmp)
-		end
-		if tmp:getOffensiveHorse() or tmp:getDefensiveHorse() then
-			table.insert(mo, tmp)
-		end
-	end
-	if choice:match("yan") then
-		for _, tmp in ipairs(yan) do
-			if self:isEnemy(tmp) then
-				return "yan"
-			end
-		end
-	elseif choice:match("mo") then
-		for _, tmp in ipairs(mo) do
-			if self:isEnemy(tmp) then
-				return "mo"
-			end
-		end
-	end
-	return "nil"
+	local target = data:toPlayer()
+	local yan, mo = 0, 0
+	if target:getWeapon() then yan = yan + 1 end
+	if target:getArmor() then yan = yan + 1 end
+    if target:getOffensiveHorse() then mo = mo + 1 end
+    if target:getDefensiveHorse() then mo = mo + 1 end
+	if yan >= mo then return "yan" else return "mo" end
 end
 
 -- lizhu

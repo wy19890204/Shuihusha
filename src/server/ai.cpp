@@ -57,6 +57,7 @@ AI::Relation AI::GetRelationHegemony(const ServerPlayer *a, const ServerPlayer *
 }
 
 AI::Relation AI::GetRelation(const ServerPlayer *a, const ServerPlayer *b){
+    if (a == b) return Friend;
     RoleMapping map, map_good, map_bad;
     if(map.isEmpty()){
         map.set("lord", "lord", Friend);
@@ -174,9 +175,9 @@ void TrustAI::activate(CardUseStruct &card_use){
 }
 
 bool TrustAI::useCard(const Card *card){
-    if(card->inherits("Peach"))
+    if(card->isKindOf("Peach"))
         return self->isWounded();
-    else if(card->inherits("EquipCard")){
+    else if(card->isKindOf("EquipCard")){
         const EquipCard *equip = qobject_cast<const EquipCard *>(card);
         switch(equip->location()){
         case EquipCard::WeaponLocation:{
@@ -303,9 +304,9 @@ const Card *TrustAI::askForPindian(ServerPlayer *requestor, const QString &reaso
     QList<const Card *> cards = self->getHandcards();
     qSort(cards.begin(), cards.end(), CompareByNumber);
 
-    // zhiba special case
+    /* zhiba special case
     if(reason == "zhiba" && self->hasLordSkill("sunce_zhiba"))
-        return cards.last();
+        return cards.last();*/
 
     if(requestor != self && isFriend(requestor))
         return cards.first();
@@ -324,10 +325,10 @@ const Card *TrustAI::askForSinglePeach(ServerPlayer *dying) {
     if(isFriend(dying)){
         QList<const Card *> cards = self->getHandcards();
         foreach(const Card *card, cards){
-            if(card->inherits("Peach"))
+            if(card->isKindOf("Peach"))
                 return card;
 
-            if(card->inherits("Analeptic") && dying == self)
+            if(card->isKindOf("Analeptic") && dying == self)
                 return card;
         }
 
@@ -481,10 +482,9 @@ void LuaAI::pushCallback(lua_State *L, const char *function_name){
 void LuaAI::pushQIntList(lua_State *L, const QList<int> &list){
     lua_createtable(L, list.length(), 0);
 
-    int i;
-    for(i=0; i<list.length(); i++){
+    for(int i = 0; i < list.length(); i++){
         lua_pushinteger(L, list.at(i));
-        lua_rawseti(L, -2, i+1);
+        lua_rawseti(L, -2, i + 1);
     }
 }
 
