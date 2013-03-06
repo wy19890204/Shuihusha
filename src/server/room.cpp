@@ -95,21 +95,21 @@ QList<ServerPlayer *> Room::getPlayers() const{
     return m_players;
 }
 
-QList<ServerPlayer *> Room::getAllPlayers() const{ //current is start
-    if(current == NULL)
-        return m_alivePlayers;
+QList<ServerPlayer *> Room::getAllPlayers(bool include_dead) const{ //current is start
+    QList <ServerPlayer *> count_players = include_dead ? m_players : m_alivePlayers;
+    if (current == NULL)
+        return count_players;
 
-    int index = m_alivePlayers.indexOf(current);
-
-    if(index == -1)
-        return m_alivePlayers;
+    int index = count_players.indexOf(current);
+    if (index == -1)
+        return count_players;
 
     QList<ServerPlayer *> all_players;
-    for (int i = index; i < m_alivePlayers.length(); i++)
-        all_players << m_alivePlayers.at(i);
+    for (int i = index; i < count_players.length(); i++)
+        all_players << count_players[i];
 
     for (int i = 0; i < index; i++)
-        all_players << m_alivePlayers.at(i);
+        all_players << count_players[i];
 
     return all_players;
 }
