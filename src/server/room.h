@@ -42,9 +42,9 @@ public:
     ServerPlayer *getCurrent() const;
     void setCurrent(ServerPlayer *current);
     int alivePlayerCount() const;
-    QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
+    QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except, bool include_dead = false) const;
     QList<ServerPlayer *> getPlayers() const;
-    QList<ServerPlayer *> getAllPlayers() const;
+    QList<ServerPlayer *> getAllPlayers(bool include_dead = false) const;
     QList<ServerPlayer *> getAlivePlayers() const;
     void output(const QString &message);
     void outputEventStack();
@@ -89,6 +89,7 @@ public:
     void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
     void playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
     int drawCard();
+    QList<int> drawCards(int num);
     const Card *peek();
     void fillAG(const QList<int> &card_ids, ServerPlayer *who = NULL);
     void takeAG(ServerPlayer *player, int card_id);

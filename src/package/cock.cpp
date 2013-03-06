@@ -350,7 +350,7 @@ public:
                     anu->drawCards(2);
                 else{
                     RecoverStruct r;
-                    room->recover(anu, r);
+                    room->recover(anu, r, true);
                 }
             }
         }

@@ -165,6 +165,7 @@ enum TriggerEvent{
 
     Pindian,
     TurnedOver,
+    ChainStateChanged,
 
     Predamage,
     DamagedProceed,

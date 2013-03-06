@@ -622,7 +622,7 @@ public:
                 rev.card = judge.card;
                 rev.recover = ren->getLostHp(false) - ren->getMaxHp() + 1;
                 rev.who = ren;
-                room->recover(ren, rev);
+                room->recover(ren, rev, true);
                 if(ren->getHp() != 1)
                     room->setPlayerProperty(ren, "hp", 1);
             }

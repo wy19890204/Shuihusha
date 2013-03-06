@@ -212,7 +212,7 @@ public:
             RecoverStruct recover;
             recover.who = player;
             recover.recover = 1;
-            room->recover(player, recover);
+            room->recover(player, recover, true);
         }
         else{
             QList<ServerPlayer *> players = room->getAlivePlayers();

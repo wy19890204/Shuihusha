@@ -435,10 +435,10 @@ public:
                 continue;
             if(event == DamagedProceed){
                 if(damage.nature == DamageStruct::Fire &&
-                   room->askForCard(water, ".", "@shuizhen1", true, data, CardDiscarded)){
+                   room->askForCard(water, ".", "@shuizhen1:" + damage.to->objectName(), true, data, CardDiscarded)){
                     room->playSkillEffect(objectName(), qrand() % 3 + 1);
                     LogMessage log;
-                    log.type = "#Shuizhen1";
+                    log.type = "#Shuizhen";
                     log.from = water;
                     log.arg = objectName();
                     log.to << damage.to;
@@ -450,10 +450,10 @@ public:
             else{
                 if(damage.nature != DamageStruct::Thunder || water == damage.from || water == damage.to)
                     return false;
-                if(room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
+                if(room->askForCard(water, ".", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
                     LogMessage log;
-                    log.type = "#Shuizhen2";
+                    log.type = "#InvokeSkill";
                     log.from = water;
                     log.arg = objectName();
                     room->sendLog(log);
@@ -939,7 +939,8 @@ public:
                     int fist = suoch->getMark("@hatchet");
                     room->setPlayerMark(suoch, "@hatchet", 0);
                     if(fist >= 2 && suoch->askForSkillInvoke(objectName())){
-                        room->playSkillEffect(objectName());
+                        int index = fist == 2 ? 3 : qrand() % 2 + 1;
+                        room->playSkillEffect(objectName(), index);
                         suoch->gainAnExtraTurn(player);
                     }
                 }
@@ -980,7 +981,7 @@ DragonPackage::DragonPackage()
     gaoyanei->addSkill(new Xixue);
     gaoyanei->addSkill(new Jiandiao);
 
-    General *shantinggui = new General(this, "shantinggui", "jiang", 3, true, true);
+    General *shantinggui = new General(this, "shantinggui", "jiang", 3);
     shantinggui->addSkill(new Shuizhen);
     shantinggui->addSkill(new Yanmo);
     //shantinggui->addSkill(new Skill("shuizhan", Skill::Compulsory));
