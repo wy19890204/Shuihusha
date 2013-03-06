@@ -243,12 +243,20 @@ end
 -- butian
 sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 	local judge = data:toJudge()
+	local reason = judge.reason
+	if reason == "tsunami" or reason == "lightning" then
+		if self:isEnemy(judge.who) or
+			(self:isFriend(judge.who) and judge:isGood()) then
+			return "."
+		end
+	end
+	local ignore = {"treasury", "provistore", "qimen", "qinxin", "yinyu", "qingshang"}
+	if table.contains(ignore, reason) then return "." end
 
 	if self:needRetrial(judge) and not self.player:isKongcheng() then
 		local cards = sgs.QList2Table(self.player:getHandcards())
 		self:sortByUseValue(cards, true)
 		self.butianjudge = judge
-	--	return "@ButianCard[" .. cards[1]:getSuitString() .. ":" .. cards[1]:getNumberString() .. "]=" .. cards[1]:getEffectiveId()
 		return "@ButianCard=" .. cards[1]:getEffectiveId()
 	end
 	return "."
