@@ -87,7 +87,7 @@ public:
                         else{
                             RecoverStruct rev;
                             rev.who = lusashi;
-                            room->recover(target, rev);
+                            room->recover(target, rev, true);
                         }
                         break;
                     }

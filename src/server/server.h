@@ -106,6 +106,7 @@ private:
     QSpinBox *timeout_spinbox;
     QCheckBox *nolimit_checkbox;
     QCheckBox *contest_mode_checkbox;
+    QCheckBox *random_seat_checkbox;
     QSpinBox *swap_spinbox;
     QSpinBox *maxchoice_spinbox;
     QCheckBox *forbid_same_ip_checkbox;

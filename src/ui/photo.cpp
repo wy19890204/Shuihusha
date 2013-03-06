@@ -221,6 +221,8 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
 
     if(emotion == "question" || emotion == "no-question")
         return;
+    //if(emotion.contains("cards"))
+    //    emotion_item->moveBy(-10,0);
 
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));

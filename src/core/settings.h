@@ -30,6 +30,7 @@ public:
     QString GameMode;
     QStringList BanPackages;
     bool ContestMode;
+    bool RandomSeat;
     bool Statistic;
     bool ForbidSIMC;
     bool DisableChat;

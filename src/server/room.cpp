@@ -1629,8 +1629,7 @@ void Room::prepareForStart(){
         scenario->assign(generals, roles);
 
         bool expose_roles = scenario->exposeRoles();
-        int i;
-        for(i = 0; i < m_players.length(); i++){
+        for (int i = 0; i < m_players.length(); i++){
             ServerPlayer *player = m_players.at(i);
             if(generals.length()>0)
             {
@@ -1656,8 +1655,7 @@ void Room::prepareForStart(){
         m_players.at(0)->setRole("lord");
         m_players.at(1)->setRole("renegade");
 
-        int i;
-        for(i=0; i<2; i++){
+        for(int i = 0; i < 2; i++){
             broadcastProperty(m_players.at(i), "role");
         }
     }else if(Config.value("Cheat/FreeAssign", false).toBool()){
@@ -1666,9 +1664,11 @@ void Room::prepareForStart(){
             bool success = doRequest(owner, S_COMMAND_CHOOSE_ROLE, Json::Value::null);
             //executeCommand(owner, "askForAssign", "assignRolesCommand", ".", ".");
             Json::Value clientReply = owner->getClientReply();
-            if(!success || !clientReply.isArray() || clientReply.size() != 2)
+            if(!success || !clientReply.isArray() || clientReply.size() != 2){
+                if(Config.RandomSeat)
+                    qShuffle(m_players);
                 assignRoles();
-            else if(Config.FreeAssignSelf){
+            }else if (Config.FreeAssignSelf){
                 QString name = toQString(clientReply[0][0]);
                 QString role = toQString(clientReply[1][0]);
                 ServerPlayer *player_self = findChild<ServerPlayer *>(name);
@@ -1705,10 +1705,16 @@ void Room::prepareForStart(){
                     m_players.swap(i, m_players.indexOf(player));
                 }
             }
-        }else
+        }else{
+            if(Config.RandomSeat)
+                qShuffle(m_players);
             assignRoles();
-    }else
+        }
+    }else{
+        if(Config.RandomSeat)
+            qShuffle(m_players);
         assignRoles();
+    }
 
     adjustSeats();
 }
@@ -2109,13 +2115,9 @@ void Room::assignGeneralsForPlayers(const QList<ServerPlayer *> &to_assign){
                 QString choice;
 
                 //keep legal generals
-                foreach(QString name, old_list)
-                {
-                    if(Sanguosha->getGeneral(name)->getKingdom()
-                        != sp->getGeneral()->getKingdom()
-                        || sp->findReasonable(old_list,true)
-                        == name)
-                    {
+                foreach(QString name, old_list){
+                    if(Sanguosha->getGeneral(name)->getKingdom() != sp->getGeneral()->getKingdom()
+                       || sp->findReasonable(old_list, true) == name){
                         sp->addToSelected(name);
                         old_list.removeOne(name);
                     }
@@ -2296,11 +2298,13 @@ void Room::run(){
         thread_3v3->start();
 
         connect(thread_3v3, SIGNAL(finished()), this, SLOT(startGame()));
+        connect(thread_3v3, SIGNAL(finished()), thread_3v3, SLOT(deleteLater()));
     }else if(mode == "02_1v1"){
         thread_1v1 = new RoomThread1v1(this);
         thread_1v1->start();
 
         connect(thread_1v1, SIGNAL(finished()), this, SLOT(startGame()));
+        connect(thread_1v1, SIGNAL(finished()), thread_1v1, SLOT(deleteLater()));
     }else{
         chooseGenerals();
         startGame();
@@ -2333,8 +2337,7 @@ void Room::doSwap(){
     broadcastInvoke("arrangeSeats", player_circle.join("+"));
 
     m_alivePlayers.clear();
-    int i;
-    for(i=0; i<m_players.length(); i++){
+    for (int i = 0; i < m_players.length(); i++) {
         ServerPlayer *player = m_players.at(i);
         if(player->isAlive()){
             m_alivePlayers << player;
