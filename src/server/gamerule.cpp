@@ -781,16 +781,32 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             return true;
         }
 
-        if(player->getState() == "online" && Config.value("Cheat/FreeUnDead", false).toBool()){
-            if(player->getMaxHp() <= 0)
-                room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
-            if(player->getHp() <= 0)
-                room->setPlayerProperty(player, "hp", 1);
-            LogMessage log;
-            log.type = "#Undead";
-            log.from = player;
-            room->sendLog(log);
-            return true;
+        if(player->getState() == "online"){
+            if(Config.value("Cheat/FreeUnDead", false).toBool()){
+                if(player->getMaxHp() <= 0)
+                    room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
+                if(player->getHp() <= 0)
+                    room->setPlayerProperty(player, "hp", 1);
+                LogMessage log;
+                log.type = "#Undead";
+                log.from = player;
+                room->sendLog(log);
+                return true;
+            }
+            if(Config.value("Cheat/HandsUp", false).toBool()){
+                bool allrobot = true;
+                QStringList winners;
+                foreach(ServerPlayer *robot, room->getOtherPlayers(player)){
+                    if(robot->getState() != "robot" && allrobot)
+                        allrobot = false;
+                    if(robot->isAlive())
+                        winners << robot->objectName();
+                }
+                if(allrobot && player->askForSkillInvoke("goaway")){
+                    room->gameOver(winners.join("+"));
+                    return true;
+                }
+            }
         }
         break;
     }

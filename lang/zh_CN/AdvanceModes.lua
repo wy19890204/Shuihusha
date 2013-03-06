@@ -52,6 +52,7 @@ return{
 	["cheat7"] = "开启不死之身",
 	["gambling"] = "手气卡",
 	["change"] = "变身",
+	["goaway"] = "投降离开",
 	["free-regulate"] = "自由调控",
 	["freeregulate"] = "超级操控",
 	["how-to-use-regulate"] = "超级操控功能：\

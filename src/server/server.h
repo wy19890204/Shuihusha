@@ -141,6 +141,7 @@ private:
     QCheckBox *free_change_general_checkbox;
     QCheckBox *free_showrole_checkbox;
     QCheckBox *free_undead_checkbox;
+    QCheckBox *hands_up_checkbox;
     QCheckBox *ai_enable_checkbox;
     QCheckBox *role_predictable_checkbox;
     QCheckBox *ai_nickname_checkbox, *ai_chat_checkbox;

@@ -128,22 +128,24 @@ void StartScene::printServerInfo(){
         server_log->append(tr("The contest mode is enabled"));
 
     QStringList cheats;
-    if(Config.value("Cheat/EnableCheatMenu", false).toBool())
+    Config.beginGroup("Cheat");
+    if(Config.value("EnableCheatMenu", false).toBool())
         cheats << Sanguosha->translate("cheat0");
     if(Config.FreeChooseGenerals)
         cheats << Sanguosha->translate("cheat1");
     if(Config.FreeChooseCards)
         cheats << Sanguosha->translate("cheat2");
-    if(Config.value("Cheat/FreeAssign", false).toBool())
+    if(Config.value("FreeAssign", false).toBool())
         cheats << Sanguosha->translate("cheat3");
-    if(Config.value("Cheat/FreeRegulate", false).toBool())
+    if(Config.value("FreeRegulate", false).toBool())
         cheats << Sanguosha->translate("cheat4");
-    if(Config.value("Cheat/FreeChange", false).toBool())
+    if(Config.value("FreeChange", false).toBool())
         cheats << Sanguosha->translate("cheat5");
-    if(Config.value("Cheat/FreeShowRole", false).toBool())
+    if(Config.value("FreeShowRole", false).toBool())
         cheats << Sanguosha->translate("cheat6");
-    if(Config.value("Cheat/FreeUnDead", false).toBool())
+    if(Config.value("FreeUnDead", false).toBool())
         cheats << Sanguosha->translate("cheat7");
+    Config.endGroup();
     QString cheating = cheats.isEmpty() ? tr("Disabled") : cheats.join(" , ");
     server_log->append(tr("Cheat choose is") + cheating);
 

@@ -4087,6 +4087,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>启用不死之身</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="316"/>
+        <source>Hands up</source>
+        <translation>无人类玩家时可选择投降离开</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="326"/>
         <source>Enable Same</source>
         <translation>同将模式</translation>
