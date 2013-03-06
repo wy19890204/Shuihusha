@@ -438,7 +438,7 @@ public:
                    room->askForCard(water, ".", "@shuizhen1", true, data, CardDiscarded)){
                     room->playSkillEffect(objectName(), qrand() % 3 + 1);
                     LogMessage log;
-                    log.type = "#Shuizhen";
+                    log.type = "#Shuizhen1";
                     log.from = water;
                     log.arg = objectName();
                     log.to << damage.to;
@@ -448,9 +448,16 @@ public:
                 }
             }
             else{
-                if(damage.nature == DamageStruct::Thunder &&
-                   room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
+                if(damage.nature != DamageStruct::Thunder || water == damage.from || water == damage.to)
+                    return false;
+                if(room->askForCard(water, ".", "@shuizhen2", true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
+                    LogMessage log;
+                    log.type = "#Shuizhen2";
+                    log.from = water;
+                    log.arg = objectName();
+                    room->sendLog(log);
+
                     foreach(ServerPlayer *tmp, room->getOtherPlayers(water)){
                         if(tmp == forbider)
                             continue;
@@ -468,48 +475,70 @@ public:
     }
 };
 
+YanmoCard::YanmoCard(){
+}
+
+bool YanmoCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select->hasEquip();
+}
+
+void YanmoCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    PlayerStar target = effect.to;
+    QStringList choices;
+    if(target->getWeapon() || target->getArmor())
+        choices << "yan";
+    if(target->getDefensiveHorse() || target->getOffensiveHorse())
+        choices << "mo";
+    QString choice = choices.count() == 1 ? choices.first() :
+                     room->askForChoice(effect.from, skill_name, choices.join("+"), QVariant::fromValue(target));
+    if(choice == "yan"){
+        room->throwCard(target->getWeapon(), target, effect.from);
+        room->throwCard(target->getArmor(), target, effect.from);
+    }
+    else{
+        room->throwCard(target->getOffensiveHorse(), target, effect.from);
+        room->throwCard(target->getDefensiveHorse(), target, effect.from);
+    }
+}
+
+class YanmoViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    YanmoViewAsSkill():ZeroCardViewAsSkill("yanmo"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new YanmoCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@yanmo";
+    }
+};
+
 class Yanmo: public MasochismSkill{
 public:
     Yanmo():MasochismSkill("yanmo"){
+        view_as_skill = new YanmoViewAsSkill;
     }
 
     virtual void onDamaged(ServerPlayer *ubun, const DamageStruct &damage) const{
         Room *room = ubun->getRoom();
         if(damage.nature != DamageStruct::Normal)
             return;
-        QList<ServerPlayer *> yan, mo;
+        bool caninvoke = false;
         foreach(ServerPlayer *tmp, room->getAlivePlayers()){
-            if(tmp->getWeapon() || tmp->getArmor())
-                yan << tmp;
-            if(tmp->getOffensiveHorse() || tmp->getDefensiveHorse())
-                mo << tmp;
-        }
-        if(yan.isEmpty() && mo.isEmpty())
-            return;
-        QString choices = yan.isEmpty() ? "mo+nil" :
-                          mo.isEmpty() ? "yan+nil" : "yan+mo+nil";
-        QString ssj = room->askForChoice(ubun, objectName(), choices);
-        if(ssj == "nil")
-            return;
-        room->playSkillEffect(objectName());
-        LogMessage log;
-        log.from = ubun;
-        log.arg = objectName();
-        if(ssj == "yan"){
-            log.type = "#YanmoYan";
-            foreach(ServerPlayer *tmp, yan){
-                room->throwCard(tmp->getWeapon(), tmp, ubun);
-                room->throwCard(tmp->getArmor(), tmp, ubun);
+            if(tmp->hasEquip()){
+                caninvoke = true;
+                break;
             }
         }
-        else{
-            log.type = "#YanmoMo";
-            foreach(ServerPlayer *tmp, mo){
-                room->throwCard(tmp->getOffensiveHorse(), tmp, ubun);
-                room->throwCard(tmp->getDefensiveHorse(), tmp, ubun);
-            }
-        }
-        room->sendLog(log);
+        if(caninvoke)
+            room->askForUseCard(ubun, "@@yanmo", "@yanmo", true);
     }
 };
 
@@ -978,6 +1007,7 @@ DragonPackage::DragonPackage()
     addMetaObject<ShexinCard>();
     addMetaObject<QianxianCard>();
     addMetaObject<XiashuCard>();
+    addMetaObject<YanmoCard>();
 }
 
 ADD_PACKAGE(Dragon)

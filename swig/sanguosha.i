@@ -495,6 +495,7 @@ enum TriggerEvent{
 
 	Pindian,
 	TurnedOver,
+	ChainStateChanged,
 
 	Predamage,
 	DamagedProceed,
@@ -851,9 +852,9 @@ public:
 	ServerPlayer *getCurrent() const;
 	void setCurrent(ServerPlayer *current);
 	int alivePlayerCount() const;
-	QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
+	QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except, bool include_dead = false) const;
 	QList<ServerPlayer *> getPlayers() const;
-	QList<ServerPlayer *> getAllPlayers() const;
+	QList<ServerPlayer *> getAllPlayers(bool include_dead = false) const;
 	QList<ServerPlayer *> getAlivePlayers() const;
 	void enterDying(ServerPlayer *player, DamageStruct *reason);
 	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);

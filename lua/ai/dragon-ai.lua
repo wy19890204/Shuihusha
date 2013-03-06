@@ -228,7 +228,74 @@ end
 
 -- shantinggui
 -- shuizhen
+sgs.ai_skill_cardask["@shuizhen1"] = function(self, data)
+	local damage = data:toDamage()
+	if not self:isFriend(damage.to) or damage.damage < 1 then return "." end
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, false)
+	return cards[1]:getEffectiveId()
+end
+sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
+	local damage = data:toDamage()
+--	local players = {}
+	local fri = #(self:getChainedEnemies())
+	local eni = #(self:getChainedFriends())
+	local fri, eni = 0, 0
+	for _, t in sgs.qlist(self.room:getOtherPlayers(self.player)) do
+		if t ~= damage.to and self:damageIsEffective(t, sgs.DamageStruct_Thunder, damage.from) then
+			if self:isEnemy(t) then
+				eni = eni + 1
+			else
+				fri = fri + 1
+			end
+--			table.insert(players, t)
+		end
+	end
+	if eni > fri then return "." end
+	local cards = sgs.QList2Table(self.player:getHandcards())
+	self:sortByUseValue(cards, false)
+	for _, fcard in ipairs(cards) do
+		if fcard:inherits("BasicCard") and
+			not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+			return fcard:getEffectiveId()
+		end
+	end
+	return "."
+end
+
 -- yanmo
+sgs.ai_skill_use["@@yanmo"] = function(self, prompt)
+	local ene2, ene1 = {}, {}
+	for _, enemy in ipairs(self.enemies) do
+		if (enemy:getWeapon() and enemy:getArmor()) or
+			(enemy:getOffensiveHorse() and enemy:getDefensiveHorse()) then
+			table.insert(ene2, enemy)
+		end
+	end
+	if #ene2 > 0 then
+		self:sort(ene2)
+		return "@YanmoCard=.->" .. ene2[1]:objectName()
+	end
+	for _, enemy in ipairs(self.enemies) do
+		if enemy:hasEquip() then
+			table.insert(ene1, enemy)
+		end
+	end
+	if #ene1 > 0 then
+		self:sort(ene1)
+		return "@YanmoCard=.->" .. ene1[1]:objectName()
+	end
+	return "."
+end
+sgs.ai_skill_choice["yanmo"] = function(self, choice, data)
+	local target = data:toPlayer()
+	local yan, mo = 0, 0
+	if target:getWeapon() then yan = yan + 1 end
+	if target:getArmor() then yan = yan + 1 end
+    if target:getOffensiveHorse() then mo = mo + 1 end
+    if target:getDefensiveHorse() then mo = mo + 1 end
+	if yan >= mo then return "yan" else return "mo" end
+end
 
 -- lizhu
 -- chuqiao

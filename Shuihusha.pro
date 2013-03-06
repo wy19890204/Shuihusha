@@ -35,7 +35,7 @@ SOURCES += \
 	src/core/skill.cpp \
 	src/core/statistics.cpp \
 	src/core/util.cpp \
-	src/core/wrapped_card.cpp \
+	#src/core/wrapped_card.cpp \
 	src/dialog/cardeditor.cpp \
 	src/dialog/cardoverview.cpp \
 	src/dialog/choosecarddialog.cpp \
@@ -176,7 +176,7 @@ HEADERS += \
 	src/core/statistics.h \
 	src/core/structs.h \
 	src/core/util.h \
-	src/core/wrapped_card.h \
+	#src/core/wrapped_card.h \
 	src/dialog/cardeditor.h \
 	src/dialog/cardoverview.h \
 	src/dialog/choosecarddialog.h \
