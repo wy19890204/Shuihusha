@@ -1644,7 +1644,7 @@ void Room::prepareForStart(){
             if(expose_roles)
                 broadcastProperty(player, "role");
             else
-                player->sendProperty("role");
+                notifyProperty(player, player, "role");
         }
     }else if(mode == "06_3v3"){
         return;
@@ -1691,7 +1691,7 @@ void Room::prepareForStart(){
                     if(role == "lord")
                         broadcastProperty(player, "role", "lord");
                     else
-                        player->sendProperty("role");
+                        notifyProperty(player, player, "role");
                 }
             }
             else{
@@ -2056,12 +2056,12 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
         player->startRecord();
 
     if(!is_robot){
-        player->sendProperty("objectName");
+        notifyProperty(player, player, "objectName");
 
         ServerPlayer *owner = getOwner();
         if(owner == NULL){
             player->setOwner(true);
-            broadcastProperty(player, "owner");
+            notifyProperty(player, player, "owner");
         }
     }
 
@@ -2253,8 +2253,18 @@ void Room::chooseGenerals(){
         foreach(ServerPlayer *player, m_players)
         {
             QStringList names;
-            if(player->getGeneral())names.append(player->getGeneralName());
-            if(player->getGeneral2() && Config.Enable2ndGeneral)names.append(player->getGeneral2Name());
+            if(player->getGeneral()){
+                QString name = player->getGeneralName();
+                names.append(name);
+                player->setGeneralName("anjiang");
+                notifyProperty(player, player, "general");
+            }
+            if(player->getGeneral2() && Config.Enable2ndGeneral){
+                QString name = player->getGeneral2Name();
+                names.append(name);
+                player->setGeneral2Name("anjiang");
+                notifyProperty(player, player, "general2");
+            }
             this->setTag(player->objectName(),QVariant::fromValue(names));
         }
     }
