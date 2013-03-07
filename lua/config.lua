@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130228",
-	version_name = "终结版F4.2",
+	version = "20130308",
+	version_name = "终结版F4.4",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -51,7 +51,6 @@ config = {
 	ai_names = {
 		"太阳神的三国杀",
 		"启姐的小雏田",
-		"KenKic的充气女仆",
 		"海泡叉的乱码",
 		"威廉古堡",
 		"葱娘家的灵魂手办",
@@ -64,7 +63,6 @@ config = {
 		"导线的电阻",
 		"QB的契约",
 		"吉祥物小萨",
-		"Slob的杀虫剂",
 		"克拉克的跑动投",
 		"早苗的假面",
 		"自来也的黄书",
@@ -73,6 +71,8 @@ config = {
 		"沾血的青苹果",
 		"海南的椰子",
 		"喵一夏的幸福",
+		"单身的活宝",
+		"超级无敌小柴进",
 		"卖萌的豚纸",
 		"江西安义的雷海",
 		"中条老道的大头贴",
@@ -142,8 +142,37 @@ ban_list = { -- 初始禁表设置
 		"zhangheng",
 		"+tongguan", -- 副将禁用
 		"+tora",
-		"tianhu+songjiang", -- 特定禁用
-		"gaoqiu+luozhenren",
+-- 1 ~ 10
+--		"qiongyaonayan+gongsunsheng",
+--		"qiongyaonayan+peixuan",
+--		"qiongyaonayan+luozhenren",
+--		"qiongyaonayan+tianhu",
+--		"yangchun+zhugui",
+--		"suochao+luzhishen",
+--		"suochao+daizong",
+--		"suochao+luda",
+--		"yanqing+zhoutong",
+		"tianhu+songjiang",
+-- 11 ~ 20
+		"suochao+lujunyi",
+--		"tianhu+ruanxiaowu",
+		"shijin+ruanxiaowu",
+--		"yangzhi+shijin",
+--		"wuyong+weidingguo",
+		"likui+peixuan",
+		"lujunyi+yanqing",
+--		"daizong+lishishi",
+		"wuyong+shiqian",
+		"peixuan+gaoqiu",
+-- 21 ~ 30
+		"peixuan+qiaodaoqing",
+--		"fangla+sunerniang",
+		"wangpo+lujunyi",
+--		"lujunyi+zhoutong",
+		"lujunyi+gaoyanei",
+--		"suochao+pangwanchun",
+--		"suochao+yanshun",
+
 		"wangying+zhangqing",
 		"wangying+qiongying",
 		"tianhu+yanshun",

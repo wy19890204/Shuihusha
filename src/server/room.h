@@ -42,9 +42,9 @@ public:
     ServerPlayer *getCurrent() const;
     void setCurrent(ServerPlayer *current);
     int alivePlayerCount() const;
-    QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except) const;
+    QList<ServerPlayer *> getOtherPlayers(ServerPlayer *except, bool include_dead = false) const;
     QList<ServerPlayer *> getPlayers() const;
-    QList<ServerPlayer *> getAllPlayers() const;
+    QList<ServerPlayer *> getAllPlayers(bool include_dead = false) const;
     QList<ServerPlayer *> getAlivePlayers() const;
     void output(const QString &message);
     void outputEventStack();
@@ -76,7 +76,7 @@ public:
     void loseHp(ServerPlayer *victim, int lose = 1);
     void loseMaxHp(ServerPlayer *victim, int lose = 1);
     void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
-    void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = false);
+    void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = true);
     bool cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to);
     bool cardEffect(const CardEffectStruct &effect);
     void judge(JudgeStruct &judge_struct);
@@ -89,6 +89,7 @@ public:
     void awake(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
     void playLightbox(ServerPlayer *player, const QString &skill_name, const QString &broad, int delay = 1000);
     int drawCard();
+    QList<int> drawCards(int num);
     const Card *peek();
     void fillAG(const QList<int> &card_ids, ServerPlayer *who = NULL);
     void takeAG(ServerPlayer *player, int card_id);
@@ -185,6 +186,7 @@ public:
     //Verification functions
     bool verifyNullificationResponse(ServerPlayer*, const Json::Value&, void*);
 
+    bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const QString &value = QString());
     void acquireSkill(ServerPlayer *player, const Skill *skill, bool open = true);
     void acquireSkill(ServerPlayer *player, const QString &skill_name, bool open = true);
     void adjustSeats();
@@ -277,7 +279,8 @@ public:
     void processResponse(ServerPlayer *player, const QSanProtocol::QSanGeneralPacket* arg);
     void addRobotCommand(ServerPlayer *player, const QString &arg);
     void fillRobotsCommand(ServerPlayer *player, const QString &arg);
-    void broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
+    bool broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
+    //void broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
     void broadcastInvoke(const QSanProtocol::QSanPacket* packet, ServerPlayer *except = NULL);
     void broadcastInvoke(const char *method, const QString &arg = ".", ServerPlayer *except = NULL);
     void startTest(const QString &to_test);

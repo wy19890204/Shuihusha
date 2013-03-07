@@ -432,7 +432,7 @@ void BinggongCard::use(Room *room, ServerPlayer *source, const QList<ServerPlaye
     if(num >= 3){
         RecoverStruct rev;
         rev.who = source;
-        room->recover(source, rev, true);
+        room->recover(source, rev);
     }
 }
 
@@ -797,7 +797,7 @@ public:
         if(target->isWounded()){
             RecoverStruct recover;
             recover.who = target;
-            room->recover(target, recover, true);
+            room->recover(target, recover);
         }
         return false;
     }
@@ -829,10 +829,10 @@ public:
             log.type = "#Qiangqu";
             log.to << damage.to;
             room->sendLog(log);
-            room->recover(damage.to, re, true);
+            room->recover(damage.to, re);
             if(player->isWounded()){
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
-                room->recover(damage.from, re, true);
+                room->recover(damage.from, re);
             }
             return true;
         }
@@ -860,7 +860,7 @@ void HuatianCard::onEffect(const CardEffectStruct &effect) const{
         RecoverStruct recovvv;
         recovvv.who = effect.from;
         room->playSkillEffect(skill_name, qrand() % 2 + 1);
-        room->recover(effect.to, recovvv, true);
+        room->recover(effect.to, recovvv);
     }
     else if(effect.from->getMark("Huatian") == 2){
         room->playSkillEffect(skill_name, qrand() % 2 + 3);

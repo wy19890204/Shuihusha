@@ -154,7 +154,7 @@ function SmartAI:useCardSlash(card, use)
 			-- fill the card use struct
 			local usecard = card
 			local mi = self:searchForEcstasy(use,target,card)
-			if mi and self:getCardsNum("Jink", target) > 0 and self:getCardId("Slash") then
+			if mi and self:getCardsNum("Jink", target) > 0 and self:getCardId("Slash") and self:slashIsAvailable() then
 				use.card = mi
 				if use.to and use.to:length() < self.mi_targets then use.to:append(target) end
 				return

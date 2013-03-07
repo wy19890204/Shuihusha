@@ -402,6 +402,11 @@ end
 sgs.ai_skill_invoke["laolian"] = true
 sgs.ai_skill_playerchosen["laolian"] = function(self, targets)
 	self:sort(self.enemies, "defense")
+	for _, e in ipairs(self.enemies) do
+		if self.player:canSlash(e) and not e:hasFlag("ecst") then
+			return e
+		end
+	end
 	return self.enemies[1]
 end
 

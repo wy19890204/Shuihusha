@@ -265,7 +265,7 @@ public:
                 room->sendLog(log);
                 RecoverStruct o;
                 o.card = Sanguosha->getCard(move->card_id);
-                room->recover(mowang, o, true);
+                room->recover(mowang, o);
             }
         }
         return false;

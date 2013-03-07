@@ -99,9 +99,10 @@ sgs.ai_use_value =
 	-- dragon
 	TaolueCard = 7.5,
 --	AnxiCard = 5,
-    ShexinCard = 7,
+	ShexinCard = 7,
 	QianxianCard = 6.4,
-    XiashuCard = 5,
+	XiashuCard = 5,
+--	YanmoCard = 5,
 
 	-- bwqz
 	FeizhenCard = 4.3,
@@ -233,9 +234,10 @@ sgs.ai_use_priority = {
 	-- dragon
 	TaolueCard = 5,
 --	AnxiCard = 5,
-    ShexinCard = 6,
+	ShexinCard = 6,
 	QianxianCard = 3.6,
-    XiashuCard = 2.4,
+	XiashuCard = 2.4,
+--	YanmoCard = 5,
 
 	-- bwqz
 	FeizhenCard = 8.3,
@@ -329,7 +331,6 @@ sgs.ai_use_priority = {
 	SunBow = 2.567,
 	GoldArmor = 2.555,
 }
-
 
 -- this table stores the chaofeng value for some generals
 -- all other generals' chaofeng value should be 0

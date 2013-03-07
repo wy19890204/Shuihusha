@@ -251,7 +251,7 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 --			table.insert(players, t)
 		end
 	end
-	if eni > fri then return "." end
+	if fri > eni then return "." end
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, false)
 	for _, fcard in ipairs(cards) do
@@ -264,6 +264,7 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 end
 
 -- yanmo
+sgs.ai_card_intention.YanmoCard = 80
 sgs.ai_skill_use["@@yanmo"] = function(self, prompt)
 	local ene2, ene1 = {}, {}
 	for _, enemy in ipairs(self.enemies) do

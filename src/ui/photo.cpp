@@ -221,6 +221,22 @@ void Photo::setEmotion(const QString &emotion, bool permanent){
 
     if(emotion == "question" || emotion == "no-question")
         return;
+    //if(emotion.contains("cards"))
+    //    emotion_item->moveBy(-10,0);
+    if(emotion.contains("skill")){
+        QString spec_name = QString("%1/revise.ini").arg(path.replace(".png", ""));
+        QSettings settings(spec_name, QSettings::IniFormat);
+        qreal x = settings.value("x", 65535).toReal();
+        qreal y = settings.value("y", 65535).toReal();
+        qreal scale = settings.value("s", 1.0).toReal();
+        qreal oca = settings.value("o", 1.0).toReal();
+        settings.deleteLater();
+
+        if(x != 65535 && y != 65535)
+            emotion_item->moveBy(x, y);
+        emotion_item->setScale(scale);
+        emotion_item->setOpacity(oca);
+    }
 
     if(!permanent)
         QTimer::singleShot(2000, this, SLOT(hideEmotion()));

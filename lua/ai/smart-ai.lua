@@ -2565,8 +2565,6 @@ function SmartAI:needRetrial(judge)
 		end
 	end
 	if self:isFriend(judge.who) then
-		if judge.reason == "luoshen" and self:getOverflow(judge.who) > 1 and self.player:getHandcardNum() < 3
-			and not self:isEquip("Crossbow", judge.who) then return false end
 		return not judge:isGood()
 	elseif self:isEnemy(judge.who) then
 		return judge:isGood()

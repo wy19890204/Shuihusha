@@ -3912,6 +3912,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>竞赛模式</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="158"/>
+        <source>Arrange the seats randomly</source>
+        <translation>随机安排座位</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="41"/>
         <source>Basic</source>
         <translation>基本</translation>
