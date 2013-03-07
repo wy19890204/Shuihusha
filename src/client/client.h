@@ -107,6 +107,7 @@ public:
     void clearPile(const QString &);
     void setPileNumber(const QString &pile_num);
     void gameOver(const QString &result_str);
+    void updateProperty(const Json::Value &);
     void killPlayer(const QString &player_name);
     void revivePlayer(const QString &player_name);
     void warn(const QString &);

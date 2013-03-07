@@ -72,6 +72,7 @@ Client::Client(QObject *parent, const QString &filename)
     m_callbacks[S_COMMAND_INVOKE_SKILL] = &Client::skillInvoked;
     m_callbacks[S_COMMAND_SHOW_ALL_CARDS] = &Client::askForGongxin;
     m_callbacks[S_COMMAND_SKILL_GONGXIN] = &Client::askForGongxin;
+    m_callbacks[S_COMMAND_SET_PROPERTY] = &Client::updateProperty;
     //callbacks["skillInvoked"] = &Client::skillInvoked;
     callbacks["addHistory"] = &Client::addHistory;
     callbacks["animate"] = &Client::animate;
@@ -355,6 +356,15 @@ void Client::addPlayer(const QString &player_info){
     alive_count ++;
 
     emit player_added(player);
+}
+
+void Client::updateProperty(const Json::Value &arg)
+{
+    if (!isStringArray(arg, 0, 2)) return;
+    QString object_name = toQString(arg[0]);
+    ClientPlayer *player = getPlayer(object_name);
+    if (!player) return;
+    player->setProperty(arg[1].asCString(), toQString(arg[2]));
 }
 
 void Client::removePlayer(const QString &player_name){

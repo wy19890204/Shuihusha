@@ -782,27 +782,27 @@ void ServerPlayer::introduceTo(ServerPlayer *player){
 }
 
 void ServerPlayer::marshal(ServerPlayer *player) const{
-    player->sendProperty("maxhp", this);
-    player->sendProperty("hp", this);
+    room->notifyProperty(player, this, "maxhp") ;
+    room->notifyProperty(player, this, "hp") ;
 
     if(getKingdom() != getGeneral()->getKingdom())
-        player->sendProperty("kingdom", this);
+        room->notifyProperty(player, this, "kingdom") ;
 
     if(isAlive()){
-        player->sendProperty("seat", this);
+        room->notifyProperty(player, this, "seat") ;
         if(getPhase() != Player::NotActive)
-            player->sendProperty("phase", this);
+            room->notifyProperty(player, this, "phase") ;
     }else{
-        player->sendProperty("alive", this);
-        player->sendProperty("role", this);
+        room->notifyProperty(player, this, "alive") ;
+        room->notifyProperty(player, this, "role") ;
         player->invoke("killPlayer", objectName());
     }
 
     if(!faceUp())
-        player->sendProperty("faceup", this);
+        room->notifyProperty(player, this, "faceup");
 
     if(isChained())
-        player->sendProperty("chained", this);
+        room->notifyProperty(player, this, "chained");
 
     if(!isKongcheng()){
         if(player != this){
