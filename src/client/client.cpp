@@ -1109,7 +1109,9 @@ bool Client::hasNoTargetResponsing() const{
 }
 
 ClientPlayer *Client::getPlayer(const QString &name){
-    return findChild<ClientPlayer *>(name);
+    if (name == Self->objectName() ||
+        name == QSanProtocol::S_PLAYER_SELF_REFERENCE_ID) return Self;
+    else return findChild<ClientPlayer *>(name);
 }
 
 void Client::kick(const QString &to_kick){
