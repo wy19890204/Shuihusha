@@ -161,7 +161,7 @@ end
 sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 	local target = data:toPlayer()
 	if self.player:hasSkill("qiongtu") then
-		speak(target, "qiongtu")
+		self:speak("qiongtu", target)
 	end
 	if self:isFriend(target) and self:isEquip("SilverLion", target) and target:isWounded() then
 		return true

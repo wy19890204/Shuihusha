@@ -1743,7 +1743,7 @@ function SmartAI:filterEvent(event, player, data)
 		target = pindian.to
 	end
 
-	speakTrigger(nil, player, target, event)
+	self:speakTrigger(nil, player, target, event)
 end
 
 function SmartAI:askForSuit(reason)
@@ -2340,7 +2340,7 @@ function SmartAI:askForPindian(requestor, reason)
 	if requestor == self.player then
 		self:speak("pindian_target")
 	else
-		speak(requestor, "pindian")
+		self:speak("pindian", requestor)
 	end
 	local callback = sgs.ai_skill_pindian[reason]
 	if type(callback) == "function" then

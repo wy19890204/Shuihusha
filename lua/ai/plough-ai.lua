@@ -67,7 +67,7 @@ end
 
 sgs.ai_card_intention.Ecstasy = function(card, from, tos)
 	for _, to in ipairs(tos) do
-		speakTrigger(card,from,to)
+		self:speakTrigger(card,from,to)
 	end
 	sgs.updateIntentions(from, tos, 80)
 end
@@ -119,7 +119,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 		return "."
 	end
 	if use.to then
-		speak(target, "drivolt")
+		self:speak("drivolt", target)
 		use.to:append(target)
 	end
 end
@@ -161,7 +161,7 @@ function SmartAI:useCardWiretap(wiretap, use)
 	use.card = wiretap
 	if use.to then
 		use.to:append(targets[r])
-		self:speak("wiretap", targets[r]:getGeneral():isFemale(), targets[r])
+		self:speak("wiretap", targets[r])
 	end
 end
 
@@ -211,7 +211,7 @@ function SmartAI:useCardAssassinate(ass, use)
 end
 
 sgs.ai_skill_cardask["@assas1"] = function(self, data, pattern, target)
-	self:speak("assassinate", self.player:getGeneral():isFemale())
+	self:speak("assassinate")
 	if sgs.ai_skill_cardask.nullfilter(self, data, pattern, target) then return "." end
 	if self:getCardsNum("Jink") < 2 and not (self.player:getHandcardNum() == 1 and self:hasSkills(sgs.need_kongcheng)) then return "." end
 end

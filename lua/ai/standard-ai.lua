@@ -11,7 +11,7 @@ sgs.songjiang_keep_value =
 
 -- ganlin
 sgs.ai_card_intention.GanlinCard = function(card, from, tos)
-	speakTrigger(card,from,tos[1])
+	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, -70)
 end
 sgs.ai_use_value.GanlinCard = 8.5
@@ -385,7 +385,7 @@ sgs.ai_skill_use["@@yixing"] = function(self, prompt)
 			for _, equip in sgs.qlist(pequips) do
 				if equip:getEffectiveId() == card_id then
 					self.yixingcid = card_id
-					if self.player ~= player then speak(player, "yixing") end
+					if self.player ~= player then self:speak("yixing", player) end
 					return "@YixingCard=.->" .. player:objectName()
 				end
 			end
@@ -440,7 +440,7 @@ sgs.ai_skill_cardask["@qimen"] = function(self, data)
 	for _, card in ipairs(cards) do
 		if card:getSuitString() == suit and self:getUseValue(card) < 5.7 then
 			self:speak("qimen_source")
-			speak(self.qimentarget, "qimen")
+			self:speak("qimen", self.qimentarget)
 			return card:getEffectiveId()
 		end
 	end
@@ -506,7 +506,7 @@ end
 sgs.ai_skill_discard["danshu"] = function(self, discard_num, optional, include_equip)
 	local to_discard = {}
 	local chaijin = self.room:findPlayerBySkillName("danshu")
-	speak(chaijin, "danshu")
+	self:speak("danshu", chaijin)
 	local cards = self.player:getHandcards()
 	cards=sgs.QList2Table(cards)
 	self:sortByKeepValue(cards, true)
@@ -541,7 +541,7 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 			end
 		end
 		if target then
-			speak(target, "haoshen")
+			self:speak("haoshen", target)
 			return "@HaoshenCard=.->" .. target:objectName()
 		else
 			return "."
@@ -557,7 +557,7 @@ sgs.ai_skill_use["@@haoshen"] = function(self, prompt)
 		for i = 1, math.floor((#cards + 1) / 2) do
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
-		speak(target, "haoshen")
+		self:speak("haoshen", target)
 		return "@HaoshenCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
 	else
 		return "."

@@ -133,7 +133,7 @@ end
 --备粮
 sgs.ai_skill_invoke.cbbeiliang = function(self, data)
 	if self.player:getCards("h"):length() <= 2 then
-		self:speak("cbbeiliang")
+--		self:speak("cbbeiliang")
 		return true
 	end
 	return false

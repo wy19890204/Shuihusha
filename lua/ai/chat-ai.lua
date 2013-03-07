@@ -1,79 +1,73 @@
-function speak(to, typpe)
+function SmartAI:speak(typpe, to)  -- self:speak("baoguo", lujunyi)
 	if not sgs.GetConfig("AIChat", true) then return end
-	if not to or to:getState() ~= "robot" then return end
 	typpe = typpe or "no_type"
-	
-	local i =math.random(1,#sgs.ai_chat[typpe])
+	to = to or self.player
+	if to == nil or to:getState() ~= "robot" then return end
+	local isFemale = to:getGeneral():isFemale()
+	if isFemale and sgs.ai_chat[typpe .. "_female"] then
+		typpe = typpe .. "_female"
+	end
+	local i = math.random(1, #sgs.ai_chat[typpe])
 	to:speak(sgs.ai_chat[typpe][i])
 end
 
-function speakTrigger(card,from,to,event)
+function SmartAI:speakTrigger(card, from, to, event)
+	from = from or self.player
+	to = to or self.player
 	if event == sgs.SlashEffect and from:hasSkill("tongwu") then
-		speak(to,"tongwu")
+		self:speak("tongwu", to)
 	elseif event == sgs.SlashProceed then
 		if from:hasSkill("kaixian") then
-			speak(from,"kaixian")
+			self:speak("kaixian", from)
 		end
 	elseif event == sgs.SlashHit then
 		if from:hasSkill("jingzhun") then
-			speak(to,"jingzhun")
+			self:speak("jingzhun", to)
 		end
 	elseif event == sgs.Death and from:hasSkill("zuohua") then
-		speak(from,"zuohua_death")
+		self:speak("zuohua_death", from)
 	elseif event == sgs.FinishJudge and from:hasFlag("CujuBad") then
-		speak(from,"cuju_fail")
+		self:speak("cuju_fail", from)
 	elseif event == sgs.Pindian then
-		speak(from,"pindian")
-		speak(to,"pindian_target")
+		self:speak("pindian", from)
+		self:speak("pindian_target", to)
 	end
 
 	if not card then return end
 
-	if card:inherits("Indulgence") then
-		speak(from, "indulgence_source")
+	if card:isKindOf("Indulgence") then
+		self:speak("indulgence_source", from)
 		if to:getHandcardNum() > to:getHp() then
-			speak(to, "indulgence")
+			self:speak("indulgence", to)
 		end
-	elseif card:inherits("SupplyShortage") then
-		speak(from, "supply_shortage_source")
+	elseif card:isKindOf("SupplyShortage") then
+		self:speak("supply_shortage_source", from)
 		if to:getHandcardNum() < to:getHp() then
-			speak(to, "supply_shortage")
+			self:speak("supply_shortage", to)
 		end
-	elseif card:inherits("Slash") then
+	elseif card:isKindOf("Slash") then
 		if to:hasSkill("baoguo") and to:getHp() <= 1 then
-			speak(to,"lujunyi_weak")
+			self:speak("lujunyi_weak", to)
 		end
-	elseif card:inherits("SavageAssault") then
+	elseif card:isKindOf("SavageAssault") then
 		if to:hasSkill("fuhu") or to:hasSkill("shalu") then
-			speak(to,"tiger")
+			self:speak("tiger", to)
 		end
-	elseif card:inherits("FireAttack") then
+	elseif card:isKindOf("FireAttack") then
 		if from:hasSkill("shenhuo") then
-			speak(from,"shenhuo")
+			self:speak("shenhuo", from)
 		elseif to:hasSkill("shenhuo") then
-			speak(to,"shenhuo_forb")
+			self:speak("shenhuo_forb", to)
 		else
-			speak(from,"fire_attack")
+			self:speak("fire_attack", from)
 		end
-	elseif card:inherits("Ecstasy") then
-		speak(from,"ecstasy_source")
-		speak(to,"ecstasy")
-	elseif card:inherits("GanlinCard") then
-		speak(from, "ganlin")
-		speak(to,"friendly")
+	elseif card:isKindOf("Ecstasy") then
+		self:speak("ecstasy_source", from)
+		self:speak("ecstasy", to)
+	elseif card:isKindOf("GanlinCard") then
+		self:speak("ganlin", from)
+		self:speak("friendly", to)
 	end
-end
-
-function SmartAI:speak(typpe, isFemale, to)
-	if not sgs.GetConfig("AIChat", true) then return end
-	to = to or self.player
-	if to:getState() ~= "robot" then return end
-	
-	local i =math.random(1,#sgs.ai_chat[typpe])
-	if isFemale then
-		typpe = typpe .. "_female"
-	end
-	to:speak(sgs.ai_chat[typpe][i])
 end
 
 sgs.ai_chat={}

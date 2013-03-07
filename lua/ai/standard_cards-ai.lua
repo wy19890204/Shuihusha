@@ -121,7 +121,7 @@ function SmartAI:useCardSlash(card, use)
 					use.card = card
 					if use.to then
 						use.to:append(friend)
-						self:speak("hostile", self.player:isFemale())
+						self:speak("hostile")
 						if self.slash_targets <= use.to:length() then return end
 					end
 				end
@@ -263,7 +263,7 @@ sgs.ai_card_intention.Slash = function(card,from,tos)
 		local value = 80
 		if sgs.ai_collateral then sgs.ai_collateral=false value = 0 end
 
-		speakTrigger(card,from,to)
+		self:speakTrigger(card,from,to)
 		if to:hasSkill("baoguo") then
 			-- value = value*(2-to:getHp())/1.1
 			value = math.max(value*(2-to:getHp())/1.1, 0)
@@ -633,7 +633,7 @@ end
 
 sgs.ai_skill_cardask["savage-assault-slash"] = function(self, data, pattern, target)
 	local effect = data:toCardEffect()
-	speakTrigger(effect.card,effect.from,effect.to)
+	self:speakTrigger(effect.card,effect.from,effect.to)
 	return sgs.ai_skill_cardask.aoe(self, data, pattern, target, "savage_assault")
 end
 
@@ -724,7 +724,7 @@ function SmartAI:useCardDuel(duel, use)
 				use.card = duel
 				if use.to then
 					use.to:append(target)
-					self:speak("duel", self.player:isFemale())
+					self:speak("duel")
 				end
 				return
 			end
@@ -758,7 +758,7 @@ function SmartAI:useCardDuel(duel, use)
 			use.card = duel
 			if use.to then
 				use.to:append(target)
-				self:speak("duel", self.player:isFemale())
+				self:speak("duel")
 			end
 			return
 		end
@@ -902,7 +902,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getDangerousCard(enemy)
 					use.to:append(enemy)
-					self:speak("hostile", self.player:isFemale())
+					self:speak("hostile")
 				end
 				return
 			end
@@ -945,7 +945,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getValuableCard(enemy)
 					use.to:append(enemy)
-					self:speak("hostile", self.player:isFemale())
+					self:speak("hostile")
 				end
 				return
 			end
@@ -959,7 +959,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 				if use.to then
 					sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "h")
 					use.to:append(enemy)
-					self:speak("hostile", self.player:isFemale())
+					self:speak("hostile")
 				end
 				return
 			end
@@ -989,7 +989,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 					if use.to then
 						sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "he")
 						use.to:append(enemy)
-						self:speak("hostile", self.player:isFemale())
+						self:speak("hostile")
 					end
 					return
 				else
@@ -1000,7 +1000,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 						else
 							sgs.ai_skill_cardchosen[name] = self:getCardRandomly(enemy, "h") end
 						use.to:append(enemy)
-						self:speak("hostile", self.player:isFemale())
+						self:speak("hostile")
 					end
 					return
 				end
@@ -1117,7 +1117,7 @@ sgs.ai_skill_cardask["collateral-slash"] = function(self, data, pattern, target,
 			end
 		end
 	end
-	self:speak("collateral", self.player:isFemale())
+	self:speak("collateral")
 	return "."
 end
 
@@ -1152,7 +1152,7 @@ end
 sgs.ai_use_value.Indulgence = 8
 sgs.ai_use_priority.Indulgence = 8.9
 sgs.ai_card_intention.Indulgence = function(card, from, tos)
-	speakTrigger(card,from,tos[1])
+	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, 120)
 end
 
