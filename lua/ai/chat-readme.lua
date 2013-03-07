@@ -1,24 +1,18 @@
 -- AI卖萌聊天的说明兼DIY文档
 
 --[[
-种类1：
-self:speak("jishi")
-直接调用sgs.ai_chat.jishi里的聊天语句并输出，视为self.player说出
+种类1：self:speak(typpe, to)
+示例：self:speak("jishi", player)
+标准函数，执行时先确定player参数，若无player则令player=self.player
+然后看如果player为女性且有相应的"_female"内容，则切换到女性输出模式
+最后调用sgs.ai_chat.jishi或sgs.ai_chat.jishi_female里的聊天语句并输出，视为player说出
 
-种类2：
-self:speak("collateral", self.player:getGeneral():isFemale(), to)
-根据to的性别，分别调用sgs.ai_chat.collateral_female或sgs.ai_chat.collateral里的聊天语句并输出
-若无to参数，则默认为self.player
-
-种类3：
-speak(target, "qiongtu")
-当说话者并不为当前角色时，可直接使用这条，视为target说出sgs.ai_chat.qiongtu里的语句
-
-种类4：
-speakTrigger(card,from,to)
-一般在实卡或技能卡使用时，根据不同的使用者和目标，输出不同的语句
-当from对to使用卡牌card时，调用主函数speakTrigger(card,from,to,event)进行进一步处理
-还有第四个参数形式：speakTrigger(card,from,to,event) 可同时加入游戏事件的条件
+种类2：self:speakTrigger(card,from,to,event)
+示例：self:speakTrigger(effect.card,effect.from,effect.to,sgs.CardEffect)
+复杂情况的实现。一般在实卡或技能卡使用时，根据不同的使用者和目标，输出不同的语句
+即“当from对to使用卡牌card时”，所调用输出的聊天语句
+同时需要编辑self:speakTrigger函数
+当from或to为空时取self.player
 ]]
 
 --[[参考聊天条目]]

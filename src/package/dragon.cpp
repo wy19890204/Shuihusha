@@ -27,7 +27,7 @@ public:
                         log.from = yn;
                         log.arg = objectName();
                         room->sendLog(log);
-                        room->recover(yn, rec, true);
+                        room->recover(yn, rec);
                     }
                 }
             }

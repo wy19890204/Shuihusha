@@ -883,7 +883,7 @@ public:
 	void loseHp(ServerPlayer *victim, int lose = 1);
 	void loseMaxHp(ServerPlayer *victim, int lose = 1);
 	void applyDamage(ServerPlayer *victim, const DamageStruct &damage);
-	void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = false);
+	void recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion = true);
 	bool cardEffect(const Card *card, ServerPlayer *from, ServerPlayer *to);
 	bool cardEffect(const CardEffectStruct &effect);
 	void judge(JudgeStruct &judge_struct);
@@ -979,6 +979,12 @@ public:
 	const Card *askForPindian(ServerPlayer *player, ServerPlayer *from, ServerPlayer *to, const char *reason);
 	ServerPlayer *askForPlayerChosen(ServerPlayer *player, const QList<ServerPlayer *> &targets, const char *reason);
 	const Card *askForSinglePeach(ServerPlayer *player, ServerPlayer *dying);
+
+	void broadcastInvoke(const char *method, const char *arg = ".", ServerPlayer *except = NULL);
+
+	void updateStateItem();
+	bool notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const QString &value = QString());
+	bool broadcastProperty(ServerPlayer *player, const char *property_name, const QString &value = QString());
 };
 
 %extend Room {

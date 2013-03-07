@@ -122,8 +122,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     bool circular = Config.CircularView;
 
     // create photos
-    int i;
-    for(i=0;i<player_count-1;i++){
+    for(int i = 0; i < player_count - 1;i++){
         Photo *photo = new Photo;
         photos << photo;
         addItem(photo);
@@ -2580,6 +2579,7 @@ void RoomScene::onStandoff(){
 }
 
 void RoomScene::onGameOver(){
+    log_box->append(QString(tr("<font color='%1'>---------- Game Finish ----------</font>").arg(Config.TextEditColor.name())));
     freeze();
 
     bool victory = Self->property("win").toBool();

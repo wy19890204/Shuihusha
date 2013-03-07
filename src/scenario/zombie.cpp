@@ -79,7 +79,7 @@ public:
                         RecoverStruct recover;
                         recover.who = p;
                         recover.recover = 1;
-                        room->recover(p, recover);
+                        room->recover(p, recover, false);
 
                         int n = player->getMark("@round")>1 ? player->getMark("@round")-1 : 1;
                         p->gainMark("@round", n);
@@ -98,7 +98,7 @@ public:
                     RecoverStruct recover;
                     recover.who = killer;
                     recover.recover = killer->getLostHp();
-                    room->recover(killer, recover);
+                    room->recover(killer, recover, false);
                     if(player->getRole()=="renegade")
                         killer->drawCards(3);
                 }

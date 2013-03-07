@@ -318,7 +318,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                                 if(room->askForChoice(p, "scene_29_eff", "dscorlose+recover") == "recover") {
                                     RecoverStruct recover;
                                     recover.who = p;
-                                    room->recover(nextAlivePlayer, recover);
+                                    room->recover(nextAlivePlayer, recover, false);
                                 } else {
                                     if(nextAlivePlayer->isKongcheng())
                                         room->loseHp(nextAlivePlayer);
@@ -334,7 +334,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                                 {
                                     RecoverStruct recover;
                                     recover.who = nextAlivePlayer;
-                                    room->recover(p, recover);
+                                    room->recover(p, recover, false);
                                 } else {
                                     if(p->isKongcheng())
                                         room->loseHp(p);
@@ -420,7 +420,7 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                 room->sendLog(log);
 
                 room->throwCard(use.card);
-                room->recover(effectTo, recover);
+                room->recover(effectTo, recover, false);
                 return true;
             }
             break;

@@ -51,7 +51,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["warn"] = &Client::warn;
 
     callbacks["startGame"] = &Client::startGame;
-    callbacks["gameOver"] = &Client::gameOver;
+    m_callbacks[S_COMMAND_GAME_OVER] = &Client::gameOver;
 
     callbacks["hpChange"] = &Client::hpChange;
     callbacks["maxhpChange"] = &Client::maxhpChange;
@@ -72,6 +72,7 @@ Client::Client(QObject *parent, const QString &filename)
     m_callbacks[S_COMMAND_INVOKE_SKILL] = &Client::skillInvoked;
     m_callbacks[S_COMMAND_SHOW_ALL_CARDS] = &Client::askForGongxin;
     m_callbacks[S_COMMAND_SKILL_GONGXIN] = &Client::askForGongxin;
+    m_callbacks[S_COMMAND_SET_PROPERTY] = &Client::updateProperty;
     //callbacks["skillInvoked"] = &Client::skillInvoked;
     callbacks["addHistory"] = &Client::addHistory;
     callbacks["animate"] = &Client::animate;
@@ -355,6 +356,15 @@ void Client::addPlayer(const QString &player_info){
     alive_count ++;
 
     emit player_added(player);
+}
+
+void Client::updateProperty(const Json::Value &arg)
+{
+    if (!isStringArray(arg, 0, 2)) return;
+    QString object_name = toQString(arg[0]);
+    ClientPlayer *player = getPlayer(object_name);
+    if (!player) return;
+    player->setProperty(arg[1].asCString(), toQString(arg[2]));
 }
 
 void Client::removePlayer(const QString &player_name){
@@ -1109,7 +1119,9 @@ bool Client::hasNoTargetResponsing() const{
 }
 
 ClientPlayer *Client::getPlayer(const QString &name){
-    return findChild<ClientPlayer *>(name);
+    if (name == Self->objectName() ||
+        name == QSanProtocol::S_PLAYER_SELF_REFERENCE_ID) return Self;
+    else return findChild<ClientPlayer *>(name);
 }
 
 void Client::kick(const QString &to_kick){
@@ -1262,15 +1274,17 @@ void Client::askForExchange(const Json::Value &exchange_str){
     setStatus(Discarding);
 }
 
-void Client::gameOver(const QString &result_str){
-    QStringList texts = result_str.split(":");
-    QString winner = texts.at(0);
-    QStringList roles = texts.at(1).split("+");
+void Client::gameOver(const Json::Value &arg){
+    disconnectFromHost();
+    //m_isGameOver = true;
+    setStatus(Client::NotActive);
+    QString winner = toQString(arg[0]);
+    QStringList roles;
+    tryParse(arg[1], roles);
 
     Q_ASSERT(roles.length() == players.length());
 
-    int i;
-    for(i=0; i<roles.length(); i++){
+    for(int i = 0; i < roles.length(); i++){
         QString name = players.at(i)->objectName();
         getPlayer(name)->setRole(roles.at(i));
     }

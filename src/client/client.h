@@ -106,7 +106,8 @@ public:
     void playAudio(const QString &name);
     void clearPile(const QString &);
     void setPileNumber(const QString &pile_num);
-    void gameOver(const QString &result_str);
+    void gameOver(const Json::Value &);
+    void updateProperty(const Json::Value &);
     void killPlayer(const QString &player_name);
     void revivePlayer(const QString &player_name);
     void warn(const QString &);

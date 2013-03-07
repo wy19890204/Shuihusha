@@ -134,7 +134,7 @@ void YinlangCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
         RecoverStruct recover;
         recover.card = this;
         recover.who = source;
-        room->recover(source, recover, true);
+        room->recover(source, recover);
     }
 }
 
