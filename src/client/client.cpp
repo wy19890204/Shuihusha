@@ -51,7 +51,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["warn"] = &Client::warn;
 
     callbacks["startGame"] = &Client::startGame;
-    callbacks["gameOver"] = &Client::gameOver;
+    m_callbacks[S_COMMAND_GAME_OVER] = &Client::gameOver;
 
     callbacks["hpChange"] = &Client::hpChange;
     callbacks["maxhpChange"] = &Client::maxhpChange;
@@ -1264,15 +1264,17 @@ void Client::askForExchange(const Json::Value &exchange_str){
     setStatus(Discarding);
 }
 
-void Client::gameOver(const QString &result_str){
-    QStringList texts = result_str.split(":");
-    QString winner = texts.at(0);
-    QStringList roles = texts.at(1).split("+");
+void Client::gameOver(const Json::Value &arg){
+    disconnectFromHost();
+    m_isGameOver = true;
+    setStatus(Client::NotActive);
+    QString winner = toQString(arg[0]);
+    QStringList roles;
+    tryParse(arg[1], roles);
 
     Q_ASSERT(roles.length() == players.length());
 
-    int i;
-    for(i=0; i<roles.length(); i++){
+    for(int i = 0; i < roles.length(); i++){
         QString name = players.at(i)->objectName();
         getPlayer(name)->setRole(roles.at(i));
     }

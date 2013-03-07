@@ -122,8 +122,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     bool circular = Config.CircularView;
 
     // create photos
-    int i;
-    for(i=0;i<player_count-1;i++){
+    for(int i = 0; i < player_count - 1;i++){
         Photo *photo = new Photo;
         photos << photo;
         addItem(photo);
