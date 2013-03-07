@@ -62,7 +62,7 @@ public:
                         if(player->getMaxHp() < 1)
                             room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
                         RecoverStruct rs;
-                        room->recover(player, rs, true);
+                        room->recover(player, rs);
                         player->drawCards(2);
                         return true;
                     }

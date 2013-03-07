@@ -1695,7 +1695,7 @@ public:
                     if(tmp->isWounded())
                         targets << tmp;
                 if(!targets.isEmpty() && player->askForSkillInvoke(objectName(), data))
-                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev, true);
+                    room->recover(room->askForPlayerChosen(player, targets, objectName()), rev);
             }
         }
         return false;
@@ -1788,7 +1788,7 @@ public:
                 log.arg = objectName();
                 room->sendLog(log);
 
-                room->recover(player, lty, true);
+                room->recover(player, lty);
             }
         }
         return false;
@@ -2388,7 +2388,7 @@ public:
             log.from = player;
             log.arg = objectName();
             room->sendLog(log);
-            room->recover(wangqing, rev, true);
+            room->recover(wangqing, rev);
         }
     }
 };
@@ -2409,8 +2409,8 @@ void MeihuoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     recover.card = this;
     recover.who = source;
 
-    room->recover(source, recover, true);
-    room->recover(targets.first(), recover, true);
+    room->recover(source, recover);
+    room->recover(targets.first(), recover);
 }
 
 class Meihuo: public OneCardViewAsSkill{
@@ -2527,7 +2527,7 @@ public:
         if(judge.card->getSuit() == suit){
             RecoverStruct rec;
             rec.who = player;
-            room->recover(player, rec, true);
+            room->recover(player, rec);
         }
         else
             player->obtainCard(judge.card);

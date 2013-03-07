@@ -301,7 +301,7 @@ public:
                 player->obtainCard(card, false);
                 RecoverStruct o;
                 o.card = card;
-                room->recover(jinge, o, true);
+                room->recover(jinge, o);
             }
         }
         return false;

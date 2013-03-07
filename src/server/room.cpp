@@ -95,7 +95,7 @@ QList<ServerPlayer *> Room::getPlayers() const{
     return m_players;
 }
 
-QList<ServerPlayer *> Room::getAllPlayers(bool include_dead) const{
+QList<ServerPlayer *> Room::getAllPlayers(bool include_dead) const{ //current is start
     QList <ServerPlayer *> count_players = include_dead ? m_players : m_alivePlayers;
     if (current == NULL)
         return count_players;
@@ -385,7 +385,7 @@ void Room::gameOver(const QString &winner){
         db->saveResult(m_players, winner);
     }
 
-    broadcastInvoke("gameOver", QString("%1:%2").arg(winner).arg(all_roles.join("+")));
+    //broadcastInvoke("gameOver", QString("%1:%2").arg(winner).arg(all_roles.join("+")));
 
     // save records
     if(Config.ContestMode){

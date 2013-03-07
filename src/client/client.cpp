@@ -1276,7 +1276,7 @@ void Client::askForExchange(const Json::Value &exchange_str){
 
 void Client::gameOver(const Json::Value &arg){
     disconnectFromHost();
-    m_isGameOver = true;
+    //m_isGameOver = true;
     setStatus(Client::NotActive);
     QString winner = toQString(arg[0]);
     QStringList roles;

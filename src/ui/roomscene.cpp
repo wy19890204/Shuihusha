@@ -2579,6 +2579,7 @@ void RoomScene::onStandoff(){
 }
 
 void RoomScene::onGameOver(){
+    log_box->append(QString(tr("<font color='%1'>---------- Game Finish ----------</font>").arg(Config.TextEditColor.name())));
     freeze();
 
     bool victory = Self->property("win").toBool();

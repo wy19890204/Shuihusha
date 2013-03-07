@@ -84,7 +84,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         RecoverStruct recover;
         recover.card = this;
         recover.who = effect.from;
-        room->recover(effect.to, recover);
+        room->recover(effect.to, recover, false);
     }else{
         LogMessage log;
         log.type = "#Drank";
@@ -257,7 +257,7 @@ void SilverLion::onUninstall(ServerPlayer *player) const{
             player->playCardEffect("Esilver_lion2");
         RecoverStruct recover;
         recover.card = this;
-        player->getRoom()->recover(player, recover);
+        player->getRoom()->recover(player, recover, false);
     }
 }
 
