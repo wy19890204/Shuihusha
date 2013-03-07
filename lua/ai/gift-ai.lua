@@ -30,7 +30,7 @@ end
 sgs.ai_use_value.Moonpie = 3.3
 sgs.ai_keep_value.Moonpie = 0
 sgs.dynamic_value.control_card.Moonpie = true
-sgs.ai_card_intention.Moonpie = function(card, from, tos)
+sgs.ai_card_intention.Moonpie = function(card, from, tos, self)
 	self:speak("moonpie", tos[1])
 end
 
@@ -50,6 +50,6 @@ end
 
 sgs.ai_use_value.RiceBall = 0.3
 sgs.ai_keep_value.RiceBall = 0
-sgs.ai_card_intention.RiceBall = function(card, from, tos)
+sgs.ai_card_intention.RiceBall = function(card, from, tos, self)
 	self:speak("riceball", tos[1])
 end

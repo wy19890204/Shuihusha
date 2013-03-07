@@ -112,12 +112,14 @@ sgs.ai_skill_invoke["pinming"] = function(self, data)
 	if not self.player:hasFlag("PinmingDie") then
 		if self.player:getMaxHp() > 4 then
 			if damage.damage > 1 then
+				self:speak("pinming")
 				return true
 			else
-				return math.random(0, 2) == 1
+				return math.random(0, 4) == 1
 			end
-		elseif self.player:getMaxHp() > 3 then
-			return damage.damage > 1
+		elseif self.player:getMaxHp() > 3 and damage.damage > 1 then
+			self:speak("pinming")
+			return true
 		end
 	else
 		if damage.to and self:isFriend(damage.to) then return false end
@@ -156,6 +158,7 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 			if #enemies > 1 then
 				src = src .. "+" .. enemies[2]:objectName()
 			end
+			self:speak("lieji")
 			return src
 		end
 	end
@@ -223,7 +226,15 @@ end
 
 -- xiebao
 -- liehuo
-sgs.ai_skill_invoke["liehuo"] = sgs.ai_skill_invoke["lihun"]
+sgs.ai_skill_invoke["liehuo"] = function(self, data)
+	local from = data:toPlayer()
+	if self:isEnemy(from) then
+		self:speak("liehuo")
+		return true
+	else
+		return false
+	end
+end
 
 -- shien
 -- longluo
@@ -263,6 +274,7 @@ sgs.ai_skill_use["@@xiaozai"] = function(self, prompt)
 			if self:getUseValue(cards[i]) > 5 then return "." end
 			table.insert(card_ids, cards[i]:getEffectiveId())
 		end
+		self:speak("xiaozai")
 		return "@XiaozaiCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
 	else
 		return "."

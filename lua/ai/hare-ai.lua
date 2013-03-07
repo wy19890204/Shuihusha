@@ -28,6 +28,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 			end
 		end
 		if delta > king then
+			self:speak("sixiang")
 			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
 		end
 	else
@@ -39,6 +40,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 			end
 		end
 		if delta >= king then
+			self:speak("sixiang")
 			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
 		end
 	end
@@ -237,6 +239,7 @@ sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 	for i = 1, num do
 		table.insert(card_ids, cards[i]:getEffectiveId())
 	end
+	self:speak("binggong")
 	return "@BinggongCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
 end
 
@@ -285,7 +288,10 @@ sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- songqing
 -- jiayao
-sgs.ai_skill_invoke["jiayao"] = true
+sgs.ai_skill_invoke["jiayao"] = function(self)
+	self:speak("jiayao")
+	return true
+end
 
 -- sheyan
 local sheyan_skill = {}
@@ -334,6 +340,7 @@ sgs.ai_skill_use_func["YijieCard"] = function(card,use,self)
 	use.card = card
 	if use.to then
 		self:sort(self.friends_noself, "handcard")
+		self:speak("yijie")
 		use.to:append(self.friends_noself[1])
 	end
 end
@@ -349,6 +356,7 @@ sgs.ai_skill_invoke["yijie"] = function(self, data)
 	return false
 end
 sgs.ai_skill_playerchosen["yijie"] = function(self, targets)
+	self:speak("yijie")
 	return self.yijietarget
 end
 
@@ -376,11 +384,13 @@ sgs.ai_skill_use["@@huatian"] = function(self, prompt)
 		if not self.friends_noself[1] then return "." end
 		self:sort(self.friends_noself, "hp")
 		if self.friends_noself[1]:isWounded() then
+			self:speak("huatianai")
 			return "@HuatianCard=.->" .. self.friends_noself[1]:objectName()
 		end
 	elseif flag == 2 then -- cuo
 		self:sort(self.enemies)
 		if #self.enemies > 0 then
+			self:speak("huatiancuo")
 			return "@HuatianCard=.->" .. self.enemies[1]:objectName()
 		end
 	end
@@ -417,6 +427,7 @@ sgs.ai_skill_use["@@shemi"] = function(self, prompt)
 	local cards = self.player:getCards("he")
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
+	self:speak("shemi")
 	return "@ShemiCard=" .. cards[1]:getEffectiveId()
 end
 

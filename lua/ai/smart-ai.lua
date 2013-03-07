@@ -1684,7 +1684,7 @@ function SmartAI:filterEvent(event, player, data)
 		local callback = sgs.ai_card_intention[card:className()]
 		if callback then
 			if type(callback) == "function" then
-				callback(card, from, to)
+				callback(card, from, to, self)
 			elseif type(callback) == "number" then
 				sgs.updateIntentions(from, to, callback, card)
 			end

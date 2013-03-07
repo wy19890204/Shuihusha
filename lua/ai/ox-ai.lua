@@ -38,6 +38,7 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 			end
 			use.card=card
 			if use.to then
+				self:speak("guibing")
 				use.to:append(enemy)
 			end
 			target_count=target_count+1
@@ -74,6 +75,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 			if i >= king then break end
 		end
 		if king >= #enemies and #enemies > 0 then
+			self:speak("zhengfa")
 			return "@ZhengfaCard=.->" .. table.concat(enemies, "+")
 		else
 			return "."
@@ -101,6 +103,7 @@ lianma_skill.getTurnUseCard = function(self)
 	return sgs.Card_Parse("@LianmaCard=.")
 end
 sgs.ai_skill_use_func["LianmaCard"] = function(card, use, self)
+	self:speak("lianma")
 	use.card = card
 end
 sgs.ai_skill_choice["lianma"] = function(self, choice)
@@ -177,6 +180,7 @@ sgs.ai_skill_use_func["SheruCard"] = function(card, use, self)
 			use.card = card
 			if use.to then
 				self.sherutarget = enemy
+				self:speak("sheru")
 				use.to:append(enemy)
 			end
 			return
@@ -306,6 +310,7 @@ sgs.ai_skill_use["@@duoming"] = function(self, prompt)
 			end
 		end
 		if #card_ids == 2 then
+			self:speak("duomingmoucai")
 			return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
 		end
 	end
@@ -319,7 +324,10 @@ sgs.shijin_keep_value =
 }
 
 -- wubang
-sgs.ai_skill_invoke["wubang"] = true
+sgs.ai_skill_invoke["wubang"] = function(self)
+	self:speak("wubang")
+	return true
+end
 
 -- xiagu
 sgs.ai_skill_cardask["@xiagu"] = function(self, data)
@@ -330,6 +338,7 @@ sgs.ai_skill_cardask["@xiagu"] = function(self, data)
 		local allcards = self.player:getCards("he")
 		for _, card in sgs.qlist(allcards) do
 			if card:inherits("EquipCard") then
+				self:speak("xiagu", damage.to)
 				return card:getEffectiveId()
 			end
 		end
@@ -406,6 +415,7 @@ sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 			if i >= self.player:getEquips():length() then break end
 		end
 		if #enemies > 0 then
+			self:speak("xunlie")
 			return "@XunlieCard=.->" .. table.concat(enemies, "+")
 		end
 	end
@@ -417,6 +427,7 @@ sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 			self:sort(self.enemies, "handcard")
 			for _, enemy in ipairs(self.enemies) do
 				if enemy:getHandcardNum() > 1 then
+					self:speak("xunlie")
 					return "@XunlieCard=" .. acard:getEffectiveId() .. "->" .. enemy:objectName()
 				end
 			end
@@ -443,7 +454,10 @@ sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
 	for _, friend in ipairs(self.friends) do
 		if friend:getGeneral():isMale() then
 			use.card = card
-			if use.to then use.to:append(friend) end
+			if use.to then
+				self:speak("shouwang")
+				use.to:append(friend)
+			end
 			return
 		end
 	end

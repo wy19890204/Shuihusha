@@ -1,13 +1,13 @@
 -- AI卖萌聊天的说明兼DIY文档
 
 --[[
-种类1：self:speak(typpe, to)
+种类1：function SmartAI:speak(typpe, to)
 示例：self:speak("jishi", player)
 标准函数，执行时先确定player参数，若无player则令player=self.player
 然后看如果player为女性且有相应的"_female"内容，则切换到女性输出模式
 最后调用sgs.ai_chat.jishi或sgs.ai_chat.jishi_female里的聊天语句并输出，视为player说出
 
-种类2：self:speakTrigger(card,from,to,event)
+种类2：function SmartAI:speakTrigger(card,from,to,event)
 示例：self:speakTrigger(effect.card,effect.from,effect.to,sgs.CardEffect)
 复杂情况的实现。一般在实卡或技能卡使用时，根据不同的使用者和目标，输出不同的语句
 即“当from对to使用卡牌card时”，所调用输出的聊天语句

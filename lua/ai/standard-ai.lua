@@ -10,7 +10,7 @@ sgs.songjiang_keep_value =
 }
 
 -- ganlin
-sgs.ai_card_intention.GanlinCard = function(card, from, tos)
+sgs.ai_card_intention.GanlinCard = function(card, from, tos, self)
 	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, -70)
 end

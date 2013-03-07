@@ -393,7 +393,10 @@ end
 
 -- suochao
 -- chongfeng
-sgs.ai_skill_invoke["chongfeng"] = true
+sgs.ai_skill_invoke["chongfeng"] = function(self)
+	self:speak("chongfeng")
+	return true
+end
 
 -- wangpo
 sgs.wangpo_suit_value = 

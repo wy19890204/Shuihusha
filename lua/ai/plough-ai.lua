@@ -65,7 +65,7 @@ function SmartAI:searchForEcstasy(use,enemy,slash)
 	end
 end
 
-sgs.ai_card_intention.Ecstasy = function(card, from, tos)
+sgs.ai_card_intention.Ecstasy = function(card, from, tos, self)
 	for _, to in ipairs(tos) do
 		self:speakTrigger(card,from,to)
 	end

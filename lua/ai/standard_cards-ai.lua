@@ -257,7 +257,7 @@ sgs.ai_skill_playerchosen.zero_card_as_slash = function(self, targets)
 	return targets:first()
 end
 
-sgs.ai_card_intention.Slash = function(card,from,tos)
+sgs.ai_card_intention.Slash = function(card,from,tos,self)
 --	if from:objectName() ~= source:objectName() then return end
 	for _, to in ipairs(tos) do
 		local value = 80
@@ -1151,7 +1151,7 @@ end
 
 sgs.ai_use_value.Indulgence = 8
 sgs.ai_use_priority.Indulgence = 8.9
-sgs.ai_card_intention.Indulgence = function(card, from, tos)
+sgs.ai_card_intention.Indulgence = function(card, from, tos, self)
 	self:speakTrigger(card,from,tos[1])
 	sgs.updateIntentions(from, tos, 120)
 end
