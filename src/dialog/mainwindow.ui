@@ -24,8 +24,8 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
+    <addaction name="actionJoin_Game"/>
     <addaction name="actionStart_Game"/>
-    <addaction name="actionStart_Server"/>
     <addaction name="actionPC_Console_Start"/>
     <addaction name="separator"/>
     <addaction name="actionRestart_game"/>
@@ -128,17 +128,17 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="actionStart_Server">
+  <action name="actionStart_Game">
    <property name="text">
-    <string>Start server</string>
+    <string>Start game</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionStart_Game">
+  <action name="actionJoin_Game">
    <property name="text">
-    <string>Start game</string>
+    <string>Join game</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>

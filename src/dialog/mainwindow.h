@@ -121,7 +121,6 @@ private slots:
     void on_actionAI_Melee_triggered();
     void on_actionPackaging_triggered();
     void on_actionScript_editor_triggered();
-    void on_actionPC_Console_Start_triggered();
     void on_actionCard_editor_triggered();
     void on_actionAcknowledgement_triggered();
     void on_actionBroadcast_triggered();
@@ -135,7 +134,7 @@ private slots:
     void on_actionEnable_Hotkey_toggled(bool );
     void on_actionCard_Overview_triggered();
     void on_actionGeneral_Overview_triggered();
-    void on_actionStart_Server_triggered();
+    void on_actionStart_Game_triggered();
     void on_actionExit_triggered();
 
     void checkVersion(const QString &server_version, const QString &server_mod);

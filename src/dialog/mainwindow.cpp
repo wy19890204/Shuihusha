@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
 
     connection_dialog = new ConnectionDialog(this);
-    connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
+    connect(ui->actionJoin_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
     connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
 
     config_dialog = new ConfigDialog(this);
@@ -105,10 +105,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     QList<QAction*> actions;
     actions << ui->actionStart_Game
-            << ui->actionStart_Server
-            << ui->actionPC_Console_Start
+            << ui->actionJoin_Game //Start_Server
+            //<< ui->actionPC_Console_Start
             << ui->actionReplay
+            << ui->actionPackaging
             << ui->actionConfigure
+
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview
@@ -188,9 +190,11 @@ void MainWindow::on_actionExit_triggered()
     }
 }
 
-void MainWindow::on_actionStart_Server_triggered()
+void MainWindow::on_actionStart_Game_triggered()
 {
     ServerDialog *dialog = new ServerDialog(this);
+    if(dialog->isPcc())
+        dialog->ensureEnableAI();
     if(!dialog->config())
         return;
 
@@ -201,10 +205,18 @@ void MainWindow::on_actionStart_Server_triggered()
         return;
     }
 
+    if(dialog->isPcc()){
+        server->createNewRoom();
+
+        Config.HostAddress = "127.0.0.1";
+        startConnection();
+        return;
+    }
+
     server->daemonize();
 
-    ui->actionStart_Game->disconnect();
-    connect(ui->actionStart_Game, SIGNAL(triggered()), this, SLOT(startGameInAnotherInstance()));
+    ui->actionJoin_Game->disconnect();
+    connect(ui->actionJoin_Game, SIGNAL(triggered()), this, SLOT(startGameInAnotherInstance()));
 
     StartScene *start_scene = qobject_cast<StartScene *>(scene);
     if(start_scene){
@@ -295,9 +307,9 @@ void MainWindow::enterRoom(){
         Config.setValue("HistoryIPs", Config.HistoryIPs);
     }
 
+    ui->actionJoin_Game->setEnabled(false);
     ui->actionStart_Game->setEnabled(false);
-    ui->actionStart_Server->setEnabled(false);
-	ui->actionAI_Melee->setEnabled(false);
+    ui->actionAI_Melee->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -356,10 +368,12 @@ void MainWindow::gotoStartScene(){
 
     QList<QAction*> actions;
     actions << ui->actionStart_Game
-            << ui->actionStart_Server
-            << ui->actionPC_Console_Start
+            << ui->actionJoin_Game //Start_Server
+            //<< ui->actionPC_Console_Start
             << ui->actionReplay
+            << ui->actionPackaging
             << ui->actionConfigure
+
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview
@@ -654,26 +668,6 @@ void MainWindow::on_actionAcknowledgement_triggered()
     AcknowledgementScene* ack = new AcknowledgementScene;
     connect(ack,SIGNAL(go_back()),this,SLOT(gotoStartScene()));
     gotoScene(ack);
-}
-
-void MainWindow::on_actionPC_Console_Start_triggered()
-{
-    ServerDialog *dialog = new ServerDialog(this);
-    dialog->ensureEnableAI();
-    if(!dialog->config())
-        return;
-
-    Server *server = new Server(this);
-    if(! server->listen()){
-        QMessageBox::warning(this, tr("Warning"), tr("Can not start server!"));
-
-        return;
-    }
-
-    server->createNewRoom();
-
-    Config.HostAddress = "127.0.0.1";
-    startConnection();
 }
 
 void MainWindow::on_actionScript_editor_triggered()

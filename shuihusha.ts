@@ -951,11 +951,6 @@
         <translation>自动选择目标</translation>
     </message>
     <message>
-        <location filename="src/dialog/configdialog.ui" line="558"/>
-        <source>Minimize the dialog when server runs</source>
-        <translation>服务器运行时最小化到托盘</translation>
-    </message>
-    <message>
         <location filename="src/dialog/configdialog.ui" line="574"/>
         <source>Show nick name and true name</source>
         <translation>以绰号+姓名方式显示日志</translation>
@@ -2024,11 +2019,6 @@
         <translation>退出(&amp;E)</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="125"/>
-        <source>Configure</source>
-        <translation>配置</translation>
-    </message>
-    <message>
         <location filename="src/dialog/mainwindow.ui" line="136"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
@@ -2050,13 +2040,28 @@
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="133"/>
-        <source>Start server</source>
-        <translation>启动服务器</translation>
+        <source>Start game</source>
+        <translation>启动游戏</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="141"/>
-        <source>Start game</source>
-        <translation>联机启动</translation>
+        <source>Join game</source>
+        <translation>加入游戏</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="221"/>
+        <source>Replay</source>
+        <translation>战局重放</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="342"/>
+        <source>Packaging</source>
+        <translation>扩展管理</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="125"/>
+        <source>Configure</source>
+        <translation>配置选项</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="149"/>
@@ -2067,6 +2072,21 @@
         <location filename="src/dialog/mainwindow.ui" line="162"/>
         <source>Card overview</source>
         <translation>卡牌一览</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="274"/>
+        <source>Scenario overview</source>
+        <translation>模式说明</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="157"/>
+        <source>About</source>
+        <translation>关于平台</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="295"/>
+        <source>Acknowledgement</source>
+        <translation>开发鸣谢</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="173"/>
@@ -2109,11 +2129,6 @@
         <translation>踢人</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="221"/>
-        <source>Replay</source>
-        <translation>战局重放</translation>
-    </message>
-    <message>
         <location filename="src/dialog/mainwindow.ui" line="224"/>
         <source>F7</source>
         <translation>F7</translation>
@@ -2139,11 +2154,6 @@
         <translation>显示/隐藏菜单</translation>
     </message>
     <message>
-        <location filename="src/dialog/mainwindow.ui" line="274"/>
-        <source>Scenario overview</source>
-        <translation>扩展模式</translation>
-    </message>
-    <message>
         <location filename="src/dialog/mainwindow.ui" line="282"/>
         <source>Script editor</source>
         <translation>脚本编辑器</translation>
@@ -2152,11 +2162,6 @@
         <location filename="src/dialog/mainwindow.ui" line="290"/>
         <source>Broadcast ...</source>
         <translation>广播 ...</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/mainwindow.ui" line="295"/>
-        <source>Acknowledgement</source>
-        <translation>鸣谢</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="303"/>
@@ -2192,11 +2197,6 @@
         <location filename="src/dialog/mainwindow.ui" line="337"/>
         <source>Ctrl+T</source>
         <translation></translation>
-    </message>
-    <message>
-        <location filename="src/dialog/mainwindow.ui" line="342"/>
-        <source>PC Console Start</source>
-        <translation>单机启动</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="345"/>
@@ -2305,11 +2305,6 @@
         <location filename="src/dialog/mainwindow.cpp" line="594"/>
         <source>Role assign table</source>
         <translation>身份分配表</translation>
-    </message>
-    <message>
-        <location filename="src/dialog/mainwindow.ui" line="157"/>
-        <source>About</source>
-        <translation>关于</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="183"/>
@@ -4216,9 +4211,19 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>启用 AI</translation>
     </message>
     <message>
+        <location filename="src/server/server.cpp" line="900"/>
+        <source>Minimize the dialog when server runs</source>
+        <translation>服务器运行时最小化到托盘</translation>
+    </message>
+    <message>
         <location filename="src/server/server.cpp" line="910"/>
-        <source>OK</source>
-        <translation>确定</translation>
+        <source>Start Server</source>
+        <translation>启动服务器</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="911"/>
+        <source>PC Console</source>
+        <translation>单机启动</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="911"/>
