@@ -76,6 +76,16 @@ struct CardMoveStruct{
     QString toString() const;
 };
 
+struct CardAskStruct{
+    ServerPlayer *who, *from;
+    const QString pattern;
+    const QString prompt;
+    TriggerEvent trigger_event;
+    bool is_skill;
+
+    QString toString() const;
+};
+
 struct DyingStruct{
     DyingStruct();
 
@@ -233,6 +243,7 @@ Q_DECLARE_METATYPE(CardStar)
 Q_DECLARE_METATYPE(PlayerStar)
 Q_DECLARE_METATYPE(DyingStruct)
 Q_DECLARE_METATYPE(RecoverStruct)
+Q_DECLARE_METATYPE(CardAskStruct)
 Q_DECLARE_METATYPE(JudgeStar)
 Q_DECLARE_METATYPE(DamageStar)
 Q_DECLARE_METATYPE(PindianStar)
