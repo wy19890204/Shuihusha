@@ -112,6 +112,10 @@ void Button::setFont(const QFont &font){
     title_item->setPixmap(*title);
 }
 
+void Button::setLabel(const QString &label){
+    this->label = label;
+}
+
 #include "engine.h"
 
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *){

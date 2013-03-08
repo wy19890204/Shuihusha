@@ -31,7 +31,6 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->fitInViewCheckBox->setChecked(Config.FitInView);
     ui->circularViewCheckBox->setChecked(Config.CircularView);
     ui->noIndicatorCheckBox->setChecked(Config.value("NoIndicator", false).toBool());
-    ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
 
     ui->bgmVolumeSlider->setValue(100 * Config.BGMVolume);
     ui->effectVolumeSlider->setValue(100 * Config.EffectVolume);
@@ -40,7 +39,6 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
     ui->autoTargetCheckBox->setChecked(Config.EnableAutoTarget);
-    ui->minimizecCheckBox->setChecked(Config.value("EnableMinimizeDialog", false).toBool());
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->spOpen->setChecked(Config.SPOpen);
     ui->enableLua->setChecked(Config.EnableLua);
@@ -191,9 +189,6 @@ void ConfigDialog::saveConfig()
 
     Config.EnableAutoTarget = ui->autoTargetCheckBox->isChecked();
     Config.setValue("EnableAutoTarget", Config.EnableAutoTarget);
-
-    Config.EnableMinimizeDialog = ui->minimizecCheckBox->isChecked();
-    Config.setValue("EnableMinimizeDialog", Config.EnableMinimizeDialog);
 
     Config.ShowAllName = ui->showAllName->isChecked();
     Config.setValue("ShowAllName", Config.ShowAllName);

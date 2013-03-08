@@ -15,6 +15,7 @@ public:
     explicit Button(const QString &label, const QSizeF &size);
     void setMute(bool mute);
     void setFont(const QFont &font);
+    void setLabel(const QString &label);
 
     virtual QRectF boundingRect() const;    
 

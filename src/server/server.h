@@ -89,7 +89,7 @@ public:
     ServerDialog(QWidget *parent);
     void ensureEnableAI();
     bool config();
-    bool isPcc();
+    bool isPCConsole();
 
 private:
     QWidget *createBasicTab();
@@ -156,7 +156,7 @@ private:
 
     QButtonGroup *extension_group;
     QButtonGroup *mode_group;
-    bool pcc;
+    bool pc_console;
 
 private slots:
     void onOkButtonClicked();

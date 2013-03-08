@@ -1001,12 +1001,12 @@ void ServerDialog::onOkButtonClicked(){
 }
 
 void ServerDialog::onPCCButtonClicked(){
-    pcc = true;
+    pc_console = true;
     onOkButtonClicked();
 }
 
 void ServerDialog::onSerButtonClicked(){
-    pcc = false;
+    pc_console = false;
     onOkButtonClicked();
 }
 
@@ -1145,8 +1145,8 @@ void ServerDialog::select3v3Generals(){
     dialog->exec();
 }
 
-bool ServerDialog::isPcc(){
-    return pcc;
+bool ServerDialog::isPCConsole(){
+    return pc_console;
 }
 
 bool ServerDialog::config(){

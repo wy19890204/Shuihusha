@@ -27,7 +27,10 @@ StartScene::StartScene()
 }
 
 void StartScene::addButton(QAction *action){
-    Button *button = new Button(action->text());
+    QString text = action->text();
+    if(action->objectName() == "actionPackaging")
+        text = tr("Lua Manager");
+    Button *button = new Button(text);
     button->setMute(false);
 
     connect(button, SIGNAL(clicked()), action, SLOT(trigger()));

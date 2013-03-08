@@ -2633,8 +2633,11 @@ void RoomScene::onGameOver(){
     QList<const ClientPlayer *> winner_list, loser_list;
     foreach(const ClientPlayer *player, ClientInstance->getPlayers()){
         bool win = player->property("win").toBool();
-        if(win)
+        if(win){
+            if(player->hasSkill("qiapai"))
+                winner_box->setTitle(Sanguosha->translate("`ubuntenkei"));
             winner_list << player;
+        }
         else
             loser_list << player;
 

@@ -545,22 +545,6 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QCheckBox" name="minimizecCheckBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>241</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Minimize the dialog when server runs</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
     <widget class="QCheckBox" name="showAllName">
      <property name="geometry">
       <rect>
@@ -663,8 +647,8 @@
     <widget class="QCheckBox" name="autoTargetCheckBox">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>60</y>
+       <x>10</x>
+       <y>90</y>
        <width>140</width>
        <height>16</height>
       </rect>

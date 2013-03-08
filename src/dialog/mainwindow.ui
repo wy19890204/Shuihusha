@@ -24,9 +24,8 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
-    <addaction name="actionJoin_Game"/>
     <addaction name="actionStart_Game"/>
-    <addaction name="actionPC_Console_Start"/>
+    <addaction name="actionJoin_Game"/>
     <addaction name="separator"/>
     <addaction name="actionRestart_game"/>
     <addaction name="actionReturn_main"/>
@@ -112,6 +111,9 @@
    <property name="text">
     <string>&amp;Exit</string>
    </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
   </action>
   <action name="actionConfigure">
    <property name="enabled">
@@ -133,7 +135,7 @@
     <string>Start game</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionJoin_Game">
@@ -141,7 +143,7 @@
     <string>Join game</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+G</string>
+    <string>F2</string>
    </property>
   </action>
   <action name="actionGeneral_Overview">
@@ -273,6 +275,9 @@
    <property name="text">
     <string>Scenario overview</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionScript_editor">
    <property name="enabled">
@@ -337,17 +342,12 @@
     <string>Ctrl+T</string>
    </property>
   </action>
-  <action name="actionPC_Console_Start">
-   <property name="text">
-    <string>PC Console Start</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
-   </property>
-  </action>
   <action name="actionPackaging">
    <property name="text">
     <string>Package manager ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionAI_Melee">
@@ -402,10 +402,16 @@
    <property name="text">
     <string>Restart game</string>
    </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
   </action>
   <action name="actionReturn_main">
    <property name="text">
     <string>Return main</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
    </property>
   </action>
   <action name="actionDecrypto_audio">

@@ -104,9 +104,8 @@ MainWindow::MainWindow(QWidget *parent)
     StartScene *start_scene = new StartScene;
 
     QList<QAction*> actions;
-    actions << ui->actionStart_Game
-            << ui->actionJoin_Game //Start_Server
-            //<< ui->actionPC_Console_Start
+    actions << ui->actionStart_Game //Start_Server
+            << ui->actionJoin_Game
             << ui->actionReplay
             << ui->actionPackaging
             << ui->actionConfigure
@@ -181,7 +180,7 @@ void MainWindow::on_actionExit_triggered()
 {
     QMessageBox::StandardButton result;
     result = QMessageBox::question(this,
-                                   tr("Shuihusha"),
+                                   Sanguosha->translate("Shuihusha"),
                                    tr("Are you sure to exit?"),
                                    QMessageBox::Ok | QMessageBox::Cancel);
     if(result == QMessageBox::Ok){
@@ -193,7 +192,7 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_actionStart_Game_triggered()
 {
     ServerDialog *dialog = new ServerDialog(this);
-    if(dialog->isPcc())
+    if(dialog->isPCConsole())
         dialog->ensureEnableAI();
     if(!dialog->config())
         return;
@@ -205,7 +204,7 @@ void MainWindow::on_actionStart_Game_triggered()
         return;
     }
 
-    if(dialog->isPcc()){
+    if(dialog->isPCConsole()){
         server->createNewRoom();
 
         Config.HostAddress = "127.0.0.1";
@@ -367,9 +366,8 @@ void MainWindow::gotoStartScene(){
     StartScene *start_scene = new StartScene;
 
     QList<QAction*> actions;
-    actions << ui->actionStart_Game
-            << ui->actionJoin_Game //Start_Server
-            //<< ui->actionPC_Console_Start
+    actions << ui->actionStart_Game //Start_Server
+            << ui->actionJoin_Game
             << ui->actionReplay
             << ui->actionPackaging
             << ui->actionConfigure
