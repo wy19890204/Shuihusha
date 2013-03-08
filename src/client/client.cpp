@@ -530,7 +530,7 @@ void Client::arrangeSeats(const QString &seats_str){
     for(i=0; i<player_names.length(); i++){
         ClientPlayer *player = findChild<ClientPlayer*>(player_names.at(i));
 
-        Q_ASSERT(player != NULL);
+        Q_CHECK_PTR(player);
 
         player->setSeat(i+1);
         players << player;

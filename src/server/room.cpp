@@ -314,7 +314,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
 }
 
 void Room::judge(JudgeStruct &judge_struct){
-    Q_ASSERT(judge_struct.who != NULL);
+    Q_CHECK_PTR(judge_struct.who);
 
     JudgeStar judge_star = &judge_struct;
 

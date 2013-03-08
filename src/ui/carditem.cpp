@@ -17,7 +17,7 @@ CardItem::CardItem(const Card *card)
     :Pixmap(card->getPixmapPath(), false), card(card), filtered_card(card), auto_back(true), frozen(false)
 
 {
-    Q_ASSERT(card != NULL);
+    Q_CHECK_PTR(card);
 
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
     cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
