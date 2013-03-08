@@ -1178,7 +1178,7 @@ function sgs.outputProcessValues(room)
 
 end
 
-function sgs.gameProcess(room)
+function sgs.gameProcess(room,...)
 	local rebel_num = sgs.current_mode_players["rebel"]
 	local loyal_num = sgs.current_mode_players["loyalist"]
 	if rebel_num == 0 and loyal_num> 0 then return "loyalist"
@@ -1210,7 +1210,7 @@ function sgs.gameProcess(room)
 		end
 		--end
 	end
-	local diff = loyal_value - rebel_value
+	local diff = loyal_value - rebel_value + (loyal_num - rebel_num) * 2
 	if #arg>0 and arg[1]==1 then return diff end
 
 	if diff >= 2 then

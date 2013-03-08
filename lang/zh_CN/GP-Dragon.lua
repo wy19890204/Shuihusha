@@ -57,7 +57,7 @@ return {
 	["illustrator:ruanxiaowu"] = "黄玉郎",
 	["cv:ruanxiaowu"] = "烨子风暴【天子会工作室】",
 	["designer:ruanxiaowu"] = "烨子&宇文天启",
-	["coder:ruanxiaowu"] = "凌天翼、宇文天启",
+	["coder:ruanxiaowu"] = "凌天翼",
 	["anxi"] = "暗袭",
 	[":anxi"] = "任一角色每受到一次锦囊牌造成的伤害，你可以弃置一张♥或♦手牌，对任一体力不少于你的其他角色造成1点伤害。",
 	["shuilao"] = "水牢",
