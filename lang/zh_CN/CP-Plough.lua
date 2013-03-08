@@ -2,6 +2,7 @@
 
 return {
 	["plough"] = "天罡卡牌包",
+	["cv:plough"] = "烨子风暴|Paddy",
 
 	["ecstasy"] = "迷",
 	[":ecstasy"] = "基本牌\

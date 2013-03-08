@@ -103,8 +103,15 @@ void CardOverview::on_tableWidget_itemSelectionChanged()
 #endif
 
     ui->cardLabel->setPixmap(pixmap_path);
-
     ui->cardDescriptionBox->setText(card->getDescription());
+    QString cv = Sanguosha->translate("cv:" + card->objectName());
+    if(cv.startsWith("cv:"))
+        cv = Sanguosha->translate("cv:" + card->getPackage());
+    if(!cv.startsWith("cv:")){
+        QStringList cvs = cv.split("|");
+        ui->malePlayButton->setToolTip(tr("CardCV: %1").arg(cvs.first()));
+        ui->femalePlayButton->setToolTip(tr("CardCV: %1").arg(cvs.last()));
+    }
 }
 
 void CardOverview::askCard(){

@@ -2,6 +2,7 @@
 
 local t = {
 	["standard_cards"] = "基础卡牌包",
+	["cv:standard_cards"] = "烨子风暴|Paddy",
 
 	["slash"] = "杀",
 	[":slash"] = "基本牌\
@@ -80,6 +81,7 @@ local t = {
 	["eight_diagram:yes"] = "进行一次判定，若判定结果为红色，则视为你打出了一张【闪】",
 
 	["ex_cards"] = "EX卡牌包",
+	["cv:ex_cards"] = "烨子风暴|Paddy",
 
 	["renwang_shield"] = "三重铠",
 	[":renwang_shield"] = "装备牌·防具\

@@ -914,7 +914,6 @@ QGroupBox *ServerDialog::createGameModeBox(){
 
 QLayout *ServerDialog::createButtonLayout(){
     QHBoxLayout *button_layout = new QHBoxLayout;
-    button_layout->addStretch();
 
     ok_button = new QPushButton(tr("PC Console"));
     QPushButton *server_button = new QPushButton(tr("Start Server"));
@@ -924,6 +923,7 @@ QLayout *ServerDialog::createButtonLayout(){
 
     button_layout->addWidget(minimize_checkbox);
     button_layout->addWidget(server_button);
+    button_layout->addStretch();
     button_layout->addWidget(ok_button);
     button_layout->addWidget(cancel_button);
 
