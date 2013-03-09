@@ -777,8 +777,10 @@ public:
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> targets = room->getAlivePlayers();
 
-        if(targets.isEmpty() || !player->askForSkillInvoke(objectName(), data))
+        if(targets.isEmpty() || !player->askForSkillInvoke(objectName(), data)){
+            room->playSkillEffect(objectName(), 5);
             return false;
+        }
 
         ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
 
