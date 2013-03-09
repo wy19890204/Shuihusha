@@ -248,6 +248,7 @@ sgs.ai_skill_cardask["@shuizhen1"] = function(self, data)
 	if not self:isFriend(damage.to) or damage.damage < 1 then return "." end
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, false)
+	self:speak("shuizhenf")
 	return cards[1]:getEffectiveId()
 end
 sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
@@ -272,6 +273,7 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 	for _, fcard in ipairs(cards) do
 		if fcard:inherits("BasicCard") and
 			not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+			self:speak("shuizhent")
 			return fcard:getEffectiveId()
 		end
 	end

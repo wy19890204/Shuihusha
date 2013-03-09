@@ -2818,8 +2818,8 @@ DamageMakerDialog::DamageMakerDialog(QWidget *parent)
 }
 
 void DamageMakerDialog::disableSource(){
-    QString nature = damage_nature->itemData(damage_nature->currentIndex()).toString();
-    damage_source->setEnabled(nature != "L" && nature != "M" && nature != "E");
+    int nature = damage_nature->itemData(damage_nature->currentIndex()).toInt();
+    damage_source->setEnabled(nature < 5);
 }
 
 void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){

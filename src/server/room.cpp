@@ -918,7 +918,7 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     broadcastInvoke("animate", animation_str);
     const Card *last_trick = trick;
 
-    QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
+    QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->getClassName())+":"+to->objectName()+":"+(positive?"true":"false"));
     thread->trigger(ChoiceMade, this, repliedPlayer, decisionData);
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
     if(repliedPlayer->hasSkill("pozhen") ||
@@ -1039,7 +1039,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             LogMessage log;
             log.card_str = card->toString();
             log.from = player;
-            log.type = QString("#%1").arg(card->metaObject()->className());
+            log.type = QString("#%1").arg(card->getClassName());
             sendLog(log);
 
             bool mute = false;
@@ -2560,7 +2560,7 @@ void Room::useCard(const CardUseStruct &use, bool add_history){
         if(card->inherits("LuaSkillCard"))
             key = "#" + card->objectName();
         else
-            key = card->metaObject()->className();
+            key = card->getClassName();
 
         bool slash_record =
             key.contains("Slash") &&

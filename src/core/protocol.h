@@ -42,13 +42,13 @@ namespace QSanProtocol
 
     enum CheatCategory
     {
-        S_CHEAT_FIRE_DAMAGE,
-        S_CHEAT_THUNDER_DAMAGE,
-        S_CHEAT_NORMAL_DAMAGE,
-        S_CHEAT_HP_RECOVER,
-        S_CHEAT_HP_LOSE,
-        S_CHEAT_MAX_HP_LOSE,
-        S_CHEAT_MAX_HP_RESET
+        S_CHEAT_NORMAL_DAMAGE = 1,
+        S_CHEAT_FIRE_DAMAGE = 2,
+        S_CHEAT_THUNDER_DAMAGE = 3,
+        S_CHEAT_HP_RECOVER = 4,
+        S_CHEAT_HP_LOSE = 5,
+        S_CHEAT_MAX_HP_LOSE = 6,
+        S_CHEAT_MAX_HP_RESET = 7
     };
 
     enum CommandType

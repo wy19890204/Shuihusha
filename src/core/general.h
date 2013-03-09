@@ -37,7 +37,7 @@ public:
     bool isTotallyHidden() const;
     bool isLuaGeneral() const;
 
-    enum Gender {Male, Female, Neuter};
+    enum Gender {Male = 0, Female = 1, Neuter = 2};
     Gender getGender() const;
     void setGender(Gender gender);
     QString getGenderString() const;

@@ -88,6 +88,7 @@ public:
     QString getDescription() const;
     QString getEffectPath() const;
 
+    inline virtual QString getClassName() const {return metaObject()->className();}
     bool isVirtualCard() const;
     virtual bool match(const QString &pattern) const;
 

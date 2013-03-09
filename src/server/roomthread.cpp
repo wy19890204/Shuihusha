@@ -73,7 +73,7 @@ bool JudgeStructPattern::match(const Player *player, const Card *card) const{
         return false;
 
     if(isRegex){
-        QString class_name = card->metaObject()->className();
+        QString class_name = card->getClassName();
         Card::Suit suit = card->getSuit();
         /*if(player->hasSkill("hongyan") && suit == Card::Spade)
             suit = Card::Heart;*/
@@ -191,13 +191,18 @@ RoomThread::RoomThread(Room *room)
 
 void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
     QVariant void_data;
+    bool invoke_verify = false;
 
     foreach(const TriggerSkill *skill, player->getTriggerSkills()){
         addTriggerSkill(skill);
 
         if(invoke_game_start && skill->getTriggerEvents().contains(GameStart))
-            skill->trigger(GameStart, room, player, void_data);
+            invoke_verify = true;
     }
+
+    //We should make someone trigger a whole GameStart event instead of trigger a skill only.
+    if(invoke_verify)
+        trigger(GameStart, room, player, void_data);
 }
 
 void RoomThread::constructTriggerTable(const GameRule *rule){
@@ -455,10 +460,6 @@ void RoomThread::run(){
     }
 }
 
-const QList<EventTriplet> *RoomThread::getEventStack() const{
-    return &event_stack;
-}
-
 class CompareByPriority{
 public:
     CompareByPriority(TriggerEvent event){
@@ -478,7 +479,7 @@ private:
 };
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data){
-    Q_ASSERT(QThread::currentThread() == this);
+    // Q_ASSERT(QThread::currentThread() == this);
 
     // push it to event stack
     EventTriplet triplet(event, room, target, &data);
@@ -499,11 +500,15 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, Q
         }
     }
 
-    delay(1);
+    //delay(1);
     // pop event stack
     event_stack.pop_back();
 
     return broken;
+}
+
+const QList<EventTriplet> *RoomThread::getEventStack() const{
+    return &event_stack;
 }
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
@@ -512,10 +517,10 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
 }
 
 void RoomThread::addTriggerSkill(const TriggerSkill *skill){
-    if(skillSet.contains(skill))
+    if(skill == NULL || skillSet.contains(skill->objectName()))
         return;
 
-    skillSet << skill;
+    skillSet << skill->objectName();
 
     QList<TriggerEvent> events = skill->getTriggerEvents();
     foreach(TriggerEvent event, events){
@@ -529,12 +534,16 @@ void RoomThread::addTriggerSkill(const TriggerSkill *skill){
     if(skill->isVisible()){
         foreach(const Skill *skill, Sanguosha->getRelatedSkills(skill->objectName())){
             const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
-            addTriggerSkill(trigger_skill);
+            if(trigger_skill)
+                addTriggerSkill(trigger_skill);
         }
     }
 }
 
 void RoomThread::delay(unsigned long secs){
+    if(secs == -1)
+        secs = (unsigned long)Config.AIDelay;
+    Q_ASSERT(secs >= 0);
     if(room->property("to_test").toString().isEmpty()&& Config.AIDelay>0)
         msleep(secs);
 }

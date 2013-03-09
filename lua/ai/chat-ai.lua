@@ -590,6 +590,18 @@ sgs.ai_chat.shemi=
 "哦……哦……",
 }
 
+--shantinggui
+sgs.ai_chat.shuizhenf=
+{
+"这里可是一方通行哦~",
+"让路让路！消防队来也！"
+}
+sgs.ai_chat.shuizhent=
+{
+"雷遁·感激波！",
+"雷遁·双重黑斑差！",
+"岚遁·激光马戏团！",
+}
 --suochao
 sgs.ai_chat.chongfeng=
 {
