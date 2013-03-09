@@ -247,15 +247,17 @@ end
 -- butian
 sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 	local judge = data:toJudge()
-	local reason = judge.reason
-	if reason == "tsunami" or reason == "lightning" then
-		if self:isEnemy(judge.who) or
-			(self:isFriend(judge.who) and judge:isGood()) then
-			return "."
+	if self.player:getHandcardNum() < 4 then
+		local reason = judge.reason
+		if reason == "tsunami" or reason == "lightning" then
+			if self:isEnemy(judge.who) or
+				(self:isFriend(judge.who) and judge:isGood()) then
+				return "."
+			end
 		end
+		local ignore = {"treasury", "provistore", "qimen", "qinxin", "yinyu", "qingshang"}
+		if table.contains(ignore, reason) then return "." end
 	end
-	local ignore = {"treasury", "provistore", "qimen", "qinxin", "yinyu", "qingshang"}
-	if table.contains(ignore, reason) then return "." end
 
 	if self:needRetrial(judge) and not self.player:isKongcheng() then
 		local cards = sgs.QList2Table(self.player:getHandcards())
@@ -369,10 +371,10 @@ dingce_skill.getTurnUseCard = function(self)
 	return sgs.Card_Parse("@DingceCard=" .. trick:getEffectiveId())
 end
 sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
-	local target = self.enemies[1]
+	local target
 	if self.player:isWounded() then
 		local erniang = self.room:findPlayerBySkillName("heidian")
-		if erniang then
+		if erniang and #self.enemies > 0 then
 			self:sort(self.enemies, "handcard")
 			target = self.enemies[1]
 		else
@@ -381,11 +383,11 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 			target = players[1]
 		end
 		use.card = card
-		if use.to then use.to:append(target) end
+		if use.to and #self.enemies > 0 then use.to:append(self.enemies[1]) end
 		return
 	else
 		use.card = card
-		if use.to and #self.friends_noself ~= 0 then use.to:append(self.friends_noself[1]) end
+		if use.to and #self.friends_noself > 0 then use.to:append(self.friends_noself[1]) end
 	end
 end
 sgs.ai_skill_invoke["dingce"] = function(self, data)

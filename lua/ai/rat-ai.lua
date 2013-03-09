@@ -148,7 +148,7 @@ shouge_skill.getTurnUseCard = function(self)
 		local cards = self.player:getCards("h")
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards) do
-			if (acard:inherits("Peach") and not keeppork) or acard:inherits("Analeptic") then
+			if (acard:isKindOf("Peach") and not keeppork) or acard:isKindOf("Analeptic") then
 				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
 			end
 		end
@@ -190,7 +190,7 @@ end
 -- baisheng
 sgs.baisheng_suit_value =
 {
-	spade = 4
+	spade = 2
 }
 
 -- xiayao
@@ -229,7 +229,7 @@ sgs.shiqian_suit_value =
 
 -- feiyan
 function sgs.ai_trick_prohibit.feiyan(card)
-	return card:inherits("SupplyShortage") or card:inherits("Snatch")
+	return card:isKindOf("SupplyShortage") or card:isKindOf("Snatch")
 end
 
 -- shentou

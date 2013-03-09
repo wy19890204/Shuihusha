@@ -2472,7 +2472,7 @@
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="1107"/>
         <source>Crypto files (*.dat)</source>
-        <translation>太阳神三国杀资源加密文件 (*.dat)</translation>
+        <translation>水浒杀资源加密文件 (*.dat)</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.cpp" line="1112"/>

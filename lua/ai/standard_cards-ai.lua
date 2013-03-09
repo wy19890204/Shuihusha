@@ -21,27 +21,27 @@ function SmartAI:slashProhibit(card,enemy,from)
 		if filter and type(filter) == "function" and filter(self, enemy, card) then return true end
 	end
 
-	if card:inherits("NatureSlash") and hasGoldArmor(self, enemy) then
+	if card:isKindOf("NatureSlash") and hasGoldArmor(self, enemy) then
 		return true
 	end
 	if self:isFriend(enemy) then
-		if card:inherits("FireSlash") or from:hasWeapon("fan") or from:hasSkill("fenhui") then
+		if card:isKindOf("FireSlash") or from:hasWeapon("fan") or from:hasSkill("fenhui") then
 			if self:isEquip("Vine", enemy) and not (enemy:isChained() and self:isGoodChainTarget(enemy)) then return true end
 		end
-		if enemy:isChained() and (card:inherits("NatureSlash") or self:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
+		if enemy:isChained() and (card:isKindOf("NatureSlash") or self:hasSkills("fenhui|paohong")) and not self:isGoodChainTarget(enemy) and
 			self:slashIsEffective(card,enemy) then return true end
 		if self:getCardsNum("Jink",enemy) == 0 and enemy:getHp() < 2 and self:slashIsEffective(card,enemy) then return true end
 		if enemy:isLord() and self:isWeak(enemy) and self:slashIsEffective(card,enemy) then return true end
 		if self:isEquip("GudingBlade") and enemy:isKongcheng() then return true end
-		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:inherits("NatureSlash") or from:hasWeapon("fan")) then
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and (card:isKindOf("NatureSlash") or from:hasWeapon("fan")) then
 			return true
 		end
 	else
 		if enemy:isChained() and not self:isGoodChainTarget(enemy) and self:slashIsEffective(card,enemy)
-			and (card:inherits("NatureSlash") or from:hasSkill("fenhui")) then
+			and (card:isKindOf("NatureSlash") or from:hasSkill("fenhui")) then
 			return true
 		end
-		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and not card:inherits("NatureSlash") and not from:hasWeapon("fan") then
+		if enemy:hasSkill("jintang") and enemy:getHp() == 1 and not card:isKindOf("NatureSlash") and not from:hasWeapon("fan") then
 			return true
 		end
 	end
@@ -54,7 +54,7 @@ function SmartAI:slashIsEffective(slash, to, from)
 	if to:hasSkill("jueming") and to:getHp() == 1 then
 		return false
 	end
-	if to:hasSkill("jintang") and to:getHp() == 1 and not slash:inherits("NatureSlash") then
+	if to:hasSkill("jintang") and to:getHp() == 1 and not slash:isKindOf("NatureSlash") then
 		return false
 	end
 	if to:hasSkill("qianshui") and not from:getWeapon() then
@@ -183,16 +183,16 @@ function SmartAI:useCardSlash(card, use)
 		--			use.card = strike_skill.getTurnUseCard(self, true)
 				end
 				if target:isChained() and self:isGoodChainTarget(target) and not use.card then
-					if self:isEquip("Crossbow") and card:inherits("NatureSlash") then
+					if self:isEquip("Crossbow") and card:isKindOf("NatureSlash") then
 						local slashes = self:getCards("Slash")
 						for _, slash in ipairs(slashes) do
-							if not slash:inherits("NatureSlash") and self:slashIsEffective(slash, target)
+							if not slash:isKindOf("NatureSlash") and self:slashIsEffective(slash, target)
 								and not self:slashProhibit(slash, target) then
 								usecard = slash
 								break
 							end
 						end
-					elseif not card:inherits("NatureSlash") then
+					elseif not card:isKindOf("NatureSlash") then
 						local slash = self:getCard("NatureSlash")
 						if slash and self:slashIsEffective(slash, target) and not self:slashProhibit(slash, target) then usecard = slash end
 					end
@@ -313,7 +313,7 @@ function SmartAI:useCardPeach(card, use)
 	local cards = self.player:getHandcards()
 	cards = sgs.QList2Table(cards)
 	for _,card in ipairs(cards) do
-		if card:inherits("Peach") then peaches = peaches+1 end
+		if card:isKindOf("Peach") then peaches = peaches+1 end
 	end
 	for _, friend in ipairs(self.enemies) do
 		if (self:hasSkills(sgs.drawpeach_skill,enemy) and self.player:getHandcardNum() < 3) then
@@ -373,8 +373,8 @@ sgs.ai_skill_cardask["double-sword-card"] = function(self, data, pattern, target
 	if target and self:isFriend(target) then return "." end
 	local cards = self.player:getHandcards()
 	for _, card in sgs.qlist(cards) do
-		if card:inherits("Slash") or card:inherits("Shit") or card:inherits("Collateral") or card:inherits("GodSalvation")
-		or card:inherits("Disaster") or card:inherits("EquipCard") or card:inherits("AmazingGrace") then
+		if card:isKindOf("Slash") or card:isKindOf("Shit") or card:isKindOf("Collateral") or card:isKindOf("GodSalvation")
+		or card:isKindOf("Disaster") or card:isKindOf("EquipCard") or card:isKindOf("AmazingGrace") then
 			return "$"..card:getEffectiveId()
 		end
 	end
@@ -491,13 +491,13 @@ function sgs.ai_cardsview.spear(class_name, player)
 		local cards = player:getCards("he")
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards) do
-			if acard:inherits("Slash") then return end
+			if acard:isKindOf("Slash") then return end
 		end
 		local cards = player:getCards("h")
 		cards=sgs.QList2Table(cards)
 		local newcards = {}
 		for _, card in ipairs(cards) do
-			if not card:inherits("Peach") then table.insert(newcards, card) end
+			if not card:isKindOf("Peach") then table.insert(newcards, card) end
 		end
 		if #newcards<(player:getHp()+1) then return nil end
 		if #newcards<2 then return nil end
@@ -547,7 +547,7 @@ end
 
 function sgs.ai_slash_weaponfilter.fan(to)
 	local armor = to:getArmor()
-	return armor and (armor:inherits("Vine") or armor:inherits("GaleShell"))
+	return armor and (armor:isKindOf("Vine") or armor:isKindOf("GaleShell"))
 end
 
 sgs.ai_skill_invoke.kylin_bow = function(self, data)
@@ -799,9 +799,9 @@ sgs.dynamic_value.benefit.ExNihilo = true
 
 function SmartAI:getDangerousCard(who)
 	local weapon = who:getWeapon()
-	if (weapon and weapon:inherits("Crossbow")) then return  weapon:getEffectiveId() end
-	if (weapon and weapon:inherits("Spear") and who:hasSkill("shalu"))  then return  weapon:getEffectiveId() end
-	if (weapon and weapon:inherits("Axe") and self:hasSkills("manli|liba|meicha|juesi", who)) then return weapon:getEffectiveId() end
+	if (weapon and weapon:isKindOf("Crossbow")) then return  weapon:getEffectiveId() end
+	if (weapon and weapon:isKindOf("Spear") and who:hasSkill("shalu"))  then return  weapon:getEffectiveId() end
+	if (weapon and weapon:isKindOf("Axe") and self:hasSkills("manli|liba|meicha|juesi", who)) then return weapon:getEffectiveId() end
 	if (who:getArmor() and who:hasEquip("eight_diagram") and who:getArmor():getSuit() == sgs.Card_Spade and who:hasSkill("kongying")) then return who:getArmor():getEffectiveId() end
 end
 
@@ -837,11 +837,11 @@ function SmartAI:getValuableCard(who)
 	local equips = sgs.QList2Table(who:getEquips())
 	for _,equip in ipairs(equips) do
 		if self:hasSkills("xiagu|zhiqu-n|zhiqu-c|huxiao|shexin|maiyi", who) then return equip:getEffectiveId() end
-		if self:hasSkills("feiqiang|maidao|yinlang", who) and equip:inherits("Weapon") then return equip:getEffectiveId() end
+		if self:hasSkills("feiqiang|maidao|yinlang", who) and equip:isKindOf("Weapon") then return equip:getEffectiveId() end
 	end
 
 	if armor and self:evaluateArmor(armor, who)>0
-		and not (armor:inherits("SilverLion") and who:isWounded()) then
+		and not (armor:isKindOf("SilverLion") and who:isWounded()) then
 		return armor:getEffectiveId()
 	end
 
@@ -879,7 +879,7 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 			if use.to then
 				tricks = player:getCards("j")
 				for _, trick in sgs.qlist(tricks) do
-					if trick:inherits("Lightning") then
+					if trick:isKindOf("Lightning") then
 						sgs.ai_skill_cardchosen[name] = trick:getEffectiveId()
 					end
 				end
@@ -915,15 +915,15 @@ function SmartAI:useCardSnatchOrDismantlement(card, use)
 			if use.to then
 				tricks = friend:delayedTricks()
 				for _, trick in sgs.qlist(tricks) do
-					if trick:inherits("Indulgence") then
+					if trick:isKindOf("Indulgence") then
 						if friend:getHp() < friend:getHandcardNum() then
 							sgs.ai_skill_cardchosen[name] = trick:getEffectiveId()
 						end
 					end
-					if trick:inherits("SupplyShortage") then
+					if trick:isKindOf("SupplyShortage") then
 						sgs.ai_skill_cardchosen[name] = trick:getEffectiveId()
 					end
-					if trick:inherits("Indulgence") then
+					if trick:isKindOf("Indulgence") then
 						sgs.ai_skill_cardchosen[name] = trick:getEffectiveId()
 					end
 				end

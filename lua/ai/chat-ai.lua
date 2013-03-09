@@ -1,4 +1,4 @@
-function SmartAI:speak(typpe, to)  -- self:speak("baoguo", lujunyi)
+function SmartAI:speak(typpe, to, index)  -- self:speak("baoguo", lujunyi)
 	if not sgs.GetConfig("AIChat", true) then return end
 	typpe = typpe or "no_type"
 	to = to or self.player
@@ -7,8 +7,8 @@ function SmartAI:speak(typpe, to)  -- self:speak("baoguo", lujunyi)
 	if isFemale and sgs.ai_chat[typpe .. "_female"] then
 		typpe = typpe .. "_female"
 	end
-	local i = math.random(1, #sgs.ai_chat[typpe])
-	to:speak(sgs.ai_chat[typpe][i])
+	index = index or math.random(1, #sgs.ai_chat[typpe])
+	to:speak(sgs.ai_chat[typpe][index])
 end
 
 function SmartAI:speakTrigger(card, from, to, event)
@@ -381,7 +381,7 @@ sgs.ai_chat.jiashu=
 {
 "来，给大爷乐一个~",
 "要记住，你爸是李刚。",
-"去歧姐家把虫妹叫来~ "
+"去歧姐家把猴子叫来~ "
 }
 --fangla
 sgs.ai_chat.yongle={
@@ -595,6 +595,12 @@ sgs.ai_chat.chongfeng=
 {
 "还不够，再来一发！",
 "不要停，继续！",
+}
+--wangpo
+sgs.ai_chat.qianxian=
+{
+"老娘发动个技能真不容易……",
+"相爱没有那么容易，每个人有他的脾气……",
 }
 
 --luzhishen

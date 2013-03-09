@@ -86,7 +86,7 @@ function SmartAI:useCardDrivolt(drivolt, use)
 	end
 	if not target then
 		for _, friend in ipairs(self.friends_noself) do
-			if not friend:isWounded() and not self:isWeak(friend) and
+			if not friend:isWounded() and not self:isWeak(friend) and friend:getHp() > 3 and
 				friend:getKingdom() ~= self.player:getKingdom() and
 				self:hasTrickEffective(drivolt, friend) then
 				target = friend
@@ -169,7 +169,7 @@ sgs.dynamic_value.benefit.Wiretap = true
 
 -- xing ci
 function SmartAI:useCardAssassinate(ass, use)
-	if not self.enemies[1] then return end
+	if #self.enemies == 0 then return "." end
 	for _, enemy in ipairs(self.enemies) do
 		if (enemy:hasSkill("fushang") and enemy:getHp() > 3) or enemy:hasSkill("huoshui") then
 			if self:hasTrickEffective(ass, enemy) then
@@ -197,7 +197,8 @@ function SmartAI:useCardAssassinate(ass, use)
 			end
 		end
 	end
-	if #self.enemies == 0 then return "." end
+
+	self:sort(self.enemies)
 	use.card = ass
 	if target then
 		if use.to then

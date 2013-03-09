@@ -59,6 +59,11 @@ end
 sgs.ai_skill_playerchosen["taolue"] = sgs.ai_skill_playerchosen["lihun"]
 
 -- shibao
+sgs.shibao_keep_value =
+{
+	Slash = 4,
+}
+
 -- xiaozhan
 sgs.ai_skill_cardask["@xiaozhan"] = function(self, data)
 	local use = data:toCardUse()
@@ -132,6 +137,11 @@ shuilao_skill.getTurnUseCard=function(self,inclusive)
 end
 
 -- zhengtianshou
+sgs.zhengtianshou_keep_value =
+{
+	TrickCard = 3
+}
+
 -- wugou
 local wugou_skill={}
 wugou_skill.name = "wugou"
@@ -227,6 +237,11 @@ sgs.ai_skill_choice["jiandiao"] = function(self, choice, data)
 end
 
 -- shantinggui
+sgs.shantinggui_keep_value =
+{
+	BasicCard = 4,
+}
+
 -- shuizhen
 sgs.ai_skill_cardask["@shuizhen1"] = function(self, data)
 	local damage = data:toDamage()
@@ -342,7 +357,7 @@ shexin_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
 	self:sort(self.enemies, "handcard2")
-	if use.to then
+	if use.to and #self.enemies > 0 then
 		use.to:append(self.enemies[1])
 	end
 	use.card=card
@@ -351,8 +366,8 @@ end
 -- qiongyaonayan
 sgs.qiongyaonayan_suit_value = 
 {
-	spade = 6,
-	club = 6,
+	spade = 4,
+	club = 4,
 }
 
 -- jiaozhen
@@ -401,7 +416,7 @@ end
 -- wangpo
 sgs.wangpo_suit_value = 
 {
-	club = 6,
+	club = 5,
 }
 
 -- qianxian
@@ -448,10 +463,13 @@ sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
 			if first and second then break end
 		end
 	end
-	if first and second and use.to then
+	if first and second then
 		use.card = card
-		use.to:append(first)
-		use.to:append(second)
+		if use.to then
+			self:speak("qianxian")
+			use.to:append(first)
+			use.to:append(second)
+		end
 	end
 end
 

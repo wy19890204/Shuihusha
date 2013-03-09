@@ -452,7 +452,7 @@ public:
             else{
                 if(damage.nature != DamageStruct::Thunder || water == damage.from || water == damage.to)
                     return false;
-                if(room->askForCard(water, ".", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
+                if(room->askForCard(water, "BasicCard", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
                     LogMessage log;
                     log.type = "#InvokeSkill";

@@ -4837,7 +4837,7 @@ zgfunc[sgs.GameOverJudge].callback.rs=function(room,player,data,name,result)
 	if not damage then return false end
 	local killer=damage.from
 	if not killer then return false end
-	if player:getGeneral():isFemale() and killer:objectName()==room:getOwner():objectName() and damage.card and damage.card:inherits("Slash") then
+	if player:getGeneral():isFemale() and killer:objectName()==room:getOwner():objectName() and damage.card and damage.card:isKindOf("Slash") then
 		addGameData(name,1)
 		if getGameData(name)==3 then
 			addZhanGong(room,name)
