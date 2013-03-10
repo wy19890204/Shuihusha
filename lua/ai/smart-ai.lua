@@ -139,6 +139,7 @@ function SmartAI:initialize(player)
 		sgs.turncount = 0
 		global_room = self.room
 		global_room:writeToConsole(version .. ", Powered by " .. _VERSION)
+		global_room:writeToConsole("GameMode: " .. global_room:getMode())
 
 		setInitialTables()
 		if sgs.isRolePredictable() then

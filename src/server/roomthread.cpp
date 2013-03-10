@@ -118,10 +118,6 @@ bool JudgeStruct::isGood(const Card *card) const{
         return !pattern.match(who, card);
 }
 
-bool JudgeStruct::isBad() const{
-    return ! isGood();
-}
-
 PhaseChangeStruct::PhaseChangeStruct()
     :from(Player::NotActive), to(Player::NotActive)
 {}
@@ -191,18 +187,13 @@ RoomThread::RoomThread(Room *room)
 
 void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
     QVariant void_data;
-    bool invoke_verify = false;
 
     foreach(const TriggerSkill *skill, player->getTriggerSkills()){
         addTriggerSkill(skill);
 
         if(invoke_game_start && skill->getTriggerEvents().contains(GameStart))
-            invoke_verify = true;
+            skill->trigger(GameStart, room, player, void_data);
     }
-
-    //We should make someone trigger a whole GameStart event instead of trigger a skill only.
-    if(invoke_verify)
-        trigger(GameStart, room, player, void_data);
 }
 
 void RoomThread::constructTriggerTable(const GameRule *rule){
@@ -541,9 +532,6 @@ void RoomThread::addTriggerSkill(const TriggerSkill *skill){
 }
 
 void RoomThread::delay(unsigned long secs){
-    if(secs == -1)
-        secs = (unsigned long)Config.AIDelay;
-    Q_ASSERT(secs >= 0);
     if(room->property("to_test").toString().isEmpty()&& Config.AIDelay>0)
         msleep(secs);
 }

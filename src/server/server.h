@@ -89,7 +89,7 @@ public:
     ServerDialog(QWidget *parent);
     void ensureEnableAI();
     bool config();
-    bool isPCConsole();
+    bool isPCConsole() {return pc_console;}
 
 private:
     QWidget *createBasicTab();

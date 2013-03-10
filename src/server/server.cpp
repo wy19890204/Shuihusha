@@ -1145,10 +1145,6 @@ void ServerDialog::select3v3Generals(){
     dialog->exec();
 }
 
-bool ServerDialog::isPCConsole(){
-    return pc_console;
-}
-
 bool ServerDialog::config(){
     exec();
 

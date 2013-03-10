@@ -118,7 +118,7 @@ public:
 struct JudgeStruct{
     JudgeStruct();
     bool isGood(const Card *card = NULL) const;
-    bool isBad() const;
+    bool isBad() const {return !isGood();}
 
     ServerPlayer *who;
     const Card *card;
