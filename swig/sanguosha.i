@@ -785,6 +785,7 @@ public:
 	virtual QDialog *getDialog() const;
 
 	virtual Location getLocation() const;
+	virtual bool isKindOf(const char* cardType) const;
 
 	void initMediaSource();
 	void playEffect(int index = -1) const;

@@ -138,7 +138,7 @@ void Engine::addSkills(const QList<const Skill *> &all_skills){
 
         skills.insert(skill->objectName(), skill);
 
-        if(skill->inherits("ClientSkill"))
+        if(skill->isKindOf("ClientSkill"))
             client_skills << qobject_cast<const ClientSkill *>(skill);
     }
 }
@@ -829,9 +829,9 @@ const ViewAsSkill *Engine::getViewAsSkill(const QString &skill_name) const{
     if(skill == NULL)
         return NULL;
 
-    if(skill->inherits("ViewAsSkill"))
+    if(skill->isKindOf("ViewAsSkill"))
         return qobject_cast<const ViewAsSkill *>(skill);
-    else if(skill->inherits("TriggerSkill")){
+    else if(skill->isKindOf("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
         return trigger_skill->getViewAsSkill();
     }else

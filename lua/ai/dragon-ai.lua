@@ -119,7 +119,7 @@ shuilao_skill.getTurnUseCard=function(self,inclusive)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if acard:inherits("EquipCard") and
+		if acard:isKindOf("EquipCard") and
 		((self:getUseValue(acard) < sgs.ai_use_value.Indulgence) or inclusive) then
 			card = acard
 			break
@@ -154,13 +154,13 @@ wugou_skill.getTurnUseCard = function(self)
 		local same_suit=false
 		cards = sgs.QList2Table(cards)
 		for _, fcard in ipairs(cards) do
-			if not fcard:inherits("Peach") and fcard:inherits("BasicCard") then
+			if not fcard:isKindOf("Peach") and fcard:isKindOf("BasicCard") then
 				first_card = fcard
 				first_found = true
 				for _, scard in ipairs(cards) do
-					if first_card ~= scard and scard:inherits("BasicCard") and
+					if first_card ~= scard and scard:isKindOf("BasicCard") and
 						(scard:isRed() and first_card:isRed()) and 
-						not scard:inherits("Peach") then
+						not scard:isKindOf("Peach") then
 						second_card = scard
 						second_found = true
 						break
@@ -191,7 +191,7 @@ qiaojiang_skill.getTurnUseCard = function(self, inclusive)
 	local card
 	self:sortByUseValue(cards, true)
 	for _, car in ipairs(cards)  do
-		if car:isBlack() and car:inherits("TrickCard") and
+		if car:isBlack() and car:isKindOf("TrickCard") and
 			((self:getUseValue(car) < sgs.ai_use_value.Slash) or inclusive) then
 			card = car
 			break
@@ -212,9 +212,9 @@ sgs.ai_view_as["qiaojiang"] = function(card, player, card_place)
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
 
-	if card:isBlack() and card:inherits("TrickCard") then
+	if card:isBlack() and card:isKindOf("TrickCard") then
 		return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
-	elseif card:isRed() and card:inherits("TrickCard") then
+	elseif card:isRed() and card:isKindOf("TrickCard") then
 		return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 	end
 end
@@ -271,8 +271,8 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, false)
 	for _, fcard in ipairs(cards) do
-		if fcard:inherits("BasicCard") and
-			not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+		if fcard:isKindOf("BasicCard") and
+			not fcard:isKindOf("Peach") and not fcard:isKindOf("Analeptic") then
 			self:speak("shuizhent")
 			return fcard:getEffectiveId()
 		end
@@ -351,7 +351,7 @@ shexin_skill.getTurnUseCard = function(self)
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
 		for _, card in ipairs(cards) do
-			if card:isNDTrick() or card:inherits("EquipCard") then
+			if card:isNDTrick() or card:isKindOf("EquipCard") then
 				return sgs.Card_Parse("@ShexinCard=" .. card:getEffectiveId())
 			end
 		end
