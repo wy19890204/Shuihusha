@@ -58,7 +58,7 @@ shenhuo_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards,true)
 	for _,acard in ipairs(cards)  do
-		if acard:isRed() and acard:inherits("TrickCard") then
+		if acard:isRed() and acard:isKindOf("TrickCard") then
 			card = acard
 			break
 		end
@@ -74,7 +74,7 @@ shenhuo_skill.getTurnUseCard = function(self)
 end
 function sgs.ai_cardneed.shenhuo(to, card, self)
 	return (card:getSuit() == sgs.Card_Diamond or card:getSuit() == sgs.Card_Heart)
-		and card:inherits("TrickCard")
+		and card:isKindOf("TrickCard")
 end
 
 -- xiaorang

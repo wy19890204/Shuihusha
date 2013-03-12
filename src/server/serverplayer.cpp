@@ -467,17 +467,17 @@ DummyCard *ServerPlayer::wholeHandCards() const{
 
 bool ServerPlayer::hasNullification(bool include_counterplot) const{
     foreach(const Card *card, handcards){
-        if(include_counterplot && card->inherits("Nullification"))
+        if(include_counterplot && card->isKindOf("Nullification"))
             return true; // all trick
         if(!include_counterplot && card->objectName() == "nullification")
             return true; // not (ntdtrick and single trick)
     }
 
     foreach(const Skill* skill, getVisibleSkillList()){
-        if(skill->inherits("ViewAsSkill")){
+        if(skill->isKindOf("ViewAsSkill")){
             const ViewAsSkill* vsskill = qobject_cast<const ViewAsSkill*>(skill);
             if(vsskill->isEnabledAtNullification(this, include_counterplot)) return true;
-        }else if(skill->inherits("TriggerSkill")){
+        }else if(skill->isKindOf("TriggerSkill")){
             const TriggerSkill* trigger_skill = qobject_cast<const TriggerSkill*>(skill);
             if(trigger_skill && trigger_skill->getViewAsSkill()){
                 const ViewAsSkill* vsskill = qobject_cast<const ViewAsSkill*>(trigger_skill->getViewAsSkill());

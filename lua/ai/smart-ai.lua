@@ -207,7 +207,7 @@ function SmartAI:assignKeep(num,start)
 		if not self.keepValue[card:getId()] then
 			self.keepValue[card:getId()]=self:getKeepValue(card,self.kept)
 			table.insert(self.kept,card)
-			--self:log(card:className())
+			--self:log(card:getClassName())
 			self:assignKeep(num-1)
 			break
 		end
@@ -1092,7 +1092,7 @@ function sgs.outputRoleValues(player, level)
 end
 
 function sgs.updateIntention(from, to, intention, card)
-	if not to then global_room:writeToConsole(debug.traceback()) end
+	if not to then global_room:writeToConsole(debug.traceback()) return end
 	if from:objectName() == to:objectName() then return end
 
 	sgs.ai_card_intention.general(from, to, intention)
@@ -2530,8 +2530,8 @@ function sgs.getSkillLists(player)
 	local vsnlist = {}
 	local fsnlist = {}
 	for _, askill in sgs.qlist(player:getVisibleSkillList()) do
-		if askill:inherits("ViewAsSkill") then table.insert(vsnlist, askill:objectName()) end
-		if askill:inherits("FilterSkill") then table.insert(fsnlist, askill:objectName()) end
+		if askill:isKindOf("ViewAsSkill") then table.insert(vsnlist, askill:objectName()) end
+		if askill:isKindOf("FilterSkill") then table.insert(fsnlist, askill:objectName()) end
 	end
 	return vsnlist, fsnlist
 end
@@ -2726,9 +2726,12 @@ local function isCompulsoryView(card, class_name, player, card_place)
 	local _, flist = sgs.getSkillLists(player)
 	for _, askill in ipairs(flist) do
 		local callback = sgs.ai_filterskill_filter[askill]
-		if type(callback) == "function" and callback(card, card_place, player)
-			and sgs.Card_Parse(callback(card, card_place, player)):isKindOf(class_name) then
-			return callback(card, card_place, player)
+		if type(callback) == "function" then
+			local cb = callback(card, card_place, player)
+			if not sgs.Card_Parse(cb) then writeToConsole(debug.traceback()) end
+			if sgs.Card_Parse(cb):isKindOf(class_name) then
+				return cb
+			end
 		end
 	end
 end

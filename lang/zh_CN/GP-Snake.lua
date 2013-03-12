@@ -112,4 +112,20 @@ return {
 	["dengfei"] = "邓飞",
 	["jiejiu"] = "截救",
 
+	["$huangfuduan"] = "057",
+	["#huangfuduan"] = "紫髯伯", -- min 3hp
+	["huangfuduan"] = "皇甫端",
+	["xiangma"] = "相马",
+	[":xiangma"] = "当任一角色进入濒死状态时，你可以弃掉除该角色外的任一角色装备区里的一张坐骑牌，视为你对该濒死角色使用一张【肉】。",
+	["yima"] = "医马",
+	[":yima"] = "当其他角色的坐骑牌进入弃牌堆时，你可以获得之并可以令该角色回复1点体力。",
+
+	["$suyuanjing"] = "154",
+	["#suyuanjing"] = "宿太尉", -- guan 3hp
+	["suyuanjing"] = "宿元景",
+
+	["$liangshijie"] = "162",
+	["#liangshijie"] = "梁中书", -- guan 3hp
+	["liangshijie"] = "梁世杰",
+
 }

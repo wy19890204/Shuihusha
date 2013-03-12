@@ -1451,7 +1451,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 
     QAbstractButton *button = NULL;
 
-    if(skill->inherits("TriggerSkill")){
+    if(skill->isKindOf("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
         switch(trigger_skill->getFrequency()){
         case Skill::Frequent:{
@@ -1478,13 +1478,13 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         case Skill::Compulsory: button = new QPushButton(); break;
         default: button = new QPushButton(); button->setVisible(false); break;
         }
-    }else if(skill->inherits("FilterSkill")){
+    }else if(skill->isKindOf("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
         if(filter && dashboard->getFilter() == NULL)
             dashboard->setFilter(filter);
         button = new QPushButton();
 
-    }else if(skill->inherits("ViewAsSkill")){
+    }else if(skill->isKindOf("ViewAsSkill")){
         button = new QPushButton();
         button2skill.insert(button, qobject_cast<const ViewAsSkill *>(skill));
         connect(button, SIGNAL(clicked()), this, SLOT(doSkillButton()));
@@ -2385,7 +2385,7 @@ void RoomScene::doCancelButton(){
             QString pattern = ClientInstance->getPattern();
             if(! pattern.startsWith("@")){
                 const ViewAsSkill *skill = dashboard->currentSkill();
-                if(!skill->inherits("ResponseSkill")){
+                if(!skill->isKindOf("ResponseSkill")){
                     cancelViewAsSkill();
                     break;
                 }

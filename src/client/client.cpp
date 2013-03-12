@@ -32,6 +32,7 @@ Client::Client(QObject *parent, const QString &filename)
 {
 
     ClientInstance = this;
+    m_isGameOver = false;
 
     callbacks["checkVersion"] = &Client::checkVersion;
 
@@ -263,7 +264,7 @@ void Client::processServerPacket(const QString &cmd){
 }
 
 void Client::processServerPacket(char *cmd){
-
+    if (m_isGameOver) return;
     QSanGeneralPacket packet;
     if (packet.parse(cmd)){
         if (packet.getPacketType() == S_SERVER_NOTIFICATION){
@@ -1276,7 +1277,7 @@ void Client::askForExchange(const Json::Value &exchange_str){
 
 void Client::gameOver(const Json::Value &arg){
     disconnectFromHost();
-    //m_isGameOver = true;
+    m_isGameOver = true;
     setStatus(Client::NotActive);
     QString winner = toQString(arg[0]);
     QStringList roles;

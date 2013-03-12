@@ -709,6 +709,115 @@ public:
     }
 };
 
+class Xiangma: public TriggerSkill{
+public:
+    Xiangma():TriggerSkill("xiangma"){
+        events << Dying;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        DyingStruct dying = data.value<DyingStruct>();
+        QList<ServerPlayer *> huangfus = room->findPlayersBySkillName(objectName());
+
+        return false;
+    }
+};
+
+class Yima: public TriggerSkill{
+public:
+    Yima():TriggerSkill("yima"){
+        events << CardLost << FinishJudge;
+    }
+
+    virtual bool triggerable(const ServerPlayer *) const{
+        return true;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        QList<ServerPlayer *> huangfus = room->findPlayersBySkillName(objectName());
+        if(huangfus.isEmpty())
+            return false;
+        if(event == CardLost){
+            CardMoveStar move = data.value<CardMoveStar>();
+            foreach(ServerPlayer *huangfu, huangfus){
+                if(huangfu != player && move->to_place == Player::DiscardedPile){
+                    const Card *weapon = Sanguosha->getCard(move->card_id);
+                    if(weapon->inherits("Weapon") &&
+                       huangfu->askForSkillInvoke(objectName())){
+                        room->playSkillEffect(objectName());
+                        huangfu->obtainCard(weapon);
+                        break;
+                    }
+                }
+            }
+        }else if(event == FinishJudge){
+            JudgeStar judge = data.value<JudgeStar>();
+            foreach(ServerPlayer *huangfu, huangfus){
+                if(huangfu != player && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
+                   judge->card->inherits("Weapon") &&
+                   huangfu->askForSkillInvoke(objectName())){
+                    room->playSkillEffect(objectName());
+                    huangfu->obtainCard(judge->card);
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+class Sougua: public TriggerSkill{
+public:
+    Sougua():TriggerSkill("sougua"){
+        events << NonTrigger;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        return false;
+    }
+};
+
+class Liushou: public TriggerSkill{
+public:
+    Liushou():TriggerSkill("liushou"){
+        events << NonTrigger;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        return false;
+    }
+};
+
+class Zhaoan: public TriggerSkill{
+public:
+    Zhaoan():TriggerSkill("zhaoan"){
+        events << NonTrigger;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        return false;
+    }
+};
+
+class Fuxu: public TriggerSkill{
+public:
+    Fuxu():TriggerSkill("fuxu"){
+        events << NonTrigger;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        return false;
+    }
+};
+
 SnakePackage::SnakePackage()
     :GeneralPackage("snake")
 {
