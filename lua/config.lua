@@ -172,6 +172,7 @@ ban_list = { -- 初始禁表设置
 		"lujunyi+gaoyanei",
 --		"suochao+pangwanchun",
 --		"suochao+yanshun",
+		"wangying+zhengtianshou",
 
 		"wangying+zhangqing",
 		"wangying+qiongying",

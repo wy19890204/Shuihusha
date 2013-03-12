@@ -479,94 +479,6 @@ public:
     }
 };
 
-class Tongmou: public SlashBuffSkill{
-public:
-    Tongmou():SlashBuffSkill("tongmou"){
-    }
-
-    virtual bool buff(const SlashEffectStruct &effect) const{
-        ServerPlayer *fuan = effect.from;
-        Room *room = fuan->getRoom();
-        QList<ServerPlayer *> targets;
-        foreach(ServerPlayer *tmp, room->getOtherPlayers(fuan)){
-            if(tmp->inMyAttackRange(effect.to))
-                targets << tmp;
-        }
-        if(targets.isEmpty() || !fuan->askForSkillInvoke(objectName()))
-            return false;
-        ServerPlayer *target = room->askForPlayerChosen(fuan, targets, objectName());
-        if(room->askForCard(target, "slash", "@tongmou:" + fuan->objectName())){
-            room->playSkillEffect(objectName());
-            LogMessage log;
-            log.type = "#Tongmou";
-            log.from = effect.to;
-            log.to << fuan << target;
-            log.arg = objectName();
-            room->sendLog(log);
-
-            room->slashResult(effect, NULL);
-            return true;
-        }
-        return false;
-    }
-};
-
-XianhaiCard::XianhaiCard(){
-    will_throw = false;
-}
-
-bool XianhaiCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
-}
-
-void XianhaiCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    const Card *c = Sanguosha->getCard(getSubcards().first());
-    Drivolt *drive = new Drivolt(c->getSuit(), c->getNumber());
-    drive->setSkillName("xianhai");
-    drive->addSubcard(c);
-    CardUseStruct use;
-    use.card = drive;
-    use.from = card_use.from;
-    use.to = card_use.to;
-    room->useCard(use);
-}
-
-class XianhaiViewAsSkill: public OneCardViewAsSkill{
-public:
-    XianhaiViewAsSkill():OneCardViewAsSkill("xianhai"){
-    }
-
-    virtual bool isEnabledAtPlay(const Player *player) const{
-        return false;
-    }
-
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
-        return pattern == "@@xianhai";
-    }
-
-    virtual bool viewFilter(const CardItem *n) const{
-        return !n->isEquipped() && n->getCard()->getSuit() == Card::Spade;
-    }
-
-    virtual const Card *viewAs(CardItem *card_item) const{
-        XianhaiCard *card = new XianhaiCard;
-        card->addSubcard(card_item->getCard()->getId());
-        return card;
-    }
-};
-
-class Xianhai: public MasochismSkill{
-public:
-    Xianhai():MasochismSkill("xianhai"){
-        view_as_skill = new XianhaiViewAsSkill;
-    }
-
-    virtual void onDamaged(ServerPlayer *an, const DamageStruct &damage) const{
-        Room *room = an->getRoom();
-        room->askForUseCard(an, "@@xianhai", "@xianhai", true);
-    }
-};
-
 class Qingdong: public TriggerSkill{
 public:
     Qingdong():TriggerSkill("qingdong"){
@@ -699,10 +611,6 @@ MonkeyPackage::MonkeyPackage()
     General *duxue = new General(this, "duxue", "kou");
     duxue->addSkill(new Wodao);
 
-    General *fuan = new General(this, "fuan", "guan", 3);
-    fuan->addSkill(new Tongmou);
-    fuan->addSkill(new Xianhai);
-
     General *yulan = new General(this, "yulan", "guan", 3, false);
     yulan->addSkill(new Qingdong);
     yulan->addSkill(new Qing5hang);
@@ -713,7 +621,6 @@ MonkeyPackage::MonkeyPackage()
 
     addMetaObject<ShensuanCard>();
     addMetaObject<JingtianCard>();
-    addMetaObject<XianhaiCard>();
 }
 
 //ADD_PACKAGE(Monkey)
