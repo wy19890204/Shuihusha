@@ -1,10 +1,5 @@
 #include "snake.h"
 #include "standard.h"
-#include "skill.h"
-#include "client.h"
-#include "carditem.h"
-#include "engine.h"
-#include "ai.h"
 #include "plough.h"
 #include "maneuvering.h"
 
@@ -721,6 +716,9 @@ SnakePackage::SnakePackage()
     muhong->addSkill(new Wuzu);
     skills << new WuzuSlash << new WuzuDistance;
 
+    General *xuanzan = new General(this, "xuanzan", "guan");
+    xuanzan->addSkill(new Konghe);
+
     General *oupeng = new General(this, "oupeng", "jiang", 5);
     oupeng->addSkill("#hp-1");
     oupeng->addSkill(new Zhanchi);
@@ -744,16 +742,25 @@ SnakePackage::SnakePackage()
     jindajian->addSkill(new Fangzao);
     jindajian->addSkill(new Jiangxin);
 
-    General *houjian = new General(this, "houjian", "kou", 2);
+    General *houjian = new General(this, "houjian", "min", 2);
     houjian->addSkill(new Feizhen);
-
-    General *xuanzan = new General(this, "xuanzan", "guan");
-    xuanzan->addSkill(new Konghe);
 
     General *dengfei = new General(this, "dengfei", "kou");
     dengfei->addSkill(new Jiejiu);
     dengfei->addSkill(new JiejiuPindian);
     related_skills.insertMulti("jiejiu", "#jiejiu_pindian");
+
+    General *huangfuduan = new General(this, "huangfuduan", "min", 3);
+    huangfuduan->addSkill(new Xiangma);
+    huangfuduan->addSkill(new Yima);
+
+    General *liangshijie = new General(this, "liangshijie", "guan", 3);
+    liangshijie->addSkill(new Sougua);
+    liangshijie->addSkill(new Liushou);
+
+    General *suyuanjing = new General(this, "suyuanjing", "guan", 3);
+    suyuanjing->addSkill(new Zhaoan);
+    suyuanjing->addSkill(new Fuxu);
 
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();
