@@ -3682,6 +3682,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     else
         thread->delay(qMin(delay / 2, 1000));
     setPlayerMark(player, skillname + "_wake", 1);
+    detachSkillFromPlayer(player, skillname, false);
     if(!Config.EnableSkillEmotion)
         setEmotion(player, "awake");
     else

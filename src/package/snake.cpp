@@ -241,6 +241,90 @@ public:
     }
 };
 
+class Liuxing: public TriggerSkill{
+public:
+    Liuxing():TriggerSkill("liuxing"){
+        events << Damaged << AskForRetrial;
+    }
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(player->hasMark("wudao_wake"))
+            return false;
+        if(event == Damaged){
+            DamageStruct damage = data.value<DamageStruct>();
+            if(damage.damage > 0){
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = player;
+                log.arg = objectName();
+                room->playSkillEffect(objectName());
+                room->sendLog(log);
+            }
+            for(int i = 0; i < damage.damage; i++){
+                if(player->isDead())
+                    break;
+                const Card *card = room->peek();
+                room->showCard(player, card->getEffectiveId());
+                room->getThread()->delay();
+
+                if(!(card->isRed() && card->isKindOf("BasicCard")))
+                    player->addToPile("shang", card);
+            }
+        }
+        else{
+            JudgeStar judge = data.value<JudgeStar>();
+            player->tag["Judge"] = data;
+            if(player->getPile("shang").isEmpty() || !player->askForSkillInvoke(objectName(), data))
+                return false;
+
+            QList<int> card_ids = player->getPile("shang");
+            room->fillAG(card_ids, player);
+            int card_id = room->askForAG(player, card_ids, false, objectName());
+            player->invoke("clearAG");
+            if(card_id > 0){
+                player->obtainCard(judge->card);
+                judge->card = Sanguosha->getCard(card_id);
+                room->moveCardTo(judge->card, NULL, Player::Special);
+
+                LogMessage log;
+                log.type = "$ChangedJudge";
+                log.from = player;
+                log.to << judge->who;
+                log.card_str = QString::number(card_id);
+                room->sendLog(log);
+
+                room->sendJudgeResult(player);
+            }
+        }
+        return false;
+    }
+};
+
+class Hunyuan: public PhaseChangeSkill{
+public:
+    Hunyuan():PhaseChangeSkill("hunyuan"){
+        frequency = Wake;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return PhaseChangeSkill::triggerable(target)
+                && !target->hasMark("hunyuan_wake")
+                && target->getPhase() == Player::Finish
+                && target->getPile("shang").count() >= 3;
+    }
+
+    virtual bool onPhaseChange(ServerPlayer *fanrui) const{
+        Room *room = fanrui->getRoom();
+
+        room->awake(fanrui, objectName(), "2500", 2500);
+
+        room->loseMaxHp(fanrui);
+        room->drawCards(fanrui, 2);
+        room->acquireSkill(fanrui, "qimen");
+        return false;
+    }
+};
+
 class Kongmen: public TriggerSkill{
 public:
     Kongmen():TriggerSkill("kongmen"){
@@ -274,17 +358,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        if(target->getPhase() != Player::Start)
-            return false;
-        Room *room = target->getRoom();
-        QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
-        if(!fanruis.isEmpty()){
-            foreach(ServerPlayer *fanrui, fanruis){
-                if(!fanrui->hasMark("wudao_wake") && fanrui->isKongcheng())
-                    return true;
-            }
-        }
-        return false;
+        return target && target->getPhase() == Player::RoundStart;
     }
 
     virtual bool onPhaseChange(ServerPlayer *player) const{
@@ -293,21 +367,14 @@ public:
         if(fanruis.isEmpty())
             return false;
 
-        LogMessage log;
-        log.type = "#WakeUp";
-        log.arg = objectName();
         foreach(ServerPlayer *fanrui, fanruis){
-            log.from = fanrui;
-            room->sendLog(log);
-            room->playSkillEffect(objectName());
-            room->broadcastInvoke("animate", "lightbox:$wudao:2500");
-            room->getThread()->delay(2500);
-
-            room->drawCards(fanrui, 2);
-            room->setPlayerMark(fanrui, "wudao_wake", 1);
+            if(fanrui->hasMark("wudao_wake") || fanrui->getPile("shang").count() < 5)
+                continue;
+            room->awake(fanrui, objectName(), "2500", 2500);
             room->loseMaxHp(fanrui);
+            room->detachSkillFromPlayer(fanrui, "liuxing");
             room->acquireSkill(fanrui, "butian");
-            room->acquireSkill(fanrui, "qimen");
+            room->acquireSkill(fanrui, "kongmen");
         }
         return false;
     }
@@ -843,9 +910,16 @@ SnakePackage::SnakePackage()
     General *baoxu = new General(this, "baoxu", "kou");
     baoxu->addSkill(new Sinue);
 
-    General *fanrui = new General(this, "fanrui", "kou", 3);
-    fanrui->addSkill(new Kongmen);
+    General *fanrui = new General(this, "fanrui", "kou");
+    fanrui->addSkill(new Liuxing);
+    fanrui->addSkill(new Hunyuan);
     fanrui->addSkill(new Wudao);
+    fanrui->addRelateSkill("kongmen");
+    related_skills.insertMulti("hunyuan", "qimen");
+    related_skills.insertMulti("wudao", "butian");
+    //fanrui->addRelateSkill("butian");
+    //fanrui->addRelateSkill("qimen");
+    skills << new Kongmen;
 
     General *jindajian = new General(this, "jindajian", "min", 3);
     jindajian->addSkill(new Fangzao);
