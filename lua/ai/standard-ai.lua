@@ -1218,15 +1218,41 @@ sgs.ai_skill_suit["jiashu"] = function(self)
 end
 
 -- duoquan
+function SmartAI:sortBySkillValue(skills, inverse)
+	local compare_func = function(a,b)
+		local value1 = sgs.ai_skill_value[a] or 0
+		local value2 = sgs.ai_skill_value[b] or 0
+
+		if not inverse then return value1 > value2 end
+		return value1 < value2
+	end
+
+	table.sort(skills, compare_func)
+end
+
 sgs.ai_skill_invoke["duoquan"] = function(self, data)
 	if self.player:getMark("@power") == 0 then return false end
 	local shiti = data:toPlayer()
-	if shiti:getHandcardNum() <= 3 then
-		local chaofeng = sgs.ai_chaofeng[shiti:getGeneralName()]
-		return chaofeng and chaofeng > 4
-	else
-		return shiti:getHandcardNum() > 3
+	local skills = {}
+	for _, skill in sgs.qlist(shiti:getVisibleSkillList()) do
+		if skill:getLocation() == sgs.Skill_Right and
+			skill:getFrequency() ~= sgs.Skill_Limited and
+			skill:getFrequency() ~= sgs.Skill_Wake and not skill:isLordSkill() then
+			table.insert(skills, skill:objectName())
+		end
 	end
+	if #skills == 0 then return false end
+	self:sortBySkillValue(skills)
+	local value = sgs.ai_skill_value[skills[1]] or 0
+	if (shiti:getHandcardNum() <= 3 and value > 5) or
+		(shiti:getHandcardNum() > 3 and value > 4) then
+		self.duoquan = skills[1]
+		return true
+	end
+	return false
+end
+sgs.ai_skill_choice["duoquan"] = function(self, choice, data)
+	return self.duoquan
 end
 
 -- fangla

@@ -942,7 +942,7 @@ void Lightning::takeEffect(ServerPlayer *target, bool good) const{
 class IceSwordSkill: public WeaponSkill{
 public:
     IceSwordSkill():WeaponSkill("ice_sword"){
-        events << DamageProceed;
+        events << Predamage;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{

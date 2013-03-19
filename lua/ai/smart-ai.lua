@@ -28,6 +28,7 @@ sgs.ai_keep_value = 		{}
 sgs.ai_use_value = 			{}
 sgs.ai_use_priority = 		{}
 sgs.ai_chaofeng = 			{}
+sgs.ai_skill_value = 		{}
 sgs.ai_global_flags = 		{}
 sgs.ai_skill_invoke = 		{}
 sgs.ai_skill_suit = 		{}
@@ -3576,6 +3577,7 @@ end
 
 dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/general_config.lua"
+dofile "lua/ai/skill_config.lua"
 dofile "lua/ai/value_config.lua"
 dofile "lua/ai/guanxing-ai.lua"
 dofile "lua/ai/standard-ai.lua"
