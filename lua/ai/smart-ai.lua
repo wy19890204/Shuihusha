@@ -1725,6 +1725,10 @@ function SmartAI:filterEvent(event, player, data)
 			else
 				player:setFlags("-CujuBad")
 			end
+		elseif reason == "qimen" then
+			if judge:isBad() then
+				self:speak("qimen", judge.who)
+			end
 		end
 	elseif event == sgs.SlashEffect then
 		local effect = data:toSlashEffect()
@@ -2553,7 +2557,7 @@ end
 function SmartAI:needRetrial(judge)
 	local reason = judge.reason
 --	if reason == "tsunami" or reason == "lightning" then return false end
-	if reason == "houlue" or reason == "qimen" or reason == "huanshu1" then return false end
+	if reason == "houlue" or reason == "huanshu1" then return false end
 	if reason == "taohui" then
 		if (self:isFriend(judge.who) and judge.card:isKindOf("BasicCard")) or
 			(self:isEnemy(judge.who) and not judge.card:isKindOf("BasicCard")) then

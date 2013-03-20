@@ -1047,8 +1047,6 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *luda, QVariant &data) const{
-        if(luda->getPhase() != Player::Play)
-            return false;
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
@@ -1059,7 +1057,9 @@ public:
                 const Card *card = Sanguosha->getCard(card_id);
                 room->showCard(damage.to, card_id);
                 room->getThread()->delay();
-                if(!card->inherits("BasicCard")){
+                if(card->isKindOf("Peach") || card->isKindOf("Analeptic"))
+                    room->obtainCard(luda, card);
+                else if(!card->isKindOf("BasicCard")){
                     room->throwCard(card_id, damage.to, luda);
                     LogMessage log;
                     log.type = "$ForceDiscardCard";
@@ -1069,8 +1069,8 @@ public:
                     room->sendLog(log);
 
                     damage.damage ++;
+                    data = QVariant::fromValue(damage);
                 }
-                data = QVariant::fromValue(damage);
             }
         }
         return false;
@@ -1329,13 +1329,13 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() > 2)
+        if(selected.length() > 3)
             return false;
         return !to_select->isEquipped();
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
+        if(cards.length() != 3)
             return NULL;
 
         BuyaKnifeCard *card = new BuyaKnifeCard();
@@ -2670,7 +2670,7 @@ class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
-        events << Damaged << PreDeath;
+        events << DamageComplete << PreDeath;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -2684,10 +2684,13 @@ public:
             if(event == PreDeath)
                 continue;
             lolidistance = other->isDead() ? lolidistance : loli->distanceTo(other);
+            if(other->getHp() >= (other->getMaxHp()+1) / 2)
+                continue;
             if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
-                const Card *card = room->peek();
+                //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
-                room->getThread()->delay();
+                loli->drawCards(1);
+                /*room->getThread()->delay();
 
                 LogMessage log;
                 log.type = "$TakeAG";
@@ -2695,15 +2698,15 @@ public:
                 log.card_str = card->getEffectIdString();
                 room->sendLog(log);
 
-                room->obtainCard(loli, card);
+                room->obtainCard(loli, card);*/
             }
         }
         return false;
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        if(event == Damaged)
-            return -1;
+        if(event == DamageComplete)
+            return 1;
         else
             return 2;
     }

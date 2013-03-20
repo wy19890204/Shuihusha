@@ -20,7 +20,7 @@ public:
         foreach(ServerPlayer *neinhg, nein){
             bool canivk = false;
             foreach(const Card *card, neinhg->getCards("he")){
-                if(card->inherits("TrickCard") || card->inherits("EquipCard")){
+                if(card->isKindOf("TrickCard")){
                     canivk = true;
                     break;
                 }

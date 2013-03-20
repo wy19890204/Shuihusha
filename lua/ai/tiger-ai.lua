@@ -1,6 +1,11 @@
 -- AI for tiger package
 
 -- leiheng
+sgs.leiheng_keep_value =
+{
+	TrickCard = 4,
+}
+
 -- guzong
 sgs.ai_skill_cardask["@guzong"] = function(self, data)
 	local player = data:toPlayer()
@@ -10,7 +15,7 @@ sgs.ai_skill_cardask["@guzong"] = function(self, data)
 		cards=sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
 		for _, scard in ipairs(cards) do
-			if scard:inherits("TrickCard") or scard:inherits("EquipCard") then
+			if scard:isKindOf("TrickCard") then
 				return scard:getEffectiveId()
 			end
 		end

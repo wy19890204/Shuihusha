@@ -98,6 +98,9 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     QPalette palette;
     palette.setColor(QPalette::Text, Config.TextEditColor);
     ui->textEditFontLineEdit->setPalette(palette);
+
+    setFixedHeight(height());
+    setFixedWidth(width());
 }
 
 void ConfigDialog::showFont(QLineEdit *lineedit, const QFont &font){

@@ -423,12 +423,19 @@ end
 -- zhaoji
 -- shemi
 sgs.ai_skill_use["@@shemi"] = function(self, prompt)
-	if self.player:getHandcardNum() < self.player:getHp() then return "." end
-	local cards = self.player:getCards("he")
+	if self.player:isKongcheng() or self.player:getHandcardNum() < self.player:getHp() then return "." end
+	local cards = self.player:getCards("h")
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
-	self:speak("shemi")
-	return "@ShemiCard=" .. cards[1]:getEffectiveId()
+	local throwcount = math.max(self.player:getHandcardNum() - 10, 1)
+	local willthrow = {}
+	for _, car in ipairs(cards) do
+		table.insert(willthrow, car:getEffectiveId())
+		if #willthrow == throwcount then
+			self:speak("shemi")
+			return "@ShemiCard=" .. table.concat(willthrow, "+")
+		end
+	end
 end
 
 -- nongquan
