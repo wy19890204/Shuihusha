@@ -9,378 +9,238 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>618</height>
+    <width>908</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>General Overview</string>
   </property>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QTableWidget" name="tableWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>901</width>
-     <height>621</height>
+     <x>10</x>
+     <y>10</y>
+     <width>421</width>
+     <height>581</height>
     </rect>
    </property>
-   <property name="currentIndex">
-    <number>0</number>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
    </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Tab 1</string>
-    </attribute>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="geometry">
-      <rect>
-       <x>660</x>
-       <y>100</y>
-       <width>221</width>
-       <height>487</height>
-      </rect>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>221</width>
-        <height>487</height>
-       </rect>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::SingleSelection</enum>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+   <property name="sortingEnabled">
+    <bool>true</bool>
+   </property>
+   <column>
+    <property name="text">
+     <string>Nick</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>General</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Kingdom</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Gender</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>MaxHP</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Package</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QTextEdit" name="skillTextEdit">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>340</y>
+     <width>201</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="generalPhoto">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>10</y>
+     <width>200</width>
+     <height>290</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>../image/generals/card/ubuntenkei.jpg</pixmap>
+   </property>
+  </widget>
+  <widget class="QScrollArea" name="scrollArea">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>104</y>
+     <width>221</width>
+     <height>487</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>221</width>
+      <height>487</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>20</y>
+     <width>221</width>
+     <height>74</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="designerLabel">
+      <property name="text">
+       <string>Designer</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>660</x>
-       <y>16</y>
-       <width>221</width>
-       <height>74</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="designerLabel">
-        <property name="text">
-         <string>Designer</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="designerLineEdit">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="cvLabel">
-        <property name="text">
-         <string>CV</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="cvLineEdit">
-        <property name="frame">
-         <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="coderLabel">
-        <property name="text">
-         <string>Coder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="coderLineEdit">
-        <property name="frame">
-         <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QLabel" name="generalPhoto">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>6</y>
-       <width>200</width>
-       <height>290</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap>../image/generals/card/ubuntenkei.jpg</pixmap>
-     </property>
-    </widget>
-    <widget class="QLabel" name="illustratorLabel">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>306</y>
-       <width>48</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Illustrator</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="skillTextEdit">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>336</y>
-       <width>201</width>
-       <height>251</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QTableWidget" name="tableWidget">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>6</y>
-       <width>421</width>
-       <height>581</height>
-      </rect>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
-     </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <column>
-      <property name="text">
-       <string>Nick</string>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="designerLineEdit">
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>General</string>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="cvLabel">
       <property name="text">
-       <string>Kingdom</string>
+       <string>CV</string>
       </property>
-     </column>
-     <column>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="cvLineEdit">
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="coderLabel">
       <property name="text">
-       <string>Gender</string>
+       <string>Coder</string>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>MaxHP</string>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="coderLineEdit">
+      <property name="frame">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Package</string>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>ID</string>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
-     </column>
-    </widget>
-    <widget class="QPushButton" name="changeGeneralButton">
-     <property name="geometry">
-      <rect>
-       <x>540</x>
-       <y>276</y>
-       <width>101</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Change this general</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="illustratorLineEdit">
-     <property name="geometry">
-      <rect>
-       <x>490</x>
-       <y>306</y>
-       <width>141</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="frame">
-      <bool>true</bool>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Tab 2</string>
-    </attribute>
-    <widget class="QPushButton" name="getCardButton">
-     <property name="geometry">
-      <rect>
-       <x>600</x>
-       <y>530</y>
-       <width>131</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Get this card</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="cardLabel">
-     <property name="geometry">
-      <rect>
-       <x>520</x>
-       <y>20</y>
-       <width>211</width>
-       <height>301</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="cardDescriptionBox">
-     <property name="geometry">
-      <rect>
-       <x>520</x>
-       <y>330</y>
-       <width>211</width>
-       <height>161</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QTableWidget" name="tableWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>491</width>
-       <height>521</height>
-      </rect>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
-     </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Suit</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Point</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Subtype</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Package</string>
-      </property>
-     </column>
-    </widget>
-    <widget class="QPushButton" name="malePlayButton">
-     <property name="geometry">
-      <rect>
-       <x>520</x>
-       <y>500</y>
-       <width>91</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Play (male)</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="femalePlayButton">
-     <property name="geometry">
-      <rect>
-       <x>634</x>
-       <y>500</y>
-       <width>91</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Play (female)</string>
-     </property>
-    </widget>
-   </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLineEdit" name="illustratorLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>310</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="illustratorLabel">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>310</y>
+     <width>48</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Illustrator</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="changeGeneralButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>280</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Change this general</string>
+   </property>
   </widget>
  </widget>
  <resources/>

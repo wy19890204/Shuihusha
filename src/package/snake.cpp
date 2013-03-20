@@ -727,6 +727,8 @@ public:
         if(damage.nature != DamageStruct::Normal || damage.to->isDead())
             return false;
         foreach(ServerPlayer *suanni, huoyansuanni){
+            if(suanni == damage.from)
+                continue;
             if(!suanni->hasMark("@block") && !suanni->isKongcheng()){
                 suanni->tag["JiejiuSource"] = QVariant::fromValue((PlayerStar)damage.from);
                 room->askForUseCard(suanni, "@@jiejiu", "@jiejiu:" + damage.from->objectName(), true);
