@@ -1010,13 +1010,13 @@ void ShemiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     source->turnOver();
 }
 
-class ShemiViewAsSkill: public OneCardViewAsSkill{
+class ShemiViewAsSkill: public ViewAsSkill{
 public:
-    ShemiViewAsSkill():OneCardViewAsSkill("shemi"){
+    ShemiViewAsSkill():ViewAsSkill("shemi"){
 
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
+    virtual bool isEnabledAtPlay(const Player *) const{
         return false;
     }
 
@@ -1024,13 +1024,15 @@ public:
         return pattern == "@@shemi";
     }
 
-    virtual bool viewFilter(const CardItem *) const{
-        return true;
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_) const{
+        return !to_->isEquipped();
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty() || Self->getHandcardNum() - cards.length() > 10)
+            return NULL;
         ShemiCard *card = new ShemiCard;
-        card->addSubcard(card_item->getFilteredCard());
+        card->addSubcards(cards);
         return card;
     }
 };
