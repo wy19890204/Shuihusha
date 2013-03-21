@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -44,19 +44,19 @@
     <addaction name="actionView_ban_list"/>
     <addaction name="actionRole_assign_table"/>
     <addaction name="separator"/>
-    <addaction name="actionBroadcast"/>
     <addaction name="actionAI_Melee"/>
     <addaction name="actionReplay_file_convert"/>
     <addaction name="actionCrypto_audio"/>
     <addaction name="actionDecrypto_audio"/>
     <addaction name="separator"/>
     <addaction name="actionEnable_Hotkey"/>
-    <addaction name="actionExpand_dashboard"/>
     <addaction name="actionView_Discarded"/>
     <addaction name="actionView_distance"/>
     <addaction name="actionServerInformation"/>
-    <addaction name="actionSurrender"/>
+    <addaction name="separator"/>
+    <addaction name="actionBroadcast"/>
     <addaction name="actionKick"/>
+    <addaction name="actionSurrender"/>
     <addaction name="actionSaveRecord"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -76,6 +76,12 @@
     <addaction name="actionShow_Hide_Menu"/>
     <addaction name="actionFullscreen"/>
     <addaction name="actionMinimize_to_system_tray"/>
+    <addaction name="separator"/>
+    <addaction name="actionDraw_indicator"/>
+    <addaction name="actionDraw_cardname"/>
+    <addaction name="actionExpand_dashboard"/>
+    <addaction name="actionFit_in_view"/>
+    <addaction name="actionAuto_target"/>
    </widget>
    <widget class="QMenu" name="menuCheat">
     <property name="enabled">
@@ -417,6 +423,38 @@
   <action name="actionDecrypto_audio">
    <property name="text">
     <string>Decrypto audio ...</string>
+   </property>
+  </action>
+  <action name="actionDraw_indicator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw indicator</string>
+   </property>
+  </action>
+  <action name="actionDraw_cardname">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw cardname</string>
+   </property>
+  </action>
+  <action name="actionFit_in_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fit in view</string>
+   </property>
+  </action>
+  <action name="actionAuto_target">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto target</string>
    </property>
   </action>
  </widget>

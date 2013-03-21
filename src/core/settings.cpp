@@ -120,7 +120,6 @@ void Settings::init(){
     EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
     ShowAllName = value("ShowAllName", true).toBool();
-    SPOpen = value("SPOpen", false).toBool();
     OperationTimeout = value("OperationTimeout", 15).toInt();
     OperationNoLimit = value("OperationNoLimit", false).toBool();
     EnableCardEffects = value("EnableCardEffects", true).toBool();

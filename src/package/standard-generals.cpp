@@ -2656,6 +2656,7 @@ public:
     }
 };
 
+#include <math.h>
 class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
@@ -2674,7 +2675,7 @@ public:
             if(event == PreDeath)
                 continue;
             lolidistance = other->isDead() ? lolidistance : loli->distanceTo(other);
-            if(lolidistance < 2 && other->getHp() < (other->getMaxHp() / 2) && loli->askForSkillInvoke(objectName())){
+            if(lolidistance < 2 && other->getHp() < (ceil((qreal)other->getMaxHp() / 2.0)) && loli->askForSkillInvoke(objectName())){
                 //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 loli->drawCards(1);

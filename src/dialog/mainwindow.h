@@ -132,6 +132,10 @@ private slots:
     void on_actionReplay_triggered();
     void on_actionAbout_triggered();
     void on_actionEnable_Hotkey_toggled(bool );
+    void on_actionDraw_indicator_toggled(bool );
+    void on_actionDraw_cardname_toggled(bool );
+    void on_actionFit_in_view_toggled(bool );
+    void on_actionAuto_target_toggled(bool );
     void on_actionCard_Overview_triggered();
     void on_actionGeneral_Overview_triggered();
     void on_actionStart_Game_triggered();

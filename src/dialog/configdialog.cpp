@@ -40,7 +40,6 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
     ui->autoTargetCheckBox->setChecked(Config.EnableAutoTarget);
     ui->showAllName->setChecked(Config.ShowAllName);
-    ui->spOpen->setChecked(Config.SPOpen);
     ui->enableLua->setChecked(Config.EnableLua);
     ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
 
@@ -195,9 +194,6 @@ void ConfigDialog::saveConfig()
 
     Config.ShowAllName = ui->showAllName->isChecked();
     Config.setValue("ShowAllName", Config.ShowAllName);
-
-    Config.SPOpen = ui->spOpen->isChecked();
-    Config.setValue("SPOpen", Config.SPOpen);
 
     Config.EnableLua = ui->enableLua->isChecked();
     Config.setValue("EnableLua", Config.EnableLua);

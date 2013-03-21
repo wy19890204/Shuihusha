@@ -70,7 +70,6 @@ public:
     bool EnableAutoTarget;
     int NullificationCountDown;
     bool ShowAllName;
-    bool SPOpen;
     int OperationTimeout;
     bool OperationNoLimit;
     bool EnableCardEffects;

@@ -145,7 +145,11 @@ void MainWindow::restoreFromConfig(){
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
-    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard").toBool());
+    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
+    ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
+    ui->actionFit_in_view->setChecked(Config.value("FitInView", false).toBool());
+    ui->actionAuto_target->setChecked(Config.value("EnableAutoTarget", false).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -671,6 +675,32 @@ void MainWindow::on_actionAcknowledgement_triggered()
 void MainWindow::on_actionScript_editor_triggered()
 {
     QMessageBox::information(this, tr("Warning"), tr("This function is not implemented yet!"));
+}
+
+void MainWindow::on_actionDraw_indicator_toggled(bool checked)
+{
+    if(Config.value("NoIndicator", false).toBool() == checked)
+        Config.setValue("NoIndicator", !checked);
+}
+
+void MainWindow::on_actionDraw_cardname_toggled(bool checked)
+{
+    if(Config.value("DrawCardName", true).toBool() != checked)
+        Config.setValue("DrawCardName", checked);
+}
+
+void MainWindow::on_actionFit_in_view_toggled(bool checked)
+{
+    if(Config.value("FitInView", false).toBool() != checked)
+        Config.setValue("FitInView", checked);
+}
+
+void MainWindow::on_actionAuto_target_toggled(bool checked)
+{
+    if(Config.EnableAutoTarget != checked){
+        Config.EnableAutoTarget = checked;
+        Config.setValue("EnableAutoTarget", checked);
+    }
 }
 
 #include <QGroupBox>

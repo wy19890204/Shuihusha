@@ -569,7 +569,7 @@ QStringList Engine::getLords() const{
     foreach(QString lord, lord_list){
         const General *general = generals.value(lord);
 
-        if(general->getPackage() == "sp" && !Config.SPOpen)
+        if(general->getPackage() == "sp")
             continue;
         if(ban_package.contains(general->getPackage()))
             continue;

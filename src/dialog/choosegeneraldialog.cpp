@@ -81,11 +81,11 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         connect(button, SIGNAL(double_clicked()), mapper, SLOT(map()));
         connect(button, SIGNAL(double_clicked()), this, SLOT(accept()));
 
-        // special case
+        /* special case
         if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
             if(general->getPackage() == "sp" && general->isLord())
                 button->setEnabled(false);
-        }
+        }*/
     }
 
     if(ServerInfo.EnableHegemony && ServerInfo.Enable2ndGeneral
@@ -254,8 +254,8 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
     QList<const General *> all_generals = Sanguosha->findChildren<const General *>();
     QMap<QString, QList<const General*> > map;
     foreach(const General *general, all_generals){
-        if(general->getPackage() == "sp" && !Config.SPOpen)
-            continue; //hidden generals
+        //if(general->getPackage() == "sp" && !Config.SPOpen)
+        //    continue; //hidden generals
         map[general->getKingdom()] << general;
     }
 
