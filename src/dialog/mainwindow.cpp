@@ -88,12 +88,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle(Sanguosha->translate("Shuihusha"));
 
-    connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
-    connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
+    //connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
+    //connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
 
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionJoin_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
-    connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
+    connect(connection_dialog, SIGNAL(accepted()), this, SLOT(on_actionRestart_game_triggered()));
 
     config_dialog = new ConfigDialog(this);
     connect(ui->actionConfigure, SIGNAL(triggered()), config_dialog, SLOT(show()));
@@ -213,7 +213,7 @@ void MainWindow::on_actionStart_Game_triggered()
         server->createNewRoom();
 
         Config.HostAddress = "127.0.0.1";
-        startConnection();
+        on_actionRestart_game_triggered();
         return;
     }
 
@@ -265,7 +265,7 @@ void MainWindow::checkVersion(const QString &server_version, const QString &serv
     QMessageBox::warning(this, tr("Warning"), text);
 }
 
-void MainWindow::startConnection(){
+void MainWindow::on_actionRestart_game_triggered(){
     Client *client = new Client(this);
 
     connect(client, SIGNAL(version_checked(QString,QString)), SLOT(checkVersion(QString,QString)));
@@ -357,14 +357,14 @@ void MainWindow::enterRoom(){
         ui->actionExecute_script_at_server_side->disconnect();
     }
 
-    connect(room_scene, SIGNAL(restart()), this, SLOT(startConnection()));
-    connect(room_scene, SIGNAL(return_to_start()), this, SLOT(gotoStartScene()));
+    connect(room_scene, SIGNAL(restart()), this, SLOT(on_actionRestart_game_triggered()));
+    connect(room_scene, SIGNAL(return_to_start()), this, SLOT(on_actionReturn_main_triggered()));
 
     room_scene->adjustItems();
     gotoScene(room_scene);
 }
 
-void MainWindow::gotoStartScene(){
+void MainWindow::on_actionReturn_main_triggered(){
     QList<Server *> servers = findChildren<Server *>();
     if(!servers.isEmpty())
         servers.first()->deleteLater();
@@ -670,7 +670,7 @@ void MainWindow::on_actionBroadcast_triggered()
 void MainWindow::on_actionAcknowledgement_triggered()
 {
     AcknowledgementScene* ack = new AcknowledgementScene;
-    connect(ack,SIGNAL(go_back()),this,SLOT(gotoStartScene()));
+    connect(ack,SIGNAL(go_back()),this,SLOT(on_actionReturn_main_triggered()));
     gotoScene(ack);
 }
 

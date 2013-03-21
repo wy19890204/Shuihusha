@@ -2919,7 +2919,7 @@
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="93"/>
         <source>Lua extra is disabled!</source>
-        <translation>LUA扩展未开启，请先勾选“配置-游戏-启用LUA扩展”，再执行本功能</translation>
+        <translation>LUA扩展未开启，请先在菜单栏(DIY)开启LUA开关，再执行本功能</translation>
     </message>
     <message>
         <location filename="src/dialog/packagingeditor.cpp" line="101"/>

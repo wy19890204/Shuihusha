@@ -110,7 +110,7 @@ private:
     void restoreFromConfig();
 
 public slots:
-    void startConnection();
+    void on_actionRestart_game_triggered();
 
 private slots:
     void on_actionAbout_Lua_triggered();
@@ -141,17 +141,17 @@ private slots:
     void on_actionCard_Overview_triggered();
     void on_actionGeneral_Overview_triggered();
     void on_actionStart_Game_triggered();
+    void on_actionReturn_main_triggered();
     void on_actionExit_triggered();
+    void on_actionView_ban_list_triggered();
 
     void checkVersion(const QString &server_version, const QString &server_mod);
     void networkError(const QString &error_msg);
     void enterRoom();
     void gotoScene(QGraphicsScene *scene);
-    void gotoStartScene();
     void sendLowLevelCommand();
     void startGameInAnotherInstance();
     void changeBackground();
-    void on_actionView_ban_list_triggered();
 };
 
 #endif // MAINWINDOW_H
