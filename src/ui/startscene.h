@@ -22,6 +22,7 @@ private:
     void printServerInfo();
 
     Pixmap *logo;
+    Pixmap *button_group;
     QTextEdit *server_log;
     QList<Button*> buttons;
 };

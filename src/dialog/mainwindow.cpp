@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview
-            << ui->actionAbout
+            //<< ui->actionAbout
             << ui->actionAcknowledgement;
 
     foreach(QAction *action, actions)
@@ -381,7 +381,7 @@ void MainWindow::on_actionReturn_main_triggered(){
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview
-            << ui->actionAbout
+            //<< ui->actionAbout
             << ui->actionAcknowledgement;
 
     foreach(QAction *action, actions)

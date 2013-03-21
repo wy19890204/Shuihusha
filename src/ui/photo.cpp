@@ -33,6 +33,7 @@ Photo::Photo()
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     order_item(NULL), hide_avatar(false)
 {
+    //setFlags(ItemIsMovable);
     setAcceptHoverEvents(true);
 
     QSettings settings("image/system/photo.ini", QSettings::IniFormat);

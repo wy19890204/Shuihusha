@@ -16,6 +16,7 @@ public:
     void setMute(bool mute);
     void setFont(const QFont &font);
     void setLabel(const QString &label);
+    void setSize(const QSizeF &size);
 
     virtual QRectF boundingRect() const;    
 
