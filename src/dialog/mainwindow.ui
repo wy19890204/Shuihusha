@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -81,6 +81,7 @@
     <addaction name="actionDraw_cardname"/>
     <addaction name="actionExpand_dashboard"/>
     <addaction name="actionFit_in_view"/>
+    <addaction name="actionAuto_select"/>
     <addaction name="actionAuto_target"/>
    </widget>
    <widget class="QMenu" name="menuCheat">
@@ -465,6 +466,14 @@
    </property>
    <property name="text">
     <string>Enable Lua</string>
+   </property>
+  </action>
+  <action name="actionAuto_select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto select</string>
    </property>
   </action>
  </widget>

@@ -1638,9 +1638,8 @@ void RoomScene::enableTargets(const Card *card){
     selected_targets.clear();
 
     // unset avatar and all photo
-    foreach(QGraphicsItem *item, item2player.keys()){
+    foreach(QGraphicsItem *item, item2player.keys())
         item->setSelected(false);
-    }
 
     if(card == NULL){
         foreach(QGraphicsItem *item, item2player.keys()){
@@ -1669,7 +1668,7 @@ void RoomScene::enableTargets(const Card *card){
 
     updateTargetsEnablity(card);
 
-    if(Config.EnableAutoTarget)
+    if(Config.AutoTarget)
         selectNextTarget(false);
 
     ok_button->setEnabled(card->targetsFeasible(selected_targets, Self));
@@ -2115,7 +2114,8 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                //dashboard->selectCard(pattern); @todo
+                if(Config.AutoSelect)
+                    dashboard->selectCard(pattern);
             }
 
             break;
