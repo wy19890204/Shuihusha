@@ -124,6 +124,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     // create photos
     for(int i = 0; i < player_count - 1;i++){
         Photo *photo = new Photo;
+        //photo->setFlags(QGraphicsItem::ItemIsMovable);
         photos << photo;
         addItem(photo);
         photo->setZValue(-0.5);
@@ -575,8 +576,7 @@ void RoomScene::adjustItems(QMatrix matrix){
     dashboard->setPos(x, y);
 
     QList<QPointF> positions = getPhotoPositions();
-    int i;
-    for(i=0; i<positions.length(); i++)
+    for(int i=0; i<positions.length(); i++)
         photos.at(i)->setPos(positions.at(i));
 
     reLayout(matrix);

@@ -32,7 +32,6 @@ zgfunc[sgs.CardResponsed]={}
 zgfunc[sgs.ChoiceMade]={}
 zgfunc[sgs.CardDrawing]={}
 
-
 zgfunc[sgs.Predamage]={}
 zgfunc[sgs.Damage]={}
 zgfunc[sgs.DamageProceed]={}
@@ -40,12 +39,9 @@ zgfunc[sgs.Damaged]={}
 zgfunc[sgs.DamageComplete]={}
 zgfunc[sgs.Predamaged]={}
 
-
 zgfunc[sgs.Death]={}
 zgfunc[sgs.PhaseChange]={}
-
 zgfunc[sgs.FinishJudge]={}
-
 zgfunc[sgs.GameStarted]={}
 zgfunc[sgs.GameOverJudge]={}
 zgfunc[sgs.GameOverJudge]["callback"]={}
@@ -59,7 +55,15 @@ zgfunc[sgs.SlashMissed]={}
 zgfunc[sgs.TurnStart]={}
 zgfunc[sgs.Pindian]={}
 
-
+local testfile = io.open("extensions/zhangong/zhangong.data")
+if testfile == nil then
+	testfile = io.open("extensions/zhangong/zhangong.atad", "rb")
+	local content = testfile:read "*a"
+	testfile:close()
+	testfile = io.open("extensions/zhangong/zhangong.data", "wb")
+	testfile:write(content)
+end
+testfile:close()
 require "sqlite3"
 db = sqlite3.open("./extensions/zhangong/zhangong.data")
 

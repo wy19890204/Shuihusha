@@ -59,6 +59,7 @@ Photo::Photo()
     wake_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
     wake_icon->setZValue(coord.at(2).toReal());
     wake_icon->setOpacity(settings.value("opacity").toReal());
+    wake_icon->setFlags(ItemIsMovable);
     wake_icon->hide();
     settings.endGroup();
 
