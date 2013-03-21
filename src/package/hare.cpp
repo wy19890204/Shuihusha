@@ -182,14 +182,16 @@ LinmoCard::LinmoCard(){
 void LinmoCard::onUse(Room *room, const CardUseStruct &card_use) const{
     ServerPlayer *xiao = card_use.from;
     QList<int> card_ids = xiao->getPile("zi");
-    room->fillAG(card_ids, xiao);
-    int zid = room->askForAG(xiao, card_ids, false, objectName());
-    QString zi = Sanguosha->getCard(zid)->objectName();
-    card_ids.removeOne(zid);
-    xiao->invoke("clearAG");
+    if(!card_ids.isEmpty()){
+        room->fillAG(card_ids, xiao);
+        int zid = room->askForAG(xiao, card_ids, false, objectName());
+        QString zi = Sanguosha->getCard(zid)->objectName();
+        card_ids.removeOne(zid);
+        xiao->invoke("clearAG");
 
-    room->setPlayerProperty(xiao, "linmostore", zi);
-    room->throwCard(zid);
+        room->setPlayerProperty(xiao, "linmostore", zi);
+        room->throwCard(zid);
+    }
 }
 
 class LinmoViewAsSkill:public ViewAsSkill{
@@ -205,14 +207,14 @@ public:
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        if(player->getPile("zi").isEmpty())
-            return false;
         if(player->hasUsed("LinmoCard") && player->hasFlag("linmo")){
             QString name = Self->property("linmostore").toString();
             Card *card = Sanguosha->cloneCard(name, Card::NoSuit, 0);
             return card->isAvailable(player);
-        }else
+        }else if(!player->hasFlag("linmo"))
             return true;
+        else
+            return false;
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
@@ -278,6 +280,7 @@ public:
                 && room->getCardPlace(use.card->getEffectiveId()) == Player::DiscardedPile){
                 if(use.to.last() == writer && word->isKindOf("Collateral"))
                     continue;
+                /*
                 bool hassamezi = false;
                 foreach(int x, writer->getPile("zi")){
                     if(Sanguosha->getCard(x)->objectName() == word->objectName()){
@@ -285,7 +288,8 @@ public:
                         break;
                     }
                 }
-                if(!hassamezi && writer->askForSkillInvoke(objectName())){
+                if(!hassamezi && writer->askForSkillInvoke(objectName())){*/
+                if(writer->askForSkillInvoke(objectName())){
                     room->playSkillEffect(objectName(), qrand() % 2 + 1);
                     writer->addToPile("zi", use.card->getEffectiveId());
                 }
@@ -1010,13 +1014,13 @@ void ShemiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
     source->turnOver();
 }
 
-class ShemiViewAsSkill: public OneCardViewAsSkill{
+class ShemiViewAsSkill: public ViewAsSkill{
 public:
-    ShemiViewAsSkill():OneCardViewAsSkill("shemi"){
+    ShemiViewAsSkill():ViewAsSkill("shemi"){
 
     }
 
-    virtual bool isEnabledAtPlay(const Player *player) const{
+    virtual bool isEnabledAtPlay(const Player *) const{
         return false;
     }
 
@@ -1024,13 +1028,15 @@ public:
         return pattern == "@@shemi";
     }
 
-    virtual bool viewFilter(const CardItem *) const{
-        return true;
+    virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_) const{
+        return !to_->isEquipped();
     }
 
-    virtual const Card *viewAs(CardItem *card_item) const{
+    virtual const Card *viewAs(const QList<CardItem *> &cards) const{
+        if(cards.isEmpty() || Self->getHandcardNum() - cards.length() > 10)
+            return NULL;
         ShemiCard *card = new ShemiCard;
-        card->addSubcard(card_item->getFilteredCard());
+        card->addSubcards(cards);
         return card;
     }
 };

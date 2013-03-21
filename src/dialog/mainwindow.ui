@@ -105,6 +105,8 @@
     <addaction name="actionCard_editor"/>
     <addaction name="actionScript_editor"/>
     <addaction name="actionPackaging"/>
+    <addaction name="separator"/>
+    <addaction name="actionEnable_Lua"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menuView"/>
@@ -455,6 +457,14 @@
    </property>
    <property name="text">
     <string>Auto target</string>
+   </property>
+  </action>
+  <action name="actionEnable_Lua">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Lua</string>
    </property>
   </action>
  </widget>

@@ -499,20 +499,24 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
 }
 
 void QimenCard::onEffect(const CardEffectStruct &effect) const{
+    const Card *docard = Sanguosha->getCard(getSubcards().first());
+    QString suit = docard->isRed() ? "heart|diamond" : "spade|club";
     ServerPlayer *dragon = effect.from;
     ServerPlayer *superman = effect.to;
     Room *room = dragon->getRoom();
 
     JudgeStruct judge;
-    judge.pattern = QRegExp("(.*):(.*):(.*)");
+    judge.pattern = QRegExp("(.*):(" + suit + "):(.*)");
     judge.reason = skill_name;
+    judge.good = false;
     judge.who = superman;
 
     room->judge(judge);
-    QString suit_str = judge.card->getSuitString();
-    QString pattern = QString(".|%1").arg(suit_str);
-    QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-    if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
+    //QString suit_str = judge.card->getSuitString();
+    //QString pattern = QString(".|%1").arg(suit_str);
+    //QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
+    //if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
+    if(judge.isBad()){
         if(!dragon->hasMark("wudao_wake"))
             room->playSkillEffect(skill_name, qrand() % 2 + 1);
         else
@@ -528,13 +532,19 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
     }
 }
 
-class QimenViewAsSkill: public ZeroCardViewAsSkill{
+class QimenViewAsSkill: public OneCardViewAsSkill{
 public:
-    QimenViewAsSkill():ZeroCardViewAsSkill("qimen"){
+    QimenViewAsSkill():OneCardViewAsSkill("qimen"){
     }
 
-    virtual const Card *viewAs() const{
-        return new QimenCard;
+    virtual bool viewFilter(const CardItem *e) const{
+        return !e->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        QimenCard *card = new QimenCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -587,8 +597,8 @@ public:
         }
         else if(player->getPhase() == Player::RoundStart){
             foreach(ServerPlayer *dragon, dragons){
-                if(!dragon->isNude())
-                    room->askForUseCard(dragon, "@@qimen", "@qimeninvoke:" + player->objectName(), true);
+                if(!dragon->isKongcheng())
+                    room->askForUseCard(dragon, "@@qimen", "@qimen:" + player->objectName(), true);
             }
         }
         return false;
@@ -2656,7 +2666,6 @@ public:
     }
 };
 
-#include <math.h>
 class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
@@ -2675,7 +2684,9 @@ public:
             if(event == PreDeath)
                 continue;
             lolidistance = other->isDead() ? lolidistance : loli->distanceTo(other);
-            if(lolidistance < 2 && other->getHp() < (ceil((qreal)other->getMaxHp() / 2.0)) && loli->askForSkillInvoke(objectName())){
+            if(other->getHp() >= (other->getMaxHp()+1) / 2)
+                continue;
+            if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
                 //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
                 loli->drawCards(1);

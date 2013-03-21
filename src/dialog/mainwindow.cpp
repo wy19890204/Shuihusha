@@ -148,8 +148,9 @@ void MainWindow::restoreFromConfig(){
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
     ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
     ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
-    ui->actionFit_in_view->setChecked(Config.value("FitInView", false).toBool());
-    ui->actionAuto_target->setChecked(Config.value("EnableAutoTarget", false).toBool());
+    ui->actionFit_in_view->setChecked(Config.FitInView);
+    ui->actionAuto_target->setChecked(Config.EnableAutoTarget);
+    ui->actionEnable_Lua->setChecked(Config.EnableLua);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -322,6 +323,7 @@ void MainWindow::enterRoom(){
     ui->actionKick->setEnabled(true);
     ui->actionSurrender->setEnabled(true);
     ui->actionSaveRecord->setEnabled(true);
+    //ui->actionEnable_Lua->setEnabled(false);
 
     connect(ui->actionView_Discarded, SIGNAL(triggered()), room_scene, SLOT(toggleDiscards()));
     connect(ui->actionView_distance, SIGNAL(triggered()), room_scene, SLOT(viewDistance()));
@@ -691,7 +693,8 @@ void MainWindow::on_actionDraw_cardname_toggled(bool checked)
 
 void MainWindow::on_actionFit_in_view_toggled(bool checked)
 {
-    if(Config.value("FitInView", false).toBool() != checked)
+    if(Config.FitInView != checked)
+        Config.FitInView = checked;
         Config.setValue("FitInView", checked);
 }
 
@@ -700,6 +703,29 @@ void MainWindow::on_actionAuto_target_toggled(bool checked)
     if(Config.EnableAutoTarget != checked){
         Config.EnableAutoTarget = checked;
         Config.setValue("EnableAutoTarget", checked);
+    }
+}
+
+void MainWindow::on_actionEnable_Lua_triggered()
+{
+    QMessageBox::StandardButton result =
+            QMessageBox::question(this,
+                                  tr("LUA derail"),
+                                  tr("Enable or disable Lua need to restart, are you sure?"),
+                                  QMessageBox::Ok | QMessageBox::Cancel);
+    if(result == QMessageBox::Ok){
+        close();
+        //qApp->quit();
+        QProcess::startDetached(qApp->applicationFilePath(), QStringList());
+        //http://blog.csdn.net/dbzhang800/article/details/6906743
+    }
+}
+
+void MainWindow::on_actionEnable_Lua_toggled(bool checked)
+{
+    if(Config.EnableLua != checked){
+        Config.EnableLua = checked;
+        Config.setValue("EnableLua", checked);
     }
 }
 

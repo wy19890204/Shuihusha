@@ -430,22 +430,13 @@ sgs.ai_skill_use["@@qimen"] = function(self, prompt)
 	end
 	if target then
 		self.qimentarget = target
-		return "@QimenCard=.->" .. target:objectName()
-	end
-end
-sgs.ai_skill_cardask["@qimen"] = function(self, data)
-	if self:isWeak() or self.player:isKongcheng() then return "." end
-	local suit = data:toString()
-	local cards = sgs.QList2Table(self.player:getHandcards())
-	self:sortByKeepValue(cards, true)
-	for _, card in ipairs(cards) do
-		if card:getSuitString() == suit and self:getUseValue(card) < 5.7 then
+		local cards = sgs.QList2Table(self.player:getHandcards())
+		self:sortByUseValue(cards, true)
+		if self:getUseValue(cards[1]) < 5.7 then
 			self:speak("qimen_source")
-			self:speak("qimen", self.qimentarget)
-			return card:getEffectiveId()
+			return "@QimenCard=" .. cards[1]:getEffectiveId() .. "->" .. target:objectName()
 		end
 	end
-	return "."
 end
 
 -- guansheng
@@ -721,9 +712,9 @@ end
 sgs.ai_card_intention.FengmangCard = 80
 
 sgs.ai_skill_use["@@fengmang"] = function(self, prompt)
+	if #self.enemies == 0 then return end
 	self:sort(self.enemies)
 	local target = self.enemies[1]
-	if not target then return end
 	local cards = self.player:getHandcards()
 	local card
 	for _, c in sgs.qlist(cards) do
@@ -743,7 +734,7 @@ buyaknife_skill = {}
 buyaknife_skill.name = "buyaknife"
 table.insert(sgs.ai_skills, buyaknife_skill)
 buyaknife_skill.getTurnUseCard = function(self)
-	if self.player:getHandcardNum() < 4 then return end
+	if self.player:getHandcardNum() < 5 then return end
 	return sgs.Card_Parse("@BuyaKnifeCard=.")
 end
 sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
@@ -758,7 +749,7 @@ sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
 					if self:getKeepValue(car) < 4.1 and not car:isKindOf("Events") then
 						table.insert(card_ids, car:getEffectiveId())
 					end
-					if #card_ids == 2 then
+					if #card_ids == 3 then
 						use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
 						if use.to then
 							self:speak("buydao")
@@ -773,7 +764,7 @@ sgs.ai_skill_use_func["BuyaKnifeCard"] = function(card, use, self)
 						if car:isKindOf("Events") then
 							table.insert(card_ids, car:getEffectiveId())
 						end
-						if #card_ids == 2 then
+						if #card_ids == 3 then
 							use.card = sgs.Card_Parse("@BuyaKnifeCard=" .. table.concat(card_ids, "+"))
 							if use.to then
 								self:speak("buydao")
