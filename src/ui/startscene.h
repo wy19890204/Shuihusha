@@ -27,8 +27,7 @@ private:
     Pixmap *button_group;
     QTextEdit *server_log;
     QList<Button*> buttons;
-    MainButton *start, *join, *replay, *lua,
-        *config, *general, *card, *mode, *thanks;
+    //start, *join, *replay, *lua, *config, *general, *card, *mode, *thanks;
 };
 
 #endif // STARTSCENE_H

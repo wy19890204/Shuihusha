@@ -16,8 +16,8 @@ StartScene::StartScene()
     addItem(logo);
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
-    button_group->moveBy(0, Config.Rect.height()/5);
-    addItem(button_group);
+    button_group->moveBy(0, Config.Rect.height()/5-40);
+    //addItem(button_group);
 
     //the website URL
     QFont website_font(Config.SmallFont);
@@ -72,35 +72,29 @@ void StartScene::addMainButton(QList<QAction *> actions){
         {198, 81, 130, 340}, //2.replay
         {79, 98, 30, 125}, //3.lua
         {102, 103, 55, 295}, //4.config
-        {198, 79, 130, 30}, //5.general
-        {130, 171, 290, 50}, //6.card
-        {132, 172, 290, 230}, //7.mode
+        {198, 79, 130, 25}, //5.general
+        {130, 171, 295, 50}, //6.card
+        {132, 172, 295, 230}, //7.mode
         {80, 99, 30, 225}, //8.thanks
+    };
+    static QString butons_name[9] = {
+        "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
     };
 
     QString path = "image/system/button/main/background.png";
     QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
     button_widget->setPos(button_group->pos());
 
-    start = new MainButton("start");
-    start->setPos(5, 3);
-
-    join = new MainButton("join");
-    join->setPos(5, 92);
-
-    replay = new MainButton("replay");
-    replay->setPos(70, 45);
-
-    start->setParentItem(button_widget);
-    join->setParentItem(button_widget);
-    replay->setParentItem(button_widget);
-
-    int *froups = pos[0];
-    start->moveBy(froups[2], froups[3]);
-
-    connect(start, SIGNAL(clicked()), actions.first(), SLOT(trigger()));
-    connect(join, SIGNAL(clicked()), actions.at(2), SLOT(trigger()));
-    connect(replay, SIGNAL(clicked()), actions.at(3), SLOT(trigger()));
+    int count = 0;
+    foreach(QAction *action, actions){
+        MainButton *buton = new MainButton(butons_name[count]);
+        buton->setParentItem(button_widget);
+        //buton->setPos(button_widget->pos());
+        int *froups = pos[count];
+        buton->moveBy(froups[2]+120, froups[3]+130);
+        connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
+        count ++;
+    }
 
     addItem(button_widget);
 }
