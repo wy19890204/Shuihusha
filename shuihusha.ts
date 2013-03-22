@@ -2219,6 +2219,11 @@
         <translation>自动选择目标</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.ui" line="462"/>
+        <source>Button style</source>
+        <translation>启用新版界面</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.ui" line="467"/>
         <source>Enable Lua</source>
         <translation>启用/禁用LUA扩展</translation>

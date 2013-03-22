@@ -68,8 +68,8 @@ protected:
             MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
             if(main_window){
                 main_window->setBackgroundBrush();
-                //QCursor my(QPixmap("backdrop/arrow.cur"));
-                //main_window->setCursor(my);
+                QCursor my(QPixmap("backdrop/yingr.ani"));
+                main_window->setCursor(my);
             }
         }
     }
@@ -112,13 +112,17 @@ MainWindow::MainWindow(QWidget *parent)
 
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
-            << ui->actionScenario_Overview
-            //<< ui->actionAbout
-            << ui->actionAcknowledgement;
+            << ui->actionScenario_Overview;
 
-    start_scene->addMainButton(actions);
-    //foreach(QAction *action, actions)
-    //    start_scene->addButton(action);
+    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+        actions << ui->actionAcknowledgement;
+        start_scene->addMainButton(actions);
+    }
+    else{
+        actions << ui->actionAbout << ui->actionAcknowledgement;
+        foreach(QAction *action, actions)
+            start_scene->addButton(action);
+    }
 
     view = new FitView(scene);
 
@@ -153,6 +157,7 @@ void MainWindow::restoreFromConfig(){
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
+    ui->actionButton_style->setChecked(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -382,12 +387,17 @@ void MainWindow::on_actionReturn_main_triggered(){
 
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
-            << ui->actionScenario_Overview
-            //<< ui->actionAbout
-            << ui->actionAcknowledgement;
+            << ui->actionScenario_Overview;
 
-    foreach(QAction *action, actions)
-        start_scene->addButton(action);
+    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+        actions << ui->actionAcknowledgement;
+        start_scene->addMainButton(actions);
+    }
+    else{
+        actions << ui->actionAbout << ui->actionAcknowledgement;
+        foreach(QAction *action, actions)
+            start_scene->addButton(action);
+    }
 
     setCentralWidget(view);
     restoreFromConfig();
@@ -683,13 +693,13 @@ void MainWindow::on_actionScript_editor_triggered()
 
 void MainWindow::on_actionDraw_indicator_toggled(bool checked)
 {
-    if(Config.value("NoIndicator", false).toBool() == checked)
+    if(Config.value("NoIndicator").toBool() == checked)
         Config.setValue("NoIndicator", !checked);
 }
 
 void MainWindow::on_actionDraw_cardname_toggled(bool checked)
 {
-    if(Config.value("DrawCardName", true).toBool() != checked)
+    if(Config.value("DrawCardName").toBool() != checked)
         Config.setValue("DrawCardName", checked);
 }
 
@@ -737,6 +747,12 @@ void MainWindow::on_actionEnable_Lua_toggled(bool checked)
         Config.EnableLua = checked;
         Config.setValue("EnableLua", checked);
     }
+}
+
+void MainWindow::on_actionButton_style_toggled(bool checked)
+{
+    if(Config.value("ButtonStyle").toBool() != checked)
+        Config.setValue("ButtonStyle", checked);
 }
 
 #include <QGroupBox>

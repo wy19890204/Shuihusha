@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -83,6 +83,8 @@
     <addaction name="actionFit_in_view"/>
     <addaction name="actionAuto_select"/>
     <addaction name="actionAuto_target"/>
+    <addaction name="separator"/>
+    <addaction name="actionButton_style"/>
    </widget>
    <widget class="QMenu" name="menuCheat">
     <property name="enabled">
@@ -518,6 +520,14 @@
    </property>
    <property name="text">
     <string>Auto select</string>
+   </property>
+  </action>
+  <action name="actionButton_style">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Button style</string>
    </property>
   </action>
  </widget>

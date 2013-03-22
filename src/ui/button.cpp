@@ -13,6 +13,7 @@ Button::Button(const QString &label, qreal scale)
     :label(label), size(ButtonRect.size() * scale),
     mute(true), font(Config.SmallFont)
 {
+
     init();
 }
 
@@ -24,49 +25,37 @@ Button::Button(const QString &label, const QSizeF &size)
 
 void Button::init()
 {
-    QString path = "button.png";
-    bool dopath = false;
-    if(label.startsWith("path:")){
-        path = label.remove("path:");
-        label = QString();
-        dopath = true;
-    }
     setFlags(ItemIsFocusable);
 
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
 
-    if(label != QString()){
-        title = new QPixmap(size.toSize());
-        title->fill(QColor(0,0,0,0));
-        QPainter pt(title);
-        pt.setFont(font);
-        pt.setPen(Config.TextEditColor);
-        pt.setRenderHint(QPainter::TextAntialiasing);
-        pt.drawText(boundingRect(), Qt::AlignCenter, label);
+    title = new QPixmap(size.toSize());
+    title->fill(QColor(0,0,0,0));
+    QPainter pt(title);
+    pt.setFont(font);
+    pt.setPen(Config.TextEditColor);
+    pt.setRenderHint(QPainter::TextAntialiasing);
+    pt.drawText(boundingRect(), Qt::AlignCenter, label);
 
-        title_item = new QGraphicsPixmapItem(this);
-        title_item->setPixmap(*title);
-        title_item->show();
+    title_item = new QGraphicsPixmapItem(this);
+    title_item->setPixmap(*title);
+    title_item->show();
 
-        QGraphicsDropShadowEffect *de = new QGraphicsDropShadowEffect;
-        de->setOffset(0);
-        de->setBlurRadius(12);
-        de->setColor(QColor(255,165,0));
+    QGraphicsDropShadowEffect *de = new QGraphicsDropShadowEffect;
+    de->setOffset(0);
+    de->setBlurRadius(12);
+    de->setColor(QColor(255,165,0));
 
-        title_item->setGraphicsEffect(de);
-    }
+    title_item->setGraphicsEffect(de);
 
 #ifdef USE_RCC
-    QImage bgimg(":system/button/" + path);
+    QImage bgimg(":system/button/button.png");
 #else
-    QImage bgimg("image/system/button/" + path);
+    QImage bgimg("image/system/button/button.png");
 #endif
 
-    //if(dopath)
-    //    outimg = new QImage("image/system/button/" + path.replace("main/", "main/o"));
-    //else
-        outimg = new QImage(size.toSize(),QImage::Format_ARGB32);
+    outimg = new QImage(size.toSize(),QImage::Format_ARGB32);
 
     qreal pad = 10;
 
@@ -95,13 +84,13 @@ void Button::init()
             QRgb rgb = bgimg.pixel(x,y);
             outimg->setPixel(i,j,rgb);
         }
-/*
+
     QGraphicsDropShadowEffect * effect = new QGraphicsDropShadowEffect;
     effect->setBlurRadius(5);
     effect->setOffset(this->boundingRect().height()/7.0);
     effect->setColor(QColor(0,0,0,200));
     this->setGraphicsEffect(effect);
-*/
+
     glow = 0;
 
     timer_id = 0;
@@ -125,10 +114,6 @@ void Button::setFont(const QFont &font){
 
 void Button::setLabel(const QString &label){
     this->label = label;
-}
-
-void Button::setSize(const QSizeF &size){
-    this->size = size;
 }
 
 #include "engine.h"

@@ -12,15 +12,11 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    logo->moveBy(0, -Config.Rect.height()/3-20);
-    //logo->moveBy(0, -Config.Rect.height()/4);
+    if(Config.value("ButtonStyle", true).toBool())
+        logo->moveBy(0, -Config.Rect.height()/3-20);
+    else
+        logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
-
-    button_group = new Pixmap("image/system/button/main/background.png");
-    button_group->shift();
-    button_group->moveBy(0, Config.Rect.height()/5-40);
-    button_group->hide();
-    //addItem(button_group);
 
     //the website URL
     QFont website_font(Config.SmallFont);
@@ -31,6 +27,13 @@ StartScene::StartScene()
                        Config.Rect.height()/2 - website_text->boundingRect().height());
 
     server_log = NULL;
+
+    //Provide coordinates for the button
+    button_group = new Pixmap("image/system/button/main/background.png");
+    button_group->shift();
+    button_group->moveBy(0, Config.Rect.height()/5-40);
+    button_group->hide();
+    //addItem(button_group);
 }
 
 void StartScene::addButton(QAction *action){
@@ -56,7 +59,10 @@ void StartScene::addButton(QAction *action){
 
 #include "irregularbutton.h"
 void StartScene::addMainButton(QList<QAction *> actions){
-    static int pos[][2] = {
+    static QString butons_name[9] = {
+        "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
+    };
+    static int pos[9][2] = {
         {220, 230}, //0.start
         {175, 180}, //1.join
         {250, 470}, //2.replay
@@ -66,9 +72,6 @@ void StartScene::addMainButton(QList<QAction *> actions){
         {415, 180}, //6.card
         {415, 360}, //7.mode
         {150, 355}, //8.thanks
-    };
-    static QString butons_name[9] = {
-        "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
     };
 
     QString path = "image/system/button/main/background.png";

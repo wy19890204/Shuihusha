@@ -139,6 +139,7 @@ private slots:
     void on_actionAuto_target_toggled(bool);
     void on_actionEnable_Lua_triggered();
     void on_actionEnable_Lua_toggled(bool );
+    void on_actionButton_style_toggled(bool);
     void on_actionCard_Overview_triggered();
     void on_actionGeneral_Overview_triggered();
     void on_actionStart_Game_triggered();

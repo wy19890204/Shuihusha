@@ -26,7 +26,7 @@ Window::Window(const QString &title, const QSizeF &size)
     int h = bgimg.height();
 
     int tw = outimg->width();
-    int th  =outimg->height();
+    int th = outimg->height();
 
     qreal xc = (w - 2*pad)/(tw - 2*pad);
     qreal yc = (h - 2*pad)/(th - 2*pad);
