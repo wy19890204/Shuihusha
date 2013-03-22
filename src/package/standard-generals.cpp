@@ -1034,6 +1034,7 @@ public:
             log.card_str = QString::number(dust);
             room->sendLog(log);
             player->drawCards(1);
+            room->setEmotion(damage.to, "avoid");
             return true;
         }
         return false;

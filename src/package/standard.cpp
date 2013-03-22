@@ -400,7 +400,7 @@ public:
 
 class NothrowPattern: public CardPattern{
 public:
-    virtual bool match(const Player *player, const Card *card) const{
+    virtual bool match(const Player *, const Card *) const{
         return true;
     }
     virtual bool willThrow() const{

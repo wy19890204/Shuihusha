@@ -5465,7 +5465,7 @@ function init_gamestart(self, room, event, player, data, isowner)
 		setGameData("status",0)
 		return false
 	end
-
+-- @todo
 	if string.find(config[5],"F") then
 		setGameData("status",0)
 		return false

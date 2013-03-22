@@ -121,7 +121,7 @@
   <action name="actionExit">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/close.png</normaloff>../../image/system/close.png</iconset>
+     <normaloff>image/system/close.png</normaloff>image/system/close.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Exit</string>
@@ -136,7 +136,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/settings.png</normaloff>../../image/system/settings.png</iconset>
+     <normaloff>image/system/settings.png</normaloff>image/system/settings.png</iconset>
    </property>
    <property name="text">
     <string>Configure</string>
@@ -172,7 +172,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/logo/moligaloo.png</normaloff>../../image/logo/moligaloo.png</iconset>
+     <normaloff>image/logo/moligaloo.png</normaloff>image/logo/moligaloo.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -197,7 +197,7 @@
   <action name="actionAbout_Qt">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/logo/qt.png</normaloff>../../image/logo/qt.png</iconset>
+     <normaloff>image/logo/qt.png</normaloff>image/logo/qt.png</iconset>
    </property>
    <property name="text">
     <string>About Qt</string>
@@ -268,7 +268,7 @@
   <action name="actionShow_Hide_Menu">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/disabled.png</normaloff>../../image/system/disabled.png</iconset>
+     <normaloff>image/system/disabled.png</normaloff>image/system/disabled.png</iconset>
    </property>
    <property name="text">
     <string>Show/Hide menu</string>
@@ -325,7 +325,7 @@
   <action name="actionAcknowledgement">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/logo/logo.png</normaloff>../../image/logo/logo.png</iconset>
+     <normaloff>image/logo/logo.png</normaloff>image/logo/logo.png</iconset>
    </property>
    <property name="text">
     <string>Acknowledgement</string>
@@ -368,7 +368,7 @@
   <action name="actionCard_editor">
    <property name="icon">
     <iconset>
-     <normaloff>../../diy/lufen.jpg</normaloff>../../diy/lufen.jpg</iconset>
+     <normaloff>diy/lufen.jpg</normaloff>diy/lufen.jpg</iconset>
    </property>
    <property name="text">
     <string>Card editor ...</string>
@@ -380,7 +380,7 @@
   <action name="actionPackaging">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/ark.png</normaloff>../../image/system/ark.png</iconset>
+     <normaloff>image/system/ark.png</normaloff>image/system/ark.png</iconset>
    </property>
    <property name="text">
     <string>Package manager ...</string>
@@ -392,7 +392,7 @@
   <action name="actionAI_Melee">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/frog/good.png</normaloff>../../image/system/frog/good.png</iconset>
+     <normaloff>image/system/frog/good.png</normaloff>image/system/frog/good.png</iconset>
    </property>
    <property name="text">
     <string>AI Melee</string>
@@ -419,7 +419,7 @@
   <action name="actionAbout_fmod">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/logo/fmod.png</normaloff>../../image/logo/fmod.png</iconset>
+     <normaloff>image/logo/fmod.png</normaloff>image/logo/fmod.png</iconset>
    </property>
    <property name="text">
     <string>About fmod</string>
@@ -428,7 +428,7 @@
   <action name="actionAbout_Lua">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/logo/lua.png</normaloff>../../image/logo/lua.png</iconset>
+     <normaloff>image/logo/lua.png</normaloff>image/logo/lua.png</iconset>
    </property>
    <property name="text">
     <string>About Lua</string>
@@ -437,7 +437,7 @@
   <action name="actionExecute_script_at_server_side">
    <property name="icon">
     <iconset>
-     <normaloff>../../image/system/chatface/29.png</normaloff>../../image/system/chatface/29.png</iconset>
+     <normaloff>image/system/chatface/29.png</normaloff>image/system/chatface/29.png</iconset>
    </property>
    <property name="text">
     <string>Execute script at server side ...</string>

@@ -967,6 +967,7 @@ public:
                 log.to << linko;
                 log.arg = QString::number(damage.damage);
                 room->sendLog(log);
+                room->setEmotion(damage.to, "avoid");
                 return true;
             }
         }

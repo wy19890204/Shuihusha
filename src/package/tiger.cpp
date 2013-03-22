@@ -197,6 +197,7 @@ public:
                 log.type = "#JintangForb";
                 room->sendLog(log);
                 room->playSkillEffect(objectName(), qrand() % 2 + 2);
+                room->setEmotion(damage.to, "avoid");
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){

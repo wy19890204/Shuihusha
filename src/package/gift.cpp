@@ -121,8 +121,8 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
         CardUseStruct use = data.value<CardUseStruct>();
-        if(use.card->inherits("TrickCard") && use.card->isRed()
-            && !use.card->inherits("Nullification")){
+        if(use.card->isKindOf("TrickCard") && use.card->isRed()
+            && !use.card->isKindOf("Nullification")){
             QList<PlayerStar> targets = use.to;
             if(use.to.isEmpty())
                 targets << use.from;

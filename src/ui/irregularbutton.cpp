@@ -1,6 +1,5 @@
 #include "irregularbutton.h"
 #include "clientplayer.h"
-#include "engine.h"
 
 #include <QBitmap>
 #include <QPainter>
@@ -73,7 +72,7 @@ void IrregularButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
     if(inMask(point)){
 #ifdef AUDIO_SUPPORT
         if(!mute)
-            Sanguosha->playAudio("button-hover");
+            Self->playAudio("button-hover");
 #endif
         changeState(Hover);
     }
@@ -100,7 +99,7 @@ void IrregularButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if(inMask(point)){
 #ifdef AUDIO_SUPPORT
         if(!mute)
-            Sanguosha->playAudio("button-down");
+            Self->playAudio("button-down");
 #endif
         changeState(Normal);
         emit clicked();

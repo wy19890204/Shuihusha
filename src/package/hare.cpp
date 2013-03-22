@@ -122,6 +122,7 @@ public:
                room->sendLog(log);
 
                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+               room->setEmotion(damage.to, "avoid");
                return true;
            }else
                return false;
@@ -840,6 +841,7 @@ public:
                 room->playSkillEffect(objectName(), qrand() % 2 + 3);
                 room->recover(damage.from, re);
             }
+            room->setEmotion(damage.to, "avoid");
             return true;
         }
         return false;

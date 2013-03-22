@@ -68,7 +68,7 @@ protected:
             MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
             if(main_window){
                 main_window->setBackgroundBrush();
-                QCursor my(QPixmap("backdrop/yingr.ani"));
+                QCursor my(QPixmap("backdrop/main.png"));
                 main_window->setCursor(my);
             }
         }
@@ -87,9 +87,6 @@ MainWindow::MainWindow(QWidget *parent)
     QResource::registerResource("backdrop/shuihu-cover.rcc");
 
     setWindowTitle(Sanguosha->translate("Shuihusha"));
-
-    //connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
-    //connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
 
     connection_dialog = new ConnectionDialog(this);
     connect(ui->actionJoin_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));

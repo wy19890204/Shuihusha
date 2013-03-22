@@ -32,6 +32,7 @@ public:
     virtual bool isLastHandCard(const Card *card) const;
     virtual void setMark(const QString &mark, int value);
 
+    void playAudio(const QString &name) const;
 private:
     int handcard_num;
     QList<const Card *> known_cards;

@@ -446,6 +446,7 @@ public:
                     log.to << damage.to;
                     room->sendLog(log);
 
+                    room->setEmotion(damage.to, "avoid");
                     return true;
                 }
             }
