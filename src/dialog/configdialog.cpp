@@ -38,7 +38,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     // tab 2
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
-    ui->autoTargetCheckBox->setChecked(Config.EnableAutoTarget);
+    ui->autoSelectCheckBox->setChecked(Config.AutoSelect);
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->enableLua->setChecked(Config.EnableLua);
     ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
@@ -189,8 +189,8 @@ void ConfigDialog::saveConfig()
     Config.NeverNullifyMyTrick = ui->neverNullifyMyTrickCheckBox->isChecked();
     Config.setValue("NeverNullifyMyTrick", Config.NeverNullifyMyTrick);
 
-    Config.EnableAutoTarget = ui->autoTargetCheckBox->isChecked();
-    Config.setValue("EnableAutoTarget", Config.EnableAutoTarget);
+    Config.AutoSelect = ui->autoSelectCheckBox->isChecked();
+    Config.setValue("AutoSelect", Config.AutoSelect);
 
     Config.ShowAllName = ui->showAllName->isChecked();
     Config.setValue("ShowAllName", Config.ShowAllName);

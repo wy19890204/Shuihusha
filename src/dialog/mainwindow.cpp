@@ -150,7 +150,8 @@ void MainWindow::restoreFromConfig(){
     ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
     ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
     ui->actionFit_in_view->setChecked(Config.FitInView);
-    ui->actionAuto_target->setChecked(Config.EnableAutoTarget);
+    ui->actionAuto_select->setChecked(Config.AutoSelect);
+    ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
 }
 
@@ -699,11 +700,19 @@ void MainWindow::on_actionFit_in_view_toggled(bool checked)
         Config.setValue("FitInView", checked);
 }
 
+void MainWindow::on_actionAuto_select_toggled(bool checked)
+{
+    if(Config.AutoSelect != checked){
+        Config.AutoSelect = checked;
+        Config.setValue("AutoSelect", checked);
+    }
+}
+
 void MainWindow::on_actionAuto_target_toggled(bool checked)
 {
-    if(Config.EnableAutoTarget != checked){
-        Config.EnableAutoTarget = checked;
-        Config.setValue("EnableAutoTarget", checked);
+    if(Config.AutoTarget != checked){
+        Config.AutoTarget = checked;
+        Config.setValue("AutoTarget", checked);
     }
 }
 

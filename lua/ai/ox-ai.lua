@@ -103,7 +103,6 @@ lianma_skill.getTurnUseCard = function(self)
 	return sgs.Card_Parse("@LianmaCard=.")
 end
 sgs.ai_skill_use_func["LianmaCard"] = function(card, use, self)
-	self:speak("lianma")
 	use.card = card
 end
 sgs.ai_skill_choice["lianma"] = function(self, choice)
@@ -120,6 +119,7 @@ sgs.ai_skill_choice["lianma"] = function(self, choice)
 		end
 	end
 
+	self:speak("lianma")
 	if lian_e >= jie_f then
 		return "lian"
 	else

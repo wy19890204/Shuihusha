@@ -106,7 +106,6 @@ SOURCES += \
 	src/ui/dashboard.cpp \
 	src/ui/indicatoritem.cpp \
 	src/ui/irregularbutton.cpp \
-	src/ui/mainbutton.cpp \
 	src/ui/photo.cpp \
 	src/ui/pixmap.cpp \
 	src/ui/pixmapanimation.cpp \
@@ -248,7 +247,6 @@ HEADERS += \
 	src/ui/dashboard.h \
 	src/ui/indicatoritem.h \
 	src/ui/irregularbutton.h \
-	src/ui/mainbutton.h \
 	src/ui/photo.h \
 	src/ui/pixmap.h \
 	src/ui/pixmapanimation.h \

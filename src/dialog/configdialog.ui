@@ -625,9 +625,9 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QCheckBox" name="autoTargetCheckBox">
+    <widget class="QCheckBox" name="autoSelectCheckBox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -638,7 +638,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Auto target</string>
+      <string>Auto select</string>
      </property>
      <property name="checked">
       <bool>true</bool>

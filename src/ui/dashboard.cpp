@@ -389,7 +389,7 @@ void Dashboard::selectCard(const QString &pattern, bool forward){
 }
 
 const Card *Dashboard::getSelected() const{
-    if(view_as_skill)
+    if(view_as_skill && pending_card)
         return pending_card;
     else if(selected)
         return selected->getFilteredCard();

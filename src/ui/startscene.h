@@ -5,7 +5,7 @@
 #include "pixmap.h"
 #include "server.h"
 
-class MainButton;
+class IrregularButton;
 #include <QGraphicsScene>
 #include <QAction>
 #include <QTextEdit>
@@ -27,7 +27,6 @@ private:
     Pixmap *button_group;
     QTextEdit *server_log;
     QList<Button*> buttons;
-    //start, *join, *replay, *lua, *config, *general, *card, *mode, *thanks;
 };
 
 #endif // STARTSCENE_H

@@ -13,10 +13,13 @@ StartScene::StartScene()
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
     logo->moveBy(0, -Config.Rect.height()/3-20);
+    //logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
+
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
     button_group->moveBy(0, Config.Rect.height()/5-40);
+    button_group->hide();
     //addItem(button_group);
 
     //the website URL
@@ -31,51 +34,38 @@ StartScene::StartScene()
 }
 
 void StartScene::addButton(QAction *action){
-    static int pos[][4] = {
-        {261, 261, 100, 100}, //0.start
-        {102, 102, 55, 50}, //1.join
-        {198, 81, 130, 340}, //2.replay
-        {79, 98, 30, 125}, //3.lua
-        {102, 103, 55, 295}, //4.config
-        {198, 79, 130, 30}, //5.general
-        {130, 171, 290, 50}, //6.card
-        {132, 172, 290, 230}, //7.mode
-        {80, 99, 30, 225}, //8.thanks
-    };
-
     QString text = action->text();
     if(action->objectName() == "actionPackaging")
         text = tr("Lua Manager");
+    Button *button = new Button(text);
+    button->setMute(false);
+
+    connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
+    addItem(button);
+
+    QRectF rect = button->boundingRect();
     int n = buttons.length();
-    /*QRectF rect = button->boundingRect();
     if(n < 5){
         button->setPos(- rect.width() - 5, (n - 1) * (rect.height() * 1.2));
     }else{
         button->setPos(5, (n - 6) * (rect.height() * 1.2));
-    }*/
-    int *froups = pos[n];
-    Button *button = new Button("path:main/" + QString::number(n) + ".png", QSize(froups[0], froups[1]));
-    button->setPos(button_group->pos());
-    button->moveBy(froups[2], froups[3]);
-    button->setMute(false);
-    connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
-    addItem(button);
+    }
 
     buttons << button;
 }
 
-#include "mainbutton.h"
+#include "irregularbutton.h"
 void StartScene::addMainButton(QList<QAction *> actions){
-    static int pos[][4] = {
-        {261, 261, 100, 100}, //0.start
-        {102, 102, 55, 50}, //1.join
-        {198, 81, 130, 340}, //2.replay
-        {79, 98, 30, 125}, //3.lua
-        {102, 103, 55, 295}, //4.config
-        {198, 79, 130, 25}, //5.general
-        {130, 171, 295, 50}, //6.card
-        {132, 172, 295, 230}, //7.mode
-        {80, 99, 30, 225}, //8.thanks
+    static int pos[][2] = {
+        {220, 230}, //0.start
+        {175, 180}, //1.join
+        {250, 470}, //2.replay
+        {150, 255}, //3.lua
+        {175, 425}, //4.config
+        {250, 155}, //5.general
+        {415, 180}, //6.card
+        {415, 360}, //7.mode
+        {150, 355}, //8.thanks
     };
     static QString butons_name[9] = {
         "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
@@ -87,11 +77,12 @@ void StartScene::addMainButton(QList<QAction *> actions){
 
     int count = 0;
     foreach(QAction *action, actions){
-        MainButton *buton = new MainButton(butons_name[count]);
+        IrregularButton *buton = new IrregularButton(butons_name[count], "main");
+        buton->setMute(false);
         buton->setParentItem(button_widget);
         //buton->setPos(button_widget->pos());
         int *froups = pos[count];
-        buton->moveBy(froups[2]+120, froups[3]+130);
+        buton->moveBy(froups[0], froups[1]);
         connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
         count ++;
     }

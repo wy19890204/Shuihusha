@@ -135,7 +135,8 @@ private slots:
     void on_actionDraw_indicator_toggled(bool );
     void on_actionDraw_cardname_toggled(bool );
     void on_actionFit_in_view_toggled(bool );
-    void on_actionAuto_target_toggled(bool );
+    void on_actionAuto_select_toggled(bool);
+    void on_actionAuto_target_toggled(bool);
     void on_actionEnable_Lua_triggered();
     void on_actionEnable_Lua_toggled(bool );
     void on_actionCard_Overview_triggered();

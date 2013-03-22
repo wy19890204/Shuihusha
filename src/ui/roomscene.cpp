@@ -124,6 +124,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     // create photos
     for(int i = 0; i < player_count - 1;i++){
         Photo *photo = new Photo;
+        //photo->setFlags(QGraphicsItem::ItemIsMovable);
         photos << photo;
         addItem(photo);
         photo->setZValue(-0.5);
@@ -575,8 +576,7 @@ void RoomScene::adjustItems(QMatrix matrix){
     dashboard->setPos(x, y);
 
     QList<QPointF> positions = getPhotoPositions();
-    int i;
-    for(i=0; i<positions.length(); i++)
+    for(int i=0; i<positions.length(); i++)
         photos.at(i)->setPos(positions.at(i));
 
     reLayout(matrix);
@@ -1638,9 +1638,8 @@ void RoomScene::enableTargets(const Card *card){
     selected_targets.clear();
 
     // unset avatar and all photo
-    foreach(QGraphicsItem *item, item2player.keys()){
+    foreach(QGraphicsItem *item, item2player.keys())
         item->setSelected(false);
-    }
 
     if(card == NULL){
         foreach(QGraphicsItem *item, item2player.keys()){
@@ -1669,7 +1668,7 @@ void RoomScene::enableTargets(const Card *card){
 
     updateTargetsEnablity(card);
 
-    if(Config.EnableAutoTarget)
+    if(Config.AutoTarget)
         selectNextTarget(false);
 
     ok_button->setEnabled(card->targetsFeasible(selected_targets, Self));
@@ -2115,7 +2114,8 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                //dashboard->selectCard(pattern); @todo
+                if(Config.AutoSelect)
+                    dashboard->selectCard(pattern);
             }
 
             break;

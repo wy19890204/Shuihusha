@@ -953,8 +953,8 @@
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="638"/>
-        <source>Auto target</source>
-        <translation>自动选择卡牌</translation>
+        <source>Auto select</source>
+        <translation>自动选择手牌</translation>
     </message>
     <message>
         <location filename="src/dialog/configdialog.ui" line="558"/>
@@ -2207,6 +2207,11 @@
         <location filename="src/dialog/mainwindow.ui" line="451"/>
         <source>Fit in view</source>
         <translation>场景随窗口缩放</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="455"/>
+        <source>Auto select</source>
+        <translation>自动选择手牌</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="459"/>
