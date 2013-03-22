@@ -1,6 +1,6 @@
 enableSkillCard = 1		-- 是否开启技能卡， 1:开启, 0:不开启
-enableLuckyCard = 1		-- 是否开启手气卡,  1:开启, 0:不开启
-enabledusongCard = 1		-- 是否开启独松关点将卡,  1:开启, 0:不开启
+enableLuckyCard = 0		-- 是否开启手气卡,  1:开启, 0:不开启
+enabledusongCard = 0		-- 是否开启独松关点将卡,  1:开启, 0:不开启
 
 zgver='20121121'
 
@@ -116,18 +116,6 @@ zgfunc[sgs.Damage].expval=function(self, room, event, player, data,isowner,name)
 	local damage = data:toDamage()
 	if damage and damage.from and damage.from:objectName()==room:getOwner():objectName() then
 		addTurnData("expval",math.min(damage.damage,8))
-	end
-end
-
-
--- 技能卡和手气卡
---
-zgfunc[sgs.TurnStart].zgCard=function(self, room, event, player, data,isowner,name)
-	if getGameData(name)==0 then
-		setGameData(name,1)
-		if enableLuckyCard==1 then useLuckyCard(room,room:getOwner()) end
-		if enableSkillCard==1 then useSkillCard(room,room:getOwner()) end
-		if enabledusongCard==1 then usedusongCard(room,room:getOwner()) end
 	end
 end
 
@@ -5500,6 +5488,10 @@ function init_gamestart(self, room, event, player, data, isowner)
 				getGameData("roomid"),player:getGeneralName(),player:getRole(),
 				player:getKingdom(),getGameData("hegemony"),room:getMode())
 	end
+
+	if enableLuckyCard==1 then useLuckyCard(room,owner) end
+	if enableSkillCard==1 then useSkillCard(room,owner) end
+	if enabledusongCard==1 then usedusongCard(room,owner) end
 
 	return true
 end
