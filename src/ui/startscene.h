@@ -5,6 +5,7 @@
 #include "pixmap.h"
 #include "server.h"
 
+class MainButton;
 #include <QGraphicsScene>
 #include <QAction>
 #include <QTextEdit>
@@ -15,6 +16,7 @@ class StartScene: public QGraphicsScene{
 public:
     StartScene();
     void addButton(QAction *action);
+    void addMainButton(QList<QAction *> actions);
     void setServerLogBackground();
     void switchToServer(Server *server);
 
@@ -25,6 +27,8 @@ private:
     Pixmap *button_group;
     QTextEdit *server_log;
     QList<Button*> buttons;
+    MainButton *start, *join, *replay, *lua,
+        *config, *general, *card, *mode, *thanks;
 };
 
 #endif // STARTSCENE_H

@@ -14,7 +14,7 @@ StartScene::StartScene()
     logo->shift();
     logo->moveBy(0, -Config.Rect.height()/3-20);
     addItem(logo);
-    button_group = new Pixmap("image/system/button/main/main.png");
+    button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
     button_group->moveBy(0, Config.Rect.height()/5);
     addItem(button_group);
@@ -62,6 +62,47 @@ void StartScene::addButton(QAction *action){
     addItem(button);
 
     buttons << button;
+}
+
+#include "mainbutton.h"
+void StartScene::addMainButton(QList<QAction *> actions){
+    static int pos[][4] = {
+        {261, 261, 100, 100}, //0.start
+        {102, 102, 55, 50}, //1.join
+        {198, 81, 130, 340}, //2.replay
+        {79, 98, 30, 125}, //3.lua
+        {102, 103, 55, 295}, //4.config
+        {198, 79, 130, 30}, //5.general
+        {130, 171, 290, 50}, //6.card
+        {132, 172, 290, 230}, //7.mode
+        {80, 99, 30, 225}, //8.thanks
+    };
+
+    QString path = "image/system/button/main/background.png";
+    QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
+    button_widget->setPos(button_group->pos());
+
+    start = new MainButton("start");
+    start->setPos(5, 3);
+
+    join = new MainButton("join");
+    join->setPos(5, 92);
+
+    replay = new MainButton("replay");
+    replay->setPos(70, 45);
+
+    start->setParentItem(button_widget);
+    join->setParentItem(button_widget);
+    replay->setParentItem(button_widget);
+
+    int *froups = pos[0];
+    start->moveBy(froups[2], froups[3]);
+
+    connect(start, SIGNAL(clicked()), actions.first(), SLOT(trigger()));
+    connect(join, SIGNAL(clicked()), actions.at(2), SLOT(trigger()));
+    connect(replay, SIGNAL(clicked()), actions.at(3), SLOT(trigger()));
+
+    addItem(button_widget);
 }
 
 void StartScene::setServerLogBackground(){

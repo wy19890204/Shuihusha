@@ -116,8 +116,9 @@ MainWindow::MainWindow(QWidget *parent)
             //<< ui->actionAbout
             << ui->actionAcknowledgement;
 
-    foreach(QAction *action, actions)
-        start_scene->addButton(action);
+    start_scene->addMainButton(actions);
+    //foreach(QAction *action, actions)
+    //    start_scene->addButton(action);
 
     view = new FitView(scene);
 
