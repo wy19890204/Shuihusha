@@ -421,7 +421,6 @@ void Client::onPlayerChooseGeneral(const QString &item_name){
         replyToServer(S_COMMAND_CHOOSE_GENERAL, toJsonString(item_name));
         Sanguosha->playAudio("choose-item");
     }
-
 }
 
 void Client::requestCheatRunScript(const QString& script)

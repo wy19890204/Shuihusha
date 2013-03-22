@@ -36,11 +36,13 @@ protected:
     virtual void timerEvent(QTimerEvent *);
 
 private:
+    QList<const General *> generals;
     QProgressBar *progress_bar;
     QDialog *free_chooser;
 
 private slots:
     void freeChoose();
+    void randomChoose();
 };
 
 class FreeChooseDialog: public QDialog{

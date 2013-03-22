@@ -48,7 +48,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
 
     QString lord_name;
 
-    QList<const General *> generals;
     foreach(QString general_name, general_names){
         if(general_name.contains("(lord)"))
         {
@@ -194,6 +193,10 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         last_layout->addWidget(free_choose_button);
     }
 
+    QPushButton *random_choose_button = new QPushButton(tr("Random choose"));
+    connect(random_choose_button, SIGNAL(clicked()), this, SLOT(randomChoose()));
+    last_layout->addWidget(random_choose_button);
+
     last_layout->addStretch();
 
     if(last_layout->count() != 0){
@@ -215,6 +218,12 @@ void ChooseGeneralDialog::freeChoose(){
     free_chooser = dialog;
 
     dialog->exec();
+}
+
+void ChooseGeneralDialog::randomChoose(){
+    int n = qrand() % generals.length();
+    ClientInstance->onPlayerChooseGeneral(generals.at(n)->objectName());
+    accept();
 }
 
 void ChooseGeneralDialog::timerEvent(QTimerEvent *event){

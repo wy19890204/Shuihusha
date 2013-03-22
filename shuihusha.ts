@@ -419,6 +419,11 @@
         <source>Free choose ...</source>
         <translation>自由选将 ...</translation>
     </message>
+    <message>
+        <location filename="src/dialog/choosegeneraldialog.cpp" line="192"/>
+        <source>Random choose</source>
+        <translation>帮我选将</translation>
+    </message>
 </context>
 <context>
     <name>Client</name>

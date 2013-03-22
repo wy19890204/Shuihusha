@@ -192,7 +192,3 @@ void ClientPlayer::setMark(const QString &mark, int value){
     mark_doc->setHtml(text);
     mark_doc_small->setHtml(text_small);
 }
-
-void ClientPlayer::playAudio(const QString &name) const{
-    Sanguosha->playAudio(name);
-}
