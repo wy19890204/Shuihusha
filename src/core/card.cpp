@@ -199,7 +199,7 @@ QString Card::getPixmapPath() const{
 #else
     QString path = QString("image/card/%1.jpg").arg(objectName());
 #endif
-    return QFile::exists(path) ? path : "image/card/unknown.jpg";
+    return QFile::exists(path) ? path : QString("image/card/%1.jpg").arg(objectName());
 }
 
 QString Card::getIconPath() const{

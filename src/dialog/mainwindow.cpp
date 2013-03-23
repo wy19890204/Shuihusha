@@ -132,7 +132,6 @@ MainWindow::MainWindow(QWidget *parent)
     addAction(ui->actionFullscreen);
     addAction(ui->actionMinimize_to_system_tray);
 
-    ui->menuView->setVisible(false);
     systray = NULL;
 }
 

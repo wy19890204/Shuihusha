@@ -70,6 +70,9 @@
     <addaction name="actionAcknowledgement"/>
    </widget>
    <widget class="QMenu" name="menuView">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>&amp;View</string>
     </property>

@@ -217,6 +217,7 @@ enum TriggerEvent{
 };
 
 struct CardAskStruct{
+    CardAskStruct();
     ServerPlayer *who, *from;
     const QString pattern;
     const QString prompt;

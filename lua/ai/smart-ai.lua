@@ -1750,6 +1750,7 @@ function SmartAI:filterEvent(event, player, data)
 	end
 
 	self:speakTrigger(nil, player, target, event)
+	self:crazyAI(event, player, data)
 end
 
 function SmartAI:askForSuit(reason)
@@ -3591,6 +3592,7 @@ dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/mini-ai.lua"
 dofile "lua/ai/chat-ai.lua"
+dofile "lua/ai/crazyai.lua"
 
 local loaded = "standard|standard_cards|maneuvering|plough|events"
 

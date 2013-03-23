@@ -56,11 +56,11 @@ RecoverStruct::RecoverStruct()
 }
 
 CardAskStruct::CardAskStruct()
-    :who(NULL), from(NULL), pattern(NULL), prompt(NULL), is_skill(false), trigger_event(NonTrigger)
+    :who(NULL), from(NULL), pattern(QString()), prompt(QString()), is_skill(false), trigger_event(NonTrigger)
 {
 }
 
-bool CardAskStruct::toString() const{
+QString CardAskStruct::toString() const{
     return pattern;
 }
 
