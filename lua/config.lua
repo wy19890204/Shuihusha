@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130308",
-	version_name = "终结版F4.4",
+	version = "20130401",
+	version_name = "终结版F4.5",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -13,8 +13,8 @@ config = {
 		"ExCard",
 		"Events",
 		"Gift",
---		"Kuso",
---		"Joy",
+		"Kuso",
+		"Joy",
 
 		"Standard",
 		"Rat",
@@ -172,22 +172,27 @@ ban_list = { -- 初始禁表设置
 		"lujunyi+gaoyanei",
 --		"suochao+pangwanchun",
 --		"suochao+yanshun",
-
-		"wangying+zhangqing",
-		"wangying+qiongying",
-		"tianhu+yanshun",
+		"wangying+zhengtianshou",
+--		"wangying+zhangqing",
+--		"wangying+qiongying",
+-- 31 ~ 40
+--		"tianhu+yanshun",
 		"husanniang+yanshun",
-		"husanniang+zhaoji",
-		"qingzhang+sunerniang",
-		"shien+andaoquan",
+--		"husanniang+zhaoji",
+--		"qingzhang+sunerniang",
+--		"shien+andaoquan",
 		"yanxijiao+guansheng",
-		"lujunyi+shien",
-		"likui+luozhenren",
-		"dingdesun+wangqing",
+--		"lujunyi+shien",
+--		"likui+luozhenren",
+--		"dingdesun+wangqing",
 		"shijin+yanshun",
+-- 41 ~ 50
 		"shijin+leiheng",
 		"zhaoji+pangwanchun",
 		"zhaoji+andaoquan",
+--		"pangwanchun+tora",
+		"tongguan+suochao",
+
 		"fangjie+songjiang",
 		"liruilan+shijin",
 --		"lujunyi+shenzhangqing",

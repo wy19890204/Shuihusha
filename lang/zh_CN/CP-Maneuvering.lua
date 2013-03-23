@@ -2,6 +2,7 @@
 
 return {
 	["maneuvering"] = "地煞卡牌包",
+	["cv:maneuvering"] = "烨子风暴|Paddy",
 
 	["fire_slash"] = "火杀",
 	[":fire_slash"] = "基本牌\

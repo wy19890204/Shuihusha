@@ -4,6 +4,7 @@ return {
 	["gift"] = "节日大礼包",
 --	["limited_card"] = "限定卡",
 	["gift_card"] = "礼物卡",
+	["cv:gift"] = "烨子风暴|Paddy",
 
 	["zongzi"] = "粽子",
 	[":zongzi"] = "基本牌\
@@ -17,7 +18,6 @@ return {
 	["$lisao2"] = "乘骐骥以驰骋兮，来吾道夫先路。",
 	["$lisao3"] = "日月忽其不淹兮，春与秋其代序。",
 	["$lisao4"] = "乘骐骥以驰骋兮，来吾道夫先路。",
-	["cv:quyuan"] = "烨子风暴&小P",
 
 	["moonpie"] = "月饼",
 	[":moonpie"] = "基本牌\

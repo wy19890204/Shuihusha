@@ -42,24 +42,8 @@ QString General::getKingdom(bool unmap) const{
         return kingdom;
 }
 
-bool General::isMale() const{
-    return gender == Male;
-}
-
-bool General::isFemale() const{
-    return gender == Female;
-}
-
-bool General::isNeuter() const{
-    return gender == Neuter;
-}
-
 void General::setGender(Gender gender){
     this->gender = gender;
-}
-
-General::Gender General::getGender() const{
-    return gender;
 }
 
 QString General::getGenderString() const{
@@ -96,18 +80,6 @@ QString General::getShowHp() const{
         }
     }
     return max_hp;
-}
-
-bool General::isLord() const{
-    return lord;
-}
-
-bool General::isHidden() const{
-    return hidden;
-}
-
-bool General::isTotallyHidden() const{
-    return never_shown;
 }
 
 bool General::isLuaGeneral() const{

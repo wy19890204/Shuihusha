@@ -38,6 +38,7 @@ sgs.ai_skill_use_func["GuibingCard"] = function(card,use,self)
 			end
 			use.card=card
 			if use.to then
+				self:speak("guibing")
 				use.to:append(enemy)
 			end
 			target_count=target_count+1
@@ -74,6 +75,7 @@ sgs.ai_skill_use["@@zhengfa"] = function(self, prompt)
 			if i >= king then break end
 		end
 		if king >= #enemies and #enemies > 0 then
+			self:speak("zhengfa")
 			return "@ZhengfaCard=.->" .. table.concat(enemies, "+")
 		else
 			return "."
@@ -117,6 +119,7 @@ sgs.ai_skill_choice["lianma"] = function(self, choice)
 		end
 	end
 
+	self:speak("lianma")
 	if lian_e >= jie_f then
 		return "lian"
 	else
@@ -177,6 +180,7 @@ sgs.ai_skill_use_func["SheruCard"] = function(card, use, self)
 			use.card = card
 			if use.to then
 				self.sherutarget = enemy
+				self:speak("sheru")
 				use.to:append(enemy)
 			end
 			return
@@ -243,15 +247,17 @@ end
 -- butian
 sgs.ai_skill_cardask["@butian-card"] = function(self, data)
 	local judge = data:toJudge()
-	local reason = judge.reason
-	if reason == "tsunami" or reason == "lightning" then
-		if self:isEnemy(judge.who) or
-			(self:isFriend(judge.who) and judge:isGood()) then
-			return "."
+	if self.player:getHandcardNum() < 4 then
+		local reason = judge.reason
+		if reason == "tsunami" or reason == "lightning" then
+			if self:isEnemy(judge.who) or
+				(self:isFriend(judge.who) and judge:isGood()) then
+				return "."
+			end
 		end
+		local ignore = {"treasury", "provistore", "qimen", "qinxin", "yinyu", "qingshang"}
+		if table.contains(ignore, reason) then return "." end
 	end
-	local ignore = {"treasury", "provistore", "qimen", "qinxin", "yinyu", "qingshang"}
-	if table.contains(ignore, reason) then return "." end
 
 	if self:needRetrial(judge) and not self.player:isKongcheng() then
 		local cards = sgs.QList2Table(self.player:getHandcards())
@@ -306,6 +312,7 @@ sgs.ai_skill_use["@@duoming"] = function(self, prompt)
 			end
 		end
 		if #card_ids == 2 then
+			self:speak("duomingmoucai")
 			return "@DuomingCard=" .. table.concat(card_ids, "+") .. "->."
 		end
 	end
@@ -319,7 +326,10 @@ sgs.shijin_keep_value =
 }
 
 -- wubang
-sgs.ai_skill_invoke["wubang"] = true
+sgs.ai_skill_invoke["wubang"] = function(self)
+	self:speak("wubang")
+	return true
+end
 
 -- xiagu
 sgs.ai_skill_cardask["@xiagu"] = function(self, data)
@@ -330,6 +340,7 @@ sgs.ai_skill_cardask["@xiagu"] = function(self, data)
 		local allcards = self.player:getCards("he")
 		for _, card in sgs.qlist(allcards) do
 			if card:inherits("EquipCard") then
+				self:speak("xiagu", damage.to)
 				return card:getEffectiveId()
 			end
 		end
@@ -360,10 +371,10 @@ dingce_skill.getTurnUseCard = function(self)
 	return sgs.Card_Parse("@DingceCard=" .. trick:getEffectiveId())
 end
 sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
-	local target = self.enemies[1]
+	local target
 	if self.player:isWounded() then
 		local erniang = self.room:findPlayerBySkillName("heidian")
-		if erniang then
+		if erniang and #self.enemies > 0 then
 			self:sort(self.enemies, "handcard")
 			target = self.enemies[1]
 		else
@@ -372,11 +383,11 @@ sgs.ai_skill_use_func["DingceCard"] = function(card, use, self)
 			target = players[1]
 		end
 		use.card = card
-		if use.to then use.to:append(target) end
+		if use.to and #self.enemies > 0 then use.to:append(self.enemies[1]) end
 		return
 	else
 		use.card = card
-		if use.to and #self.friends_noself ~= 0 then use.to:append(self.friends_noself[1]) end
+		if use.to and #self.friends_noself > 0 then use.to:append(self.friends_noself[1]) end
 	end
 end
 sgs.ai_skill_invoke["dingce"] = function(self, data)
@@ -406,6 +417,7 @@ sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 			if i >= self.player:getEquips():length() then break end
 		end
 		if #enemies > 0 then
+			self:speak("xunlie")
 			return "@XunlieCard=.->" .. table.concat(enemies, "+")
 		end
 	end
@@ -417,6 +429,7 @@ sgs.ai_skill_use["@@xunlie"] = function(self, prompt)
 			self:sort(self.enemies, "handcard")
 			for _, enemy in ipairs(self.enemies) do
 				if enemy:getHandcardNum() > 1 then
+					self:speak("xunlie")
 					return "@XunlieCard=" .. acard:getEffectiveId() .. "->" .. enemy:objectName()
 				end
 			end
@@ -443,7 +456,10 @@ sgs.ai_skill_use_func["ShouwangCard"] = function(card, use, self)
 	for _, friend in ipairs(self.friends) do
 		if friend:getGeneral():isMale() then
 			use.card = card
-			if use.to then use.to:append(friend) end
+			if use.to then
+				self:speak("shouwang")
+				use.to:append(friend)
+			end
 			return
 		end
 	end

@@ -1070,3 +1070,7 @@ QList<const Player *> Player::getSiblings() const{
 
     return siblings;
 }
+
+void Player::playAudio(const QString &name) const{
+    Sanguosha->playAudio(name);
+}

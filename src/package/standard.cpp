@@ -400,7 +400,7 @@ public:
 
 class NothrowPattern: public CardPattern{
 public:
-    virtual bool match(const Player *player, const Card *card) const{
+    virtual bool match(const Player *, const Card *) const{
         return true;
     }
     virtual bool willThrow() const{
@@ -662,7 +662,7 @@ TestPackage::TestPackage()
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
-    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true, true);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
     addMetaObject<QiapaiCard>();

@@ -124,6 +124,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     // create photos
     for(int i = 0; i < player_count - 1;i++){
         Photo *photo = new Photo;
+        //photo->setFlags(QGraphicsItem::ItemIsMovable);
         photos << photo;
         addItem(photo);
         photo->setZValue(-0.5);
@@ -575,8 +576,7 @@ void RoomScene::adjustItems(QMatrix matrix){
     dashboard->setPos(x, y);
 
     QList<QPointF> positions = getPhotoPositions();
-    int i;
-    for(i=0; i<positions.length(); i++)
+    for(int i=0; i<positions.length(); i++)
         photos.at(i)->setPos(positions.at(i));
 
     reLayout(matrix);
@@ -1451,7 +1451,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 
     QAbstractButton *button = NULL;
 
-    if(skill->inherits("TriggerSkill")){
+    if(skill->isKindOf("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
         switch(trigger_skill->getFrequency()){
         case Skill::Frequent:{
@@ -1478,13 +1478,13 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         case Skill::Compulsory: button = new QPushButton(); break;
         default: button = new QPushButton(); button->setVisible(false); break;
         }
-    }else if(skill->inherits("FilterSkill")){
+    }else if(skill->isKindOf("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
         if(filter && dashboard->getFilter() == NULL)
             dashboard->setFilter(filter);
         button = new QPushButton();
 
-    }else if(skill->inherits("ViewAsSkill")){
+    }else if(skill->isKindOf("ViewAsSkill")){
         button = new QPushButton();
         button2skill.insert(button, qobject_cast<const ViewAsSkill *>(skill));
         connect(button, SIGNAL(clicked()), this, SLOT(doSkillButton()));
@@ -1638,9 +1638,8 @@ void RoomScene::enableTargets(const Card *card){
     selected_targets.clear();
 
     // unset avatar and all photo
-    foreach(QGraphicsItem *item, item2player.keys()){
+    foreach(QGraphicsItem *item, item2player.keys())
         item->setSelected(false);
-    }
 
     if(card == NULL){
         foreach(QGraphicsItem *item, item2player.keys()){
@@ -1669,7 +1668,7 @@ void RoomScene::enableTargets(const Card *card){
 
     updateTargetsEnablity(card);
 
-    if(Config.EnableAutoTarget)
+    if(Config.AutoTarget)
         selectNextTarget(false);
 
     ok_button->setEnabled(card->targetsFeasible(selected_targets, Self));
@@ -2115,7 +2114,8 @@ void RoomScene::updateStatus(Client::Status status){
             }else{
                 response_skill->setPattern(pattern);
                 dashboard->startPending(response_skill);
-                //dashboard->selectCard(pattern); @todo
+                if(Config.AutoSelect)
+                    dashboard->selectCard(pattern);
             }
 
             break;
@@ -2385,7 +2385,7 @@ void RoomScene::doCancelButton(){
             QString pattern = ClientInstance->getPattern();
             if(! pattern.startsWith("@")){
                 const ViewAsSkill *skill = dashboard->currentSkill();
-                if(!skill->inherits("ResponseSkill")){
+                if(!skill->isKindOf("ResponseSkill")){
                     cancelViewAsSkill();
                     break;
                 }
@@ -2633,8 +2633,11 @@ void RoomScene::onGameOver(){
     QList<const ClientPlayer *> winner_list, loser_list;
     foreach(const ClientPlayer *player, ClientInstance->getPlayers()){
         bool win = player->property("win").toBool();
-        if(win)
+        if(win){
+            if(player->hasSkill("qiapai"))
+                winner_box->setTitle(Sanguosha->translate("`ubuntenkei"));
             winner_list << player;
+        }
         else
             loser_list << player;
 
@@ -2815,8 +2818,8 @@ DamageMakerDialog::DamageMakerDialog(QWidget *parent)
 }
 
 void DamageMakerDialog::disableSource(){
-    QString nature = damage_nature->itemData(damage_nature->currentIndex()).toString();
-    damage_source->setEnabled(nature != "L" && nature != "M" && nature != "E");
+    int nature = damage_nature->itemData(damage_nature->currentIndex()).toInt();
+    damage_source->setEnabled(nature < 5);
 }
 
 void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){

@@ -65,12 +65,12 @@ public:
     bool CircularView;
     bool FitInView;
     bool EnableHotKey;
+    bool AutoSelect;
+    bool AutoTarget;
     bool EnableMinimizeDialog;
     bool NeverNullifyMyTrick;
-    bool EnableAutoTarget;
     int NullificationCountDown;
     bool ShowAllName;
-    bool SPOpen;
     int OperationTimeout;
     bool OperationNoLimit;
     bool EnableCardEffects;

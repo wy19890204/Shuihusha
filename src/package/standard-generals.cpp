@@ -499,20 +499,24 @@ void QimenCard::willCry(Room *room, ServerPlayer *target) const{
 }
 
 void QimenCard::onEffect(const CardEffectStruct &effect) const{
+    const Card *docard = Sanguosha->getCard(getSubcards().first());
+    QString suit = docard->isRed() ? "heart|diamond" : "spade|club";
     ServerPlayer *dragon = effect.from;
     ServerPlayer *superman = effect.to;
     Room *room = dragon->getRoom();
 
     JudgeStruct judge;
-    judge.pattern = QRegExp("(.*):(.*):(.*)");
+    judge.pattern = QRegExp("(.*):(" + suit + "):(.*)");
     judge.reason = skill_name;
+    judge.good = false;
     judge.who = superman;
 
     room->judge(judge);
-    QString suit_str = judge.card->getSuitString();
-    QString pattern = QString(".|%1").arg(suit_str);
-    QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
-    if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
+    //QString suit_str = judge.card->getSuitString();
+    //QString pattern = QString(".|%1").arg(suit_str);
+    //QString prompt = QString("@qimen:%1::%2").arg(superman->getGeneralName()).arg(suit_str);
+    //if(room->askForCard(dragon, pattern, prompt, true, QVariant::fromValue(suit_str), CardDiscarded)){
+    if(judge.isBad()){
         if(!dragon->hasMark("wudao_wake"))
             room->playSkillEffect(skill_name, qrand() % 2 + 1);
         else
@@ -528,13 +532,19 @@ void QimenCard::onEffect(const CardEffectStruct &effect) const{
     }
 }
 
-class QimenViewAsSkill: public ZeroCardViewAsSkill{
+class QimenViewAsSkill: public OneCardViewAsSkill{
 public:
-    QimenViewAsSkill():ZeroCardViewAsSkill("qimen"){
+    QimenViewAsSkill():OneCardViewAsSkill("qimen"){
     }
 
-    virtual const Card *viewAs() const{
-        return new QimenCard;
+    virtual bool viewFilter(const CardItem *e) const{
+        return !e->isEquipped();
+    }
+
+    virtual const Card *viewAs(CardItem *card_item) const{
+        QimenCard *card = new QimenCard;
+        card->addSubcard(card_item->getFilteredCard());
+        return card;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -587,8 +597,8 @@ public:
         }
         else if(player->getPhase() == Player::RoundStart){
             foreach(ServerPlayer *dragon, dragons){
-                if(!dragon->isNude())
-                    room->askForUseCard(dragon, "@@qimen", "@qimeninvoke:" + player->objectName(), true);
+                if(!dragon->isKongcheng())
+                    room->askForUseCard(dragon, "@@qimen", "@qimen:" + player->objectName(), true);
             }
         }
         return false;
@@ -1024,6 +1034,7 @@ public:
             log.card_str = QString::number(dust);
             room->sendLog(log);
             player->drawCards(1);
+            room->setEmotion(damage.to, "avoid");
             return true;
         }
         return false;
@@ -1037,8 +1048,6 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *luda, QVariant &data) const{
-        if(luda->getPhase() != Player::Play)
-            return false;
         DamageStruct damage = data.value<DamageStruct>();
 
         if(damage.card && damage.card->inherits("Slash") && damage.to->isAlive()
@@ -1049,7 +1058,9 @@ public:
                 const Card *card = Sanguosha->getCard(card_id);
                 room->showCard(damage.to, card_id);
                 room->getThread()->delay();
-                if(!card->inherits("BasicCard")){
+                if(card->isKindOf("Peach") || card->isKindOf("Analeptic"))
+                    room->obtainCard(luda, card);
+                else if(!card->isKindOf("BasicCard")){
                     room->throwCard(card_id, damage.to, luda);
                     LogMessage log;
                     log.type = "$ForceDiscardCard";
@@ -1059,8 +1070,8 @@ public:
                     room->sendLog(log);
 
                     damage.damage ++;
+                    data = QVariant::fromValue(damage);
                 }
-                data = QVariant::fromValue(damage);
             }
         }
         return false;
@@ -1319,13 +1330,13 @@ public:
     }
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
-        if(selected.length() > 2)
+        if(selected.length() > 3)
             return false;
         return !to_select->isEquipped();
     }
 
     virtual const Card *viewAs(const QList<CardItem *> &cards) const{
-        if(cards.length() != 2)
+        if(cards.length() != 3)
             return NULL;
 
         BuyaKnifeCard *card = new BuyaKnifeCard();
@@ -1998,7 +2009,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent) const{
-        return -1;
+        return 2;
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -2660,7 +2671,7 @@ class Huakui: public TriggerSkill{
 public:
     Huakui():TriggerSkill("huakui"){
         frequency = Frequent;
-        events << Damaged << PreDeath;
+        events << DamageComplete << PreDeath;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -2674,10 +2685,13 @@ public:
             if(event == PreDeath)
                 continue;
             lolidistance = other->isDead() ? lolidistance : loli->distanceTo(other);
+            if(other->getHp() >= (other->getMaxHp()+1) / 2)
+                continue;
             if(lolidistance < 2 && loli->askForSkillInvoke(objectName())){
-                const Card *card = room->peek();
+                //const Card *card = room->peek();
                 room->playSkillEffect(objectName());
-                room->getThread()->delay();
+                loli->drawCards(1);
+                /*room->getThread()->delay();
 
                 LogMessage log;
                 log.type = "$TakeAG";
@@ -2685,15 +2699,15 @@ public:
                 log.card_str = card->getEffectIdString();
                 room->sendLog(log);
 
-                room->obtainCard(loli, card);
+                room->obtainCard(loli, card);*/
             }
         }
         return false;
     }
 
     virtual int getPriority(TriggerEvent event) const{
-        if(event == Damaged)
-            return -1;
+        if(event == DamageComplete)
+            return 1;
         else
             return 2;
     }

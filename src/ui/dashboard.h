@@ -88,6 +88,7 @@ private:
 
     QGraphicsRectItem *avatar_area;
 
+    bool auto_select;
     int sort_type;
     QGraphicsSimpleTextItem *handcard_num;
     QList<CardItem *> judging_area;

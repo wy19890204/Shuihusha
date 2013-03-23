@@ -844,23 +844,25 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         break;
     }
     case RewardAndPunish:{
-        DamageStar damage = data.value<DamageStar>();
-        PlayerStar killer = damage->from;
-        PlayerStar victim = player;
+        if(data.canConvert<DamageStar>()){
+            DamageStar damage = data.value<DamageStar>();
+            PlayerStar killer = damage->from;
+            PlayerStar victim = player;
 
-        if(killer->isDead())
-            return true;
-        if(Config.EnableReincarnation && victim->property("isDead").toBool())
-            return true;
+            if(killer->isDead())
+                return true;
+            if(Config.EnableReincarnation && victim->property("isDead").toBool())
+                return true;
 
-        if(room->getMode() == "06_3v3")
-            killer->drawCards(3);
-        else{
-            if(victim->getRole() == "rebel" && killer != victim){
+            if(room->getMode() == "06_3v3")
                 killer->drawCards(3);
-            }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
-                killer->throwAllEquips();
-                killer->throwAllHandCards();
+            else{
+                if(victim->getRole() == "rebel" && killer != victim){
+                    killer->drawCards(3);
+                }else if(victim->getRole() == "loyalist" && killer->getRole() == "lord"){
+                    killer->throwAllEquips();
+                    killer->throwAllHandCards();
+                }
             }
         }
         break;

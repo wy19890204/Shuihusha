@@ -4,20 +4,21 @@
 #include <QBitmap>
 #include <QPainter>
 
-static inline QString MakePath(const QString &name, const QString &state){
-    return QString("image/system/button/irregular/%1-%2.png").arg(name).arg(state);
+static inline QString MakePath(const QString &name, const QString &state, const QString &father){
+    return QString("image/system/button/%1/%2-%3.png").arg(father).arg(name).arg(state);
 }
 
-IrregularButton::IrregularButton(const QString &name)
+IrregularButton::IrregularButton(const QString &name, const QString &father)
+    :mute(true)
 {
     state = Normal;
 
-    normal.load(MakePath(name, "normal"));
-    hover.load(MakePath(name, "hover"));
-    down.load(MakePath(name, "down"));
-    disabled.load(MakePath(name, "disabled"));
+    normal.load(MakePath(name, "normal", father));
+    hover.load(MakePath(name, "hover", father));
+    down.load(MakePath(name, "down", father));
+    disabled.load(MakePath(name, "disabled", father));
 
-    QBitmap mask_bitmap(MakePath(name, "mask"));
+    QBitmap mask_bitmap(MakePath(name, "mask", father));
     mask = QRegion(mask_bitmap);
 
     setAcceptsHoverEvents(true);
@@ -60,11 +61,19 @@ bool IrregularButton::inMask(const QPointF &pos) const{
     return mask.contains(QPoint(pos.x(), pos.y()));
 }
 
+void IrregularButton::setMute(bool mute){
+    this->mute = mute;
+}
+
 #include <QGraphicsSceneHoverEvent>
 
 void IrregularButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
     QPointF point = mapToParent(event->pos());
     if(inMask(point)){
+#ifdef AUDIO_SUPPORT
+        if(!mute)
+            Self->playAudio("button-hover");
+#endif
         changeState(Hover);
     }
 }
@@ -88,6 +97,10 @@ void IrregularButton::mousePressEvent(QGraphicsSceneMouseEvent *event){
 void IrregularButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QPointF point = mapToParent(event->pos());
     if(inMask(point)){
+#ifdef AUDIO_SUPPORT
+        if(!mute)
+            Self->playAudio("button-down");
+#endif
         changeState(Normal);
         emit clicked();
     }

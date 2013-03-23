@@ -175,6 +175,7 @@ return {
 	["illustrator:lijun"] = "NF1",
 	["designer:lijun"] = "扈成",
 	["cv:lijun"] = "冥引【天子会工作室】",
+	["coder:lijun"] = "roxiel",
 	["nizhuan"] = "逆转",
 	[":nizhuan"] = "当一张非延时类锦囊指定了多名目标角色时，（在结算前）你可以指定该锦囊的结算方向（顺时针或逆时针）。",
 	["dingce"] = "定策",

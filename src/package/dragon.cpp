@@ -136,6 +136,7 @@ public:
         if(event == Predamage){
             if(player->hasFlag("Bark")){
                 DamageStruct damage = data.value<DamageStruct>();
+                DamageStruct::Nature nat = damage.nature;
                 damage.nature = DamageStruct::Thunder;
 
                 LogMessage log;
@@ -148,7 +149,8 @@ public:
                 if(damage.card->getSkillName() != "jiaozhen")
                     room->playSkillEffect(objectName(), qrand() % 2 + 6);
 
-                data = QVariant::fromValue(damage);
+                if(nat != DamageStruct::Thunder)
+                    data = QVariant::fromValue(damage);
             }
             return false;
         }
@@ -444,13 +446,14 @@ public:
                     log.to << damage.to;
                     room->sendLog(log);
 
+                    room->setEmotion(damage.to, "avoid");
                     return true;
                 }
             }
             else{
                 if(damage.nature != DamageStruct::Thunder || water == damage.from || water == damage.to)
                     return false;
-                if(room->askForCard(water, ".", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
+                if(room->askForCard(water, "BasicCard", "@shuizhen2:" + damage.to->objectName(), true, data, CardDiscarded)){
                     ServerPlayer *forbider = damage.to;
                     LogMessage log;
                     log.type = "#InvokeSkill";
@@ -794,17 +797,19 @@ public:
     Jianwu():MasochismSkill("jianwu"){
     }
 
-    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
-        Room *room = player->getRoom();
+    virtual void onDamaged(ServerPlayer *lizhu, const DamageStruct &damage) const{
+        Room *room = lizhu->getRoom();
         PlayerStar target = damage.from;
-        if(!target || target->isDead() || target == player)
+        if(!target || target->isDead() || target == lizhu)
             return;
 
-        QList<ServerPlayer *> others = room->getOtherPlayers(player);
+        QList<ServerPlayer *> others = room->getOtherPlayers(lizhu);
         others.removeOne(target);
-        if(!others.isEmpty() && player->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
+        if(!others.isEmpty() && lizhu->askForSkillInvoke(objectName(), QVariant::fromValue(target))){
             foreach(ServerPlayer *p, others){
-                QString prompt = QString("@jianwu-slash:%1:%2").arg(player->objectName()).arg(target->objectName());
+                if(target->isDead())
+                    return;
+                QString prompt = QString("@jianwu-slash:%1:%2").arg(lizhu->objectName()).arg(target->objectName());
                 const Card *slash = room->askForCard(p, "slash", prompt, QVariant::fromValue(target));
                 if(slash) {
                     Slash *slas = new Slash(slash->getSuit(), slash->getNumber());
@@ -813,7 +818,7 @@ public:
                     CardUseStruct use;
                     use.card = slas;
                     use.to << target;
-                    use.from = player;
+                    use.from = lizhu;
                     room->useCard(use);
                     //break;
                 }

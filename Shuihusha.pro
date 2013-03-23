@@ -5,7 +5,7 @@ TARGET = Shuihusha
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
-DEFINES += USE_RCC
+CONFIG += use_rcc
 
 # If you want to enable joystick support, please uncomment the following line:
 # CONFIG += joystick
@@ -302,9 +302,6 @@ FORMS += \
 	src/dialog/generaloverview.ui \
 	src/dialog/mainwindow.ui 
 
-RESOURCES += \
-    image/skin.qrc
-
 INCLUDEPATH += include
 INCLUDEPATH += src/client
 INCLUDEPATH += src/core
@@ -325,8 +322,50 @@ TRANSLATIONS += shuihusha.ts
 OTHER_FILES += \
         shuihusha.qss \
         acknowledgement/main.qml \
-        acknowledgement/list.png \
-        acknowledgement/back.png
+        swig/sanguosha.i \
+        swig/qvariant.i \
+        swig/naturalvar.i \
+        swig/native.i \
+        swig/luaskills.i \
+        swig/list.i \
+        swig/card.i \
+        swig/ai.i \
+        etc/3v3-priority.txt \
+        etc/1v1-priority.txt \
+        etc/customScenes/30.txt \
+        etc/customScenes/29.txt \
+        etc/customScenes/28.txt \
+        etc/customScenes/27.txt \
+        etc/customScenes/26.txt \
+        etc/customScenes/25.txt \
+        etc/customScenes/24.txt \
+        etc/customScenes/23.txt \
+        etc/customScenes/22.txt \
+        etc/customScenes/21.txt \
+        etc/customScenes/20.txt \
+        etc/customScenes/19.txt \
+        etc/customScenes/18.txt \
+        etc/customScenes/17.txt \
+        etc/customScenes/16.txt \
+        etc/customScenes/15.txt \
+        etc/customScenes/14.txt \
+        etc/customScenes/13.txt \
+        etc/customScenes/12.txt \
+        etc/customScenes/11.txt \
+        etc/customScenes/10.txt \
+        etc/customScenes/09.txt \
+        etc/customScenes/08.txt \
+        etc/customScenes/07.txt \
+        etc/customScenes/06.txt \
+        etc/customScenes/05.txt \
+        etc/customScenes/04.txt \
+        etc/customScenes/03.txt \
+        etc/customScenes/02.txt \
+        etc/customScenes/01.txt \
+        image/system/coord_normal.ini \
+        image/system/coord_circular.ini \
+        image/system/photo.ini \
+        lua/config.lua
 
 win32{
         RC_FILE += resource/icon.rc
@@ -356,6 +395,11 @@ CONFIG(chatvoice){
 		CONFIG += qaxcontainer
 		DEFINES += CHAT_VOICE
 	}
+}
+
+CONFIG(use_rcc){
+        DEFINES += USE_RCC
+        RESOURCES += image/skin.qrc
 }
 
 CONFIG(qrc){

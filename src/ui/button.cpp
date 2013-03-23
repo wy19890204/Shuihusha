@@ -63,7 +63,7 @@ void Button::init()
     int h = bgimg.height();
 
     int tw = outimg->width();
-    int th  =outimg->height();
+    int th = outimg->height();
 
     qreal xc = (w - 2*pad)/(tw - 2*pad);
     qreal yc = (h - 2*pad)/(th - 2*pad);
@@ -112,6 +112,10 @@ void Button::setFont(const QFont &font){
     title_item->setPixmap(*title);
 }
 
+void Button::setLabel(const QString &label){
+    this->label = label;
+}
+
 #include "engine.h"
 
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *){
@@ -149,7 +153,7 @@ QRectF Button::boundingRect() const{
 void Button::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     QRectF rect = boundingRect();
 
-    //painter->setOpacity(0.8);
+    painter->setOpacity(0.8);
     painter->drawImage(rect,*outimg);
     painter->fillRect(rect,QColor(255,255,255,glow*10));
     //painter->drawPixmap(rect.toRect(),*title);

@@ -339,10 +339,8 @@ public:
 
 %extend ServerPlayer{
 	void speak(const char *msg){
-		if(msg){
-			QString str = QByteArray(msg).toBase64();
-			$self->getRoom()->speakCommand($self, str);
-		}
+		QString str = QByteArray(msg).toBase64();
+		$self->getRoom()->speakCommand($self, str);
 	}
 
 	bool isSkipped(Player::Phase phase){
@@ -787,6 +785,7 @@ public:
 	virtual QDialog *getDialog() const;
 
 	virtual Location getLocation() const;
+	virtual bool isKindOf(const char* cardType) const;
 
 	void initMediaSource();
 	void playEffect(int index = -1) const;

@@ -28,6 +28,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 			end
 		end
 		if delta > king then
+			self:speak("sixiang")
 			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
 		end
 	else
@@ -39,6 +40,7 @@ sgs.ai_skill_use["@@sixiang"] = function(self, prompt)
 			end
 		end
 		if delta >= king then
+			self:speak("sixiang")
 			return "@SixiangCard=" .. cards[1]:getEffectiveId() .. "->" .. table.concat(targets, "+")
 		end
 	end
@@ -56,7 +58,7 @@ shenhuo_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards,true)
 	for _,acard in ipairs(cards)  do
-		if acard:isRed() and acard:inherits("TrickCard") then
+		if acard:isRed() and acard:isKindOf("TrickCard") then
 			card = acard
 			break
 		end
@@ -72,7 +74,7 @@ shenhuo_skill.getTurnUseCard = function(self)
 end
 function sgs.ai_cardneed.shenhuo(to, card, self)
 	return (card:getSuit() == sgs.Card_Diamond or card:getSuit() == sgs.Card_Heart)
-		and card:inherits("TrickCard")
+		and card:isKindOf("TrickCard")
 end
 
 -- xiaorang
@@ -237,6 +239,7 @@ sgs.ai_skill_use["@@binggong"] = function(self, prompt)
 	for i = 1, num do
 		table.insert(card_ids, cards[i]:getEffectiveId())
 	end
+	self:speak("binggong")
 	return "@BinggongCard=" .. table.concat(card_ids, "+") .. "->" .. target:objectName()
 end
 
@@ -285,7 +288,10 @@ sgs.ai_skill_playerchosen["dalangtu"] = sgs.ai_skill_playerchosen["shunshui"]
 
 -- songqing
 -- jiayao
-sgs.ai_skill_invoke["jiayao"] = true
+sgs.ai_skill_invoke["jiayao"] = function(self)
+	self:speak("jiayao")
+	return true
+end
 
 -- sheyan
 local sheyan_skill = {}
@@ -334,6 +340,7 @@ sgs.ai_skill_use_func["YijieCard"] = function(card,use,self)
 	use.card = card
 	if use.to then
 		self:sort(self.friends_noself, "handcard")
+		self:speak("yijie")
 		use.to:append(self.friends_noself[1])
 	end
 end
@@ -349,6 +356,7 @@ sgs.ai_skill_invoke["yijie"] = function(self, data)
 	return false
 end
 sgs.ai_skill_playerchosen["yijie"] = function(self, targets)
+	self:speak("yijie")
 	return self.yijietarget
 end
 
@@ -376,11 +384,13 @@ sgs.ai_skill_use["@@huatian"] = function(self, prompt)
 		if not self.friends_noself[1] then return "." end
 		self:sort(self.friends_noself, "hp")
 		if self.friends_noself[1]:isWounded() then
+			self:speak("huatianai")
 			return "@HuatianCard=.->" .. self.friends_noself[1]:objectName()
 		end
 	elseif flag == 2 then -- cuo
 		self:sort(self.enemies)
 		if #self.enemies > 0 then
+			self:speak("huatiancuo")
 			return "@HuatianCard=.->" .. self.enemies[1]:objectName()
 		end
 	end
@@ -413,11 +423,19 @@ end
 -- zhaoji
 -- shemi
 sgs.ai_skill_use["@@shemi"] = function(self, prompt)
-	if self.player:getHandcardNum() < self.player:getHp() then return "." end
-	local cards = self.player:getCards("he")
+	if self.player:isKongcheng() or self.player:getHandcardNum() < self.player:getHp() then return "." end
+	local cards = self.player:getCards("h")
 	cards = sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
-	return "@ShemiCard=" .. cards[1]:getEffectiveId()
+	local throwcount = math.max(self.player:getHandcardNum() - 10, 1)
+	local willthrow = {}
+	for _, car in ipairs(cards) do
+		table.insert(willthrow, car:getEffectiveId())
+		if #willthrow == throwcount then
+			self:speak("shemi")
+			return "@ShemiCard=" .. table.concat(willthrow, "+")
+		end
+	end
 end
 
 -- nongquan

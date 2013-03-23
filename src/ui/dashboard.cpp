@@ -383,13 +383,14 @@ void Dashboard::selectCard(const QString &pattern, bool forward){
             selected->unselect();
         to_select->select();
         selected = to_select;
+        auto_select = true;
 
         emit card_selected(selected->getFilteredCard());
     }
 }
 
 const Card *Dashboard::getSelected() const{
-    if(view_as_skill)
+    if(view_as_skill && pending_card)
         return pending_card;
     else if(selected)
         return selected->getFilteredCard();
@@ -928,7 +929,6 @@ void Dashboard::stopPending(){
             equip->setMarkable(false);
             disconnect(equip, SIGNAL(mark_changed()));
         }
-
     }
 
     pendings.clear();
@@ -940,6 +940,8 @@ void Dashboard::onCardItemClicked(){
     if(!card_item)
         return;
 
+    if(auto_select)
+        unselectAll();
     if(view_as_skill){
         if(card_item->isPending()){
             card_item->unselect();
@@ -964,6 +966,7 @@ void Dashboard::onCardItemClicked(){
             emit card_selected(selected->getFilteredCard());
         }
     }
+    auto_select = false;
 }
 
 void Dashboard::updatePending(){

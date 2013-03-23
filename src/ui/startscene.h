@@ -5,6 +5,7 @@
 #include "pixmap.h"
 #include "server.h"
 
+class IrregularButton;
 #include <QGraphicsScene>
 #include <QAction>
 #include <QTextEdit>
@@ -15,6 +16,7 @@ class StartScene: public QGraphicsScene{
 public:
     StartScene();
     void addButton(QAction *action);
+    void addMainButton(QList<QAction *> actions);
     void setServerLogBackground();
     void switchToServer(Server *server);
 
@@ -22,6 +24,7 @@ private:
     void printServerInfo();
 
     Pixmap *logo;
+    Pixmap *button_group;
     QTextEdit *server_log;
     QList<Button*> buttons;
 };

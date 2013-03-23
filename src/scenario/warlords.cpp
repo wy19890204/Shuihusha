@@ -245,11 +245,16 @@ bool ArthurFerrisScenario::setCardPiles(const Card *card) const{
 void ArthurFerrisScenario::assign(QStringList &generals, QStringList &roles) const{
     Q_UNUSED(generals);
 
-    roles << "lord" << "renegade" << "rebel";
-    if(getPlayerCount() == 4)
-        roles << "loyalist";
-    if(getPlayerCount() == 5)
+    switch(getPlayerCount()){
+    case 5:
         roles << "renegade";
+    case 4:
+        roles << "loyalist";
+    default:
+        roles << "rebel" <<  "renegade" << "lord";
+    }
+
+    qShuffle(roles);
 }
 
 int ArthurFerrisScenario::getPlayerCount() const{

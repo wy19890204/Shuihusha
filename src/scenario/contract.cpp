@@ -61,8 +61,7 @@ public:
                         scenario->annex(damage->from, damage->to);
                         if(player->getMaxHp() < 1)
                             room->setPlayerProperty(player, "maxhp", player->getGeneral()->getMaxHp());
-                        RecoverStruct rs;
-                        room->recover(player, rs);
+                        room->setPlayerProperty(player, "hp", 1);
                         player->drawCards(2);
                         return true;
                     }

@@ -12,7 +12,10 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    logo->moveBy(0, -Config.Rect.height()/4);
+    /*if(Config.value("ButtonStyle", true).toBool())
+        logo->moveBy(0, -Config.Rect.height()/3-20);
+    else*/
+        logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
 
     //the website URL
@@ -24,10 +27,20 @@ StartScene::StartScene()
                        Config.Rect.height()/2 - website_text->boundingRect().height());
 
     server_log = NULL;
+
+    //Provide coordinates for the button
+    button_group = new Pixmap("image/system/button/main/background.png");
+    button_group->shift();
+    button_group->moveBy(0, Config.Rect.height()/5-40);
+    button_group->hide();
+    //addItem(button_group);
 }
 
 void StartScene::addButton(QAction *action){
-    Button *button = new Button(action->text());
+    QString text = action->text();
+    if(action->objectName() == "actionPackaging")
+        text = tr("Lua Manager");
+    Button *button = new Button(text);
     button->setMute(false);
 
     connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
@@ -42,6 +55,42 @@ void StartScene::addButton(QAction *action){
     }
 
     buttons << button;
+}
+
+#include "irregularbutton.h"
+void StartScene::addMainButton(QList<QAction *> actions){
+    static QString butons_name[9] = {
+        "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
+    };
+    static int pos[9][2] = {
+        {220, 230}, //0.start
+        {175, 180}, //1.join
+        {250, 470}, //2.replay
+        {150, 255}, //3.lua
+        {175, 425}, //4.config
+        {250, 155}, //5.general
+        {415, 180}, //6.card
+        {415, 360}, //7.mode
+        {150, 355}, //8.thanks
+    };
+
+    QString path = "image/system/button/main/background.png";
+    QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
+    button_widget->setPos(button_group->pos());
+
+    int count = 0;
+    foreach(QAction *action, actions){
+        IrregularButton *buton = new IrregularButton(butons_name[count], "main");
+        buton->setMute(false);
+        buton->setParentItem(button_widget);
+        //buton->setPos(button_widget->pos());
+        int *froups = pos[count];
+        buton->moveBy(froups[0], froups[1]);
+        connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
+        count ++;
+    }
+
+    addItem(button_widget);
 }
 
 void StartScene::setServerLogBackground(){

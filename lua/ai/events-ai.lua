@@ -2,7 +2,7 @@
 sgs.dynamic_value.control_card.Events = true
 
 function SmartAI:useEventsCard(card, use)
-	if card:inherits("Tifanshi") then
+	if card:isKindOf("Tifanshi") then
 		for _, enemy in ipairs(self.enemies) do
 			if enemy:getHandcardNum() == 1 then
 				use.card = card
@@ -10,11 +10,11 @@ function SmartAI:useEventsCard(card, use)
 				return
 			end
 		end
-	elseif card:inherits("FuckGaolian") or card:inherits("Jiangjieshi") or card:inherits("NanaStars") then
+	elseif card:isKindOf("FuckGaolian") or card:isKindOf("Jiangjieshi") or card:isKindOf("NanaStars") then
 		return
-	elseif card:inherits("Daojia") then
+	elseif card:isKindOf("Daojia") then
 		return math.random(1, 3) == 2
-	elseif card:inherits("NinedayGirl") then
+	elseif card:isKindOf("NinedayGirl") then
 		for _, enemy in ipairs(self.enemies) do
 			if not enemy:isKongcheng() then
 				use.card = card
@@ -22,7 +22,7 @@ function SmartAI:useEventsCard(card, use)
 				return
 			end
 		end
-	elseif card:inherits("Jiefachang") then
+	elseif card:isKindOf("Jiefachang") then
 		for _, target in sgs.qlist(self.room:getAllPlayers()) do
 			local juds = target:getJudgingArea():length()
 			if juds > 0 and self:isFriend(target) then
@@ -91,9 +91,11 @@ sgs.dynamic_value.damage_card.FuckGaolian = true
 
 sgs.ai_skill_use["FuckGaolian"] = function(self, prompt)
 	local evc = self:getCard("FuckGaolian")
-	self:sort(self.enemies, "hp")
-	local enemy = self.enemies[1]
-	return ("%s->%s"):format(evc:toString(), enemy:objectName())
+	if #self.enemies > 0 then
+		self:sort(self.enemies, "hp")
+		local enemy = self.enemies[1]
+		return ("%s->%s"):format(evc:toString(), enemy:objectName())
+	end
 end
 sgs.ai_skill_cardask["@fuckl"] = function(self, data)
 	local judge = data:toJudge()
@@ -124,7 +126,7 @@ sgs.ai_skill_use["NanaStars"] = function(self, prompt)
 end
 sgs.ai_skill_cardask["@7stars"] = function(self, data)
 	local damage = data:toDamage()
-	if self:isEnemy(damage.from) then
+	if damage.from and self:isEnemy(damage.from) then
 		local star = self:getCard("NanaStars")
 		return star:getEffectiveId()
 	end

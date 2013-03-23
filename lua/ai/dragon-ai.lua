@@ -59,6 +59,11 @@ end
 sgs.ai_skill_playerchosen["taolue"] = sgs.ai_skill_playerchosen["lihun"]
 
 -- shibao
+sgs.shibao_keep_value =
+{
+	Slash = 4,
+}
+
 -- xiaozhan
 sgs.ai_skill_cardask["@xiaozhan"] = function(self, data)
 	local use = data:toCardUse()
@@ -114,7 +119,7 @@ shuilao_skill.getTurnUseCard=function(self,inclusive)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if acard:inherits("EquipCard") and
+		if acard:isKindOf("EquipCard") and
 		((self:getUseValue(acard) < sgs.ai_use_value.Indulgence) or inclusive) then
 			card = acard
 			break
@@ -132,6 +137,11 @@ shuilao_skill.getTurnUseCard=function(self,inclusive)
 end
 
 -- zhengtianshou
+sgs.zhengtianshou_keep_value =
+{
+	TrickCard = 3
+}
+
 -- wugou
 local wugou_skill={}
 wugou_skill.name = "wugou"
@@ -144,13 +154,13 @@ wugou_skill.getTurnUseCard = function(self)
 		local same_suit=false
 		cards = sgs.QList2Table(cards)
 		for _, fcard in ipairs(cards) do
-			if not fcard:inherits("Peach") and fcard:inherits("BasicCard") then
+			if not fcard:isKindOf("Peach") and fcard:isKindOf("BasicCard") then
 				first_card = fcard
 				first_found = true
 				for _, scard in ipairs(cards) do
-					if first_card ~= scard and scard:inherits("BasicCard") and
+					if first_card ~= scard and scard:isKindOf("BasicCard") and
 						(scard:isRed() and first_card:isRed()) and 
-						not scard:inherits("Peach") then
+						not scard:isKindOf("Peach") then
 						second_card = scard
 						second_found = true
 						break
@@ -181,7 +191,7 @@ qiaojiang_skill.getTurnUseCard = function(self, inclusive)
 	local card
 	self:sortByUseValue(cards, true)
 	for _, car in ipairs(cards)  do
-		if car:isBlack() and car:inherits("TrickCard") and
+		if car:isBlack() and car:isKindOf("TrickCard") and
 			((self:getUseValue(car) < sgs.ai_use_value.Slash) or inclusive) then
 			card = car
 			break
@@ -202,9 +212,9 @@ sgs.ai_view_as["qiaojiang"] = function(card, player, card_place)
 	local number = card:getNumberString()
 	local card_id = card:getEffectiveId()
 
-	if card:isBlack() and card:inherits("TrickCard") then
+	if card:isBlack() and card:isKindOf("TrickCard") then
 		return ("slash:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
-	elseif card:isRed() and card:inherits("TrickCard") then
+	elseif card:isRed() and card:isKindOf("TrickCard") then
 		return ("jink:qiaojiang[%s:%s]=%d"):format(suit, number, card_id)
 	end
 end
@@ -227,12 +237,18 @@ sgs.ai_skill_choice["jiandiao"] = function(self, choice, data)
 end
 
 -- shantinggui
+sgs.shantinggui_keep_value =
+{
+	BasicCard = 4,
+}
+
 -- shuizhen
 sgs.ai_skill_cardask["@shuizhen1"] = function(self, data)
 	local damage = data:toDamage()
 	if not self:isFriend(damage.to) or damage.damage < 1 then return "." end
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, false)
+	self:speak("shuizhenf")
 	return cards[1]:getEffectiveId()
 end
 sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
@@ -255,8 +271,9 @@ sgs.ai_skill_cardask["@shuizhen2"] = function(self, data)
 	local cards = sgs.QList2Table(self.player:getHandcards())
 	self:sortByUseValue(cards, false)
 	for _, fcard in ipairs(cards) do
-		if fcard:inherits("BasicCard") and
-			not fcard:inherits("Peach") and not fcard:inherits("Analeptic") then
+		if fcard:isKindOf("BasicCard") and
+			not fcard:isKindOf("Peach") and not fcard:isKindOf("Analeptic") then
+			self:speak("shuizhent")
 			return fcard:getEffectiveId()
 		end
 	end
@@ -334,7 +351,7 @@ shexin_skill.getTurnUseCard = function(self)
 		cards = sgs.QList2Table(cards)
 		self:sortByUseValue(cards, true)
 		for _, card in ipairs(cards) do
-			if card:isNDTrick() or card:inherits("EquipCard") then
+			if card:isNDTrick() or card:isKindOf("EquipCard") then
 				return sgs.Card_Parse("@ShexinCard=" .. card:getEffectiveId())
 			end
 		end
@@ -342,7 +359,7 @@ shexin_skill.getTurnUseCard = function(self)
 end
 sgs.ai_skill_use_func["ShexinCard"] = function(card,use,self)
 	self:sort(self.enemies, "handcard2")
-	if use.to then
+	if use.to and #self.enemies > 0 then
 		use.to:append(self.enemies[1])
 	end
 	use.card=card
@@ -351,8 +368,8 @@ end
 -- qiongyaonayan
 sgs.qiongyaonayan_suit_value = 
 {
-	spade = 6,
-	club = 6,
+	spade = 4,
+	club = 4,
 }
 
 -- jiaozhen
@@ -393,12 +410,15 @@ end
 
 -- suochao
 -- chongfeng
-sgs.ai_skill_invoke["chongfeng"] = true
+sgs.ai_skill_invoke["chongfeng"] = function(self)
+	self:speak("chongfeng")
+	return true
+end
 
 -- wangpo
 sgs.wangpo_suit_value = 
 {
-	club = 6,
+	club = 5,
 }
 
 -- qianxian
@@ -445,10 +465,13 @@ sgs.ai_skill_use_func["QianxianCard"] = function(card,use,self)
 			if first and second then break end
 		end
 	end
-	if first and second and use.to then
+	if first and second then
 		use.card = card
-		use.to:append(first)
-		use.to:append(second)
+		if use.to then
+			self:speak("qianxian")
+			use.to:append(first)
+			use.to:append(second)
+		end
 	end
 end
 

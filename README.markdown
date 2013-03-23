@@ -1,7 +1,7 @@
-Open Source Sanguosha
+Shuihusha QSanguosha's MOD
 ==========
 
-Introduction
+Introduction of QSanguosha
 ----------
 
 Sanguosha is both a popular board game and online game,

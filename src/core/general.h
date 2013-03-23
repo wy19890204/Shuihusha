@@ -29,16 +29,16 @@ public:
     // property getters/setters
     int getMaxHp() const;
     QString getKingdom(bool unmap = false) const;
-    bool isMale() const;
-    bool isFemale() const;
-    bool isNeuter() const;
-    bool isLord() const;
-    bool isHidden() const;
-    bool isTotallyHidden() const;
+    bool isMale() const {return gender == Male;}
+    bool isFemale() const {return gender == Female;}
+    bool isNeuter() const {return gender == Neuter;}
+    bool isLord() const {return lord;}
+    bool isHidden() const {return hidden;}
+    bool isTotallyHidden() const {return never_shown;}
     bool isLuaGeneral() const;
 
-    enum Gender {Male, Female, Neuter};
-    Gender getGender() const;
+    enum Gender {Male = 0, Female = 1, Neuter = 2};
+    Gender getGender() const {return gender;}
     void setGender(Gender gender);
     QString getGenderString() const;
 

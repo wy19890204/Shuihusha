@@ -314,7 +314,7 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
 }
 
 void Room::judge(JudgeStruct &judge_struct){
-    Q_ASSERT(judge_struct.who != NULL);
+    Q_CHECK_PTR(judge_struct.who);
 
     JudgeStar judge_star = &judge_struct;
 
@@ -918,7 +918,7 @@ bool Room::_askForNullification(const TrickCard *trick, ServerPlayer *from, Serv
     broadcastInvoke("animate", animation_str);
     const Card *last_trick = trick;
 
-    QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->metaObject()->className())+":"+to->objectName()+":"+(positive?"true":"false"));
+    QVariant decisionData = QVariant::fromValue("Nullification:"+QString(trick->getClassName())+":"+to->objectName()+":"+(positive?"true":"false"));
     thread->trigger(ChoiceMade, this, repliedPlayer, decisionData);
     setTag("NullifyingTimes",getTag("NullifyingTimes").toInt()+1);
     if(repliedPlayer->hasSkill("pozhen") ||
@@ -1039,7 +1039,7 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
             LogMessage log;
             log.card_str = card->toString();
             log.from = player;
-            log.type = QString("#%1").arg(card->metaObject()->className());
+            log.type = QString("#%1").arg(card->getClassName());
             sendLog(log);
 
             bool mute = false;
@@ -2565,7 +2565,7 @@ void Room::useCard(const CardUseStruct &use, bool add_history){
         if(card->inherits("LuaSkillCard"))
             key = "#" + card->objectName();
         else
-            key = card->metaObject()->className();
+            key = card->getClassName();
 
         bool slash_record =
             key.contains("Slash") &&
@@ -2697,34 +2697,26 @@ void Room::damage(const DamageStruct &damage_data){
 
     if(!damage_data.chain && damage_data.from){
         // predamage
-        if(thread->trigger(Predamage, this, damage_data.from, data)){
-            setEmotion(damage_data.to, "avoid");
+        if(thread->trigger(Predamage, this, damage_data.from, data))
             return;
-        }
     }
 
     do{
         // DamagedProceed
         bool prevent = thread->trigger(DamagedProceed, this, damage_data.to, data);
-        if(prevent){
-            setEmotion(damage_data.to, "avoid");
+        if(prevent)
             break;
-        }
 
         // DamageProceed
         if(damage_data.from){
-            if(thread->trigger(DamageProceed, this, damage_data.from, data)){
-                setEmotion(damage_data.to, "avoid");
+            if(thread->trigger(DamageProceed, this, damage_data.from, data))
                 break;
-            }
         }
 
         // predamaged
         bool broken = thread->trigger(Predamaged, this, damage_data.to, data);
-        if(broken){
-            setEmotion(damage_data.to, "avoid");
+        if(broken)
             break;
-        }
 
         // damage done, should not cause damage process broken
         thread->trigger(DamageDone, this, damage_data.to, data);
@@ -3687,6 +3679,7 @@ void Room::awake(ServerPlayer *player, const QString &skill_name, const QString 
     else
         thread->delay(qMin(delay / 2, 1000));
     setPlayerMark(player, skillname + "_wake", 1);
+    detachSkillFromPlayer(player, skillname, false);
     if(!Config.EnableSkillEmotion)
         setEmotion(player, "awake");
     else

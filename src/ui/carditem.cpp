@@ -17,7 +17,7 @@ CardItem::CardItem(const Card *card)
     :Pixmap(card->getPixmapPath(), false), card(card), filtered_card(card), auto_back(true), frozen(false)
 
 {
-    Q_ASSERT(card != NULL);
+    Q_CHECK_PTR(card);
 
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
     cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
@@ -301,7 +301,18 @@ void CardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if(card){
         painter->drawPixmap(0, 14, cardsuit_pixmap);
         painter->drawPixmap(0, 2, number_pixmap);
-        if(owner_pixmap)painter->drawPixmap(0,0,*owner_pixmap);
+
+        if(Config.value("DrawCardName", true).toBool()){
+            static QFont card_desc_font("SimSun", 8, QFont::DemiBold);
+            painter->setFont(card_desc_font);
+            painter->setPen(Qt::black);
+            const QString str = Sanguosha->translate(card->objectName());
+            for(int i = 0; i < qMin(5, str.length()); i ++)
+                painter->drawText(7, 50 + 11*i, str.at(i));
+
+            if(owner_pixmap)
+                painter->drawPixmap(0,0,*owner_pixmap);
+        }
     }
 }
 

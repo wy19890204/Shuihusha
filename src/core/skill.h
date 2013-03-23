@@ -43,6 +43,7 @@ public:
     virtual QDialog *getDialog() const;
 
     virtual Location getLocation() const;
+    inline virtual bool isKindOf(const char* cardType) const {return this && inherits(cardType);}
 
     void initMediaSource();
     void playEffect(int index = -1) const;

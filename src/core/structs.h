@@ -76,16 +76,6 @@ struct CardMoveStruct{
     QString toString() const;
 };
 
-struct CardAskStruct{
-    ServerPlayer *who, *from;
-    const QString pattern;
-    const QString prompt;
-    TriggerEvent trigger_event;
-    bool is_skill;
-
-    QString toString() const;
-};
-
 struct DyingStruct{
     DyingStruct();
 
@@ -128,7 +118,7 @@ public:
 struct JudgeStruct{
     JudgeStruct();
     bool isGood(const Card *card = NULL) const;
-    bool isBad() const;
+    bool isBad() const {return !isGood();}
 
     ServerPlayer *who;
     const Card *card;
@@ -224,6 +214,16 @@ enum TriggerEvent{
     QiaogongTrigger,
 
     NumOfEvents
+};
+
+struct CardAskStruct{
+    ServerPlayer *who, *from;
+    const QString pattern;
+    const QString prompt;
+    TriggerEvent trigger_event;
+    bool is_skill;
+
+    QString toString() const;
 };
 
 typedef const Card *CardStar;

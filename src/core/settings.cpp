@@ -115,12 +115,12 @@ void Settings::init(){
     CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
     FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
+    AutoSelect = value("AutoSelect", true).toBool();
+    AutoTarget = value("AutoTarget", false).toBool();
     NeverNullifyMyTrick = value("NeverNullifyMyTrick", true).toBool();
     EnableMinimizeDialog = value("EnableMinimizeDialog", false).toBool();
-    EnableAutoTarget = value("EnableAutoTarget", false).toBool();
     NullificationCountDown = value("NullificationCountDown", 8).toInt();
     ShowAllName = value("ShowAllName", true).toBool();
-    SPOpen = value("SPOpen", false).toBool();
     OperationTimeout = value("OperationTimeout", 15).toInt();
     OperationNoLimit = value("OperationNoLimit", false).toBool();
     EnableCardEffects = value("EnableCardEffects", true).toBool();

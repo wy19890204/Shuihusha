@@ -1,8 +1,9 @@
 #ifndef MINIGENERALS_H
 #define MINIGENERALS_H
 
-#include "card.h"
-#include "skill.h"
+#include "carditem.h"
+#include "engine.h"
+#include "client.h"
 
 class FangdiaoCard: public SkillCard{
     Q_OBJECT
@@ -49,6 +50,15 @@ class Qi6ingCard: public SkillCard{
 public:
     Q_INVOKABLE Qi6ingCard();
 
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+};
+
+class XianhaiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE XianhaiCard();
+    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 

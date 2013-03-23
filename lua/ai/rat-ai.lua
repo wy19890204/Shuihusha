@@ -85,6 +85,7 @@ sgs.ai_skill_invoke["lihun"] = function(self, data)
 	return self:isEnemy(from)
 end
 sgs.ai_skill_playerchosen["lihun"] = function(self, targets)
+	self:speak("lihun")
 	local friends = sgs.QList2Table(targets)
 	self:sort(friends, "hp")
 	for _, friend in ipairs(friends) do
@@ -120,6 +121,7 @@ sgs.ai_skill_cardask["@fangzhen"] = function(self, data)
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
 		if card:getSuitString() == suit then
+			self:speak("fangzhen")
 			return card:getEffectiveId()
 		end
 	end
@@ -146,7 +148,7 @@ shouge_skill.getTurnUseCard = function(self)
 		local cards = self.player:getCards("h")
 		cards = sgs.QList2Table(cards)
 		for _, acard in ipairs(cards) do
-			if (acard:inherits("Peach") and not keeppork) or acard:inherits("Analeptic") then
+			if (acard:isKindOf("Peach") and not keeppork) or acard:isKindOf("Analeptic") then
 				return sgs.Card_Parse("@ShougeCard=" .. acard:getId())
 			end
 		end
@@ -162,6 +164,8 @@ sgs.ai_skill_invoke["qiongtu"] = function(self, data)
 	local target = data:toPlayer()
 	if self.player:hasSkill("qiongtu") then
 		self:speak("qiongtu", target)
+	elseif self.player:hasSkill("moucai") then
+		self:speak("duomingmoucai")
 	end
 	if self:isFriend(target) and self:isEquip("SilverLion", target) and target:isWounded() then
 		return true
@@ -186,7 +190,7 @@ end
 -- baisheng
 sgs.baisheng_suit_value =
 {
-	spade = 4
+	spade = 2
 }
 
 -- xiayao
@@ -225,7 +229,7 @@ sgs.shiqian_suit_value =
 
 -- feiyan
 function sgs.ai_trick_prohibit.feiyan(card)
-	return card:inherits("SupplyShortage") or card:inherits("Snatch")
+	return card:isKindOf("SupplyShortage") or card:isKindOf("Snatch")
 end
 
 -- shentou
@@ -264,12 +268,14 @@ sgs.ai_skill_invoke["dujian"] = function(self, data)
 	if self:isFriend(damage.to) then
 		if not damage.to:faceUp() then return true end
 		if damage.to:getHandcardNum() > 5 and damage.to:getHp() < 2 then
+			self:speak("dujian")
 			return true
 		end
-	else
-		if #self.enemies < 2 then return false end
-		return damage.to:faceUp()
+	elseif #self.enemies >= 2 and damage.to:faceUp() then
+		self:speak("dujian")
+		return true
 	end
+	return false
 end
 
 -- qiaodaoqing

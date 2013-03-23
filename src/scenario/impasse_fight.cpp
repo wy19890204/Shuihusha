@@ -423,15 +423,18 @@ public:
         }
 
         case RewardAndPunish:{
-            DamageStar damage = data.value<DamageStar>();
-            if(damage && damage->from){
-                if(damage->from->getRole() == damage->to->getRole())
-                    damage->from->throwAllHandCards();
-                else
-                    damage->from->drawCards(2);
+            if(data.canConvert<DamageStar>()){
+                DamageStar damage = data.value<DamageStar>();
+                if(damage && damage->from){
+                    QString torole = damage->to ? damage->to->getRole() : "unknown";
+                    if(damage->from->getRole() == torole)
+                        damage->from->throwAllHandCards();
+                    else
+                        damage->from->drawCards(2);
 
-                damage = NULL;
-                data = QVariant::fromValue(damage);
+                    damage = NULL;
+                    data = QVariant::fromValue(damage);
+                }
             }
             return true;
         }

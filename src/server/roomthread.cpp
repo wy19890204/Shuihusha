@@ -82,7 +82,7 @@ bool JudgeStructPattern::match(const Player *player, const Card *card) const{
         return false;
 
     if(isRegex){
-        QString class_name = card->metaObject()->className();
+        QString class_name = card->getClassName();
         Card::Suit suit = card->getSuit();
         /*if(player->hasSkill("hongyan") && suit == Card::Spade)
             suit = Card::Heart;*/
@@ -125,10 +125,6 @@ bool JudgeStruct::isGood(const Card *card) const{
         return pattern.match(who, card);
     else
         return !pattern.match(who, card);
-}
-
-bool JudgeStruct::isBad() const{
-    return ! isGood();
 }
 
 PhaseChangeStruct::PhaseChangeStruct()
@@ -464,10 +460,6 @@ void RoomThread::run(){
     }
 }
 
-const QList<EventTriplet> *RoomThread::getEventStack() const{
-    return &event_stack;
-}
-
 class CompareByPriority{
 public:
     CompareByPriority(TriggerEvent event){
@@ -487,7 +479,7 @@ private:
 };
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, QVariant &data){
-    Q_ASSERT(QThread::currentThread() == this);
+    // Q_ASSERT(QThread::currentThread() == this);
 
     // push it to event stack
     EventTriplet triplet(event, room, target, &data);
@@ -508,11 +500,15 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target, Q
         }
     }
 
-    delay(1);
+    //delay(1);
     // pop event stack
     event_stack.pop_back();
 
     return broken;
+}
+
+const QList<EventTriplet> *RoomThread::getEventStack() const{
+    return &event_stack;
 }
 
 bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
@@ -521,10 +517,10 @@ bool RoomThread::trigger(TriggerEvent event, Room* room, ServerPlayer *target){
 }
 
 void RoomThread::addTriggerSkill(const TriggerSkill *skill){
-    if(skillSet.contains(skill))
+    if(skill == NULL || skillSet.contains(skill->objectName()))
         return;
 
-    skillSet << skill;
+    skillSet << skill->objectName();
 
     QList<TriggerEvent> events = skill->getTriggerEvents();
     foreach(TriggerEvent event, events){
@@ -538,7 +534,8 @@ void RoomThread::addTriggerSkill(const TriggerSkill *skill){
     if(skill->isVisible()){
         foreach(const Skill *skill, Sanguosha->getRelatedSkills(skill->objectName())){
             const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
-            addTriggerSkill(trigger_skill);
+            if(trigger_skill)
+                addTriggerSkill(trigger_skill);
         }
     }
 }

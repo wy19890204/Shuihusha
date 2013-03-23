@@ -20,7 +20,7 @@ public:
         foreach(ServerPlayer *neinhg, nein){
             bool canivk = false;
             foreach(const Card *card, neinhg->getCards("he")){
-                if(card->inherits("TrickCard") || card->inherits("EquipCard")){
+                if(card->isKindOf("TrickCard")){
                     canivk = true;
                     break;
                 }
@@ -197,6 +197,7 @@ public:
                 log.type = "#JintangForb";
                 room->sendLog(log);
                 room->playSkillEffect(objectName(), qrand() % 2 + 2);
+                room->setEmotion(damage.to, "avoid");
                 return true;
             }
             if(player->getHp() <= 2 && damage.damage > 1){

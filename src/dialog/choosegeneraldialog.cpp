@@ -48,7 +48,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
 
     QString lord_name;
 
-    QList<const General *> generals;
     foreach(QString general_name, general_names){
         if(general_name.contains("(lord)"))
         {
@@ -81,11 +80,11 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         connect(button, SIGNAL(double_clicked()), mapper, SLOT(map()));
         connect(button, SIGNAL(double_clicked()), this, SLOT(accept()));
 
-        // special case
+        /* special case
         if(Self->getRoleEnum() == Player::Lord && !Config.SPOpen){
             if(general->getPackage() == "sp" && general->isLord())
                 button->setEnabled(false);
-        }
+        }*/
     }
 
     if(ServerInfo.EnableHegemony && ServerInfo.Enable2ndGeneral
@@ -194,6 +193,10 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         last_layout->addWidget(free_choose_button);
     }
 
+    QPushButton *random_choose_button = new QPushButton(tr("Random choose"));
+    connect(random_choose_button, SIGNAL(clicked()), this, SLOT(randomChoose()));
+    last_layout->addWidget(random_choose_button);
+
     last_layout->addStretch();
 
     if(last_layout->count() != 0){
@@ -215,6 +218,25 @@ void ChooseGeneralDialog::freeChoose(){
     free_chooser = dialog;
 
     dialog->exec();
+}
+
+void ChooseGeneralDialog::randomChoose(){
+    int n = qrand() % generals.length() + 5;
+    QString name;
+    if(n > generals.length() - 1){
+        int m = qrand() % 5;
+        switch(m){
+        case 0: name = "zhangbao"; break;
+        case 1: name = "liruilan"; break;
+        case 2: name = "fangjie"; break;
+        case 3: name = "renyuan"; break;
+        case 4: name = "xisheng";
+        }
+    }
+    else
+        name = generals.at(n)->objectName();
+    ClientInstance->onPlayerChooseGeneral(name);
+    accept();
 }
 
 void ChooseGeneralDialog::timerEvent(QTimerEvent *event){
@@ -254,8 +276,8 @@ FreeChooseDialog::FreeChooseDialog(QWidget *parent, bool pair_choose)
     QList<const General *> all_generals = Sanguosha->findChildren<const General *>();
     QMap<QString, QList<const General*> > map;
     foreach(const General *general, all_generals){
-        if(general->getPackage() == "sp" && !Config.SPOpen)
-            continue; //hidden generals
+        //if(general->getPackage() == "sp" && !Config.SPOpen)
+        //    continue; //hidden generals
         map[general->getKingdom()] << general;
     }
 

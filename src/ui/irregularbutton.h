@@ -9,10 +9,11 @@ class IrregularButton : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit IrregularButton(const QString &name);
+    explicit IrregularButton(const QString &name, const QString &father = "irregular");
     void click();
 
     virtual QRectF boundingRect() const;
+    void setMute(bool mute);
 
 protected:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -25,6 +26,7 @@ protected:
 private:
     enum State { Normal, Hover, Down };
     State state;
+    bool mute;
 
     QPixmap normal, hover, down, disabled;
     QRegion mask;

@@ -32,6 +32,7 @@ Client::Client(QObject *parent, const QString &filename)
 {
 
     ClientInstance = this;
+    m_isGameOver = false;
 
     callbacks["checkVersion"] = &Client::checkVersion;
 
@@ -263,7 +264,7 @@ void Client::processServerPacket(const QString &cmd){
 }
 
 void Client::processServerPacket(char *cmd){
-
+    if (m_isGameOver) return;
     QSanGeneralPacket packet;
     if (packet.parse(cmd)){
         if (packet.getPacketType() == S_SERVER_NOTIFICATION){
@@ -420,7 +421,6 @@ void Client::onPlayerChooseGeneral(const QString &item_name){
         replyToServer(S_COMMAND_CHOOSE_GENERAL, toJsonString(item_name));
         Sanguosha->playAudio("choose-item");
     }
-
 }
 
 void Client::requestCheatRunScript(const QString& script)
@@ -530,7 +530,7 @@ void Client::arrangeSeats(const QString &seats_str){
     for(i=0; i<player_names.length(); i++){
         ClientPlayer *player = findChild<ClientPlayer*>(player_names.at(i));
 
-        Q_ASSERT(player != NULL);
+        Q_CHECK_PTR(player);
 
         player->setSeat(i+1);
         players << player;
@@ -1276,7 +1276,7 @@ void Client::askForExchange(const Json::Value &exchange_str){
 
 void Client::gameOver(const Json::Value &arg){
     disconnectFromHost();
-    //m_isGameOver = true;
+    m_isGameOver = true;
     setStatus(Client::NotActive);
     QString winner = toQString(arg[0]);
     QStringList roles;

@@ -28,6 +28,7 @@ sgs.ai_keep_value = 		{}
 sgs.ai_use_value = 			{}
 sgs.ai_use_priority = 		{}
 sgs.ai_chaofeng = 			{}
+sgs.ai_skill_value = 		{}
 sgs.ai_global_flags = 		{}
 sgs.ai_skill_invoke = 		{}
 sgs.ai_skill_suit = 		{}
@@ -139,6 +140,7 @@ function SmartAI:initialize(player)
 		sgs.turncount = 0
 		global_room = self.room
 		global_room:writeToConsole(version .. ", Powered by " .. _VERSION)
+		global_room:writeToConsole("GameMode: " .. global_room:getMode())
 
 		setInitialTables()
 		if sgs.isRolePredictable() then
@@ -206,7 +208,7 @@ function SmartAI:assignKeep(num,start)
 		if not self.keepValue[card:getId()] then
 			self.keepValue[card:getId()]=self:getKeepValue(card,self.kept)
 			table.insert(self.kept,card)
-			--self:log(card:className())
+			--self:log(card:getClassName())
 			self:assignKeep(num-1)
 			break
 		end
@@ -1091,7 +1093,7 @@ function sgs.outputRoleValues(player, level)
 end
 
 function sgs.updateIntention(from, to, intention, card)
-	if not to then global_room:writeToConsole(debug.traceback()) end
+	if not to then global_room:writeToConsole(debug.traceback()) return end
 	if from:objectName() == to:objectName() then return end
 
 	sgs.ai_card_intention.general(from, to, intention)
@@ -1178,7 +1180,7 @@ function sgs.outputProcessValues(room)
 
 end
 
-function sgs.gameProcess(room)
+function sgs.gameProcess(room,...)
 	local rebel_num = sgs.current_mode_players["rebel"]
 	local loyal_num = sgs.current_mode_players["loyalist"]
 	if rebel_num == 0 and loyal_num> 0 then return "loyalist"
@@ -1210,7 +1212,7 @@ function sgs.gameProcess(room)
 		end
 		--end
 	end
-	local diff = loyal_value - rebel_value
+	local diff = loyal_value - rebel_value + (loyal_num - rebel_num) * 2
 	if #arg>0 and arg[1]==1 then return diff end
 
 	if diff >= 2 then
@@ -1684,7 +1686,7 @@ function SmartAI:filterEvent(event, player, data)
 		local callback = sgs.ai_card_intention[card:className()]
 		if callback then
 			if type(callback) == "function" then
-				callback(card, from, to)
+				callback(card, from, to, self)
 			elseif type(callback) == "number" then
 				sgs.updateIntentions(from, to, callback, card)
 			end
@@ -1722,6 +1724,10 @@ function SmartAI:filterEvent(event, player, data)
 				player:setFlags("CujuBad")
 			else
 				player:setFlags("-CujuBad")
+			end
+		elseif reason == "qimen" then
+			if judge:isBad() then
+				self:speak("qimen", judge.who)
 			end
 		end
 	elseif event == sgs.SlashEffect then
@@ -2529,8 +2535,8 @@ function sgs.getSkillLists(player)
 	local vsnlist = {}
 	local fsnlist = {}
 	for _, askill in sgs.qlist(player:getVisibleSkillList()) do
-		if askill:inherits("ViewAsSkill") then table.insert(vsnlist, askill:objectName()) end
-		if askill:inherits("FilterSkill") then table.insert(fsnlist, askill:objectName()) end
+		if askill:isKindOf("ViewAsSkill") then table.insert(vsnlist, askill:objectName()) end
+		if askill:isKindOf("FilterSkill") then table.insert(fsnlist, askill:objectName()) end
 	end
 	return vsnlist, fsnlist
 end
@@ -2551,7 +2557,7 @@ end
 function SmartAI:needRetrial(judge)
 	local reason = judge.reason
 --	if reason == "tsunami" or reason == "lightning" then return false end
-	if reason == "houlue" or reason == "qimen" or reason == "huanshu1" then return false end
+	if reason == "houlue" or reason == "huanshu1" then return false end
 	if reason == "taohui" then
 		if (self:isFriend(judge.who) and judge.card:isKindOf("BasicCard")) or
 			(self:isEnemy(judge.who) and not judge.card:isKindOf("BasicCard")) then
@@ -2725,9 +2731,12 @@ local function isCompulsoryView(card, class_name, player, card_place)
 	local _, flist = sgs.getSkillLists(player)
 	for _, askill in ipairs(flist) do
 		local callback = sgs.ai_filterskill_filter[askill]
-		if type(callback) == "function" and callback(card, card_place, player)
-			and sgs.Card_Parse(callback(card, card_place, player)):isKindOf(class_name) then
-			return callback(card, card_place, player)
+		if type(callback) == "function" then
+			local cb = callback(card, card_place, player)
+			if not sgs.Card_Parse(cb) then writeToConsole(debug.traceback()) end
+			if sgs.Card_Parse(cb):isKindOf(class_name) then
+				return cb
+			end
 		end
 	end
 end
@@ -3572,6 +3581,7 @@ end
 
 dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/general_config.lua"
+dofile "lua/ai/skill_config.lua"
 dofile "lua/ai/value_config.lua"
 dofile "lua/ai/guanxing-ai.lua"
 dofile "lua/ai/standard-ai.lua"

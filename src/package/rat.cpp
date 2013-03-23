@@ -437,6 +437,7 @@ public:
             log.arg = objectName();
             log.arg2 = QString::number(dmag.damage);
             room->sendLog(log);
+            room->setEmotion(dmag.to, "avoid");
             return true;
         }
         return false;

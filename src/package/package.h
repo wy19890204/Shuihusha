@@ -27,15 +27,15 @@ class Package: public QObject{
 
 public:
     enum Type{
-        GeneralPack,
-        CardPack,
-        MixedPack,
-        SpecialPack
+        GeneralPack = 1,
+        CardPack = 2,
+        MixedPack = 3,
+        SpecialPack = 13
     };
 
     enum Genre{
-        LUA,
-        CPP
+        LUA = 0,
+        CPP = 1
     };
 
     Package(const QString &name){

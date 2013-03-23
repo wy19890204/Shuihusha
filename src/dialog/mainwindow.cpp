@@ -68,7 +68,7 @@ protected:
             MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
             if(main_window){
                 main_window->setBackgroundBrush();
-                //QCursor my(QPixmap("backdrop/arrow.cur"));
+                //QCursor my(QPixmap("backdrop/main.png"));
                 //main_window->setCursor(my);
             }
         }
@@ -88,12 +88,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle(Sanguosha->translate("Shuihusha"));
 
-    connect(ui->actionReturn_main, SIGNAL(triggered()), this, SLOT(gotoStartScene()));
-    connect(ui->actionRestart_game, SIGNAL(triggered()), this, SLOT(startConnection()));
-
     connection_dialog = new ConnectionDialog(this);
-    connect(ui->actionStart_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
-    connect(connection_dialog, SIGNAL(accepted()), this, SLOT(startConnection()));
+    connect(ui->actionJoin_Game, SIGNAL(triggered()), connection_dialog, SLOT(exec()));
+    connect(connection_dialog, SIGNAL(accepted()), this, SLOT(on_actionRestart_game_triggered()));
 
     config_dialog = new ConfigDialog(this);
     connect(ui->actionConfigure, SIGNAL(triggered()), config_dialog, SLOT(show()));
@@ -104,19 +101,25 @@ MainWindow::MainWindow(QWidget *parent)
     StartScene *start_scene = new StartScene;
 
     QList<QAction*> actions;
-    actions << ui->actionStart_Game
-            << ui->actionStart_Server
-            << ui->actionPC_Console_Start
+    actions << ui->actionStart_Game //Start_Server
+            << ui->actionJoin_Game
             << ui->actionReplay
+            << ui->actionPackaging
             << ui->actionConfigure
+
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
-            << ui->actionScenario_Overview
-            << ui->actionAbout
-            << ui->actionAcknowledgement;
-
-    foreach(QAction *action, actions)
-        start_scene->addButton(action);
+            << ui->actionScenario_Overview;
+/*
+    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+        actions << ui->actionAcknowledgement;
+        start_scene->addMainButton(actions);
+    }
+    else{*/
+        actions << ui->actionAbout << ui->actionAcknowledgement;
+        foreach(QAction *action, actions)
+            start_scene->addButton(action);
+    //}
 
     view = new FitView(scene);
 
@@ -129,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent)
     addAction(ui->actionFullscreen);
     addAction(ui->actionMinimize_to_system_tray);
 
+    ui->menuView->setVisible(false);
     systray = NULL;
 }
 
@@ -144,7 +148,14 @@ void MainWindow::restoreFromConfig(){
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
-    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard").toBool());
+    ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
+    ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
+    ui->actionFit_in_view->setChecked(Config.FitInView);
+    ui->actionAuto_select->setChecked(Config.AutoSelect);
+    ui->actionAuto_target->setChecked(Config.AutoTarget);
+    ui->actionEnable_Lua->setChecked(Config.EnableLua);
+    ui->actionButton_style->setChecked(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -179,7 +190,7 @@ void MainWindow::on_actionExit_triggered()
 {
     QMessageBox::StandardButton result;
     result = QMessageBox::question(this,
-                                   tr("Shuihusha"),
+                                   Sanguosha->translate("Shuihusha"),
                                    tr("Are you sure to exit?"),
                                    QMessageBox::Ok | QMessageBox::Cancel);
     if(result == QMessageBox::Ok){
@@ -188,9 +199,11 @@ void MainWindow::on_actionExit_triggered()
     }
 }
 
-void MainWindow::on_actionStart_Server_triggered()
+void MainWindow::on_actionStart_Game_triggered()
 {
     ServerDialog *dialog = new ServerDialog(this);
+    if(dialog->isPCConsole())
+        dialog->ensureEnableAI();
     if(!dialog->config())
         return;
 
@@ -201,10 +214,18 @@ void MainWindow::on_actionStart_Server_triggered()
         return;
     }
 
+    if(dialog->isPCConsole()){
+        server->createNewRoom();
+
+        Config.HostAddress = "127.0.0.1";
+        on_actionRestart_game_triggered();
+        return;
+    }
+
     server->daemonize();
 
-    ui->actionStart_Game->disconnect();
-    connect(ui->actionStart_Game, SIGNAL(triggered()), this, SLOT(startGameInAnotherInstance()));
+    ui->actionJoin_Game->disconnect();
+    connect(ui->actionJoin_Game, SIGNAL(triggered()), this, SLOT(startGameInAnotherInstance()));
 
     StartScene *start_scene = qobject_cast<StartScene *>(scene);
     if(start_scene){
@@ -249,7 +270,7 @@ void MainWindow::checkVersion(const QString &server_version, const QString &serv
     QMessageBox::warning(this, tr("Warning"), text);
 }
 
-void MainWindow::startConnection(){
+void MainWindow::on_actionRestart_game_triggered(){
     Client *client = new Client(this);
 
     connect(client, SIGNAL(version_checked(QString,QString)), SLOT(checkVersion(QString,QString)));
@@ -295,9 +316,9 @@ void MainWindow::enterRoom(){
         Config.setValue("HistoryIPs", Config.HistoryIPs);
     }
 
+    ui->actionJoin_Game->setEnabled(false);
     ui->actionStart_Game->setEnabled(false);
-    ui->actionStart_Server->setEnabled(false);
-	ui->actionAI_Melee->setEnabled(false);
+    ui->actionAI_Melee->setEnabled(false);
 
     RoomScene *room_scene = new RoomScene(this);
 
@@ -307,6 +328,7 @@ void MainWindow::enterRoom(){
     ui->actionKick->setEnabled(true);
     ui->actionSurrender->setEnabled(true);
     ui->actionSaveRecord->setEnabled(true);
+    //ui->actionEnable_Lua->setEnabled(false);
 
     connect(ui->actionView_Discarded, SIGNAL(triggered()), room_scene, SLOT(toggleDiscards()));
     connect(ui->actionView_distance, SIGNAL(triggered()), room_scene, SLOT(viewDistance()));
@@ -340,14 +362,14 @@ void MainWindow::enterRoom(){
         ui->actionExecute_script_at_server_side->disconnect();
     }
 
-    connect(room_scene, SIGNAL(restart()), this, SLOT(startConnection()));
-    connect(room_scene, SIGNAL(return_to_start()), this, SLOT(gotoStartScene()));
+    connect(room_scene, SIGNAL(restart()), this, SLOT(on_actionRestart_game_triggered()));
+    connect(room_scene, SIGNAL(return_to_start()), this, SLOT(on_actionReturn_main_triggered()));
 
     room_scene->adjustItems();
     gotoScene(room_scene);
 }
 
-void MainWindow::gotoStartScene(){
+void MainWindow::on_actionReturn_main_triggered(){
     QList<Server *> servers = findChildren<Server *>();
     if(!servers.isEmpty())
         servers.first()->deleteLater();
@@ -355,19 +377,25 @@ void MainWindow::gotoStartScene(){
     StartScene *start_scene = new StartScene;
 
     QList<QAction*> actions;
-    actions << ui->actionStart_Game
-            << ui->actionStart_Server
-            << ui->actionPC_Console_Start
+    actions << ui->actionStart_Game //Start_Server
+            << ui->actionJoin_Game
             << ui->actionReplay
+            << ui->actionPackaging
             << ui->actionConfigure
+
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
-            << ui->actionScenario_Overview
-            << ui->actionAbout
-            << ui->actionAcknowledgement;
-
-    foreach(QAction *action, actions)
-        start_scene->addButton(action);
+            << ui->actionScenario_Overview;
+/*
+    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+        actions << ui->actionAcknowledgement;
+        start_scene->addMainButton(actions);
+    }
+    else{*/
+        actions << ui->actionAbout << ui->actionAcknowledgement;
+        foreach(QAction *action, actions)
+            start_scene->addButton(action);
+    //}
 
     setCentralWidget(view);
     restoreFromConfig();
@@ -652,33 +680,77 @@ void MainWindow::on_actionBroadcast_triggered()
 void MainWindow::on_actionAcknowledgement_triggered()
 {
     AcknowledgementScene* ack = new AcknowledgementScene;
-    connect(ack,SIGNAL(go_back()),this,SLOT(gotoStartScene()));
+    connect(ack,SIGNAL(go_back()),this,SLOT(on_actionReturn_main_triggered()));
     gotoScene(ack);
-}
-
-void MainWindow::on_actionPC_Console_Start_triggered()
-{
-    ServerDialog *dialog = new ServerDialog(this);
-    dialog->ensureEnableAI();
-    if(!dialog->config())
-        return;
-
-    Server *server = new Server(this);
-    if(! server->listen()){
-        QMessageBox::warning(this, tr("Warning"), tr("Can not start server!"));
-
-        return;
-    }
-
-    server->createNewRoom();
-
-    Config.HostAddress = "127.0.0.1";
-    startConnection();
 }
 
 void MainWindow::on_actionScript_editor_triggered()
 {
     QMessageBox::information(this, tr("Warning"), tr("This function is not implemented yet!"));
+}
+
+void MainWindow::on_actionDraw_indicator_toggled(bool checked)
+{
+    if(Config.value("NoIndicator").toBool() == checked)
+        Config.setValue("NoIndicator", !checked);
+}
+
+void MainWindow::on_actionDraw_cardname_toggled(bool checked)
+{
+    if(Config.value("DrawCardName").toBool() != checked)
+        Config.setValue("DrawCardName", checked);
+}
+
+void MainWindow::on_actionFit_in_view_toggled(bool checked)
+{
+    if(Config.FitInView != checked)
+        Config.FitInView = checked;
+        Config.setValue("FitInView", checked);
+}
+
+void MainWindow::on_actionAuto_select_toggled(bool checked)
+{
+    if(Config.AutoSelect != checked){
+        Config.AutoSelect = checked;
+        Config.setValue("AutoSelect", checked);
+    }
+}
+
+void MainWindow::on_actionAuto_target_toggled(bool checked)
+{
+    if(Config.AutoTarget != checked){
+        Config.AutoTarget = checked;
+        Config.setValue("AutoTarget", checked);
+    }
+}
+
+void MainWindow::on_actionEnable_Lua_triggered()
+{
+    QMessageBox::StandardButton result =
+            QMessageBox::question(this,
+                                  tr("LUA derail"),
+                                  tr("Enable or disable Lua need to restart, are you sure?"),
+                                  QMessageBox::Ok | QMessageBox::Cancel);
+    if(result == QMessageBox::Ok){
+        close();
+        //qApp->quit();
+        QProcess::startDetached(qApp->applicationFilePath(), QStringList());
+        //http://blog.csdn.net/dbzhang800/article/details/6906743
+    }
+}
+
+void MainWindow::on_actionEnable_Lua_toggled(bool checked)
+{
+    if(Config.EnableLua != checked){
+        Config.EnableLua = checked;
+        Config.setValue("EnableLua", checked);
+    }
+}
+
+void MainWindow::on_actionButton_style_toggled(bool checked)
+{
+    if(Config.value("ButtonStyle").toBool() != checked)
+        Config.setValue("ButtonStyle", checked);
 }
 
 #include <QGroupBox>

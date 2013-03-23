@@ -3,6 +3,7 @@
 return {
 	["events"] = "事件牌",
 	["events_package"] = "事件卡牌包",
+	["cv:events_package"] = "烨子风暴|Paddy",
 
 	["jiefachang"] = "梁山好汉劫法场",
 	[":jiefachang"] = "事件牌\
