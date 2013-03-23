@@ -851,10 +851,10 @@ public:
 
 TigerPackage::TigerPackage()
     :GeneralPackage("tiger")
-{
+{/*
     General *leiheng = new General(this, "leiheng", "guan");
     leiheng->addSkill(new Guzong);
-
+*/
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
 

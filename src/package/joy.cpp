@@ -261,10 +261,11 @@ JoyPackage::JoyPackage()
     cards
                 << new Saru(Card::Diamond, 5)
                 << new GaleShell(Card::Heart, 1)
-                << new Poison(Card::Heart, 7)
-                << new Poison(Card::Club, 9)
-                << new Poison(Card::Diamond, 11)
-                << new Poison(Card::Spade, 13);
+                //<< new Poison(Card::Heart, 7)
+                //<< new Poison(Card::Club, 9)
+                //<< new Poison(Card::Diamond, 11)
+                //<< new Poison(Card::Spade, 13)
+                ;
 
     foreach(Card *card, cards)
         card->setParent(this);

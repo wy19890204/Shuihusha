@@ -43,6 +43,9 @@ private:
 private slots:
     void freeChoose();
     void randomChoose();
+
+signals:
+    void random_choosen(const QString &name);
 };
 
 class FreeChooseDialog: public QDialog{

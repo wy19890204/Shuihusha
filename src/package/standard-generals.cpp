@@ -2727,13 +2727,13 @@ StandardPackage::StandardPackage()
     General *wuyong = new General(this, "wuyong", "kou", 3);
     wuyong->addSkill(new Huace);
     wuyong->addSkill(new Yunchou);
-
+/*
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
     gongsunsheng->addSkill(new Yixing);
     gongsunsheng->addSkill(new Qimen);
     gongsunsheng->addSkill(new QimenClear);
     related_skills.insertMulti("qimen", "#qimencls");
-
+*/
     General *guansheng = new General(this, "guansheng", "jiang");
     guansheng->addSkill(new Huqi);
     guansheng->addSkill(new Tongwu);
@@ -2753,19 +2753,19 @@ StandardPackage::StandardPackage()
     General *zhutong = new General(this, "zhutong", "guan");
     zhutong->addSkill(new Sijiu);
     zhutong->addSkill(new Yixian);
-
+/*
     General *luzhishen = new General(this, "luzhishen", "kou");
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Zuohua);
-
+*/
     General *wusong = new General(this, "wusong", "kou");
     wusong->addSkill(new Fuhu);
-
+/*
     General *yangzhi = new General(this, "yangzhi", "guan");
     yangzhi->addSkill(new Maidao);
     skills << new BuyaKnife;
     yangzhi->addSkill(new Fengmang);
-
+*/
     General *xuning = new General(this, "xuning", "jiang");
     xuning->addSkill(new Goulian);
     xuning->addSkill(new Jinjia);
@@ -2836,11 +2836,11 @@ StandardPackage::StandardPackage()
     General *lishishi = new General(this, "lishishi", "min", 3, false);
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
-
+/*
     General *yanxijiao = new General(this, "yanxijiao", "min", 3, false);
     yanxijiao->addSkill(new Suocai);
     yanxijiao->addSkill(new Huakui);
-
+*/
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();
