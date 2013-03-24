@@ -263,17 +263,16 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *, QVariant &data) const{
         DyingStruct dying = data.value<DyingStruct>();
-        DamageStruct *damage = dying.damage;
+        DamageStar damage = dying.damage;
         if(damage && damage->from && damage->from->hasSkill("pinming") && damage->to->isAlive()){
             damage->from->setFlags("PinmingDie");
-            if(!damage->from->askForSkillInvoke("pinming", QVariant::fromValue(damage)))
-                return false;
-            room->playSkillEffect("pinming", qrand() % 2 + 4);
-            room->getThread()->delay(500);
-            room->killPlayer(damage->to, damage);
-            room->getThread()->delay(1000);
-            room->killPlayer(damage->from);
-
+            if(damage->from->askForSkillInvoke("pinming", QVariant::fromValue(damage))){
+                room->playSkillEffect("pinming", qrand() % 2 + 4);
+                room->getThread()->delay(500);
+                room->killPlayer(damage->to, damage);
+                room->getThread()->delay(1000);
+                room->killPlayer(damage->from);
+            }
             damage->from->setFlags("-PinmingDie");
             return true;
         }

@@ -211,7 +211,7 @@ public:
         if(from->hasSkill("bizhai"))
             return 1;
         else
-            return SlashSkill::getSlashExtraGoals(from, to, slash);
+            return 0;
     }
 };
 
