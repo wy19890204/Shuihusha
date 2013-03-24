@@ -866,14 +866,33 @@ public:
     }
 };
 
-class Zhaoan: public TriggerSkill{
+ZhaoanCard::ZhaoanCard(){
+}
+
+bool ZhaoanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.isEmpty() && to_select != Self && to_select->getKingdom() != Self->getKingdom();
+}
+
+void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    const Card *resp = room->askForCard(effect.to, "Slash|Weapon", "@zhaoan:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
+    if(resp)
+        effect.to->drawCards(2);
+    else
+        room->setPlayerCardLock(effect.to, "BasicCard");
+}
+
+class Zhaoan: public ZeroCardViewAsSkill{
 public:
-    Zhaoan():TriggerSkill("zhaoan"){
-        events << NonTrigger;
+    Zhaoan():ZeroCardViewAsSkill("zhaoan"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        return false;
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return ! player->hasUsed("ZhaoanCard");
+    }
+
+    virtual const Card *viewAs() const{
+        return new ZhaoanCard;
     }
 };
 
@@ -952,6 +971,7 @@ SnakePackage::SnakePackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
     addMetaObject<JiejiuCard>();
+    addMetaObject<ZhaoanCard>();
 }
 
 //ADD_PACKAGE(Snake)

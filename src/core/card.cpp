@@ -18,7 +18,8 @@ Card::Card(Suit suit, int number, bool target_fixed)
     :target_fixed(target_fixed), once(false), mute(false), will_throw(true), owner_discarded(false)
     , suit(suit), number(number), id(-1)
 {
-    can_jilei = will_throw;
+    handling_method = will_throw ? Card::MethodDiscard : Card::MethodUse;
+    can_recast = will_throw;
 
     if(number < 1 || number > 13)
         number = 0;
@@ -567,7 +568,8 @@ void Card::clearSubcards(){
 }
 
 bool Card::isAvailable(const Player *player) const{
-    return !player->isJilei(this) && !player->isLocked(this);
+    return !player->isCardLimited(this, handling_method)
+           || (can_recast && !player->isCardLimited(this, Card::MethodRecast));
 }
 
 const Card *Card::validate(const CardUseStruct *) const{
@@ -593,11 +595,19 @@ bool Card::willThrow() const{
 }
 
 bool Card::canJilei() const{
-    return can_jilei;
+    return can_recast;
+}
+
+bool Card::canRecast() const{
+    return can_recast;
 }
 
 bool Card::isOwnerDiscarded() const{
     return owner_discarded;
+}
+
+Card::HandlingMethod Card::getHandlingMethod() const{
+    return handling_method;
 }
 
 void Card::setFlags(const QString &flag) const{

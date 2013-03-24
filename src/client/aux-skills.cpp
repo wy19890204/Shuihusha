@@ -7,8 +7,8 @@
 #include "engine.h"
 
 DiscardSkill::DiscardSkill()
-    :ViewAsSkill("discard"), card(new DummyCard),
-    num(0), include_equip(false)
+    : ViewAsSkill("discard"), card(new DummyCard),
+      num(0), include_equip(false), is_discard(true)
 {
     card->setParent(this);
 }
@@ -17,8 +17,16 @@ void DiscardSkill::setNum(int num){
     this->num = num;
 }
 
+void DiscardSkill::setMinNum(int minnum){
+    this->minnum = minnum;
+}
+
 void DiscardSkill::setIncludeEquip(bool include_equip){
     this->include_equip = include_equip;
+}
+
+void DiscardSkill::setIsDiscard(bool is_discard) {
+    this->is_discard = is_discard;
 }
 
 bool DiscardSkill::viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const{
@@ -28,14 +36,15 @@ bool DiscardSkill::viewFilter(const QList<CardItem *> &selected, const CardItem 
     if(!include_equip && to_select->isEquipped())
         return false;
 
-    if(Self->isJilei(to_select->getFilteredCard()))
+	const Card *card = to_select->getFilteredCard();
+    if (is_discard && Self->isCardLimited(card, Card::MethodDiscard))
         return false;
 
     return true;
 }
 
 const Card *DiscardSkill::viewAs(const QList<CardItem *> &cards) const{
-    if(cards.length() == num){
+    if(cards.length() >= minnum){
         card->clearSubcards();
         card->addSubcards(cards);
         return card;
@@ -48,15 +57,19 @@ const Card *DiscardSkill::viewAs(const QList<CardItem *> &cards) const{
 ResponseSkill::ResponseSkill()
     :OneCardViewAsSkill("response-skill")
 {
-
+    request = Card::MethodResponse;
 }
 
 void ResponseSkill::setPattern(const QString &pattern){
     this->pattern = Sanguosha->getPattern(pattern);
 }
 
+void ResponseSkill::setRequest(const Card::HandlingMethod request) {
+    this->request = request;
+}
+
 bool ResponseSkill::matchPattern(const Player *player, const Card *card) const{
-    if(player->isJilei(card))
+    if (request != Card::MethodNone && player->isCardLimited(card, request))
         return false;
 
     return pattern && pattern->match(player, card);
@@ -72,6 +85,15 @@ const Card *ResponseSkill::viewAs(CardItem *card_item) const{
 }
 
 // -------------------------------------------
+
+ShowOrPindianSkill::ShowOrPindianSkill()
+{
+    setObjectName("showorpindian-skill");
+}
+
+bool ShowOrPindianSkill::matchPattern(const Player *player, const Card *card) const{
+    return pattern && pattern->match(player, card);
+}
 
 FreeRegulateSkill::FreeRegulateSkill(QObject *parent)
     :ViewAsSkill("free-regulate")

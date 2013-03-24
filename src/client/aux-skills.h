@@ -10,7 +10,9 @@ public:
     explicit DiscardSkill();
 
     void setNum(int num);
+    void setMinNum(int minnum);
     void setIncludeEquip(bool include_equip);
+    void setIsDiscard(bool is_discard);
 
     virtual bool viewFilter(const QList<CardItem *> &selected, const CardItem *to_select) const;
     virtual const Card *viewAs(const QList<CardItem *> &cards) const;
@@ -18,7 +20,9 @@ public:
 private:
     DummyCard *card;
     int num;
+    int minnum;
     bool include_equip;
+    bool is_discard;
 };
 
 class CardPattern;
@@ -31,11 +35,21 @@ public:
     bool matchPattern(const Player *player, const Card *card) const;
 
     virtual void setPattern(const QString &pattern);
+    virtual void setRequest(const Card::HandlingMethod request);
     virtual bool viewFilter(const CardItem *to_select) const;
     virtual const Card *viewAs(CardItem *card_item) const;
 
-private:
+protected:
     const CardPattern *pattern;
+    Card::HandlingMethod request;
+};
+
+class ShowOrPindianSkill: public ResponseSkill{
+    Q_OBJECT
+
+public:
+    ShowOrPindianSkill();
+    virtual bool matchPattern(const Player *player, const Card *card) const;
 };
 
 class FreeRegulateSkill: public ViewAsSkill{

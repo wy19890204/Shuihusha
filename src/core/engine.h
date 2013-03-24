@@ -54,6 +54,7 @@ public:
     int getRoleIndex() const;
 
     const CardPattern *getPattern(const QString &name) const;
+    Card::HandlingMethod getCardHandlingMethod(const QString &method_name) const;
     QList<const Skill *> getRelatedSkills(const QString &skill_name) const;
 
     QStringList getScenarioNames() const;

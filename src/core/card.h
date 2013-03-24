@@ -35,21 +35,29 @@ class Card : public QObject
 
     Q_ENUMS(Suit)
     Q_ENUMS(CardType)
+    Q_ENUMS(HandlingMethod)
 
 public:
     // enumeration type
     enum Suit {Spade, Club, Heart, Diamond, NoSuit};
     enum Color{Red, Black, Colorless};
+    enum HandlingMethod { MethodNone, MethodUse, MethodResponse, MethodDiscard, MethodRecast, MethodPindian };
 
     static const Suit AllSuits[4];
 
     // card types
     enum CardType{
-        Skill,
-        Basic,
-        Trick,
-        Equip,
-        Events,
+        Skill = 0x00,
+        Basic = 0x01,
+        Trick = 0x02,
+        Equip = 0x03,
+        Events = 0x04,
+		
+		TypeSkill = Skill,
+		TypeBasic = Basic,
+		TypeTrick = Trick,
+		TypeEquip = Equip,
+        TypeEvents = Events,
     };
 
     // constructor
@@ -86,6 +94,21 @@ public:
     QString getSkillName() const;
     void setSkillName(const QString &skill_name);
     QString getDescription() const;
+
+    bool isOnce() const;
+    bool isMute() const;
+    bool willThrow() const;
+    bool canJilei() const;
+    bool isOwnerDiscarded() const;
+
+    void setFlags(const QString &flag) const;
+    bool hasFlag(const QString &flag) const;
+    bool hasFlag(const QString &flag, bool getreal) const;
+    void clearFlags() const;
+    bool hasSameSuit() const;
+    virtual bool canRecast() const;
+    virtual Card::HandlingMethod getHandlingMethod() const;
+
     QString getEffectPath() const;
 
     bool isVirtualCard() const;
@@ -113,18 +136,6 @@ public:
     virtual bool isAvailable(const Player *player) const;
     virtual const Card *validate(const CardUseStruct *card_use) const;
     virtual const Card *validateInResposing(ServerPlayer *user, bool *continuable) const;
-
-    bool isOnce() const;
-    bool isMute() const;
-    bool willThrow() const;
-    bool canJilei() const;
-    bool isOwnerDiscarded() const;
-
-    void setFlags(const QString &flag) const;
-    bool hasFlag(const QString &flag) const;
-    bool hasFlag(const QString &flag, bool getreal) const;
-    void clearFlags() const;
-    bool hasSameSuit() const;
 
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
     virtual void use(Room *room, ServerPlayer *source,  const QList<ServerPlayer *> &targets) const;
@@ -155,13 +166,14 @@ protected:
     QString skill_name;
     bool mute;
     bool will_throw;
-    bool can_jilei;
+    bool can_recast;
     bool owner_discarded;
 
 private:
     Suit suit;
     int number;
     int id;
+    Card::HandlingMethod handling_method;
 
     mutable QStringList flags;
 };

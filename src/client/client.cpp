@@ -789,7 +789,17 @@ void Client::_askForCardOrUseCard(const Json::Value &cardUsage){
         }
     }
 
-    setStatus(Responsing);
+    Status status = Responding;
+    if (cardUsage[2].isInt()) {
+        Card::HandlingMethod method = (Card::HandlingMethod)(cardUsage[2].asInt());
+        switch (method) {
+        case Card::MethodDiscard: status = RespondingForDiscard; break;
+        case Card::MethodUse: status = RespondingUse; break;
+        case Card::MethodResponse: status = Responding; break;
+        default: status = RespondingNonTrigger; break;
+        }
+    }
+    setStatus(status);
 }
 
 void Client::askForCard(const Json::Value &req){

@@ -945,52 +945,111 @@ bool Player::canSlashWithoutCrossbow() const{
     return Slash::IsAvailable(this);
 }
 
-void Player::jilei(const QString &type){
-    if(type == ".")
-        jilei_set.clear();
-    else if(type == "basic")
-        jilei_set << "BasicCard";
-    else if(type == "trick")
-        jilei_set << "TrickCard";
-    else if(type == "equip")
-        jilei_set << "EquipCard";
-    else
-        jilei_set << type;
+void Player::jilei(const QString &type) {
+    if (type == "clear") { // Clear
+        removeCardLimitation("use,response,discard", "BasicCard|.|.|hand$1");
+        removeCardLimitation("use,response,discard", "EquipCard|.|.|hand$1");
+        removeCardLimitation("use,response,discard", "TrickCard|.|.|hand$1");
+        return;
+    }
+    QList<Card::HandlingMethod> limit_method;
+    limit_method << Card::MethodUse << Card::MethodResponse << Card::MethodDiscard;
+    QString _type = type;
+    if (type == "basic")
+        _type = "BasicCard";
+    else if (type == "equip")
+        _type = "EquipCard";
+    else if (type == "trick")
+        _type = "TrickCard";
+    _type = _type + "|.|.|hand"; // Handcards only
+    foreach (Card::HandlingMethod method, limit_method)
+        card_limitation[method] << _type + "$1";
 }
 
 bool Player::isJilei(const Card *card) const{
-    if(card->getTypeId() == Card::Skill){
-        if(!card->canJilei())
-            return false;
+    // Not handcard only!!!
+    return isCardLimited(card, Card::MethodDiscard);
+}
 
-        foreach(int card_id, card->getSubcards()){
+void Player::setCardLocked(const QString &name) {
+    static QChar unset_symbol('-');
+    if (name.isEmpty())
+        return;
+    else if (name.startsWith(unset_symbol)) {
+        QString copy = name.mid(1);
+        removeCardLimitation("use,response", copy + "$0");
+    } else
+        setCardLimitation("use,response", name + "$0");
+}
+
+bool Player::isLocked(const Card *card) const{
+    return isCardLimited(card, Card::MethodUse);
+}
+
+void Player::setCardLimitation(const QString &limit_list, const QString &pattern, bool single_turn) {
+    QStringList limit_type = limit_list.split(",");
+    QString _pattern = pattern;
+    if (!pattern.endsWith("$1") && !pattern.endsWith("$0")) {
+        QString symb = single_turn ? "$1" : "$0";
+        _pattern = _pattern + symb;
+    }
+    foreach (QString limit, limit_type) {
+        Card::HandlingMethod method = Sanguosha->getCardHandlingMethod(limit);
+        card_limitation[method] << _pattern;
+    }
+}
+
+void Player::removeCardLimitation(const QString &limit_list, const QString &pattern) {
+    QStringList limit_type = limit_list.split(",");
+    QString _pattern = pattern;
+    if (!_pattern.endsWith("$1") && !_pattern.endsWith("$0"))
+        _pattern = _pattern + "$0";
+    foreach (QString limit, limit_type) {
+        Card::HandlingMethod method = Sanguosha->getCardHandlingMethod(limit);
+        card_limitation[method].removeOne(_pattern);
+    }
+}
+
+void Player::clearCardLimitation(bool single_turn) {
+    QList<Card::HandlingMethod> limit_type;
+    limit_type << Card::MethodUse << Card::MethodResponse << Card::MethodDiscard
+               << Card::MethodRecast << Card::MethodPindian;
+    foreach (Card::HandlingMethod method, limit_type) {
+        QStringList limit_patterns = card_limitation[method];
+        foreach (QString pattern, limit_patterns) {
+            if (!single_turn || pattern.endsWith("$1"))
+                card_limitation[method].removeAll(pattern);
+        }
+    }
+}
+
+bool Player::isCardLimited(const Card *card, Card::HandlingMethod method, bool isHandcard) const{
+    if (method == Card::MethodNone)
+        return false;
+    if (card->getTypeId() == Card::TypeSkill && method == card->getHandlingMethod()) {
+        foreach(int card_id, card->getSubcards()) {
             const Card *c = Sanguosha->getCard(card_id);
-            foreach(QString pattern, jilei_set.toList()){
-                ExpPattern p(pattern);
-                if(p.match(this,c) && !hasEquip(c)) return true;
+            foreach (QString pattern, card_limitation[method]) {
+                QString _pattern = pattern.split("$").first();
+                if (isHandcard)
+                    _pattern.replace("hand", ".");
+                ExpPattern p(_pattern);
+                if (p.match(this, c)) return true;
             }
         }
-    }
-    else{
-        if(card->getSubcards().isEmpty())
-            foreach(QString pattern, jilei_set.toList()){
-                ExpPattern p(pattern);
-                if(p.match(this,card)) return true;
-            }
-        else{
-            foreach(int card_id, card->getSubcards()){
-                const Card *c = Sanguosha->getCard(card_id);
-                foreach(QString pattern, jilei_set.toList()){
-                    ExpPattern p(pattern);
-                    if(p.match(this,card) && !hasEquip(c)) return true;
-                }
-            }
+    } else {
+        foreach (QString pattern, card_limitation[method]) {
+            QString _pattern = pattern.split("$").first();
+            if (isHandcard)
+                _pattern.replace("hand", ".");
+            ExpPattern p(_pattern);
+            if (p.match(this, card)) return true;
         }
     }
-
     return false;
 }
 
+/*
 void Player::setCardLocked(const QString &name){
     static QChar unset_symbol('-');
     if(name.isEmpty())
@@ -1015,9 +1074,10 @@ bool Player::isLocked(const Card *card) const{
 
     return false;
 }
-
+*/
 bool Player::hasCardLock(const QString &card_str) const{
-    return lock_card.contains(card_str);
+    return false;
+    //return lock_card.contains(card_str);
 }
 
 StatisticsStruct *Player::getStatistics() const{
@@ -1056,7 +1116,7 @@ void Player::copyFrom(Player* p)
     b->judging_area     = QList<const Card *> (a->judging_area);
     b->delayed_tricks   = QList<const DelayedTrick *> (a->delayed_tricks);
     b->fixed_distance   = QHash<const Player *, int> (a->fixed_distance);
-    b->jilei_set        = QSet<QString> (a->jilei_set);
+    b->card_limitation  = QMap<Card::HandlingMethod, QStringList>(a->card_limitation);
 
     b->tag              = QVariantMap(a->tag);
 }

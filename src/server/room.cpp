@@ -1144,9 +1144,7 @@ int Room::askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusa
 }
 
 const Card *Room::askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const QString &reason){
-
-    if(player->getHandcardNum() == 1)
-        return player->getHandcards().first();
+    Q_ASSERT(!player->isKongcheng());
 
     const Card *card = NULL;
 
@@ -1154,15 +1152,20 @@ const Card *Room::askForCardShow(ServerPlayer *player, ServerPlayer *requestor, 
     if(ai)
         card = ai->askForCardShow(requestor, reason);
     else{
-        bool success = doRequest(player, S_COMMAND_SHOW_CARD, toJsonString(requestor->getGeneralName()));
-        Json::Value clientReply = player->getClientReply();
-        if (success && clientReply.isString())
-        {
-            card = Card::Parse(toQString(clientReply));
+        if (player->getHandcardNum() == 1) {
+            card = player->getHandcards().first();
         }
+        else {
+            bool success = doRequest(player, S_COMMAND_SHOW_CARD, toJsonString(requestor->getGeneralName()));
+            Json::Value clientReply = player->getClientReply();
+            if (success && clientReply.isString())
+            {
+                card = Card::Parse(toQString(clientReply));
+            }
 
-        if (card == NULL)
-            card = player->getRandomHandCard();
+            if (card == NULL)
+                card = player->getRandomHandCard();
+        }
     }
 
     QVariant decisionData = QVariant::fromValue("cardShow:" + reason + ":_" + card->toString() + "_");
@@ -2560,6 +2563,10 @@ void Room::processResponse(ServerPlayer *player, const QSanGeneralPacket *packet
 void Room::useCard(const CardUseStruct &use, bool add_history){
     CardUseStruct card_use = use;
     const Card *card = card_use.card;
+
+    if (card_use.from->isCardLimited(card, card->getHandlingMethod())
+        && (!card->canRecast() || card_use.from->isCardLimited(card, Card::MethodRecast)))
+        return;
     if(card_use.from->getPhase() == Player::Play && add_history){
         QString key;
         if(card->inherits("LuaSkillCard"))

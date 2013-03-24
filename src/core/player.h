@@ -215,6 +215,11 @@ public:
     bool isLocked(const Card *card) const;
     bool hasCardLock(const QString &card_str) const;
 
+    void setCardLimitation(const QString &limit_list, const QString &pattern, bool single_turn = false);
+    void removeCardLimitation(const QString &limit_list, const QString &pattern);
+    void clearCardLimitation(bool single_turn = false);
+    bool isCardLimited(const Card *card, Card::HandlingMethod method, bool isHandcard = false) const;
+
     StatisticsStruct *getStatistics() const;
     void setStatistics(StatisticsStruct *statistics);
     void copyFrom(Player* p);
@@ -253,8 +258,7 @@ private:
     QList<const DelayedTrick *> delayed_tricks;
     QHash<const Player *, int> fixed_distance;
 
-    QSet<QString> jilei_set;
-    QSet<QString> lock_card;
+    QMap<Card::HandlingMethod, QStringList> card_limitation;
 
     StatisticsStruct *player_statistics;
 
