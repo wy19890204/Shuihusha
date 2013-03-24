@@ -790,9 +790,21 @@ public:
     }
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
-        DyingStruct dying = data.value<DyingStruct>();
+        //DyingStruct dying = data.value<DyingStruct>();
         QList<ServerPlayer *> huangfus = room->findPlayersBySkillName(objectName());
-
+        foreach(ServerPlayer *duan, huangfus){
+            if(player->getHp() > 0)
+                break;
+            if(room->askForUseCard(duan, "@@xiangma", "@xiangma:" + player->objectName(), true)){
+                Peach *peach = new Peach(Card::NoSuit, 0);
+                peach->setSkillName(objectName());
+                CardUseStruct use;
+                use.card = peach;
+                use.from = duan;
+                use.to << player;
+                room->useCard(use);
+            }
+        }
         return false;
     }
 };
@@ -811,46 +823,49 @@ public:
         return -1;
     }
 
+    static void doYima(ServerPlayer *player, QList<ServerPlayer *> huangfus, const Card *horse){
+        Room *room = player->getRoom();
+        foreach(ServerPlayer *huangfu, huangfus){
+            if(huangfu != player && horse->isKindOf("Horse")
+                && huangfu->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                huangfu->obtainCard(horse);
+                if(player && player->isWounded()){
+                    RecoverStruct ruc;
+                    ruc.who = huangfu;
+                    room->recover(player, ruc);
+                }
+                break;
+            }
+        }
+    }
+
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> huangfus = room->findPlayersBySkillName(objectName());
         if(huangfus.isEmpty())
             return false;
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
-            foreach(ServerPlayer *huangfu, huangfus){
-                if(huangfu != player && move->to_place == Player::DiscardedPile){
-                    const Card *weapon = Sanguosha->getCard(move->card_id);
-                    if(weapon->inherits("Weapon") &&
-                       huangfu->askForSkillInvoke(objectName())){
-                        room->playSkillEffect(objectName());
-                        huangfu->obtainCard(weapon);
-                        break;
-                    }
-                }
-            }
+            if(move->to_place == Player::DiscardedPile)
+                doYima(player, huangfus, Sanguosha->getCard(move->card_id));
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
-            foreach(ServerPlayer *huangfu, huangfus){
-                if(huangfu != player && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
-                   judge->card->inherits("Weapon") &&
-                   huangfu->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    huangfu->obtainCard(judge->card);
-                    break;
-                }
-            }
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile)
+                doYima(player, huangfus, judge->card);
         }
         return false;
     }
 };
 
-class Sougua: public TriggerSkill{
+class Sougua: public PhaseChangeSkill{
 public:
-    Sougua():TriggerSkill("sougua"){
-        events << NonTrigger;
+    Sougua():PhaseChangeSkill("sougua"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+    virtual bool onPhaseChange(ServerPlayer *gouguan) const{
+        Room *room = gouguan->getRoom();
+        if(gouguan->getPhase() == Player::Draw)
+            room->askForUseCard(gouguan, "@@sougua", "@sougua", true);
         return false;
     }
 };
@@ -858,10 +873,40 @@ public:
 class Liushou: public TriggerSkill{
 public:
     Liushou():TriggerSkill("liushou"){
-        events << NonTrigger;
+        events << SlashEffected << CardLost;
+        frequency = Compulsory;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+        if(event == SlashEffected){
+            SlashEffectStruct effect = data.value<SlashEffectStruct>();
+            if(!player->faceUp()){
+                room->playSkillEffect(objectName(), qrand() % 2 + 1);
+                LogMessage log;
+                log.from = effect.from;
+                log.to = player;
+                log.type = "#ComskillNullify";
+                log.arg = objectName();
+                log.arg2 = effect.slash->objectName();
+                room->sendLog(log);
+
+                return true;
+            }
+        }else if(event == CardLost && player->getPhase() == Player::NotActive){
+            CardMoveStar move = data.value<CardMoveStar>();
+            if(player->isDead())
+                return false;
+            if(move->from_place == Player::Equip && !player->faceUp()){
+                room->playSkillEffect(objectName(), qrand() % 2 + 3);
+                LogMessage log;
+                log.type = "#TriggerSkill";
+                log.from = player;
+                log.arg = objectName();
+                room->sendLog(log);
+
+                player->turnOver();
+            }
+        }
         return false;
     }
 };
@@ -877,14 +922,46 @@ public:
     }
 };
 
-class Fuxu: public TriggerSkill{
+class Fuxu:public MasochismSkill{
 public:
-    Fuxu():TriggerSkill("fuxu"){
-        events << NonTrigger;
+    Fuxu():MasochismSkill("fuxu"){
     }
 
-    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        return false;
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return true;
+    }
+
+    virtual void onDamaged(ServerPlayer *player, const DamageStruct &damage) const{
+        Room *room = player->getRoom();
+        if(!damage.card || !damage.card->isKindOf("Slash"))
+            return;
+
+        QVariant data = QVariant::fromValue(damage);
+        QList<ServerPlayer *> xius = room->findPlayersBySkillName(objectName());
+        foreach(ServerPlayer *xiu, xius){
+            if(player->isDead())
+                break;
+            if(xiu->askForSkillInvoke(objectname(), data)){
+                JudgeStruct judge;
+                judge.pattern = QRegExp("(.*):(.*):(.*)");
+                judge.reason = objectName();
+                judge.who = player;
+
+                room->judge(judge);
+                if(judge.card->isBlack()){
+                    player->obtainCard(judge.card);
+                    xiu->drawCards(1);
+                }
+                else if(judge.card->isRed()){
+                    if(player->isWounded() &&
+                       room->askForCard(xiu, ".|.|.|hand|red", "@fuxu", data, CardDiscarded)){
+                        RecoverStruct t;
+                        t.who = xiu;
+                        room->recover(player, t);
+                    }
+                }
+            }
+        }
     }
 };
 

@@ -745,34 +745,30 @@ public:
         return -1;
     }
 
+    static void doWubang(ServerPlayer *player, QList<ServerPlayer *> shijins, const Card *weapon){
+        Room *room = player->getRoom();
+        foreach(ServerPlayer *jiuwenlong, shijins){
+            if(jiuwenlong != player && weapon->isKindOf("Weapon")
+                && jiuwenlong->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName());
+                jiuwenlong->obtainCard(weapon);
+                break;
+            }
+        }
+    }
+
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> jiuwenl0ng = room->findPlayersBySkillName(objectName());
         if(jiuwenl0ng.isEmpty())
             return false;
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
-            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
-                if(jiuwenlong != player && move->to_place == Player::DiscardedPile){
-                    const Card *weapon = Sanguosha->getCard(move->card_id);
-                    if(weapon->inherits("Weapon") &&
-                       jiuwenlong->askForSkillInvoke(objectName())){
-                        room->playSkillEffect(objectName());
-                        jiuwenlong->obtainCard(weapon);
-                        break;
-                    }
-                }
-            }
+            if(move->to_place == Player::DiscardedPile)
+                doWubang(player, jiuwenl0ng, Sanguosha->getCard(move->card_id));
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
-            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
-                if(jiuwenlong != player && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
-                   judge->card->inherits("Weapon") &&
-                   jiuwenlong->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    jiuwenlong->obtainCard(judge->card);
-                    break;
-                }
-            }
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile)
+                doWubang(player, jiuwenl0ng, judge->card);
         }
         return false;
     }

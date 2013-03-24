@@ -201,9 +201,7 @@ function SmartAI:useCardSlash(card, use)
 			use.card = use.card or usecard
 			if use.to and not use.to:contains(target) then
 				use.to:append(target)
-				local targetplus = 0
-				if use.card:getSkillName() == "douzhan" then targetplus = 1 end
-				if self.slash_targets + targetplus <= use.to:length() then return end
+				if self.slash_targets <= use.to:length() then return end
 			end
 		end
 	end

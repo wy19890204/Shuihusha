@@ -52,7 +52,7 @@ public:
         if(from->hasSkill("douzhan") && slash->getSkillName() == "douzhan")
             return 1;
         else
-            return SlashSkill::getSlashExtraGoals(from, to, slash);
+            return 0;
     }
 };
 

@@ -632,6 +632,6 @@ JoyGeneralPackage::JoyGeneralPackage()
     addMetaObject<ChuiniuCard>();
 }
 
-ADD_PACKAGE(Kuso)
-ADD_PACKAGE(Joy)
-ADD_PACKAGE(JoyGeneral)
+//ADD_PACKAGE(Kuso)
+//ADD_PACKAGE(Joy)
+//ADD_PACKAGE(JoyGeneral)
