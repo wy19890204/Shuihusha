@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "connectiondialog.h"
 #include "configdialog.h"
+#include "startscene.h"
 
 #include <QMainWindow>
 #include <QSettings>
@@ -100,6 +101,7 @@ protected:
     virtual void closeEvent(QCloseEvent *);
 
 private:
+    StartScene *start_scene;
     FitView *view;
     QGraphicsScene *scene;
     Ui::MainWindow *ui;

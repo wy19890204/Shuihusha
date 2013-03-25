@@ -1346,11 +1346,6 @@
         <translation>势力</translation>
     </message>
     <message>
-        <location filename="src/dialog/customassigndialog.cpp" line="250"/>
-        <source>Set Extra Skills</source>
-        <translation>设置额外技能</translation>
-    </message>
-    <message>
         <location filename="src/dialog/customassigndialog.cpp" line="381"/>
         <location filename="src/dialog/customassigndialog.cpp" line="1150"/>
         <source>After this turn </source>
@@ -4494,10 +4489,20 @@ P = 你自己, R = 你所在的房间</translation>
 <context>
     <name>SkillAssignDialog</name>
     <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="250"/>
+        <source>Set Extra Skills ...</source>
+        <translation>设置额外技能 ...</translation>
+    </message>
+    <message>
         <location filename="src/dialog/customassigndialog.cpp" line="1802"/>
         <location filename="src/dialog/customassigndialog.cpp" line="1877"/>
-        <source>Skill Chosen</source>
-        <translation>技能选择</translation>
+        <source>Set Extra Skills</source>
+        <translation>设置额外技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/customassigndialog.cpp" line="1832"/>
+        <source>%1 &apos;s extra skills</source>
+        <translation>分配给【%1】的额外技能：</translation>
     </message>
     <message>
         <location filename="src/dialog/customassigndialog.cpp" line="1808"/>

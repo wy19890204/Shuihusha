@@ -12,10 +12,13 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    if(Config.value("ButtonStyle", true).toBool())
+    if(Config.value("ButtonStyle", true).toBool()){
         logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
+        logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
+    }
     else
         logo->moveBy(0, -Config.Rect.height()/4);
+    logo->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(logo);
 /*
     //the website URL
@@ -75,8 +78,9 @@ void StartScene::addMainButton(QList<QAction *> actions){
     };
 
     QString path = "image/system/button/main/background.png";
-    QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
-    button_widget->setPos(button_group->pos());
+    button_widget = new QGraphicsPixmapItem(QPixmap(path));
+    button_widget->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
+    button_widget->setFlags(QGraphicsItem::ItemIsMovable);
 
     int count = 0;
     foreach(QAction *action, actions){

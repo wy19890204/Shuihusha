@@ -735,12 +735,17 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         settings.endGroup();
     }
 
-    painter->setPen(Qt::white);
+    // state related
     QString state_str = player->getState();
+    QPixmap state_icon;
     if(!state_str.isEmpty() && state_str != "online"){
+        state_icon.load(QString("image/system/%1.png").arg(state_str));
         QList<QVariant> coord = settings.value("state_item/pos").toList();
-        painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), state_icon);
+        //painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
     }
+    else
+        state_icon = QPixmap();
 
     drawHp(painter, settings);
 

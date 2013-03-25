@@ -247,7 +247,7 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     }
     nationalities->setEnabled(false);
 
-    extra_skill_set = new QPushButton(tr("Set Extra Skills"));
+    extra_skill_set = new QPushButton(tr("Set Extra Skills ..."));
 
     QTabWidget *tab_widget = new QTabWidget;
     tab_widget->addTab(starterTab(), tr("Start Info"));
@@ -1799,7 +1799,7 @@ void CardAssignDialog::updateCardList(){
 SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStringList &player_skills)
     :QDialog(parent), update_skills(player_skills)
 {
-    setWindowTitle(tr("Skill Chosen"));
+    setWindowTitle(tr("Set Extra Skills"));
     QHBoxLayout *layout = new QHBoxLayout;
     skill_list = new QListWidget;
 
@@ -1829,7 +1829,7 @@ SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStri
     updateSkillList();
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->addWidget(new QLabel(Sanguosha->translate(player_name)));
+    vlayout->addWidget(new QLabel(tr("%1 's extra skills").arg(Sanguosha->translate(player_name))));
     vlayout->addWidget(skill_list);
     layout->addLayout(vlayout);
     QVBoxLayout *sided_lay = new QVBoxLayout;
@@ -1847,6 +1847,7 @@ SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStri
     connect(select_skill, SIGNAL(clicked()), this, SLOT(selectSkill()));
     connect(delete_skill, SIGNAL(clicked()), this, SLOT(deleteSkill()));
     connect(skill_list, SIGNAL(itemSelectionChanged()), this, SLOT(changeSkillInfo()));
+    connect(skill_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(deleteSkill()));
     connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -1874,7 +1875,7 @@ void SkillAssignDialog::deleteSkill(){
 
 void SkillAssignDialog::getSkillFromGeneral(QString general_name){
     QDialog *select_dialog = new QDialog(this);
-    select_dialog->setWindowTitle(tr("Skill Chosen"));
+    select_dialog->setWindowTitle(tr("Set Extra Skills"));
     QVBoxLayout *layout = new QVBoxLayout;
 
     const General *general = Sanguosha->getGeneral(general_name);
@@ -1933,7 +1934,8 @@ void SkillAssignDialog::updateSkillList(){
         changeSkillInfo();
         delete_skill->setEnabled(true);
     }
-    else delete_skill->setEnabled(false);
+    else
+        delete_skill->setEnabled(false);
 }
 
 void SkillAssignDialog::accept(){
