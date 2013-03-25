@@ -2357,9 +2357,8 @@ void RoomScene::updatePileButton(const QString &pile_name){
     }
 
     qSort(cards.begin(), cards.end(), CompareByNumber);
-    foreach(const Card *card, cards){
+    foreach(const Card *card, cards)
         menu->addAction(card->getSuitIcon(), card->getFullName());
-    }
 }
 
 void RoomScene::doOkButton(){

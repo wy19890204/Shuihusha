@@ -302,7 +302,7 @@ void CardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         painter->drawPixmap(0, 14, cardsuit_pixmap);
         painter->drawPixmap(0, 2, number_pixmap);
 
-        if(Config.value("DrawCardName", true).toBool()){
+        if(Config.value("UI/DrawCardName", true).toBool()){
             static QFont card_desc_font("SimSun", 8, QFont::DemiBold);
             painter->setFont(card_desc_font);
             painter->setPen(Qt::black);

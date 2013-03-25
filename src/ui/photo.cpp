@@ -273,9 +273,9 @@ void Photo::setWakeState(){
     if(player->getWakeSkills().isEmpty())
         return;
     if(player->getMark("_wake") > 0)
-        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+        wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
-        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
+        wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
 }
 
 void Photo::setDrankState(){
@@ -735,12 +735,17 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         settings.endGroup();
     }
 
-    painter->setPen(Qt::white);
+    // state related
     QString state_str = player->getState();
+    QPixmap state_icon;
     if(!state_str.isEmpty() && state_str != "online"){
+        state_icon.load(QString("image/state/%1.png").arg(state_str));
         QList<QVariant> coord = settings.value("state_item/pos").toList();
-        painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), state_icon);
+        //painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
     }
+    else
+        state_icon = QPixmap();
 
     drawHp(painter, settings);
 
@@ -785,7 +790,7 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     if(!equip)
         return;
 
-    QRect suit_rect(6, 105 + 19 + order * 15, 12.5, 12.5);
+    QRect suit_rect(2, 120 + order * 14, 20, 20);
     painter->drawPixmap(suit_rect, equip->getSuitPixmap());
 
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());

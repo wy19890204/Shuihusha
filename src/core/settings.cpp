@@ -113,7 +113,6 @@ void Settings::init(){
 
     BackgroundBrush = value("BackgroundBrush", ":shuihu.jpg").toString();
     CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
-    FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     AutoSelect = value("AutoSelect", true).toBool();
     AutoTarget = value("AutoTarget", false).toBool();
@@ -194,7 +193,7 @@ void Settings::init(){
     setValue("ForbidPackages", forbid_packages.join("+"));
 
 //ui
-    setValue("UI/ExpandDashboard", value("UI/ExpandDashboard", true).toBool());
+    FitInView = value("UI/FitInView", false).toBool();
 }
 
 QString Settings::translate(const QString &to_translate) const{

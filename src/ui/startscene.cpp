@@ -12,12 +12,15 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    if(Config.value("ButtonStyle", true).toBool())
-        logo->moveBy(0, -Config.Rect.height()/3-20);
+    if(Config.value("ButtonStyle", true).toBool()){
+        logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
+        logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
+    }
     else
         logo->moveBy(0, -Config.Rect.height()/4);
+    logo->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(logo);
-
+/*
     //the website URL
     QFont website_font(Config.SmallFont);
     website_font.setStyle(QFont::StyleItalic);
@@ -25,13 +28,13 @@ StartScene::StartScene()
     website_text->setBrush(Qt::white);
     website_text->setPos(Config.Rect.width()/2 - website_text->boundingRect().width(),
                        Config.Rect.height()/2 - website_text->boundingRect().height());
-
+*/
     server_log = NULL;
 
     //Provide coordinates for the button
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
-    button_group->moveBy(0, Config.Rect.height()/5-40);
+    //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
     //addItem(button_group);
 }
@@ -63,20 +66,21 @@ void StartScene::addMainButton(QList<QAction *> actions){
         "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
     };
     static int pos[9][2] = {
-        {220, 230}, //0.start
-        {175, 180}, //1.join
-        {250, 470}, //2.replay
-        {150, 255}, //3.lua
-        {175, 425}, //4.config
-        {250, 155}, //5.general
-        {415, 180}, //6.card
+        {220, 235}, //0.start
+        {175, 190}, //1.join
+        {250, 480}, //2.replay
+        {145, 260}, //3.lua
+        {175, 430}, //4.config
+        {245, 160}, //5.general
+        {415, 190}, //6.card
         {415, 360}, //7.mode
-        {150, 355}, //8.thanks
+        {145, 360}, //8.thanks
     };
 
     QString path = "image/system/button/main/background.png";
-    QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
-    button_widget->setPos(button_group->pos());
+    button_widget = new QGraphicsPixmapItem(QPixmap(path));
+    button_widget->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
+    button_widget->setFlags(QGraphicsItem::ItemIsMovable);
 
     int count = 0;
     foreach(QAction *action, actions){
@@ -85,7 +89,7 @@ void StartScene::addMainButton(QList<QAction *> actions){
         buton->setParentItem(button_widget);
         //buton->setPos(button_widget->pos());
         int *froups = pos[count];
-        buton->moveBy(froups[0], froups[1]);
+        buton->moveBy(froups[0]+330, froups[1]+200);
         connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
         count ++;
     }
@@ -210,10 +214,10 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    QString changjing = Config.EnableScene ?
+    /*QString changjing = Config.EnableScene ?
                         tr("Scene Mode is enabled") :
                         tr("Scene Mode is disabled");
-    //server_log->append(changjing);
+    server_log->append(changjing);*/
 
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :

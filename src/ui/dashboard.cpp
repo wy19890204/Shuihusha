@@ -162,7 +162,7 @@ void Dashboard::createRight(){
     back_icon->setParentItem(right);
     back_icon->setPos(22, 64);
     back_icon->setZValue(0.2);
-    back_icon->setOpacity(0.6);
+    //back_icon->setOpacity(0.6);
     back_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
@@ -201,9 +201,9 @@ void Dashboard::setWakeState(){
     if(Self->getWakeSkills().isEmpty())
         return;
     if(Self->getMark("_wake") > 0)
-        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+        wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
-        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
+        wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
 }
 
 void Dashboard::setEcstState(){
@@ -667,9 +667,8 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
 
     painter->setPen(Qt::white);
-    if(equip->isMarked()){
+    if(equip->isMarked())
         painter->drawRect(8,y + 2,label.width(),label.height());
-    }
 }
 
 void Dashboard::adjustCards(){

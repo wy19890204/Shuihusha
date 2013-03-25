@@ -136,9 +136,11 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::restoreFromConfig(){
+    Config.beginGroup("UI");
     //resize(Config.value("WindowSize", QSize(1042, 719)).toSize());
     resize(Config.value("WindowSize", QSize(1340, 758)).toSize());
     move(Config.value("WindowPosition", QPoint(20,20)).toPoint());
+    Config.endGroup();
 
     QFont font;
     if(Config.AppFont != font)
@@ -148,8 +150,8 @@ void MainWindow::restoreFromConfig(){
 
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
-    ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
-    ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
+    ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", true).toBool());
     ui->actionFit_in_view->setChecked(Config.FitInView);
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
@@ -158,8 +160,15 @@ void MainWindow::restoreFromConfig(){
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
+    Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
+    if(scene->inherits("StartScene")){
+        StartScene *start_scene = qobject_cast<StartScene *>(scene);
+        Config.setValue("LogoPosition", start_scene->logo->pos());
+        Config.setValue("PlatePosition", start_scene->button_widget->pos());
+    }
+    Config.endGroup();
 
     if(systray){
         systray->showMessage(windowTitle(), tr("Game is minimized"));
@@ -690,21 +699,21 @@ void MainWindow::on_actionScript_editor_triggered()
 
 void MainWindow::on_actionDraw_indicator_toggled(bool checked)
 {
-    if(Config.value("NoIndicator").toBool() == checked)
-        Config.setValue("NoIndicator", !checked);
+    if(Config.value("UI/NoIndicator").toBool() == checked)
+        Config.setValue("UI/NoIndicator", !checked);
 }
 
 void MainWindow::on_actionDraw_cardname_toggled(bool checked)
 {
-    if(Config.value("DrawCardName").toBool() != checked)
-        Config.setValue("DrawCardName", checked);
+    if(Config.value("UI/DrawCardName").toBool() != checked)
+        Config.setValue("UI/DrawCardName", checked);
 }
 
 void MainWindow::on_actionFit_in_view_toggled(bool checked)
 {
     if(Config.FitInView != checked)
         Config.FitInView = checked;
-        Config.setValue("FitInView", checked);
+        Config.setValue("UI/FitInView", checked);
 }
 
 void MainWindow::on_actionAuto_select_toggled(bool checked)
