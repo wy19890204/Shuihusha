@@ -667,9 +667,8 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
 
     painter->setPen(Qt::white);
-    if(equip->isMarked()){
+    if(equip->isMarked())
         painter->drawRect(8,y + 2,label.width(),label.height());
-    }
 }
 
 void Dashboard::adjustCards(){
