@@ -18,7 +18,7 @@ ClientPlayer::ClientPlayer(Client *client)
     mark_doc->setDefaultTextOption(QTextOption(Qt::AlignRight));
     mark_doc_small = new QTextDocument(this);
     mark_doc_small->setTextWidth(128);
-    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignRight));
+    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignLeft));
 }
 
 void ClientPlayer::handCardChange(int delta){
@@ -171,8 +171,9 @@ void ClientPlayer::setMark(const QString &mark, int value){
     QString text = "";
     QString text_small = "";
     QMapIterator<QString, int> itor(marks);
-    while(itor.hasNext()){
-        itor.next();
+    itor.toBack();
+    while(itor.hasPrevious()){
+        itor.previous();
 
         if(itor.key().startsWith("@") && itor.value() > 0){
             QString path = QString("image/mark/%1.png").arg(itor.key());

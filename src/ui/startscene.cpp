@@ -214,10 +214,10 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    QString changjing = Config.EnableScene ?
+    /*QString changjing = Config.EnableScene ?
                         tr("Scene Mode is enabled") :
                         tr("Scene Mode is disabled");
-    //server_log->append(changjing);
+    server_log->append(changjing);*/
 
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :
