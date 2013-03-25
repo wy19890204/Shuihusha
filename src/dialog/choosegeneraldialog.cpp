@@ -193,15 +193,14 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         last_layout->addWidget(free_choose_button);
     }
 
+    last_layout->addStretch();
+
     QPushButton *random_choose_button = new QPushButton(tr("Random choose"));
     connect(random_choose_button, SIGNAL(clicked()), this, SLOT(randomChoose()));
     last_layout->addWidget(random_choose_button);
 
-    last_layout->addStretch();
-
-    if(last_layout->count() != 0){
+    if(last_layout->count() != 0)
         dialog_layout->addLayout(last_layout);
-    }
 
     setLayout(dialog_layout);
 

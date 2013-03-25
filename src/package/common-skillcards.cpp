@@ -135,16 +135,24 @@ UbunbCard::UbunbCard(){
 }
 
 bool UbunbCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    return targets.isEmpty();
+    return targets.length() < 2;
 }
 
-void UbunbCard::onEffect(const CardEffectStruct &effect) const{
-    Room *room = effect.from->getRoom();
-    QStringList all_generals = Sanguosha->getLimitedGeneralNames();
-    qShuffle(all_generals);
-    QStringList choices = all_generals.mid(0, 4);
-    QString name = room->askForGeneral(effect.from, choices, "guansheng");
-    room->transfigure(effect.to, name, false, true, effect.to->getGeneralName());
+void UbunbCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(targets.length() == 1){
+        QStringList all_generals = Sanguosha->getLimitedGeneralNames();
+        qShuffle(all_generals);
+        QStringList choices = all_generals.mid(0, 4);
+        QString name = room->askForGeneral(source, choices, "guansheng");
+        room->transfigure(targets.first(), name, false, true, targets.first()->getGeneralName());
+    }
+    else{
+        QString role = targets.last()->getRole();
+        targets.last()->setRole(targets.first()->getRole());
+        targets.first()->setRole(role);
+        room->broadcastProperty(targets.first(), "role");
+        room->broadcastProperty(targets.last(), "role");
+    }
 }
 
 UbuncCard::UbuncCard(){

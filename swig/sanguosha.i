@@ -587,7 +587,7 @@ public:
 	QString getPixmapPath() const;
 	QString getIconPath() const;
 	QString getPackage() const;
-        QIcon getSuitIcon(bool getbig = false) const;
+	QIcon getSuitIcon(bool getbig = false) const;
 	QString getFullName(bool include_suit = false) const;
 	QString getLogName() const;
 	QString getName() const;

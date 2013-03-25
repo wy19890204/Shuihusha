@@ -48,7 +48,7 @@ Photo::Photo()
     back_icon->hide();
     settings.endGroup();
 
-    chain_icon = new Pixmap("image/system/chain.png");
+    chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(this);
     chain_icon->setPos(boundingRect().width() - 22, 5);
     chain_icon->hide();
@@ -738,7 +738,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // state related
     QString state_str = player->getState();
     QPixmap state_icon;
-    if(!state_str.isEmpty() && state_str != "online"){
+    if(!state_str.isEmpty()){
         state_icon.load(QString("image/state/%1.png").arg(state_str));
         QList<QVariant> coord = settings.value("state_item/pos").toList();
         painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), state_icon);

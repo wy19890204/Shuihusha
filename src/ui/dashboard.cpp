@@ -151,7 +151,7 @@ void Dashboard::createRight(){
     ready_item->setPos(2, 43);
     ready_item->hide();
 
-    chain_icon = new Pixmap("image/system/chain.png");
+    chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(right);
     chain_icon->setPos(small_avatar->pos());
     chain_icon->moveBy(-20 ,-45);
