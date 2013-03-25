@@ -995,8 +995,7 @@ QWidget *CardEditor::createSkillBox(){
 
     QComboBox *suit_combobox = new QComboBox;
     const Card::Suit *suits = Card::AllSuits;
-    int i;
-    for(i=0; i<4; i++){
+    for(int i=0; i<4; i++){
         QString suit_name = Card::Suit2String(suits[i]);
         QIcon suit_icon(QString("image/system/suit/%1.png").arg(suit_name));
         suit_combobox->addItem(suit_icon, Sanguosha->translate(suit_name), suit_name);
