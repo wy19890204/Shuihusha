@@ -226,8 +226,9 @@ QString Card::getEffectPath() const{
     return QString("audio/card/common/%1.ogg").arg(objectName());
 }
 
-QIcon Card::getSuitIcon() const{
-    return QIcon(QString("image/system/suit/%1.png").arg(getSuitString()));
+QIcon Card::getSuitIcon(bool getbig) const{
+    QString big = getbig ? "big-" : "";
+    return QIcon(QString("image/system/suit/%1%2.png").arg(big).arg(getSuitString()));
 }
 
 QString Card::getFullName(bool include_suit) const{

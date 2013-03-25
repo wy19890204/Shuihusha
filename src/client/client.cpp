@@ -1376,7 +1376,7 @@ void Client::askForSuit(const Json::Value &){
 
     foreach(QString suit, suits){
         QCommandLinkButton *button = new QCommandLinkButton;
-        button->setIcon(QIcon(QString("image/system/suit/%1.png").arg(suit)));
+        button->setIcon(QIcon(QString("image/system/suit/big-%1.png").arg(suit)));
         button->setText(Sanguosha->translate(suit));
         button->setObjectName(suit);
 

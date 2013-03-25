@@ -659,7 +659,7 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
 
     // draw the suit of equip
     QRect suit_rect(width - 19, y + 10, 13, 13);
-    painter->drawPixmap(suit_rect, equip->getSuitPixmap());
+    painter->drawPixmap(suit_rect, equip->getSuitPixmap(true));
 
     // draw the number of equip
 

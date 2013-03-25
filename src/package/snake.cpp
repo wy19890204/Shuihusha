@@ -823,12 +823,12 @@ public:
         return -1;
     }
 
-    static void doYima(ServerPlayer *player, QList<ServerPlayer *> huangfus, const Card *horse){
+    static void doYima(ServerPlayer *player, const QList<ServerPlayer *> huangfus, const Card *horse){
         Room *room = player->getRoom();
         foreach(ServerPlayer *huangfu, huangfus){
             if(huangfu != player && horse->isKindOf("Horse")
-                && huangfu->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
+                && huangfu->askForSkillInvoke("yima")){
+                room->playSkillEffect("yima");
                 huangfu->obtainCard(horse);
                 if(player && player->isWounded()){
                     RecoverStruct ruc;
@@ -884,7 +884,7 @@ public:
                 room->playSkillEffect(objectName(), qrand() % 2 + 1);
                 LogMessage log;
                 log.from = effect.from;
-                log.to = player;
+                log.to << player;
                 log.type = "#ComskillNullify";
                 log.arg = objectName();
                 log.arg2 = effect.slash->objectName();
@@ -941,7 +941,7 @@ public:
         foreach(ServerPlayer *xiu, xius){
             if(player->isDead())
                 break;
-            if(xiu->askForSkillInvoke(objectname(), data)){
+            if(xiu->askForSkillInvoke(objectName(), data)){
                 JudgeStruct judge;
                 judge.pattern = QRegExp("(.*):(.*):(.*)");
                 judge.reason = objectName();

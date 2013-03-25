@@ -791,7 +791,7 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
         return;
 
     QRect suit_rect(2, 120 + order * 14, 20, 20);
-    painter->drawPixmap(suit_rect, equip->getSuitPixmap());
+    painter->drawPixmap(suit_rect, equip->getSuitPixmap(false));
 
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
     painter->setPen(Qt::white);

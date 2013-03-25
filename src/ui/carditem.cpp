@@ -19,6 +19,7 @@ CardItem::CardItem(const Card *card)
 {
     Q_CHECK_PTR(card);
 
+    bigsuit_pixmap.load(QString("image/system/suit/big-%1.png").arg(card->getSuitString()));
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
     cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
     number_pixmap.load(QString("image/system/card/%1/%2.png").arg(card->isBlack() ? "black" : "red").arg(card->getNumberString()));
@@ -139,8 +140,11 @@ QAbstractAnimation* CardItem::goBack(bool kieru,bool fadein,bool fadeout){
     }
 }
 
-const QPixmap &CardItem::getSuitPixmap() const{
-    return suit_pixmap;
+const QPixmap &CardItem::getSuitPixmap(bool getbig) const{
+    if(getbig)
+        return bigsuit_pixmap;
+    else
+        return suit_pixmap;
 }
 
 const QPixmap &CardItem::getNumberPixmap() const{

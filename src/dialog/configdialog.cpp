@@ -30,7 +30,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->enableBgMusicCheckBox->setChecked(Config.EnableBgMusic);
     ui->fitInViewCheckBox->setChecked(Config.FitInView);
     ui->circularViewCheckBox->setChecked(Config.CircularView);
-    ui->noIndicatorCheckBox->setChecked(Config.value("NoIndicator", false).toBool());
+    ui->noIndicatorCheckBox->setChecked(Config.value("UI/NoIndicator", false).toBool());
 
     ui->bgmVolumeSlider->setValue(100 * Config.BGMVolume);
     ui->effectVolumeSlider->setValue(100 * Config.EffectVolume);
@@ -179,12 +179,12 @@ void ConfigDialog::saveConfig()
     Config.setValue("EnableBgMusic", enabled);
 
     Config.FitInView = ui->fitInViewCheckBox->isChecked();
-    Config.setValue("FitInView", Config.FitInView);
+    Config.setValue("UI/FitInView", Config.FitInView);
 
     Config.CircularView = ui->circularViewCheckBox->isChecked();
     Config.setValue("CircularView", Config.CircularView);
 
-    Config.setValue("NoIndicator", ui->noIndicatorCheckBox->isChecked());
+    Config.setValue("UI/NoIndicator", ui->noIndicatorCheckBox->isChecked());
 
     Config.NeverNullifyMyTrick = ui->neverNullifyMyTrickCheckBox->isChecked();
     Config.setValue("NeverNullifyMyTrick", Config.NeverNullifyMyTrick);

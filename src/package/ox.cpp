@@ -745,12 +745,12 @@ public:
         return -1;
     }
 
-    static void doWubang(ServerPlayer *player, QList<ServerPlayer *> shijins, const Card *weapon){
+    static void doWubang(ServerPlayer *player, const QList<ServerPlayer *> shijins, const Card *weapon){
         Room *room = player->getRoom();
         foreach(ServerPlayer *jiuwenlong, shijins){
             if(jiuwenlong != player && weapon->isKindOf("Weapon")
-                && jiuwenlong->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName());
+                && jiuwenlong->askForSkillInvoke("wubang")){
+                room->playSkillEffect("wubang");
                 jiuwenlong->obtainCard(weapon);
                 break;
             }
