@@ -15,10 +15,11 @@ StartScene::StartScene()
     if(Config.value("ButtonStyle", true).toBool()){
         logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
         logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
+        logo->setFlags(QGraphicsItem::ItemIsMovable);
+        logo->setObjectName("logo");
     }
     else
         logo->moveBy(0, -Config.Rect.height()/4);
-    logo->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(logo);
 /*
     //the website URL
@@ -51,11 +52,10 @@ void StartScene::addButton(QAction *action){
 
     QRectF rect = button->boundingRect();
     int n = buttons.length();
-    if(n < 5){
+    if(n < 5)
         button->setPos(- rect.width() - 5, (n - 1) * (rect.height() * 1.2));
-    }else{
+    else
         button->setPos(5, (n - 6) * (rect.height() * 1.2));
-    }
 
     buttons << button;
 }

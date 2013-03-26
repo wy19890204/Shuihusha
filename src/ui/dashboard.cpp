@@ -190,7 +190,7 @@ void Dashboard::createRight(){
     avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
     avatar_area->setVisible(false);
 
-    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(right);
     wake_icon->setPos(18, 127);
     wake_icon->hide();

@@ -53,7 +53,7 @@ Photo::Photo()
     chain_icon->setPos(boundingRect().width() - 22, 5);
     chain_icon->hide();
 
-    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(this);
     settings.beginGroup("wake_icon");
     coord = settings.value("pos").toList();
