@@ -21,7 +21,7 @@ public:
     void switchToServer(Server *server);
 
     Pixmap *logo;
-    QGraphicsItem *button_widget;
+    QGraphicsItem *button_plate;
 private:
     void printServerInfo();
 

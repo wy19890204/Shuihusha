@@ -166,7 +166,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
     if(scene->inherits("StartScene")){
         StartScene *start_scene = qobject_cast<StartScene *>(scene);
         Config.setValue("LogoPosition", start_scene->logo->pos());
-        Config.setValue("PlatePosition", start_scene->button_widget->pos());
+        Config.setValue("PlatePosition", start_scene->button_plate->pos());
     }
     Config.endGroup();
 
