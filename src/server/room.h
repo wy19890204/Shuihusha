@@ -100,7 +100,6 @@ public:
     void sendLog(const LogMessage &log);
     void showCard(ServerPlayer *player, int card_id, ServerPlayer *only_viewer = NULL);
     void showAllCards(ServerPlayer *player, ServerPlayer *to = NULL);
-    void onPhaseEnd(ServerPlayer *player);
     bool isNoLordSkill();
    
     // Ask a player to send a server request and returns the client response. Call is blocking until client 

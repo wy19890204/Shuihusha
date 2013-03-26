@@ -1462,6 +1462,10 @@ public:
     Jibao():PhaseChangeSkill("jibao"){
     }
 
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
         if(player->getPhase() == Player::RoundStart)

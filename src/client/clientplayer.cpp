@@ -180,7 +180,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
             if(!QFile::exists(path))
                 path = QString("extensions/generals/mark/%1.png").arg(itor.key());
             QString mark_text = QString("<img src='%1' />").arg(path);
-            QString mark_text_small = QString("<img src='%1' height='15' />").arg(path);
+            QString mark_text_small = QString("<img src='%1' />").arg(path);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
                 mark_text_small.append(QString("x%1").arg(itor.value()));

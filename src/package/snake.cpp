@@ -95,6 +95,10 @@ public:
         frequency = Compulsory;
     }
 
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *opt) const{
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();

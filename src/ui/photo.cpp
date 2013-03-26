@@ -729,9 +729,10 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         settings.beginGroup("handcard_item");
         QList<QVariant> coord = settings.value("pos").toList();
         painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
-        painter->setPen(Qt::yellow);
+        painter->setPen(qRgb(127,254,3));
         coord = settings.value("text_pos").toList();
-        painter->drawText(coord.first().toReal(), coord.last().toReal(), QString::number(n));
+        qreal xo = n < 10 ? coord.first().toReal() : coord.first().toReal()-2;
+        painter->drawText(xo, coord.last().toReal(), QString::number(n));
         settings.endGroup();
     }
 
