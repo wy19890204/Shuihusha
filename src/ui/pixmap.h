@@ -26,6 +26,7 @@ public:
 
 protected:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QPixmap pixmap;
@@ -37,6 +38,17 @@ signals:
     void mark_changed();
     void selected_changed();
     void enable_changed();
+};
+
+class PixmapItem : public QGraphicsPixmapItem{
+    Q_OBJECT
+
+public:
+    PixmapItem(const QPixmap &pixmap);
+    virtual void setObjectName(const QString &name);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+private:
+    QString objectname;
 };
 
 #endif // PIXMAP_H

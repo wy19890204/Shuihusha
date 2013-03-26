@@ -1,4 +1,5 @@
 #include "pixmap.h"
+#include "settings.h"
 
 #include <QPainter>
 #include <QGraphicsColorizeEffect>
@@ -83,7 +84,8 @@ void Pixmap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 }
 
 QVariant Pixmap::itemChange(GraphicsItemChange change, const QVariant &value){
-    if(change == ItemSelectedHasChanged){
+    switch(change){
+    case ItemSelectedHasChanged:{
         if(value.toBool()){
             QGraphicsColorizeEffect *effect = new QGraphicsColorizeEffect(this);
             effect->setColor(QColor(0xCC, 0x00, 0x00));
@@ -92,7 +94,9 @@ QVariant Pixmap::itemChange(GraphicsItemChange change, const QVariant &value){
             setGraphicsEffect(NULL);
 
         emit selected_changed();
-    }else if(change == ItemEnabledHasChanged){
+        break;
+    }
+    case ItemEnabledHasChanged:{
         if(this->inherits("CardItem"))
         {
             if(value.toBool()){
@@ -102,9 +106,27 @@ QVariant Pixmap::itemChange(GraphicsItemChange change, const QVariant &value){
             }
         }
         else emit enable_changed();
+        break;
+    }
+    /*
+    case ItemPositionHasChanged:{
+        qDebug("logo: %s", qPrintable(this->objectName()));
+        if(this->objectName() == "logo"){
+            Config.setValue("UI/LogoPosition", this->pos());
+        }
+        break;
+    }*/
+    default:
+        break;
     }
 
     return QGraphicsObject::itemChange(change, value);
+}
+
+void Pixmap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+    if(this->objectName() == "logo")
+        Config.setValue("UI/LogoPosition", this->pos());
+    QGraphicsItem::mouseReleaseEvent(event);
 }
 
 bool Pixmap::isMarked() const{
@@ -126,4 +148,19 @@ void Pixmap::mark(bool marked){
 
 void Pixmap::setMarkable(bool markable){
     this->markable = markable;
+}
+
+PixmapItem::PixmapItem(const QPixmap &pixmap)
+    :QGraphicsPixmapItem(pixmap)
+{
+}
+
+void PixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+    //if(this->objectName() == "plate")
+    //    Config.setValue("UI/PlatePosition", this->pos());
+    PixmapItem::mouseReleaseEvent(event);
+}
+
+void PixmapItem::setObjectName(const QString &name){
+    this->objectname = name;
 }

@@ -15,10 +15,11 @@ StartScene::StartScene()
     if(Config.value("ButtonStyle", true).toBool()){
         logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
         logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
+        logo->setFlags(QGraphicsItem::ItemIsMovable);
+        logo->setObjectName("logo");
     }
     else
         logo->moveBy(0, -Config.Rect.height()/4);
-    logo->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(logo);
 /*
     //the website URL
@@ -34,7 +35,6 @@ StartScene::StartScene()
     //Provide coordinates for the button
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
-    //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
     //addItem(button_group);
 }
@@ -51,11 +51,10 @@ void StartScene::addButton(QAction *action){
 
     QRectF rect = button->boundingRect();
     int n = buttons.length();
-    if(n < 5){
+    if(n < 5)
         button->setPos(- rect.width() - 5, (n - 1) * (rect.height() * 1.2));
-    }else{
+    else
         button->setPos(5, (n - 6) * (rect.height() * 1.2));
-    }
 
     buttons << button;
 }
@@ -78,9 +77,10 @@ void StartScene::addMainButton(QList<QAction *> actions){
     };
 
     QString path = "image/system/button/main/background.png";
-    button_widget = new QGraphicsPixmapItem(QPixmap(path));
+    button_widget = new PixmapItem(QPixmap(path));
     button_widget->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
     button_widget->setFlags(QGraphicsItem::ItemIsMovable);
+    button_widget->setObjectName("plate");
 
     int count = 0;
     foreach(QAction *action, actions){
