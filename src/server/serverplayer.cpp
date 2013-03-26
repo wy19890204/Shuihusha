@@ -889,13 +889,12 @@ void ServerPlayer::clearPile(const QString &pile_name){
 }
 
 void ServerPlayer::gainAnExtraTurn(ServerPlayer *clearflag){
-    ServerPlayer *current = room->getCurrent();
-
-    room->setCurrent(this);
+    room->onPhaseEnd(clearflag);
     room->removeTag("Shudan");
-    if(clearflag)
-        clearflag->clearFlags();
+    ServerPlayer *current = room->getCurrent();
+    room->setCurrent(this);
     room->getThread()->trigger(TurnStart, room, this);
+
     if(clearflag)
         clearflag->clearHistory();
     room->setCurrent(current);

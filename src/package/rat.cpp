@@ -564,7 +564,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &) const{
         if(player->getPhase() == Player::NotActive)
-            room->setTag("Shudan", QVariant());
+            room->removeTag("Shudan");
         return false;
     }
 };
