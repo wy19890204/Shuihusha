@@ -20,12 +20,12 @@ public:
     void setServerLogBackground();
     void switchToServer(Server *server);
 
+    QGraphicsItem *button_widget;
 private:
     void printServerInfo();
 
     Pixmap *logo;
     Pixmap *button_group;
-    PixmapItem *button_widget;
     QTextEdit *server_log;
     QList<Button*> buttons;
 };

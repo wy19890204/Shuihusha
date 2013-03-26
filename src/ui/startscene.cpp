@@ -35,6 +35,7 @@ StartScene::StartScene()
     //Provide coordinates for the button
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
+    //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
     //addItem(button_group);
 }
@@ -77,10 +78,9 @@ void StartScene::addMainButton(QList<QAction *> actions){
     };
 
     QString path = "image/system/button/main/background.png";
-    button_widget = new PixmapItem(QPixmap(path));
+    button_widget = new QGraphicsPixmapItem(QPixmap(path));
     button_widget->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
     button_widget->setFlags(QGraphicsItem::ItemIsMovable);
-    button_widget->setObjectName("plate");
 
     int count = 0;
     foreach(QAction *action, actions){

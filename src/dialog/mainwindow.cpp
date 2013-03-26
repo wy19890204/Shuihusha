@@ -163,6 +163,10 @@ void MainWindow::closeEvent(QCloseEvent *event){
     Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
+    if(scene->inherits("StartScene")){
+        StartScene *start_scene = qobject_cast<StartScene *>(scene);
+        Config.setValue("PlatePosition", start_scene->button_widget->pos());
+    }
     Config.endGroup();
 
     if(systray){
