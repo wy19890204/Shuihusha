@@ -149,18 +149,3 @@ void Pixmap::mark(bool marked){
 void Pixmap::setMarkable(bool markable){
     this->markable = markable;
 }
-
-PixmapItem::PixmapItem(const QPixmap &pixmap)
-    :QGraphicsPixmapItem(pixmap)
-{
-}
-
-void PixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    //if(this->objectName() == "plate")
-    //    Config.setValue("UI/PlatePosition", this->pos());
-    PixmapItem::mouseReleaseEvent(event);
-}
-
-void PixmapItem::setObjectName(const QString &name){
-    this->objectname = name;
-}

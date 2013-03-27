@@ -934,6 +934,10 @@ public:
         return target != NULL;
     }
 
+    virtual int getPriority(TriggerEvent event) const{
+        return event == PhaseChange ? -1 : 1;
+    }
+
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *player, QVariant &data) const{
         if(e == PhaseChange){
             QList<ServerPlayer *> suochaos = room->findPlayersBySkillName(objectName());

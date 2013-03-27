@@ -1462,6 +1462,10 @@ public:
     Jibao():PhaseChangeSkill("jibao"){
     }
 
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
         if(player->getPhase() == Player::RoundStart)
@@ -1575,7 +1579,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *nana, QVariant &data) const{
         RecoverStruct rec = data.value<RecoverStruct>();
-        if(rec.who == nana && rec.card->inherits("Analeptic") &&
+        if(rec.who == nana && rec.card->isKindOf("Analeptic") &&
            nana->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
             LogMessage log;
@@ -1584,9 +1588,11 @@ public:
             log.arg = objectName();
             log.arg2 = QString::number(1);
             room->sendLog(log);
-            rec.recover ++;
+            room->loseMaxHp(nana);
+            rec.recover = nana->getLostHp(false);
 
             data = QVariant::fromValue(rec);
+            room->setPlayerProperty(nana, "hp", nana->getMaxHp());
         }
         return false;
     }

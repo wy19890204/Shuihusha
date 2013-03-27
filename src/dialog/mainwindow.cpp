@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
@@ -156,13 +156,17 @@ void MainWindow::restoreFromConfig(){
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
-    ui->actionButton_style->setChecked(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
+    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
     Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
+    if(scene->inherits("StartScene") && Config.value("ButtonStyle", false).toBool()){
+        StartScene *start_scene = qobject_cast<StartScene *>(scene);
+        Config.setValue("PlatePosition", start_scene->button_plate->pos());
+    }
     Config.endGroup();
 
     if(systray){
@@ -390,7 +394,7 @@ void MainWindow::on_actionReturn_main_triggered(){
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
 
-    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
@@ -752,8 +756,8 @@ void MainWindow::on_actionEnable_Lua_toggled(bool checked)
 
 void MainWindow::on_actionButton_style_toggled(bool checked)
 {
-    if(Config.value("ButtonStyle").toBool() != checked)
-        Config.setValue("ButtonStyle", checked);
+    if(Config.value("UI/ButtonStyle").toBool() != checked)
+        Config.setValue("UI/ButtonStyle", checked);
 }
 
 #include <QGroupBox>

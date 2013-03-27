@@ -12,7 +12,7 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    if(Config.value("ButtonStyle", true).toBool()){
+    if(Config.value("UI/ButtonStyle", true).toBool()){
         logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
         logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
         logo->setFlags(QGraphicsItem::ItemIsMovable);
@@ -35,6 +35,7 @@ StartScene::StartScene()
     //Provide coordinates for the button
     button_group = new Pixmap("image/system/button/main/background.png");
     button_group->shift();
+    //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
     //addItem(button_group);
 }
@@ -61,10 +62,10 @@ void StartScene::addButton(QAction *action){
 
 #include "irregularbutton.h"
 void StartScene::addMainButton(QList<QAction *> actions){
-    static QString butons_name[9] = {
+    static QString tianjis_name[9] = {
         "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
     };
-    static int pos[9][2] = {
+    static int tianjipos[9][2] = {
         {220, 235}, //0.start
         {175, 190}, //1.join
         {250, 480}, //2.replay
@@ -77,24 +78,23 @@ void StartScene::addMainButton(QList<QAction *> actions){
     };
 
     QString path = "image/system/button/main/background.png";
-    button_widget = new PixmapItem(QPixmap(path));
-    button_widget->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
-    button_widget->setFlags(QGraphicsItem::ItemIsMovable);
-    button_widget->setObjectName("plate");
+    button_plate = new QGraphicsPixmapItem(QPixmap(path));
+    button_plate->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
+    button_plate->setFlags(QGraphicsItem::ItemIsMovable);
 
     int count = 0;
     foreach(QAction *action, actions){
-        IrregularButton *buton = new IrregularButton(butons_name[count], "main");
-        buton->setMute(false);
-        buton->setParentItem(button_widget);
-        //buton->setPos(button_widget->pos());
-        int *froups = pos[count];
-        buton->moveBy(froups[0]+330, froups[1]+200);
-        connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
+        IrregularButton *tianji = new IrregularButton(tianjis_name[count], "main");
+        tianji->setMute(false);
+        tianji->setParentItem(button_plate);
+        //tianji->setPos(button_plate->pos());
+        int *froups = tianjipos[count];
+        tianji->moveBy(froups[0]+330, froups[1]+200);
+        connect(tianji, SIGNAL(clicked()), action, SLOT(trigger()));
         count ++;
     }
 
-    addItem(button_widget);
+    addItem(button_plate);
 }
 
 void StartScene::setServerLogBackground(){

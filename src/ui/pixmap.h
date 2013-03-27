@@ -40,15 +40,4 @@ signals:
     void enable_changed();
 };
 
-class PixmapItem : public QGraphicsPixmapItem{
-    Q_OBJECT
-
-public:
-    PixmapItem(const QPixmap &pixmap);
-    virtual void setObjectName(const QString &name);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-private:
-    QString objectname;
-};
-
 #endif // PIXMAP_H
