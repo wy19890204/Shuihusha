@@ -1065,11 +1065,6 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
     return askForCard(player, pattern, prompt, false, data, trigger_event);
 }
 
-const Card *Room::askForCard(CardAskStruct data){
-    PlayerStar from = data.from;
-    askForCard(data.who, data.pattern, data.prompt, data.is_skill, QVariant::fromValue(from), data.trigger_event);
-}
-
 bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
     if(player->isDead())
         return NULL;

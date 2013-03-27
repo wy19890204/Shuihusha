@@ -259,7 +259,6 @@ public:
     int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QString &flags, const QString &reason);
     const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
     const Card *askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, const QVariant &data = QVariant(), TriggerEvent trigger_event = CardResponsed);
-    const Card *askForCard(CardAskStruct data);
     bool askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill = false);
     int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const QString &reason);
     const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const QString &reason);

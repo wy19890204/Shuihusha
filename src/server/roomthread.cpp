@@ -55,15 +55,6 @@ RecoverStruct::RecoverStruct()
 
 }
 
-CardAskStruct::CardAskStruct()
-    :who(NULL), from(NULL), pattern(QString()), prompt(QString()), is_skill(false), trigger_event(NonTrigger)
-{
-}
-
-QString CardAskStruct::toString() const{
-    return pattern;
-}
-
 PindianStruct::PindianStruct()
     :from(NULL), to(NULL), from_card(NULL), to_card(NULL)
 {
