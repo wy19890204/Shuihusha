@@ -1555,6 +1555,8 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 
     if(player == Self)
         addSkillButton(Sanguosha->getSkill(skill_name));
+    dashboard->updateAvatar();
+    dashboard->updateSmallAvatar();
 }
 
 void RoomScene::updateSkillButtons(){

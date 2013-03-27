@@ -288,6 +288,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
 
 void Dashboard::updateAvatar(){
     const General *general = Self->getAvatarGeneral();
+    avatar->setToolTip(Self->getAllSkillDescription());
     if(!avatar->changePixmap(general->getPixmapPath("big"))){
         QPixmap pixmap(General::BigIconSize);
         pixmap.fill(Qt::black);
@@ -315,6 +316,7 @@ void Dashboard::updateAvatar(){
 void Dashboard::updateSmallAvatar(){
     const General *general2 = Self->getGeneral2();
     if(general2){
+        small_avatar->setToolTip(Self->getAllSkillDescription());
         bool success = small_avatar->changePixmap(general2->getPixmapPath("tiny"));
 
         if(!success){
@@ -331,6 +333,7 @@ void Dashboard::updateSmallAvatar(){
             small_avatar->setPixmap(pixmap);
         }
     }
+    updateAvatar();
 
     update();
 }
@@ -580,9 +583,6 @@ void Dashboard::revivePlayer(){
 }
 
 void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *){
-    avatar->setToolTip(Self->getAllSkillDescription());
-    small_avatar->setToolTip(Self->getAllSkillDescription());
-
     // draw the left side and right side
     painter->drawPixmap(left->pos(), left_pixmap);
     painter->drawPixmap(right->pos(), right_pixmap);
