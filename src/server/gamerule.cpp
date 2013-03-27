@@ -163,7 +163,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                             break;
                         }
                     if(face)
-                        room->askForUseCard(player, "Jiefachang", "@jiefachang");
+                        room->askForUseCard(player, "Jiefachang", "@jiefachang", false);
                 }
             }
 
@@ -368,7 +368,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
                 if(source){
                     room->setPlayerFlag(source, "Daojia");
-                    room->askForUseCard(source, "Daojia", "@daojia");
+                    room->askForUseCard(source, "Daojia", "@daojia", false);
                     room->setPlayerFlag(source, "-Daojia");
                 }
             }
@@ -376,7 +376,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("tifanshi");
                 if(source && source == use.from){
                     room->setPlayerFlag(source, "Tifanshi");
-                    room->askForUseCard(source, "Tifanshi", "@tifanshi");
+                    room->askForUseCard(source, "Tifanshi", "@tifanshi", false);
                     room->setPlayerFlag(source, "-Tifanshi");
                 }
             }
@@ -391,7 +391,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                         }
                     }
                     if(invoke)
-                        room->askForUseCard(source, "NanaStars", "@nanastars");
+                        room->askForUseCard(source, "NanaStars", "@nanastars", false);
                 }
             }
         }
@@ -546,7 +546,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         if(!Config.BanPackages.contains("events")){
             ServerPlayer *source = room->findPlayerWhohasEventCard("nanastars");
             if(damage.from && damage.from != player && source == player && !damage.from->isNude()){
-                if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), data, CardDiscarded)){
+                if(room->askForCard(source, "NanaStars", "@7stars:" + damage.from->objectName(), false, data)){
                     int x = qMax(qAbs(source->getHp() - damage.from->getHp()), 1);
                     source->playCardEffect("@nanastars2");
 
@@ -614,7 +614,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 if(source == damage.to){
                     room->setPlayerFlag(damage.to, "NineGirl");
                     QString prompt = QString("@ninedaygirl:::%1").arg(damage.damage);
-                    bool girl = room->askForUseCard(damage.to, "NinedayGirl", prompt);
+                    bool girl = room->askForUseCard(damage.to, "NinedayGirl", prompt, false);
                     room->setPlayerFlag(damage.to, "-NineGirl");
                     if(girl){
                         LogMessage log;
@@ -639,7 +639,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             if(source && source != player && player->getGender() != damage.to->getGender()){
                 QString prompt = QString("@xiaobawang1:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName());
                 source->tag["Xiaob"] = QVariant::fromValue((PlayerStar)damage.from);
-                room->askForUseCard(source, "Xiaobawang", prompt);
+                room->askForUseCard(source, "Xiaobawang", prompt, false);
                 source->tag.remove("Xiaob");
             }
         }
@@ -653,7 +653,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             if(damage.from && damage.from == source){
                 if(damage.to && !damage.to->isNude() &&
                    damage.from->getGender() == damage.to->getGender()){
-                    const Card *e = room->askForCard(source, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), data, CardDiscarded);
+                    const Card *e = room->askForCard(source, "Xiaobawang", "@xiaobawang2:" + damage.to->objectName(), false, data);
                     if(e){
                         source->playCardEffect("@xiaobawang2");
                         int card_id = room->askForCardChosen(source, damage.to, "he", "xiaobawang");
@@ -662,7 +662,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
                 else{
                     QString prompt = QString("@xiaobawang3:::%1").arg(damage.damage);
-                    const Card *e = room->askForCard(source, "Xiaobawang", prompt, data, CardDiscarded);
+                    const Card *e = room->askForCard(source, "Xiaobawang", prompt, false, data);
                     if(e){
                         source->playCardEffect("@xiaobawang2");
                         source->drawCards(damage.damage);
@@ -697,7 +697,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         SlashEffectStruct effect = data.value<SlashEffectStruct>();
 
         QString slasher = effect.from->objectName();
-        const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, data, JinkUsed);
+        const Card *jink = room->askForCard(effect.to, "jink", "slash-jink:" + slasher, false, data, Card::MethodUse, effect.from);
         room->slashResult(effect, jink);
 
         break;
@@ -900,7 +900,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
             if(source && source == player){
                 room->setPlayerFlag(player, "FuckLian");
-                const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", data);
+                const Card *fuck = room->askForCard(player, "FuckGaolian", "@fuckl", false, data);
                 if(fuck){
                     player->playCardEffect("@fuckgaolian2");
                     JudgeStar judge = data.value<JudgeStar>();
@@ -940,14 +940,14 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 ServerPlayer *source = room->findPlayerWhohasEventCard("fuckgaolian");
                 if(source){
                     room->setPlayerFlag(source, "FuckGao");
-                    room->askForUseCard(source, "FuckGaolian", "@fuckg");
+                    room->askForUseCard(source, "FuckGaolian", "@fuckg", false);
                     room->setPlayerFlag(source, "-FuckGao");
                 }
             }
             if(judge->card->inherits("Analeptic") && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile){
                 ServerPlayer *sour = room->findPlayerWhohasEventCard("jiangjieshi");
                 if(sour && sour != room->getCurrent()){
-                    const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
+                    const Card *fight = room->askForCard(sour, "Jiangjieshi", "@jiangshi", false, data);
                     if(fight){
                         sour->playCardEffect("@jiangjieshi2");
                         LogMessage log;

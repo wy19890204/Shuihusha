@@ -970,116 +970,162 @@ int Room::askForCardChosen(ServerPlayer *player, ServerPlayer *who, const QStrin
     return card_id;
 }
 
-const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
-                             bool is_skill, const QVariant &data, TriggerEvent trigger_event){
-    if(player->isDead())
-        return NULL;
+const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill,
+                             const QVariant &data, const QString &skill_name) {
+    return askForCard(player, pattern, prompt, is_skill, data, Card::MethodDiscard, NULL, false, skill_name);
+}
+
+const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill,
+                             const QVariant &data, Card::HandlingMethod method, ServerPlayer *to,
+                             bool isRetrial, const QString &skill_name) {
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
+    // For compatibility.
+    // ===================================================
+    TriggerEvent triggerEvent = (TriggerEvent)int(method);
+    switch (triggerEvent) {
+    case CardUsed: method = Card::MethodUse; break;
+    case CardResponsed: method = Card::MethodResponse; break;
+    case AskForRetrial: method = Card::MethodResponse; isRetrial = true; break;
+    case NonTrigger: method = Card::MethodNone; break;
+    default: ;
+    }
+    // ===================================================
+
+    //notifyMoveFocus(player, S_COMMAND_RESPONSE_CARD);
+    //_m_roomState.setCurrentCardUsePattern(pattern);
 
     const Card *card = NULL;
-
     QVariant asked = pattern;
-    if(thread->trigger(CardAsk, this, player, asked))
-        return NULL;
-    if(thread->trigger(CardAsked, this, player, asked))
-        return NULL;
-    if(has_provided){
+    if ((method == Card::MethodUse || method == Card::MethodResponse) && !isRetrial && !player->hasFlag("continuing")){
+        if(thread->trigger(CardAsk, this, player, asked))
+            return NULL;
+        if(thread->trigger(CardAsked, this, player, asked))
+            return NULL;
+    }
+/*
+    CardUseStruct::CardUseReason reason = CardUseStruct::CARD_USE_REASON_UNKNOWN;
+    if (method == Card::MethodResponse)
+        reason = CardUseStruct::CARD_USE_REASON_RESPONSE;
+    else if (method == Card::MethodUse)
+        reason = CardUseStruct::CARD_USE_REASON_RESPONSE_USE;
+    _m_roomState.setCurrentCardUseReason(reason);
+*/
+    if (player->hasFlag("continuing"))
+        setPlayerFlag(player, "-continuing");
+    if (has_provided || !player->isAlive()) {
         card = provided;
         provided = NULL;
         has_provided = false;
-    }else if(pattern.startsWith("@") || !player->isNude()){
+    }else {
         AI *ai = player->getAI();
         if(ai){
             card = ai->askForCard(pattern, prompt, data);
-            if(card)
-                thread->delay(Config.AIDelay);
-        }else{
-            bool success = doRequest(player, S_COMMAND_RESPONSE_CARD, toJsonArray(pattern, prompt));
+            if (card && player->isCardLimited(card, method)) card = NULL;
+            if (card) thread->delay(Config.AIDelay);
+        } else {
+            Json::Value arg(Json::arrayValue);
+            arg[0] = toJsonString(pattern);
+            arg[1] = toJsonString(prompt);
+            arg[2] = int(method);
+            bool success = doRequest(player, S_COMMAND_RESPONSE_CARD, arg, true);
             Json::Value clientReply = player->getClientReply();
-            if (success && !clientReply.isNull()){
+            if (success && !clientReply.isNull())
                 card = Card::Parse(toQString(clientReply));
-            }
         }
     }
 
-    if(card == NULL)
-    {
-        QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+"nil"+"_");
+    if (card == NULL) {
+        QVariant decisionData = QVariant::fromValue(QString("cardResponded:%1:%2:_nil_").arg(pattern).arg(prompt));
         thread->trigger(ChoiceMade, this, player, decisionData);
         return NULL;
     }
 
     bool continuable = false;
-    CardUseStruct card_use;
-    card_use.card = card;
-    card_use.from = player;
-    card = card->validateInResposing(player, &continuable);
+    card = card->validateInResponse(player, continuable);
+    const Card *result = NULL;
 
-    if(card){
-        if(card->getTypeId() != Card::Skill){
-            const CardPattern *card_pattern = Sanguosha->getPattern(pattern);
-            if(card_pattern == NULL || card_pattern->willThrow())
-                moveCardTo(card, NULL, Player::DiscardedPile, true);
-                //throwCard(card, trigger_event == CardDiscarded ? player: NULL);
-        }else if(card->willThrow())
-            moveCardTo(card, NULL, Player::DiscardedPile, true);
-            //throwCard(card, trigger_event == CardDiscarded ? player: NULL);
-
-        if(card->getSkillName() == "spear")
-            player->playCardEffect("Espear", "weapon");
-
-        QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+card->toString()+"_");
-        thread->trigger(ChoiceMade, this, player, decisionData);
-
-        CardStar card_ptr = card;
-        QVariant card_star = QVariant::fromValue(card_ptr);
-
-        if(trigger_event == CardResponsed || trigger_event == JinkUsed){
+    if (card) {
+        if ((method == Card::MethodUse || method == Card::MethodResponse) && !isRetrial) {
             LogMessage log;
             log.card_str = card->toString();
             log.from = player;
             log.type = QString("#%1").arg(card->getClassName());
+            if (method == Card::MethodResponse)
+                log.type += "_Resp";
             sendLog(log);
+            player->broadcastSkillInvoke(card);
+        } else if (method == Card::MethodDiscard) {
+            LogMessage log;
+            log.type = skill_name.isEmpty()? "$DiscardCard" : "$DiscardCardWithSkill";
+            log.from = player;
+            QList<int> to_discard;
+            if (card->isVirtualCard())
+                to_discard.append(card->getSubcards());
+            else
+                to_discard << card->getEffectiveId();
+            log.card_str = Card::IdsToStrings(to_discard).join("+");
+            if (!skill_name.isEmpty())
+                log.arg = skill_name;
+            sendLog(log);
+        }
+    }
 
-            bool mute = false;
-            if(card->getSkillName() == "eight_diagram" && Config.EnableEquipEffects)
-                mute = true;
+    if (card) {
+        QVariant decisionData = QVariant::fromValue("cardResponded:"+pattern+":"+prompt+":_"+card->toString()+"_");
+        thread->trigger(ChoiceMade, this, player, decisionData);
 
-            player->playCardEffect(card, mute);
-
-            if(trigger_event == JinkUsed)
-                thread->trigger(CardResponsed, this, player, card_star);
+        if (method == Card::MethodUse) {
+            if (pattern != "slash") {
+                CardMoveReason reason(CardMoveReason::S_REASON_LETUSE, player->objectName(), QString(), card->getSkillName(), QString());
+                moveCardTo(card, player, NULL, Player::PlaceTable, reason, true);
+            }
+        } else if (method == Card::MethodDiscard) {
+            CardMoveReason reason(CardMoveReason::S_REASON_THROW, player->objectName());
+            moveCardTo(card, player, NULL, Player::DiscardPile, reason);
+        } else if (method != Card::MethodNone && !isRetrial) {
+            CardMoveReason reason(CardMoveReason::S_REASON_RESPONSE, player->objectName());
+            reason.m_skillName = card->getSkillName();
+            moveCardTo(card, player, NULL, Player::DiscardPile, reason);
         }
 
-        thread->trigger(trigger_event, this, player, card_star);
-
-    }else if(continuable)
-        return askForCard(player, pattern, prompt);
-
-    return card;
+        if ((method == Card::MethodUse || method == Card::MethodResponse) && !isRetrial) {
+            if (!(method == Card::MethodUse && pattern == "slash")) {
+                ResponsedStruct resp(card, to, method == Card::MethodUse);
+                QVariant data = QVariant::fromValue(resp);
+                thread->trigger(CardResponded, this, player, data);
+                if (method == Card::MethodUse) {
+                    if (getCardPlace(card->getEffectiveId()) == Player::PlaceTable) {
+                        CardMoveReason reason(CardMoveReason::S_REASON_LETUSE, player->objectName(),
+                                              QString(), card->getSkillName(), QString());
+                        moveCardTo(card, player, NULL, Player::DiscardPile, reason, true);
+                    }
+                    CardUseStruct card_use;
+                    card_use.card = card;
+                    card_use.from = player;
+                    if (to) card_use.to << to;
+                    QVariant data2 = QVariant::fromValue(card_use);
+                    thread->trigger(CardFinished, this, player, data2);
+                }
+            }
+        }
+        result = card;
+    } else if (continuable) {
+        setPlayerFlag(player, "continuing");
+        result = askForCard(player, pattern, prompt, data, method, to, isRetrial, skill_name);
+    } else {
+        result = NULL;
+    }
+    return result;
 }
 
-const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const QString &prompt,
-                             const QVariant &data, TriggerEvent trigger_event){
-    return askForCard(player, pattern, prompt, false, data, trigger_event);
-}
-
-const Card *Room::askForCard(CardAskStruct data){
-    PlayerStar from = data.from;
-    askForCard(data.who, data.pattern, data.prompt, data.is_skill, QVariant::fromValue(from), data.trigger_event);
-}
-
-bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill){
-    if(player->isDead())
-        return NULL;
+bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QString &prompt, bool is_skill, int notice_index,
+                         Card::HandlingMethod method) {
     if(is_skill && player->property("scarecrow").toBool())
         return NULL;
-
-    QVariant asked = pattern;
-    if(thread->trigger(CardUseAsk, this, player, asked))
-        return NULL;
-
+    //notifyMoveFocus(player, S_COMMAND_USE_CARD);
+    _m_roomState.setCurrentCardUsePattern(pattern);
+    _m_roomState.setCurrentCardUseReason(CardUseStruct::CARD_USE_REASON_RESPONSE_USE);
     CardUseStruct card_use;
     bool isCardUsed = false;
     AI *ai = player->getAI();
@@ -1087,28 +1133,36 @@ bool Room::askForUseCard(ServerPlayer *player, const QString &pattern, const QSt
         //@todo: update ai interface to use the new protocol
         QString answer = ai->askForUseCard(pattern, prompt);
         if(answer != ".")
-        {
+        {            
             isCardUsed = true;
             card_use.from = player;
             card_use.parse(answer, this);
             thread->delay(Config.AIDelay);
         }
     }
-    else if (doRequest(player, S_COMMAND_USE_CARD, toJsonArray(pattern, prompt)))
+    else
     {
-        Json::Value clientReply = player->getClientReply();
-        isCardUsed = !clientReply.isNull();
-        if (isCardUsed && card_use.tryParse(clientReply, this))
-            card_use.from = player;
+        Json::Value ask_str(Json::arrayValue);
+        ask_str[0] = toJsonString(pattern);
+        ask_str[1] = toJsonString(prompt);
+        ask_str[2] = int(method);
+        ask_str[3] = notice_index;
+        bool success = doRequest(player, S_COMMAND_USE_CARD, ask_str, true);
+        if (success) {
+            Json::Value clientReply = player->getClientReply();
+            isCardUsed = !clientReply.isNull();
+            if (isCardUsed && card_use.tryParse(clientReply, this))
+                card_use.from = player;
+        }
     }
-
-    if (isCardUsed && card_use.isValid()){
+    card_use.m_reason = CardUseStruct::CARD_USE_REASON_RESPONSE_USE;
+    if (isCardUsed && card_use.isValid(pattern)) {
         QVariant decisionData = QVariant::fromValue(card_use);
         thread->trigger(ChoiceMade, this, player, decisionData);
         useCard(card_use);
-        return true;
-    }else{
-        QVariant decisionData = QVariant::fromValue("askForUseCard:"+pattern+":"+prompt+":nil");
+        return true;        
+    } else {
+        QVariant decisionData = QVariant::fromValue("cardUsed:"+pattern+":"+prompt+":nil");
         thread->trigger(ChoiceMade, this, player, decisionData);
     }
 
@@ -1857,6 +1911,7 @@ bool Room::makeSurrender(ServerPlayer* initiator)
             result = !player->isOnline();
         else
             result = player->getClientReply().asBool();
+
 
         QString playerRole = player->getRole();
         if (playerRole == "loyalist" || playerRole == "lord")

@@ -969,9 +969,12 @@ public:
 	bool askForNullification(const TrickCard *trick, ServerPlayer *from, ServerPlayer *to, bool positive);
 	bool isCanceled(const CardEffectStruct &effect);
 	int askForCardChosen(ServerPlayer *player, ServerPlayer *who, const char *flags, const char *reason);
-	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill, const QVariant &data = QVariant());
-	const Card *askForCard(ServerPlayer *player, const char *pattern, const char *prompt, const QVariant &data = QVariant());
-	bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill = false);
+    const Card *askForCard(ServerPlayer *player, const char *pattern,
+                           const char *prompt, bool is_skill, const QVariant &data, const char *skill_name);
+    const Card *askForCard(ServerPlayer *player, const char *pattern,
+                           const char *prompt, bool is_skill, const QVariant &data = QVariant(),
+                           Card::HandlingMethod method = Card::MethodDiscard, ServerPlayer *to = NULL, bool isRetrial = false, const char *skill_name = NULL);
+    bool askForUseCard(ServerPlayer *player, const char *pattern, const char *prompt, bool is_skill, int notice_index = -1, Card::HandlingMethod method = Card::MethodUse);
 	int askForAG(ServerPlayer *player, const QList<int> &card_ids, bool refusable, const char *reason);
 	const Card *askForCardShow(ServerPlayer *player, ServerPlayer *requestor, const char *reason);
 	bool askForYiji(ServerPlayer *guojia, QList<int> &cards);
