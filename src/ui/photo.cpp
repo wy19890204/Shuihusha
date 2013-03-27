@@ -382,7 +382,6 @@ void Photo::showCard(int card_id){
 void Photo::updateAvatar(){
     if(player){
         const General *general = player->getAvatarGeneral();
-        avatar_area->setToolTip(general->getSkillDescription());
         bool success = avatar.load(general->getPixmapPath("small"));
         QPixmap kingdom_icon(player->getKingdomIcon());
         kingdom_item->setPixmap(kingdom_icon);
@@ -422,7 +421,6 @@ void Photo::updateSmallAvatar(){
     const General *general2 = player->getGeneral2();
     if(general2){
         bool success = small_avatar.load(general2->getPixmapPath("tiny"));
-        small_avatar_area->setToolTip(general2->getSkillDescription());
 
         if(!success){
             QPixmap pixmap(General::TinyIconSize);
@@ -704,6 +702,8 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     if(!player)
         return;
+    avatar_area->setToolTip(player->getAllSkillDescription());
+    small_avatar_area->setToolTip(player->getAllSkillDescription());
     QSettings settings("image/system/photo.ini", QSettings::IniFormat);
 
     painter->setPen(Qt::white);

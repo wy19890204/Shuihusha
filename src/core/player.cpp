@@ -933,6 +933,35 @@ QSet<QString> Player::getAcquiredSkills() const{
     return acquired_skills;
 }
 
+QString Player::getAllSkillDescription() const{
+    //if(!getGeneral())        return QString();
+    QString local_desc = tr("Main General:<br/>%1<br/><br/>").arg(getGeneral()->getSkillDescription());
+    QString local_desc2 = getGeneral2() ? tr("Second General:<br/>%1<br/><br/>").arg(getGeneral2()->getSkillDescription())
+        : QString();
+    QString acquired_desc = QString();
+    if(!acquired_skills.isEmpty()){
+        acquired_desc = tr("Acquired:<br/>");
+        foreach(QString skill_name, acquired_skills){
+            const Skill *skill = Sanguosha->getSkill(skill_name);
+            if(skill){
+                if(skill->getFrequency() == Skill::NotSkill)
+                    continue;
+                if(getGeneral()->hasSkill(skill_name) ||
+                   (getGeneral2() && getGeneral2()->hasSkill(skill_name)))
+                    continue;
+
+                QString skill_name = Sanguosha->translate(skill->objectName());
+                QString desc = skill->getDescription();
+                desc.replace("\n", "<br/>");
+                acquired_desc.append(QString("<b>%1</b>: %2 <br/> <br/>").arg(skill_name).arg(desc));
+            }
+        }
+    }
+    QString fin = QString("%1%2%3").arg(local_desc).arg(local_desc2).arg(acquired_desc);
+    fin.replace("<br/> <br/>", "<br/>");
+    return fin;
+}
+
 bool Player::isProhibited(const Player *to, const Card *card) const{
     return Sanguosha->isProhibited(this, to, card);
 }

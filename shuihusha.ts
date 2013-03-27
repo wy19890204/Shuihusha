@@ -3205,6 +3205,24 @@
     </message>
 </context>
 <context>
+    <name>Player</name>
+    <message>
+        <location filename="src/core/player.cpp" line="939"/>
+        <source>Main General:&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;</source>
+        <translation>主武将技能&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/core/player.cpp" line="940"/>
+        <source>Second General:&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;</source>
+        <translation>副武将技能&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/core/player.cpp" line="944"/>
+        <source>Acquired:&lt;br/&gt;</source>
+        <translation>获得技能&lt;br/&gt;</translation>
+    </message>
+</context>
+<context>
     <name>PlayerCardDialog</name>
     <message>
         <location filename="src/dialog/playercarddialog.cpp" line="122"/>

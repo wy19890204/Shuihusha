@@ -201,6 +201,7 @@ public:
     QList<const Skill *> getVisibleSkillList() const;
     QStringList getVisibleSkillList(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
+    QString getAllSkillDescription() const;
     int getKingdoms() const;
 
     bool canSlashWithoutCrossbow() const;
