@@ -316,6 +316,7 @@ private slots:
     void showOwnerButtons(bool owner);
     void showJudgeResult(const QString &who, const QString &result, const QString &reason);
     void showPlayerCards();
+    void showSkillDes();
     void updateStateItem(const QString &roles);
     void adjustPrompt();
 

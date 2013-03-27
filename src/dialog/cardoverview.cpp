@@ -91,6 +91,7 @@ CardOverview::~CardOverview()
     delete ui;
 }
 
+#include <QFile>
 void CardOverview::on_tableWidget_itemSelectionChanged()
 {
     int row = ui->tableWidget->currentRow();
@@ -101,6 +102,8 @@ void CardOverview::on_tableWidget_itemSelectionChanged()
 #else
     QString pixmap_path = QString("image/big-card/%1.png").arg(card->objectName());
 #endif
+    if(!QFile::exists(pixmap_path))
+        pixmap_path = QString("image/big-card/%1.png").arg(card->objectName());
 
     ui->cardLabel->setPixmap(pixmap_path);
     ui->cardDescriptionBox->setText(card->getDescription());

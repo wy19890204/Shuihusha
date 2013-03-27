@@ -1023,7 +1023,7 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
                 if(player->getGeneral()->hasSkill(skill_name) ||
                    (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
                     continue;
-                if(skill->getLocation() == Skill::Right)
+                //if(skill->getLocation() == Skill::Right)
                     skills << skill;
             }
         }
@@ -1031,8 +1031,9 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         if(!skills.isEmpty()){
             menu->addSeparator();
             foreach(const Skill *skill, skills){
-                QString tooltip = skill->getDescription();
-                menu->addAction(Sanguosha->translate(skill->objectName()))->setToolTip(tooltip);
+                QAction *qa = menu->addAction(Sanguosha->translate(skill->objectName()));
+                qa->setData(skill->objectName());
+                connect(qa, SIGNAL(triggered()), this, SLOT(showSkillDes()));
             }
         }
 
@@ -1812,6 +1813,8 @@ void RoomScene::useSelectedCard(){
 
             break;
         }
+    default:
+        break;
     }
 
     const ViewAsSkill *skill = dashboard->currentSkill();
@@ -2020,22 +2023,14 @@ void RoomScene::unselectAllTargets(const QGraphicsItem *except){
 
 void RoomScene::doTimeout(){
     switch(ClientInstance->getStatus()){
-    case Client::Responsing:{
-            doCancelButton();
-            break;
-        }
-
     case Client::Playing:{
             discard_button->click();
             break;
         }
 
-    case Client::Discarding:{
-            doCancelButton();
 
-            break;
-        }
-
+    case Client::Responsing:
+    case Client::Discarding:
     case Client::ExecDialog:{
             doCancelButton();
 
@@ -2238,8 +2233,9 @@ void RoomScene::updateStatus(Client::Status status){
 
             break;
         }
+    default:
+        break;
     }
-
 
     foreach(QAbstractButton *button, skill_buttons){
         const ViewAsSkill *skill = button2skill.value(button, NULL);
@@ -3235,6 +3231,16 @@ void RoomScene::showPlayerCards(){
         viewer->shift();
         viewer->view(player);
         viewer->setZValue(card_container->zValue());
+    }
+}
+
+void RoomScene::showSkillDes(){
+    QAction *action = qobject_cast<QAction *>(sender());
+
+    if(action){
+        QString des = Sanguosha->getSkill(action->data().toString())->getDescription();
+        QMessageBox::information(main_window, Sanguosha->translate(action->data().toString()),
+                                 des);
     }
 }
 
