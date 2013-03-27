@@ -229,11 +229,22 @@ void ChooseGeneralDialog::freeChoose(){
 }
 
 void ChooseGeneralDialog::randomChoose(){
-    int n = qrand() % generals.length();
-    QString name = generals.at(n)->objectName();
-    emit random_choosen(name);
-    //ClientInstance->onPlayerChooseGeneral(name);
-    close();
+    int n = qrand() % generals.length() + 5;
+    QString name;
+    if(n > generals.length() - 1){
+        int m = qrand() % 5;
+        switch(m){
+        case 0: name = "zhangbao"; break;
+        case 1: name = "liruilan"; break;
+        case 2: name = "fangjie"; break;
+        case 3: name = "renyuan"; break;
+        case 4: name = "xisheng";
+        }
+    }
+    else
+        name = generals.at(n)->objectName();
+    ClientInstance->onPlayerChooseGeneral(name);
+    accept();
 }
 
 void ChooseGeneralDialog::timerEvent(QTimerEvent *event){

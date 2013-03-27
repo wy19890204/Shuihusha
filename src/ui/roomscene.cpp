@@ -1023,16 +1023,18 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
                 if(player->getGeneral()->hasSkill(skill_name) ||
                    (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
                     continue;
-                if(skill->getLocation() == Skill::Right)
+                //if(skill->getLocation() == Skill::Right){
                     skills << skill;
+                //}
             }
         }
 
         if(!skills.isEmpty()){
             menu->addSeparator();
             foreach(const Skill *skill, skills){
-                QString tooltip = skill->getDescription();
-                menu->addAction(Sanguosha->translate(skill->objectName()))->setToolTip(tooltip);
+                QAction *qa = menu->addAction(Sanguosha->translate(skill->objectName()));
+                qa->setData(skill->objectName());
+                connect(qa, SIGNAL(triggered()), this, SLOT(showSkillDes()));
             }
         }
 
@@ -1749,8 +1751,12 @@ void RoomScene::useSelectedCard(){
             dashboard->unselectAll();
             break;
         }
+    case Client::AskForShowOrPindian: {
 
-    case Client::Discarding: {
+            break;
+        }
+    case Client::Discarding:
+    case Client::Exchanging: {
             const Card *card = dashboard->pendingCard();
             if(card){
                 ClientInstance->onPlayerDiscardCards(card);
@@ -1812,6 +1818,8 @@ void RoomScene::useSelectedCard(){
 
             break;
         }
+    default:
+        break;
     }
 
     const ViewAsSkill *skill = dashboard->currentSkill();
@@ -2020,25 +2028,17 @@ void RoomScene::unselectAllTargets(const QGraphicsItem *except){
 
 void RoomScene::doTimeout(){
     switch(ClientInstance->getStatus()){
-    case Client::Responsing:{
-            doCancelButton();
-            break;
-        }
-
     case Client::Playing:{
             discard_button->click();
             break;
         }
 
-    case Client::Discarding:{
+    case Client::Responding:
+    case Client::Discarding:
+    case Client::Exchanging:
+    case Client::ExecDialog:
+    case Client::AskForShowOrPindian: {
             doCancelButton();
-
-            break;
-        }
-
-    case Client::ExecDialog:{
-            doCancelButton();
-
             break;
         }
 
@@ -2117,6 +2117,9 @@ void RoomScene::updateStatus(Client::Status status){
                 if(Config.AutoSelect)
                     dashboard->selectCard(pattern);
             }
+            break;
+        }
+    case Client::AskForShowOrPindian: {
 
             break;
         }
@@ -2130,7 +2133,8 @@ void RoomScene::updateStatus(Client::Status status){
             break;
         }
 
-    case Client::Discarding:{
+    case Client::Discarding:
+    case Client::Exchanging: {
             prompt_box->appear();
 
             ok_button->setEnabled(false);
@@ -2138,7 +2142,9 @@ void RoomScene::updateStatus(Client::Status status){
             discard_button->setEnabled(false);
 
             discard_skill->setNum(ClientInstance->discard_num);
+            discard_skill->setMinNum(ClientInstance->discard_num);
             discard_skill->setIncludeEquip(ClientInstance->m_canDiscardEquip);
+            //discard_skill->setIsDiscard(newStatus != Client::Exchanging);
             dashboard->startPending(discard_skill);
             break;
         }
@@ -2238,6 +2244,8 @@ void RoomScene::updateStatus(Client::Status status){
 
             break;
         }
+    default:
+        break;
     }
 
 
@@ -2399,8 +2407,12 @@ void RoomScene::doCancelButton(){
             dashboard->stopPending();
             break;
         }
-
-    case Client::Discarding:{
+    case Client::AskForShowOrPindian: {
+            break;
+        }
+    case Client::Discarding:
+    case Client::Exchanging: {
+            dashboard->unselectAll();
             dashboard->stopPending();
             ClientInstance->onPlayerDiscardCards(NULL);
             prompt_box->disappear();
@@ -3236,6 +3248,16 @@ void RoomScene::showPlayerCards(){
         viewer->shift();
         viewer->view(player);
         viewer->setZValue(card_container->zValue());
+    }
+}
+
+void RoomScene::showSkillDes(){
+    QAction *action = qobject_cast<QAction *>(sender());
+
+    if(action){
+        QString des = Sanguosha->getSkill(action->data().toString())->getDescription();
+        QMessageBox::information(main_window, Sanguosha->translate(action->data().toString()),
+                                 des);
     }
 }
 

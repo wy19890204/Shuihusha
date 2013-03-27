@@ -78,5 +78,11 @@ function SmartAI:crazyAI(event, player, data)
 				player:skip(sgs.Player_Discard)
 			end
 		end
+	elseif event == sgs.PhaseEnd then
+		if player:getPhase() == sgs.Player_Start then -- 回合开始阶段随机产生跳出判定阶段效果
+			if not player:getJudgingArea():isEmpty() and math.random(0, 2) == 1 then
+				player:skip(sgs.Player_Judge)
+			end
+		end
 	end
 end

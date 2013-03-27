@@ -24,7 +24,7 @@ public:
     enum Status {
         NotActive = 0x00,
         Responding = 0x01,
-		Responsing = Responding,
+        Responsing = Responding,
         Playing = 0x02,
         Discarding = 0x03,
         Exchanging = 0x04,
