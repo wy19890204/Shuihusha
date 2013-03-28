@@ -19,7 +19,7 @@ public:
     void setCards(const QList<int> &card_ids);
     QTextDocument *getMarkDoc(bool dashboard = true) const;
     void changePile(const QString &name, bool add, int card_id);
-    QString getDeathPixmapPath() const;
+    QString getDeathPixmapPath(bool isdash = true) const;
     void setHandcardNum(int n);
     virtual QString getGameMode() const;
 

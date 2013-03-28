@@ -168,9 +168,9 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	for _, card in ipairs(cards) do
 		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
 			local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. targets[1]:objectName()
+					.. targets[1]
 			if #targets > 1 then
-				src = src .. "+" .. targets[2]:objectName()
+				src = src .. "+" .. targets[2]
 			end
 			self:speak("lieji")
 			return src

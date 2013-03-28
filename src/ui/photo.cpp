@@ -778,9 +778,9 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     if(player->isDead()){
         if(death_pixmap.isNull()){
-            QString path = player->getDeathPixmapPath();
+            QString path = player->getDeathPixmapPath(false);
             death_pixmap.load(path);
-            death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
+            //death_pixmap = death_pixmap.scaled(death_pixmap.size() / (1.25));
         }
         QList<QVariant> coord = settings.value("death_pixmap/pos").toList();
         painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), death_pixmap);
