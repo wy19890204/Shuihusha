@@ -37,7 +37,6 @@ StartScene::StartScene()
     button_group->shift();
     //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
-    //addItem(button_group);
 }
 
 void StartScene::addButton(QAction *action){

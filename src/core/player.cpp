@@ -934,13 +934,13 @@ QSet<QString> Player::getAcquiredSkills() const{
 }
 
 QString Player::getAllSkillDescription() const{
-    //if(!getGeneral())        return QString();
-    QString local_desc = tr("Main General:<br/>%1<br/><br/>").arg(getGeneral()->getSkillDescription());
-    QString local_desc2 = getGeneral2() ? tr("Second General:<br/>%1<br/><br/>").arg(getGeneral2()->getSkillDescription())
+    if(!getGeneral())        return QString();
+    QString local_desc = tr("<font color=red size=4>Main:</font><br/>%1").arg(getGeneral()->getSkillDescription());
+    QString local_desc2 = getGeneral2() ? tr("<font color=blue size=4>Extra:</font><br/>%1").arg(getGeneral2()->getSkillDescription())
         : QString();
     QString acquired_desc = QString();
     if(!acquired_skills.isEmpty()){
-        acquired_desc = tr("Acquired:<br/>");
+        acquired_desc = tr("<font color=green size=4>Acquired:</font><br/>");
         foreach(QString skill_name, acquired_skills){
             const Skill *skill = Sanguosha->getSkill(skill_name);
             if(skill){
