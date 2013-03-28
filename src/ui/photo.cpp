@@ -792,16 +792,10 @@ void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     if(!equip)
         return;
 
-    QRect suit_rect(2, 120 + order * 14, 20, 20);
-    painter->drawPixmap(suit_rect, equip->getSuitPixmap(false));
-
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
-    painter->setPen(Qt::white);
-    QFont bold_font;
-    bold_font.setBold(true);
-    //painter->setFont(bold_font);
-    painter->drawText(25, 115 + 19 + order * 15, card->getNumberString());
-    painter->drawText(39, 115 + 19 + order * 15, card->label());
+    QRect tiny_rect(2, 120 + order * 15, 122, 20);
+    QPixmap tiny_equip(QString("image/tiny-equips/%1.png").arg(card->objectName()));
+    painter->drawPixmap(tiny_rect, tiny_equip);
 }
 
 QVariant Photo::itemChange(GraphicsItemChange change, const QVariant &value){
