@@ -33,7 +33,7 @@ StartScene::StartScene()
     server_log = NULL;
 
     //Provide coordinates for the button
-    button_group = new Pixmap("image/system/button/main/background.png");
+    button_group = new Pixmap("image/system/button/plate/background.png");
     button_group->shift();
     //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
@@ -76,14 +76,14 @@ void StartScene::addMainButton(QList<QAction *> actions){
         {145, 360}, //8.thanks
     };
 
-    QString path = "image/system/button/main/background.png";
+    QString path = "image/system/button/plate/background.png";
     button_plate = new QGraphicsPixmapItem(QPixmap(path));
     button_plate->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
     button_plate->setFlags(QGraphicsItem::ItemIsMovable);
 
     int count = 0;
     foreach(QAction *action, actions){
-        IrregularButton *tianji = new IrregularButton(tianjis_name[count], "main");
+        IrregularButton *tianji = new IrregularButton(tianjis_name[count], "plate");
         tianji->setMute(false);
         tianji->setParentItem(button_plate);
         //tianji->setPos(button_plate->pos());

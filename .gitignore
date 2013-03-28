@@ -25,4 +25,4 @@ lua*.dll
 extensions/zhangong/img/*.*
 extensions/zhangong/zhangong.data
 extensions/litex_sqlite3.dll
-image/system/button/main*
+image/system/button/plate*
