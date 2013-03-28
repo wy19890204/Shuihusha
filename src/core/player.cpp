@@ -934,7 +934,7 @@ QSet<QString> Player::getAcquiredSkills() const{
 }
 
 QString Player::getAllSkillDescription() const{
-    if(!getGeneral())        return QString();
+    //if(!getGeneral())        return QString();
     QString local_desc = tr("<font color=red size=4>Main:</font><br/>%1").arg(getGeneral()->getSkillDescription());
     QString local_desc2 = getGeneral2() ? tr("<font color=blue size=4>Extra:</font><br/>%1").arg(getGeneral2()->getSkillDescription())
         : QString();

@@ -157,6 +157,7 @@ void MainWindow::restoreFromConfig(){
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
     ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
+    ui->actionEquip_style->setChecked(Config.value("UI/EquipStyle", true).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -758,6 +759,12 @@ void MainWindow::on_actionButton_style_toggled(bool checked)
 {
     if(Config.value("UI/ButtonStyle").toBool() != checked)
         Config.setValue("UI/ButtonStyle", checked);
+}
+
+void MainWindow::on_actionEquip_style_toggled(bool checked)
+{
+    if(Config.value("UI/EquipStyle").toBool() != checked)
+        Config.setValue("UI/EquipStyle", checked);
 }
 
 #include <QGroupBox>
