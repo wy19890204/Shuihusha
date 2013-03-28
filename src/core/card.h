@@ -49,7 +49,7 @@ public:
         Basic,
         Trick,
         Equip,
-        Events,
+        Events
     };
 
     // constructor
