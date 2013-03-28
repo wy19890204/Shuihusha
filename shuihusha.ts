@@ -2226,7 +2226,12 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="530"/>
         <source>Button style</source>
-        <translation>启用新版界面</translation>
+        <translation>启用天机铜盘</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/mainwindow.ui" line="535"/>
+        <source>Equip style</source>
+        <translation>启用图片装备栏</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="514"/>

@@ -793,7 +793,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
                 return true;
             }
-            if(Config.value("Cheat/HandsUp", false).toBool()){
+            if(Config.value("Cheat/HandsUp", false).toBool() && room->getMode() != "02_1v1"){
                 bool allrobot = true;
                 QStringList winners;
                 foreach(ServerPlayer *robot, room->getOtherPlayers(player)){

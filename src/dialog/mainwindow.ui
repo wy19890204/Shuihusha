@@ -85,6 +85,7 @@
     <addaction name="actionAuto_target"/>
     <addaction name="separator"/>
     <addaction name="actionButton_style"/>
+    <addaction name="actionEquip_style"/>
    </widget>
    <widget class="QMenu" name="menuCheat">
     <property name="enabled">
@@ -528,6 +529,14 @@
    </property>
    <property name="text">
     <string>Button style</string>
+   </property>
+  </action>
+  <action name="actionEquip_style">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Equip style</string>
    </property>
   </action>
  </widget>

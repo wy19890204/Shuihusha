@@ -3274,11 +3274,9 @@ void KOFOrderBox::revealGeneral(const QString &name){
         const General *general = Sanguosha->getGeneral(name);
         if(general){
             Pixmap *avatar = avatars[revealed ++];
-            avatar->changePixmap(general->getPixmapPath("small"));
+            avatar->changePixmap(general->getPixmapPath("small"), QRect(0, 0, 122, 50));
+            avatar->setToolTip(general->getSkillDescription());
             avatar->setObjectName(name);
-
-            //QRect arrayRect(0,0,122,50); //截取图片区域
-            //QGraphicsRectItem *rect_item = new QGraphicsRectItem(arrayRect, avatar);
         }
     }
 }
@@ -3292,7 +3290,7 @@ void KOFOrderBox::killPlayer(const QString &general_name){
             death->moveBy(10, -10);
             death->setScale(0.6);
 
-            avatar->setOpacity(0.7);
+            //avatar->setOpacity(0.7);
             avatar->makeGray();
             avatar->setEnabled(false);
 
@@ -3886,6 +3884,7 @@ void RoomScene::surrender(){
 
 void RoomScene::fillGenerals1v1(const QStringList &names){
     selector_box = new Pixmap("image/system/1v1/select.png", true);
+    selector_box->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(selector_box);
     selector_box->shift();
 
@@ -3930,6 +3929,7 @@ void RoomScene::fillGenerals3v3(const QStringList &names){
 
     QString path = QString("image/system/3v3/select-%1.png").arg(temperature);
     selector_box = new Pixmap(path, true);
+    selector_box->setFlags(QGraphicsItem::ItemIsMovable);
     addItem(selector_box);
     selector_box->setZValue(guanxing_box->zValue());
     selector_box->shift();
@@ -4062,9 +4062,9 @@ void RoomScene::startArrange(){
                 << QPointF(489, 291);
     }else{
         mode = "1v1";
-        positions << QPointF(84, 269)
-                << QPointF(214, 269)
-                << QPointF(344, 269);
+        positions << QPointF(83, 236)
+                << QPointF(214, 236)
+                << QPointF(343, 236);
     }
 
     selector_box->changePixmap(QString("image/system/%1/arrange.png").arg(mode));
@@ -4086,7 +4086,10 @@ void RoomScene::startArrange(){
 
     arrange_button = new Button(tr("Complete"), 0.8);
     arrange_button->setParentItem(selector_box);
-    arrange_button->setPos(600, 330);
+    if(mode == "1v1")
+        arrange_button->setPos(175, 370);
+    else
+        arrange_button->setPos(600, 330);
     connect(arrange_button, SIGNAL(clicked()), this, SLOT(finishArrange()));
 }
 
