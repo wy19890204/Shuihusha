@@ -2911,7 +2911,7 @@ void Room::startGame(){
 
     GameRule *game_rule;
     if(Config.EnableScene)	//changjing
-        game_rule = new SceneRule(this);	//changjing
+        game_rule = new SceneRule(this);
     else
         game_rule = new GameRule(this);
 

@@ -202,15 +202,17 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
 
                 case 4:
                     foreach(ServerPlayer *p, room->getAlivePlayers()) {
-                        if(!p->isChained())
-                            room->setPlayerProperty(p, "chained", true);
+                        if(!p->isChained()){
+                            p->setChained(true);
+                            room->broadcastProperty(p, "chained");
+                            room->setEmotion(p, "chain");
+                        }
                     }
                     break;
 
                 case 8:
-                    foreach(ServerPlayer *p, room->getAlivePlayers()) {
+                    foreach(ServerPlayer *p, room->getAlivePlayers())
                         room->showAllCards(room->askForPlayerChosen(p, room->getOtherPlayers(p), "Scene8"), p);
-                    }
                     break;
 
                 case 10:
@@ -368,9 +370,8 @@ bool SceneRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QV
                         }
                     }
 
-                    foreach(int card, cardList) {
+                    foreach(int card, cardList)
                         room->throwCard(card);
-                    }
 
                     room->fillAG(cardList);
                     foreach(ServerPlayer *p, affectedPlayers) {

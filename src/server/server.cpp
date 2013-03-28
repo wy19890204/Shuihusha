@@ -266,9 +266,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     reinca_unchange_checkbox->setVisible(Config.value("ReincaPersist", false).toBool());
     connect(reincarnation_checkbox, SIGNAL(toggled(bool)), reinca_unchange_checkbox, SLOT(setVisible(bool)));
 
-    //hide&disable
-    scene_checkbox->setEnabled(false);
-
     return widget;
 }
 
