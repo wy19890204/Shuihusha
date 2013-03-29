@@ -104,6 +104,7 @@ public:
 
 HeiwuCard::HeiwuCard(){
     target_fixed = true;
+    will_throw = false;
 }
 
 void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
@@ -156,9 +157,9 @@ public:
         room->loseMaxHp(tg, 1);
 
         if(tg->getGeneralName() == "tongguan")
-            room->setPlayerProperty(tg, "general", "tongguanf");
+            room->transfigure(tg, "tongguanf", false, false);
         else if(tg->getGeneral2Name() == "tongguan")
-            room->setPlayerProperty(tg, "general2", "tongguanf");
+            room->transfigure(tg, "%tongguanf", false, false);
 
         room->getThread()->delay(2500);
         //room->setPlayerMark(tg, "aoxiang_wake", 1);

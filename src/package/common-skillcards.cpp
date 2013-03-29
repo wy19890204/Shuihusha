@@ -144,7 +144,7 @@ void UbunbCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *
         qShuffle(all_generals);
         QStringList choices = all_generals.mid(0, 4);
         QString name = room->askForGeneral(source, choices, "guansheng");
-        room->transfigure(targets.first(), name, false, true, targets.first()->getGeneralName());
+        room->transfigure(targets.first(), name, false, true);
     }
     else{
         QString role = targets.last()->getRole();

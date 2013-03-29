@@ -201,7 +201,7 @@ public:
     QList<ServerPlayer *> findOnlinePlayers() const;
     void installEquip(ServerPlayer *player, const QString &equip_name);
     void resetAI(ServerPlayer *player);
-    void transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start = true, const QString &old_general = QString(""));
+    void transfigure(ServerPlayer *player, const QString &new_general, bool full_state = true, bool invoke_start = true);
     void doSwap();
     void swapSeat(ServerPlayer *a, ServerPlayer *b);
     void jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag = 1);

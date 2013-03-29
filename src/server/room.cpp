@@ -1502,36 +1502,45 @@ void Room::resetAI(ServerPlayer *player){
     }
 }
 
-void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, const QString &old_general){
-    if(!Sanguosha->getGeneral(new_general))
+void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start){
+    QString general = new_general;
+    if(new_general.startsWith("%"))
+        general.remove("%");
+    if(!Sanguosha->getGeneral(general))
         return;
-    LogMessage log;
-    log.type = "#Transfigure";
-    log.from = player;
-    log.arg = new_general;
-    sendLog(log);
 
-    QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(new_general);
+    if(!new_general.startsWith("%")){
+        LogMessage log;
+        log.type = "#Transfigure";
+        log.from = player;
+        log.arg = general;
+        sendLog(log);
+    }
+
+    QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(general);
     player->invoke("transfigure", transfigure_str);
 
-    if(Config.Enable2ndGeneral && !old_general.isEmpty() && player->getGeneral2Name() == old_general){
-        setPlayerProperty(player, "general2", new_general);
+    if(new_general.startsWith("%")){
+        setPlayerProperty(player, "general2", general);
         broadcastProperty(player, "general2");
     }
     else{
-        setPlayerProperty(player, "general", new_general);
+        setPlayerProperty(player, "general", general);
         broadcastProperty(player, "general");
+        thread->addPlayerSkills(player, invoke_start);
     }
-    thread->addPlayerSkills(player, invoke_start);
 
-    player->setMaxHP(player->getGeneralMaxHP());
-    broadcastProperty(player, "maxhp");
+    if(!new_general.startsWith("%")){
+        player->setMaxHP(player->getGeneralMaxHP());
+        broadcastProperty(player, "maxhp");
+    }
 
-    if(full_state)
+    if(full_state){
         player->setHp(player->getMaxHP());
-    broadcastProperty(player, "hp");
+        broadcastProperty(player, "hp");
+    }
 
-    resetAI(player);
+    //resetAI(player);
 }
 
 lua_State *Room::getLuaState() const{
