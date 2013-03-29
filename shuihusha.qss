@@ -3,12 +3,14 @@ QProgressBar{
 	border: 2px solid black;
 	border-radius: 2px;
 	background: transparent;
+	background-image: url(image/system/controls/progress-0.png);
 	padding: 0px;
 	text-align : center ;
 }
 
 QProgressBar::chunk{
 	background: #B22222;
+	background-image: url(image/system/controls/progress-100.png);
 }
 
 QTextEdit{
@@ -24,7 +26,6 @@ QTextEdit[description="true"]{
 }
 
 QTextEdit QScrollBar:vertical {
-
 	margin: 22px 0 22px 0;
 }
 
@@ -68,7 +69,7 @@ QScrollBar::up-arrow:vertical
 
 QScrollBar::handle:vertical
 {
-        border-image: url(image/system/button/scroll-handle.png);
+	border-image: url(image/system/button/scroll-handle.png);
 }
 
 QScrollBar::down-arrow:vertical
