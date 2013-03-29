@@ -65,12 +65,12 @@ Photo::Photo()
     settings.endGroup();
 
     progress_bar = new QProgressBar;
+    progress_bar->setObjectName("photo-bar");
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
     progress_bar->setValue(0);
     progress_bar->hide();
-    progress_bar->setMaximumHeight(10);
-    progress_bar->setMaximumWidth(pixmap.width() - 10);
+    progress_bar->setFixedSize(198, 13);
     progress_bar->setTextVisible(false);
     timer_id = 0;
 

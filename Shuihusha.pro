@@ -113,6 +113,7 @@ SOURCES += \
 	src/ui/roomscene.cpp \
 	src/ui/sprite.cpp \
 	src/ui/startscene.cpp \
+	#src/ui/TimedProgressBar.cpp \
 	src/ui/window.cpp \
 	src/util/detector.cpp \
 	src/util/nativesocket.cpp \
@@ -254,6 +255,7 @@ HEADERS += \
 	src/ui/roomscene.h \
 	src/ui/sprite.h \
 	src/ui/startscene.h \
+	#src/ui/TimedProgressBar.h \
 	src/ui/window.h \
 	src/util/detector.h \
 	src/util/nativesocket.h \
