@@ -35,8 +35,9 @@ CardItem::CardItem(const Card *card)
         break;
     case Card::Diamond:
         cardsuit_pixmap = cardsuit_pixmap.copy(27, 28, 27, 28);
-    default:
         break;
+    default:
+        cardsuit_pixmap = QPixmap();
     }
     number_pixmap.load(QString("image/system/card/%1/%2.png").arg(card->isBlack() ? "black" : "red").arg(card->getNumberString()));
     icon_pixmap.load(card->getIconPath());

@@ -9,6 +9,7 @@ class QCommandLinkButton;
 #include <QTableWidgetItem>
 #include <QButtonGroup>
 #include <QVBoxLayout>
+#include <QLabel>
 
 namespace Ui {
     class GeneralOverview;
@@ -31,6 +32,7 @@ private:
     void addLines(const Skill *skill, int wake_index = 0);
     void addWakeLines(const QString &general_name);
     void addCopyAction(QCommandLinkButton *button);
+    void addChangeAction(QLabel *label);
 
 private slots:
     void playEffect();

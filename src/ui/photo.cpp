@@ -65,12 +65,12 @@ Photo::Photo()
     settings.endGroup();
 
     progress_bar = new QProgressBar;
+    progress_bar->setObjectName("photo-bar");
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
     progress_bar->setValue(0);
     progress_bar->hide();
-    progress_bar->setMaximumHeight(15);
-    progress_bar->setMaximumWidth(pixmap.width());
+    progress_bar->setFixedSize(198, 13);
     progress_bar->setTextVisible(false);
     timer_id = 0;
 
@@ -84,7 +84,12 @@ Photo::Photo()
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(this);
     widget->setWidget(progress_bar);
-    widget->setPos( -6 , - 25);
+    settings.beginGroup("progress_bar");
+    coord = settings.value("pos").toList();
+    widget->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    widget->setZValue(coord.at(2).toReal());
+    widget->setOpacity(settings.value("opacity").toReal());
+    settings.endGroup();
 
     skill_name_item = new QGraphicsSimpleTextItem(this);
     skill_name_item->setBrush(Qt::white);

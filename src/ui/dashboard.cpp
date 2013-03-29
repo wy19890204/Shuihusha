@@ -519,15 +519,16 @@ QPushButton *Dashboard::addButton(const QString &name, int x, bool from_left){
 
 QProgressBar *Dashboard::addProgressBar(){
     QProgressBar *progress_bar = new QProgressBar;
+    progress_bar->setObjectName("dash-bar");
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
-    progress_bar->setFixedSize(300, 15);
+    progress_bar->setFixedSize(472, 20);
     progress_bar->setTextVisible(false);
 
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(right);
     widget->setWidget(progress_bar);
     widget->setParentItem(middle);
-    widget->setPos(300, - 25);
+    widget->setPos(300, - 20);
 
     progress_bar->hide();
 

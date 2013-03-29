@@ -1,14 +1,31 @@
-QProgressBar{
+QProgressBar#dash-bar{
 	color : solid black;
-	border: 2px solid black;
-	border-radius: 2px;
+	border: 2px solid transparent;
+	border-radius: 2px 2px 2px 2px;
 	background: transparent;
-	padding: 0px;
+	background-image: url(image/system/controls/progress-dash-back.png);
+	padding: 2px 54px;
 	text-align : center ;
 }
 
-QProgressBar::chunk{
-	background: #B22222;
+QProgressBar#dash-bar::chunk{
+	background: transparent;
+	background-image: url(image/system/controls/progress-dash-chunk.png);
+}
+
+QProgressBar#photo-bar{
+	color : solid black;
+	border: 2px solid transparent;
+	border-radius: 2px 2px 2px 2px;
+	background: transparent;
+	background-image: url(image/system/controls/progress-photo-back.png);
+	padding: 1px 32px;
+	text-align : center ;
+}
+
+QProgressBar#photo-bar::chunk{
+	background: transparent;
+	background-image: url(image/system/controls/progress-photo-chunk.png);
 }
 
 QTextEdit{
@@ -24,7 +41,6 @@ QTextEdit[description="true"]{
 }
 
 QTextEdit QScrollBar:vertical {
-
 	margin: 22px 0 22px 0;
 }
 
@@ -68,7 +84,7 @@ QScrollBar::up-arrow:vertical
 
 QScrollBar::handle:vertical
 {
-        border-image: url(image/system/button/scroll-handle.png);
+	border-image: url(image/system/button/scroll-handle.png);
 }
 
 QScrollBar::down-arrow:vertical

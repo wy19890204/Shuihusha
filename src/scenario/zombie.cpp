@@ -13,7 +13,7 @@ public:
         Room *room = player->getRoom();
 
         //room->setPlayerProperty(player, "general2", "zombie");
-        //room->getThread()->addPlayerSkills(player, false);
+        //room->getThread()->addPlayerSkills(player);
         room->transfigure(player, "%zombie", false, false);
 
         int maxhp = killer ? (killer->getMaxHP() + 1)/2 : 5;

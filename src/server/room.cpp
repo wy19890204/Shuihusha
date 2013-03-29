@@ -1509,38 +1509,35 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     if(!Sanguosha->getGeneral(general))
         return;
 
-    if(!new_general.startsWith("%")){
-        LogMessage log;
-        log.type = "#Transfigure";
-        log.from = player;
-        log.arg = general;
-        sendLog(log);
+    if(new_general.startsWith("%")){
+        player->invoke("transfigure", player->getGeneral2Name() + ":" + general);
+        setPlayerProperty(player, "general2", general);
+        thread->addPlayerSkills(player, true);
+        return;
     }
+
+    LogMessage log;
+    log.type = "#Transfigure";
+    log.from = player;
+    log.arg = general;
+    sendLog(log);
 
     QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(general);
     player->invoke("transfigure", transfigure_str);
 
-    if(new_general.startsWith("%")){
-        setPlayerProperty(player, "general2", general);
-        broadcastProperty(player, "general2");
-    }
-    else{
-        setPlayerProperty(player, "general", general);
-        broadcastProperty(player, "general");
-        thread->addPlayerSkills(player, invoke_start);
-    }
+    setPlayerProperty(player, "general", general);
+    broadcastProperty(player, "general");
+    thread->addPlayerSkills(player, invoke_start);
 
-    if(!new_general.startsWith("%")){
-        player->setMaxHP(player->getGeneralMaxHP());
-        broadcastProperty(player, "maxhp");
-    }
+    player->setMaxHP(player->getGeneralMaxHP());
+    broadcastProperty(player, "maxhp");
 
     if(full_state){
         player->setHp(player->getMaxHP());
         broadcastProperty(player, "hp");
     }
 
-    //resetAI(player);
+    resetAI(player);
 }
 
 lua_State *Room::getLuaState() const{
