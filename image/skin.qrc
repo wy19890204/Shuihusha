@@ -18,11 +18,5 @@
 		<file>system/button/free-regulate.png</file>
 		<file>system/button/free-regulate-disabled.png</file>
 		<file>system/button/irregular/background.png</file>
-		<file>system/button/frequent_checkbox/checked.png</file>
-		<file>system/button/frequent_checkbox/checked_hover.png</file>
-		<file>system/button/frequent_checkbox/checked_press.png</file>
-		<file>system/button/frequent_checkbox/unchecked.png</file>
-		<file>system/button/frequent_checkbox/unchecked_hover.png</file>
-		<file>system/button/frequent_checkbox/unchecked_press.png</file>
 	</qresource>
 </RCC>

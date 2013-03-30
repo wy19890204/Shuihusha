@@ -157,61 +157,105 @@ QPushButton#uniform{
 }
 
 #skill_bar_container QPushButton#normal{
-	background-image: url(:system/button/skill/normal/normal.png);
-		border: 1px solid black;
+	background-image: url(image/system/button/skill/normal/normal.png);
 		border-radius: 2px;
 	color: yellow;
 	font: 12px;
-	padding: 6px 12px 6px 12px;
+}
+#skill_bar_container QPushButton#normal:hover{
+	background-image: url(image/system/button/skill/normal/hover.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#normal:pressed{
+	background-image: url(image/system/button/skill/normal/down.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
 }
 #skill_bar_container QPushButton#normal:disabled{
-	background-image: url(:system/button/skill/normal/disabled.png);
+	background-image: url(image/system/button/skill/normal/disabled.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;
 }
+
 #skill_bar_container QPushButton#compulsory{
-	background-image: url(:system/button/skill/compulsory/normal.png);
-		border: 1px solid black;
+	background-image: url(image/system/button/skill/compulsory/normal.png);
 		border-radius: 2px;
 	color: yellow;
 	font: 12px;
-	padding: 6px 12px 6px 12px;
+}
+#skill_bar_container QPushButton#compulsory:hover{
+	background-image: url(image/system/button/skill/compulsory/hover.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#compulsory:pressed{
+	background-image: url(image/system/button/skill/compulsory/down.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
 }
 #skill_bar_container QPushButton#compulsory:disabled{
-	background-image: url(:system/button/skill/compulsory/disabled.png);
+	background-image: url(image/system/button/skill/compulsory/disabled.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;
 }
+
 #skill_bar_container QPushButton#limited{
-	background-image: url(:system/button/skill/limited/normal.png);
-		border: 1px solid black;
+	background-image: url(image/system/button/skill/limited/normal.png);
 		border-radius: 2px;
 	color: yellow;
 	font: 12px;
-	padding: 6px 12px 6px 12px;
+}
+#skill_bar_container QPushButton#limited:hover{
+	background-image: url(image/system/button/skill/limited/hover.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#limited:pressed{
+	background-image: url(image/system/button/skill/limited/down.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
 }
 #skill_bar_container QPushButton#limited:disabled{
-	background-image: url(:system/button/skill/limited/disabled.png);
+	background-image: url(image/system/button/skill/limited/disabled.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;
 }
+
 #skill_bar_container QPushButton#awaken{
-	background-image: url(:system/button/skill/awaken/normal.png);
-		border: 1px solid black;
+	background-image: url(image/system/button/skill/awaken/normal.png);
 		border-radius: 2px;
 	color: yellow;
 	font: 12px;
-	padding: 6px 12px 6px 12px;
+}
+#skill_bar_container QPushButton#awaken:hover{
+	background-image: url(image/system/button/skill/awaken/hover.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#awaken:pressed{
+	background-image: url(image/system/button/skill/awaken/down.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
 }
 #skill_bar_container QPushButton#awaken:disabled{
-	background-image: url(:system/button/skill/awaken/disabled.png);
+	background-image: url(image/system/button/skill/awaken/disabled.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;
 }
+
 #skill_bar_container QCheckBox{
 	border: 1px solid black;
 		border-radius: 2px;
@@ -224,25 +268,29 @@ QPushButton#uniform{
 	width: 0px;
 }
 #skill_bar_container QCheckBox:unchecked{
-	background-image: url(:system/button/skill/frequent/normal.png);
+	background-image: url(image/system/button/skill/frequent/normal.png);
 }
 #skill_bar_container QCheckBox:unchecked:hover{
-	background-image: url(:system/button/skill/frequent/hover.png);
+	background-image: url(image/system/button/skill/frequent/normal-hover.png);
 }
 #skill_bar_container QCheckBox:unchecked:pressed{
-	background-image: url(:system/button/skill/frequent/hover.png);
+	background-image: url(image/system/button/skill/frequent/normal-hover.png);
 }
 #skill_bar_container QCheckBox:checked{
-	background-image: url(:system/button/skill/frequent/down.png);
+	background-image: url(image/system/button/skill/frequent/down.png);
 }
 #skill_bar_container QCheckBox:checked:hover{
-	background-image: url(:system/button/skill/frequent/down-hover.png);
+	background-image: url(image/system/button/skill/frequent/down-hover.png);
 }
 #skill_bar_container QCheckBox:checked:pressed{
-	background-image: url(:system/button/skill/frequent/down-hover.png);
+	background-image: url(image/system/button/skill/frequent/down-hover.png);
 }
+#skill_bar_container QCheckBox:checked:disabled{
+	background-image: url(image/system/button/skill/frequent/disabled.png);
+}
+
 #skill_bar_container QComboBox{
-	background-image: url(:system/button/back2.png);
+	background-image: url(image/system/button/back2.png);
 	border: 1px solid black;
 	border-radius: 2px;
 	color: white;
