@@ -392,6 +392,19 @@ void SupplyShortage::takeEffect(ServerPlayer *target, bool good) const{
         target->skip(Player::Draw);
 }
 
+class FanhalberdSkill: public SlashSkill{
+public:
+    FanhalberdSkill():SlashSkill("fan"){
+    }
+
+    virtual int getSlashExtraGoals(const Player *from, const Player *, const Card *slash) const{
+        if(from->hasWeapon("fan") && from->isLastHandCard(slash))
+            return 2;
+        else
+            return 0;
+    }
+};
+
 ManeuveringPackage::ManeuveringPackage()
     :CardPackage("maneuvering")
 {
@@ -464,6 +477,7 @@ ManeuveringPackage::ManeuveringPackage()
     momohana->setObjectName("momohana");
 
     cards << momohana;
+    skills << new FanhalberdSkill;
 
     foreach(Card *card, cards)
         card->setParent(this);

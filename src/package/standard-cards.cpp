@@ -383,10 +383,41 @@ Axe::Axe(Suit suit, int number)
     attach_skill = true;
 }
 
+class HalberdSkill: public WeaponSkill{
+public:
+    HalberdSkill():WeaponSkill("halberd"){
+        events << SlashProceed;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *player, QVariant &data) const{
+        SlashEffectStruct effect = data.value<SlashEffectStruct>();
+        if(player->isAlive()){
+            ServerPlayer *target = effect.to;
+
+            if(target->getHandcardNum() > target->getHp()){
+                room->playSkillEffect(objectName());
+                LogMessage log;
+                log.type = "#Halberd";
+                log.from = player;
+                log.to << target;
+                log.arg = objectName();
+                room->sendLog(log);
+                player->playCardEffect("Ehalberd", "weapon");
+
+                room->slashResult(effect, NULL);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
 Halberd::Halberd(Suit suit, int number)
     :Weapon(suit, number, 4)
 {
     setObjectName("halberd");
+    skill = new HalberdSkill;
 }
 
 class KylinBowSkill: public WeaponSkill{
@@ -1017,19 +1048,6 @@ public:
     }
 };
 
-class HalberdSkill: public SlashSkill{
-public:
-    HalberdSkill():SlashSkill("halberd"){
-    }
-
-    virtual int getSlashExtraGoals(const Player *from, const Player *to, const Card *slash) const{
-        if(from->hasWeapon("halberd") && from->isLastHandCard(slash))
-            return 2;
-        else
-            return 0;
-    }
-};
-
 class HorseSkill: public DistanceSkill{
 public:
     HorseSkill(): DistanceSkill("horse"){
@@ -1127,7 +1145,6 @@ StandardCardPackage::StandardCardPackage()
 
     skills << EightDiagramSkill::GetInstance();
     skills << new CrossbowSkill;
-    skills << new HalberdSkill;
     skills << new QinggangSlash;
 
     {
