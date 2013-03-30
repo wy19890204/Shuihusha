@@ -357,7 +357,7 @@ public:
         case GameStart:{
                 if(player->isLord()){
                     if(boss_banlist.contains(player->getGeneralName()))
-                        getRandomSkill(player, true);
+                        getRandomSkill(player);
 
                     room->installEquip(player, "silver_lion");
                     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));

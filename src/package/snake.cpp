@@ -907,15 +907,52 @@ public:
     }
 };
 
+SouguaCard::SouguaCard(){
+}
+
+bool SouguaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    return targets.length() < 4 && !to_select->isKongcheng() && to_select != Self;
+}
+
+bool SouguaCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
+    return targets.length() <= 4 && !targets.isEmpty();
+}
+
+void SouguaCard::onEffect(const CardEffectStruct &effect) const{
+    if(!effect.to->isKongcheng())
+        effect.from->getRoom()->obtainCard(effect.from, effect.to->getRandomHandCardId(), false);
+}
+
+class SouguaViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    SouguaViewAsSkill():ZeroCardViewAsSkill("sougua"){
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@sougua";
+    }
+
+    virtual const Card *viewAs() const{
+        return new SouguaCard;
+    }
+};
+
 class Sougua: public PhaseChangeSkill{
 public:
     Sougua():PhaseChangeSkill("sougua"){
+        view_as_skill = new SouguaViewAsSkill;
     }
 
     virtual bool onPhaseChange(ServerPlayer *gouguan) const{
         Room *room = gouguan->getRoom();
-        if(gouguan->getPhase() == Player::Draw)
-            room->askForUseCard(gouguan, "@@sougua", "@sougua", true);
+        if(gouguan->getPhase() == Player::Draw && room->askForUseCard(gouguan, "@@sougua", "@sougua", true)){
+            gouguan->turnOver();
+            return true;
+        }
         return false;
     }
 };
@@ -1080,6 +1117,7 @@ SnakePackage::SnakePackage()
     addMetaObject<FeizhenCard>();
     addMetaObject<JiejiuCard>();
     addMetaObject<XiangmaCard>();
+    addMetaObject<SouguaCard>();
 }
 
 ADD_PACKAGE(Snake)

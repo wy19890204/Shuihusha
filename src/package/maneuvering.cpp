@@ -112,7 +112,7 @@ public:
         if(effect.nature == DamageStruct::Normal){
             if(room->askForSkillInvoke(player, objectName(), data)){
                 effect.nature = DamageStruct::Fire;
-                player->playCardEffect("Efan", "weapon");
+                player->playCardEffect("Efan1", "weapon");
                 data = QVariant::fromValue(effect);
             }
         }
@@ -161,9 +161,17 @@ GudingBlade::GudingBlade(Suit suit, int number):Weapon(suit, number, 2){
 }
 
 class VineSkill: public ArmorSkill{
-public:
+private:
     VineSkill():ArmorSkill("vine"){
         events << Predamaged << SlashEffected << CardEffected;
+    }
+
+public:
+    static VineSkill *GetInstance(){
+        static VineSkill *instance = NULL;
+        if(instance == NULL)
+            instance = new VineSkill;
+        return instance;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
@@ -203,10 +211,9 @@ public:
                 log.type = "#VineDamage";
                 log.from = player;
                 log.arg = QString::number(damage.damage);
-                log.arg2 = QString::number(damage.damage + 1);
+                log.arg2 = QString::number(++ damage.damage);
                 room->sendLog(log);
 
-                damage.damage ++;
                 data = QVariant::fromValue(damage);
             }
         }
@@ -217,7 +224,7 @@ public:
 
 Vine::Vine(Suit suit, int number):Armor(suit, number){
     setObjectName("vine");
-    skill = new VineSkill;
+    skill = VineSkill::GetInstance();
 }
 
 class SilverLionSkill: public ArmorSkill{
@@ -477,6 +484,7 @@ ManeuveringPackage::ManeuveringPackage()
     momohana->setObjectName("momohana");
 
     cards << momohana;
+    skills << VineSkill::GetInstance();
     skills << new FanhalberdSkill;
 
     foreach(Card *card, cards)

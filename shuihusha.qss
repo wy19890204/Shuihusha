@@ -271,6 +271,31 @@ QPushButton#uniform{
 	font: 12px;
 }
 
+#skill_bar_container QPushButton#lord{
+	background-image: url(image/system/button/skill/lord/normal.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#lord:hover{
+	background-image: url(image/system/button/skill/lord/hover.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#lord:pressed{
+	background-image: url(image/system/button/skill/lord/down.png);
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+}
+#skill_bar_container QPushButton#lord:disabled{
+	background-image: url(image/system/button/skill/lord/disabled.png);
+		border-radius: 2px;
+	color: white;
+	font: 12px;
+}
+
 #skill_bar_container QCheckBox{
 	border: 1px solid black;
 		border-radius: 2px;
@@ -283,22 +308,22 @@ QPushButton#uniform{
 	width: 0px;
 }
 #skill_bar_container QCheckBox:unchecked{
-	background-image: url(image/system/button/skill/frequent/normal.png);
+	background-image: url(image/system/button/skill/frequent/unchecked.png);
 }
 #skill_bar_container QCheckBox:unchecked:hover{
-	background-image: url(image/system/button/skill/frequent/normal-hover.png);
+	background-image: url(image/system/button/skill/frequent/unchecked-hover.png);
 }
 #skill_bar_container QCheckBox:unchecked:pressed{
-	background-image: url(image/system/button/skill/frequent/normal-hover.png);
+	background-image: url(image/system/button/skill/frequent/unchecked-down.png);
 }
 #skill_bar_container QCheckBox:checked{
-	background-image: url(image/system/button/skill/frequent/down.png);
+	background-image: url(image/system/button/skill/frequent/checked.png);
 }
 #skill_bar_container QCheckBox:checked:hover{
-	background-image: url(image/system/button/skill/frequent/down-hover.png);
+	background-image: url(image/system/button/skill/frequent/checked-hover.png);
 }
 #skill_bar_container QCheckBox:checked:pressed{
-	background-image: url(image/system/button/skill/frequent/down-hover.png);
+	background-image: url(image/system/button/skill/frequent/checked-down.png);
 }
 #skill_bar_container QCheckBox:checked:disabled{
 	background-image: url(image/system/button/skill/frequent/disabled.png);

@@ -35,7 +35,7 @@ QString Skill::getDescription() const{
 }
 
 QString Skill::getText() const{
-    QString islord = !isLordSkill() ? "  " : QString();
+    //QString islord = !isLordSkill() ? "  " : QString();
     QString skill_name = Sanguosha->translate(objectName());
 /*
     switch(frequency){
@@ -47,7 +47,8 @@ QString Skill::getText() const{
     default: break;
     }
 */
-    return islord + skill_name;
+    //return islord + skill_name;
+    return skill_name;
 }
 
 bool Skill::isVisible() const{

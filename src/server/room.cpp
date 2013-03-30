@@ -4269,12 +4269,11 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
                 player->playCardEffect("Espear", "weapon");
                 mute = true;
             }
-            /*
-            else if(player->hasWeapon("halberd") &&
+            else if(player->hasWeapon("fan") &&
                     player->isLastHandCard(card_use.card) && card_use.to.count() > 1){
-                player->playCardEffect("Ehalberd", "weapon");
+                player->playCardEffect("Efan2", "weapon");
                 mute = true;
-            }*/
+            }
             else if(player->hasWeapon("sun_bow") && card_use.card->objectName() == "slash" && card_use.to.count() > 1){
                 player->playCardEffect("Esun_bow", "weapon");
                 mute = true;

@@ -561,11 +561,7 @@ public:
 
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
         if(card){
-            int index = qrand() % 2 + 1;
-            if(!player->hasMark("wudao_wake"))
-                room->playSkillEffect(objectName(), index);
-            else
-                room->playSkillEffect(objectName(), index + 2);
+            room->playSkillEffect(objectName());
             room->throwCard(judge->card);
 
             QList<int> card_ids = room->getNCards(3);
