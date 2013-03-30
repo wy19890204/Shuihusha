@@ -1,7 +1,7 @@
 QProgressBar{
 	color : solid black;
-	border: 2px solid black;
-	border-radius: 2px;
+	border: 1px solid black;
+	border-radius: 0px;
 	background: transparent;
 	background-image: url(image/system/controls/progress-0.png);
 	padding: 0px;
@@ -9,7 +9,7 @@ QProgressBar{
 }
 
 QProgressBar::chunk{
-	background: #B22222;
+	background: transparent;
 	background-image: url(image/system/controls/progress-100.png);
 }
 

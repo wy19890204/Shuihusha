@@ -3,7 +3,7 @@
 
 config = {
 	version = "20130401",
-	version_name = "终结版F4.5",
+	version_name = "终结版F4.5 愚人节特供",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
