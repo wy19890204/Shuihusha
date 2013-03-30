@@ -26,6 +26,7 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     ui->skillTextEdit->setProperty("description", true);
 
     if(ServerInfo.isPlay && Config.value("Cheat/FreeChange", false).toBool()){
+        addChangeAction(ui->changeGeneralButton);
         ui->changeGeneralButton->show();
         connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
     }
@@ -274,9 +275,8 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     resetButtons();
 
-    foreach(const Skill *skill, skills){
+    foreach(const Skill *skill, skills)
         addLines(skill);
-    }
 
     addWakeLines(general_name);
 
@@ -338,15 +338,35 @@ void GeneralOverview::playEffect()
     }
 }
 
+void GeneralOverview::addChangeAction(QPushButton *button){
+    button->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    QAction *action = new QAction(button);
+    action->setData("general");
+    action->setText(tr("Change general"));
+    button->addAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(askChange()));
+
+    QAction *action2 = new QAction(button);
+    action2->setData("general2");
+    action2->setText(tr("Change general2"));
+    button->addAction(action2);
+    connect(action2, SIGNAL(triggered()), this, SLOT(askChange()));
+}
+
 void GeneralOverview::askChange(){
     if(!Config.value("Cheat/FreeChange", false).toBool())
         return;
 
+    QAction *action = qobject_cast<QAction *>(sender());
+    QString change2 = action->data().toString() == "general2" ? "%" : "";
+
     int row = ui->tableWidget->currentRow();
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
     if(Self && general_name != Self->getGeneralName()){
-        ClientInstance->requestCheatChangeGeneral(general_name);
-        ui->changeGeneralButton->setEnabled(false);
+        ClientInstance->requestCheatChangeGeneral(change2 + general_name);
+        if(change2 != "%")
+            ui->changeGeneralButton->setEnabled(false);
     }
 }
 

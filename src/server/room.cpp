@@ -1502,34 +1502,40 @@ void Room::resetAI(ServerPlayer *player){
     }
 }
 
-void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start, const QString &old_general){
-    if(!Sanguosha->getGeneral(new_general))
+void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start){
+    QString general = new_general;
+    if(new_general.startsWith("%"))
+        general.remove("%");
+    if(!Sanguosha->getGeneral(general))
         return;
+
+    if(new_general.startsWith("%")){
+        player->invoke("transfigure", player->getGeneral2Name() + ":" + general);
+        setPlayerProperty(player, "general2", general);
+        thread->addPlayerSkills(player, true);
+        return;
+    }
+
     LogMessage log;
     log.type = "#Transfigure";
     log.from = player;
-    log.arg = new_general;
+    log.arg = general;
     sendLog(log);
 
-    QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(new_general);
+    QString transfigure_str = QString("%1:%2").arg(player->getGeneralName()).arg(general);
     player->invoke("transfigure", transfigure_str);
 
-    if(Config.Enable2ndGeneral && !old_general.isEmpty() && player->getGeneral2Name() == old_general){
-        setPlayerProperty(player, "general2", new_general);
-        broadcastProperty(player, "general2");
-    }
-    else{
-        setPlayerProperty(player, "general", new_general);
-        broadcastProperty(player, "general");
-    }
+    setPlayerProperty(player, "general", general);
+    broadcastProperty(player, "general");
     thread->addPlayerSkills(player, invoke_start);
 
     player->setMaxHP(player->getGeneralMaxHP());
     broadcastProperty(player, "maxhp");
 
-    if(full_state)
+    if(full_state){
         player->setHp(player->getMaxHP());
-    broadcastProperty(player, "hp");
+        broadcastProperty(player, "hp");
+    }
 
     resetAI(player);
 }
@@ -3951,6 +3957,7 @@ void Room::takeAG(ServerPlayer *player, int card_id){
         //@todo: move this to the client side!!!
         player->invoke("disableAG", "true");
         CardMoveStruct move;
+
         move.from = NULL;
         move.from_place = Player::DrawPile;
         move.to = player;
@@ -4263,11 +4270,12 @@ void Room::playExtra(TriggerEvent event, const QVariant &data){
                 player->playCardEffect("Espear", "weapon");
                 mute = true;
             }
+            /*
             else if(player->hasWeapon("halberd") &&
                     player->isLastHandCard(card_use.card) && card_use.to.count() > 1){
                 player->playCardEffect("Ehalberd", "weapon");
                 mute = true;
-            }
+            }*/
             else if(player->hasWeapon("sun_bow") && card_use.card->objectName() == "slash" && card_use.to.count() > 1){
                 player->playCardEffect("Esun_bow", "weapon");
                 mute = true;

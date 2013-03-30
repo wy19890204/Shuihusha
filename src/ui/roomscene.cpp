@@ -1514,7 +1514,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     }
 
     button->setObjectName(button_objectname);
-    button->setText("  " + skill->getText());
+    button->setText(skill->getText());
     button->setToolTip(skill->getDescription());
     button->setDisabled(skill->getFrequency() == Skill::Compulsory);
     //button->setStyleSheet(Config.value("style/button").toString());
@@ -3299,12 +3299,12 @@ void KOFOrderBox::killPlayer(const QString &general_name){
     for(int i = 0; i < revealed; i++) {
         Pixmap *avatar = avatars[i];
         if(avatar->isEnabled() && avatar->objectName() == general_name){
-            QPixmap pixmap("image/system/death/unknown.png");
+            QPixmap pixmap("image/system/death/photo/unknown.png");
             QGraphicsPixmapItem *death = new QGraphicsPixmapItem(pixmap, avatar);
             death->moveBy(10, -10);
-            death->setScale(0.6);
+            death->setScale(0.8);
 
-            avatar->setOpacity(0.7);
+            //avatar->setOpacity(0.7);
             avatar->makeGray();
             avatar->setEnabled(false);
 
@@ -4076,9 +4076,9 @@ void RoomScene::startArrange(){
                 << QPointF(489, 291);
     }else{
         mode = "1v1";
-        positions << QPointF(84, 244)
-                << QPointF(214, 244)
-                << QPointF(344, 244);
+        positions << QPointF(83, 236)
+                << QPointF(214, 236)
+                << QPointF(343, 236);
     }
 
     selector_box->changePixmap(QString("image/system/%1/arrange.png").arg(mode));

@@ -71,8 +71,7 @@ public:
                 QStringList lord_list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
                 QString general = room->askForGeneral(lord, lord_list);
 
-                lord->invoke("transfigure", "anjiang:" + general);
-                room->setPlayerProperty(lord, "general2", general);
+                room->transfigure(lord, "%" + general);
 
                 room->setPlayerProperty(lord, "maxhp", qMin(lord->getGeneral()->getMaxHp(), lord->getGeneral2()->getMaxHp()) + 1);
                 room->setPlayerProperty(lord, "hp", lord->getMaxHp());
@@ -81,7 +80,7 @@ public:
                 foreach(ServerPlayer *p, players)
                     room->broadcastProperty(p, "role");
 
-                room->getThread()->addPlayerSkills(lord, true);
+                //room->getThread()->addPlayerSkills(lord, true);
                 QStringList landskills = getLandSkills(room);
                 room->acquireSkill(lord, landskills.first());
 

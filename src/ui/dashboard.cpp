@@ -566,7 +566,7 @@ void Dashboard::killPlayer(){
     }
 
     death_item = new QGraphicsPixmapItem(QPixmap(Self->getDeathPixmapPath()), this);
-    death_item->setPos(397, 55);
+    death_item->setPos(397, 40);
 
     filter = NULL;
 

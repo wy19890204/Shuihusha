@@ -185,7 +185,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                         room->revivePlayer(next);
 
                         if(!Config.value("ReincaPersist", false).toBool()){
-                            QString oldname = next->getGeneralName();
                             QStringList names;
                             foreach(ServerPlayer *tmp, room->getAllPlayers()){
                                 names << tmp->getGeneralName();
@@ -195,7 +194,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                             if(!names.isEmpty()){
                                 QSet<QString> names_set = names.toSet();
                                 QString newname = Sanguosha->getRandomGenerals(1, names_set).first();
-                                room->transfigure(next, newname, false, true, oldname);
+                                room->transfigure(next, newname, false, true);
                             }
                         }
                         if(next->getMaxHp() == 0)
@@ -793,7 +792,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 room->sendLog(log);
                 return true;
             }
-            if(Config.value("Cheat/HandsUp", false).toBool()){
+            if(Config.value("Cheat/HandsUp", false).toBool() && room->getMode() != "02_1v1"){
                 bool allrobot = true;
                 QStringList winners;
                 foreach(ServerPlayer *robot, room->getOtherPlayers(player)){

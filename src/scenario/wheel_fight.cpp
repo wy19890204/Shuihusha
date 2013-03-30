@@ -31,7 +31,6 @@ public:
         room->setTag("WheelBan", ban);
         QStringList list = Sanguosha->getRandomGenerals(qMin(5, Config.value("MaxChoice", 3).toInt()), ban.toSet());
         QString next_general = room->askForGeneral(player, list);
-        //room->transfigure(player, next_general, true, true, player->getGeneralName());
         room->transfigure(player, next_general, true, true);
         room->setPlayerProperty(player, "kingdom", player->getGeneral()->getKingdom());
 

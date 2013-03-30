@@ -21,7 +21,24 @@ CardItem::CardItem(const Card *card)
 
     bigsuit_pixmap.load(QString("image/system/suit/big-%1.png").arg(card->getSuitString()));
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
-    cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
+    cardsuit_pixmap.load("image/system/card/suit.png");
+    switch(card->getSuit()){
+    //static_cast<int>(card->getSuit());
+    case Card::Heart:
+        cardsuit_pixmap = cardsuit_pixmap.copy(0, 0, 27, 28);
+        break;
+    case Card::Spade:
+        cardsuit_pixmap = cardsuit_pixmap.copy(0, 28, 27, 28);
+        break;
+    case Card::Club:
+        cardsuit_pixmap = cardsuit_pixmap.copy(27, 0, 27, 28);
+        break;
+    case Card::Diamond:
+        cardsuit_pixmap = cardsuit_pixmap.copy(27, 28, 27, 28);
+        break;
+    default:
+        cardsuit_pixmap = QPixmap();
+    }
     number_pixmap.load(QString("image/system/card/%1/%2.png").arg(card->isBlack() ? "black" : "red").arg(card->getNumberString()));
     icon_pixmap.load(card->getIconPath());
     setTransformOriginPoint(pixmap.width()/2, pixmap.height()/2);

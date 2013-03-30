@@ -162,7 +162,7 @@ public:
                         room->broadcastInvoke("animate", "lightbox:$shapeshift:3000");
                         room->broadcastInvoke("playAudio", "skill/shapeshift");
                         room->getThread()->delay(1500);
-                        room->transfigure(player, "zhang2dong", true, true, "zhang1dong");
+                        room->transfigure(player, "zhang2dong", true, true);
 
                         QList<const Card *> tricks = player->getJudgingArea();
                         foreach(const Card *trick, tricks)

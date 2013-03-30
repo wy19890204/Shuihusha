@@ -118,7 +118,7 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
         emit pile_changed(name);
 }
 
-QString ClientPlayer::getDeathPixmapPath() const{
+QString ClientPlayer::getDeathPixmapPath(bool isdash) const{
     QString basename = "unknown";
     if(ServerInfo.GameMode == "06_3v3" ||
        ServerInfo.GameMode == "warlords" ||
@@ -132,7 +132,8 @@ QString ClientPlayer::getDeathPixmapPath() const{
     if(property("panxin").toBool())
         basename = "unknown";
 
-    return QString("image/system/death/%1.png").arg(basename);
+    QString dash = isdash ? "dashboard" : "photo";
+    return QString("image/system/death/%1/%2.png").arg(dash).arg(basename);
 }
 
 void ClientPlayer::setHandcardNum(int n){
