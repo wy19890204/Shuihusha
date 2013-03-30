@@ -197,9 +197,8 @@ void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
 }
 
 void RoomThread::constructTriggerTable(const GameRule *rule){
-    foreach(ServerPlayer *player, room->getPlayers()){
+    foreach(ServerPlayer *player, room->getPlayers())
         addPlayerSkills(player, false);
-    }
 
     addTriggerSkill(rule);
 }

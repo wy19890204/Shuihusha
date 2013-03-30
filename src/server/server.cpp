@@ -118,6 +118,9 @@ QWidget *ServerDialog::createPackageTab(){
         checkbox->setChecked(!ban_packages.contains(extension) && !forbid_package);
         checkbox->setEnabled(!forbid_package);
 
+        if(package->getGenre() == Package::LUA)
+            checkbox->setIcon(QIcon("image/system/settings.png"));
+
         extension_group->addButton(checkbox);
 
         switch(package->getType()){
@@ -265,9 +268,6 @@ QWidget *ServerDialog::createAdvancedTab(){
     connect(anzhan_checkbox, SIGNAL(toggled(bool)), anzhan_equal_checkbox, SLOT(setVisible(bool)));
     reinca_unchange_checkbox->setVisible(Config.value("ReincaPersist", false).toBool());
     connect(reincarnation_checkbox, SIGNAL(toggled(bool)), reinca_unchange_checkbox, SLOT(setVisible(bool)));
-
-    //hide&disable
-    scene_checkbox->setEnabled(false);
 
     return widget;
 }

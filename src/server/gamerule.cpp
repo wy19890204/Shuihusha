@@ -344,18 +344,13 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     }
     case CardAsk :
     case CardUseAsk: {
-        if(player->hasFlag("ecst")){
-            const CardPattern *pattern = Sanguosha->getPattern(data.toString());
-            const Card *slash = new Slash(Card::NoSuit, 0);
-            const Card *jink = new Jink(Card::NoSuit, 0);
-            if(pattern->match(player, slash) || pattern->match(player, jink)){
-                LogMessage log;
-                log.type = "#EcstasyEffect";
-                log.from = player;
-                log.arg = data.toString();
-                room->sendLog(log);
-                return true;
-            }
+        if(player->hasFlag("ecst") && (data.toString() == "slash" || data.toString() == "jink")){
+            LogMessage log;
+            log.type = "#EcstasyEffect";
+            log.from = player;
+            log.arg = data.toString();
+            room->sendLog(log);
+            return true;
         }
         if(player->hasFlag("Guibing") && data.toString() == "slash")
             return true;
