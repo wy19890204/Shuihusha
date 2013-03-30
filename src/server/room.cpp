@@ -1532,10 +1532,9 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
     player->setMaxHP(player->getGeneralMaxHP());
     broadcastProperty(player, "maxhp");
 
-    if(full_state){
+    if(full_state)
         player->setHp(player->getMaxHP());
-        broadcastProperty(player, "hp");
-    }
+    broadcastProperty(player, "hp");
 
     resetAI(player);
 }

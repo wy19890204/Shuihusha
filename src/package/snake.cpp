@@ -783,10 +783,54 @@ public:
     }
 };
 
+XiangmaCard::XiangmaCard(){
+}
+
+bool XiangmaCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(to_select->hasFlag("xmtarget"))
+        return false;
+    return to_select->getOffensiveHorse() || to_select->getDefensiveHorse();
+}
+
+void XiangmaCard::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
+    int card_id = room->askForCardChosen(effect.from, effect.to, "e", skill_name);
+    const Card *horse = Sanguosha->getCard(card_id);
+    if(horse->isKindOf("Horse"))
+        room->throwCard(card_id, effect.to, effect.from);
+    else{
+        if(effect.to->getOffensiveHorse())
+            room->throwCard(effect.to->getOffensiveHorse(), effect.to, effect.from);
+        else
+            room->throwCard(effect.to->getDefensiveHorse(), effect.to, effect.from);
+    }
+}
+
+class XiangmaViewAsSkill: public ZeroCardViewAsSkill{
+public:
+    XiangmaViewAsSkill():ZeroCardViewAsSkill("xiangma"){
+    }
+
+    virtual const Card *viewAs() const{
+        return new XiangmaCard;
+    }
+
+    virtual bool isEnabledAtPlay(const Player *player) const{
+        return false;
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@xiangma";
+    }
+};
+
 class Xiangma: public TriggerSkill{
 public:
     Xiangma():TriggerSkill("xiangma"){
         events << Dying;
+        view_as_skill = new XiangmaViewAsSkill;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -799,6 +843,7 @@ public:
         foreach(ServerPlayer *duan, huangfus){
             if(player->getHp() > 0)
                 break;
+            room->setPlayerFlag(player, "xmtarget");
             if(room->askForUseCard(duan, "@@xiangma", "@xiangma:" + player->objectName(), true)){
                 Peach *peach = new Peach(Card::NoSuit, 0);
                 peach->setSkillName(objectName());
@@ -808,6 +853,7 @@ public:
                 use.to << player;
                 room->useCard(use);
             }
+            room->setPlayerFlag(player, "-xmtarget");
         }
         return false;
     }
@@ -1033,6 +1079,7 @@ SnakePackage::SnakePackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
     addMetaObject<JiejiuCard>();
+    addMetaObject<XiangmaCard>();
 }
 
 ADD_PACKAGE(Snake)

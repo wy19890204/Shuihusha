@@ -156,6 +156,21 @@ QPushButton#uniform{
 	background-image: url(image/system/button/uniform.png);
 }
 
+#skill_bar_container QPushButton{
+	background-image: url(:system/button/back.png);
+		border: 1px solid black;
+		border-radius: 2px;
+	color: yellow;
+	font: 12px;
+	padding: 6px 12px 6px 12px;
+}
+#skill_bar_container QPushButton:disabled{
+	background-image: url(:system/button/back_shade.png);
+		border-radius: 2px;
+	color: white;
+	font: 12px;
+}
+
 #skill_bar_container QPushButton#normal{
 	background-image: url(image/system/button/skill/normal/normal.png);
 		border-radius: 2px;

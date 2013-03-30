@@ -1445,10 +1445,9 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         return;
 
     // check duplication
-    foreach(QAbstractButton *button, skill_buttons){
-        if(button->objectName() == skill->objectName())
+    foreach(QAbstractButton *button, skill_buttons)
+        if(button->text() == skill->getText())
             return;
-    }
 
     QAbstractButton *button = NULL;
     QString button_objectname = "normal";
@@ -1530,11 +1529,14 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
     if(widget->inherits("QComboBox"))
         widget->setFixedHeight(20);
+    else if(widget->inherits("QAbstractButton"))
+        widget->setFixedHeight(26);
     else
         widget->setFixedSize(67, 26);
 
     if(!from_left)
-        main_window->statusBar()->addPermanentWidget(widget);
+        //main_window->statusBar()->addPermanentWidget(widget);
+        main_window->statusBar()->insertPermanentWidget(1, widget);
     else
         main_window->statusBar()->addWidget(widget);
 }
@@ -1579,6 +1581,8 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 }
 
 void RoomScene::updateSkillButtons(){
+    addWidgetToSkillDock(role_combobox);
+
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
             if(Config.NoLordSkill || Config.EnableAnzhan)
@@ -1592,8 +1596,6 @@ void RoomScene::updateSkillButtons(){
 
         addSkillButton(skill);
     }
-
-    addWidgetToSkillDock(role_combobox);
 
     // disable all skill buttons
     foreach(QAbstractButton *button, skill_buttons)
@@ -2174,7 +2176,8 @@ void RoomScene::updateStatus(Client::Status status){
     case Client::AskForSkillInvoke:{
             QString skill_name = ClientInstance->getSkillNameToInvoke();
             foreach(QAbstractButton *button, skill_buttons){
-                if(button->objectName() == skill_name){
+                const Skill *skill = Sanguosha->getSkill(skill_name);
+                if(skill && button->text() == skill->getText()){
                     QCheckBox *check_box = qobject_cast<QCheckBox *>(button);
                     if(check_box && check_box->isChecked()){
                         ClientInstance->onPlayerInvokeSkill(true);
@@ -2340,10 +2343,9 @@ void RoomScene::updatePileButton(const QString &pile_name){
     }
 
     QMenu *menu = NULL;
+    QPushButton *push_button = new QPushButton;
     if(button == NULL){
-        QPushButton *push_button = new QPushButton;
         push_button->setObjectName(pile_name);
-
         skill_buttons << push_button;
         addWidgetToSkillDock(push_button);
 
@@ -2351,7 +2353,7 @@ void RoomScene::updatePileButton(const QString &pile_name){
         push_button->setMenu(menu);
         button = push_button;
     }else{
-        QPushButton *push_button = qobject_cast<QPushButton *>(button);
+        push_button = qobject_cast<QPushButton *>(button);
         menu = push_button->menu();
         if(menu == NULL){
             menu = new QMenu(push_button);
@@ -2376,6 +2378,9 @@ void RoomScene::updatePileButton(const QString &pile_name){
     qSort(cards.begin(), cards.end(), CompareByNumber);
     foreach(const Card *card, cards)
         menu->addAction(card->getSuitIcon(), card->getFullName());
+
+    if(cards.isEmpty())
+        removeWidgetFromSkillDock(push_button);
 }
 
 void RoomScene::doOkButton(){
@@ -3132,7 +3137,8 @@ void RoomScene::detachSkill(const QString &skill_name){
         itor.next();
 
         QAbstractButton *button = itor.value();
-        if(button->objectName() == skill_name){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill && button->text() == skill->getText()){
             removeWidgetFromSkillDock(button);
             button2skill.remove(button);
             button->deleteLater();
@@ -3142,9 +3148,8 @@ void RoomScene::detachSkill(const QString &skill_name){
         }
     }
 
-    if(dashboard->getFilter() == Sanguosha->getSkill(skill_name)){
+    if(dashboard->getFilter() == Sanguosha->getSkill(skill_name))
         dashboard->setFilter(NULL);
-    }
 }
 
 void RoomScene::viewDistance(){
