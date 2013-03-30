@@ -25,7 +25,7 @@ return {
 
 	["#Baozou"] = "%from 进入暴走状态，拥有无视防具效果",
 	["#BaozouOver"] = "%from 的暴走状态消失，[绝境之战]事件触发。每名角色开始进行判定",
-	["#DajiAvoid"] = "%to 的技能【%arg2】被触发，%from 对 %to 使用的锦囊 %arg 无效",
+	["#TiemuAvoid"] = "%to 的技能【%arg2】被触发，%from 对 %to 使用的锦囊 %arg 无效",
 
 	["@frantic"] = "暴走",
 
