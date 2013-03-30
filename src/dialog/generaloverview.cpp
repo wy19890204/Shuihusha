@@ -209,9 +209,6 @@ void GeneralOverview::addWakeLines(const QString &general_name){
             addLines(wake_skill, i);
     }
     if(general_name == "fanrui"){
-        wake_skill = Sanguosha->getSkill("butian");
-        addLines(wake_skill, 3);
-        addLines(wake_skill, 4);
         wake_skill = Sanguosha->getSkill("qimen");
         addLines(wake_skill, 3);
         addLines(wake_skill, 4);

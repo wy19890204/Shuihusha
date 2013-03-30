@@ -1499,7 +1499,6 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         if(filter && dashboard->getFilter() == NULL)
             dashboard->setFilter(filter);
         button = new QPushButton();
-
     }else if(skill->isKindOf("ViewAsSkill")){
         button = new QPushButton();
         button2skill.insert(button, qobject_cast<const ViewAsSkill *>(skill));
@@ -1507,6 +1506,11 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     }else{
         button = new QPushButton;
     }
+
+    if(skill->isLordSkill())
+        button_objectname = "lord";
+    else if(skill->getFrequency() == Skill::Compulsory)
+        button_objectname = "compulsory";
 
     QDialog *dialog = skill->getDialog();
     if(dialog){
@@ -1518,11 +1522,10 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     button->setText(skill->getText());
     button->setToolTip(skill->getDescription());
     button->setDisabled(skill->getFrequency() == Skill::Compulsory);
-    //button->setStyleSheet(Config.value("style/button").toString());
-
+    /*button->setStyleSheet(Config.value("style/button").toString());
     if(skill->isLordSkill())
         button->setIcon(QIcon("image/system/roles/lord.png"));
-
+    */
     skill_buttons << button;
     addWidgetToSkillDock(button, from_left);
 }
@@ -1531,7 +1534,7 @@ void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
     if(widget->inherits("QComboBox"))
         widget->setFixedHeight(20);
     else
-        widget->setFixedSize(67, 26);
+        widget->setFixedSize(71, 30);
 
     if(!from_left)
         main_window->statusBar()->addPermanentWidget(widget);
