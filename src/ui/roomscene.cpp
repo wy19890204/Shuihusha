@@ -1451,6 +1451,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
     }
 
     QAbstractButton *button = NULL;
+    QString button_objectname = "normal";
 
     if(skill->isKindOf("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
@@ -1466,7 +1467,12 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         case Skill::Limited:
         case Skill::NotFrequent:{
                 const ViewAsSkill *view_as_skill = trigger_skill->getViewAsSkill();
-                button = new QPushButton();
+                if(trigger_skill->getFrequency() == Skill::Limited){
+                    button = new QPushButton();
+                    button_objectname = "limited";
+                }
+                else
+                    button = new QPushButton();
                 if(view_as_skill){
                     button2skill.insert(button, view_as_skill);
                     connect(button, SIGNAL(clicked()), this, SLOT(doSkillButton()));
@@ -1475,8 +1481,16 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
                 break;
         }
 
-        case Skill::Wake:
-        case Skill::Compulsory: button = new QPushButton(); break;
+        case Skill::Wake:{
+            button = new QPushButton();
+            button_objectname = "awaken";
+            break;
+        }
+        case Skill::Compulsory:{
+            button = new QPushButton();
+            button_objectname = "compulsory";
+            break;
+        }
         default: button = new QPushButton(); button->setVisible(false); break;
         }
     }else if(skill->isKindOf("FilterSkill")){
@@ -1499,8 +1513,8 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         connect(button, SIGNAL(clicked()), dialog, SLOT(popup()));
     }
 
-    button->setObjectName(skill->objectName());
-    button->setText(skill->getText());
+    button->setObjectName(button_objectname);
+    button->setText("  " + skill->getText());
     button->setToolTip(skill->getDescription());
     button->setDisabled(skill->getFrequency() == Skill::Compulsory);
     //button->setStyleSheet(Config.value("style/button").toString());

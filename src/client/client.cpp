@@ -1778,7 +1778,7 @@ void Client::speak(const QString &speak_data){
 }
 
 void Client::moveFocus(const Json::Value &focus){
-    QString test = toQString(focus);
+    //QString test = toQString(focus);
     emit focus_moved(QString(focus.asCString()));
 }
 
