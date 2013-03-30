@@ -1462,6 +1462,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
                 checkbox->setChecked(true);
 
                 button = checkbox;
+                button_objectname = checkbox->objectName();
                 break;
         }
         case Skill::Limited:

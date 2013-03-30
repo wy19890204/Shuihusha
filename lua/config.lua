@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130322",
-	version_name = "终结版F4.4.5",
+	version = "20130330",
+	version_name = "终结版F4.7",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -22,7 +22,7 @@ config = {
 		"Tiger",
 		"Hare",
 		"Dragon",
---		"Snake",
+		"Snake",
 --		"Mustang",
 --		"Sheep",
 --		"Monkey",

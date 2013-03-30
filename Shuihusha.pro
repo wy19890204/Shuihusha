@@ -5,7 +5,7 @@ TARGET = Shuihusha
 QT += network sql declarative
 TEMPLATE = app
 CONFIG += warn_on audio
-#CONFIG += use_rcc
+CONFIG += use_rcc
 
 # If you want to enable joystick support, please uncomment the following line:
 # CONFIG += joystick

@@ -138,8 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::restoreFromConfig(){
     Config.beginGroup("UI");
     //resize(Config.value("WindowSize", QSize(1042, 719)).toSize());
-    resize(Config.value("WindowSize", QSize(1340, 758)).toSize());
-    move(Config.value("WindowPosition", QPoint(20,20)).toPoint());
+    resize(Config.value("WindowSize", QSize(1340, 820)).toSize());
+    move(Config.value("WindowPosition", QPoint(45, 1)).toPoint());
     Config.endGroup();
 
     QFont font;

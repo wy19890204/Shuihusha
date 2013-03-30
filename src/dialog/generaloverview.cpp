@@ -358,8 +358,10 @@ void GeneralOverview::askChange(){
     if(!Config.value("Cheat/FreeChange", false).toBool())
         return;
 
+    QString change2 = "";
     QAction *action = qobject_cast<QAction *>(sender());
-    QString change2 = action->data().toString() == "general2" ? "%" : "";
+    if(action && action->data().toString() == "general2")
+        change2 = "%";
 
     int row = ui->tableWidget->currentRow();
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();

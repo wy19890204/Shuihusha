@@ -1035,4 +1035,4 @@ SnakePackage::SnakePackage()
     addMetaObject<JiejiuCard>();
 }
 
-//ADD_PACKAGE(Snake)
+ADD_PACKAGE(Snake)

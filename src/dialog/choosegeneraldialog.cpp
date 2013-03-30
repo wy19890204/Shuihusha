@@ -183,7 +183,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         progress_bar = new QProgressBar;
         progress_bar->setMinimum(0);
         progress_bar->setMaximum(100);
-        progress_bar->setFixedSize(150, 18);
         progress_bar->setTextVisible(false);
         last_layout->addWidget(progress_bar);
     }
