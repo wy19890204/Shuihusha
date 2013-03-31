@@ -711,8 +711,7 @@ void RoomScene::changeTextEditBackground(){
 }
 
 void RoomScene::addPlayer(ClientPlayer *player){
-    int i;
-    for(i=0; i<photos.length(); i++){
+    for(int i=0; i<photos.length(); i++){
         Photo *photo = photos[i];
         if(photo->getPlayer() == NULL){
             photo->setPlayer(player);
@@ -800,8 +799,7 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
     QParallelAnimationGroup *disappering = new QParallelAnimationGroup;
 
     Photo *photo = name2photo[player->objectName()];
-    int i;
-    for(i=0; i<n; i++){
+    for(int i=0; i<n; i++){
         QString backname = ServerInfo.GameMode == "06_3v3" ?
                            "card-back-3v3" : "card-back";
 #ifdef USE_RCC
@@ -841,8 +839,7 @@ void RoomScene::drawNCards(ClientPlayer *player, int n){
             player->getGeneralName(),
             QStringList(),
             QString(),
-            QString::number(n)
-            );
+            QString::number(n));
 }
 
 void RoomScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -876,9 +873,8 @@ void RoomScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         }
     }
 
-    if(avatar->isUnderMouse()){
+    if(avatar->isUnderMouse())
         avatar->setSelected(true);
-    }
 }
 
 void RoomScene::keyReleaseEvent(QKeyEvent *event){
@@ -1006,9 +1002,9 @@ void RoomScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
 
         menu->addSeparator();
 
-        if(cards.isEmpty()){
+        if(cards.isEmpty())
             menu->addAction(tr("There is no known cards"))->setEnabled(false);
-        }else{
+        else{
             foreach(const Card *card, cards)
                 menu->addAction(card->getSuitIcon(), card->getFullName());
         }
@@ -1065,9 +1061,8 @@ void RoomScene::timerEvent(QTimerEvent *event){
         timer_id = 0;
         tick = 0;
         doTimeout();
-    }else{
+    }else
         progress_bar->setValue(new_value);
-    }
 }
 
 void RoomScene::chooseGeneral(const QStringList &generals){
@@ -1119,18 +1114,19 @@ void RoomScene::viewDiscards(){
             y     = room_layout->discard.y();
         }
 
-        int i;
-        for(i=0; i< discarded_queue.length(); i++){
+        for(int i=0; i< discarded_queue.length(); i++){
             CardItem *card_item = discarded_queue.at(i);
             card_item->setEnabled(true);
             card_item->setOpacity(1.0);
             card_item->setHomePos(QPointF(start + i*width/discarded_queue.length(), y));
             QAbstractAnimation* gb;
             if(card_item->zValue()>0)
-                gb =card_item->goBack(true,false,false);
-            else gb =card_item->goBack();
+                gb = card_item->goBack(true,false,false);
+            else
+                gb = card_item->goBack();
 
-            if(gb)connect(gb,SIGNAL(finished()),card_item,SLOT(reduceZ()));
+            if(gb)
+                connect(gb, SIGNAL(finished()), card_item, SLOT(reduceZ()));
         }
     }else{
         CardOverview *overview = new CardOverview;
@@ -1149,8 +1145,7 @@ void RoomScene::hideDiscards(){
         if(card_item != top)removeItem(card_item);
 
     piled_discards.clear();
-    if(top)
-    {
+    if(top){
         piled_discards.append(top);
         top->setZValue(-0.9);
     }
@@ -1227,9 +1222,8 @@ CardItem *RoomScene::takeCardItem(ClientPlayer *src, Player::Place src_place, in
     // from discard pile
     int i;
     for(i=0; i<discarded_queue.length(); i++){
-        if(discarded_queue.at(i)->getCard()->getId() == card_id){
+        if(discarded_queue.at(i)->getCard()->getId() == card_id)
             card_item = discarded_queue.takeAt(i);
-        }
     }
 
     if(card_item == NULL){
@@ -1313,17 +1307,15 @@ void RoomScene::moveCard(const CardMoveStructForClient &move){
     if(card_item->scene() == NULL)
         addItem(card_item);
 
-    if(src != NULL && src_place != Player::Judging)
-    {
+    if(src != NULL && src_place != Player::Judging){
         QString from_general;
         from_general= src->getGeneralName();
         from_general = Sanguosha->translate(from_general);
         putCardItem(dest, dest_place, card_item, from_general);
     }
     else{
-        if(src_place == Player::DiscardedPile || dest_place == Player::Hand){
+        if(src_place == Player::DiscardedPile || dest_place == Player::Hand)
             card_item->deleteCardDesc();
-        }
         putCardItem(dest, dest_place, card_item);
     }
 

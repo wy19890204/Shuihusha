@@ -166,14 +166,16 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	local cards = sgs.QList2Table(self.player:getCards("h"))
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
-		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
-			local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. targets[1]
-			if #targets > 1 then
-				src = src .. "+" .. targets[2]
+		if card:isKindOf("BasicCard") then
+			if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
+				local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
+						.. targets[1]
+				if #targets > 1 then
+					src = src .. "+" .. targets[2]
+				end
+				self:speak("lieji")
+				return src
 			end
-			self:speak("lieji")
-			return src
 		end
 	end
 end

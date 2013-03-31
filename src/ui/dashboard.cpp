@@ -158,12 +158,19 @@ void Dashboard::createRight(){
     chain_icon->hide();
     chain_icon->setZValue(1.0);
 
-    back_icon = new Pixmap("image/system/big-back.png");
+    back_icon = new Pixmap("image/system/cover/big-back.png");
     back_icon->setParentItem(right);
     back_icon->setPos(22, 64);
     back_icon->setZValue(0.2);
     //back_icon->setOpacity(0.6);
     back_icon->hide();
+
+    jail_icon = new Pixmap("image/system/cover/big-jail.png");
+    jail_icon->setParentItem(right);
+    jail_icon->setPos(back_icon->pos());
+    jail_icon->setZValue(back_icon->zValue() + 0.1);
+    jail_icon->setOpacity(back_icon->opacity());
+    jail_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
     handcard_pixmap->setPixmap(QPixmap("image/system/handcard.png"));
@@ -608,6 +615,7 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
+    jail_icon->setVisible(Self->containsTrick("indulgence"));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
 }
 

@@ -165,9 +165,8 @@ bool UbuncCard::targetFilter(const QList<const Player *> &targets, const Player 
 void UbuncCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(targets.length() == 1){
         QString kingdom = room->askForKingdom(source);
-        //QString kingdom = room->askForChoice(source, "ubunc", "guan+jiang+min+kou+god");
         room->setPlayerProperty(targets.first(), "kingdom", kingdom);
-        room->setPlayerFlag(targets.first(), "ShutUp");
+        //room->setPlayerFlag(targets.first(), "ShutUp");
     }
     else{
         ServerPlayer *first = targets.first();

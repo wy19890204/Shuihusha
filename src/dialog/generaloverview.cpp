@@ -334,6 +334,8 @@ void GeneralOverview::playEffect()
 
 void GeneralOverview::addChangeAction(QPushButton *button){
     //button->setContextMenuPolicy(Qt::ActionsContextMenu);
+    if(!Self)
+        return;
 
     QMenu *menu = new QMenu(button);
     button->setMenu(menu);
@@ -341,12 +343,14 @@ void GeneralOverview::addChangeAction(QPushButton *button){
     QAction *action = new QAction(menu);
     action->setData(QString("general:%1").arg(Self->objectName()));
     action->setText(tr("Change general"));
+    action->setIcon(QIcon(Self->getGeneral()->getPixmapPath("tiny")));
     menu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(askChange()));
 
     QAction *action2 = new QAction(menu);
     action2->setData(QString("general2:%1").arg(Self->objectName()));
     action2->setText(tr("Change general2"));
+    action2->setIcon(QIcon(Self->getGeneral2()->getPixmapPath("tiny")));
     menu->addAction(action2);
     connect(action2, SIGNAL(triggered()), this, SLOT(askChange()));
     action2->setEnabled(!Self->getGeneral2Name().isNull());
@@ -365,15 +369,17 @@ void GeneralOverview::addChangeAction(QPushButton *button){
             continue;
         QAction *action4 = new QAction(menu4);
         action4->setData(QString("general:%1").arg(player->objectName()));
-        action4->setText(tr("%1 %2%3").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneralName()))
-                         .arg(player->isDead() ? "(dead)" : ""));
+        action4->setText(QString("%1 %2%3").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneralName()))
+                         .arg(player->isDead() ? tr("(dead)") : ""));
+        action4->setIcon(QIcon(player->getGeneral()->getPixmapPath("tiny")));
         menu4->addAction(action4);
         connect(action4, SIGNAL(triggered()), this, SLOT(askChange()));
 
         if(player->getGeneral2()){
             QAction *action5 = new QAction(menu4);
             action5->setData(QString("general2:%1").arg(player->objectName()));
-            action5->setText(tr("%1 %2").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneral2Name())));
+            action5->setText(QString("%1 %2").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneral2Name())));
+            action5->setIcon(QIcon(player->getGeneral2()->getPixmapPath("tiny")));
             menu4->addAction(action5);
             connect(action5, SIGNAL(triggered()), this, SLOT(askChange()));
 

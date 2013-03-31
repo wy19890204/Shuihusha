@@ -38,7 +38,7 @@ Photo::Photo()
 
     QSettings settings("image/system/photo.ini", QSettings::IniFormat);
 
-    back_icon = new Pixmap("image/system/small-back.png");
+    back_icon = new Pixmap("image/system/cover/small-back.png");
     back_icon->setParentItem(this);
     settings.beginGroup("back_icon");
     QList<QVariant> coord = settings.value("pos").toList();
@@ -47,6 +47,13 @@ Photo::Photo()
     back_icon->setOpacity(settings.value("opacity").toReal());
     back_icon->hide();
     settings.endGroup();
+
+    jail_icon = new Pixmap("image/system/cover/small-jail.png");
+    jail_icon->setParentItem(this);
+    jail_icon->setPos(back_icon->pos());
+    jail_icon->setZValue(back_icon->zValue() + 0.1);
+    jail_icon->setOpacity(back_icon->opacity());
+    jail_icon->hide();
 
     chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(this);
@@ -778,7 +785,8 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     drawEquip(painter, offensive_horse, 3);
 
     chain_icon->setVisible(player->isChained());
-    back_icon->setVisible(! player->faceUp());
+    back_icon->setVisible(!player->faceUp());
+    jail_icon->setVisible(player->containsTrick("indulgence"));
     wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 
     if(player->isDead()){
