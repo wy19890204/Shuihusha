@@ -9,7 +9,7 @@
 #include <QFile>
 
 Skill::Skill(const QString &name, Frequency frequency)
-    :frequency(frequency), default_choice("no")
+    :frequency(frequency), default_choice("no"), equip_skill(false)
 {
     static QChar lord_symbol('$');
 
@@ -24,10 +24,6 @@ Skill::Skill(const QString &name, Frequency frequency)
     }
 }
 
-bool Skill::isLordSkill() const{
-    return lord_skill;
-}
-
 QString Skill::getDescription() const{
     if(!Sanguosha->isDuplicated(objectName()))
         return Sanguosha->translate("::");
@@ -35,8 +31,8 @@ QString Skill::getDescription() const{
 }
 
 QString Skill::getText() const{
-    QString skill_name = Sanguosha->translate(objectName());
 /*
+    QString skill_name = Sanguosha->translate(objectName());
     switch(frequency){
     case Skill::NotFrequent:
     case Skill::Frequent: break;
@@ -46,11 +42,7 @@ QString Skill::getText() const{
     default: break;
     }
 */
-    return skill_name;
-}
-
-bool Skill::isVisible() const{
-    return ! objectName().startsWith("#");
+    return Sanguosha->translate(objectName());
 }
 
 QString Skill::getDefaultChoice(ServerPlayer *) const{
@@ -89,7 +81,10 @@ void Skill::initMediaSource(){
 }
 
 Skill::Location Skill::getLocation() const{
-    return parent() ? Right : Left;
+    if(isEquipSkill())
+        return Left;
+    else
+        return parent() ? Right : Left;
 }
 
 void Skill::playEffect(int index) const{
@@ -120,22 +115,9 @@ void Skill::unsetFlag(ServerPlayer *player) const{
     player->getRoom()->setPlayerFlag(player, "-" + objectName());
 }
 
-Skill::Frequency Skill::getFrequency() const{
-    return frequency;
-}
-
-QStringList Skill::getSources() const{
-    return sources;
-}
-
-QDialog *Skill::getDialog() const{
-    return NULL;
-}
-
 ViewAsSkill::ViewAsSkill(const QString &name)
     :Skill(name)
 {
-
 }
 
 bool ViewAsSkill::isAvailable() const{
@@ -162,7 +144,6 @@ bool ViewAsSkill::isEnabledAtNullification(const ServerPlayer *, bool) const{
 ZeroCardViewAsSkill::ZeroCardViewAsSkill(const QString &name)
     :ViewAsSkill(name)
 {
-
 }
 
 const Card *ZeroCardViewAsSkill::viewAs(const QList<CardItem *> &cards) const{
