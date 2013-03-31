@@ -1504,15 +1504,41 @@ void Room::resetAI(ServerPlayer *player){
 
 void Room::transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start){
     QString general = new_general;
-    if(new_general.startsWith("%"))
-        general.remove("%");
+    if(new_general.contains(":"))
+        general = new_general.split(":").last();
+    if(new_general.contains("%"))
+        general = new_general.split("%").last();
+    if(new_general.startsWith("~"))
+        general.remove("~");
     if(!Sanguosha->getGeneral(general))
         return;
 
-    if(new_general.startsWith("%")){
+    if(new_general.contains(":")){
+        QString object = new_general.split(":").first();
+        foreach(ServerPlayer *p, m_players){
+            if(p->objectName() == object){
+                player = p;
+                break;
+            }
+        }
+    }
+    if(new_general.contains("%")){
+        QString object = new_general.split("%").first();
+        foreach(ServerPlayer *p, m_players){
+            if(p->objectName() == object){
+                player = p;
+                break;
+            }
+        }
         player->invoke("transfigure", player->getGeneral2Name() + ":" + general);
         setPlayerProperty(player, "general2", general);
         thread->addPlayerSkills(player, true);
+        return;
+    }
+    if(new_general.startsWith("~")){
+        const General *gen = Sanguosha->getGeneral(general);
+        foreach(const Skill *skill, gen->getVisibleSkillList())
+            acquireSkill(player, skill->objectName());
         return;
     }
 

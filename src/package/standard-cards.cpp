@@ -268,6 +268,7 @@ Blade::Blade(Suit suit, int number)
 class SpearSkill: public ViewAsSkill{
 public:
     SpearSkill():ViewAsSkill("spear"){
+        equip_skill = true;
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
@@ -314,7 +315,7 @@ Spear::Spear(Suit suit, int number)
 class AxeViewAsSkill: public ViewAsSkill{
 public:
     AxeViewAsSkill():ViewAsSkill("axe"){
-
+        equip_skill = true;
     }
 
     virtual bool isEnabledAtPlay(const Player *) const{

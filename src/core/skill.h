@@ -33,14 +33,15 @@ public:
     };
 
     explicit Skill(const QString &name, Frequency frequent = NotFrequent);
-    bool isLordSkill() const;
     QString getDescription() const;
     QString getText() const;
-    bool isVisible() const;
+    bool isLordSkill() const {return lord_skill;}
+    bool isVisible() const {return !objectName().startsWith("#");}
+    bool isEquipSkill() const {return equip_skill;}
 
     virtual QString getDefaultChoice(ServerPlayer *player) const;
     virtual int getEffectIndex(const ServerPlayer *player, const Card *card) const;
-    virtual QDialog *getDialog() const;
+    virtual QDialog *getDialog() const {return NULL;}
 
     virtual Location getLocation() const;
     inline virtual bool isKindOf(const char* cardType) const {return this && inherits(cardType);}
@@ -49,12 +50,13 @@ public:
     void playEffect(int index = -1) const;
     void setFlag(ServerPlayer *player) const;
     void unsetFlag(ServerPlayer *player) const;
-    Frequency getFrequency() const;
-    QStringList getSources() const;
+    Frequency getFrequency() const {return frequency;}
+    QStringList getSources() const {return sources;}
 
 protected:
     Frequency frequency;
     QString default_choice;
+    bool equip_skill;
 
 private:
     bool lord_skill;

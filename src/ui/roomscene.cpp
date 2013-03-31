@@ -175,6 +175,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
 
     // add role combobox
     role_combobox = new QComboBox;
+    role_combobox->setObjectName("role");
     role_combobox->addItem(tr("Your role"));
     role_combobox->addItem(tr("Unknown"));
     connect(Self, SIGNAL(role_changed(QString)), this, SLOT(updateRoleComboBox(QString)));
@@ -1449,8 +1450,8 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         if(button->text() == skill->getText())
             return;
 
-    QAbstractButton *button = NULL;
-    QString button_objectname = "normal";
+    QAbstractButton *button = new QPushButton();
+    QString button_type = "normal";
 
     if(skill->isKindOf("TriggerSkill")){
         const TriggerSkill *trigger_skill = qobject_cast<const TriggerSkill *>(skill);
@@ -1461,55 +1462,40 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
                 checkbox->setChecked(true);
 
                 button = checkbox;
-                button_objectname = checkbox->objectName();
+                button_type = "frequent";
                 break;
         }
         case Skill::Limited:
         case Skill::NotFrequent:{
+                if(trigger_skill->getFrequency() == Skill::Limited)
+                    button_type = "limited";
                 const ViewAsSkill *view_as_skill = trigger_skill->getViewAsSkill();
-                if(trigger_skill->getFrequency() == Skill::Limited){
-                    button = new QPushButton();
-                    button_objectname = "limited";
-                }
-                else
-                    button = new QPushButton();
                 if(view_as_skill){
                     button2skill.insert(button, view_as_skill);
                     connect(button, SIGNAL(clicked()), this, SLOT(doSkillButton()));
                 }
-
                 break;
         }
-
-        case Skill::Wake:{
-            button = new QPushButton();
-            button_objectname = "awaken";
-            break;
-        }
-        case Skill::Compulsory:{
-            button = new QPushButton();
-            button_objectname = "compulsory";
-            break;
-        }
-        default: button = new QPushButton(); button->setVisible(false); break;
+        case Skill::Wake: button_type = "awaken"; break;
+        case Skill::Compulsory: button_type = "compulsory"; break;
+        default:
+            button->setVisible(false);
         }
     }else if(skill->isKindOf("FilterSkill")){
         const FilterSkill *filter = qobject_cast<const FilterSkill *>(skill);
         if(filter && dashboard->getFilter() == NULL)
             dashboard->setFilter(filter);
-        button = new QPushButton();
     }else if(skill->isKindOf("ViewAsSkill")){
-        button = new QPushButton();
         button2skill.insert(button, qobject_cast<const ViewAsSkill *>(skill));
         connect(button, SIGNAL(clicked()), this, SLOT(doSkillButton()));
-    }else{
-        button = new QPushButton;
     }
 
     if(skill->isLordSkill())
-        button_objectname = "lord";
+        button_type = "lord";
     else if(skill->getFrequency() == Skill::Compulsory)
-        button_objectname = "compulsory";
+        button_type = "compulsory";
+    else if(skill->isEquipSkill())
+        button_type = "default";
 
     QDialog *dialog = skill->getDialog();
     if(dialog){
@@ -1517,7 +1503,8 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
         connect(button, SIGNAL(clicked()), dialog, SLOT(popup()));
     }
 
-    button->setObjectName(button_objectname);
+    button->setProperty("type", button_type);
+    button->setObjectName(skill->objectName());
     button->setText(skill->getText());
     button->setToolTip(skill->getDescription());
     button->setDisabled(skill->getFrequency() == Skill::Compulsory);
@@ -1532,15 +1519,17 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
     if(widget->inherits("QComboBox"))
         widget->setFixedHeight(20);
-    else if(widget->objectName() == "pile")
+    else if(widget->property("type").toString() == "default")
         widget->setFixedHeight(26);
     else
         widget->setFixedSize(71, 28);
 
-    if(!from_left)
-        //main_window->statusBar()->addPermanentWidget(widget);
-        main_window->statusBar()->insertPermanentWidget(1, widget);
-    else
+    if(!from_left){
+        if(widget->objectName() == "role")
+            main_window->statusBar()->addPermanentWidget(widget);
+        else
+            main_window->statusBar()->insertPermanentWidget(1, widget);
+    }else
         main_window->statusBar()->addWidget(widget);
 }
 
@@ -1713,20 +1702,24 @@ void RoomScene::updateTargetsEnablity(const Card *card){
             continue;
 
         bool enabled;
-        if(card)enabled= !Sanguosha->isProhibited(Self, player, card)
+        if(card)
+            enabled = !Sanguosha->isProhibited(Self, player, card)
                        && card->targetFilter(selected_targets, player, Self);
-        else enabled = true;
+        else
+            enabled = true;
 
         //item->setOpacity(enabled ? 1.0 : 0.7);
-        if(enabled)animations->effectOut(item);
-        else
-        {
+        if(enabled)
+            animations->effectOut(item);
+        else{
             if(item->graphicsEffect() &&
                     item->graphicsEffect()->inherits("SentbackEffect"));
-            else animations->sendBack(item);
+            else
+                animations->sendBack(item);
         }
 
-        if(card)item->setFlag(QGraphicsItem::ItemIsSelectable, enabled);
+        if(card)
+            item->setFlag(QGraphicsItem::ItemIsSelectable, enabled);
     }
 }
 
@@ -1739,17 +1732,14 @@ void RoomScene::updateSelectedTargets(){
     const Card *card = dashboard->getSelected();
     if(card){
         const ClientPlayer *player = item2player[item];
-        if(item->isSelected()){
+        if(item->isSelected())
             selected_targets.append(player);
-        }else{
+        else
             selected_targets.removeOne(player);
-        }
-
 
         ok_button->setEnabled(card->targetsFeasible(selected_targets, Self));
-    }else{
+    }else
         selected_targets.clear();
-    }
 
     updateTargetsEnablity(card);
 }
@@ -2179,8 +2169,7 @@ void RoomScene::updateStatus(Client::Status status){
     case Client::AskForSkillInvoke:{
             QString skill_name = ClientInstance->getSkillNameToInvoke();
             foreach(QAbstractButton *button, skill_buttons){
-                const Skill *skill = Sanguosha->getSkill(skill_name);
-                if(skill && button->text() == skill->getText()){
+                if(button->objectName() == skill_name){
                     QCheckBox *check_box = qobject_cast<QCheckBox *>(button);
                     if(check_box && check_box->isChecked()){
                         ClientInstance->onPlayerInvokeSkill(true);
@@ -2339,7 +2328,7 @@ static bool CompareByNumber(const Card *card1, const Card *card2){
 void RoomScene::updatePileButton(const QString &pile_name){
     QPushButton *button = NULL;
     foreach(QAbstractButton *pile_button, skill_buttons){
-        if(pile_button->objectName() == "pile"){
+        if(pile_button->objectName() == pile_name){
             button = qobject_cast<QPushButton *>(pile_button);
             break;
         }
@@ -2348,7 +2337,8 @@ void RoomScene::updatePileButton(const QString &pile_name){
     QMenu *menu = NULL;
     QPushButton *push_button = new QPushButton;
     if(button == NULL){
-        push_button->setObjectName("pile");
+        push_button->setObjectName(pile_name);
+        push_button->setProperty("type", "default");
         skill_buttons << push_button;
         addWidgetToSkillDock(push_button);
 
@@ -3140,8 +3130,7 @@ void RoomScene::detachSkill(const QString &skill_name){
         itor.next();
 
         QAbstractButton *button = itor.value();
-        const Skill *skill = Sanguosha->getSkill(skill_name);
-        if(skill && button->text() == skill->getText()){
+        if(button->objectName() == skill_name){
             removeWidgetFromSkillDock(button);
             button2skill.remove(button);
             button->deleteLater();

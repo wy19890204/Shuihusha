@@ -10,6 +10,7 @@
 #include <QGroupBox>
 #include <QCommandLinkButton>
 #include <QClipboard>
+#include <QMenu>
 
 GeneralOverview::GeneralOverview(QWidget *parent) :
     QDialog(parent),
@@ -255,10 +256,6 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
     else
         ui->generalPhoto->setToolTip(QString());
     ui->generalPhoto->setWhatsThis("FAQ:"); //@todo
-    if(Self && general->objectName() == Self->getGeneralName())
-        ui->changeGeneralButton->setEnabled(false);
-    else
-        ui->changeGeneralButton->setEnabled(true);
 
     QList<const Skill *> skills = general->getVisibleSkillList();
 
@@ -336,19 +333,53 @@ void GeneralOverview::playEffect()
 }
 
 void GeneralOverview::addChangeAction(QPushButton *button){
-    button->setContextMenuPolicy(Qt::ActionsContextMenu);
+    //button->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    QAction *action = new QAction(button);
-    action->setData("general");
+    QMenu *menu = new QMenu(button);
+    button->setMenu(menu);
+
+    QAction *action = new QAction(menu);
+    action->setData(QString("general:%1").arg(Self->objectName()));
     action->setText(tr("Change general"));
-    button->addAction(action);
+    menu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(askChange()));
 
-    QAction *action2 = new QAction(button);
-    action2->setData("general2");
+    QAction *action2 = new QAction(menu);
+    action2->setData(QString("general2:%1").arg(Self->objectName()));
     action2->setText(tr("Change general2"));
-    button->addAction(action2);
+    menu->addAction(action2);
     connect(action2, SIGNAL(triggered()), this, SLOT(askChange()));
+    action2->setEnabled(!Self->getGeneral2Name().isNull());
+
+    QAction *action3 = new QAction(menu);
+    action3->setData("skills");
+    action3->setText(tr("Get skills only"));
+    menu->addAction(action3);
+    connect(action3, SIGNAL(triggered()), this, SLOT(askChange()));
+
+    QMenu *menu4 = new QMenu(menu);
+    menu4->setTitle(tr("Change others"));
+    menu->addMenu(menu4);
+    foreach(const ClientPlayer *player, ClientInstance->getPlayers()){
+        if(player == Self)
+            continue;
+        QAction *action4 = new QAction(menu4);
+        action4->setData(QString("general:%1").arg(player->objectName()));
+        action4->setText(tr("%1 %2%3").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneralName()))
+                         .arg(player->isDead() ? "(dead)" : ""));
+        menu4->addAction(action4);
+        connect(action4, SIGNAL(triggered()), this, SLOT(askChange()));
+
+        if(player->getGeneral2()){
+            QAction *action5 = new QAction(menu4);
+            action5->setData(QString("general2:%1").arg(player->objectName()));
+            action5->setText(tr("%1 %2").arg(player->objectName()).arg(Sanguosha->translate(player->getGeneral2Name())));
+            menu4->addAction(action5);
+            connect(action5, SIGNAL(triggered()), this, SLOT(askChange()));
+
+            menu4->addSeparator();
+        }
+    }
 }
 
 void GeneralOverview::askChange(){
@@ -357,16 +388,20 @@ void GeneralOverview::askChange(){
 
     QString change2 = "";
     QAction *action = qobject_cast<QAction *>(sender());
-    if(action && action->data().toString() == "general2")
-        change2 = "%";
+    if(action){
+        QString flag = action->data().toString();
+        if(flag.startsWith("general:"))
+            change2 = flag.split(":").last() + ":"; //sgs4:wusong
+        else if(flag.startsWith("general2"))
+            change2 = flag.split(":").last() + "%"; //sgs5%wuyong
+        else if(flag == "skills")
+            change2 = "~"; //~linchong
+    }
 
     int row = ui->tableWidget->currentRow();
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-    if(Self && general_name != Self->getGeneralName()){
+    if(Self && general_name != Self->getGeneralName())
         ClientInstance->requestCheatChangeGeneral(change2 + general_name);
-        if(change2 != "%")
-            ui->changeGeneralButton->setEnabled(false);
-    }
 }
 
 void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)

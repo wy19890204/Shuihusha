@@ -628,6 +628,8 @@ QiapaiCard::QiapaiCard(){
 }
 
 void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(!room->askForSkillInvoke(source, skill_name))
+        return;
     QList<int> card_ids;
     QList<const Card *> cards = source->getCards("he");
     foreach(const Card *tmp, cards)
