@@ -1532,10 +1532,10 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
     if(widget->inherits("QComboBox"))
         widget->setFixedHeight(20);
-    else if(widget->inherits("QAbstractButton"))
+    else if(widget->objectName() == "pile")
         widget->setFixedHeight(26);
     else
-        widget->setFixedSize(71, 30);
+        widget->setFixedSize(71, 28);
 
     if(!from_left)
         //main_window->statusBar()->addPermanentWidget(widget);
@@ -2339,7 +2339,7 @@ static bool CompareByNumber(const Card *card1, const Card *card2){
 void RoomScene::updatePileButton(const QString &pile_name){
     QPushButton *button = NULL;
     foreach(QAbstractButton *pile_button, skill_buttons){
-        if(pile_button->objectName() == pile_name){
+        if(pile_button->objectName() == "pile"){
             button = qobject_cast<QPushButton *>(pile_button);
             break;
         }
@@ -2348,7 +2348,7 @@ void RoomScene::updatePileButton(const QString &pile_name){
     QMenu *menu = NULL;
     QPushButton *push_button = new QPushButton;
     if(button == NULL){
-        push_button->setObjectName(pile_name);
+        push_button->setObjectName("pile");
         skill_buttons << push_button;
         addWidgetToSkillDock(push_button);
 
