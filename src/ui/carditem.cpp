@@ -330,10 +330,9 @@ void CardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             const QString str = Sanguosha->translate(card->objectName());
             for(int i = 0; i < qMin(5, str.length()); i ++)
                 painter->drawText(7, 50 + 11*i, str.at(i));
-
-            if(owner_pixmap)
-                painter->drawPixmap(0,0,*owner_pixmap);
         }
+        if(owner_pixmap)
+            painter->drawPixmap(0,0,*owner_pixmap);
     }
 }
 

@@ -615,7 +615,7 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
-    jail_icon->setVisible(Self->containsTrick("indulgence"));
+    jail_icon->setVisible(Self->containsTrick("indulgence", false));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
 }
 

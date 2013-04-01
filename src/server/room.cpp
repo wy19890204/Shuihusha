@@ -1508,8 +1508,8 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
         general = new_general.split(":").last();
     if(new_general.contains("%"))
         general = new_general.split("%").last();
-    if(new_general.startsWith("~"))
-        general.remove("~");
+    if(new_general.contains("~"))
+        general = new_general.split("~").last();
     if(!Sanguosha->getGeneral(general))
         return;
 
@@ -1535,10 +1535,23 @@ void Room::transfigure(ServerPlayer *player, const QString &new_general, bool fu
         thread->addPlayerSkills(player, true);
         return;
     }
-    if(new_general.startsWith("~")){
-        const General *gen = Sanguosha->getGeneral(general);
-        foreach(const Skill *skill, gen->getVisibleSkillList())
-            acquireSkill(player, skill->objectName());
+    if(new_general.contains("`")){
+        QString object = new_general.split("`").first();
+        foreach(ServerPlayer *p, m_players){
+            if(p->objectName() == object){
+                player = p;
+                break;
+            }
+        }
+        if(new_general.contains("`~")){
+            const General *gen = Sanguosha->getGeneral(general);
+            foreach(const Skill *skill, gen->getVisibleSkillList())
+                acquireSkill(player, skill->objectName());
+        }
+        else{
+            QString skill_name = new_general.split("`").last().split("~").first();
+            acquireSkill(player, skill_name);
+        }
         return;
     }
 

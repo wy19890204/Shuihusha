@@ -135,6 +135,7 @@ void StartScene::switchToServer(Server *server){
     server_log->setFrameShape(QFrame::NoFrame);
     server_log->setFont(QFont("Verdana", 12));
     server_log->setTextColor(Config.TextEditColor);
+    server_log->setProperty("type", "border");
     setServerLogBackground();
 
     addWidget(server_log);

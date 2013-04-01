@@ -798,7 +798,7 @@ MeleeDialog::MeleeDialog(QWidget *parent)
     server_log->setMinimumWidth(300);
     server_log->setReadOnly(true);
     server_log->setFrameStyle(QFrame::Box);
-    server_log->setProperty("description", true);
+    server_log->setProperty("type", "description");
     server_log->setFont(QFont("Verdana", 12));
 
     QVBoxLayout *vlayout = new QVBoxLayout;

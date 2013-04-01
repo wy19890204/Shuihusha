@@ -314,6 +314,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         chat_box_size.rwidth() += widen_width;
         chat_box->resize(chat_box_size);
         chat_box->setObjectName("chat_box");
+        chat_box->setProperty("type", "border");
 
         chat_box_widget = addWidget(chat_box);
         QPointF chat_box_pos = room_layout->chat_box_pos;
