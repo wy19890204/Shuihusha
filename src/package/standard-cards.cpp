@@ -128,8 +128,14 @@ void Peach::onEffect(const CardEffectStruct &effect) const{
     room->recover(effect.to, recover, false);
 }
 
-bool Peach::isAvailable(const Player *player) const{
+bool Peach::IsAvailable(const Player *player){
+    if(player->hasFlag("%zhaoan"))
+        return false;
     return player->isWounded();
+}
+
+bool Peach::isAvailable(const Player *player) const{
+    return IsAvailable(player);
 }
 
 Crossbow::Crossbow(Suit suit, int number)
