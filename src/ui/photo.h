@@ -59,7 +59,6 @@ public slots:
     void hideSkillName();
     void setWakeState();
     void setDrankState();
-    void setEcstState();
     void setPoisonState();
     void setActionState();
     void updateRoleComboboxPos();

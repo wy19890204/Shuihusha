@@ -177,13 +177,13 @@ void Dashboard::createRight(){
     handcard_pixmap->setPos(25, 127);
 
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setPos(6,8);
+    handcard_num->setPos(6,6);
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
     handcard_num->setBrush(Qt::white);
 
-    handcard_pixmap->hide();
+    //handcard_pixmap->hide();
 
     mark_item = new QGraphicsTextItem(right);
     mark_item->setPos(-120 - getButtonWidgetWidth(), 5);
@@ -191,11 +191,11 @@ void Dashboard::createRight(){
 
     action_item = NULL;
 
-    avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
-    avatar_area->setPos(22, 64);
-    avatar_area->setZValue(0.3);
-    avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    avatar_area->setVisible(false);
+    ecst_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    ecst_area->setPos(22, 64);
+    ecst_area->setZValue(0.3);
+    ecst_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    ecst_area->setVisible(false);
 
     wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(right);
@@ -211,15 +211,6 @@ void Dashboard::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
-}
-
-void Dashboard::setEcstState(){
-    if(Self->hasFlag("ecst"))
-        avatar_area->setVisible(true);
-    //else if(Self->hasMark("poison"))
-    //    setPoisonState();
-    else
-        avatar_area->setVisible(false);
 }
 
 void Dashboard::setActionState(){
@@ -286,7 +277,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
-    connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+    //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
 
@@ -615,8 +606,10 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
+    ecst_area->setVisible(Self->hasFlag("ecst"));
     jail_icon->setVisible(Self->containsTrick("indulgence"));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
+    //poison_area->setVisible(Self->hasMark("poison"));
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){
@@ -787,9 +780,9 @@ CardItem *Dashboard::takeCardItem(int card_id, Player::Place place){
 
         if(Self->isKongcheng())
             handcard_num->parentItem()->hide();
-        else{
+        else
             handcard_num->setText(QString::number(Self->getHandcardNum()));
-        }
+
         if(card_item)
             card_item->hideFrame();
     }else if(place == Player::Equip){
