@@ -274,9 +274,8 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 
     resetButtons();
 
-    foreach(const Skill *skill, skills){
+    foreach(const Skill *skill, skills)
         addLines(skill);
-    }
 
     addWakeLines(general_name);
 

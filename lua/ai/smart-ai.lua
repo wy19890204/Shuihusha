@@ -1750,7 +1750,9 @@ function SmartAI:filterEvent(event, player, data)
 	end
 
 	self:speakTrigger(nil, player, target, event)
-	self:crazyAI(event, player, data)
+	if sgs.GetConfig("AICrazy", false) then
+		self:crazyAI(event, player, data)
+	end
 end
 
 function SmartAI:askForSuit(reason)

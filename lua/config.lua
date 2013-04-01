@@ -22,7 +22,7 @@ config = {
 		"Tiger",
 		"Hare",
 		"Dragon",
---		"Snake",
+		"Snake",
 --		"Mustang",
 --		"Sheep",
 --		"Monkey",

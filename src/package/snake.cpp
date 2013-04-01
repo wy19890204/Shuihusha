@@ -95,6 +95,10 @@ public:
         frequency = Compulsory;
     }
 
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *opt) const{
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
@@ -909,7 +913,7 @@ public:
 
 SnakePackage::SnakePackage()
     :GeneralPackage("snake")
-{
+{/*
     General *muhong = new General(this, "muhong", "jiang");
     muhong->addSkill(new Wuzu);
     skills << new WuzuSlash << new WuzuDistance;
@@ -931,7 +935,7 @@ SnakePackage::SnakePackage()
 
     General *baoxu = new General(this, "baoxu", "kou");
     baoxu->addSkill(new Sinue);
-
+*/
     General *fanrui = new General(this, "fanrui", "kou");
     fanrui->addSkill(new Liuxing);
     fanrui->addSkill(new Hunyuan);
@@ -942,7 +946,7 @@ SnakePackage::SnakePackage()
     //fanrui->addRelateSkill("butian");
     //fanrui->addRelateSkill("qimen");
     skills << new Kongmen;
-
+/*
     General *jindajian = new General(this, "jindajian", "min", 3);
     jindajian->addSkill(new Fangzao);
     jindajian->addSkill(new Jiangxin);
@@ -971,7 +975,7 @@ SnakePackage::SnakePackage()
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
     addMetaObject<JiejiuCard>();
-    addMetaObject<ZhaoanCard>();
+    addMetaObject<ZhaoanCard>();*/
 }
 
-//ADD_PACKAGE(Snake)
+ADD_PACKAGE(Snake)

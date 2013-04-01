@@ -18,7 +18,7 @@ ClientPlayer::ClientPlayer(Client *client)
     mark_doc->setDefaultTextOption(QTextOption(Qt::AlignRight));
     mark_doc_small = new QTextDocument(this);
     mark_doc_small->setTextWidth(128);
-    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignRight));
+    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignLeft));
 }
 
 void ClientPlayer::handCardChange(int delta){

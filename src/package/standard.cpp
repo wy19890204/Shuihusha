@@ -662,7 +662,7 @@ TestPackage::TestPackage()
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
-    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true, true);
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
     addMetaObject<QiapaiCard>();

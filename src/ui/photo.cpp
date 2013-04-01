@@ -65,12 +65,12 @@ Photo::Photo()
     settings.endGroup();
 
     progress_bar = new QProgressBar;
+    progress_bar->setObjectName("photo-bar");
     progress_bar->setMinimum(0);
     progress_bar->setMaximum(100);
     progress_bar->setValue(0);
     progress_bar->hide();
-    progress_bar->setMaximumHeight(10);
-    progress_bar->setMaximumWidth(pixmap.width() - 10);
+    progress_bar->setFixedSize(198, 13);
     progress_bar->setTextVisible(false);
     timer_id = 0;
 
@@ -740,12 +740,17 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         settings.endGroup();
     }
 
-    painter->setPen(Qt::white);
+    // state related
     QString state_str = player->getState();
-    if(!state_str.isEmpty() && state_str != "online"){
+    QPixmap state_icon;
+    if(!state_str.isEmpty()){
+        state_icon.load(QString("image/state/%1.png").arg(state_str));
         QList<QVariant> coord = settings.value("state_item/pos").toList();
-        painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), state_icon);
+        //painter->drawText(coord.first().toReal(), coord.last().toReal(), Sanguosha->translate(state_str));
     }
+    else
+        state_icon = QPixmap();
 
     drawHp(painter, settings);
 
@@ -789,11 +794,19 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 void Photo::drawEquip(QPainter *painter, CardItem *equip, int order){
     if(!equip)
         return;
-
-    QRect suit_rect(6, 105 + 19 + order * 15, 12.5, 12.5);
-    painter->drawPixmap(suit_rect, equip->getSuitPixmap());
-
     const EquipCard *card = qobject_cast<const EquipCard *>(equip->getCard());
+    if(Config.value("UI/EquipStyle", true).toBool()){
+        QRect tiny_rect(2, 120 + order * 15, 122, 20);
+        QPixmap tiny_equip(QString("image/tiny-equips/%1.png").arg(card->objectName()));
+        if(tiny_equip.isNull())
+            tiny_equip.load(QString("image/tiny-equips/%1_%2.png").arg(card->objectName()).arg(card->getSuitString()));
+        if(!tiny_equip.isNull()){
+            painter->drawPixmap(tiny_rect, tiny_equip);
+            return;
+        }
+    }
+    QRect suit_rect(2, 120 + order * 14, 20, 20);
+    painter->drawPixmap(suit_rect, equip->getSuitPixmap());
     painter->setPen(Qt::white);
     QFont bold_font;
     bold_font.setBold(true);

@@ -2727,13 +2727,13 @@ StandardPackage::StandardPackage()
     General *wuyong = new General(this, "wuyong", "kou", 3);
     wuyong->addSkill(new Huace);
     wuyong->addSkill(new Yunchou);
-/*
+
     General *gongsunsheng = new General(this, "gongsunsheng", "kou", 3);
     gongsunsheng->addSkill(new Yixing);
     gongsunsheng->addSkill(new Qimen);
     gongsunsheng->addSkill(new QimenClear);
     related_skills.insertMulti("qimen", "#qimencls");
-*/
+
     General *guansheng = new General(this, "guansheng", "jiang");
     guansheng->addSkill(new Huqi);
     guansheng->addSkill(new Tongwu);

@@ -1076,6 +1076,7 @@ OxPackage::OxPackage()
     General *gaolian = new General(this, "gaolian", "guan", 3);
     gaolian->addSkill(new Guibing);
     gaolian->addSkill(new Heiwu);
+    skills << new GuibingSlash;
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);

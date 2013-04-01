@@ -190,7 +190,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         progress_bar = new QProgressBar;
         progress_bar->setMinimum(0);
         progress_bar->setMaximum(100);
-        progress_bar->setFixedSize(200, 18);
         progress_bar->setTextVisible(false);
         last_layout->addWidget(progress_bar);
     }
@@ -201,16 +200,14 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         last_layout->addWidget(free_choose_button);
     }
 
-    QPushButton *random_choose_button = new QPushButton(tr("Random choose"));
-    connect(random_choose_button, SIGNAL(clicked()), this, SLOT(randomChoose()));
-    connect(this, SIGNAL(random_choosen(QString)), ClientInstance, SLOT(onPlayerChooseGeneral(QString)));
-    last_layout->addWidget(random_choose_button);
-
     last_layout->addStretch();
 
-    if(last_layout->count() != 0){
+    QPushButton *random_choose_button = new QPushButton(tr("Random choose"));
+    connect(random_choose_button, SIGNAL(clicked()), this, SLOT(randomChoose()));
+    last_layout->addWidget(random_choose_button);
+
+    if(last_layout->count() != 0)
         dialog_layout->addLayout(last_layout);
-    }
 
     setLayout(dialog_layout);
 

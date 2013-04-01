@@ -29,7 +29,7 @@ StartScene::StartScene()
     server_log = NULL;
 
     //Provide coordinates for the button
-    button_group = new Pixmap("image/system/button/main/background.png");
+    button_group = new Pixmap("image/system/button/plate/background.png");
     button_group->shift();
     button_group->moveBy(0, Config.Rect.height()/5-40);
     button_group->hide();
