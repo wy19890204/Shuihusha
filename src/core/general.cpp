@@ -88,12 +88,8 @@ bool General::isLuaGeneral() const{
 }
 
 QString General::getPixmapPath(const QString &category) const{
-    QString suffix = "png";
-    if(category == "card")
-        suffix = "jpg";
+    QString suffix = category == "card" ? "jpg" : "png";
 
-    //QString path = !isLuaGeneral() ? "image" : "extensions";
-    //return QString("%1/generals/%2/%3.%4").arg(path).arg(category).arg(objectName()).arg(suffix);
     QString path = QString("image/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);
     if(!QFile::exists(path))
         path = QString("extensions/generals/%1/%2.%3").arg(category).arg(objectName()).arg(suffix);

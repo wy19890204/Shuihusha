@@ -334,7 +334,7 @@ void GeneralOverview::playEffect()
 
 void GeneralOverview::addChangeAction(QPushButton *button){
     //button->setContextMenuPolicy(Qt::ActionsContextMenu);
-    if(!Self)
+    if(!Self || !Self->getGeneral())
         return;
 
     QMenu *menu = new QMenu(button);
@@ -350,7 +350,8 @@ void GeneralOverview::addChangeAction(QPushButton *button){
     QAction *action2 = new QAction(menu);
     action2->setData(QString("general2:%1").arg(Self->objectName()));
     action2->setText(tr("Change general2"));
-    action2->setIcon(QIcon(Self->getGeneral2()->getPixmapPath("tiny")));
+    if(Self->getGeneral2())
+        action2->setIcon(QIcon(Self->getGeneral2()->getPixmapPath("tiny")));
     menu->addAction(action2);
     connect(action2, SIGNAL(triggered()), this, SLOT(askChange()));
     action2->setEnabled(!Self->getGeneral2Name().isNull());

@@ -89,7 +89,7 @@ Wiretap::Wiretap(Suit suit, int number)
 }
 
 bool Wiretap::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
-    if(getSkillName() == "huace" || getSkillName() == "linmo")
+    if(getSkillName() == "huace" || getSkillName() == "linmo" || getSkillName() == "fangzao")
         return targets.length() == 1;
     else
         return targets.length() <= 1;

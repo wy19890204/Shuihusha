@@ -132,6 +132,15 @@ QString Player::getFlags() const{
     return flags_list.join("+");
 }
 
+QStringList Player::getClearFlags() const{
+    QStringList flags_list;
+    foreach(QString flag, flags){
+        if(flag.startsWith("%"))
+            flags_list << flag;
+    }
+    return flags_list;
+}
+
 void Player::setFlags(const QString &flag){
     static QChar unset_symbol('-');
     if(flag.startsWith(unset_symbol)){
@@ -144,7 +153,8 @@ void Player::setFlags(const QString &flag){
 }
 
 bool Player::hasFlag(const QString &flag) const{
-    return flags.contains(flag);
+    QString clflag = "%" + flag;
+    return flags.contains(flag) || flags.contains(clflag);
 }
 
 void Player::clearFlags(){

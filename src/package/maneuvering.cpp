@@ -337,7 +337,7 @@ bool IronChain::targetFilter(const QList<const Player *> &targets, const Player 
 }
 
 bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
-    if(getSkillName() == "huace" || getSkillName() == "linmo")
+    if(getSkillName() == "huace" || getSkillName() == "linmo" || getSkillName() == "fangzao")
         return targets.length() == 1 || targets.length() == 2;
     else
         return targets.length() <= 2;
