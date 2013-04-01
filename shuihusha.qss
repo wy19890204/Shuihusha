@@ -28,13 +28,13 @@ QProgressBar#photo-bar::chunk{
 	background-image: url(image/system/controls/progress-photo-chunk.png);
 }
 
-QTextEdit{
+QTextEdit[type="border"]{
 	border: 10px;
 	border-image: url(image/system/border.png)10 10 10 10 ;
 	background-color: rgba(43,45,31,120);
 }
 
-QTextEdit[description="true"]{
+QTextEdit[type="description"]{
 	border: 10px;
 	border-image: none;
 	background-color: rgba(255,255,255,255);
@@ -240,7 +240,7 @@ QPushButton#uniform{
 }
 
 #skill_bar_container QPushButton[type="default"]{
-	background-image: url(:system/button/back.png);
+	background-image: url(image/system/button/back.png);
 		border: 1px solid black;
 		border-radius: 2px;
 	color: yellow;
@@ -248,7 +248,7 @@ QPushButton#uniform{
 	padding: 6px 12px 6px 12px;
 }
 #skill_bar_container QPushButton[type="default"]:disabled{
-	background-image: url(:system/button/back_shade.png);
+	background-image: url(image/system/button/back_shade.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;

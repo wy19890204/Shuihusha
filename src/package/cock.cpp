@@ -158,7 +158,7 @@ void EyanCard::onEffect(const CardEffectStruct &effect) const{
         room->useCard(use);
     }
     else{
-        room->setPlayerFlag(effect.from, "Eyan_success");
+        room->setPlayerFlag(effect.from, "%Eyan_success");
         effect.from->tag["EyanTarget"] = QVariant::fromValue(target);
     }
 }
@@ -187,46 +187,25 @@ void EyanSlashCard::onUse(Room *room, const CardUseStruct &card_use) const{
         use.to << target;
         room->useCard(use);
     }
+    card_use.from->tag.remove("EyanTarget");
 }
 
-class EyanViewAsSkill: public ZeroCardViewAsSkill{
+class Eyan: public ZeroCardViewAsSkill{
 public:
-    EyanViewAsSkill():ZeroCardViewAsSkill("eyan"){
-
+    Eyan():ZeroCardViewAsSkill("eyan"){
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
-        return ! player->hasUsed("EyanCard") || player->hasFlag("Eyan_success");
+        return ! player->hasUsed("EyanCard") || player->hasFlag("%Eyan_success");
     }
 
     virtual const Card *viewAs() const{
         if(!Self->hasUsed("EyanCard")){
             return new EyanCard;
-        }else if(Self->hasFlag("Eyan_success")){
+        }else if(Self->hasFlag("%Eyan_success")){
             return new EyanSlashCard;
         }else
             return NULL;
-    }
-};
-
-class Eyan: public PhaseChangeSkill{
-public:
-    Eyan():PhaseChangeSkill("eyan"){
-        view_as_skill = new EyanViewAsSkill;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        ServerPlayer *target = player->tag["EyanTarget"].value<PlayerStar>();
-        Room *room = player->getRoom();
-        if(player->getPhase() == Player::Finish && target)
-            player->tag.remove("EyanTarget");
-        else if(player->getPhase() == Player::NotActive){
-            foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                if(tmp->hasFlag("EyanTarget"))
-                    room->setPlayerFlag(tmp, "-EyanTarget");
-            }
-        }
-        return false;
     }
 };
 

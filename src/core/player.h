@@ -116,6 +116,7 @@ public:
     void setAlive(bool alive);
 
     QString getFlags() const;
+    QStringList getClearFlags() const;
     virtual void setFlags(const QString &flag);
     bool hasFlag(const QString &flag) const;
     void clearFlags();

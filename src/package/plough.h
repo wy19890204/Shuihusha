@@ -35,6 +35,9 @@ class Wiretap: public SingleTargetTrick{
 public:
     Q_INVOKABLE Wiretap(Card::Suit suit, int number);
 
+    virtual bool targetsFeasible(const QList<const Player *> &targets, const Player *Self) const;
+    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
     virtual void onEffect(const CardEffectStruct &effect) const;
 };
 

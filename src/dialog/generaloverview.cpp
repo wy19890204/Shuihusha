@@ -24,15 +24,8 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setTitle(tr("Effects"));
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
-    ui->skillTextEdit->setProperty("description", true);
-
-    if(ServerInfo.isPlay && Config.value("Cheat/FreeChange", false).toBool()){
-        addChangeAction(ui->changeGeneralButton);
-        ui->changeGeneralButton->show();
-        connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
-    }
-    else
-        ui->changeGeneralButton->hide();
+    //ui->skillTextEdit->setProperty("type", "description");
+    setProperty("GeneralName", "songjiang");
 }
 
 void GeneralOverview::fillGenerals(const QList<const General *> &generals){
@@ -169,7 +162,7 @@ void GeneralOverview::addLines(const Skill *skill, int wake_index){
         for(int i = 0; i < sources.length(); i++){
             if(isInvisibleSkill(skill->objectName(), i + 1))
                 break;
-            QString general_name = ui->tableWidget->item(ui->tableWidget->currentRow(), 0)->data(Qt::UserRole).toString();
+            QString general_name = property("GeneralName").toString();
             if(singleSkillFineTuning(general_name, skill->objectName(), i + 1))
                 continue;
             QString source = wake_index == 0 ? sources.at(i) : sources.at(wake_index - 1);
@@ -238,8 +231,17 @@ void GeneralOverview::on_tableWidget_itemSelectionChanged()
 {
     int row = ui->tableWidget->currentRow();
     QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
+    setProperty("GeneralName", general_name);
     const General *general = Sanguosha->getGeneral(general_name);
     ui->generalPhoto->setPixmap(QPixmap(general->getPixmapPath("card")));
+
+    if(ServerInfo.isPlay && Config.value("Cheat/FreeChange", false).toBool()){
+        addChangeAction(ui->changeGeneralButton);
+        ui->changeGeneralButton->show();
+        connect(ui->changeGeneralButton, SIGNAL(clicked()), this, SLOT(askChange()));
+    }
+    else
+        ui->changeGeneralButton->hide();
 
     QString resum = Sanguosha->translate("resume:" + general->objectName());
     if(!resum.startsWith("resume:")){
@@ -334,7 +336,7 @@ void GeneralOverview::playEffect()
 
 void GeneralOverview::addChangeAction(QPushButton *button){
     //button->setContextMenuPolicy(Qt::ActionsContextMenu);
-    if(!Self)
+    if(!Self || !Self->getGeneral())
         return;
 
     QMenu *menu = new QMenu(button);
@@ -350,16 +352,33 @@ void GeneralOverview::addChangeAction(QPushButton *button){
     QAction *action2 = new QAction(menu);
     action2->setData(QString("general2:%1").arg(Self->objectName()));
     action2->setText(tr("Change general2"));
-    action2->setIcon(QIcon(Self->getGeneral2()->getPixmapPath("tiny")));
+    if(Self->getGeneral2())
+        action2->setIcon(QIcon(Self->getGeneral2()->getPixmapPath("tiny")));
     menu->addAction(action2);
     connect(action2, SIGNAL(triggered()), this, SLOT(askChange()));
     action2->setEnabled(!Self->getGeneral2Name().isNull());
 
-    QAction *action3 = new QAction(menu);
-    action3->setData("skills");
-    action3->setText(tr("Get skills only"));
-    menu->addAction(action3);
-    connect(action3, SIGNAL(triggered()), this, SLOT(askChange()));
+    QMenu *menu3 = new QMenu(menu);
+    menu3->setTitle(tr("Get skills only"));
+    menu->addMenu(menu3);
+    QAction *action3m = new QAction(menu3);
+    action3m->setData(QString("skills:%1").arg(Self->objectName()));
+    action3m->setText(tr("All skill"));
+    menu3->addAction(action3m);
+    connect(action3m, SIGNAL(triggered()), this, SLOT(askChange()));
+    menu3->addSeparator();
+
+    QString general_name = property("GeneralName").toString();
+    const General *general = Sanguosha->getGeneral(general_name);
+    foreach(const Skill *skill, general->getVisibleSkillList()){
+        QAction *action3 = new QAction(menu3);
+        action3->setData(QString("skills#%1:%2").arg(skill->objectName()).arg(Self->objectName()));
+        action3->setText(Sanguosha->translate(skill->objectName()));
+        if(skill->isLordSkill())
+            action3->setIcon(QIcon("image/system/roles/lord.png"));
+        menu3->addAction(action3);
+        connect(action3, SIGNAL(triggered()), this, SLOT(askChange()));
+    }
 
     QMenu *menu4 = new QMenu(menu);
     menu4->setTitle(tr("Change others"));
@@ -389,7 +408,7 @@ void GeneralOverview::addChangeAction(QPushButton *button){
 }
 
 void GeneralOverview::askChange(){
-    if(!Config.value("Cheat/FreeChange", false).toBool())
+    if(!Self || !Config.value("Cheat/FreeChange", false).toBool())
         return;
 
     QString change2 = "";
@@ -397,21 +416,21 @@ void GeneralOverview::askChange(){
     if(action){
         QString flag = action->data().toString();
         if(flag.startsWith("general:"))
-            change2 = flag.split(":").last() + ":"; //sgs4:wusong
+            change2 = flag.split(":").last() + ":"; //general:sgs4 .. sgs4:wusong
         else if(flag.startsWith("general2"))
-            change2 = flag.split(":").last() + "%"; //sgs5%wuyong
-        else if(flag == "skills")
-            change2 = "~"; //~linchong
+            change2 = flag.split(":").last() + "%"; //general2:sgs5 .. sgs5%wuyong
+        else if(flag.startsWith("skills")){
+            //skills#jiaozhen:sgs2 .. sgs2`jiaozhen~linchong or sgs2`~linchong
+            flag.remove("skills");
+            change2 = flag.split(":").last() + "`" + flag.split(":").first().remove("#") + "~";
+        }
     }
 
-    int row = ui->tableWidget->currentRow();
-    QString general_name = ui->tableWidget->item(row, 0)->data(Qt::UserRole).toString();
-    if(Self && general_name != Self->getGeneralName())
+    QString general_name = property("GeneralName").toString();
+    if(general_name != Self->getGeneralName())
         ClientInstance->requestCheatChangeGeneral(change2 + general_name);
 }
 
-void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem* item)
-{
-    if(Self)
-        askChange();
+void GeneralOverview::on_tableWidget_itemDoubleClicked(QTableWidgetItem*){
+    askChange();
 }

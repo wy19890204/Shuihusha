@@ -20,9 +20,9 @@ void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     }
 }
 
-class GanlinViewAsSkill:public ViewAsSkill{
+class Ganlin:public ViewAsSkill{
 public:
-    GanlinViewAsSkill():ViewAsSkill("ganlin"){
+    Ganlin():ViewAsSkill("ganlin"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
@@ -40,25 +40,6 @@ public:
         GanlinCard *ganlin_card = new GanlinCard;
         ganlin_card->addSubcards(cards);
         return ganlin_card;
-    }
-};
-
-class Ganlin: public PhaseChangeSkill{
-public:
-    Ganlin():PhaseChangeSkill("ganlin"){
-        view_as_skill = new GanlinViewAsSkill;
-    }
-
-    virtual int getPriority(TriggerEvent) const{
-        return 2;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *p) const{
-        if(p->getPhase() == Player::NotActive){
-            Room *room = p->getRoom();
-            room->setPlayerFlag(p, "-Ganlin");
-        }
-        return false;
     }
 };
 

@@ -19,7 +19,7 @@ ScenarioOverview::ScenarioOverview(QWidget *parent)
 
     content_box = new QTextEdit;
     content_box->setReadOnly(true);
-    content_box->setProperty("description", true);
+    content_box->setProperty("type", "description");
 
     QHBoxLayout *layout = new QHBoxLayout;
 

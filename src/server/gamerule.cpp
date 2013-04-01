@@ -146,8 +146,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     room->sendLog(log);
                     room->setPlayerFlag(tmp, "-ecst");
                 }
-                if(tmp->hasFlag("Guibing"))
-                    room->setPlayerFlag(tmp, "-Guibing");
+                foreach(QString clear_flag, tmp->getClearFlags())
+                    room->setPlayerFlag(tmp, "-" + clear_flag);
+                // % mean clear this flag after each turn
             }
 
             player->clearFlags();
@@ -351,14 +352,12 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->sendLog(log);
             return true;
         }
-        if(player->hasFlag("Guibing") && data.toString() == "slash")
-            return true;
         break;
     }
     case CardFinished: {
         CardUseStruct use = data.value<CardUseStruct>();
         if(data.canConvert<CardUseStruct>() && !Config.BanPackages.contains("events")){
-            if(use.card->inherits("Snatch")){
+            if(use.card->isKindOf("Snatch")){
                 ServerPlayer *source = room->findPlayerWhohasEventCard("daojia");
                 if(source){
                     room->setPlayerFlag(source, "Daojia");
@@ -475,6 +474,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     case AskForPeaches:{
         DyingStruct dying = data.value<DyingStruct>();
 
+        if(player->hasFlag("%zhaoan"))
+            return true;
         while(dying.who->getHp() <= 0){
             if(dying.who->isDead())
                 break;

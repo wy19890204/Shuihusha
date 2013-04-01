@@ -1958,6 +1958,11 @@
         <translation>只获得武将技能</translation>
     </message>
     <message>
+        <location filename="src/dialog/generaloverview.cpp" line="363"/>
+        <source>All skill</source>
+        <translation>全部技能</translation>
+    </message>
+    <message>
         <location filename="src/dialog/generaloverview.cpp" line="365"/>
         <source>Change others</source>
         <translation>指鹿为马</translation>
@@ -2241,7 +2246,7 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="523"/>
         <source>Auto select</source>
-        <translation>自动选择手牌</translation>
+        <translation>自动弹出手牌</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="507"/>

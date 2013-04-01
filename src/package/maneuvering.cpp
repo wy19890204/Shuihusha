@@ -44,6 +44,8 @@ QString Analeptic::getEffectPath(bool ) const{
 }
 
 bool Analeptic::IsAvailable(const Player *player){
+    if(player->hasFlag("%zhaoan"))
+        return false;
     return !player->hasUsed("Analeptic") || player->hasSkill("huafo");
 }
 
@@ -334,8 +336,8 @@ bool IronChain::targetFilter(const QList<const Player *> &targets, const Player 
     return true;
 }
 
-bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
-    if(getSkillName() == "huace")
+bool IronChain::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
+    if(getSkillName() == "huace" || getSkillName() == "linmo" || getSkillName() == "fangzao")
         return targets.length() == 1 || targets.length() == 2;
     else
         return targets.length() <= 2;

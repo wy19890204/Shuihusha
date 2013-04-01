@@ -777,7 +777,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     chain_icon->setVisible(player->isChained());
     back_icon->setVisible(!player->faceUp());
-    jail_icon->setVisible(player->containsTrick("indulgence"));
+    jail_icon->setVisible(player->containsTrick("indulgence", false));
     wake_icon->setVisible(!player->getWakeSkills().isEmpty());
 
     if(player->hasFlag("ecst"))

@@ -606,9 +606,9 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
-    ecst_area->setVisible(Self->hasFlag("ecst"));
-    jail_icon->setVisible(Self->containsTrick("indulgence"));
+    jail_icon->setVisible(Self->containsTrick("indulgence", false));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
+    ecst_area->setVisible(Self->hasFlag("ecst"));
     //poison_area->setVisible(Self->hasMark("poison"));
 }
 
