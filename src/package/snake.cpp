@@ -1012,7 +1012,6 @@ void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
         effect.to->drawCards(2);
     else
         room->setPlayerFlag(effect.to, "%zhaoan");
-    // % mean clear this flag after each turn
 }
 
 class Zhaoan: public ZeroCardViewAsSkill{

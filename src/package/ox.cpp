@@ -31,7 +31,7 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
         use.card = slash;
         room->useCard(use);
     }else
-        room->setPlayerFlag(gaolian, "Guibing");
+        room->setPlayerFlag(gaolian, "%Guibing");
 }
 
 class GuibingViewAsSkill:public ZeroCardViewAsSkill{
@@ -46,21 +46,25 @@ public:
     virtual const Card *viewAs() const{
         return new GuibingCard;
     }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "slash";
+    }
 };
 
 class Guibing: public TriggerSkill{
 public:
     Guibing():TriggerSkill("guibing"){
-        events << CardAsked;
+        events << CardAsked << CardAsk << CardUseAsk;
         view_as_skill = new GuibingViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *gaolian, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *gaolian, QVariant &data) const{
         QString pattern = data.toString();
-        if(pattern != "slash")
+        if(pattern != "slash" || gaolian->hasFlag("%Guibing"))
             return false;
 
-        if(gaolian->askForSkillInvoke(objectName())){
+        if(event == CardAsked && gaolian->askForSkillInvoke(objectName())){
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(heart):(.*)");
             judge.good = false;
@@ -76,7 +80,7 @@ public:
                 room->provide(slash);
             }
             else{
-                room->setPlayerFlag(gaolian, "Guibing");
+                room->setPlayerFlag(gaolian, "%Guibing");
                 return true;
             }
         }
@@ -95,7 +99,7 @@ public:
     }
 
     virtual int getSlashResidue(const Player *t) const{
-        if(t->hasSkill("guibing") && t->hasFlag("Guibing"))
+        if(t->hasSkill("guibing") && t->hasFlag("%Guibing"))
             return -998;
         else
             return 0;
@@ -1069,6 +1073,7 @@ OxPackage::OxPackage()
     General *gaolian = new General(this, "gaolian", "guan", 3);
     gaolian->addSkill(new Guibing);
     gaolian->addSkill(new Heiwu);
+    skills << new GuibingSlash;
 
     General *tongguan = new General(this, "tongguan", "guan");
     tongguan->addSkill(new Aoxiang);
