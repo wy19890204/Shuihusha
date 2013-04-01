@@ -20,6 +20,7 @@ public:
     void setServerLogBackground();
     void switchToServer(Server *server);
 
+    QGraphicsItem *button_plate;
 private:
     void printServerInfo();
 

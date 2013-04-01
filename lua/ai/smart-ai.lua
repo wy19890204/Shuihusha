@@ -3580,7 +3580,6 @@ sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
 	return targetlist[1]
 end
 
-dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/general_config.lua"
 dofile "lua/ai/skill_config.lua"
 dofile "lua/ai/value_config.lua"
@@ -3591,6 +3590,7 @@ dofile "lua/ai/plough-ai.lua"
 dofile "lua/ai/maneuvering-ai.lua"
 dofile "lua/ai/events-ai.lua"
 dofile "lua/ai/mini-ai.lua"
+dofile "lua/ai/debug-ai.lua"
 dofile "lua/ai/chat-ai.lua"
 dofile "lua/ai/crazyai.lua"
 

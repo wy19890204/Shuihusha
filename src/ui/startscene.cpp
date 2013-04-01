@@ -48,49 +48,49 @@ void StartScene::addButton(QAction *action){
 
     QRectF rect = button->boundingRect();
     int n = buttons.length();
-    if(n < 5){
+    if(n < 5)
         button->setPos(- rect.width() - 5, (n - 1) * (rect.height() * 1.2));
-    }else{
+    else
         button->setPos(5, (n - 6) * (rect.height() * 1.2));
-    }
 
     buttons << button;
 }
 
 #include "irregularbutton.h"
 void StartScene::addMainButton(QList<QAction *> actions){
-    static QString butons_name[9] = {
+    static QString tianjis_name[9] = {
         "start", "join", "replay", "lua", "config", "general", "card", "mode", "thanks"
     };
-    static int pos[9][2] = {
-        {220, 230}, //0.start
-        {175, 180}, //1.join
-        {250, 470}, //2.replay
-        {150, 255}, //3.lua
-        {175, 425}, //4.config
-        {250, 155}, //5.general
-        {415, 180}, //6.card
+    static int tianjipos[9][2] = {
+        {220, 235}, //0.start
+        {175, 190}, //1.join
+        {250, 480}, //2.replay
+        {145, 260}, //3.lua
+        {175, 430}, //4.config
+        {245, 160}, //5.general
+        {415, 190}, //6.card
         {415, 360}, //7.mode
-        {150, 355}, //8.thanks
+        {145, 360}, //8.thanks
     };
 
-    QString path = "image/system/button/main/background.png";
-    QGraphicsItem *button_widget = new QGraphicsPixmapItem(QPixmap(path));
-    button_widget->setPos(button_group->pos());
+    QString path = "image/system/button/plate/background.png";
+    button_plate = new QGraphicsPixmapItem(QPixmap(path));
+    button_plate->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
+    button_plate->setFlags(QGraphicsItem::ItemIsMovable);
 
     int count = 0;
     foreach(QAction *action, actions){
-        IrregularButton *buton = new IrregularButton(butons_name[count], "main");
-        buton->setMute(false);
-        buton->setParentItem(button_widget);
-        //buton->setPos(button_widget->pos());
-        int *froups = pos[count];
-        buton->moveBy(froups[0], froups[1]);
-        connect(buton, SIGNAL(clicked()), action, SLOT(trigger()));
+        IrregularButton *tianji = new IrregularButton(tianjis_name[count], "plate");
+        tianji->setMute(false);
+        tianji->setParentItem(button_plate);
+        //tianji->setPos(button_plate->pos());
+        int *froups = tianjipos[count];
+        tianji->moveBy(froups[0]+330, froups[1]+200);
+        connect(tianji, SIGNAL(clicked()), action, SLOT(trigger()));
         count ++;
     }
 
-    addItem(button_widget);
+    addItem(button_plate);
 }
 
 void StartScene::setServerLogBackground(){
@@ -210,11 +210,6 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    QString changjing = Config.EnableScene ?
-                        tr("Scene Mode is enabled") :
-                        tr("Scene Mode is disabled");
-    //server_log->append(changjing);
-
     server_log->append( Config.EnableReincarnation ?
                         tr("Reincarnation Rule is enabled") :
                         tr("Reincarnation Rule is disabled"));
@@ -222,6 +217,10 @@ void StartScene::printServerInfo(){
     server_log->append( Config.EnableAnzhan ?
                         tr("Anzhan Mode is enabled") :
                         tr("Anzhan Mode is disabled"));
+
+    server_log->append( Config.EnableScene ?
+                        tr("Scene Mode is enabled") :
+                        tr("Scene Mode is disabled"));
 
     server_log->append( Config.EnableBasara ?
                         tr("Basara Mode is enabled") :

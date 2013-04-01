@@ -152,19 +152,30 @@ sgs.ai_skill_use["@@lieji"] = function(self, prompt)
 	if not basiccard or self.player:getHandcardNum() - 1 > self.player:getMaxCards() then return "." end
 	enemies = self:getEnemies()
 	if #enemies < 2 and self.room:getPlayers():length() > 2 then return "." end
+
 	self:sort(enemies)
+	local slash = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
+	local targets = {}
+	for _, enemy in ipairs(enemies) do
+		if not self:slashProhibit(slash, enemy) then
+			table.insert(targets, enemy:objectName())
+		end
+		if #targets == 2 then break end
+	end
 
 	local cards = sgs.QList2Table(self.player:getCards("h"))
 	self:sortByUseValue(cards, true)
 	for _, card in ipairs(cards) do
-		if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
-			local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
-					.. enemies[1]:objectName()
-			if #enemies > 1 then
-				src = src .. "+" .. enemies[2]:objectName()
+		if card:isKindOf("BasicCard") then
+			if not card:inherits("Peach") or (self:isWeak() and not card:inherits("Analeptic")) then
+				local src = "@LiejiCard=" .. card:getEffectiveId() .. "->"
+						.. targets[1]
+				if #targets > 1 then
+					src = src .. "+" .. targets[2]
+				end
+				self:speak("lieji")
+				return src
 			end
-			self:speak("lieji")
-			return src
 		end
 	end
 end

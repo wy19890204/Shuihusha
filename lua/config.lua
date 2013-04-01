@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130401",
-	version_name = "终结版F4.5 愚人节特供",
+	version = "20130405",
+	version_name = "终结版F4.6 上坟版",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {

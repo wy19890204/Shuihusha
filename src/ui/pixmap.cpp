@@ -33,8 +33,9 @@ QRectF Pixmap::boundingRect() const{
     return QRectF(0, 0, pixmap.width(), pixmap.height());
 }
 
-bool Pixmap::changePixmap(const QString &filename){
+bool Pixmap::changePixmap(const QString &filename, const QRect &copy){
     bool success = pixmap.load(filename);
+    pixmap = pixmap.copy(copy);
     if(success)
         prepareGeometryChange();
 

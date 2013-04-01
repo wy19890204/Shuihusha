@@ -133,7 +133,7 @@ void Dashboard::createRight(){
     small_avatar = new Pixmap;
     small_avatar->setPos(21, 63);
     small_avatar->setParentItem(right);
-    small_avatar->setOpacity(0.75);
+    //small_avatar->setOpacity(0.75);
 
     if(button_widget){
         kingdom = new QGraphicsPixmapItem(button_widget);
@@ -667,9 +667,8 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
     painter->drawPixmap(width - 14,y + 3,equip->getNumberPixmap());
 
     painter->setPen(Qt::white);
-    if(equip->isMarked()){
+    if(equip->isMarked())
         painter->drawRect(8,y + 2,label.width(),label.height());
-    }
 }
 
 void Dashboard::adjustCards(){
