@@ -38,7 +38,7 @@ CardOverview::CardOverview(QWidget *parent) :
     }else
         ui->getCardButton->hide();
 
-    ui->cardDescriptionBox->setProperty("description", true);
+    //ui->cardDescriptionBox->setProperty("type", "description");
 }
 
 void CardOverview::loadFromAll(){

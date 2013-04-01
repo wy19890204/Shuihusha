@@ -2246,7 +2246,7 @@
     <message>
         <location filename="src/dialog/mainwindow.ui" line="523"/>
         <source>Auto select</source>
-        <translation>自动选择手牌</translation>
+        <translation>自动弹出手牌</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="507"/>

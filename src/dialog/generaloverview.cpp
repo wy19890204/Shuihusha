@@ -24,7 +24,7 @@ GeneralOverview::GeneralOverview(QWidget *parent) :
     group_box->setTitle(tr("Effects"));
     group_box->setLayout(button_layout);
     ui->scrollArea->setWidget(group_box);
-    //ui->skillTextEdit->setProperty("description", true);
+    //ui->skillTextEdit->setProperty("type", "description");
     setProperty("GeneralName", "songjiang");
 }
 

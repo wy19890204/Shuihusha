@@ -1825,7 +1825,7 @@ SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStri
 
     skill_info = new QTextEdit;
     skill_info->setReadOnly(true);
-    skill_info->setProperty("border", true);
+    skill_info->setProperty("type", "description");
 
     updateSkillList();
 
