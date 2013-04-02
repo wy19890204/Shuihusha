@@ -159,7 +159,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         connect(ClientInstance, SIGNAL(do_filter()), dashboard, SLOT(doFilter()));
         connect(dashboard, SIGNAL(card_selected(const Card*)), this, SLOT(enableTargets(const Card*)));
         connect(dashboard, SIGNAL(card_to_use()), this, SLOT(doOkButton()));
-
+        /*
         sort_combobox = new QComboBox;
 
         sort_combobox->addItem(tr("No sort"));
@@ -169,6 +169,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         sort_combobox->addItem(tr("Sort by availability"));
 
         connect(sort_combobox, SIGNAL(currentIndexChanged(int)), dashboard, SLOT(sortCards(int)));
+        */
     }
 
     connect(Self, SIGNAL(pile_changed(QString)), this, SLOT(updatePileButton(QString)));
@@ -440,7 +441,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
 
     main_window->statusBar()->setObjectName("skill_bar_container");
     //main_window->statusBar()->setLayout(skill_dock_layout);
-    addWidgetToSkillDock(sort_combobox, true);
+    //addWidgetToSkillDock(sort_combobox, true);
 
     createStateItem();
 
@@ -483,10 +484,7 @@ void RoomScene::createExtraButtons(){
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
     reverse_button->setVisible(false);
 
-    free_discard = NULL;
-
     // add sort pull button
-    int x = Config.value("Cheat/FreeRegulate", false).toBool() ? 100 : 10;
     sort_pullbutton = dashboard->createButton("sort-pull");
     sort_pullbutton->setEnabled(true);
     QMenu *sort_menu = new QMenu(sort_pullbutton);
@@ -501,8 +499,16 @@ void RoomScene::createExtraButtons(){
         sort_menu->addAction(action);
         connect(action, SIGNAL(triggered()), dashboard, SLOT(sortCardsAuto()));
     }
-    dashboard->addWidget(sort_pullbutton, x, true);
+    sort_menu->addSeparator();
+    QAction *action2 = new QAction(sort_menu);
+    action2->setText(tr("Reverse Select"));
+    sort_menu->addAction(action2);
+    connect(action2, SIGNAL(triggered()), dashboard, SLOT(reverseSelection()));
+
+    dashboard->addWidget(sort_pullbutton, 10, true);
     sort_pullbutton->setVisible(false);
+
+    free_discard = NULL;
 }
 
 ReplayerControlBar::ReplayerControlBar(Dashboard *dashboard){
@@ -909,7 +915,8 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_F1: break;
     case Qt::Key_F2: chooseSkillButton(); break;
-    case Qt::Key_F3: sort_combobox->showPopup(); break;
+    case Qt::Key_F3: dashboard->sortCards(qrand() % 5); break;
+    //case Qt::Key_F3: sort_combobox->showPopup(); break;
     case Qt::Key_F4: dashboard->reverseSelection(); break;
     case Qt::Key_F5: {
             if (control_is_down) {
@@ -1537,10 +1544,8 @@ void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
         widget->setFixedSize(71, 28);
 
     if(!from_left){
-        if(widget->objectName() == "role")
-            main_window->statusBar()->addPermanentWidget(widget);
-        else
-            main_window->statusBar()->insertPermanentWidget(1, widget);
+        main_window->statusBar()->addPermanentWidget(widget);
+        //main_window->statusBar()->insertPermanentWidget(1, widget);
     }else
         main_window->statusBar()->addWidget(widget);
 }
@@ -1585,7 +1590,7 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 }
 
 void RoomScene::updateSkillButtons(){
-    addWidgetToSkillDock(role_combobox);
+    addWidgetToSkillDock(role_combobox, true);
 
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
@@ -3388,7 +3393,8 @@ void RoomScene::onGameStart(){
     }
 
     updateSkillButtons();
-    sort_pullbutton->setVisible(true);
+    if(!ClientInstance->getReplayer())
+        sort_pullbutton->setVisible(true);
 
     if(control_panel)
         control_panel->hide();
@@ -3397,7 +3403,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-regulate", 10, true);
+        free_discard = dashboard->addButton("free-regulate", 100, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);

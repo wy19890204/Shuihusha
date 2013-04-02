@@ -194,7 +194,7 @@ private:
     Window *prompt_box;
     QGraphicsItem *control_panel;
     QMap<QGraphicsItem *, const ClientPlayer *> item2player;
-    QComboBox *sort_combobox;
+    //QComboBox *sort_combobox;
 
     QProgressBar *progress_bar;
     int timer_id;

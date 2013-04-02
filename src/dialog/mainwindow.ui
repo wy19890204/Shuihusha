@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -30,7 +30,10 @@
     <addaction name="actionRestart_game"/>
     <addaction name="actionReturn_main"/>
     <addaction name="separator"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionSaveRecord"/>
     <addaction name="actionReplay"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -57,7 +60,6 @@
     <addaction name="actionBroadcast"/>
     <addaction name="actionKick"/>
     <addaction name="actionSurrender"/>
-    <addaction name="actionSaveRecord"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -244,7 +246,7 @@
   </action>
   <action name="actionReplay">
    <property name="text">
-    <string>Replay</string>
+    <string>&amp;Replay</string>
    </property>
    <property name="shortcut">
     <string>F7</string>
@@ -255,7 +257,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Save battle record</string>
+    <string>&amp;Save</string>
    </property>
   </action>
   <action name="actionFullscreen">
@@ -537,6 +539,14 @@
    </property>
    <property name="text">
     <string>Equip style</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
    </property>
   </action>
  </widget>

@@ -148,6 +148,7 @@ void MainWindow::restoreFromConfig(){
     if(Config.UIFont != font)
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
+    ui->actionPause->setChecked(false);
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
     ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
@@ -192,6 +193,12 @@ void MainWindow::gotoScene(QGraphicsScene *scene){
     this->scene = scene;
 
     changeBackground();
+}
+
+void MainWindow::on_actionPause_toggled(bool checked)
+{
+    if(Config.Pause != checked)
+        Config.Pause = checked;
 }
 
 void MainWindow::on_actionExit_triggered()

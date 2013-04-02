@@ -3420,6 +3420,8 @@ void Room::setEmotion(QList<ServerPlayer *> targets, const QString &emotion){
 void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
     if(player->hasFlag("ShutUp"))
         return;
+    while(Config.Pause)
+        wait(5000);
     AI *ai = player->getAI();
     if(ai){
         QElapsedTimer timer;
