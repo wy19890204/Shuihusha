@@ -484,6 +484,25 @@ void RoomScene::createExtraButtons(){
     reverse_button->setVisible(false);
 
     free_discard = NULL;
+
+    // add sort pull button
+    int x = Config.value("Cheat/FreeRegulate", false).toBool() ? 100 : 10;
+    sort_pullbutton = dashboard->createButton("sort-pull");
+    sort_pullbutton->setEnabled(true);
+    QMenu *sort_menu = new QMenu(sort_pullbutton);
+    sort_pullbutton->setMenu(sort_menu);
+
+    QStringList sort_texts;
+    sort_texts << tr("Sort by color") << tr("Sort by suit") << tr("Sort by type") << tr("Sort by availability");
+    foreach(QString sort_text, sort_texts){
+        QAction *action = new QAction(sort_menu);
+        action->setText(sort_text);
+        action->setData(sort_texts.indexOf(sort_text) + 1);
+        sort_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), dashboard, SLOT(sortCardsAuto()));
+    }
+    dashboard->addWidget(sort_pullbutton, x, true);
+    sort_pullbutton->setVisible(false);
 }
 
 ReplayerControlBar::ReplayerControlBar(Dashboard *dashboard){
@@ -3369,6 +3388,7 @@ void RoomScene::onGameStart(){
     }
 
     updateSkillButtons();
+    sort_pullbutton->setVisible(true);
 
     if(control_panel)
         control_panel->hide();
@@ -3390,9 +3410,8 @@ void RoomScene::onGameStart(){
     updateStatus(ClientInstance->getStatus());
 
     QList<const ClientPlayer *> players = ClientInstance->getPlayers();
-    foreach(const ClientPlayer *player, players){
+    foreach(const ClientPlayer *player, players)
         connect(player, SIGNAL(phase_changed()), log_box, SLOT(appendSeparator()));
-    }
 
     foreach(Photo *photo, photos)
         photo->createRoleCombobox();

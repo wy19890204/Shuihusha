@@ -68,6 +68,7 @@ public slots:
     void refresh();
     void doFilter();
     void sortCards(int sort_type);
+    void sortCardsAuto();
     void reverseSelection();
 
 protected:

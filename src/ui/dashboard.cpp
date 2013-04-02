@@ -106,6 +106,7 @@ void Dashboard::createMiddle(){
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
+    middle->setZValue(-1);
 
     trusting_item = new QGraphicsRectItem(this);
     trusting_item->setRect(middle->rect());
@@ -859,6 +860,12 @@ void Dashboard::sortCards(int sort_type){
         qSort(card_items.begin(), card_items.end(), func);
 
     adjustCards();
+}
+
+void Dashboard::sortCardsAuto(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action)
+        sortCards(action->data().toInt());
 }
 
 void Dashboard::reverseSelection(){
