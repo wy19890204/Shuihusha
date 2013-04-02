@@ -173,6 +173,7 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent *event);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual void timerEvent(QTimerEvent *event);
+    virtual void autoSaveReplayRecord();
 
 private:
     Button* add_robot, *fill_robots;

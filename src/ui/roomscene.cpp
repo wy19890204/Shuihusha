@@ -2682,8 +2682,14 @@ void RoomScene::addRestartButton(QDialog *dialog){
     hlayout->addStretch();
     hlayout->addWidget(restart_button);
 
-    QPushButton *save_button = new QPushButton(tr("Save record"));
-    hlayout->addWidget(save_button);
+    if(Config.value("AutoSave", false).toBool())
+        autoSaveReplayRecord();
+    else{
+        QPushButton *save_button = new QPushButton(tr("Save record"));
+        hlayout->addWidget(save_button);
+        connect(save_button, SIGNAL(clicked()), this, SLOT(saveReplayRecord()));
+    }
+
     hlayout->addWidget(return_button);
 
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(dialog->layout());
@@ -2692,7 +2698,6 @@ void RoomScene::addRestartButton(QDialog *dialog){
 
     connect(restart_button, SIGNAL(clicked()), dialog, SLOT(accept()));
     connect(return_button, SIGNAL(clicked()), dialog, SLOT(accept()));
-    connect(save_button, SIGNAL(clicked()), this, SLOT(saveReplayRecord()));
     connect(dialog, SIGNAL(accepted()), this, SIGNAL(restart()));
     connect(return_button, SIGNAL(clicked()), this, SIGNAL(return_to_start()));
 }
@@ -2704,9 +2709,16 @@ void RoomScene::saveReplayRecord(){
                                                     location,
                                                     tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
-    if(!filename.isEmpty()){
+    if(!filename.isEmpty())
         ClientInstance->save(filename);
-    }
+}
+
+void RoomScene::autoSaveReplayRecord(){
+    const char *date = __DATE__;
+    const char *time = __TIME__;
+    QString filename = QString("%1-%2.txt").arg(date).arg(time);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    ClientInstance->save(location + "/" + filename);
 }
 
 ScriptExecutor::ScriptExecutor(QWidget *parent)

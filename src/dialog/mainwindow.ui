@@ -17,19 +17,27 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
     <property name="title">
      <string>&amp;Game</string>
     </property>
+    <widget class="QMenu" name="menuAuto_save">
+     <property name="title">
+      <string>Auto save</string>
+     </property>
+     <addaction name="actionAutoSave"/>
+     <addaction name="actionAutoSavePath"/>
+    </widget>
     <addaction name="actionStart_Game"/>
     <addaction name="actionJoin_Game"/>
     <addaction name="separator"/>
     <addaction name="actionRestart_game"/>
     <addaction name="actionReturn_main"/>
     <addaction name="separator"/>
+    <addaction name="menuAuto_save"/>
     <addaction name="actionReplay"/>
     <addaction name="actionExit"/>
    </widget>
@@ -537,6 +545,19 @@
    </property>
    <property name="text">
     <string>Equip style</string>
+   </property>
+  </action>
+  <action name="actionAutoSave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionAutoSavePath">
+   <property name="text">
+    <string>Path ...</string>
    </property>
   </action>
  </widget>
