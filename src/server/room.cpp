@@ -1346,6 +1346,15 @@ bool Room::isFinished() const{
     return game_finished;
 }
 
+bool Room::isPCConsole() const{
+    int human = 0;
+    foreach(ServerPlayer *robot, getAllPlayers()){
+        if(robot->getState() != "robot")
+            human ++;
+    }
+    return human <= 1;
+}
+
 int Room::getLack() const{
     return player_count - m_players.length();
 }
@@ -2960,7 +2969,8 @@ void Room::startGame(){
         game_rule = new GameRule(this);
 
     thread->constructTriggerTable(game_rule);
-    if(Config.EnableBasara)thread->addTriggerSkill(new BasaraMode(this));
+    if(Config.EnableBasara)
+        thread->addTriggerSkill(new BasaraMode(this));
 
     if(scenario){
         const ScenarioRule *rule = scenario->getRule();
@@ -2968,7 +2978,9 @@ void Room::startGame(){
             thread->addTriggerSkill(rule);
     }
 
-    if(!_virtual)thread->start();
+    Config.setValue("PCConsole", isPCConsole());
+    if(!_virtual)
+        thread->start();
 }
 
 bool Room::notifyProperty(ServerPlayer* playerToNotify, const ServerPlayer* propertyOwner, const char *propertyName, const QString &value)
@@ -3420,6 +3432,8 @@ void Room::setEmotion(QList<ServerPlayer *> targets, const QString &emotion){
 void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
     if(player->hasFlag("ShutUp"))
         return;
+    while(isPCConsole() && Config.Pause)
+        wait(5000);
     AI *ai = player->getAI();
     if(ai){
         QElapsedTimer timer;

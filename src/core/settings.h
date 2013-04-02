@@ -29,6 +29,7 @@ public:
     int CountDownSeconds;
     QString GameMode;
     QStringList BanPackages;
+    bool Pause;
     bool ContestMode;
     bool RandomSeat;
     bool Statistic;

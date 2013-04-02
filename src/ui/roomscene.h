@@ -190,12 +190,12 @@ private:
     QComboBox *role_combobox;
     IrregularButton *ok_button, *cancel_button, *discard_button;
     TrustButton *trust_button;
-    QPushButton *reverse_button, *free_discard;
+    QPushButton *reverse_button, *free_discard, *sort_pullbutton;
     QMenu *known_cards_menu, *change_general_menu;
     Window *prompt_box;
     QGraphicsItem *control_panel;
     QMap<QGraphicsItem *, const ClientPlayer *> item2player;
-    QComboBox *sort_combobox;
+    //QComboBox *sort_combobox;
 
     QProgressBar *progress_bar;
     int timer_id;

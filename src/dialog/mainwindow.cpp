@@ -148,6 +148,7 @@ void MainWindow::restoreFromConfig(){
     if(Config.UIFont != font)
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
+    ui->actionPause->setChecked(false);
     ui->actionAutoSave->setChecked(Config.value("AutoSave", false).toBool());
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
@@ -209,6 +210,16 @@ void MainWindow::on_actionAutoSavePath_triggered()
                                          Config.value("AutoSavePath", "save").toString());
     if(!path.isNull())
         Config.setValue("AutoSavePath", path);
+}
+
+void MainWindow::on_actionPause_toggled(bool checked)
+{
+    if(!Config.value("PCConsole", false).toBool()){
+        QMessageBox::warning(this, tr("Warning"), tr("Can not pause in online game!"));
+        return;
+    }
+    if(Config.Pause != checked)
+        Config.Pause = checked;
 }
 
 void MainWindow::on_actionExit_triggered()

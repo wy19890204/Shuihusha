@@ -800,8 +800,7 @@ mitan_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if (acard:isKindOf("Wiretap") or
-			acard:isKindOf("Lightning") or
+		if (acard:isKindOf("Lightning") or
 			acard:isKindOf("Tsunami") or
 			acard:isKindOf("Treasury") or
 			acard:isKindOf("Provistore")) then

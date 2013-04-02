@@ -134,6 +134,14 @@ QPushButton#free-regulate:disabled{
 	background-image: url(:system/button/free-regulate-disabled.png);
 }
 
+QPushButton#sort-pull{
+	background-image: url(image/system/button/sort-pull.png);
+}
+
+QPushButton#sort-pull:pressed{
+	background-image: url(image/system/button/sort-pull-down.png);
+}
+
 QPushButton#pause{
 	background-image: url(image/system/button/pause.png);
 }
@@ -240,7 +248,7 @@ QPushButton#uniform{
 }
 
 #skill_bar_container QPushButton[type="default"]{
-	background-image: url(:system/button/back.png);
+	background-image: url(image/system/button/back.png);
 		border: 1px solid black;
 		border-radius: 2px;
 	color: yellow;
@@ -248,7 +256,7 @@ QPushButton#uniform{
 	padding: 6px 12px 6px 12px;
 }
 #skill_bar_container QPushButton[type="default"]:disabled{
-	background-image: url(:system/button/back_shade.png);
+	background-image: url(image/system/button/back_shade.png);
 		border-radius: 2px;
 	color: white;
 	font: 12px;

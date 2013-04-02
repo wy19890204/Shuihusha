@@ -106,6 +106,7 @@ void Dashboard::createMiddle(){
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
+    //middle->setZValue(-1);
 
     trusting_item = new QGraphicsRectItem(this);
     trusting_item->setRect(middle->rect());
@@ -148,7 +149,7 @@ void Dashboard::createRight(){
 #else
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
 #endif
-    ready_item->setPos(2, 43);
+    ready_item->setPos(26, 43);
     ready_item->hide();
 
     chain_icon = new Pixmap("image/state/chain.png");
@@ -173,17 +174,17 @@ void Dashboard::createRight(){
     jail_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
-    handcard_pixmap->setPixmap(QPixmap("image/system/handcard.png"));
-    handcard_pixmap->setPos(25, 127);
+    handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
+    handcard_pixmap->setPos(26, 134);
 
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setPos(6,8);
+    handcard_num->setPos(5,6);
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
     handcard_num->setBrush(Qt::white);
 
-    handcard_pixmap->hide();
+    //handcard_pixmap->hide();
 
     mark_item = new QGraphicsTextItem(right);
     mark_item->setPos(-120 - getButtonWidgetWidth(), 5);
@@ -191,11 +192,11 @@ void Dashboard::createRight(){
 
     action_item = NULL;
 
-    avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
-    avatar_area->setPos(22, 64);
-    avatar_area->setZValue(0.3);
-    avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    avatar_area->setVisible(false);
+    ecst_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    ecst_area->setPos(22, 64);
+    ecst_area->setZValue(0.3);
+    ecst_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    ecst_area->setVisible(false);
 
     wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(right);
@@ -211,15 +212,6 @@ void Dashboard::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
-}
-
-void Dashboard::setEcstState(){
-    if(Self->hasFlag("ecst"))
-        avatar_area->setVisible(true);
-    //else if(Self->hasMark("poison"))
-    //    setPoisonState();
-    else
-        avatar_area->setVisible(false);
 }
 
 void Dashboard::setActionState(){
@@ -286,7 +278,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
-    connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+    //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
 
@@ -617,6 +609,10 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     back_icon->setVisible(!Self->faceUp());
     jail_icon->setVisible(Self->containsTrick("indulgence", false));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
+    ecst_area->setVisible(Self->hasFlag("ecst"));
+    //poison_area->setVisible(Self->hasMark("poison"));
+
+    middle->setToolTip(tr("HandcardNum:%1").arg(handcard_num->text()));
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){
@@ -787,9 +783,9 @@ CardItem *Dashboard::takeCardItem(int card_id, Player::Place place){
 
         if(Self->isKongcheng())
             handcard_num->parentItem()->hide();
-        else{
+        else
             handcard_num->setText(QString::number(Self->getHandcardNum()));
-        }
+
         if(card_item)
             card_item->hideFrame();
     }else if(place == Player::Equip){
@@ -866,6 +862,12 @@ void Dashboard::sortCards(int sort_type){
         qSort(card_items.begin(), card_items.end(), func);
 
     adjustCards();
+}
+
+void Dashboard::sortCardsAuto(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action)
+        sortCards(action->data().toInt());
 }
 
 void Dashboard::reverseSelection(){

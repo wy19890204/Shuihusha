@@ -1007,11 +1007,17 @@ bool ZhaoanCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    const Card *resp = room->askForCard(effect.to, "Slash|Weapon", "@zhaoan:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
+    const Card *resp = room->askForCard(effect.to, "Slash,Weapon", "@zhaoan:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
     if(resp)
         effect.to->drawCards(2);
-    else
+    else{
+        LogMessage log;
+        log.type = "#Zhaoan";
+        log.from = effect.to;
+        log.arg = skill_name;
+        room->sendLog(log);
         room->setPlayerFlag(effect.to, "%zhaoan");
+    }
 }
 
 class Zhaoan: public ZeroCardViewAsSkill{

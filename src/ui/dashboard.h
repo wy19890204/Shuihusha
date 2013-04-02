@@ -68,6 +68,7 @@ public slots:
     void refresh();
     void doFilter();
     void sortCards(int sort_type);
+    void sortCardsAuto();
     void reverseSelection();
 
 protected:
@@ -85,8 +86,7 @@ private:
     QGraphicsPixmapItem *kingdom, *ready_item;
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;
-
-    QGraphicsRectItem *avatar_area;
+    QGraphicsRectItem *ecst_area;
 
     bool auto_select;
     int sort_type;
@@ -132,7 +132,7 @@ private slots:
     void onCardItemLeaveHover();
     void onMarkChanged();
     void setWakeState();
-    void setEcstState();
+    //void setEcstState();
     void setActionState();
 
 signals:

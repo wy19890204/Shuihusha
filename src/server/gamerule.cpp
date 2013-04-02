@@ -474,6 +474,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
     case AskForPeaches:{
         DyingStruct dying = data.value<DyingStruct>();
 
+        if(player->hasFlag("%zhaoan"))
+            return true;
         while(dying.who->getHp() <= 0){
             if(dying.who->isDead())
                 break;
