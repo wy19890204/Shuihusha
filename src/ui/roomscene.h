@@ -15,7 +15,7 @@ class Button;
 class CardContainer;
 class GuanxingBox;
 class IrregularButton;
-class TrustButton;
+//class TrustButton;
 class QGroupBox;
 struct RoomLayout;
 
@@ -190,8 +190,9 @@ private:
     QMainWindow *main_window;
     //QCheckBox *role_combobox;
     IrregularButton *ok_button, *cancel_button, *discard_button;
-    TrustButton *trust_button;
-    QPushButton *reverse_button, *free_discard, *sort_pullbutton;
+    //TrustButton *trust2_button;
+    QPushButton *trust_button, *untrust_button;
+    QPushButton *free_discard, *sort_pullbutton;
     QMenu *known_cards_menu, *change_general_menu;
     Window *prompt_box;
     QGraphicsItem *control_panel;

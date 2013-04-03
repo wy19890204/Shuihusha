@@ -143,7 +143,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
             ok_button->setParentItem(button_widget);
             cancel_button->setParentItem(button_widget);
             discard_button->setParentItem(button_widget);
-            trust_button->setParentItem(button_widget);
+            //trust2_button->setParentItem(button_widget);
         }
 
         // create dashboard
@@ -467,25 +467,24 @@ void RoomScene::createControlButtons(){
     connect(cancel_button, SIGNAL(clicked()), this, SLOT(doCancelButton()));
     connect(discard_button, SIGNAL(clicked()), this, SLOT(doDiscardButton()));
 
-    trust_button = new TrustButton;
-    trust_button->setPos(69, 133);
-    connect(trust_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
-    connect(Self, SIGNAL(state_changed()), this, SLOT(updateTrustButton()));
+    //trust2_button = new TrustButton;
+    //trust2_button->setPos(69, 133);
+    //connect(trust2_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
 
     // set them all disabled
     ok_button->setEnabled(false);
     cancel_button->setEnabled(false);
     discard_button->setEnabled(false);
-    trust_button->setEnabled(false);
+    //trust2_button->setEnabled(false);
 }
 
 void RoomScene::createExtraButtons(){
-    reverse_button = dashboard->createButton("reverse-select");
+    /*reverse_button = dashboard->createButton("reverse-select");
     reverse_button->setEnabled(true);
 
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
-    reverse_button->setVisible(false);
+    reverse_button->setVisible(false);*/
 
     // add sort pull button
     sort_pullbutton = dashboard->createButton("sort-pull");
@@ -515,6 +514,16 @@ void RoomScene::createExtraButtons(){
 
     dashboard->addWidget(sort_pullbutton, 10, true);
     sort_pullbutton->setVisible(false);
+
+    trust_button = dashboard->createButton("trust");
+    untrust_button = dashboard->createButton("untrust");
+    connect(trust_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
+    connect(untrust_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
+    connect(Self, SIGNAL(state_changed()), this, SLOT(updateTrustButton()));
+    dashboard->addWidget(trust_button, 100, true);
+    dashboard->addWidget(untrust_button, 100, true);
+    trust_button->setVisible(false);
+    untrust_button->setVisible(false);
 
     free_discard = NULL;
 }
@@ -593,7 +602,9 @@ void ReplayerControlBar::setTime(int secs){
 
 void RoomScene::createReplayControlBar(){
     // hide all buttons
-    reverse_button->hide();
+    //reverse_button->hide();
+    trust_button->disconnect();
+    untrust_button->disconnect();
 
     new ReplayerControlBar(dashboard);
 }
@@ -2336,7 +2347,9 @@ void RoomScene::doSkillButton(){
 void RoomScene::updateTrustButton(){
     if(!ClientInstance->getReplayer()){
         bool trusting = Self->getState() == "trust";
-        trust_button->update();
+        trust_button->setVisible(!trusting);
+        untrust_button->setVisible(trusting);
+
         dashboard->setTrust(trusting);
     }
 }
@@ -3411,8 +3424,11 @@ void RoomScene::onGameStart(){
     }
 
     updateSkillButtons();
-    if(!ClientInstance->getReplayer())
+    if(!ClientInstance->getReplayer()){
         sort_pullbutton->setVisible(true);
+        trust_button->setVisible(true);
+        untrust_button->setVisible(true);
+    }
 
     if(control_panel)
         control_panel->hide();
@@ -3421,7 +3437,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-regulate", 100, true);
+        free_discard = dashboard->addButton("free-regulate", 200, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);
@@ -3440,8 +3456,9 @@ void RoomScene::onGameStart(){
     foreach(Photo *photo, photos)
         photo->createRoleCombobox();
 
+    //trust2_button->setEnabled(true);
     trust_button->setEnabled(true);
-
+    untrust_button->setEnabled(true);
 
 #ifdef AUDIO_SUPPORT
 
@@ -3514,6 +3531,9 @@ void RoomScene::freeze(){
     foreach(Photo *photo, photos)
         photo->setEnabled(false);
     item2player.clear();
+
+    trust_button->setEnabled(false);
+    untrust_button->setEnabled(false);
 
     chat_edit->setEnabled(false);
 
@@ -4289,9 +4309,9 @@ void RoomScene::reLayout(QMatrix matrix)
     pos.rx()+= padding_left;
     pos.ry()+= padding_top;
 
-    alignTo(reverse_button,pos,"xlyb");
-    pos.rx()+=reverse_button->width();
-    pos.rx()+=skip*2;
+    //alignTo(reverse_button,pos,"xlyb");
+    //pos.rx()+=reverse_button->width();
+    //pos.rx()+=skip*2;
 
 
     if(free_discard)

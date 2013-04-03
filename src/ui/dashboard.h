@@ -83,8 +83,8 @@ private:
 
     QList<CardItem*> card_items;
     CardItem *selected;
-    Pixmap *avatar, *small_avatar, *role;
-    QGraphicsPixmapItem *kingdom, *ready_item;
+    Pixmap *avatar, *small_avatar;
+    QGraphicsPixmapItem *kingdom, *role, *ready_item;
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;
     QGraphicsRectItem *ecst_area;

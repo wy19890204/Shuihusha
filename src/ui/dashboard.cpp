@@ -139,9 +139,13 @@ void Dashboard::createRight(){
     if(button_widget){
         kingdom = new QGraphicsPixmapItem(button_widget);
         kingdom->setPos(57, 0);
+        role = new QGraphicsPixmapItem(button_widget);
+        role->setPos(57, 50);
     }else{
         kingdom = new QGraphicsPixmapItem(right);
         kingdom->setPos(91, 54);
+        role = new QGraphicsPixmapItem(right);
+        role->setPos(91, 104);
     }
 
 #ifdef USE_RCC
@@ -172,14 +176,6 @@ void Dashboard::createRight(){
     jail_icon->setZValue(back_icon->zValue() + 0.1);
     jail_icon->setOpacity(back_icon->opacity());
     jail_icon->hide();
-
-    //role = new QGraphicsPixmapItem(right);
-    //role->setPixmap(QPixmap("image/system/button/skill-dock/roles/unknown.png"));
-    role = new Pixmap("image/system/cover/big-jail.png");
-    role->setParentItem(right);
-    role->setPos(10, 134);
-    role->setZValue(3);
-    connect(role, SIGNAL(clicked()), this, SLOT(reverseSelection()));
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
     handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
@@ -214,7 +210,7 @@ void Dashboard::createRight(){
 }
 
 void Dashboard::setRole(const QString &new_role){
-    role->setPixmap(QPixmap(QString("image/system/button/skill-dock/roles/%1.png").arg(new_role)));
+    role->setPixmap(QPixmap(QString("image/system/roles/dashboard/%1.png").arg(new_role)));
 }
 
 void Dashboard::setWakeState(){

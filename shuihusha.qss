@@ -142,6 +142,22 @@ QPushButton#sort-pull:pressed{
 	background-image: url(image/system/button/sort-pull-down.png);
 }
 
+QPushButton#untrust{
+	background-image: url(image/system/button/untrust.png);
+}
+
+QPushButton#untrust:pressed{
+	background-image: url(image/system/button/untrust-down.png);
+}
+
+QPushButton#trust{
+	background-image: url(image/system/button/trust.png);
+}
+
+QPushButton#trust:pressed{
+	background-image: url(image/system/button/trust-down.png);
+}
+
 QPushButton#pause{
 	background-image: url(image/system/button/pause.png);
 }
@@ -292,32 +308,4 @@ QPushButton#uniform{
 }
 #skill_bar_container QCheckBox[type="frequent"]:checked:disabled{
 	background-image: url(image/system/button/skill/frequent/disabled.png);
-}
-
-#skill_bar_container QCheckBox[role="lord"]:unchecked{
-	background: transparent;
-	background-image: url(image/system/button/skill-dock/roles/unknown.png);
-}
-#skill_bar_container QCheckBox[role="lord"]:checked{
-	background: transparent;
-	background-image: url(image/system/button/skill-dock/roles/lord.png);
-}
-
-#skill_bar_container QComboBox:on{
-	padding-left: 4px;
-	padding-top: 3px;
-}
-#skill_bar_container QComboBox::drop-down{
-	border-bottom-right-radius: 2px;
-	border-left-color: black;
-	border-left-style: solid;
-	border-left-width: 1px;
-	border-top-right-radius: 2px;
-	subcontrol-origin: padding;
-	subcontrol-position: top right;
-	width: 15px;
-}
-#skill_bar_container QComboBox::down-arrow:on{
-	left: 1px;
-	top: 1px;
 }
