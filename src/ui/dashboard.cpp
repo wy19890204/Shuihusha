@@ -140,12 +140,12 @@ void Dashboard::createRight(){
         kingdom = new QGraphicsPixmapItem(button_widget);
         kingdom->setPos(57, 0);
         role = new QGraphicsPixmapItem(button_widget);
-        role->setPos(57, 50);
+        role->setPos(57, 150);
     }else{
         kingdom = new QGraphicsPixmapItem(right);
         kingdom->setPos(91, 54);
         role = new QGraphicsPixmapItem(right);
-        role->setPos(91, 104);
+        role->setPos(91, 204);
     }
 
 #ifdef USE_RCC

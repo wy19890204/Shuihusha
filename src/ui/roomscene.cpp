@@ -3427,7 +3427,6 @@ void RoomScene::onGameStart(){
     if(!ClientInstance->getReplayer()){
         sort_pullbutton->setVisible(true);
         trust_button->setVisible(true);
-        untrust_button->setVisible(true);
     }
 
     if(control_panel)
