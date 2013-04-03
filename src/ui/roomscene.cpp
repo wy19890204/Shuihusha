@@ -159,7 +159,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         connect(ClientInstance, SIGNAL(do_filter()), dashboard, SLOT(doFilter()));
         connect(dashboard, SIGNAL(card_selected(const Card*)), this, SLOT(enableTargets(const Card*)));
         connect(dashboard, SIGNAL(card_to_use()), this, SLOT(doOkButton()));
-
+        /*
         sort_combobox = new QComboBox;
 
         sort_combobox->addItem(tr("No sort"));
@@ -169,6 +169,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         sort_combobox->addItem(tr("Sort by availability"));
 
         connect(sort_combobox, SIGNAL(currentIndexChanged(int)), dashboard, SLOT(sortCards(int)));
+        */
     }
 
     connect(Self, SIGNAL(pile_changed(QString)), this, SLOT(updatePileButton(QString)));
@@ -440,7 +441,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
 
     main_window->statusBar()->setObjectName("skill_bar_container");
     //main_window->statusBar()->setLayout(skill_dock_layout);
-    addWidgetToSkillDock(sort_combobox, true);
+    //addWidgetToSkillDock(sort_combobox, true);
 
     createStateItem();
 
@@ -482,6 +483,35 @@ void RoomScene::createExtraButtons(){
     dashboard->addWidget(reverse_button, 100, true);
     connect(reverse_button, SIGNAL(clicked()), dashboard, SLOT(reverseSelection()));
     reverse_button->setVisible(false);
+
+    // add sort pull button
+    sort_pullbutton = dashboard->createButton("sort-pull");
+    sort_pullbutton->setEnabled(true);
+    QMenu *sort_menu = new QMenu(sort_pullbutton);
+    sort_pullbutton->setMenu(sort_menu);
+
+    QStringList sort_texts;
+    sort_texts
+            << tr("No sort")
+            << tr("Sort by color")
+            << tr("Sort by suit")
+            << tr("Sort by type")
+            << tr("Sort by availability");
+    foreach(QString sort_text, sort_texts){
+        QAction *action = new QAction(sort_menu);
+        action->setText(sort_text);
+        action->setData(sort_texts.indexOf(sort_text));
+        sort_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), dashboard, SLOT(sortCardsAuto()));
+    }
+    sort_menu->addSeparator();
+    QAction *action2 = new QAction(sort_menu);
+    action2->setText(tr("Reverse Select"));
+    sort_menu->addAction(action2);
+    connect(action2, SIGNAL(triggered()), dashboard, SLOT(reverseSelection()));
+
+    dashboard->addWidget(sort_pullbutton, 10, true);
+    sort_pullbutton->setVisible(false);
 
     free_discard = NULL;
 }
@@ -890,7 +920,8 @@ void RoomScene::keyReleaseEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_F1: break;
     case Qt::Key_F2: chooseSkillButton(); break;
-    case Qt::Key_F3: sort_combobox->showPopup(); break;
+    case Qt::Key_F3: dashboard->sortCards(qrand() % 5); break;
+    //case Qt::Key_F3: sort_combobox->showPopup(); break;
     case Qt::Key_F4: dashboard->reverseSelection(); break;
     case Qt::Key_F5: {
             if (control_is_down) {
@@ -1518,10 +1549,8 @@ void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
         widget->setFixedSize(71, 28);
 
     if(!from_left){
-        if(widget->objectName() == "role")
-            main_window->statusBar()->addPermanentWidget(widget);
-        else
-            main_window->statusBar()->insertPermanentWidget(1, widget);
+        main_window->statusBar()->addPermanentWidget(widget);
+        //main_window->statusBar()->insertPermanentWidget(1, widget);
     }else
         main_window->statusBar()->addWidget(widget);
 }
@@ -1566,7 +1595,7 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 }
 
 void RoomScene::updateSkillButtons(){
-    addWidgetToSkillDock(role_combobox);
+    addWidgetToSkillDock(role_combobox, true);
 
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
@@ -2682,8 +2711,14 @@ void RoomScene::addRestartButton(QDialog *dialog){
     hlayout->addStretch();
     hlayout->addWidget(restart_button);
 
-    QPushButton *save_button = new QPushButton(tr("Save record"));
-    hlayout->addWidget(save_button);
+    if(Config.value("AutoSave", false).toBool())
+        autoSaveReplayRecord();
+    else{
+        QPushButton *save_button = new QPushButton(tr("Save record"));
+        hlayout->addWidget(save_button);
+        connect(save_button, SIGNAL(clicked()), this, SLOT(saveReplayRecord()));
+    }
+
     hlayout->addWidget(return_button);
 
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(dialog->layout());
@@ -2692,7 +2727,6 @@ void RoomScene::addRestartButton(QDialog *dialog){
 
     connect(restart_button, SIGNAL(clicked()), dialog, SLOT(accept()));
     connect(return_button, SIGNAL(clicked()), dialog, SLOT(accept()));
-    connect(save_button, SIGNAL(clicked()), this, SLOT(saveReplayRecord()));
     connect(dialog, SIGNAL(accepted()), this, SIGNAL(restart()));
     connect(return_button, SIGNAL(clicked()), this, SIGNAL(return_to_start()));
 }
@@ -2704,9 +2738,16 @@ void RoomScene::saveReplayRecord(){
                                                     location,
                                                     tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
-    if(!filename.isEmpty()){
+    if(!filename.isEmpty())
         ClientInstance->save(filename);
-    }
+}
+
+void RoomScene::autoSaveReplayRecord(){
+    const char *date = __DATE__;
+    const char *time = __TIME__;
+    QString filename = QString("%1-%2.txt").arg(date).arg(time);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    ClientInstance->save(location + "/" + filename);
 }
 
 ScriptExecutor::ScriptExecutor(QWidget *parent)
@@ -3369,6 +3410,8 @@ void RoomScene::onGameStart(){
     }
 
     updateSkillButtons();
+    if(!ClientInstance->getReplayer())
+        sort_pullbutton->setVisible(true);
 
     if(control_panel)
         control_panel->hide();
@@ -3377,7 +3420,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-regulate", 10, true);
+        free_discard = dashboard->addButton("free-regulate", 100, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);
@@ -3390,9 +3433,8 @@ void RoomScene::onGameStart(){
     updateStatus(ClientInstance->getStatus());
 
     QList<const ClientPlayer *> players = ClientInstance->getPlayers();
-    foreach(const ClientPlayer *player, players){
+    foreach(const ClientPlayer *player, players)
         connect(player, SIGNAL(phase_changed()), log_box, SLOT(appendSeparator()));
-    }
 
     foreach(Photo *photo, photos)
         photo->createRoleCombobox();

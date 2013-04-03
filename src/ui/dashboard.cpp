@@ -106,6 +106,7 @@ void Dashboard::createMiddle(){
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
+    //middle->setZValue(-1);
 
     trusting_item = new QGraphicsRectItem(this);
     trusting_item->setRect(middle->rect());
@@ -148,7 +149,7 @@ void Dashboard::createRight(){
 #else
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
 #endif
-    ready_item->setPos(2, 43);
+    ready_item->setPos(26, 43);
     ready_item->hide();
 
     chain_icon = new Pixmap("image/state/chain.png");
@@ -173,11 +174,11 @@ void Dashboard::createRight(){
     jail_icon->hide();
 
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
-    handcard_pixmap->setPixmap(QPixmap("image/system/handcard.png"));
-    handcard_pixmap->setPos(25, 127);
+    handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
+    handcard_pixmap->setPos(26, 134);
 
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setPos(6,6);
+    handcard_num->setPos(5,6);
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
@@ -610,6 +611,8 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
     ecst_area->setVisible(Self->hasFlag("ecst"));
     //poison_area->setVisible(Self->hasMark("poison"));
+
+    middle->setToolTip(tr("HandcardNum:%1").arg(handcard_num->text()));
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){
@@ -859,6 +862,12 @@ void Dashboard::sortCards(int sort_type){
         qSort(card_items.begin(), card_items.end(), func);
 
     adjustCards();
+}
+
+void Dashboard::sortCardsAuto(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action)
+        sortCards(action->data().toInt());
 }
 
 void Dashboard::reverseSelection(){

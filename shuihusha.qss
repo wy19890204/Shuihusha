@@ -134,6 +134,14 @@ QPushButton#free-regulate:disabled{
 	background-image: url(:system/button/free-regulate-disabled.png);
 }
 
+QPushButton#sort-pull{
+	background-image: url(image/system/button/sort-pull.png);
+}
+
+QPushButton#sort-pull:pressed{
+	background-image: url(image/system/button/sort-pull-down.png);
+}
+
 QPushButton#pause{
 	background-image: url(image/system/button/pause.png);
 }

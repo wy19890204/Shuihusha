@@ -72,6 +72,7 @@ void Settings::init(){
     }
     BanPackages = value("BanPackages").toStringList();
 
+    Pause = false;
     ContestMode = value("ContestMode", false).toBool();
     RandomSeat = value("RandomSeat", true).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();

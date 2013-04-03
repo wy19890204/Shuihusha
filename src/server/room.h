@@ -32,6 +32,7 @@ public:
     ServerPlayer *addSocket(ClientSocket *socket);
     bool isFull() const;
     bool isFinished() const;
+    bool isPCConsole() const;
     int getLack() const;
     int getPlayerCount() const;
     QString getMode() const;

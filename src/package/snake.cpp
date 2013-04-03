@@ -522,24 +522,13 @@ FeizhenCard::FeizhenCard(){
 bool FeizhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
     if(targets.length() == 2)
         return true;
-    if(ClientInstance->getStatus() == Client::Responsing)
-        return targets.length() == 1;
     else
         return targets.length() == 1 && Self->canSlash(targets.first());
 }
 
 bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(targets.isEmpty()){
-        if(to_select == Self)
-            return false;
-        if(ClientInstance->getStatus() == Client::Responsing){
-            QString pattern = ClientInstance->getPattern();
-            if(pattern == "slash")
-                return to_select->getWeapon();
-            else if(pattern == "jink")
-                return to_select->getArmor() || to_select->getOffensiveHorse() || to_select->getDefensiveHorse();
-        }
-        return to_select->getWeapon();
+        return to_select->getWeapon() && to_select != Self;
     }else if(targets.length() == 1){
         const Player *first = targets.first();
         return to_select != Self && first->getWeapon() && Self->canSlash(to_select);
@@ -548,10 +537,6 @@ bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    if(ClientInstance->getStatus() == Client::Responsing){
-        card_use.from->tag["FeizhenTarget"] = QVariant::fromValue((PlayerStar)card_use.to.first());
-        return;
-    }
     QList<ServerPlayer *> targets = card_use.to;
     PlayerStar target; PlayerStar source = card_use.from;
     if(targets.length() > 1)
@@ -576,6 +561,28 @@ void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
     }
 }
 
+FeizhenResponseCard::FeizhenResponseCard(){
+    mute = true;
+    will_throw = false;
+}
+
+bool FeizhenResponseCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
+    if(!targets.isEmpty())
+        return false;
+    if(to_select == Self)
+        return false;
+    QString pattern = ClientInstance->getPattern();
+    if(pattern.endsWith("slash"))
+        return to_select->getWeapon();
+    else if(pattern.endsWith("jink"))
+        return to_select->getArmor() || to_select->getOffensiveHorse() || to_select->getDefensiveHorse();
+    return false;
+}
+
+void FeizhenResponseCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    card_use.from->tag["FeizhenTarget"] = QVariant::fromValue((PlayerStar)card_use.to.first());
+}
+
 class FeizhenViewAsSkill:public ZeroCardViewAsSkill{
 public:
     FeizhenViewAsSkill():ZeroCardViewAsSkill("feizhen"){
@@ -586,11 +593,14 @@ public:
     }
 
     virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern == "@@feizhen";
+        return pattern.startsWith("@@feizhen");
     }
 
     virtual const Card *viewAs() const{
-        return new FeizhenCard;
+        if(ClientInstance->getStatus() == Client::Responsing)
+            return new FeizhenResponseCard;
+        else
+            return new FeizhenCard;
     }
 };
 
@@ -620,7 +630,7 @@ public:
         if((asked == "slash" && playerAs.isEmpty()) || (asked == "jink" && playerBs.isEmpty()))
             return false;
 
-        if(room->askForUseCard(player, "@@feizhen", "@feizhen:::" + asked, true)){
+        if(room->askForCard(player, "@@feizhen-" + asked, "@feizhen-" + asked, true)){
             ServerPlayer *target = player->tag["FeizhenTarget"].value<PlayerStar>();
             const Card *card = NULL;
             if(asked == "slash")
@@ -1154,6 +1164,7 @@ SnakePackage::SnakePackage()
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
+    addMetaObject<FeizhenResponseCard>();
     addMetaObject<JiejiuCard>();
     addMetaObject<XiangmaCard>();
     addMetaObject<SouguaCard>();

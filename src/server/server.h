@@ -147,7 +147,7 @@ private:
     QCheckBox *hands_up_checkbox;
     QCheckBox *ai_enable_checkbox;
     QCheckBox *role_predictable_checkbox;
-    QCheckBox *ai_nickname_checkbox, *ai_chat_checkbox;
+    QCheckBox *ai_nickname_checkbox, *ai_chat_checkbox, *ai_crazy_checkbox;
     QSpinBox *ai_delay_spinbox;
     QCheckBox *disable_gongsunsheng;
     QRadioButton *standard_3v3_radiobutton;

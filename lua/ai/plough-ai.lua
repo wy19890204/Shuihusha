@@ -136,6 +136,11 @@ sgs.dynamic_value.control_card.Drivolt = true
 
 -- tan ting
 function SmartAI:useCardWiretap(wiretap, use)
+	if wiretap:getSkillName() ~= "mitan" then
+		use.card = wiretap
+		return
+	end
+
 	local targets = {}
 	if #self.friends_noself > 0 then
 		self:sort(self.friends_noself, "handcard2")
