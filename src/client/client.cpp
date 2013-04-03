@@ -1135,6 +1135,20 @@ bool Client::save(const QString &filename) const{
         return false;
 }
 
+QList<QString> Client::getRecords() const{
+    if(recorder)
+        return recorder->getRecords();
+    else
+        return QList<QString>();
+}
+
+QString Client::getReplayPath() const{
+    if(replayer)
+        return replayer->getPath();
+    else
+        return QString();
+}
+
 void Client::setLines(const QString &filename){
     QRegExp rx(".+/(\\w+\\d?).(\\w+)");
     if(rx.exactMatch(filename)){

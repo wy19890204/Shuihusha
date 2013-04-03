@@ -2391,6 +2391,11 @@
         <translation>在服务器端执行脚本 ...</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.ui" line="378"/>
+        <source>Record analysis</source>
+        <translation>录像数据分析</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.ui" line="459"/>
         <source>Change general ...</source>
         <translation>换将卡 ...</translation>
