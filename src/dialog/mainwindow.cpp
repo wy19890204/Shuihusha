@@ -315,7 +315,8 @@ void MainWindow::on_actionRestart_game_triggered(){
 
 void MainWindow::on_actionReplay_triggered()
 {
-    QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    //QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     QString last_dir = Config.value("LastReplayDir").toString();
     if(!last_dir.isEmpty())
         location = last_dir;

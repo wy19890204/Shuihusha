@@ -522,8 +522,7 @@ FeizhenCard::FeizhenCard(){
 bool FeizhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
     if(targets.length() == 2)
         return true;
-    else
-        return targets.length() == 1 && Self->canSlash(targets.first());
+    return targets.length() == 1 && Self->canSlash(targets.first());
 }
 
 bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -561,46 +560,18 @@ void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
     }
 }
 
-FeizhenResponseCard::FeizhenResponseCard(){
-    mute = true;
-    will_throw = false;
-}
-
-bool FeizhenResponseCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
-    if(!targets.isEmpty())
-        return false;
-    if(to_select == Self)
-        return false;
-    QString pattern = ClientInstance->getPattern();
-    if(pattern.endsWith("slash"))
-        return to_select->getWeapon();
-    else if(pattern.endsWith("jink"))
-        return to_select->getArmor() || to_select->getOffensiveHorse() || to_select->getDefensiveHorse();
-    return false;
-}
-
-void FeizhenResponseCard::onUse(Room *room, const CardUseStruct &card_use) const{
-    card_use.from->tag["FeizhenTarget"] = QVariant::fromValue((PlayerStar)card_use.to.first());
-}
-
 class FeizhenViewAsSkill:public ZeroCardViewAsSkill{
 public:
     FeizhenViewAsSkill():ZeroCardViewAsSkill("feizhen"){
+
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return Slash::IsAvailable(player);
     }
 
-    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
-        return pattern.startsWith("@@feizhen");
-    }
-
     virtual const Card *viewAs() const{
-        if(ClientInstance->getStatus() == Client::Responsing)
-            return new FeizhenResponseCard;
-        else
-            return new FeizhenCard;
+        return new FeizhenCard;
     }
 };
 
@@ -629,9 +600,10 @@ public:
         }
         if((asked == "slash" && playerAs.isEmpty()) || (asked == "jink" && playerBs.isEmpty()))
             return false;
-
-        if(room->askForCard(player, "@@feizhen-" + asked, "@feizhen-" + asked, true)){
-            ServerPlayer *target = player->tag["FeizhenTarget"].value<PlayerStar>();
+        if(room->askForSkillInvoke(player, objectName(), data)){
+            ServerPlayer *target = asked == "slash" ?
+                                   room->askForPlayerChosen(player, playerAs, objectName()) :
+                                   room->askForPlayerChosen(player, playerBs, objectName());
             const Card *card = NULL;
             if(asked == "slash")
                 card = target->getWeapon();
@@ -645,14 +617,18 @@ public:
             }
             if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card->getId())
                 return false;
-            Card *feizhen_card = NULL;
-            if(asked == "slash")
-                feizhen_card = new Slash(card->getSuit(), card->getNumber());
-            else
-                feizhen_card = new Jink(card->getSuit(), card->getNumber());
-            feizhen_card->setSkillName(objectName());
-            feizhen_card->addSubcard(card);
-            room->provide(feizhen_card);
+            if(asked == "slash"){
+                Slash *feizhen_card = new Slash(card->getSuit(), card->getNumber());
+                feizhen_card->setSkillName(objectName());
+                feizhen_card->addSubcard(card);
+                room->provide(feizhen_card);
+            }
+            else{
+                Jink *feizhen_card = new Jink(card->getSuit(), card->getNumber());
+                feizhen_card->setSkillName(objectName());
+                feizhen_card->addSubcard(card);
+                room->provide(feizhen_card);
+            }
         }
         return false;
     }
@@ -1164,7 +1140,6 @@ SnakePackage::SnakePackage()
     addMetaObject<SinueCard>();
     addMetaObject<FangzaoCard>();
     addMetaObject<FeizhenCard>();
-    addMetaObject<FeizhenResponseCard>();
     addMetaObject<JiejiuCard>();
     addMetaObject<XiangmaCard>();
     addMetaObject<SouguaCard>();

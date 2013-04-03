@@ -36,16 +36,6 @@ public:
     virtual void onUse(Room *room, const CardUseStruct &card_use) const;
 };
 
-class FeizhenResponseCard: public SkillCard{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE FeizhenResponseCard();
-
-    virtual bool targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const;
-    virtual void onUse(Room *room, const CardUseStruct &card_use) const;
-};
-
 class JiejiuCard: public SkillCard{
     Q_OBJECT
 

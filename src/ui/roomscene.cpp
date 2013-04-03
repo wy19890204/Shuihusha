@@ -177,6 +177,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
     // add role combobox
     role_combobox = new QComboBox;
     role_combobox->setObjectName("role");
+    role_combobox->setProperty("role", "lord");
     role_combobox->addItem(tr("Your role"));
     role_combobox->addItem(tr("Unknown"));
     connect(Self, SIGNAL(role_changed(QString)), this, SLOT(updateRoleComboBox(QString)));
@@ -363,6 +364,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         log_box->resize(chat_box->width(), 205);
         log_box->setTextColor(Config.TextEditColor);
         log_box->setObjectName("log_box");
+        log_box->setProperty("type", "border");
 
         QGraphicsProxyWidget *log_box_widget = addWidget(log_box);
         log_box_widget->setPos(114, -83);
@@ -1542,7 +1544,7 @@ void RoomScene::addSkillButton(const Skill *skill, bool from_left){
 
 void RoomScene::addWidgetToSkillDock(QWidget *widget, bool from_left){
     if(widget->inherits("QComboBox"))
-        widget->setFixedHeight(20);
+        widget->setFixedHeight(30);
     else if(widget->property("type").toString() == "default")
         widget->setFixedHeight(26);
     else
@@ -2732,7 +2734,8 @@ void RoomScene::addRestartButton(QDialog *dialog){
 }
 
 void RoomScene::saveReplayRecord(){
-    QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    //QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     QString filename = QFileDialog::getSaveFileName(main_window,
                                                     tr("Save replay record"),
                                                     location,
@@ -2746,6 +2749,8 @@ void RoomScene::autoSaveReplayRecord(){
     const char *date = __DATE__;
     const char *time = __TIME__;
     QString filename = QString("%1-%2.txt").arg(date).arg(time);
+    filename.remove(" ");
+    filename.remove(":");
     QString location = Config.value("AutoSavePath", "save").toString();
     ClientInstance->save(location + "/" + filename);
 }

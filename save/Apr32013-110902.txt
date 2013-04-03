@@ -1,0 +1,151 @@
+28 checkVersion 20130330:Shuihusha
+28 setup 5rC05rWS5p2AZmFuc+eahOacjeWKoeWZqA==:02p:0:personal+test+zhangong+sanguosha+draggon:FSA2
+165 [3,0,3,30,["MG_SELF","objectName","sgs1"]]
+165 [4,0,3,30,["MG_SELF","owner","true"]]
+165 speak sgs1:PGZvbnQgY29sb3I9I0VFQjQyMj7njqnlrrYgPGI+5rC05rWS5p2AZmFuczwvYj4g5Yqg5YWl5LqG5ri45oiPPC9mb250Pg==
+168 networkDelayTest .
+168 [6,0,3,30,["sgs1","ready","true"]]
+168 speak sgs1:PGZvbnQgY29sb3I9I0VFQjQyMj7njqnlrrYgPGI+5rC05rWS5p2AZmFuczwvYj4g55qE572R57uc5bu26L+f5Li6IDMg5q+r56eSPC9mb250Pg==
+764 addPlayer sgs2:5a6J5q2n55qE5bCP6buR5bGL:spzhuwu
+799 [15,0,3,30,["sgs2","ready","true"]]
+800 [17,0,3,30,["sgs1","ready","false"]]
+800 [19,0,3,30,["sgs2","ready","false"]]
+800 speak sgs2:5aSn5a625aW977yM5oiR5piv5LiA5Liq5py65Zmo5Lq6
+800 [21,0,3,30,["sgs2","state","robot"]]
+813 [24,0,3,10,"sgs1"]
+813 [23,0,1,14]
+1567 [36,0,3,30,["sgs1","role","lord"]]
+1567 [38,0,3,30,["sgs1","role","lord"]]
+1569 arrangeSeats sgs1+sgs2
+1570 startInXs 3
+2567 startInXs 2
+3567 startInXs 1
+4567 startInXs 0
+5566 [49,0,3,10,"sgs1"]
+5566 [48,0,1,11,["songjiang","gaoqiu","fangla","wangqing","tianhu","zhaoji","xiezhen","husanniang"]]
+6450 [55,0,3,30,["sgs1","general","husanniang"]]
+6479 [60,0,1,11,["qiongying","wuyong","qiaodaoqing","wangqing","wuyanguang","husanniang(lord)"]]
+7503 [65,0,3,30,["MG_SELF","general2","wuyong"]]
+7509 [67,0,3,30,["sgs2","general","linniangzi"]]
+7512 [69,0,3,30,["sgs1","general2","wuyong"]]
+7512 [71,0,3,30,["sgs2","general2","dengfei"]]
+7512 [73,0,3,30,["sgs1","maxhp","3"]]
+7512 [75,0,3,30,["sgs1","hp","3"]]
+7525 [78,0,3,30,["sgs2","maxhp","3"]]
+7526 [80,0,3,30,["sgs2","hp","3"]]
+7526 startGame .
+7943 setPileNumber 234
+7944 detachSkill sgs2:#zgzhangong1
+7944 detachSkill sgs2:#zgzhangong2
+7944 speak sgs1:PGZvbnQgY29sb3I9J3JlZCc+5oiY5Yqf5YyF5bey56aB55SoIHZlcjoyMDEyMTEyMTwvZm9udD4=
+7944 log #disableZhangong:->:::
+7945 drawCards 56+68+110+176
+7959 playAudio draw-card
+7961 [84,0,3,10,"sgs1"]
+7961 [83,0,1,9,["gambling",""]]
+9154 drawNCards sgs2:4
+9155 playAudio draw-card
+9155 log #GetMark:sgs2->::@rope:1
+9156 setMark sgs2.@rope=1
+9157 [104,0,3,30,["sgs1","phase","round_start"]]
+9157 [106,0,3,30,["sgs1","phase","start"]]
+9167 [108,0,3,30,["sgs1","phase","judge"]]
+9167 [110,0,3,30,["sgs1","phase","draw"]]
+9167 drawCards 20+70
+9173 playAudio draw-card
+9173 [112,0,3,30,["sgs1","phase","play"]]
+9173 [115,0,3,10,"sgs1"]
+9173 [114,0,1,2,"sgs1"]
+13766 playAudio cheat
+13775 setStatistics sgs1.cheat:1
+13780 log #DamageNoSource:->sgs1::2:normal_nature
+13781 [133,0,3,30,["sgs1","hp","1"]]
+13781 hpChange sgs1:-2
+13816 [136,0,3,10,"sgs1"]
+13816 [135,0,1,2,"sgs1"]
+15548 addHistory OffensiveHorse
+15548 addHistory pushPile
+15548 playCardEffect snow:F
+15557 setEmotion sgs1:cards/snow
+15557 setEmotion sgs1:horse
+15557 log $Install:sgs1->:68::
+15559 moveCard 68:sgs1@hand->sgs1@equip
+15559 setCardFlag 68:.
+15559 [147,0,3,10,"sgs1"]
+15559 [146,0,1,2,"sgs1"]
+16389 addHistory QinggangSword
+16389 addHistory pushPile
+16389 playCardEffect qinggang_sword:F
+16393 setEmotion sgs1:cards/qinggang_sword
+16393 log $Install:sgs1->:56::
+16397 moveCard 56:sgs1@hand->sgs1@equip
+16398 setCardFlag 56:.
+16398 [162,0,3,10,"sgs1"]
+16398 [161,0,1,2,"sgs1"]
+17651 [174,0,3,30,["sgs1","state","trust"]]
+17664 [177,0,3,30,["sgs1","phase","discard"]]
+17664 setCardFlag 110:visible
+17664 setCardFlag 20:visible
+17664 setCardFlag 70:visible
+17664 log $DiscardCard:sgs1->:110+20+70::
+17666 moveCard 110:sgs1@hand->_@_
+17667 moveCard 20:sgs1@hand->_@_
+17669 moveCard 70:sgs1@hand->_@_
+17671 [179,0,3,30,["sgs1","phase","finish"]]
+17671 [181,0,3,30,["sgs1","phase","not_active"]]
+17674 [183,0,3,30,["sgs2","phase","round_start"]]
+17674 [185,0,3,30,["sgs2","phase","start"]]
+17674 [187,0,3,30,["sgs2","phase","judge"]]
+17674 [189,0,3,30,["sgs2","phase","draw"]]
+17674 drawNCards sgs2:2
+17675 playAudio draw-card
+17675 [191,0,3,30,["sgs2","phase","play"]]
+17709 speak sgs2:5ZWn5ZWn5ZWn77yM5p2l5biu5L2g6Kej5Yaz54K55omL54mM5ZCn
+17927 [212,0,3,30,["sgs1","state","online"]]
+19169 addHistory pushPile
+19169 log #UseCard:sgs2->sgs1:93::
+19170 moveCard 93:sgs2@hand->_@_
+19174 playCardEffect dismantlement:F
+19211 setEmotion sgs2:cards/dismantlement
+20669 setCardFlag 56:visible
+20669 log $DiscardCardByOther:sgs2->sgs1:56::
+20670 log $Uninstall:sgs1->:56::
+20670 moveCard 56:sgs1@equip->_@_
+20671 setCardFlag 93:.
+22180 addHistory pushPile
+22180 moveCard 167:sgs2@hand->_@_
+22183 playCardEffect @recast:F
+22206 setEmotion sgs2:cards/recast
+22207 drawNCards sgs2:1
+22208 playAudio draw-card
+23694 addHistory pushPile
+23694 playCardEffect eight_diagram:F
+23694 setEmotion sgs2:cards/eight_diagram
+23694 log $Install:sgs2->:62::
+23695 moveCard 62:sgs2@hand->sgs2@equip
+23698 setCardFlag 62:.
+25207 addHistory pushPile
+25207 log #UseCard:sgs2->sgs1:119::
+25209 moveCard 119:sgs2@hand->_@_
+25212 playCardEffect fire_slash:F
+25242 setEmotion sgs2:cards/fire_slash
+25242 setEmotion sgs2:fire_slash
+25338 setEmotion sgs1:victimf
+25339 [238,0,3,10,"sgs1"]
+25339 [237,0,1,4,["jink","slash-jink:sgs2"]]
+26468 log #Damage:sgs2->sgs1::1:fire_nature
+26469 setStatistics sgs2.damage:1
+26469 [251,0,3,30,["sgs1","hp","0"]]
+26469 hpChange sgs1:-1F
+26519 playAudio female-sos1
+26543 log #AskForPeaches:sgs1->sgs2+sgs1::1:
+26543 [254,0,3,10,"sgs1"]
+26543 [253,0,1,19,["sgs1",1]]
+27443 [267,0,3,10,"sgs1"]
+27443 [266,0,1,9,["goaway",""]]
+27986 [273,0,3,30,["sgs2","seat","1"]]
+27986 updateStateItem zF
+27986 setStatistics sgs2.kill:1
+27986 log #Murder:sgs2->sgs1::lord:
+27987 [275,0,3,30,["sgs1","alive","false"]]
+27987 [277,0,3,35,["rebel",["lord","rebel"]]]
