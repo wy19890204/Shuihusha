@@ -26,6 +26,7 @@ struct RoomLayout;
 #include <QSharedMemory>
 #include <QProgressBar>
 #include <QTextEdit>
+#include <QCheckBox>
 #include <QDockWidget>
 #include <QSpinBox>
 #include <QDialog>
@@ -187,7 +188,7 @@ private:
     QQueue<CardItem*> discarded_queue;
     QQueue<CardItem*> piled_discards;
     QMainWindow *main_window;
-    QComboBox *role_combobox;
+    //QCheckBox *role_combobox;
     IrregularButton *ok_button, *cancel_button, *discard_button;
     TrustButton *trust_button;
     QPushButton *reverse_button, *free_discard, *sort_pullbutton;

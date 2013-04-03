@@ -26,6 +26,7 @@ public:
     QPushButton *addButton(const QString &name, int x, bool from_left);
     QProgressBar *addProgressBar();
 
+    void setRole(const QString &new_role);
     void setTrust(bool trust);
     void addCardItem(CardItem *card_item);
     CardItem *takeCardItem(int card_id, Player::Place place);
@@ -82,7 +83,7 @@ private:
 
     QList<CardItem*> card_items;
     CardItem *selected;
-    Pixmap *avatar, *small_avatar;
+    Pixmap *avatar, *small_avatar, *role;
     QGraphicsPixmapItem *kingdom, *ready_item;
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;

@@ -294,14 +294,15 @@ QPushButton#uniform{
 	background-image: url(image/system/button/skill/frequent/disabled.png);
 }
 
-#skill_bar_container QComboBox[role="lord"]{
+#skill_bar_container QCheckBox[role="lord"]:unchecked{
+	background: transparent;
+	background-image: url(image/system/button/skill-dock/roles/unknown.png);
+}
+#skill_bar_container QCheckBox[role="lord"]:checked{
 	background: transparent;
 	background-image: url(image/system/button/skill-dock/roles/lord.png);
-	border: 1px solid black;
-	border-radius: 2px;
-	color: white;
-	padding: 1px 18px 1px 3px;
 }
+
 #skill_bar_container QComboBox:on{
 	padding-left: 4px;
 	padding-top: 3px;

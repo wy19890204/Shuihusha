@@ -22,7 +22,6 @@
 #include <QListWidget>
 #include <QHBoxLayout>
 #include <QKeyEvent>
-#include <QCheckBox>
 #include <QGraphicsLinearLayout>
 #include <QMenu>
 #include <QGroupBox>
@@ -175,11 +174,13 @@ RoomScene::RoomScene(QMainWindow *main_window)
     connect(Self, SIGNAL(pile_changed(QString)), this, SLOT(updatePileButton(QString)));
 
     // add role combobox
+    /*
     role_combobox = new QComboBox;
     role_combobox->setObjectName("role");
     role_combobox->setProperty("role", "lord");
     role_combobox->addItem(tr("Your role"));
     role_combobox->addItem(tr("Unknown"));
+    */
     connect(Self, SIGNAL(role_changed(QString)), this, SLOT(updateRoleComboBox(QString)));
 
     createExtraButtons();
@@ -1597,7 +1598,7 @@ void RoomScene::acquireSkill(const ClientPlayer *player, const QString &skill_na
 }
 
 void RoomScene::updateSkillButtons(){
-    addWidgetToSkillDock(role_combobox, true);
+    //addWidgetToSkillDock(role_combobox, true);
 
     foreach(const Skill* skill, Self->getVisibleSkillList()){
         if(skill->isLordSkill()){
@@ -1650,6 +1651,7 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
         map = &normal_mode;
     }
 
+    QString role = new_role;
     if(ServerInfo.EnableHegemony){
         QMap<QString, QString> hegemony_roles;
 
@@ -1658,15 +1660,9 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
         hegemony_roles["rebel"] = "min";
         hegemony_roles["renegade"] = "kou";
 
-        role_combobox->setItemText(1, map->value(new_role));
-        role_combobox->setItemIcon(1, QIcon(QString("image/kingdom/icon/%1.png").arg(hegemony_roles[new_role])));
-        role_combobox->setCurrentIndex(5);
+        role = hegemony_roles[new_role];
     }
-    else{
-        role_combobox->setItemText(1, map->value(new_role));
-        role_combobox->setItemIcon(1, QIcon(QString("image/system/roles/%1.png").arg(new_role)));
-        role_combobox->setCurrentIndex(1);
-    }
+    dashboard->setRole(new_role);
 }
 
 void RoomScene::enableTargets(const Card *card){

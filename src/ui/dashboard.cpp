@@ -173,6 +173,14 @@ void Dashboard::createRight(){
     jail_icon->setOpacity(back_icon->opacity());
     jail_icon->hide();
 
+    //role = new QGraphicsPixmapItem(right);
+    //role->setPixmap(QPixmap("image/system/button/skill-dock/roles/unknown.png"));
+    role = new Pixmap("image/system/cover/big-jail.png");
+    role->setParentItem(right);
+    role->setPos(10, 134);
+    role->setZValue(3);
+    connect(role, SIGNAL(clicked()), this, SLOT(reverseSelection()));
+
     QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
     handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
     handcard_pixmap->setPos(26, 134);
@@ -203,6 +211,10 @@ void Dashboard::createRight(){
     wake_icon->setPos(18, 127);
     wake_icon->hide();
     wake_icon->setZValue(0.4);
+}
+
+void Dashboard::setRole(const QString &new_role){
+    role->setPixmap(QPixmap(QString("image/system/button/skill-dock/roles/%1.png").arg(new_role)));
 }
 
 void Dashboard::setWakeState(){
