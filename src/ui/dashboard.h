@@ -85,6 +85,7 @@ private:
     CardItem *selected;
     Pixmap *avatar, *small_avatar;
     QGraphicsPixmapItem *kingdom, *role, *ready_item;
+    QGraphicsPixmapItem *handcard_pixmap;
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;
     QGraphicsRectItem *ecst_area;

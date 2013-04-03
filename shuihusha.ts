@@ -957,6 +957,11 @@
         <translation>从不无懈自己的单体锦囊</translation>
     </message>
     <message>
+        <location filename="src/dialog/configdialog.ui" line="560"/>
+        <source>Game start count down</source>
+        <translation>游戏开始前倒计时</translation>
+    </message>
+    <message>
         <location filename="src/dialog/configdialog.ui" line="641"/>
         <source>Auto select</source>
         <translation>自动选择手牌</translation>
@@ -2200,8 +2205,8 @@
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="350"/>
-        <source>Damage maker</source>
-        <translation>伤害制造器</translation>
+        <source>Damage maker ...</source>
+        <translation>伤害制造器 ...</translation>
     </message>
     <message>
         <location filename="src/dialog/mainwindow.ui" line="358"/>
@@ -4302,6 +4307,11 @@ P = 你自己, R = 你所在的房间</translation>
         <location filename="src/server/server.cpp" line="394"/>
         <source>AI delay</source>
         <translation>电脑延迟</translation>
+    </message>
+    <message>
+        <location filename="src/server/server.cpp" line="384"/>
+        <source>Alter AI Delay After Death</source>
+        <translation>场上只剩电脑时更改延迟</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="844"/>

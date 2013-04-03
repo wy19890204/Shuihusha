@@ -94,6 +94,7 @@ void Settings::init(){
     FreeAssignSelf = value("Cheat/FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
+    AIDelayAD = value("AIDelayAD", 500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
 
 #ifdef Q_OS_WIN32

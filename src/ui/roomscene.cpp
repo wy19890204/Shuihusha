@@ -520,8 +520,8 @@ void RoomScene::createExtraButtons(){
     connect(trust_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
     connect(untrust_button, SIGNAL(clicked()), ClientInstance, SLOT(trust()));
     connect(Self, SIGNAL(state_changed()), this, SLOT(updateTrustButton()));
-    dashboard->addWidget(trust_button, 100, true);
-    dashboard->addWidget(untrust_button, 100, true);
+    dashboard->addWidget(trust_button, 95, true);
+    dashboard->addWidget(untrust_button, 95, true);
     trust_button->setVisible(false);
     untrust_button->setVisible(false);
 
@@ -1715,8 +1715,17 @@ void RoomScene::enableTargets(const Card *card){
 
     updateTargetsEnablity(card);
 
-    if(Config.AutoTarget)
-        selectNextTarget(false);
+    if(Config.AutoTarget && !card->targetsFeasible(selected_targets, Self)){
+        unselectAllTargets();
+        int count = 0;
+        foreach(Photo *photo, photos)
+            if(photo->flags() & QGraphicsItem::ItemIsSelectable)
+                count++;
+        if(dashboard->flags() & QGraphicsItem::ItemIsSelectable)
+            count++;
+        if(count == 1)
+            selectNextTarget(false);
+    }
 
     ok_button->setEnabled(card->targetsFeasible(selected_targets, Self));
 }
@@ -2755,13 +2764,12 @@ void RoomScene::saveReplayRecord(){
 }
 
 void RoomScene::autoSaveReplayRecord(){
-    const char *date = __DATE__;
-    const char *time = __TIME__;
-    QString filename = QString("%1-%2.txt").arg(date).arg(time);
-    filename.remove(" ");
-    filename.remove(":");
+    QString filename = QString("%1%2-").arg(Sanguosha->translate("Shuihusha")).arg(Sanguosha->getVersionName());
+    filename.append(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+    filename.append(".txt");
     QString location = Config.value("AutoSavePath", "save").toString();
-    ClientInstance->save(location + "/" + filename);
+    //qDebug("date: %s", qPrintable(QString("%1/%2").arg(location).arg(filename)));
+    ClientInstance->save(QString("%1/%2").arg(location).arg(filename));
 }
 
 ScriptExecutor::ScriptExecutor(QWidget *parent)
@@ -3436,7 +3444,7 @@ void RoomScene::onGameStart(){
 
     // add free discard button
     if(Config.value("Cheat/FreeRegulate", false).toBool() && !ClientInstance->getReplayer()){
-        free_discard = dashboard->addButton("free-regulate", 200, true);
+        free_discard = dashboard->addButton("free-regulate", 145, true);
         free_discard->setToolTip(Sanguosha->translate("how-to-use-regulate"));
         FreeRegulateSkill *discard_skill = new FreeRegulateSkill(this);
         button2skill.insert(free_discard, discard_skill);

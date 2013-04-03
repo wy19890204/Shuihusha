@@ -52,6 +52,7 @@ public:
     bool FreeAssignSelf;
     bool EnableAI;
     int AIDelay;
+    int AIDelayAD;
     ushort ServerPort;
 
     // client side

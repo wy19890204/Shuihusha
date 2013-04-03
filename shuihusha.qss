@@ -130,6 +130,10 @@ QPushButton#free-regulate{
 	background-image: url(:system/button/free-regulate.png);
 }
 
+QPushButton#free-regulate:pressed{
+	background-image: url(:system/button/free-regulate-down.png);
+}
+
 QPushButton#free-regulate:disabled{
 	background-image: url(:system/button/free-regulate-disabled.png);
 }

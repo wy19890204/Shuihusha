@@ -140,7 +140,7 @@ void Dashboard::createRight(){
         kingdom = new QGraphicsPixmapItem(button_widget);
         kingdom->setPos(57, 0);
         role = new QGraphicsPixmapItem(button_widget);
-        role->setPos(57, 150);
+        role->setPos(69, 133);
     }else{
         kingdom = new QGraphicsPixmapItem(right);
         kingdom->setPos(91, 54);
@@ -177,7 +177,7 @@ void Dashboard::createRight(){
     jail_icon->setOpacity(back_icon->opacity());
     jail_icon->hide();
 
-    QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
+    handcard_pixmap = new QGraphicsPixmapItem(right);
     handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
     handcard_pixmap->setPos(26, 134);
 

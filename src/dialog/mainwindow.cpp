@@ -508,7 +508,7 @@ void MainWindow::on_actionAbout_triggered()
     config = "debug";
 #endif
 */
-    content.append(tr("Current version: %1 (%2)<br/>")
+    content.append(tr("Current version: %1 %2<br/>")
                    .arg(Sanguosha->getVersion())
                    //.arg(config)
                    .arg(Sanguosha->getVersionName()));

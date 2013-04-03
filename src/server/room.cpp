@@ -311,6 +311,12 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
             }
         }
     }
+
+    foreach(ServerPlayer *p, getOtherPlayers(victim))
+        if(p->getState() != "robot")
+            return;
+    if(Config.value("AlterAIDelayAD", false).toBool())
+        Config.AIDelay = Config.AIDelayAD;
 }
 
 void Room::judge(JudgeStruct &judge_struct){
@@ -2223,8 +2229,7 @@ void Room::chooseGenerals(){
 
     // for lord.
     const int nonlord_prob = 5;
-    if(!Config.EnableHegemony)
-    {
+    if(!Config.EnableHegemony){
         QStringList lord_list;
         ServerPlayer *the_lord = getLord();
         if(Config.EnableSame){
@@ -2250,11 +2255,12 @@ void Room::chooseGenerals(){
         QString general = askForGeneral(the_lord, lord_list);
         the_lord->setGeneralName(general);
 
-        if (!Config.EnableBasara)
+        if(!Config.EnableBasara)
             broadcastProperty(the_lord, "general", general);
         if(Config.EnableSame){ //@todo: crash and the lord different
             foreach(ServerPlayer *p, m_players)
-                if(p != the_lord) p->setGeneralName(general);
+                if(p != the_lord)
+                    p->setGeneralName(general);
             if(Config.Enable2ndGeneral){
                 QStringList bans;
                 bans << general;
@@ -2344,7 +2350,7 @@ void Room::run(){
 #endif
 
     if(using_countdown){
-        for(int i=Config.CountDownSeconds; i>=0; i--){
+        for(int i = Config.CountDownSeconds; i>=0; i--){
             broadcastInvoke("startInXs", QString::number(i));
             sleep(1);
         }

@@ -381,6 +381,17 @@ QWidget *ServerDialog::createAITab(){
     ai_delay_spinbox->setValue(Config.AIDelay);
     ai_delay_spinbox->setSuffix(tr(" millisecond"));
 
+    ai_delay_altered_checkbox = new QCheckBox(tr("Alter AI Delay After Death"));
+    ai_delay_altered_checkbox->setChecked(Config.value("AlterAIDelayAD", false).toBool());
+
+    ai_delay_ad_spinbox = new QSpinBox;
+    ai_delay_ad_spinbox->setMinimum(0);
+    ai_delay_ad_spinbox->setMaximum(5000);
+    ai_delay_ad_spinbox->setValue(Config.AIDelayAD);
+    ai_delay_ad_spinbox->setSuffix(tr(" millisecond"));
+    ai_delay_ad_spinbox->setEnabled(ai_delay_altered_checkbox->isChecked());
+    connect(ai_delay_altered_checkbox,SIGNAL(toggled(bool)),ai_delay_ad_spinbox, SLOT(setEnabled(bool)));
+
     disable_gongsunsheng = new QCheckBox(tr("Disable Gongsunsheng"));
     disable_gongsunsheng->setChecked(Config.value("DisableQimen", false).toBool());
     //disable_gongsunsheng->setEnabled(false);
@@ -392,6 +403,7 @@ QWidget *ServerDialog::createAITab(){
     layout->addWidget(ai_enable_checkbox);
     layout->addWidget(role_predictable_checkbox);
     layout->addLayout(HLay(new QLabel(tr("AI delay")), ai_delay_spinbox));
+    layout->addLayout(HLay(ai_delay_altered_checkbox, ai_delay_ad_spinbox));
     layout->addWidget(ai_nickname_checkbox);
     layout->addWidget(ai_chat_checkbox);
     layout->addWidget(ai_crazy_checkbox);
@@ -1238,6 +1250,8 @@ bool ServerDialog::config(){
     Config.setValue("AIChat", ai_chat_checkbox->isChecked());
     Config.setValue("AICrazy", ai_crazy_checkbox->isChecked());
     Config.setValue("AIDelay", Config.AIDelay);
+    Config.setValue("AlterAIDelayAD", ai_delay_altered_checkbox->isChecked());
+    Config.setValue("AIDelayAD", Config.AIDelayAD);
     Config.setValue("DisableQimen", disable_gongsunsheng->isChecked());
     Config.setValue("ServerPort", Config.ServerPort);
     Config.setValue("AnnounceIP", Config.AnnounceIP);

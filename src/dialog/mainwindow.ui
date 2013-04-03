@@ -347,7 +347,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Damage maker</string>
+    <string>Damage maker ...</string>
    </property>
   </action>
   <action name="actionExpand_dashboard">
@@ -555,6 +555,9 @@
    </property>
    <property name="text">
     <string>&amp;Pause</string>
+   </property>
+   <property name="shortcut">
+    <string>Pause</string>
    </property>
   </action>
   <action name="actionAutoSave">
