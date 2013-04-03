@@ -522,12 +522,24 @@ FeizhenCard::FeizhenCard(){
 bool FeizhenCard::targetsFeasible(const QList<const Player *> &targets, const Player *Self) const{
     if(targets.length() == 2)
         return true;
-    return targets.length() == 1 && Self->canSlash(targets.first());
+    if(ClientInstance->getStatus() == Client::Responsing)
+        return targets.length() == 1;
+    else
+        return targets.length() == 1 && Self->canSlash(targets.first());
 }
 
 bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
     if(targets.isEmpty()){
-        return to_select->getWeapon() && to_select != Self;
+        if(to_select == Self)
+            return false;
+        if(ClientInstance->getStatus() == Client::Responsing){
+            QString pattern = ClientInstance->getPattern();
+            if(pattern == "slash")
+                return to_select->getWeapon();
+            else if(pattern == "jink")
+                return to_select->getArmor() || to_select->getOffensiveHorse() || to_select->getDefensiveHorse();
+        }
+        return to_select->getWeapon();
     }else if(targets.length() == 1){
         const Player *first = targets.first();
         return to_select != Self && first->getWeapon() && Self->canSlash(to_select);
@@ -536,6 +548,10 @@ bool FeizhenCard::targetFilter(const QList<const Player *> &targets, const Playe
 }
 
 void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
+    if(ClientInstance->getStatus() == Client::Responsing){
+        card_use.from->tag["FeizhenTarget"] = QVariant::fromValue((PlayerStar)card_use.to.first());
+        return;
+    }
     QList<ServerPlayer *> targets = card_use.to;
     PlayerStar target; PlayerStar source = card_use.from;
     if(targets.length() > 1)
@@ -563,11 +579,14 @@ void FeizhenCard::onUse(Room *room, const CardUseStruct &card_use) const{
 class FeizhenViewAsSkill:public ZeroCardViewAsSkill{
 public:
     FeizhenViewAsSkill():ZeroCardViewAsSkill("feizhen"){
-
     }
 
     virtual bool isEnabledAtPlay(const Player *player) const{
         return Slash::IsAvailable(player);
+    }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "@@feizhen";
     }
 
     virtual const Card *viewAs() const{
@@ -600,10 +619,9 @@ public:
         }
         if((asked == "slash" && playerAs.isEmpty()) || (asked == "jink" && playerBs.isEmpty()))
             return false;
-        if(room->askForSkillInvoke(player, objectName(), data)){
-            ServerPlayer *target = asked == "slash" ?
-                                   room->askForPlayerChosen(player, playerAs, objectName()) :
-                                   room->askForPlayerChosen(player, playerBs, objectName());
+
+        if(room->askForUseCard(player, "@@feizhen", "@feizhen:::" + asked, true)){
+            ServerPlayer *target = player->tag["FeizhenTarget"].value<PlayerStar>();
             const Card *card = NULL;
             if(asked == "slash")
                 card = target->getWeapon();
@@ -617,18 +635,14 @@ public:
             }
             if(asked == "jink" && target->getWeapon() && target->getWeapon()->getId() == card->getId())
                 return false;
-            if(asked == "slash"){
-                Slash *feizhen_card = new Slash(card->getSuit(), card->getNumber());
-                feizhen_card->setSkillName(objectName());
-                feizhen_card->addSubcard(card);
-                room->provide(feizhen_card);
-            }
-            else{
-                Jink *feizhen_card = new Jink(card->getSuit(), card->getNumber());
-                feizhen_card->setSkillName(objectName());
-                feizhen_card->addSubcard(card);
-                room->provide(feizhen_card);
-            }
+            Card *feizhen_card = NULL;
+            if(asked == "slash")
+                feizhen_card = new Slash(card->getSuit(), card->getNumber());
+            else
+                feizhen_card = new Jink(card->getSuit(), card->getNumber());
+            feizhen_card->setSkillName(objectName());
+            feizhen_card->addSubcard(card);
+            room->provide(feizhen_card);
         }
         return false;
     }
