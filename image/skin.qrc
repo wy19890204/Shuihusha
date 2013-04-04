@@ -12,8 +12,6 @@
 		<file>system/ready.png</file>
 		<file>system/arrow.png</file>
 		<file>system/button/button.png</file>
-		<file>system/button/free-regulate.png</file>
-		<file>system/button/free-regulate-disabled.png</file>
 		<file>system/button/irregular/background.png</file>
 	</qresource>
 </RCC>
