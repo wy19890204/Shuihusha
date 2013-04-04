@@ -3942,7 +3942,7 @@
     <message>
         <location filename="src/ui/roomscene.cpp" line="382"/>
         <source>Shuihusha</source>
-        <translation>太阳神水浒杀</translation>
+        <translation>水浒杀</translation>
     </message>
     <message>
         <location filename="src/ui/roomscene.cpp" line="504"/>
