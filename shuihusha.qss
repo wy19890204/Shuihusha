@@ -15,11 +15,10 @@ QProgressBar#dash-bar::chunk{
 
 QProgressBar#photo-bar{
 	color : solid black;
-	border: 2px solid transparent;
-	border-radius: 2px 2px 2px 2px;
+	border: 1px solid transparent;
 	background: transparent;
 	background-image: url(image/system/controls/progress-photo-back.png);
-	padding: 1px 32px;
+	padding: 1px 1px;
 	text-align : center ;
 }
 

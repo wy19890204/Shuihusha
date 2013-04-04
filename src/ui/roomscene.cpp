@@ -3082,8 +3082,8 @@ void RoomScene::fillTable(QTableWidget *table, const QList<const ClientPlayer *>
         table->setColumnWidth(8, 37);
     }
 
-    for (int i = 2; i <= 8; i++)
-        table->resizeColumnToContents(i);
+    //for (int i = 2; i <= 8; i++)
+    //    table->resizeColumnToContents(i);
 }
 
 void RoomScene::killPlayer(const QString &who){

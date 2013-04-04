@@ -70,6 +70,7 @@ protected:
     virtual void timerEvent(QTimerEvent *);
 
 private:
+    QSettings *settings;
     const ClientPlayer *player;
     QPixmap avatar, small_avatar;
     QGraphicsPixmapItem *kingdom_item, *ready_item;
@@ -103,8 +104,8 @@ private:
     QGraphicsRectItem *avatar_area, *small_avatar_area;
 
     void drawEquip(QPainter *painter, CardItem *equip, int order);
-    void drawHp(QPainter *painter, QSettings &settings);
-    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap, QSettings &settings);
+    void drawHp(QPainter *painter);
+    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap);
 };
 
 #endif // PHOTOBACK_H

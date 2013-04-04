@@ -6,6 +6,7 @@
 #include "player.h"
 #include "skill.h"
 #include "sprite.h"
+#include "settings.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -77,6 +78,7 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+    QSettings *settings;
     QPixmap left_pixmap, right_pixmap;
     QGraphicsRectItem *left, *middle, *right;
     QGraphicsItem *button_widget;
@@ -97,6 +99,7 @@ private:
     QList<QGraphicsItem *> delayed_tricks;
     QGraphicsPixmapItem *death_item;
     Pixmap *chain_icon, *back_icon, *wake_icon, *jail_icon;
+    Pixmap *phase_icon;
 
     QGraphicsRectItem *equip_rects[4];
     CardItem *weapon, *armor, *defensive_horse, *offensive_horse;
@@ -134,6 +137,7 @@ private slots:
     void onCardItemLeaveHover();
     void onMarkChanged();
     void setWakeState();
+    void setPhaseState();
     //void setEcstState();
     void setActionState();
 
