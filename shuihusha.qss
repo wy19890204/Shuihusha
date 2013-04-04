@@ -41,7 +41,7 @@ QTextEdit[type="description"]{
 }
 
 QTextEdit QScrollBar:vertical {
-	margin: 22px 0 22px 0;
+	margin: 22px 0px;
 }
 
 QScrollBar:add-page

@@ -1118,29 +1118,33 @@ void MainWindow::on_actionReplay_file_convert_triggered()
 }
 
 void MainWindow::on_actionRecord_analysis_triggered(){
-    QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    //QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Load replay record"),
                                                     location,
                                                     tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
 
-    if(filename.isEmpty()) return;
+    if(filename.isEmpty())
+        return;
 
     QDialog *rec_dialog = new QDialog(this);
-    rec_dialog->setWindowTitle(tr("Record Analysis"));
+    rec_dialog->setWindowTitle(tr("Record analysis"));
     rec_dialog->resize(800, 500);
     QTableWidget *table = new QTableWidget;
 
     RecAnalysis *record = new RecAnalysis(filename);
     QMap<QString, PlayerRecordStruct *> record_map = record->getRecordMap();
-    table->setColumnCount(10);
+    table->setColumnCount(11);
     table->setRowCount(record_map.keys().length());
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     static QStringList labels;
     if(labels.isEmpty()){
         labels << tr("ScreenName") << tr("General") << tr("Role") << tr("Living") << tr("WinOrLose")
-               << tr("Recover") << tr("Damage") << tr("Damaged") << tr("Kill") << tr("Designation");
+               << tr("Recover") << tr("Damage") << tr("Damaged") << tr("Save") << tr("Kill") << tr("Cheat")
+               //<< tr("Designation")
+                  ;
     }
     table->setHorizontalHeaderLabels(labels);
     table->setSelectionBehavior(QTableWidget::SelectRows);
@@ -1189,14 +1193,25 @@ void MainWindow::on_actionRecord_analysis_triggered(){
         table->setItem(i, 7, item);
 
         item = new QTableWidgetItem;
-        item->setText(QString::number(rec->m_kill));
+        item->setText(QString::number(rec->m_save));
         table->setItem(i, 8, item);
 
         item = new QTableWidgetItem;
-        item->setText(rec->m_designation.join(", "));
+        item->setText(QString::number(rec->m_kill));
         table->setItem(i, 9, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_cheat));
+        table->setItem(i, 10, item);
+/*
+        item = new QTableWidgetItem;
+        item->setText(rec->m_designation.join(", "));
+        table->setItem(i, 11, item);
+*/
         i++;
     }
+    for (int i = 2; i <= 11; i++)
+        table->resizeColumnToContents(i);
 
     table->resizeColumnsToContents();
 
@@ -1208,7 +1223,9 @@ void MainWindow::on_actionRecord_analysis_triggered(){
 
     QTextEdit *chat_info = new QTextEdit;
     chat_info->setReadOnly(chat_info);
+    chat_info->setProperty("type", "border");
     chat_info->setText(record->getRecordChat());
+    chat_info->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     QLabel *table_chat_title = new QLabel;
     table_chat_title->setText(tr("Chat Infomation:"));

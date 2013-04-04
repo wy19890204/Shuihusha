@@ -37,7 +37,10 @@ void RecAnalysis::initialize(QString dir){
 
     QStringList role_list;
     foreach (QString line, records_line) {
+        //qDebug("Debug: %s", qPrintable(line));
         if (line.contains(QString(QSanProtocol::S_PLAYER_SELF_REFERENCE_ID))) {
+            //333 [3,0,3,30,["MG_SELF","objectName","sgs1"]]
+            //333 [4,0,3,30,["MG_SELF","owner","true"]]
             line = line.split("[").last().remove("]");
             line.remove(QRegExp("[^a-zA-Z0-9_,]"));
             QStringList self_info = line.split(",");
@@ -54,7 +57,8 @@ void RecAnalysis::initialize(QString dir){
         }
 
         if (line.contains("setup")) {
-            QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([RCFSNTBHAM1234]*)(\\s+)?");
+            //55 setup 5rC05rWS5p2AZmFuc+eahOacjeWKoeWZqA==:08pz:0:personal+test+sanguosha+draggon:FSRCZA2
+            QRegExp rx("(.*):(@?\\w+):(\\d+):([+\\w]*):([FSRCTEZBHAM1234]*)(\\s+)?");
             if (!rx.exactMatch(line))
                 continue;
 
@@ -68,20 +72,24 @@ void RecAnalysis::initialize(QString dir){
             }
 
             QString flags = texts.at(5);
-            if(flags.contains("R")) m_recordGameMode << tr("RandomSeats");
-            if(flags.contains("C")) { m_recordGameMode << tr("EnableCheat"), m_recordHasCheat = true; }
-            if(flags.contains("F")) m_recordGameMode << tr("FreeChoose");
+            if(flags.contains("R")) m_recordGameMode << tr("EnableReincarnation");
+            //if(flags.contains("C")) { m_recordGameMode << tr("EnableCheat"), m_recordHasCheat = true; }
+            if(flags.contains("F")) {m_recordGameMode << tr("FreeChoose"), m_recordHasCheat = true;}
             if(flags.contains("S")) m_recordGameMode << tr("Enable2ndGeneral");
             if(flags.contains("T")) m_recordGameMode << tr("EnableSame");
-            if(flags.contains("N")) m_recordGameMode << tr("EnableScene");
+            if(flags.contains("C")) m_recordGameMode << tr("EnableScene");
             if(flags.contains("B")) m_recordGameMode << tr("EnableBasara");
             if(flags.contains("H")) m_recordGameMode << tr("EnableHegemony");
             if(flags.contains("A")) m_recordGameMode << tr("EnableAI");
+            if(flags.contains("E")) m_recordGameMode << tr("EnableEndless");
+            if(flags.contains("Z")) m_recordGameMode << tr("EnableAnzhan");
+            if(flags.contains("M")) m_recordGameMode << tr("DisableChat");
 
             continue;
         }
 
         if(line.contains("arrangeSeats")){
+            //2148 arrangeSeats sgs1+sgs2+sgs3+sgs4+sgs5+sgs6+sgs7+sgs8
             QStringList line_struct = line.split(QRegExp("\\s+"));
             line_struct.removeAll(QString());
             role_list = line_struct.last().split("+");
@@ -90,6 +98,7 @@ void RecAnalysis::initialize(QString dir){
         }
 
         if(line.contains("addPlayer")){
+            //1195 addPlayer sgs8:5Y2W6JCM55qE6LGa57q4:tongguan
             QStringList info_assemble = line.split(" ").last().split(":");
             getPlayer(info_assemble.at(0))->m_screenName = QString::fromUtf8(QByteArray::fromBase64(info_assemble.at(1).toAscii()));
             continue;
@@ -113,31 +122,31 @@ void RecAnalysis::initialize(QString dir){
         }
 
         if(line.contains("general")){
+            //3811 [238,0,3,30,["sgs1","general","xiaorang"]]
+            //5262 [345,0,3,30,["sgs2","general2","lujunyi"]]
             foreach(QString object, m_recordMap.keys()){
                 if(line.contains(object)){
                     QString general = line.split(",").last();
                     general.remove(QRegExp("[^a-z_]+"));
-
                     line.contains("general2") ?
                             getPlayer(object)->m_general2Name = general :
                             getPlayer(object)->m_generalName = general;
                 }
             }
-
             continue;
         }
 
         if(line.contains("state") && line.contains("robot")){
+            //1102 [17,0,3,30,["sgs2","state","robot"]]
             foreach(QString object_name, m_recordMap.keys()){
                 if(line.contains(object_name)){
                     getPlayer(object_name)->m_statue = "robot";
                     break;
                 }
             }
-
             continue;
         }
-
+/*
         if(line.contains("hpChange")){
             QStringList info_assemble = line.split(" ").last().split(":");
             QString hp = info_assemble.at(1);
@@ -145,18 +154,19 @@ void RecAnalysis::initialize(QString dir){
             int hp_change = hp.remove(QRegExp("[TF]")).toInt(&ok);
             if(!ok)
                 continue;
-
             if(hp_change > 0)
                 getPlayer(info_assemble.at(0))->m_recover += hp_change;
-
             continue;
         }
+*/
 
         if (line.contains("#Damage")) {
-            QStringList texts = line.split(",");
-            QString object_damage = line.contains("#DamageNoSource") ? QString() : texts.at(5).mid(1, texts.at(5).length() - 2);
-            QString object_damaged = texts.at(6).mid(1, texts.at(6).length() - 2);
-            int damage = texts.at(8).mid(1, texts.at(8).length() - 2).toInt();
+            //543249 log #Damage:sgs1->sgs6::1:normal_nature
+            QStringList texts = line.split(":");
+            QString object_damage = line.contains("#DamageNoSource") ?
+                        QString() : texts.at(1).split("->").first();
+            QString object_damaged = texts.at(1).split("->").last();
+            int damage = texts.at(3).toInt();
 
             if (!object_damage.isEmpty())
                 getPlayer(object_damage)->m_damage += damage;
@@ -165,38 +175,57 @@ void RecAnalysis::initialize(QString dir){
         }
 
         if (line.contains("#Murder") || line.contains("#Suicide")) {
-            QStringList texts = line.split(",");
-            QString object = texts.at(5).mid(1, texts.at(5).length() - 2);
+            //570046 log #Murder:sgs1->sgs2::loyalist:
+            QStringList texts = line.split(":");
+            QString object = texts.at(1).split("->").first();
             getPlayer(object)->m_kill++;
-            object = texts.at(6).mid(1, texts.at(6).length() - 2);
+            object = texts.at(1).split("->").last();
             getPlayer(object)->m_isAlive = false;
 
             continue;
         }
 
         if (line.contains("#Contingency")) {
-            QStringList texts = line.split(",");
-            QString object = texts.at(6).mid(1, texts.at(6).length() - 2);
+            //556840 log #Contingency:->sgs7::rebel:
+            QStringList texts = line.split(":");
+            QString object = texts.at(1).split("->").last();
             getPlayer(object)->m_isAlive = false;
 
             continue;
         }
+        if(line.contains("setStatistics")){
+            //13775 setStatistics sgs1.save:1
+            QStringList texts = line.split(".");
+            QString object = texts.first().split(" ").last();
+            if(texts.last().startsWith("save"))
+                getPlayer(object)->m_save++;
+            else if(texts.last().startsWith("recover"))
+                getPlayer(object)->m_recover++;
+            //else if(texts.last().startsWith("damage"))
+            //    getPlayer(object)->m_damage++;
+            else if(texts.last().startsWith("cheat"))
+                getPlayer(object)->m_cheat++;
+        }
     }
 
     QString winners = records_line.last();
-    winners.remove(winners.lastIndexOf("[")-1, winners.length());
-    winners = winners.split("[").last();
-    m_recordWinners = winners.remove("\"").split("+");
+    if(winners.contains("gameOver")){
+        //329102 gameOver rebel:lord+rebel+rebel
+        m_recordWinners = winners.split(":").last().split("+");
+    }
+    else{
+        winners.remove(winners.lastIndexOf("[")-1, winners.length());
+        winners = winners.split("[").last();
+        m_recordWinners = winners.remove("\"").split("+");
 
-    winners = records_line.last().remove("\"");
-    winners.remove(0, winners.lastIndexOf("[")+1);
-    QStringList roles_order = winners.remove(QRegExp("[^a-z,]+")).split(",");
-    int i = 0;
-    for(; i<role_list.length(); i++){
-        getPlayer(role_list.at(i))->m_role = roles_order.at(i);
+        winners = records_line.last().remove("\"");
+        winners.remove(0, winners.lastIndexOf("[")+1);
+        QStringList roles_order = winners.remove(QRegExp("[^a-z,]+")).split(",");
+        for(int i=0; i<role_list.length(); i++)
+            getPlayer(role_list.at(i))->m_role = roles_order.at(i);
     }
 
-    setDesignation();
+    //setDesignation();
 }
 
 PlayerRecordStruct *RecAnalysis::getPlayerRecord(const Player *player) const{
@@ -503,8 +532,8 @@ void RecAnalysis::initialDesignation(){
 
 PlayerRecordStruct::PlayerRecordStruct()
     :m_statue("online"), m_recover(0), m_damage(0),
-      m_damaged(0), m_kill(0), m_isAlive(true)
-{}
+      m_damaged(0), m_save(0), m_kill(0), m_cheat(0), m_isAlive(true){
+}
 
 bool PlayerRecordStruct::isNull(){
     return m_screenName.isEmpty() || m_generalName.isEmpty();
