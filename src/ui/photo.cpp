@@ -57,7 +57,8 @@ Photo::Photo()
 
     chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(this);
-    chain_icon->setPos(boundingRect().width() - 22, 5);
+    coord = settings.value("chain_icon/pos").toList();
+    chain_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
     chain_icon->hide();
 
     wake_icon = new Pixmap("image/state/sleep.png");
@@ -767,7 +768,10 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
         int index = static_cast<int>(player->getPhase());
         QPixmap phase_pixmap = phase_pixmaps.at(index);
-        painter->drawPixmap(115, 120, phase_pixmap);
+
+        QList<QVariant> coord = settings.value("phase_item/pos").toList();
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), phase_pixmap);
+        painter->setOpacity(settings.value("phase_item/opacity").toReal());
     }
 
     drawEquip(painter, weapon, 0);

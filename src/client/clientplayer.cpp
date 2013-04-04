@@ -18,7 +18,7 @@ ClientPlayer::ClientPlayer(Client *client)
     mark_doc->setDefaultTextOption(QTextOption(Qt::AlignRight));
     mark_doc_small = new QTextDocument(this);
     mark_doc_small->setTextWidth(128);
-    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignLeft));
+    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignTop));
 }
 
 void ClientPlayer::handCardChange(int delta){
@@ -184,8 +184,9 @@ void ClientPlayer::setMark(const QString &mark, int value){
             QString mark_text_small = QString("<img src='%1' />").arg(path);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
-                mark_text_small.append(QString("x%1").arg(itor.value()));
+                mark_text_small.append(QString("<br />x%1").arg(itor.value()));
             }
+            mark_text_small.append("<br />");
             text.append(mark_text);
             text_small.append(mark_text_small);
         }

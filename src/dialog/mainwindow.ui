@@ -57,6 +57,7 @@
     <addaction name="separator"/>
     <addaction name="actionAI_Melee"/>
     <addaction name="actionReplay_file_convert"/>
+    <addaction name="actionRecord_analysis"/>
     <addaction name="actionCrypto_audio"/>
     <addaction name="actionDecrypto_audio"/>
     <addaction name="separator"/>
@@ -571,6 +572,11 @@
   <action name="actionAutoSavePath">
    <property name="text">
     <string>Path ...</string>
+   </property>
+  </action>
+  <action name="actionRecord_analysis">
+   <property name="text">
+    <string>Record analysis</string>
    </property>
   </action>
  </widget>
