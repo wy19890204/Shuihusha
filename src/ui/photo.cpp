@@ -599,23 +599,11 @@ void Photo::setFrame(FrameType type){
     static QPixmap responsing_frame("image/system/frame/responsing.png");
     static QPixmap sos_frame("image/system/frame/sos.png");
 
-    static QPixmap responsing_phase("image/system/phase/photo/response.png");
-    static QPixmap sos_phase("image/system/phase/photo/sos.png");
-
     QPixmap *to_draw = NULL;
-    QPixmap phase_ol = QPixmap();
     switch(type){
     case Playing: to_draw = &playing_frame; break;
-    case Responsing:{
-        to_draw = &responsing_frame;
-        phase_ol = responsing_phase;
-        break;
-    }
-    case SOS:{
-        to_draw = &sos_frame;
-        phase_ol = sos_phase;
-        break;
-    }
+    case Responsing: to_draw = &responsing_frame; break;
+    case SOS: to_draw = &sos_frame; break;
     default:
         break;
     }
@@ -625,11 +613,6 @@ void Photo::setFrame(FrameType type){
         frame_item->show();
     }else
         frame_item->hide();
-
-    QPainter painter(&phase_ol);
-    QList<QVariant> coord = settings->value("phase_item/pos").toList();
-    painter.drawPixmap(coord.first().toReal(), coord.last().toReal(), phase_ol);
-    painter.setOpacity(settings->value("phase_item/opacity").toReal());
 
     update();
 }

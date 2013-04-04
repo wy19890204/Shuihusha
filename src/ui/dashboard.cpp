@@ -1,6 +1,5 @@
 #include "dashboard.h"
 #include "engine.h"
-#include "settings.h"
 #include "client.h"
 #include "standard.h"
 #include "playercarddialog.h"
@@ -23,6 +22,8 @@ Dashboard::Dashboard(QGraphicsItem *button_widget)
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
 {
+    settings = new QSettings("image/system/dashboard.ini", QSettings::IniFormat);
+
     createLeft();
     createMiddle();
     createRight();
@@ -148,20 +149,44 @@ void Dashboard::createRight(){
         role->setPos(91, 204);
     }
 
+    mark_item = new QGraphicsTextItem(right);
+    settings->beginGroup("mark_item");
+    QList<QVariant> coord = settings->value("pos").toList();
+    mark_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    mark_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
+    mark_item->setDefaultTextColor(Qt::white);
+
+    phase_icon = new Pixmap;
+    phase_icon->setParentItem(right);
+    settings->beginGroup("phase_icon");
+    coord = settings->value("pos").toList();
+    phase_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    phase_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
+
 #ifdef USE_RCC
     ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), avatar);
 #else
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
 #endif
-    ready_item->setPos(26, 43);
+    settings->beginGroup("ready_item");
+    coord = settings->value("pos").toList();
+    ready_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    ready_item->setZValue(coord.at(2).toReal());
+    ready_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     ready_item->hide();
 
     chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(right);
-    chain_icon->setPos(small_avatar->pos());
-    chain_icon->moveBy(-20 ,-45);
+    settings->beginGroup("chain_icon");
+    coord = settings->value("pos").toList();
+    chain_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    chain_icon->setZValue(coord.at(2).toReal());
+    chain_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     chain_icon->hide();
-    chain_icon->setZValue(1.0);
 
     back_icon = new Pixmap("image/system/cover/big-back.png");
     back_icon->setParentItem(right);
@@ -179,20 +204,19 @@ void Dashboard::createRight(){
 
     handcard_pixmap = new QGraphicsPixmapItem(right);
     handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
-    handcard_pixmap->setPos(26, 134);
-
+    settings->beginGroup("handcard_item");
+    coord = settings->value("pos").toList();
+    handcard_pixmap->setPos(coord.at(0).toReal(), coord.at(1).toReal());
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setPos(5,6);
+    coord = settings->value("text_pos").toList();
+    handcard_num->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    settings->endGroup();
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
     handcard_num->setBrush(Qt::white);
 
     //handcard_pixmap->hide();
-
-    mark_item = new QGraphicsTextItem(right);
-    mark_item->setPos(-120 - getButtonWidgetWidth(), 5);
-    mark_item->setDefaultTextColor(Qt::white);
 
     action_item = NULL;
 
@@ -204,9 +228,13 @@ void Dashboard::createRight(){
 
     wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(right);
-    wake_icon->setPos(18, 127);
+    settings->beginGroup("wake_icon");
+    coord = settings->value("pos").toList();
+    wake_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    wake_icon->setZValue(coord.at(2).toReal());
+    wake_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     wake_icon->hide();
-    wake_icon->setZValue(0.4);
 }
 
 void Dashboard::setRole(const QString &new_role){
@@ -220,6 +248,23 @@ void Dashboard::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
+}
+
+void Dashboard::setPhaseState(){
+    if(Self->getPhase() != Player::NotActive){
+        static QList<QPixmap> phase_pixmaps;
+        if(phase_pixmaps.isEmpty()){
+            QStringList names;
+            names << "round_start" << "start" << "judge" << "draw"
+                    << "play" << "discard" << "finish";
+            foreach(QString name, names)
+                phase_pixmaps << QPixmap(QString("image/system/phase/dashboard/%1.png").arg(name));
+        }
+        int index = static_cast<int>(Self->getPhase());
+        phase_icon->setPixmap(phase_pixmaps.at(index));
+    }
+    else
+        phase_icon->setPixmap(QPixmap());
 }
 
 void Dashboard::setActionState(){
@@ -286,6 +331,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
+    connect(player, SIGNAL(phase_changed()), this, SLOT(setPhaseState()));
     //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
@@ -535,7 +581,11 @@ QProgressBar *Dashboard::addProgressBar(){
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(right);
     widget->setWidget(progress_bar);
     widget->setParentItem(middle);
-    widget->setPos(300, - 20);
+    settings->beginGroup("progress_bar");
+    QList<QVariant> coord = settings->value("pos").toList();
+    widget->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    widget->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
 
     progress_bar->hide();
 
@@ -573,7 +623,11 @@ void Dashboard::killPlayer(){
     }
 
     death_item = new QGraphicsPixmapItem(QPixmap(Self->getDeathPixmapPath()), this);
-    death_item->setPos(397, 40);
+    settings->beginGroup("death_item");
+    QList<QVariant> coord = settings->value("pos").toList();
+    death_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    death_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
 
     filter = NULL;
 

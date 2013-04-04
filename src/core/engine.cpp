@@ -667,7 +667,7 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
     qShuffle(all_generals);
 
     QStringList general_list = all_generals.mid(0, count);
-    Q_ASSERT(general_list.count() == count);
+    //Q_ASSERT(general_list.count() == count);
 
     return general_list;
 }

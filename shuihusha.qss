@@ -126,15 +126,15 @@ QPushButton[game_control="true"]{
 }
 
 QPushButton#free-regulate{
-	background-image: url(:system/button/free-regulate.png);
+	background-image: url(image/system/button/free-regulate.png);
 }
 
 QPushButton#free-regulate:pressed{
-	background-image: url(:system/button/free-regulate-down.png);
+	background-image: url(image/system/button/free-regulate-down.png);
 }
 
 QPushButton#free-regulate:disabled{
-	background-image: url(:system/button/free-regulate-disabled.png);
+	background-image: url(image/system/button/free-regulate-disabled.png);
 }
 
 QPushButton#sort-pull{
