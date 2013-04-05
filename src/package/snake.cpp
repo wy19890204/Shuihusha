@@ -102,10 +102,12 @@ public:
     virtual bool onPhaseChange(ServerPlayer *opt) const{
         if(opt->getPhase() == Player::NotActive){
             Room *room = opt->getRoom();
-            if(opt->getMaxHP() > 3)
+            if(opt->getMaxHP() > 4)
                 room->playSkillEffect(objectName(), 1);
-            else if(opt->getMaxHP() > 1)
+            else if(opt->getMaxHP() > 2)
                 room->playSkillEffect(objectName(), 2);
+            else if(opt->getMaxHP() > 1)
+                room->playSkillEffect(objectName(), 3);
             room->loseMaxHp(opt);
 
             if(opt->isAlive()){
@@ -656,12 +658,18 @@ public:
                     ugly->turnOver();
                     QString choice = room->askForChoice(ugly, objectName(), "k1+k2+k3");
                     player->skip(Player::Judge);
-                    if(choice == "k1")
+                    if(choice == "k1"){
+                        room->playSkillEffect(objectName(), qrand() % 2 + 1);
                         player->skip(Player::Draw);
-                    else if(choice == "k2")
+                    }
+                    else if(choice == "k2"){
+                        room->playSkillEffect(objectName(), qrand() % 2 + 3);
                         player->skip(Player::Play);
-                    else
+                    }
+                    else{
+                        room->playSkillEffect(objectName(), qrand() % 2 + 5);
                         player->skip(Player::Discard);
+                    }
                     break;
                 }
             }
@@ -670,8 +678,10 @@ public:
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.to->isDead() || !uglys.contains(damage.to))
                 return false;
-            if(damage.to->faceUp() && damage.to->askForSkillInvoke(objectName()))
+            if(damage.to->faceUp() && damage.to->askForSkillInvoke(objectName())){
+                room->playSkillEffect(objectName(), qrand() % 2 + 7);
                 damage.to->turnOver();
+            }
         }
         return false;
     }
@@ -679,11 +689,13 @@ public:
 
 JiejiuCard::JiejiuCard(){
     target_fixed = true;
+    mute = true;
 }
 
 void JiejiuCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     const Card *card = Sanguosha->getCard(getSubcards().first());
     PlayerStar target = source->tag["JiejiuSource"].value<PlayerStar>();
+    target->playSkillEffect(skill_name, 1);
     source->pindian(target, skill_name, card);
 }
 
@@ -775,9 +787,12 @@ public:
             if(pindian->isSuccess()){
                 player->setMark("jiejiu", 4);
                 player->obtainCard(pindian->to_card);
+                player->playSkillEffect("jiejiu", 2);
             }
-            else
+            else{
                 player->gainMark("@block");
+                player->playSkillEffect("jiejiu", 3);
+            }
         }
         return false;
     }
@@ -999,6 +1014,7 @@ public:
 };
 
 ZhaoanCard::ZhaoanCard(){
+    mute = true;
 }
 
 bool ZhaoanCard::targetFilter(const QList<const Player *> &targets, const Player *to_select, const Player *Self) const{
@@ -1007,15 +1023,19 @@ bool ZhaoanCard::targetFilter(const QList<const Player *> &targets, const Player
 
 void ZhaoanCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
+    room->playSkillEffect(skill_name, 1);
     const Card *resp = room->askForCard(effect.to, "Slash,Weapon", "@zhaoan:" + effect.from->objectName(), QVariant::fromValue(effect), NonTrigger);
-    if(resp)
+    if(resp){
+        room->playSkillEffect(skill_name, 2);
         effect.to->drawCards(2);
+    }
     else{
         LogMessage log;
         log.type = "#Zhaoan";
         log.from = effect.to;
         log.arg = skill_name;
         room->sendLog(log);
+        room->playSkillEffect(skill_name, 3);
         room->setPlayerFlag(effect.to, "%zhaoan");
     }
 }
@@ -1061,10 +1081,12 @@ public:
 
                 room->judge(judge);
                 if(judge.card->isBlack()){
+                    room->playSkillEffect(objectName(), qrand() % 2 + 1);
                     player->obtainCard(judge.card);
                     xiu->drawCards(1);
                 }
                 else if(judge.card->isRed()){
+                    room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     if(player->isWounded() &&
                        room->askForCard(xiu, ".|.|.|hand|red", "@fuxu", data, CardDiscarded)){
                         RecoverStruct t;

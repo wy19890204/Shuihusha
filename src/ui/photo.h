@@ -103,6 +103,7 @@ private:
     QGraphicsSimpleTextItem *skill_name_item;
     QGraphicsRectItem *avatar_area, *small_avatar_area;
 
+    void drawPhase(QPainter *painter);
     void drawEquip(QPainter *painter, CardItem *equip, int order);
     void drawHp(QPainter *painter);
     void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap);
