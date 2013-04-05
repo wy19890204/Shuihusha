@@ -366,6 +366,7 @@ OTHER_FILES += \
         etc/customScenes/01.txt \
         image/system/coord_normal.ini \
         image/system/coord_circular.ini \
+        image/system/dashboard.ini \
         image/system/photo.ini \
         lua/config.lua
 

@@ -1674,7 +1674,7 @@ void RoomScene::updateRoleComboBox(const QString &new_role){
 
         role = hegemony_roles[new_role];
     }
-    dashboard->setRole(new_role);
+    dashboard->setRole(new_role, Sanguosha->getRoleIndex());
 }
 
 void RoomScene::enableTargets(const Card *card){
@@ -2768,6 +2768,9 @@ void RoomScene::autoSaveReplayRecord(){
     filename.append(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
     filename.append(".txt");
     QString location = Config.value("AutoSavePath", "save").toString();
+    QDir temp;
+    if(!temp.exists(location))
+        temp.mkdir(location);
     //qDebug("date: %s", qPrintable(QString("%1/%2").arg(location).arg(filename)));
     ClientInstance->save(QString("%1/%2").arg(location).arg(filename));
 }

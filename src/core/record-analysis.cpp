@@ -63,6 +63,7 @@ void RecAnalysis::initialize(QString dir){
                 continue;
 
             QStringList texts = rx.capturedTexts();
+            m_gameMode = Sanguosha->translate(":" + texts.at(2)).split("\n").first();
             m_recordPlayers = texts.at(2).split("_").first().remove(QRegExp("[^0-9]")).toInt();
             QStringList ban_packages = texts.at(4).split("+");
             foreach(Package *package, Sanguosha->findChildren<Package *>()){
@@ -247,7 +248,11 @@ QStringList RecAnalysis::getRecordWinners() const{
     return m_recordWinners;
 }
 
-QStringList RecAnalysis::getRecordGameMode() const{
+QString RecAnalysis::getRecordGameMode() const{
+    return m_gameMode;
+}
+
+QStringList RecAnalysis::getRecordGameModes() const{
     return m_recordGameMode;
 }
 

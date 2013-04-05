@@ -201,6 +201,10 @@ void MainWindow::on_actionAutoSave_toggled(bool checked)
 {
     if(Config.value("AutoSave").toBool() != checked)
         Config.setValue("AutoSave", checked);
+    QDir temp;
+    QString path = Config.value("AutoSavePath", "save").toString();
+    if(!temp.exists(path))
+        temp.mkdir(path);
 }
 
 void MainWindow::on_actionAutoSavePath_triggered()
@@ -209,8 +213,12 @@ void MainWindow::on_actionAutoSavePath_triggered()
                                          tr("Please input the path"),
                                          QLineEdit::Normal,
                                          Config.value("AutoSavePath", "save").toString());
-    if(!path.isNull())
+    if(!path.isNull()){
         Config.setValue("AutoSavePath", path);
+        QDir temp;
+        if(!temp.exists(path))
+            temp.mkdir(path);
+    }
 }
 
 void MainWindow::on_actionPause_toggled(bool checked)
@@ -1215,11 +1223,14 @@ void MainWindow::on_actionRecord_analysis_triggered(){
 
     table->resizeColumnsToContents();
 
+    QLabel *mode = new QLabel;
+    mode->setText(tr("Mode:") + record->getRecordGameMode());
+
     QLabel *label = new QLabel;
     label->setText(tr("Packages:") + record->getRecordPackages().join(","));
 
     QLabel *label_options = new QLabel;
-    label_options->setText(tr("GameMode:") + record->getRecordGameMode().join(","));
+    label_options->setText(tr("GameMode:") + record->getRecordGameModes().join(","));
 
     QTextEdit *chat_info = new QTextEdit;
     chat_info->setReadOnly(chat_info);
@@ -1231,6 +1242,7 @@ void MainWindow::on_actionRecord_analysis_triggered(){
     table_chat_title->setText(tr("Chat Infomation:"));
 
     QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(mode);
     layout->addWidget(label);
     layout->addWidget(label_options);
     layout->addWidget(table);
