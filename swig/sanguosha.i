@@ -693,6 +693,16 @@ public:
 	QList<const Skill *> getSkills() const;
 };
 
+class GeneralPackage: public Package{
+public:
+	GeneralPackage(const char *name);
+};
+
+class CardPackage: public Package{
+public:
+	CardPackage(const char *name);
+};
+
 class Engine: public QObject
 {
 public:

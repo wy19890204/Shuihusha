@@ -125,10 +125,7 @@ QWidget *ServerDialog::createPackageTab(){
 
         switch(package->getType()){
         case Package::GeneralPack: {
-                if(package->objectName() == "customcards")
-                    layout2->addWidget(checkbox);
-                else
-                    layout1->addWidget(checkbox);
+                layout1->addWidget(checkbox);
                 break;
             }
 

@@ -73,13 +73,12 @@ PixmapAnimation* PixmapAnimation::GetPixmapAnimation(QGraphicsObject *parent, co
         QResource::registerResource(QString("image/system/emotion/%1.rcc").arg(emotion));
         pma->setPath(QString(":/%1/").arg(emotion));
 #else
-        pma->setPath(QString("image/system/emotion/%1/").arg(emotion));
+        pma->setPath(QString("image/system/emotion-real/%1/").arg(emotion));
 #endif
     }
     bool returnpma = false;
     if(pma->valid()){
-        if(emotion == "horse")
-            pma->moveBy(90,0);
+        //if(emotion == "horse") pma->moveBy(90,0);
         if(emotion == "judgebad")
             pma->moveBy(-10,0);
 
