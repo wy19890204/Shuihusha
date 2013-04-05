@@ -9,6 +9,7 @@ object_script*
 config.ini
 swig/sanguosha_wrap.cxx
 records/*
+save/*
 users.db
 doc/*.html
 .DS_Store
@@ -19,7 +20,6 @@ etc/customScenes/custom_scenario.txt
 *.dylib
 image/*.rcc
 image/system/emotion-real/*
-image/system/emotion/*.rcc
 lib/libcryptopp.a
 *sha.exe
 lua*.dll
