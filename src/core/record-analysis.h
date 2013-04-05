@@ -36,7 +36,8 @@ public:
     QMap<QString, PlayerRecordStruct *> getRecordMap() const;
     QStringList getRecordPackages() const;
     QStringList getRecordWinners() const;
-    QStringList getRecordGameMode() const;
+    QString getRecordGameMode() const;
+    QStringList getRecordGameModes() const;
     QString getRecordChat() const;
 
     void setDesignation();
@@ -71,6 +72,7 @@ private:
     const QStringList findPlayerOfRecover(int upper, int lower) const;
 
     QMap<QString, PlayerRecordStruct *> m_recordMap;
+    QString m_gameMode;
     QStringList m_recordPackages, m_recordWinners;
     QStringList m_recordGameMode;
     QString m_recordChat;

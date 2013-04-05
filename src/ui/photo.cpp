@@ -751,24 +751,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     drawHp(painter);
 
-    if(player->getPhase() != Player::NotActive){
-        static QList<QPixmap> phase_pixmaps;
-        if(phase_pixmaps.isEmpty()){
-            QStringList names;
-            names << "round_start" << "start" << "judge" << "draw"
-                    << "play" << "discard" << "finish";
-
-            foreach(QString name, names)
-                phase_pixmaps << QPixmap(QString("image/system/phase/photo/%1.png").arg(name));
-        }
-
-        int index = static_cast<int>(player->getPhase());
-        QPixmap phase_pixmap = phase_pixmaps.at(index);
-
-        QList<QVariant> coord = settings->value("phase_item/pos").toList();
-        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), phase_pixmap);
-        painter->setOpacity(settings->value("phase_item/opacity").toReal());
-    }
+    drawPhase(painter);
 
     drawEquip(painter, weapon, 0);
     drawEquip(painter, armor, 1);
@@ -797,6 +780,34 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         }
         QList<QVariant> coord = settings->value("death_pixmap/pos").toList();
         painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), death_pixmap);
+    }
+}
+
+void Photo::drawPhase(QPainter *painter){
+    if(player->getPhase() != Player::NotActive){
+        static QList<QPixmap> phase_pixmaps;
+        if(phase_pixmaps.isEmpty()){
+            QStringList names;
+            names << "round_start" << "start" << "judge" << "draw"
+                    << "play" << "discard" << "finish";
+
+            foreach(QString name, names)
+                phase_pixmaps << QPixmap(QString("image/system/phase/photo/%1.png").arg(name));
+        }
+
+        int index = static_cast<int>(player->getPhase());
+        QPixmap phase_pixmap = phase_pixmaps.at(index);
+
+        QList<QVariant> coord = settings->value("phase_item/pos").toList();
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), phase_pixmap);
+        painter->setOpacity(settings->value("phase_item/opacity").toReal());
+    }
+    if(player && player->getHp() <= 0 && player->isAlive() && player->getMaxHP() > 0){
+        QPixmap phase_pixmap = QPixmap("image/system/phase/photo/sos.png");
+
+        QList<QVariant> coord = settings->value("phase_item/pos").toList();
+        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), phase_pixmap);
+        painter->setOpacity(settings->value("phase_item/opacity").toReal());
     }
 }
 

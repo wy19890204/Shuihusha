@@ -237,8 +237,8 @@ void Dashboard::createRight(){
     wake_icon->hide();
 }
 
-void Dashboard::setRole(const QString &new_role){
-    role->setPixmap(QPixmap(QString("image/system/roles/dashboard/%1.png").arg(new_role)));
+void Dashboard::setRole(const QString &new_role, int index){
+    role->setPixmap(QPixmap(QString("image/system/roles/dashboard/%1-%2.png").arg(new_role).arg(index)));
 }
 
 void Dashboard::setWakeState(){

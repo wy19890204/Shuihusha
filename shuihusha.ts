@@ -2483,6 +2483,11 @@
         <translation>武将包：</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.cpp" line="1220"/>
+        <source>Mode:</source>
+        <translation>游戏模式：</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.cpp" line="1222"/>
         <source>GameMode:</source>
         <translation>服务器选项：</translation>

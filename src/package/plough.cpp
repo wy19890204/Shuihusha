@@ -114,6 +114,8 @@ void Wiretap::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> 
 
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+    if(effect.to->isKongcheng())
+        return;
     room->setTag("Wiretap", QVariant::fromValue(effect));
     QList<int> all = effect.to->handCards();
     //room->showAllCards(effect.to, effect.from);

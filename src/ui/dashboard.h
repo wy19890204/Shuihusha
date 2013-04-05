@@ -27,7 +27,7 @@ public:
     QPushButton *addButton(const QString &name, int x, bool from_left);
     QProgressBar *addProgressBar();
 
-    void setRole(const QString &new_role);
+    void setRole(const QString &new_role, int index = 1);
     void setTrust(bool trust);
     void addCardItem(CardItem *card_item);
     CardItem *takeCardItem(int card_id, Player::Place place);
