@@ -3969,8 +3969,7 @@ void RoomScene::kick(){
 }
 
 void RoomScene::surrender(){
-
-     if(Self->getPhase() != Player::Play){
+    if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("You can only initiate a surrender poll at your play phase!"));
         return;
     }

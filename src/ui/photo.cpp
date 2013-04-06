@@ -733,7 +733,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     painter->setPen(Qt::white);
     QString title = player->screenName();
-    painter->drawText(QRectF(0,0,132,19), title, QTextOption(Qt::AlignHCenter));
+    painter->drawText(QRectF(10,0,132,19), title, QTextOption(Qt::AlignHCenter));
 
     static QPixmap wait_frame("image/system/wait-frame.png");
     if(kingdom_frame.isNull())
@@ -755,7 +755,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         //QList<QVariant> coord = settings->value("pos").toList();
         //painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
         QList<QVariant> coord = settings->value("text_pos").toList();
-        qreal xo = n < 10 ? coord.first().toReal() : coord.first().toReal()-2;
+        qreal xo = n < 10 ? coord.first().toReal() : coord.first().toReal()-5;
         QFont serifFont("Georgia", 16, QFont::Bold);
         painter->setPen(Qt::yellow);
         painter->setFont(serifFont);

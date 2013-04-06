@@ -206,7 +206,7 @@ public:
         return false;
     }
 
-    virtual bool isEnabledAtResponse(const Player *player, const QString &pattern) const{
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
         return pattern == "@@sinue";
     }
 
@@ -654,7 +654,7 @@ public:
             foreach(ServerPlayer *ugly, uglys){
                 if(ugly->faceUp())
                     continue;
-                if(ugly->askForSkillInvoke(objectName())){
+                if(ugly->askForSkillInvoke(objectName(), QVariant::fromValue((PlayerStar)player))){
                     ugly->turnOver();
                     QString choice = room->askForChoice(ugly, objectName(), "k1+k2+k3");
                     player->skip(Player::Judge);
@@ -678,7 +678,7 @@ public:
             DamageStruct damage = data.value<DamageStruct>();
             if(damage.to->isDead() || !uglys.contains(damage.to))
                 return false;
-            if(damage.to->faceUp() && damage.to->askForSkillInvoke(objectName())){
+            if(damage.to->faceUp() && damage.to->askForSkillInvoke(objectName(), data)){
                 room->playSkillEffect(objectName(), qrand() % 2 + 7);
                 damage.to->turnOver();
             }
@@ -689,12 +689,14 @@ public:
 
 JiejiuCard::JiejiuCard(){
     target_fixed = true;
+    will_throw = false;
     mute = true;
 }
 
-void JiejiuCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+void JiejiuCard::use(Room *, ServerPlayer *source, const QList<ServerPlayer *> &) const{
     const Card *card = Sanguosha->getCard(getSubcards().first());
-    PlayerStar target = source->tag["JiejiuSource"].value<PlayerStar>();
+    DamageStruct damage = source->tag["Jiejiu"].value<DamageStruct>();
+    PlayerStar target = damage.from;
     target->playSkillEffect(skill_name, 1);
     source->pindian(target, skill_name, card);
 }
@@ -746,9 +748,9 @@ public:
             if(suanni == damage.from)
                 continue;
             if(!suanni->hasMark("@block") && !suanni->isKongcheng()){
-                suanni->tag["JiejiuSource"] = QVariant::fromValue((PlayerStar)damage.from);
+                suanni->tag["Jiejiu"] = data;
                 room->askForUseCard(suanni, "@@jiejiu", QString("@jiejiu:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName()), true);
-                suanni->tag.remove("JiejiuSource");
+                suanni->tag.remove("Jiejiu");
                 if(suanni->getMark("jiejiu") == 4){
                     suanni->loseAllMarks("jiejiu");
                     LogMessage log;
@@ -878,6 +880,7 @@ class Yima: public TriggerSkill{
 public:
     Yima():TriggerSkill("yima"){
         events << CardLost << FinishJudge;
+        frequency = Frequent;
     }
 
     virtual bool triggerable(const ServerPlayer *) const{
@@ -888,14 +891,15 @@ public:
         return -1;
     }
 
-    static void doYima(ServerPlayer *player, const QList<ServerPlayer *> huangfus, const Card *horse){
+    static void doYima(PlayerStar player, const QList<ServerPlayer *> huangfus, const Card *horse){
         Room *room = player->getRoom();
         foreach(ServerPlayer *huangfu, huangfus){
             if(huangfu != player && horse->isKindOf("Horse")
                 && huangfu->askForSkillInvoke("yima")){
                 room->playSkillEffect("yima");
                 huangfu->obtainCard(horse);
-                if(player && player->isWounded()){
+                if(player && player->isWounded()
+                        && room->askForChoice(huangfu, "yima", "yes+no", QVariant::fromValue(player)) == "yes"){
                     RecoverStruct ruc;
                     ruc.who = huangfu;
                     room->recover(player, ruc);
@@ -1089,7 +1093,7 @@ public:
                 else if(judge.card->isRed()){
                     room->playSkillEffect(objectName(), qrand() % 2 + 3);
                     if(player->isWounded() &&
-                       room->askForCard(xiu, ".|.|.|hand|red", "@fuxu", data, CardDiscarded)){
+                       room->askForCard(xiu, ".|.|.|hand|red", "@fuxu:" + player->objectName(), data, CardDiscarded)){
                         RecoverStruct t;
                         t.who = xiu;
                         room->recover(player, t);

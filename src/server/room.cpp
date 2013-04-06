@@ -61,7 +61,6 @@ void Room::initCallbacks(){
     m_callbacks[S_COMMAND_SURRENDER] = &Room::processRequestSurrender;
     m_callbacks[S_COMMAND_CHEAT] = &Room::processRequestCheat;
 
-
     // init callback table
     callbacks["arrangeCommand"] = &Room::arrangeCommand;
     callbacks["takeGeneralCommand"] = &Room::takeGeneralCommand;
@@ -311,12 +310,6 @@ void Room::killPlayer(ServerPlayer *victim, DamageStruct *reason, bool force){
             }
         }
     }
-
-    foreach(ServerPlayer *p, getOtherPlayers(victim))
-        if(p->getState() != "robot")
-            return;
-    if(Config.value("AlterAIDelayAD", false).toBool())
-        Config.AIDelay = Config.AIDelayAD;
 }
 
 void Room::judge(JudgeStruct &judge_struct){
@@ -3447,6 +3440,20 @@ void Room::activate(ServerPlayer *player, CardUseStruct &card_use){
 
         card_use.from = player;
         ai->activate(card_use);
+
+        if(Config.value("AlterAIDelayAD", false).toBool()){
+            bool ad = true;
+            foreach(ServerPlayer *p, getOtherPlayers(player)){
+                if(p->getState() != "robot"){
+                    ad = false;
+                    break;
+                }
+            }
+            if(ad)
+                Config.AIDelay = Config.AIDelayAD;
+            else
+                Config.AIDelay = Config.value("AIDelay", 1500).toInt();
+        }
 
         qint64 diff = Config.AIDelay - timer.elapsed();
         if(diff > 0)
