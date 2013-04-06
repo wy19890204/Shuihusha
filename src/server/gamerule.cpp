@@ -450,6 +450,12 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
         DyingStruct dying = data.value<DyingStruct>();
 
+        ServerPlayer *source = room->findPlayerWhohasEventCard("edo_tensei");
+        if(source){
+            source->tag["EdoSource"] = QVariant::fromValue((PlayerStar)player);
+            room->askForUseCard(source, "EdoTensei", "@edo");
+        }
+
         LogMessage log;
         log.type = "#AskForPeaches";
         log.from = player;
@@ -596,7 +602,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             }
         }
 
-        if(player->getHp() <= 0)
+        if(player->getHp() <= 0 && player->isAlive())
             room->enterDying(player, &damage);
         break;
     }
@@ -666,7 +672,7 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
         }
-        if(player->getHp() <= 0)
+        if(player->getHp() <= 0 && player->isAlive())
             room->enterDying(player, &damage);
         break;
     }
