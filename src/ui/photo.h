@@ -107,6 +107,7 @@ private:
     void drawEquip(QPainter *painter, CardItem *equip, int order);
     void drawHp(QPainter *painter);
     void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap);
+    void drawHpText(QPainter *painter, int hp, int max_hp, const QPixmap &magatama);
 };
 
 #endif // PHOTOBACK_H

@@ -747,7 +747,7 @@ public:
                 continue;
             if(!suanni->hasMark("@block") && !suanni->isKongcheng()){
                 suanni->tag["JiejiuSource"] = QVariant::fromValue((PlayerStar)damage.from);
-                room->askForUseCard(suanni, "@@jiejiu", "@jiejiu:" + damage.from->objectName(), true);
+                room->askForUseCard(suanni, "@@jiejiu", QString("@jiejiu:%1:%2").arg(damage.from->objectName()).arg(damage.to->objectName()), true);
                 suanni->tag.remove("JiejiuSource");
                 if(suanni->getMark("jiejiu") == 4){
                     suanni->loseAllMarks("jiejiu");
@@ -933,6 +933,11 @@ bool SouguaCard::targetsFeasible(const QList<const Player *> &targets, const Pla
     return targets.length() <= 4 && !targets.isEmpty();
 }
 
+void SouguaCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->turnOver();
+    SkillCard::use(room, source, targets);
+}
+
 void SouguaCard::onEffect(const CardEffectStruct &effect) const{
     if(!effect.to->isKongcheng())
         effect.from->getRoom()->obtainCard(effect.from, effect.to->getRandomHandCardId(), false);
@@ -964,11 +969,7 @@ public:
 
     virtual bool onPhaseChange(ServerPlayer *gouguan) const{
         Room *room = gouguan->getRoom();
-        if(gouguan->getPhase() == Player::Draw && room->askForUseCard(gouguan, "@@sougua", "@sougua", true)){
-            gouguan->turnOver();
-            return true;
-        }
-        return false;
+        return gouguan->getPhase() == Player::Draw && room->askForUseCard(gouguan, "@@sougua", "@sougua", true);
     }
 };
 
@@ -988,8 +989,8 @@ public:
                 log.from = effect.from;
                 log.to << player;
                 log.type = "#ComskillNullify";
-                log.arg = objectName();
-                log.arg2 = effect.slash->objectName();
+                log.arg2 = objectName();
+                log.arg = effect.slash->objectName();
                 room->sendLog(log);
 
                 return true;

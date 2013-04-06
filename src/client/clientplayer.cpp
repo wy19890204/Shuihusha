@@ -184,7 +184,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
             QString mark_text_small = QString("<img src='%1' />").arg(path);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
-                mark_text_small.append(itor.value());
+                mark_text_small.append(QString("%1").arg(itor.value()));
             }
             mark_text_small.append("<br />");
             text.append(mark_text);

@@ -726,9 +726,8 @@ void Player::removeMark(const QString &mark){
 }
 
 void Player::setMark(const QString &mark, int value){
-    if(marks[mark] != value){
+    if(marks[mark] != value)
         marks[mark] = value;
-    }
 }
 
 int Player::getMark(const QString &mark) const{

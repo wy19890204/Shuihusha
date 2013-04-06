@@ -556,24 +556,44 @@ void Photo::addCardItem(CardItem *card_item){
 }
 
 void Photo::drawMagatama(QPainter *painter, int index, const QPixmap &pixmap){
-    QList<QVariant> coord = settings->value("magatama_item/first").toList();
-    static const QPoint first_row(coord.first().toReal(), coord.last().toReal());
-    coord = settings->value("magatama_item/second").toList();
+    settings->beginGroup("magatama_item");
+    QList<QVariant> coord = settings->value("second").toList();
     static const QPoint second_row(coord.first().toReal(), coord.last().toReal());
-    static const int skip = settings->value("magatama_item/skip").toInt();
+    coord = settings->value("first").toList();
+    static const QPoint first_row(coord.first().toReal(), coord.last().toReal());
+    static const int skip = settings->value("skip").toInt();
+    settings->endGroup();
 
     // index is count from 0
-    if(index >= 5){
+    if(index >= 6){
         // draw magatama at first row
-        QPoint pos = first_row;
-        pos.rx() += (index - 5) * skip;
+        QPoint pos = second_row;
+        pos.rx() += (index - 6) * skip;
         painter->drawPixmap(pos, pixmap);
     }else{
         // draw magatama at second row
-        QPoint pos = second_row;
+        QPoint pos = first_row;
         pos.rx() += index * skip;
         painter->drawPixmap(pos, pixmap);
     }
+}
+
+void Photo::drawHpText(QPainter *painter, int hp, int max_hp, const QPixmap &pixmap){
+    settings->beginGroup("magatama_item");
+    QList<QVariant> coord = settings->value("first").toList();
+    static const QPoint first_row(coord.first().toReal(), coord.last().toReal());
+    static const int skip = settings->value("skip").toInt();
+    settings->endGroup();
+
+    QPoint pos = first_row;
+    painter->drawPixmap(pos, pixmap);
+
+    pos.rx() += skip;
+    pos.ry() += 11;
+    QFont serifFont("Georgia", 10, QFont::Bold);
+    painter->setFont(serifFont);
+    //painter->setBrush(Qt::yellow);
+    painter->drawText(pos, QString(" %1 / %2").arg(hp).arg(max_hp));
 }
 
 void Photo::drawHp(QPainter *painter){
@@ -587,11 +607,15 @@ void Photo::drawHp(QPainter *painter){
     QPixmap *zero_magatama = MagatamaWidget::GetSmallMagatama(0);
 
     int max_hp = player->getMaxHP();
-    int i;
-    for(i=0; i< hp; i++)
-        drawMagatama(painter, i, *magatama);
-    for(i=hp; i< max_hp; i++)
-        drawMagatama(painter, i, *zero_magatama);
+    if(max_hp > 6)
+        drawHpText(painter, hp, max_hp, *magatama);
+    else{
+        int i;
+        for(i=0; i< hp; i++)
+            drawMagatama(painter, i, *magatama);
+        for(i=hp; i< max_hp; i++)
+            drawMagatama(painter, i, *zero_magatama);
+    }
 }
 
 void Photo::setFrame(FrameType type){
@@ -728,11 +752,13 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     int n = player->getHandcardNum();
     if(n > 0){
         settings->beginGroup("handcard_item");
-        QList<QVariant> coord = settings->value("pos").toList();
-        painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
-        painter->setPen(qRgb(127,254,3));
-        coord = settings->value("text_pos").toList();
+        //QList<QVariant> coord = settings->value("pos").toList();
+        //painter->drawPixmap(coord.first().toReal(), coord.last().toReal(), handcard);
+        QList<QVariant> coord = settings->value("text_pos").toList();
         qreal xo = n < 10 ? coord.first().toReal() : coord.first().toReal()-2;
+        QFont serifFont("Georgia", 16, QFont::Bold);
+        painter->setPen(Qt::yellow);
+        painter->setFont(serifFont);
         painter->drawText(xo, coord.last().toReal(), QString::number(n));
         settings->endGroup();
     }

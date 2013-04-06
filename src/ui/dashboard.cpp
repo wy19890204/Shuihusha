@@ -207,6 +207,7 @@ void Dashboard::createRight(){
     settings->beginGroup("handcard_item");
     coord = settings->value("pos").toList();
     handcard_pixmap->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    handcard_pixmap->setZValue(0.3);
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
     coord = settings->value("text_pos").toList();
     handcard_num->setPos(coord.at(0).toReal(), coord.at(1).toReal());
@@ -214,7 +215,7 @@ void Dashboard::createRight(){
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
-    handcard_num->setBrush(Qt::white);
+    handcard_num->setBrush(Qt::yellow);
 
     //handcard_pixmap->hide();
 
@@ -595,19 +596,27 @@ QProgressBar *Dashboard::addProgressBar(){
 void Dashboard::drawHp(QPainter *painter) const{
     int hp = qMax(0, Self->getHp());
     int max_hp = Self->getMaxHP();
-    QPixmap *magatama, *zero_magatama;
     int index = Self->isWounded() ? qMin(hp, 5) : 5;
-    if(max_hp > 6){
+    QPixmap *magatama = MagatamaWidget::GetMagatama(index);
+    QPixmap *zero_magatama = MagatamaWidget::GetMagatama(0);
+
+    qreal start_x = left_pixmap.width() + middle->rect().width();
+
+    if(max_hp > 8){
+        painter->drawPixmap(start_x + 20, 5, *magatama);
+        QFont serifFont("Georgia", 14, QFont::Bold);
+        painter->setFont(serifFont);
+        painter->setBrush(Qt::yellow);
+        painter->drawText(start_x + 45, 23, QString(" %1 / %2").arg(hp).arg(max_hp));
+        return;
+    }
+    else if(max_hp > 6){
         magatama = MagatamaWidget::GetSmallMagatama(index);
         zero_magatama = MagatamaWidget::GetSmallMagatama(0);
-    }else{
-        magatama = MagatamaWidget::GetMagatama(index);
-        zero_magatama = MagatamaWidget::GetMagatama(0);
     }
 
     qreal total_width = magatama->width() * max_hp;
     qreal skip = (121 - total_width)/ (max_hp + 1);
-    qreal start_x = left_pixmap.width() + middle->rect().width();
 
     int i;
     for(i=0; i<hp; i++)
