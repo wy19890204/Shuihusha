@@ -33,7 +33,11 @@ StartScene::StartScene()
     server_log = NULL;
 
     //Provide coordinates for the button
+#ifdef USE_RCC
+    button_group = new Pixmap(":plate/background.png");
+#else
     button_group = new Pixmap("image/system/button/plate/background.png");
+#endif
     button_group->shift();
     //button_group->moveBy(0, -Config.Rect.height()/10);
     button_group->hide();
@@ -43,6 +47,8 @@ void StartScene::addButton(QAction *action){
     QString text = action->text();
     if(action->objectName() == "actionPackaging")
         text = tr("Lua Manager");
+    else if(action->objectName() == "actionReplay")
+        text = tr("Replay");
     Button *button = new Button(text);
     button->setMute(false);
 
@@ -76,7 +82,11 @@ void StartScene::addMainButton(QList<QAction *> actions){
         {145, 360}, //8.thanks
     };
 
+#ifdef USE_RCC
+    QString path = ":plate/background.png";
+#else
     QString path = "image/system/button/plate/background.png";
+#endif
     button_plate = new QGraphicsPixmapItem(QPixmap(path));
     button_plate->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
     button_plate->setFlags(QGraphicsItem::ItemIsMovable);

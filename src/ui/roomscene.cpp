@@ -135,7 +135,7 @@ RoomScene::RoomScene(QMainWindow *main_window)
         QGraphicsItem *button_widget = NULL;
         if(ClientInstance->getReplayer() == NULL){
 #ifdef USE_RCC
-            QString path = ":system/button/irregular/background.png";
+            QString path = ":irregular/background.png";
 #else
             QString path = "image/system/button/irregular/background.png";
 #endif

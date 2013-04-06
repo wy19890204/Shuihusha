@@ -402,7 +402,9 @@ CONFIG(chatvoice){
 
 CONFIG(use_rcc){
         DEFINES += USE_RCC
-        RESOURCES += image/skin.qrc
+        RESOURCES += \
+		image/skin.qrc \
+		image/system/button/irregular.qrc
 }
 
 CONFIG(qrc){

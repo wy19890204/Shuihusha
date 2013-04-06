@@ -5122,6 +5122,11 @@ P = 你自己, R = 你所在的房间</translation>
         <translation>扩展管理</translation>
     </message>
     <message>
+        <location filename="src/ui/startscene.cpp" line="47"/>
+        <source>Replay</source>
+        <translation>战局重放</translation>
+    </message>
+    <message>
         <location filename="src/ui/startscene.cpp" line="223"/>
         <source>Anzhan Mode is disabled</source>
         <translation>禁用暗战规则</translation>

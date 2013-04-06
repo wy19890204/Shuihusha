@@ -11,5 +11,4 @@ del system\card-container.png
 del system\ready.png
 del system\arrow.png
 del system\button\button.png
-del system\button\irregular\background.png
 pause
