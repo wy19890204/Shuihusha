@@ -523,9 +523,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             room->setPlayerStatistics(damage.from, "damage", damage.damage);
 
         room->applyDamage(player, damage);
-        if(player->getHp() <= 0){
+        if(player->getHp() <= 0)
             room->enterDying(player, &damage);
-        }
 
         break;
     }
@@ -597,6 +596,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             }
         }
 
+        if(player->getHp() <= 0)
+            room->enterDying(player, &damage);
         break;
     }
 
@@ -641,9 +642,9 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         break;
     }
     case Damaged:{
+        DamageStruct damage = data.value<DamageStruct>();
         //xiaobawang
         if(!Config.BanPackages.contains("events")){
-            DamageStruct damage = data.value<DamageStruct>();
             ServerPlayer *source = room->findPlayerWhohasEventCard("xiaobawang");
             if(damage.from && damage.from == source){
                 if(damage.to && !damage.to->isNude() &&
@@ -665,6 +666,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
         }
+        if(player->getHp() <= 0)
+            room->enterDying(player, &damage);
         break;
     }
     case CardEffected:{

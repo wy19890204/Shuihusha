@@ -8,7 +8,8 @@
 sgs.ai_skill_invoke["konghe"] = function(self, data)
 	local damage = data:toDamage()
 	if damage then
-		return true
+		local cur = self.room:getCurrent()
+		return cur:getNextAlive() ~= self.player
 	else
 		local source = data:toPlayer()
 		if source then
@@ -112,6 +113,17 @@ sgs.ai_skill_use_func["FangzaoCard"] = function(card,use,self)
 	use.card=card
 end
 
+function fangzao_card(self, card, name)
+	local suit = card:getSuitString()
+	local number = card:getNumberString()
+	local id = card:getEffectiveId()
+
+	local card_str = ("%s:fangzao[%s:%s]=%d"):format(name, suit, number, id)
+	local angzao = sgs.Card_Parse(card_str)
+	assert(angzao)
+	return angzao
+end
+
 fangzao2_skill={}
 fangzao2_skill.name = "fangzao"
 table.insert(sgs.ai_skills, fangzao2_skill)
@@ -125,14 +137,8 @@ fangzao2_skill.getTurnUseCard = function(self)
 	cards=sgs.QList2Table(cards)
 	self:sortByUseValue(cards, true)
 	local card = cards[1]
-	if card:objectName() ~= "peach" then return nil end
-	local suit = card:getSuitString()
-	local number = card:getNumberString()
-	local card_id = card:getEffectiveId()
-	local card_str = ("peach:fangzao[%s:%s]=%d"):format(suit, number, card_id)
-	local caard = sgs.Card_Parse(card_str)
-	assert(caard)
-	return caard
+--	if card:objectName() ~= "peach" then return nil end
+	return fangzao_card(self, card, card:objectName())
 end
 
 -- jiangxin
@@ -242,9 +248,11 @@ sgs.ai_skill_use["@@jiejiu"] = function(self, prompt)
 
 	if self.player:getHandcardNum() > 2 or damage.to == self.player then
 		local max_card = self:getMaxCard()
-		local max_care = self:getMaxCard(source)
-		if max_card and max_care and max_card:getNumber() > max_care:getNumber() then
-			return "@JiejiuCard=" .. max_card:getEffectiveId() .. "->."
+		if max_card then
+			local max_care = self:getMaxCard(source)
+			if (max_care and max_card:getNumber() > max_care:getNumber()) or  max_card:getNumber() > 9 then
+				return "@JiejiuCard=" .. max_card:getEffectiveId() .. "->."
+			end
 		end
 	end
 	return "."
@@ -279,11 +287,29 @@ end
 sgs.ai_skill_invoke["yima"] = true
 sgs.ai_skill_choice["yima"] = function(self, choice, data)
 	local player = data:toPlayer()
-	return self:isFriend(player)
+	if self:isFriend(player) then
+		return "yes"
+	else
+		return "no"
+	end
 end
 
 -- liangshijie
 -- sougua
+sgs.ai_skill_use["@@sougua"] = function(self, prompt)
+	local enemies = {}
+	self:sort(self.enemies, "handcard")
+	for _, enemy in ipairs(self.enemies) do
+		if not enemy:isKongcheng() then
+			table.insert(enemies, enemy:objectName())
+			if #enemies >= 4 then break end
+		end
+	end
+	if #enemies < 2 then return "." end
+	if #enemies == 2 and math.random(0,1) == 1 then return "." end
+	return "@SouguaCard=.->" .. table.concat(enemies, "+")
+end
+
 -- liushou
 
 -- suyuanjing
@@ -291,7 +317,7 @@ end
 -- fuxu
 sgs.ai_skill_invoke["fuxu"] = function(self, data)
 	local daamge = data:toDamage()
-	if self:isEnemy(daamge.to)
+	if self:isEnemy(daamge.to) then
 		return math.random(0, 1) == 1
 	else
 		return true
