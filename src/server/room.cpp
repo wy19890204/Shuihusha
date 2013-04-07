@@ -1452,11 +1452,11 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
 QList<ServerPlayer *>Room::findPlayersByProperty(const char *key, const QVariant &value, bool include_dead) const{
     QList<ServerPlayer *> list;
     foreach(ServerPlayer *player, include_dead ? m_players : m_alivePlayers){
-        if(key == "mark"){
+        if(QString(QLatin1String(key)) == "mark"){
             if(player->hasMark(key))
                 list << player;
         }
-        else if(key == "flag"){
+        else if(QString(QLatin1String(key)) == "flag"){
             if(player->hasFlag(key))
                 list << player;
         }

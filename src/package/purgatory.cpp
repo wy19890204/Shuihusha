@@ -1,18 +1,23 @@
 #include "purgatory.h"
 #include "maneuvering.h"
 
-Shit::Shit(Suit suit, int number):BasicCard(suit, number){
+Shit::Shit(Suit suit, int number):
+    BasicCard(suit, number){
     setObjectName("shit");
-
     target_fixed = true;
 }
 
 QString Shit::getSubtype() const{
-    return "disgusting_card";
+    return "specially";
+}
+
+void Shit::onUse(Room *room, const CardUseStruct &) const{
+    room->moveCardTo(this, NULL, Player::DiscardedPile);
 }
 
 void Shit::onMove(const CardMoveStruct &move) const{
-    ServerPlayer *from = move.from;
+    PlayerStar from = move.from;
+    Room *room = from->getRoom();
     if(from && move.from_place == Player::Hand &&
        from->getRoom()->getCurrent() == move.from
        && (move.to_place == Player::DiscardedPile || move.to_place == Player::Special)
@@ -20,41 +25,25 @@ void Shit::onMove(const CardMoveStruct &move) const{
        && from->isAlive()){
 
         LogMessage log;
+        log.type = "$ShitHint";
         log.card_str = getEffectIdString();
         log.from = from;
-
-        Room *room = from->getRoom();
-
-        if(getSuit() == Spade){
-            log.type = "$ShitLostHp";
-            room->sendLog(log);
-
-            room->loseHp(from);
-            return;
-        }
-
-        DamageStruct damage;
-        damage.from = damage.to = from;
-        damage.card = this;
-
-        switch(getSuit()){
-        case Club:
-            damage.nature = DamageStruct::Thunder;
-            log.arg = "thunder_nature";
-            break;
-        case Heart:
-            damage.nature = DamageStruct::Fire;
-            log.arg = "fire_nature";
-            break;
-        default:
-            damage.nature = DamageStruct::Normal;
-            log.arg = "normal_nature";
-        }
-
-        log.type = "$ShitDamage";
         room->sendLog(log);
 
-        room->damage(damage);
+        if(getSuit() == Spade)
+            room->loseHp(from);
+        else{
+            DamageStruct damage;
+            damage.from = damage.to = from;
+            damage.card = this;
+
+            switch(getSuit()){
+            case Club: damage.nature = DamageStruct::Thunder; break;
+            case Heart: damage.nature = DamageStruct::Fire; break;
+            default: damage.nature = DamageStruct::Normal;
+            }
+            room->damage(damage);
+        }
     }
 }
 
@@ -138,10 +127,20 @@ EdoTensei::EdoTensei(Suit suit, int number)
 }
 
 void EdoTensei::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
     PlayerStar whody = effect.from->tag["EdoSource"].value<PlayerStar>();
-    //QList<ServerPlayer *> targets = alldead;
-    //choose dead;
-    //revive dead;
+    QStringList targets;
+    foreach(ServerPlayer *target, room->getAllPlayers(true))
+        if(target->isDead())
+            targets << target->getGeneralName();
+    if(targets.isEmpty())
+        return;
+    QString hcoi = room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
+    PlayerStar revivd = room->findPlayer(hcoi, true);
+    room->setPlayerProperty(revivd, "hp", 1);
+    revivd->drawCards(3);
+    room->revivePlayer(revivd);
+    room->killPlayer(whody);
 }
 
 bool EdoTensei::isAvailable(const Player *) const{
@@ -156,8 +155,8 @@ PurgatoryPackage::PurgatoryPackage()
     cards
             /*<< new Shit(Card::Club, 1)
             << new Shit(Card::Heart, 8)
-            << new Shit(Card::Diamond, 13)
-            << new Shit(Card::Spade, 10)*/
+            << new Shit(Card::Diamond, 13)*/
+            << new Shit(Card::Spade, 10)
             << new Mastermind(Card::Heart, 5)
             << new Mastermind(Card::Heart, 5)
             << new SpinDestiny(Card::Diamond, 5)
