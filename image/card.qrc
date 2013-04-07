@@ -70,5 +70,8 @@
 		<file>card/wiretap.jpg</file>
 		<file>card/xiaobawang.jpg</file>
 		<file>card/zongzi.jpg</file>
+		<file>card/mastermind.jpg</file>
+		<file>card/spin_destiny.jpg</file>
+		<file>card/edo_tensei.jpg</file>
 	</qresource>
 </RCC>

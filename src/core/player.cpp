@@ -771,16 +771,6 @@ QStringList Player::getAllMarkName(int flag, const QString &part) const{
     return marknames;
 }
 
-QStringList Player::getMarkFlags() const{
-    QStringList marks_list;
-    foreach(QString mark, marks){
-        mark.remove("@");
-        if(mark.startsWith("%"))
-            marks_list << flag;
-    }
-    return marks_list;
-}
-
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
     if(slash == NULL)
         slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
@@ -830,9 +820,7 @@ QList<int> Player::getPile(const QString &pile_name) const{
 QStringList Player::getPileNames() const{
     QStringList names;
     foreach(QString pile_name,piles.keys())
-    {
         names.append(pile_name);
-    }
     return names;
 }
 
@@ -1057,9 +1045,8 @@ void Player::setCardLocked(const QString &name){
 
 bool Player::isLocked(const Card *card) const{
     foreach(QString card_name, lock_card){
-        if(card->inherits(card_name.toStdString().c_str())){
+        if(card->inherits(card_name.toStdString().c_str()))
             return true;
-        }
     }
 
     return false;

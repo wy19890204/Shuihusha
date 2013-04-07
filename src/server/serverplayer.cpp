@@ -650,14 +650,10 @@ void ServerPlayer::loseMark(const QString &mark, int n){
     room->setPlayerMark(this, mark, value);
 }
 
-void ServerPlayer::loseAllMarks(const QString &mark_name, bool open){
+void ServerPlayer::loseAllMarks(const QString &mark_name){
     int n = getMark(mark_name);
-    if(n > 0){
-        if(open)
-            loseMark(mark_name, n);
-        else
-            room->setPlayerMark(this, mark_name, 0);
-    }
+    if(n > 0)
+        loseMark(mark_name, n);
 }
 
 bool ServerPlayer::isOnline() const {
