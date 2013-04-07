@@ -168,6 +168,12 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 }
             }
 
+            // shengsizhizhan
+            foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                tmp->loseAllMarks("@death");
+                tmp->loseAllMarks("@life");
+            }
+
             // zhuan shi
             if(Config.EnableReincarnation){
                 int count = Sanguosha->getPlayerCount(room->getMode());
@@ -602,8 +608,8 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
             }
         }
 
-        if(player->getHp() <= 0 && player->isAlive())
-            room->enterDying(player, &damage);
+        //if(player->getHp() <= 0 && player->isAlive())
+        //    room->enterDying(player, &damage);
         break;
     }
 
@@ -672,8 +678,15 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
                 }
             }
         }
-        if(player->getHp() <= 0 && player->isAlive())
-            room->enterDying(player, &damage);
+        //shensizhizhan
+        if(player->hasMark("@death")){
+            PlayerStar life = player->tag["DtoL"].value<PlayerStar>();
+            RecoverStruct recover;
+            recover.who = player;
+            room->recover(life, recover);
+        }
+        //if(player->getHp() <= 0 && player->isAlive())
+        //    room->enterDying(player, &damage);
         break;
     }
     case CardEffected:{

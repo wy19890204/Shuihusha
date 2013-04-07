@@ -265,16 +265,16 @@ public:
         DyingStruct dying = data.value<DyingStruct>();
         DamageStar damage = dying.damage;
         if(damage && damage->from && damage->from->hasSkill("pinming") && damage->to->isAlive()){
-            damage->from->setFlags("PinmingDie");
+            damage->from->setFlags("%PinmingDie");
             if(damage->from->askForSkillInvoke("pinming", QVariant::fromValue(damage))){
                 room->playSkillEffect("pinming", qrand() % 2 + 4);
                 room->getThread()->delay(500);
                 room->killPlayer(damage->to, damage);
                 room->getThread()->delay(1000);
                 room->killPlayer(damage->from);
+                damage->from->setFlags("-%PinmingDie");
+                return true;
             }
-            damage->from->setFlags("-PinmingDie");
-            return true;
         }
         return false;
     }

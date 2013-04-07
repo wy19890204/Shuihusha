@@ -10,16 +10,27 @@ bool Mastermind::targetsFeasible(const QList<const Player *> &targets, const Pla
     return targets.length() == 2;
 }
 
+bool Mastermind::targetFilter(const QList<const Player *> &targets, const Player *, const Player *) const{
+    return targets.length() <= 1;
+}
+
 void Mastermind::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     targets.last()->tag["DtoL"] = QVariant::fromValue((PlayerStar)targets.first());
-    QString tgs;
+    QList<ServerPlayer *> tgs;
     tgs << targets.last();
     TrickCard::use(room, source, tgs);
 }
 
 void Mastermind::onEffect(const CardEffectStruct &effect) const{
+    Room *room = effect.from->getRoom();
     PlayerStar death = effect.to;
     PlayerStar life = death->tag["DtoL"].value<PlayerStar>();
+
+    foreach(ServerPlayer *t, room->getAllPlayers()){
+        t->loseAllMarks("@death");
+        t->loseAllMarks("@life");
+    }
+
     death->gainMark("@death");
     life->gainMark("@life");
 }
@@ -30,39 +41,36 @@ SpinDestiny::SpinDestiny(Suit suit, int number)
     setObjectName("spin_destiny");
 }
 
-bool SpinDestiny::isCancelable(const CardEffectStruct &effect) const{
-    return effect.to->isAlive();
-}
-
 void SpinDestiny::onUse(Room *room, const CardUseStruct &card_use) const{
     CardUseStruct use = card_use;
-    use.to = room->getPlayers();
+    use.to = room->getAllPlayers(false);
     TrickCard::onUse(room, use);
+    foreach(ServerPlayer *dead, room->getAllPlayers(true)){
+        if(dead->isDead()){
+            if(dead->getMaxHp() <= 0)
+                room->setPlayerProperty(dead, "maxhp", 1);
+            room->setPlayerProperty(dead, "hp", 1);
+            room->revivePlayer(dead);
+        }
+    }
 }
 
 void SpinDestiny::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    if(effect.to->isAlive())
-        room->loseHp(effect.to);
-    else{
-        if(effect.to->getMaxHp() <= 0)
-            room->setPlayerProperty(effect.to, "maxhp", 1);
-        room->setPlayerProperty(effect.to, "hp", 1);
-        room->revivePlayer(effect.to);
-    }
+    room->loseHp(effect.to);
 }
 
 EdoTensei::EdoTensei(Suit suit, int number)
-    :SingleTargetTrick(suit, number){
+    :SingleTargetTrick(suit, number, false){
     setObjectName("edo_tensei");
     target_fixed = true;
 }
 
 void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     PlayerStar whody = effect.from->tag["EdoSource"].value<PlayerStar>();
-    QList<ServerPlayer *> targets = alldead;
-    choose dead;
-    revive dead;
+    //QList<ServerPlayer *> targets = alldead;
+    //choose dead;
+    //revive dead;
 }
 
 bool EdoTensei::isAvailable(const Player *) const{
