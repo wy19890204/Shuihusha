@@ -1449,6 +1449,23 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
     return NULL;
 }
 
+QList<ServerPlayer *>Room::findPlayersByProperty(const char *key, const QVariant &value, bool include_dead) const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, include_dead ? m_players : m_alivePlayers){
+        if(key == "mark"){
+            if(player->hasMark(key))
+                list << player;
+        }
+        else if(key == "flag"){
+            if(player->hasFlag(key))
+                list << player;
+        }
+        if(player->property(key) == value)
+            list << player;
+    }
+    return list;
+}
+
 QList<ServerPlayer *>Room::findPlayersBySkillName(const QString &skill_name, bool include_dead) const{
     QList<ServerPlayer *> list;
     foreach(ServerPlayer *player, include_dead ? m_players : m_alivePlayers){

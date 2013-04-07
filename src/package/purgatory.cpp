@@ -1,6 +1,77 @@
 #include "purgatory.h"
 #include "maneuvering.h"
 
+Shit::Shit(Suit suit, int number):BasicCard(suit, number){
+    setObjectName("shit");
+
+    target_fixed = true;
+}
+
+QString Shit::getSubtype() const{
+    return "disgusting_card";
+}
+
+void Shit::onMove(const CardMoveStruct &move) const{
+    ServerPlayer *from = move.from;
+    if(from && move.from_place == Player::Hand &&
+       from->getRoom()->getCurrent() == move.from
+       && (move.to_place == Player::DiscardedPile || move.to_place == Player::Special)
+       && move.to == NULL
+       && from->isAlive()){
+
+        LogMessage log;
+        log.card_str = getEffectIdString();
+        log.from = from;
+
+        Room *room = from->getRoom();
+
+        if(getSuit() == Spade){
+            log.type = "$ShitLostHp";
+            room->sendLog(log);
+
+            room->loseHp(from);
+            return;
+        }
+
+        DamageStruct damage;
+        damage.from = damage.to = from;
+        damage.card = this;
+
+        switch(getSuit()){
+        case Club:
+            damage.nature = DamageStruct::Thunder;
+            log.arg = "thunder_nature";
+            break;
+        case Heart:
+            damage.nature = DamageStruct::Fire;
+            log.arg = "fire_nature";
+            break;
+        default:
+            damage.nature = DamageStruct::Normal;
+            log.arg = "normal_nature";
+        }
+
+        log.type = "$ShitDamage";
+        room->sendLog(log);
+
+        room->damage(damage);
+    }
+}
+
+bool Shit::HasShit(const Card *card){
+    if(card->isVirtualCard()){
+        QList<int> card_ids = card->getSubcards();
+        foreach(int card_id, card_ids){
+            const Card *c = Sanguosha->getCard(card_id);
+            if(c->objectName() == "shit")
+                return true;
+        }
+
+        return false;
+    }else
+        return card->objectName() == "shit";
+}
+
 Mastermind::Mastermind(Suit suit, int number)
     :SingleTargetTrick(suit, number, false) {
     setObjectName("mastermind");
@@ -83,6 +154,10 @@ PurgatoryPackage::PurgatoryPackage()
     QList<Card *> cards;
 
     cards
+            /*<< new Shit(Card::Club, 1)
+            << new Shit(Card::Heart, 8)
+            << new Shit(Card::Diamond, 13)
+            << new Shit(Card::Spade, 10)*/
             << new Mastermind(Card::Heart, 5)
             << new Mastermind(Card::Heart, 5)
             << new SpinDestiny(Card::Diamond, 5)
