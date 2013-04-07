@@ -925,6 +925,7 @@ public:
 	ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerWhohasEventCard(const char *event) const;
 	QList<ServerPlayer *> findPlayersBySkillName(const char *skill_name, bool include_dead = false) const;
+	QList<ServerPlayer *> findPlayersByProperty(const char *key, const QVariant &value = QVariant(), bool include_dead = false) const;
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
 	void transfigure(ServerPlayer *player, const char *new_general, bool full_state = true, bool invoke_start = true);

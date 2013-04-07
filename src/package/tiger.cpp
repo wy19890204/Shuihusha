@@ -417,9 +417,8 @@ public:
         if(ServerInfo.EnableAnzhan || room->isNoLordSkill())
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->attachSkillToPlayer(player, "huweiv");
-        }
     }
 
     virtual void onIdied(ServerPlayer *tigger) const{
@@ -427,9 +426,8 @@ public:
         if(room->findPlayerBySkillName("huwei"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->detachSkillFromPlayer(player, "huweiv", false);
-        }
     }
 };
 

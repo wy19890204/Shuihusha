@@ -97,9 +97,8 @@ public:
         Room *room = player->getRoom();
         if(ServerInfo.EnableAnzhan || room->isNoLordSkill())
             return;
-        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+        foreach(ServerPlayer *tmp, room->getAlivePlayers())
             room->attachSkillToPlayer(tmp, "jui");
-        }
     }
 
     virtual void onIdied(ServerPlayer *player) const{
@@ -107,9 +106,8 @@ public:
         if(room->findPlayerBySkillName("juyi"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *tmp, players){
+        foreach(ServerPlayer *tmp, players)
             room->detachSkillFromPlayer(tmp, "jui", false);
-        }
     }
 };
 
@@ -1169,9 +1167,8 @@ public:
     virtual void onGameStart(ServerPlayer *yangvi) const{
         Room *room = yangvi->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->attachSkillToPlayer(player, "buyaknife");
-        }
     }
 
     virtual void onIdied(ServerPlayer *yangvi) const{
@@ -1179,9 +1176,8 @@ public:
         if(room->findPlayerBySkillName("maidao"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->detachSkillFromPlayer(player, "buyaknife", false);
-        }
     }
 };
 

@@ -196,6 +196,7 @@ public:
     QList<int> getDrawPile();
     int getCardFromPile(const QString &card_name);
     QList<ServerPlayer *> findPlayersBySkillName(const QString &skill_name, bool include_dead = false) const;
+    QList<ServerPlayer *> findPlayersByProperty(const char *key, const QVariant &value = QVariant(), bool include_dead = false) const;
     ServerPlayer *findPlayer(const QString &general_name, bool include_dead = false) const;
     ServerPlayer *findPlayerBySkillName(const QString &skill_name, bool include_dead = false) const;
     ServerPlayer *findPlayerWhohasEventCard(const QString &event) const;
