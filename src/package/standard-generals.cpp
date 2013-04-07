@@ -1560,7 +1560,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *nana, QVariant &data) const{
         RecoverStruct rec = data.value<RecoverStruct>();
-        if(rec.who == nana && rec.card->isKindOf("Analeptic") &&
+        if(rec.who == nana && rec.card->isKindOf("Analeptic") && nana->getHp() < 1 &&
            nana->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
             LogMessage log;

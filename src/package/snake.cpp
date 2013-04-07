@@ -813,7 +813,9 @@ bool XiangmaCard::targetFilter(const QList<const Player *> &targets, const Playe
 
 void XiangmaCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.from->getRoom();
-    int card_id = room->askForCardChosen(effect.from, effect.to, "e", skill_name);
+    int card_id = effect.to->getEquips().length() == 1 ?
+                effect.to->getEquips().first()->getEffectiveId() :
+                room->askForCardChosen(effect.from, effect.to, "e", skill_name);
     const Card *horse = Sanguosha->getCard(card_id);
     if(horse->isKindOf("Horse"))
         room->throwCard(card_id, effect.to, effect.from);

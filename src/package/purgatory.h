@@ -12,6 +12,17 @@ public:
     PurgatoryPackage();
 };
 
+class Shit:public BasicCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Shit(Card::Suit suit, int number);
+    virtual QString getSubtype() const;
+    virtual void onMove(const CardMoveStruct &move) const;
+
+    static bool HasShit(const Card *card);
+};
+
 class Mastermind: public SingleTargetTrick{
     Q_OBJECT
 
