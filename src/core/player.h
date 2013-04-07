@@ -115,12 +115,6 @@ public:
     bool isDead() const;
     void setAlive(bool alive);
 
-    QString getFlags() const;
-    QStringList getClearFlags() const;
-    virtual void setFlags(const QString &flag);
-    bool hasFlag(const QString &flag) const;
-    void clearFlags();
-
     bool faceUp() const;
     void setFaceUp(bool face_up);
 
@@ -173,12 +167,19 @@ public:
     bool isNude() const;
     bool isAllNude() const;
 
+    QString getFlags() const;
+    QStringList getClearFlags() const;
+    virtual void setFlags(const QString &flag);
+    bool hasFlag(const QString &flag) const;
+    void clearFlags();
+
     void addMark(const QString &mark);
     void removeMark(const QString &mark);
     virtual void setMark(const QString &mark, int value = 1);
     int getMark(const QString &mark) const;
     bool hasMark(const QString &mark) const;
     QStringList getAllMarkName(int flag = 1, const QString &part = "@") const;
+    QStringList getClearMarks() const;
 
     void setChained(bool chained);
     bool isChained() const;

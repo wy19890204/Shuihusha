@@ -149,6 +149,9 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 foreach(QString clear_flag, tmp->getClearFlags())
                     room->setPlayerFlag(tmp, "-" + clear_flag);
                 // % mean clear this flag after each turn
+                foreach(QString clear_mark, tmp->getClearMarks())
+                    tmp->loseAllMarks(clear_mark, !clear_mark.endsWith("+"));
+                // % mean clear this mark after each turn; + mean not show this log message
             }
 
             player->clearFlags();

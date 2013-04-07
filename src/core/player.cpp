@@ -771,6 +771,16 @@ QStringList Player::getAllMarkName(int flag, const QString &part) const{
     return marknames;
 }
 
+QStringList Player::getMarkFlags() const{
+    QStringList marks_list;
+    foreach(QString mark, marks){
+        mark.remove("@");
+        if(mark.startsWith("%"))
+            marks_list << flag;
+    }
+    return marks_list;
+}
+
 bool Player::canSlash(const Player *other, const Card *slash, bool distance_limit) const{
     if(slash == NULL)
         slash = Sanguosha->cloneCard("slash", Card::NoSuit, 0);
