@@ -1,7 +1,7 @@
 %{
 
 #include "ai.h"
-#include "joy.h"
+#include "purgatory.h"
 
 %}
 

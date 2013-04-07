@@ -3,6 +3,7 @@
 return {
 	["purgatory"] = "生死之战",
 
+	["specially"] = "特定牌",
 	["cv:gift"] = "烨子风暴|Paddy",
 
 	["mastermind"] = "摄魂",
@@ -28,7 +29,6 @@ return {
 	["shit"] = "伪信",
 	[":shit"] = "基本牌\
 特定效果：你的回合内，当此牌从你的手牌进入弃牌堆时，你受到1点属性与该牌花色相应且来源为你的伤害（或流失体力）：♠~流失体力；♥~火焰属性；♣~雷电属性；♦~无属性。",
-	["$ShitLostHp"] = "%from 的 %card 败露, 将流失1点体力",
-	["$ShitDamage"] = "%from 的 %card 败露, 将受到自己对自己的1点伤害[%arg]",
+	["$ShitHint"] = "%from 的 %card 败露",
 }
 
