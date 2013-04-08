@@ -77,7 +77,6 @@ public:
         if(opt->hasMark("@wings") && opt->getPhase() == Player::Judge){
             Room *room = opt->getRoom();
             if(opt->askForSkillInvoke(objectName())){
-                room->playSkillEffect(objectName(), 1);
                 while(!opt->getJudgingArea().isEmpty())
                     room->throwCard(opt->getJudgingArea().first()->getId());
                 room->playLightbox(opt, "zhanchi", "");
@@ -247,34 +246,33 @@ public:
     }
 };
 
-class Liuxing: public TriggerSkill{
+class Hunyuan: public TriggerSkill{
 public:
-    Liuxing():TriggerSkill("liuxing"){
-        events << Damaged << AskForRetrial;
+    Hunyuan():TriggerSkill("hunyuan"){
+        events << Damaged << HpRecovered << AskForRetrial;
     }
 
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
-        if(player->hasMark("wudao_wake"))
-            return false;
-        if(event == Damaged){
-            DamageStruct damage = data.value<DamageStruct>();
-            if(damage.damage > 0){
-                LogMessage log;
-                log.type = "#TriggerSkill";
-                log.from = player;
-                log.arg = objectName();
-                room->playSkillEffect(objectName());
-                room->sendLog(log);
+        if(event != AskForRetrial){
+            int number = 0;
+            if(data.canConvert<DamageStruct>()){
+                DamageStruct damage = data.value<DamageStruct>();
+                number = damage.damage;
             }
-            for(int i = 0; i < damage.damage; i++){
+            else if(data.canConvert<RecoverStruct>()){
+                RecoverStruct reco = data.value<RecoverStruct>();
+                number = reco.recover;
+            }
+            if(number < 1 || !player->askForSkillInvoke(objectName(), data))
+                return false;
+            room->playSkillEffect(objectName());
+            for(int i = 0; i < number; i++){
                 if(player->isDead())
                     break;
                 const Card *card = room->peek();
                 room->showCard(player, card->getEffectiveId());
                 room->getThread()->delay();
-
-                if(!(card->isRed() && card->isKindOf("BasicCard")))
-                    player->addToPile("shang", card);
+                player->addToPile("shang", card);
             }
         }
         else{
@@ -283,12 +281,14 @@ public:
             if(player->getPile("shang").isEmpty() || !player->askForSkillInvoke(objectName(), data))
                 return false;
 
+            room->playSkillEffect(objectName());
             QList<int> card_ids = player->getPile("shang");
             room->fillAG(card_ids, player);
             int card_id = room->askForAG(player, card_ids, false, objectName());
             player->invoke("clearAG");
             if(card_id > 0){
-                player->obtainCard(judge->card);
+                //player->obtainCard(judge->card);
+                player->addToPile("shang", judge->card);
                 judge->card = Sanguosha->getCard(card_id);
                 room->moveCardTo(judge->card, NULL, Player::Special);
 
@@ -306,15 +306,15 @@ public:
     }
 };
 
-class Hunyuan: public PhaseChangeSkill{
+class Wudao: public PhaseChangeSkill{
 public:
-    Hunyuan():PhaseChangeSkill("hunyuan"){
+    Wudao():PhaseChangeSkill("wudao"){
         frequency = Wake;
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return PhaseChangeSkill::triggerable(target)
-                && !target->hasMark("hunyuan_wake")
+                && !target->hasMark("wudao_wake")
                 && target->getPhase() == Player::Finish
                 && target->getPile("shang").count() >= 3;
     }
@@ -325,8 +325,10 @@ public:
         room->awake(fanrui, objectName(), "2500", 2500);
 
         room->loseMaxHp(fanrui);
+        room->setPlayerProperty(fanrui, "maxhp", 2);
         room->drawCards(fanrui, 2);
         room->acquireSkill(fanrui, "qimen");
+        room->acquireSkill(fanrui, "kongmen");
         return false;
     }
 };
@@ -352,35 +354,6 @@ public:
                 o.card = Sanguosha->getCard(move->card_id);
                 room->recover(mowang, o);
             }
-        }
-        return false;
-    }
-};
-
-class Wudao: public PhaseChangeSkill{
-public:
-    Wudao():PhaseChangeSkill("wudao"){
-        frequency = Wake;
-    }
-
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target && target->getPhase() == Player::RoundStart;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *player) const{
-        Room *room = player->getRoom();
-        QList<ServerPlayer *> fanruis = room->findPlayersBySkillName(objectName());
-        if(fanruis.isEmpty())
-            return false;
-
-        foreach(ServerPlayer *fanrui, fanruis){
-            if(fanrui->hasMark("wudao_wake") || fanrui->getPile("shang").count() < 5)
-                continue;
-            room->awake(fanrui, objectName(), "2500", 2500);
-            room->loseMaxHp(fanrui);
-            room->detachSkillFromPlayer(fanrui, "liuxing");
-            room->acquireSkill(fanrui, "butian");
-            room->acquireSkill(fanrui, "kongmen");
         }
         return false;
     }
@@ -1132,12 +1105,11 @@ SnakePackage::SnakePackage()
     baoxu->addSkill(new Sinue);
 
     General *fanrui = new General(this, "fanrui", "kou");
-    fanrui->addSkill(new Liuxing);
     fanrui->addSkill(new Hunyuan);
     fanrui->addSkill(new Wudao);
     fanrui->addRelateSkill("kongmen");
-    related_skills.insertMulti("hunyuan", "qimen");
-    related_skills.insertMulti("wudao", "butian");
+    related_skills.insertMulti("wudao", "kongmen");
+    related_skills.insertMulti("wudao", "qimen");
     //fanrui->addRelateSkill("butian");
     //fanrui->addRelateSkill("qimen");
     skills << new Kongmen;

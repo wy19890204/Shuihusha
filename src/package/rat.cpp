@@ -403,7 +403,6 @@ public:
                 n--;
             }
             if(n < 5){
-                room->playSkillEffect(objectName());
                 zhuwu->loseMark("@embattle");
                 zhuwu->throwAllEquips();
                 zhuwu->throwAllHandCards();
