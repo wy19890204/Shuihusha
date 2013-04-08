@@ -1434,7 +1434,7 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
     if(general_name.contains("+")){
         QStringList names = general_name.split("+");
         foreach(ServerPlayer *player, list){
-            if(names.contains(player->getGeneralName()))
+            if(names.contains(player->getGeneralName()) || names.contains(player->objectName()))
                 return player;
         }
 
@@ -1442,7 +1442,7 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
     }
 
     foreach(ServerPlayer *player, list){
-        if(player->getGeneralName() == general_name)
+        if(player->getGeneralName() == general_name || player->objectName() == general_name)
             return player;
     }
 
@@ -1452,11 +1452,11 @@ ServerPlayer *Room::findPlayer(const QString &general_name, bool include_dead) c
 QList<ServerPlayer *>Room::findPlayersByProperty(const char *key, const QVariant &value, bool include_dead) const{
     QList<ServerPlayer *> list;
     foreach(ServerPlayer *player, include_dead ? m_players : m_alivePlayers){
-        if(key == "mark"){
+        if(QString(QLatin1String(key)) == "mark"){
             if(player->hasMark(key))
                 list << player;
         }
-        else if(key == "flag"){
+        else if(QString(QLatin1String(key)) == "flag"){
             if(player->hasFlag(key))
                 list << player;
         }
@@ -1483,17 +1483,25 @@ ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool includ
         return list.first();
 }
 
-ServerPlayer *Room::findPlayerWhohasEventCard(const QString &event) const{
+ServerPlayer *Room::findPlayerWhohasCard(const QString &card) const{
     foreach(ServerPlayer *player, m_alivePlayers){
         if(player->isKongcheng())
             continue;
-        foreach(const Card *cd, player->getHandcards()){
-            if(cd->objectName() == event){
-                return player;
-            }
-        }
+        if(player->hasCard(card))
+            return player;
     }
     return NULL;
+}
+
+QList<ServerPlayer *>Room::findPlayersWhohasCard(const QString &card) const{
+    QList<ServerPlayer *> list;
+    foreach(ServerPlayer *player, m_alivePlayers){
+        if(player->isKongcheng())
+            continue;
+        if(player->hasCard(card))
+            list << player;
+    }
+    return list;
 }
 
 QList<ServerPlayer *>Room::findOnlinePlayers() const{
@@ -3239,7 +3247,7 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
         thread->trigger(CardGotDone, this, to);
 
     if(card->inherits("Analeptic") && place == Player::DiscardedPile && !Config.BanPackages.contains("events")){
-        ServerPlayer *sour = findPlayerWhohasEventCard("jiangjieshi");
+        ServerPlayer *sour = findPlayerWhohasCard("jiangjieshi");
         if(sour && sour != getCurrent()){
             const Card *fight = askForCard(sour, "Jiangjieshi", "@jiangshi", data, CardDiscarded);
             if(fight){

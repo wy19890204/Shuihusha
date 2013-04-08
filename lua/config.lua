@@ -30,6 +30,7 @@ config = {
 --		"Cock",
 --		"Boar",
 		"SP",
+		"Casket",
 		"Test",
 --		"JoyGeneral",
 	},
