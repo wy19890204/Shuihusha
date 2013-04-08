@@ -409,17 +409,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
         room->setPlayerProperty(player, "hp", new_hp);
         room->broadcastInvoke("hpChange", QString("%1:%2").arg(player->objectName()).arg(recover));
 
-        if(player->hasMark("poison")){
-            int index = qrand() % 5;
-            if(index == 4){
-                room->setPlayerMark(player, "poison", 0);
-                //room->setEmotion(player, "good");
-                LogMessage log;
-                log.type = "#Poison_out";
-                log.from = player;
-                room->sendLog(log);
-            }
-        }
         break;
     }
 

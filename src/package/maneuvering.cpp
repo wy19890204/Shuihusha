@@ -73,14 +73,6 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
                               .arg(effect.to->objectName()));
     }
 
-    if(effect.to->hasMark("poison")){
-        LogMessage log;
-        log.from = effect.to;
-        log.type = "#Poison_ana";
-        room->sendLog(log);
-        room->loseHp(effect.to);
-    }
-
     if(effect.to->hasFlag("dying")){
         // recover hp
         RecoverStruct recover;

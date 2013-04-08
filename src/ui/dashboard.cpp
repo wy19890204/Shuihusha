@@ -681,7 +681,6 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     jail_icon->setVisible(Self->containsTrick("indulgence", false));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
     ecst_area->setVisible(Self->hasFlag("ecst"));
-    //poison_area->setVisible(Self->hasMark("poison"));
 
     middle->setToolTip(tr("HandcardNum:%1").arg(handcard_num->text()));
 }
