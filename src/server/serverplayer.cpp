@@ -152,15 +152,6 @@ void ServerPlayer::bury(){
 
     room->clearPlayerCardLock(this);
     room->setEmotion(this, "death");
-
-    if(Config.EnableReincarnation){
-        QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
-        if(!deathnote.contains(getGeneralName()))
-            deathnote << getGeneralName();
-        if(deathnote.first() == "")
-            deathnote.removeFirst();
-        room->setTag("DeadPerson", deathnote.join("+"));
-    }
 }
 
 void ServerPlayer::throwAllCards(){
@@ -673,11 +664,19 @@ void ServerPlayer::gainJur(const QString &jur, int n){
     log.type = "#GainJur";
     log.from = this;
     log.arg = jur;
-    //log.arg2 = QString::number(n);
-
     room->sendLog(log);
 
     room->setPlayerMark(this, jur, value);
+}
+
+void ServerPlayer::removeJur(const QString &jur){
+    LogMessage log;
+    log.type = "#RemoveJur";
+    log.from = this;
+    log.arg = jur;
+    room->sendLog(log);
+
+    removeMark(jur);
 }
 
 bool ServerPlayer::isOnline() const {

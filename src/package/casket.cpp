@@ -85,13 +85,19 @@ public:
         return target->hasSkill(objectName());
     }
 
-    virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
+    virtual bool trigger(TriggerEvent, Room *room, ServerPlayer *player, QVariant &data) const{
         DamageStar damage = data.value<DamageStar>();
         ServerPlayer *killer = damage ? damage->from : NULL;
 
         if(killer){
+            LogMessage log;
+            log.from = player;
+            log.type = "#TriggerSkill";
+            log.arg = objectName();
+            room->sendLog(log);
             killer->throwAllCards();
             killer->loseAllMarks("poison_jur");
+            killer->removeJur("poison_jur");
         }
         return false;
     }

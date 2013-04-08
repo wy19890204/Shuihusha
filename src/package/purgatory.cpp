@@ -140,7 +140,8 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     }
     if(targets.isEmpty())
         return;
-    QString hcoi = room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
+    QString hcoi = targets.count() == 1 ? targets.first() :
+                   room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
     int index = targets.indexOf(hcoi);
     PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
     room->setPlayerProperty(revivd, "hp", 1);

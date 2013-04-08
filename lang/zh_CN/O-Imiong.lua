@@ -21,5 +21,6 @@ return {
 	["invalid_jur"] = "无效",
 
 	["#GainJur"] = "%from 进入了 %arg 状态",
+	["#RemoveJur"] = "%from 解除了 %arg 状态",
 	["#Poison"] = "%from 毒发！剧痛难忍，将自己抓出了条条血痕",
 }

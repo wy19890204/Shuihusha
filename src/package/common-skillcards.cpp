@@ -121,12 +121,21 @@ SacrificeCard::SacrificeCard(){
 void SacrificeCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
     if(!Config.EnableReincarnation)
         return;
-    QStringList deathnote = room->getTag("DeadPerson").toString().split("+");
+
+    QStringList deathnote, targets_object;
+    foreach(ServerPlayer *target, room->getAllPlayers(true)){
+        if(target->isDead()){
+            deathnote << target->getGeneralName();
+            targets_object << target->objectName();
+        }
+    }
     if(deathnote.isEmpty())
         return;
+
     QString choice = deathnote.length() == 1 ? deathnote.first() :
-                     room->askForChoice(source, "sacrifice", deathnote.join("+"), room->getTag("DeadPerson"));
-    ServerPlayer *target = room->findPlayer(choice, true);
+                     room->askForChoice(source, "sacrifice", deathnote.join("+"));
+    int index = deathnote.indexOf(choice);
+    PlayerStar target = room->findPlayer(targets_object.at(index), true);
     const Card *card = room->askForCardShow(source, target, "sacrifice");
     target->obtainCard(card, false);
 }

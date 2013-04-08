@@ -47,7 +47,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 if(player->getMark("poison_jur") == 0){
                     room->loseHp(player);
                     if(player->getMark("poison_count") >= 6)
-                        player->removeMark("poison_jur");
+                        player->removeJur("poison_jur");
                     else
                         player->gainJur("poison_jur", 3);
                 }
