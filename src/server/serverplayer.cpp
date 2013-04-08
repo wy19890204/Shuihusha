@@ -440,6 +440,14 @@ QList<const Card *> ServerPlayer::getHandcards() const{
     return handcards;
 }
 
+bool ServerPlayer::hasCard(const QString &card_name) const{
+    foreach(const Card *card, handcards){
+        if(card->objectName() == card_name)
+            return true;
+    }
+    return false;
+}
+
 QList<const Card *> ServerPlayer::getCards(const QString &flags) const{
     QList<const Card *> cards;
     if(flags.contains("h"))

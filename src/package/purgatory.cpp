@@ -127,10 +127,22 @@ EdoTensei::EdoTensei(Suit suit, int number)
 }
 
 void EdoTensei::onEffect(const CardEffectStruct &effect) const{
-    PlayerStar whody = effect.from->tag["EdoSource"].value<PlayerStar>();
-    //QList<ServerPlayer *> targets = alldead;
-    //choose dead;
-    //revive dead;
+    Room *room = effect.from->getRoom();
+    QStringList targets, targets_object;
+    foreach(ServerPlayer *target, room->getAllPlayers(true)){
+        if(target->isDead()){
+            targets << target->getGeneralName();
+            targets_object << target->objectName();
+        }
+    }
+    if(targets.isEmpty())
+        return;
+    QString hcoi = room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
+    int index = targets.indexOf(hcoi);
+    PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
+    room->setPlayerProperty(revivd, "hp", 1);
+    revivd->drawCards(3);
+    room->revivePlayer(revivd);
 }
 
 bool EdoTensei::isAvailable(const Player *) const{

@@ -42,7 +42,7 @@ signals:
     void waked();
     void drank_changed();
     void ecst_changed();
-    void poison_changed();
+    void conjuring_changed();
     void action_taken();
 };
 
