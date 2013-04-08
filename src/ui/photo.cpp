@@ -798,6 +798,16 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     else
         avatar_area->setBrush(Qt::NoBrush);
 
+    //conjuring
+    QStringList conjurs = player->getAllMarkName(3, "_jur");
+    foreach(QString conjur, conjurs){
+        static QPixmap cojur(QString("image/system/conjuring/%1.png").arg(conjur));
+        painter->drawPixmap(50+10*conjurs.indexOf(conjur), 63, cojur);
+        painter->setPen(Qt::white);
+        painter->setFont(QFont());
+        painter->drawText(55+10*conjurs.indexOf(conjur), 63, QString::number(player->getMark(conjur)));
+    }
+
     if(player->isDead()){
         if(death_pixmap.isNull()){
             QString path = player->getDeathPixmapPath(false);

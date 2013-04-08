@@ -37,15 +37,19 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
-            if(player->hasMark("poison") && !player->isAllNude()){
+            if(player->hasMark("poison_jur")){
+                player->addMark("poison_count");
+                if(player->getMark("poison_count") >= 6)
+                    return;
                 LogMessage log;
                 log.from = player;
-                log.type = "$Poison_lost";
-                int index = qrand() % player->getCards("hej").length();
-                const Card *card = player->getCards("hej").at(index);
-                log.card_str = card->getEffectIdString();
-                room->throwCard(card, player);
+                log.type = "$Poison";
                 room->sendLog(log);
+                player->loseMark("poison_jur");
+                if(player->getMark("poison_jur") == 0){
+                    room->loseHp(player);
+                    player->gainJur("poison_jur", 3);
+                }
             }
             break;
         }

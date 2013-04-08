@@ -644,7 +644,7 @@ void ServerPlayer::loseMark(const QString &mark, int n){
     log.arg = mark;
     log.arg2 = QString::number(n);
 
-    if(mark.startsWith("@"))
+    if(mark.startsWith("@") || mark.endsWith("_jur"))
         room->sendLog(log);
 
     room->setPlayerMark(this, mark, value);
@@ -654,6 +654,22 @@ void ServerPlayer::loseAllMarks(const QString &mark_name){
     int n = getMark(mark_name);
     if(n > 0)
         loseMark(mark_name, n);
+}
+
+void ServerPlayer::gainJur(const QString &jur, int n){
+    int value = getMark(jur) + n;
+    if(n < 1)
+        return;
+
+    LogMessage log;
+    log.type = "#GainJur";
+    log.from = this;
+    log.arg = jur;
+    //log.arg2 = QString::number(n);
+
+    room->sendLog(log);
+
+    room->setPlayerMark(this, jur, value);
 }
 
 bool ServerPlayer::isOnline() const {

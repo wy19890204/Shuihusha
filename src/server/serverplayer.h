@@ -63,6 +63,7 @@ public:
     void gainMark(const QString &mark, int n = 1);
     void loseMark(const QString &mark, int n = 1);
     void loseAllMarks(const QString &mark_name);
+    void gainJur(const QString &jur, int n);
 
     void setAI(AI *ai);
     AI *getAI() const;
