@@ -282,6 +282,7 @@ public:
 	QList<int> forceToDiscard(int discard_num, bool include_equip);
 	QList<int> handCards() const;
 	QList<const Card *> getHandcards() const;
+	bool hasCard(const char *card_name) const;
 	QList<const Card *> getCards(const char *flags) const;
 	DummyCard *wholeHandCards() const;
 	bool hasNullification(bool include_counterplot = false) const;
@@ -923,7 +924,8 @@ public:
 	int getCardFromPile(const char *card_name);
 	ServerPlayer *findPlayer(const char *general_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;
-	ServerPlayer *findPlayerWhohasEventCard(const char *event) const;
+	ServerPlayer *findPlayerWhohasCard(const char *card) const;
+	QList<ServerPlayer *> findPlayersWhohasCard(const char *card) const;
 	QList<ServerPlayer *> findPlayersBySkillName(const char *skill_name, bool include_dead = false) const;
 	QList<ServerPlayer *> findPlayersByProperty(const char *key, const QVariant &value = QVariant(), bool include_dead = false) const;
 	void installEquip(ServerPlayer *player, const char *equip_name);

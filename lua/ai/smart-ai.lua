@@ -3588,7 +3588,21 @@ sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
 	return targetlist[1]
 end
 
-local loaded = "mini"
+dofile "lua/ai/general_config.lua"
+dofile "lua/ai/skill_config.lua"
+dofile "lua/ai/value_config.lua"
+dofile "lua/ai/guanxing-ai.lua"
+dofile "lua/ai/standard-ai.lua"
+dofile "lua/ai/standard_cards-ai.lua"
+dofile "lua/ai/plough-ai.lua"
+dofile "lua/ai/maneuvering-ai.lua"
+dofile "lua/ai/events-ai.lua"
+dofile "lua/ai/mini-ai.lua"
+dofile "lua/ai/debug-ai.lua"
+dofile "lua/ai/chat-ai.lua"
+dofile "lua/ai/crazyai.lua"
+
+local loaded = "standard|standard_cards|maneuvering|plough|events"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 
@@ -3603,15 +3617,6 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 		dofile("lua/ai/" .. string.lower(ascenario) .. "-ai.lua")
 	end
 end
-
-dofile "lua/ai/general_config.lua"
-dofile "lua/ai/skill_config.lua"
-dofile "lua/ai/value_config.lua"
-dofile "lua/ai/guanxing-ai.lua"
-dofile "lua/ai/mini-ai.lua"
-dofile "lua/ai/debug-ai.lua"
-dofile "lua/ai/chat-ai.lua"
-dofile "lua/ai/crazyai.lua"
 
 if sgs.GetConfig("EnableReincarnation", false) then
 	dofile "lua/ai/reincarnation-ai.lua"

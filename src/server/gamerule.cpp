@@ -38,17 +38,18 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     switch(player->getPhase()){
     case Player::RoundStart:{
             if(player->hasMark("poison_jur")){
-                player->addMark("poison_count");
-                if(player->getMark("poison_count") >= 6)
-                    return;
                 LogMessage log;
                 log.from = player;
-                log.type = "$Poison";
+                log.type = "#Poison";
                 room->sendLog(log);
                 player->loseMark("poison_jur");
+                player->addMark("poison_count");
                 if(player->getMark("poison_jur") == 0){
                     room->loseHp(player);
-                    player->gainJur("poison_jur", 3);
+                    if(player->getMark("poison_count") >= 6)
+                        player->removeMark("poison_jur");
+                    else
+                        player->gainJur("poison_jur", 3);
                 }
             }
             break;

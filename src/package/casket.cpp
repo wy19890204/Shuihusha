@@ -10,7 +10,7 @@ public:
 
     virtual bool trigger(TriggerEvent , Room*, ServerPlayer *, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
-        if(damage.to->getGender() == General::Male)
+        if(damage.to->getGender() == General::Male && !damage.to->hasMark("poison_jur"))
             damage.to->gainJur("poison_jur", 3);
         return false;
     }
@@ -29,12 +29,13 @@ void TumiCard::onEffect(const CardEffectStruct &effect) const{
 
     QList<int> card_ids = effect.from->handCards();
     room->fillAG(card_ids);
-    foreach(int card_id, card_ids){
-        const Card *card = Sanguosha->getCard(card_id);
+    //room->askForAG(effect.from, card_ids, true, skill_name);
+    QList<const Card *> cards = effect.from->getHandcards();
+    foreach(const Card *card, cards){
         if(card->isRed()){
-            room->takeAG(effect.to, card_id);
-            //card_ids.removeOne(card_id);
-            //effect.to->obtainCard(card);
+            room->getThread()->delay();
+            effect.to->obtainCard(card);
+            //room->takeAG(effect.to, card->getId());
         }
     }
     room->broadcastInvoke("clearAG");

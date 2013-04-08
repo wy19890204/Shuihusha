@@ -5,7 +5,9 @@ return {
 	["conjuring"] = "咒术",
 
 	["poison_jur"] = "中毒",
+	[":poison_jur"] = "目标角色回合开始时损失1/3体力，持续6个回合。",
 	["sleep_jur"] = "昏睡",
+	[":sleep_jur"] = "目标角色无法行动（跳过回合），受到伤害后解除，持续2个回合。",
 	["dizzy_jur"] = "晕眩",
 	["petro_jur"] = "石化",
 	["chaos_jur"] = "混乱",
@@ -19,4 +21,5 @@ return {
 	["invalid_jur"] = "无效",
 
 	["#GainJur"] = "%from 进入了 %arg 状态",
+	["#Poison"] = "%from 毒发！剧痛难忍，将自己抓出了条条血痕",
 }
