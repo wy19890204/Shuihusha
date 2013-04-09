@@ -791,7 +791,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     QStringList conjurs = player->getAllMarkName(3, "_jur");
     foreach(QString conjur, conjurs){
         if(player->getMark(conjur) > 0){
-            static QPixmap cojur(QString("image/system/conjuring/%1.png").arg(conjur));
+            static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
             painter->drawPixmap(50+10*conjurs.indexOf(conjur), 63, cojur);
             painter->setPen(Qt::white);
             painter->setFont(QFont());
