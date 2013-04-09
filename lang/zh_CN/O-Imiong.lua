@@ -3,6 +3,10 @@
 return {
 	["imiong"] = "阴阳",
 	["conjuring"] = "咒术",
+	
+	["moon"] = "阴",
+	["sun"] = "阳",
+	["multiply"] = "×",
 
 	["poison_jur"] = "中毒",
 	[":poison_jur"] = "目标角色回合开始时损失1/3体力，持续6个回合。",

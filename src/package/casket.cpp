@@ -106,7 +106,7 @@ public:
 CasketPackage::CasketPackage()
     :GeneralPackage("casket")
 {
-    General *moon_panqiaoyun = new General(this, "moon_panqiaoyun", "min", 3, false);
+    General *moon_panqiaoyun = new General(this, "moon_panqiaoyun", "moon", 3, false);
     moon_panqiaoyun->addSkill(new Qingdu);
     moon_panqiaoyun->addSkill(new Tumi);
     moon_panqiaoyun->addSkill(new Jueyuan);
