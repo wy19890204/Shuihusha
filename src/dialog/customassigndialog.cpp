@@ -247,7 +247,7 @@ QVBoxLayout *CustomAssignDialog::createRight(){
     }
     nationalities->setEnabled(false);
 
-    extra_skill_set = new QPushButton(tr("Set Extra Skills"));
+    extra_skill_set = new QPushButton(tr("Set Extra Skills ..."));
 
     QTabWidget *tab_widget = new QTabWidget;
     tab_widget->addTab(starterTab(), tr("Start Info"));
@@ -665,7 +665,7 @@ void CustomAssignDialog::updatePlayerInfo(QString name)
     foreach(int equip_id, player_equips[name]){
         const Card* card = Sanguosha->getCard(equip_id);
         QString card_name = Sanguosha->translate(card->objectName());
-        QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+        QIcon suit_icon = card->getSuitIcon();
         QString point = card->getNumberString();
 
         QString card_info = point + "  " + card_name + "\t\t" + Sanguosha->translate(card->getSubtype());
@@ -677,7 +677,7 @@ void CustomAssignDialog::updatePlayerInfo(QString name)
     foreach(int hand_id, player_handcards[name]){
         const Card* card = Sanguosha->getCard(hand_id);
         QString card_name = Sanguosha->translate(card->objectName());
-        QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+        QIcon suit_icon = card->getSuitIcon();
         QString point = card->getNumberString();
 
         QString card_info = point + "  " + card_name + "\t\t" + Sanguosha->translate(card->getSubtype());
@@ -689,7 +689,7 @@ void CustomAssignDialog::updatePlayerInfo(QString name)
     foreach(int judge_id, player_judges[name]){
         const Card* card = Sanguosha->getCard(judge_id);
         QString card_name = Sanguosha->translate(card->objectName());
-        QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+        QIcon suit_icon = card->getSuitIcon();
         QString point = card->getNumberString();
 
         QString card_info = point + "  " + card_name + "\t\t" + Sanguosha->translate(card->getSubtype());
@@ -737,7 +737,7 @@ void CustomAssignDialog::updatePileInfo(int row){
     foreach(int card_id, set_pile){
         const Card* card = Sanguosha->getCard(card_id);
         QString card_name = Sanguosha->translate(card->objectName());
-        QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+        QIcon suit_icon = card->getSuitIcon();
         QString point = card->getNumberString();
 
         QString card_info = point + "  " + card_name + "\t\t" + Sanguosha->translate(card->getSubtype());
@@ -1737,7 +1737,7 @@ CardAssignDialog::CardAssignDialog(QWidget *parent, QString card_type, QString c
 
 void CardAssignDialog::addCard(const Card *card){
     QString name = Sanguosha->translate(card->objectName());
-    QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+    QIcon suit_icon = card->getSuitIcon();
     QString point = card->getNumberString();
 
     QString card_info = point + "  " + name + "\t\t" + Sanguosha->translate(card->getSubtype());
@@ -1799,7 +1799,7 @@ void CardAssignDialog::updateCardList(){
 SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStringList &player_skills)
     :QDialog(parent), update_skills(player_skills)
 {
-    setWindowTitle(tr("Skill Chosen"));
+    setWindowTitle(tr("Set Extra Skills"));
     QHBoxLayout *layout = new QHBoxLayout;
     skill_list = new QListWidget;
 
@@ -1825,11 +1825,12 @@ SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStri
 
     skill_info = new QTextEdit;
     skill_info->setReadOnly(true);
+    skill_info->setProperty("type", "description");
 
     updateSkillList();
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->addWidget(new QLabel(Sanguosha->translate(player_name)));
+    vlayout->addWidget(new QLabel(tr("%1 's extra skills").arg(Sanguosha->translate(player_name))));
     vlayout->addWidget(skill_list);
     layout->addLayout(vlayout);
     QVBoxLayout *sided_lay = new QVBoxLayout;
@@ -1847,6 +1848,7 @@ SkillAssignDialog::SkillAssignDialog(QDialog *parent, QString player_name, QStri
     connect(select_skill, SIGNAL(clicked()), this, SLOT(selectSkill()));
     connect(delete_skill, SIGNAL(clicked()), this, SLOT(deleteSkill()));
     connect(skill_list, SIGNAL(itemSelectionChanged()), this, SLOT(changeSkillInfo()));
+    connect(skill_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(deleteSkill()));
     connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -1874,7 +1876,7 @@ void SkillAssignDialog::deleteSkill(){
 
 void SkillAssignDialog::getSkillFromGeneral(QString general_name){
     QDialog *select_dialog = new QDialog(this);
-    select_dialog->setWindowTitle(tr("Skill Chosen"));
+    select_dialog->setWindowTitle(tr("Set Extra Skills"));
     QVBoxLayout *layout = new QVBoxLayout;
 
     const General *general = Sanguosha->getGeneral(general_name);
@@ -1933,7 +1935,8 @@ void SkillAssignDialog::updateSkillList(){
         changeSkillInfo();
         delete_skill->setEnabled(true);
     }
-    else delete_skill->setEnabled(false);
+    else
+        delete_skill->setEnabled(false);
 }
 
 void SkillAssignDialog::accept(){

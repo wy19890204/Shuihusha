@@ -29,6 +29,7 @@ public:
     int CountDownSeconds;
     QString GameMode;
     QStringList BanPackages;
+    bool Pause;
     bool ContestMode;
     bool RandomSeat;
     bool Statistic;
@@ -51,6 +52,7 @@ public:
     bool FreeAssignSelf;
     bool EnableAI;
     int AIDelay;
+    int AIDelayAD;
     ushort ServerPort;
 
     // client side

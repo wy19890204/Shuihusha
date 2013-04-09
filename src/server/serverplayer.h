@@ -48,6 +48,7 @@ public:
     QList<int> forceToDiscard(int discard_num, bool include_equip);
     QList<int> handCards() const;
     QList<const Card *> getHandcards() const;
+    bool hasCard(const QString &card_name) const;
     QList<const Card *> getCards(const QString &flags) const;
     DummyCard *wholeHandCards() const;
     bool hasNullification(bool include_counterplot = false) const;
@@ -63,6 +64,7 @@ public:
     void gainMark(const QString &mark, int n = 1);
     void loseMark(const QString &mark, int n = 1);
     void loseAllMarks(const QString &mark_name);
+    void gainJur(const QString &jur, int n);
 
     void setAI(AI *ai);
     AI *getAI() const;

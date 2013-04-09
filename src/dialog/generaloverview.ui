@@ -239,7 +239,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Change this general</string>
+    <string>ChangeCard</string>
    </property>
   </widget>
  </widget>

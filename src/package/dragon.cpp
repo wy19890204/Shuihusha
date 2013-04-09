@@ -713,12 +713,16 @@ void QianxianCard::onEffect(const CardEffectStruct &effect) const{
         effect.from->obtainCard(club);
         if(!effect.to->faceUp())
             effect.to->turnOver();
-        room->setPlayerProperty(effect.to, "chained", false);
     }
     else{
         if(effect.to->faceUp())
             effect.to->turnOver();
-        room->setPlayerProperty(effect.to, "chained", true);
+    }
+    bool ch = club == NULL;
+    if(ch != effect.to->isChained()){
+        effect.to->setChained(ch);
+        room->broadcastProperty(effect.to, "chained");
+        room->setEmotion(effect.to, "chain");
     }
 }
 
@@ -932,6 +936,10 @@ public:
 
     virtual bool triggerable(const ServerPlayer *target) const{
         return target != NULL;
+    }
+
+    virtual int getPriority(TriggerEvent event) const{
+        return event == PhaseChange ? -1 : 1;
     }
 
     virtual bool trigger(TriggerEvent e, Room* room, ServerPlayer *player, QVariant &data) const{

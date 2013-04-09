@@ -59,8 +59,7 @@ public slots:
     void hideSkillName();
     void setWakeState();
     void setDrankState();
-    void setEcstState();
-    void setPoisonState();
+    void setConjuring();
     void setActionState();
     void updateRoleComboboxPos();
     void killPlayer();
@@ -71,6 +70,7 @@ protected:
     virtual void timerEvent(QTimerEvent *);
 
 private:
+    QSettings *settings;
     const ClientPlayer *player;
     QPixmap avatar, small_avatar;
     QGraphicsPixmapItem *kingdom_item, *ready_item;
@@ -96,16 +96,18 @@ private:
     QGraphicsPixmapItem *order_item;
     bool hide_avatar;
     QPixmap death_pixmap;
-    Pixmap *back_icon, *chain_icon, *wake_icon;
+    Pixmap *back_icon, *chain_icon, *wake_icon, *jail_icon;
     QProgressBar *progress_bar;
     int timer_id;
     QGraphicsPixmapItem *emotion_item, *frame_item;
     QGraphicsSimpleTextItem *skill_name_item;
     QGraphicsRectItem *avatar_area, *small_avatar_area;
 
+    void drawPhase(QPainter *painter);
     void drawEquip(QPainter *painter, CardItem *equip, int order);
-    void drawHp(QPainter *painter, QSettings &settings);
-    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap, QSettings &settings);
+    void drawHp(QPainter *painter);
+    void drawMagatama(QPainter *painter, int index, const QPixmap &pixmap);
+    void drawHpText(QPainter *painter, int hp, int max_hp, const QPixmap &magatama);
 };
 
 #endif // PHOTOBACK_H

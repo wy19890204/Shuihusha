@@ -131,6 +131,7 @@ public:
 	void setAlive(bool alive);
 
 	QString getFlags() const;
+    QStringList getClearFlags() const;
 	void setFlags(const char *flag);
 	bool hasFlag(const char *flag) const;
 	void clearFlags();
@@ -281,6 +282,7 @@ public:
 	QList<int> forceToDiscard(int discard_num, bool include_equip);
 	QList<int> handCards() const;
 	QList<const Card *> getHandcards() const;
+	bool hasCard(const char *card_name) const;
 	QList<const Card *> getCards(const char *flags) const;
 	DummyCard *wholeHandCards() const;
 	bool hasNullification(bool include_counterplot = false) const;
@@ -587,7 +589,7 @@ public:
 	QString getPixmapPath() const;
 	QString getIconPath() const;
 	QString getPackage() const;
-	QIcon getSuitIcon() const;
+	QIcon getSuitIcon(bool getbig = false) const;
 	QString getFullName(bool include_suit = false) const;
 	QString getLogName() const;
 	QString getName() const;
@@ -690,6 +692,16 @@ public:
 	Package(const char *name);
 	Type getType() const;
 	QList<const Skill *> getSkills() const;
+};
+
+class GeneralPackage: public Package{
+public:
+	GeneralPackage(const char *name);
+};
+
+class CardPackage: public Package{
+public:
+	CardPackage(const char *name);
 };
 
 class Engine: public QObject
@@ -912,11 +924,13 @@ public:
 	int getCardFromPile(const char *card_name);
 	ServerPlayer *findPlayer(const char *general_name, bool include_dead = false) const;
 	ServerPlayer *findPlayerBySkillName(const char *skill_name, bool include_dead = false) const;
-	ServerPlayer *findPlayerWhohasEventCard(const char *event) const;
+	ServerPlayer *findPlayerWhohasCard(const char *card) const;
+	QList<ServerPlayer *> findPlayersWhohasCard(const char *card) const;
 	QList<ServerPlayer *> findPlayersBySkillName(const char *skill_name, bool include_dead = false) const;
+	QList<ServerPlayer *> findPlayersByProperty(const char *key, const QVariant &value = QVariant(), bool include_dead = false) const;
 	void installEquip(ServerPlayer *player, const char *equip_name);
 	void resetAI(ServerPlayer *player);
-	void transfigure(ServerPlayer *player, const char *new_general, bool full_state, bool invoke_start = true);
+	void transfigure(ServerPlayer *player, const char *new_general, bool full_state = true, bool invoke_start = true);
 	void swapSeat(ServerPlayer *a, ServerPlayer *b);
 	void jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag = 1);
 	void swapHandcards(ServerPlayer *source, ServerPlayer *target);

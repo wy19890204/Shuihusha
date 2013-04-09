@@ -2,8 +2,8 @@
 -- and it is a little different from config.ini
 
 config = {
-	version = "20130405",
-	version_name = "终结版F4.6 上坟版",
+	version = "20130404",
+	version_name = "F4.7.5",
 	mod_name = "Shuihusha",
 	kingdoms = { "guan", "jiang", "min", "kou", "god"},
 	package_names = {
@@ -12,9 +12,10 @@ config = {
 		"Maneuvering",
 		"ExCard",
 		"Events",
+		"Purgatory",
 		"Gift",
-		"Kuso",
-		"Joy",
+--		"Kuso",
+--		"Joy",
 
 		"Standard",
 		"Rat",
@@ -71,6 +72,11 @@ config = {
 		"沾血的青苹果",
 		"海南的椰子",
 		"喵一夏的幸福",
+		"大阿哥的古典风",
+		"裤衩反穿",
+		"活泼的P仔",
+		"趴趴走的呼呼",
+		"小爺綠豆沙",
 		"单身的活宝",
 		"超级无敌小柴进",
 		"卖萌的豚纸",
@@ -80,6 +86,7 @@ config = {
 		"TLK的EH",
 		"爱上小衣的殃",
 		"纠结的金田一君",
+		"小辰的超兽伪画",
 		"肉酱茧",
 	},
 

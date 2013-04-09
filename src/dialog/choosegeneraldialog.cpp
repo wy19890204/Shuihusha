@@ -59,13 +59,6 @@ ChooseGeneralDialog::ChooseGeneralDialog(const QStringList &general_names, QWidg
         generals << general;
     }
 
-    if(qrand() % 3 == 1){
-        QStringList mini;
-        mini << "renyuan" << "fangjie" << "liruilan" << "xisheng" << "zhangbao";
-        qShuffle(mini);
-        generals << Sanguosha->getGeneral(mini.first());
-    }
-
     QSignalMapper *mapper = new QSignalMapper(this);
     QList<OptionButton *> buttons;
     QString category("card");
@@ -227,21 +220,8 @@ void ChooseGeneralDialog::freeChoose(){
 }
 
 void ChooseGeneralDialog::randomChoose(){
-    int n = qrand() % generals.length() + 5;
-    QString name;
-    if(n > generals.length() - 1){
-        int m = qrand() % 5;
-        switch(m){
-        case 0: name = "zhangbao"; break;
-        case 1: name = "liruilan"; break;
-        case 2: name = "fangjie"; break;
-        case 3: name = "renyuan"; break;
-        case 4: name = "xisheng";
-        }
-    }
-    else
-        name = generals.at(n)->objectName();
-    ClientInstance->onPlayerChooseGeneral(name);
+    int n = qrand() % generals.length();
+    ClientInstance->onPlayerChooseGeneral(generals.at(n)->objectName());
     accept();
 }
 

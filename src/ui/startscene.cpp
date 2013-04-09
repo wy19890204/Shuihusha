@@ -12,12 +12,16 @@ StartScene::StartScene()
     // game logo
     logo = new Pixmap("image/logo/logo.png");
     logo->shift();
-    /*if(Config.value("ButtonStyle", true).toBool())
-        logo->moveBy(0, -Config.Rect.height()/3-20);
-    else*/
+    if(Config.value("UI/ButtonStyle", true).toBool()){
+        logo->moveBy(Config.Rect.width()/3+20, -Config.Rect.height()/4-50);
+        logo->setPos(Config.value("UI/LogoPosition", logo->pos()).toPoint());
+        logo->setFlags(QGraphicsItem::ItemIsMovable);
+        logo->setObjectName("logo");
+    }
+    else
         logo->moveBy(0, -Config.Rect.height()/4);
     addItem(logo);
-
+/*
     //the website URL
     QFont website_font(Config.SmallFont);
     website_font.setStyle(QFont::StyleItalic);
@@ -25,21 +29,28 @@ StartScene::StartScene()
     website_text->setBrush(Qt::white);
     website_text->setPos(Config.Rect.width()/2 - website_text->boundingRect().width(),
                        Config.Rect.height()/2 - website_text->boundingRect().height());
-
+*/
     server_log = NULL;
 
-    //Provide coordinates for the button
-    button_group = new Pixmap("image/system/button/plate/background.png");
-    button_group->shift();
-    button_group->moveBy(0, Config.Rect.height()/5-40);
-    button_group->hide();
-    //addItem(button_group);
+    if(Config.value("UI/ButtonStyle", false).toBool()){
+        //Provide coordinates for the button
+#ifdef USE_RCC
+        button_group = new Pixmap(":plate/background.png");
+#else
+        button_group = new Pixmap("image/system/button/plate/background.png");
+#endif
+        button_group->shift();
+        //button_group->moveBy(0, -Config.Rect.height()/10);
+        button_group->hide();
+    }
 }
 
 void StartScene::addButton(QAction *action){
     QString text = action->text();
     if(action->objectName() == "actionPackaging")
         text = tr("Lua Manager");
+    else if(action->objectName() == "actionReplay")
+        text = tr("Replay");
     Button *button = new Button(text);
     button->setMute(false);
 
@@ -73,7 +84,11 @@ void StartScene::addMainButton(QList<QAction *> actions){
         {145, 360}, //8.thanks
     };
 
+#ifdef USE_RCC
+    QString path = ":plate/background.png";
+#else
     QString path = "image/system/button/plate/background.png";
+#endif
     button_plate = new QGraphicsPixmapItem(QPixmap(path));
     button_plate->setPos(Config.value("UI/PlatePosition", button_group->pos()).toPoint());
     button_plate->setFlags(QGraphicsItem::ItemIsMovable);
@@ -132,6 +147,7 @@ void StartScene::switchToServer(Server *server){
     server_log->setFrameShape(QFrame::NoFrame);
     server_log->setFont(QFont("Verdana", 12));
     server_log->setTextColor(Config.TextEditColor);
+    server_log->setProperty("type", "border");
     setServerLogBackground();
 
     addWidget(server_log);

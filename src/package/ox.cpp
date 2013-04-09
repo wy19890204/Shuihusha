@@ -31,7 +31,7 @@ void GuibingCard::use(Room *room, ServerPlayer *gaolian, const QList<ServerPlaye
         use.card = slash;
         room->useCard(use);
     }else
-        room->setPlayerFlag(gaolian, "Guibing");
+        room->setPlayerFlag(gaolian, "%Guibing");
 }
 
 class GuibingViewAsSkill:public ZeroCardViewAsSkill{
@@ -46,21 +46,25 @@ public:
     virtual const Card *viewAs() const{
         return new GuibingCard;
     }
+
+    virtual bool isEnabledAtResponse(const Player *, const QString &pattern) const{
+        return pattern == "slash";
+    }
 };
 
 class Guibing: public TriggerSkill{
 public:
     Guibing():TriggerSkill("guibing"){
-        events << CardAsked;
+        events << CardAsked << CardAsk << CardUseAsk;
         view_as_skill = new GuibingViewAsSkill;
     }
 
-    virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *gaolian, QVariant &data) const{
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *gaolian, QVariant &data) const{
         QString pattern = data.toString();
-        if(pattern != "slash")
+        if(pattern != "slash" || gaolian->hasFlag("%Guibing"))
             return false;
 
-        if(gaolian->askForSkillInvoke(objectName())){
+        if(event == CardAsked && gaolian->askForSkillInvoke(objectName())){
             JudgeStruct judge;
             judge.pattern = QRegExp("(.*):(heart):(.*)");
             judge.good = false;
@@ -76,7 +80,7 @@ public:
                 room->provide(slash);
             }
             else{
-                room->setPlayerFlag(gaolian, "Guibing");
+                room->setPlayerFlag(gaolian, "%Guibing");
                 return true;
             }
         }
@@ -95,7 +99,7 @@ public:
     }
 
     virtual int getSlashResidue(const Player *t) const{
-        if(t->hasSkill("guibing") && t->hasFlag("Guibing"))
+        if(t->hasSkill("guibing") && t->hasFlag("%Guibing"))
             return -998;
         else
             return 0;
@@ -104,6 +108,7 @@ public:
 
 HeiwuCard::HeiwuCard(){
     target_fixed = true;
+    will_throw = false;
 }
 
 void HeiwuCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &) const{
@@ -156,9 +161,9 @@ public:
         room->loseMaxHp(tg, 1);
 
         if(tg->getGeneralName() == "tongguan")
-            room->setPlayerProperty(tg, "general", "tongguanf");
+            room->transfigure(tg, "tongguanf", false, false);
         else if(tg->getGeneral2Name() == "tongguan")
-            room->setPlayerProperty(tg, "general2", "tongguanf");
+            room->transfigure(tg, "%tongguanf", false, false);
 
         room->getThread()->delay(2500);
         //room->setPlayerMark(tg, "aoxiang_wake", 1);
@@ -560,11 +565,7 @@ public:
 
         const Card *card = room->askForCard(player, "@butian", prompt, true, data, CardDiscarded);
         if(card){
-            int index = qrand() % 2 + 1;
-            if(!player->hasMark("wudao_wake"))
-                room->playSkillEffect(objectName(), index);
-            else
-                room->playSkillEffect(objectName(), index + 2);
+            room->playSkillEffect(objectName());
             room->throwCard(judge->card);
 
             QList<int> card_ids = room->getNCards(3);
@@ -745,34 +746,30 @@ public:
         return -1;
     }
 
+    static void doWubang(ServerPlayer *player, const QList<ServerPlayer *> shijins, const Card *weapon){
+        Room *room = player->getRoom();
+        foreach(ServerPlayer *jiuwenlong, shijins){
+            if(jiuwenlong != player && weapon->isKindOf("Weapon")
+                && jiuwenlong->askForSkillInvoke("wubang")){
+                room->playSkillEffect("wubang");
+                jiuwenlong->obtainCard(weapon);
+                break;
+            }
+        }
+    }
+
     virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
         QList<ServerPlayer *> jiuwenl0ng = room->findPlayersBySkillName(objectName());
         if(jiuwenl0ng.isEmpty())
             return false;
         if(event == CardLost){
             CardMoveStar move = data.value<CardMoveStar>();
-            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
-                if(jiuwenlong != player && move->to_place == Player::DiscardedPile){
-                    const Card *weapon = Sanguosha->getCard(move->card_id);
-                    if(weapon->inherits("Weapon") &&
-                       jiuwenlong->askForSkillInvoke(objectName())){
-                        room->playSkillEffect(objectName());
-                        jiuwenlong->obtainCard(weapon);
-                        break;
-                    }
-                }
-            }
+            if(move->to_place == Player::DiscardedPile)
+                doWubang(player, jiuwenl0ng, Sanguosha->getCard(move->card_id));
         }else if(event == FinishJudge){
             JudgeStar judge = data.value<JudgeStar>();
-            foreach(ServerPlayer *jiuwenlong, jiuwenl0ng){
-                if(jiuwenlong != player && room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile &&
-                   judge->card->inherits("Weapon") &&
-                   jiuwenlong->askForSkillInvoke(objectName())){
-                    room->playSkillEffect(objectName());
-                    jiuwenlong->obtainCard(judge->card);
-                    break;
-                }
-            }
+            if(room->getCardPlace(judge->card->getEffectiveId()) == Player::DiscardedPile)
+                doWubang(player, jiuwenl0ng, judge->card);
         }
         return false;
     }

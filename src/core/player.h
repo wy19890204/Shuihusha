@@ -115,11 +115,6 @@ public:
     bool isDead() const;
     void setAlive(bool alive);
 
-    QString getFlags() const;
-    virtual void setFlags(const QString &flag);
-    bool hasFlag(const QString &flag) const;
-    void clearFlags();
-
     bool faceUp() const;
     void setFaceUp(bool face_up);
 
@@ -172,6 +167,12 @@ public:
     bool isNude() const;
     bool isAllNude() const;
 
+    QString getFlags() const;
+    QStringList getClearFlags() const;
+    virtual void setFlags(const QString &flag);
+    bool hasFlag(const QString &flag) const;
+    void clearFlags();
+
     void addMark(const QString &mark);
     void removeMark(const QString &mark);
     virtual void setMark(const QString &mark, int value = 1);
@@ -201,6 +202,7 @@ public:
     QList<const Skill *> getVisibleSkillList() const;
     QStringList getVisibleSkillList(const QString &exclude) const;
     QSet<QString> getAcquiredSkills() const;
+    QString getAllSkillDescription() const;
     int getKingdoms() const;
 
     bool canSlashWithoutCrossbow() const;

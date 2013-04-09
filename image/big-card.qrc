@@ -70,5 +70,9 @@
 		<file>big-card/wiretap.png</file>
 		<file>big-card/xiaobawang.png</file>
 		<file>big-card/zongzi.png</file>
+		<file>big-card/shit.png</file>
+		<file>big-card/mastermind.png</file>
+		<file>big-card/spin_destiny.png</file>
+		<file>big-card/edo_tensei.png</file>
 	</qresource>
 </RCC>

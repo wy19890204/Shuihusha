@@ -628,6 +628,8 @@ QiapaiCard::QiapaiCard(){
 }
 
 void QiapaiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    if(!room->askForSkillInvoke(source, skill_name))
+        return;
     QList<int> card_ids;
     QList<const Card *> cards = source->getCards("he");
     foreach(const Card *tmp, cards)
@@ -662,7 +664,7 @@ TestPackage::TestPackage()
     skills << new Sacrifice << new Skill("freeregulate", Skill::NotSkill);
     addMetaObject<SacrificeCard>();
 
-    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false);
+    General *ubuntenkei = new General(this, "ubuntenkei", "god", 4, false, true);
     ubuntenkei->addSkill(new Ubuna);
     ubuntenkei->addSkill(new Qiapai);
     addMetaObject<QiapaiCard>();

@@ -19,7 +19,7 @@ public:
     void setCards(const QList<int> &card_ids);
     QTextDocument *getMarkDoc(bool dashboard = true) const;
     void changePile(const QString &name, bool add, int card_id);
-    QString getDeathPixmapPath() const;
+    QString getDeathPixmapPath(bool isdash = true) const;
     void setHandcardNum(int n);
     virtual QString getGameMode() const;
 
@@ -42,7 +42,7 @@ signals:
     void waked();
     void drank_changed();
     void ecst_changed();
-    void poison_changed();
+    void conjuring_changed();
     void action_taken();
 };
 

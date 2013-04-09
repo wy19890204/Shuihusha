@@ -32,6 +32,7 @@ public:
     ServerPlayer *addSocket(ClientSocket *socket);
     bool isFull() const;
     bool isFinished() const;
+    bool isPCConsole() const;
     int getLack() const;
     int getPlayerCount() const;
     QString getMode() const;
@@ -195,13 +196,15 @@ public:
     QList<int> getDrawPile();
     int getCardFromPile(const QString &card_name);
     QList<ServerPlayer *> findPlayersBySkillName(const QString &skill_name, bool include_dead = false) const;
+    QList<ServerPlayer *> findPlayersByProperty(const char *key, const QVariant &value = QVariant(), bool include_dead = false) const;
     ServerPlayer *findPlayer(const QString &general_name, bool include_dead = false) const;
     ServerPlayer *findPlayerBySkillName(const QString &skill_name, bool include_dead = false) const;
-    ServerPlayer *findPlayerWhohasEventCard(const QString &event) const;
+    ServerPlayer *findPlayerWhohasCard(const QString &card) const;
+    QList<ServerPlayer *> findPlayersWhohasCard(const QString &card) const;
     QList<ServerPlayer *> findOnlinePlayers() const;
     void installEquip(ServerPlayer *player, const QString &equip_name);
     void resetAI(ServerPlayer *player);
-    void transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start = true, const QString &old_general = QString(""));
+    void transfigure(ServerPlayer *player, const QString &new_general, bool full_state = true, bool invoke_start = true);
     void doSwap();
     void swapSeat(ServerPlayer *a, ServerPlayer *b);
     void jumpSeat(ServerPlayer *a, ServerPlayer *b, int flag = 1);

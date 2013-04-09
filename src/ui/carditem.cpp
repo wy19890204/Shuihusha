@@ -19,8 +19,26 @@ CardItem::CardItem(const Card *card)
 {
     Q_CHECK_PTR(card);
 
+    bigsuit_pixmap.load(QString("image/system/suit/big-%1.png").arg(card->getSuitString()));
     suit_pixmap.load(QString("image/system/suit/%1.png").arg(card->getSuitString()));
-    cardsuit_pixmap.load(QString("image/system/card/suit/%1.png").arg(card->getSuitString()));
+    cardsuit_pixmap.load("image/system/card/suit.png");
+    switch(card->getSuit()){
+    //static_cast<int>(card->getSuit());
+    case Card::Heart:
+        cardsuit_pixmap = cardsuit_pixmap.copy(0, 0, 27, 28);
+        break;
+    case Card::Spade:
+        cardsuit_pixmap = cardsuit_pixmap.copy(0, 28, 27, 28);
+        break;
+    case Card::Club:
+        cardsuit_pixmap = cardsuit_pixmap.copy(27, 0, 27, 28);
+        break;
+    case Card::Diamond:
+        cardsuit_pixmap = cardsuit_pixmap.copy(27, 28, 27, 28);
+        break;
+    default:
+        cardsuit_pixmap = QPixmap();
+    }
     number_pixmap.load(QString("image/system/card/%1/%2.png").arg(card->isBlack() ? "black" : "red").arg(card->getNumberString()));
     icon_pixmap.load(card->getIconPath());
     setTransformOriginPoint(pixmap.width()/2, pixmap.height()/2);
@@ -139,8 +157,11 @@ QAbstractAnimation* CardItem::goBack(bool kieru,bool fadein,bool fadeout){
     }
 }
 
-const QPixmap &CardItem::getSuitPixmap() const{
-    return suit_pixmap;
+const QPixmap &CardItem::getSuitPixmap(bool getbig) const{
+    if(getbig)
+        return bigsuit_pixmap;
+    else
+        return suit_pixmap;
 }
 
 const QPixmap &CardItem::getNumberPixmap() const{
@@ -302,17 +323,16 @@ void CardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         painter->drawPixmap(0, 14, cardsuit_pixmap);
         painter->drawPixmap(0, 2, number_pixmap);
 
-        if(Config.value("DrawCardName", true).toBool()){
+        if(Config.value("UI/DrawCardName", true).toBool()){
             static QFont card_desc_font("SimSun", 8, QFont::DemiBold);
             painter->setFont(card_desc_font);
             painter->setPen(Qt::black);
             const QString str = Sanguosha->translate(card->objectName());
             for(int i = 0; i < qMin(5, str.length()); i ++)
                 painter->drawText(7, 50 + 11*i, str.at(i));
-
-            if(owner_pixmap)
-                painter->drawPixmap(0,0,*owner_pixmap);
         }
+        if(owner_pixmap)
+            painter->drawPixmap(0,0,*owner_pixmap);
     }
 }
 

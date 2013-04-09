@@ -60,6 +60,9 @@ function SmartAI:slashIsEffective(slash, to, from)
 	if to:hasSkill("qianshui") and not from:getWeapon() then
 		return false
 	end
+	if to:hasSkill("liushou") and not to:faceUp() then
+		return false
+	end
 
 	local natures = {
 		Slash = sgs.DamageStruct_Normal,

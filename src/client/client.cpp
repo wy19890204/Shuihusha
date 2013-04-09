@@ -1145,6 +1145,20 @@ bool Client::save(const QString &filename) const{
         return false;
 }
 
+QList<QString> Client::getRecords() const{
+    if(recorder)
+        return recorder->getRecords();
+    else
+        return QList<QString>();
+}
+
+QString Client::getReplayPath() const{
+    if(replayer)
+        return replayer->getPath();
+    else
+        return QString();
+}
+
 void Client::setLines(const QString &filename){
     QRegExp rx(".+/(\\w+\\d?).(\\w+)");
     if(rx.exactMatch(filename)){
@@ -1386,7 +1400,7 @@ void Client::askForSuit(const Json::Value &){
 
     foreach(QString suit, suits){
         QCommandLinkButton *button = new QCommandLinkButton;
-        button->setIcon(QIcon(QString("image/system/suit/%1.png").arg(suit)));
+        button->setIcon(QIcon(QString("image/system/suit/big-%1.png").arg(suit)));
         button->setText(Sanguosha->translate(suit));
         button->setObjectName(suit);
 
@@ -1788,7 +1802,7 @@ void Client::speak(const QString &speak_data){
 }
 
 void Client::moveFocus(const Json::Value &focus){
-    QString test = toQString(focus);
+    //QString test = toQString(focus);
     emit focus_moved(QString(focus.asCString()));
 }
 

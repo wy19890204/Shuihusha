@@ -1158,12 +1158,12 @@ HarePackage::HarePackage()
     zhugui->addSkill(new Shihaodo);
     related_skills.insertMulti("shihao", "#shihao-do");
     zhugui->addSkill(new Laolian);
-/*
+
     General *zhaoji = new General(this, "zhaoji$", "guan", 3);
     zhaoji->addSkill(new Shemi);
     zhaoji->addSkill(new Lizheng);
     zhaoji->addSkill(new Nongquan);
-*/
+
     addMetaObject<SixiangCard>();
     addMetaObject<LinmoCard>();
     addMetaObject<ZhaixingCard>();

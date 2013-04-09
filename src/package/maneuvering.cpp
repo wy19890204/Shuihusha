@@ -44,6 +44,8 @@ QString Analeptic::getEffectPath(bool ) const{
 }
 
 bool Analeptic::IsAvailable(const Player *player){
+    if(player->hasFlag("%zhaoan"))
+        return false;
     return !player->hasUsed("Analeptic") || player->hasSkill("huafo");
 }
 
@@ -71,14 +73,6 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
                               .arg(effect.to->objectName()));
     }
 
-    if(effect.to->hasMark("poison")){
-        LogMessage log;
-        log.from = effect.to;
-        log.type = "#Poison_ana";
-        room->sendLog(log);
-        room->loseHp(effect.to);
-    }
-
     if(effect.to->hasFlag("dying")){
         // recover hp
         RecoverStruct recover;
@@ -94,7 +88,7 @@ void Analeptic::onEffect(const CardEffectStruct &effect) const{
         room->setPlayerFlag(effect.to, "drank");
 
         if(!Config.BanPackages.contains("events")){
-            ServerPlayer *source = room->findPlayerWhohasEventCard("jiangjieshi");
+            ServerPlayer *source = room->findPlayerWhohasCard("jiangjieshi");
             if(source && source == effect.to)
                 room->askForUseCard(effect.to, "Jiangjieshi", "@jiangjie");
         }
@@ -112,7 +106,7 @@ public:
         if(effect.nature == DamageStruct::Normal){
             if(room->askForSkillInvoke(player, objectName(), data)){
                 effect.nature = DamageStruct::Fire;
-                player->playCardEffect("Efan", "weapon");
+                player->playCardEffect("Efan1", "weapon");
                 data = QVariant::fromValue(effect);
             }
         }

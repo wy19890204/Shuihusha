@@ -30,15 +30,15 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->enableBgMusicCheckBox->setChecked(Config.EnableBgMusic);
     ui->fitInViewCheckBox->setChecked(Config.FitInView);
     ui->circularViewCheckBox->setChecked(Config.CircularView);
-    ui->noIndicatorCheckBox->setChecked(Config.value("NoIndicator", false).toBool());
+    ui->noIndicatorCheckBox->setChecked(Config.value("UI/NoIndicator", false).toBool());
 
     ui->bgmVolumeSlider->setValue(100 * Config.BGMVolume);
     ui->effectVolumeSlider->setValue(100 * Config.EffectVolume);
 
     // tab 2
     ui->nullificationSpinBox->setValue(Config.NullificationCountDown);
+    ui->gameStartSpinBox->setValue(Config.CountDownSeconds);
     ui->neverNullifyMyTrickCheckBox->setChecked(Config.NeverNullifyMyTrick);
-    ui->autoSelectCheckBox->setChecked(Config.AutoSelect);
     ui->showAllName->setChecked(Config.ShowAllName);
     ui->enableLua->setChecked(Config.EnableLua);
     ui->muteLoad->setChecked(Config.value("MuteLoad", false).toBool());
@@ -147,6 +147,10 @@ void ConfigDialog::saveConfig()
     Config.NullificationCountDown = count_down;
     Config.setValue("NullificationCountDown", count_down);
 
+    int gs_count_down = ui->gameStartSpinBox->value();
+    Config.CountDownSeconds = gs_count_down;
+    Config.setValue("CountDownSeconds", gs_count_down);
+
     float volume = ui->bgmVolumeSlider->value() / 100.0;
     Config.BGMVolume = volume;
     Config.setValue("BGMVolume", volume);
@@ -179,18 +183,15 @@ void ConfigDialog::saveConfig()
     Config.setValue("EnableBgMusic", enabled);
 
     Config.FitInView = ui->fitInViewCheckBox->isChecked();
-    Config.setValue("FitInView", Config.FitInView);
+    Config.setValue("UI/FitInView", Config.FitInView);
 
     Config.CircularView = ui->circularViewCheckBox->isChecked();
     Config.setValue("CircularView", Config.CircularView);
 
-    Config.setValue("NoIndicator", ui->noIndicatorCheckBox->isChecked());
+    Config.setValue("UI/NoIndicator", ui->noIndicatorCheckBox->isChecked());
 
     Config.NeverNullifyMyTrick = ui->neverNullifyMyTrickCheckBox->isChecked();
     Config.setValue("NeverNullifyMyTrick", Config.NeverNullifyMyTrick);
-
-    Config.AutoSelect = ui->autoSelectCheckBox->isChecked();
-    Config.setValue("AutoSelect", Config.AutoSelect);
 
     Config.ShowAllName = ui->showAllName->isChecked();
     Config.setValue("ShowAllName", Config.ShowAllName);

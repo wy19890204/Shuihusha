@@ -378,7 +378,7 @@ void SkillBox::setTinyFont(const QFont &font){
 void SkillBox::insertSuit(int index){
     Card::Suit suit = static_cast<Card::Suit>(index);
     QString suit_name = Card::Suit2String(suit);
-    QString suit_path = QString("image/system/suit/%1.png").arg(suit_name);
+    QString suit_path = QString("image/system/suit/big-%1.png").arg(suit_name);
     int size = skill_description->font().pointSize() + 1;
 
     // QString code = QString("<img src='%1' width='%2' height='%2'>").arg(suit_path).arg(size);
@@ -995,10 +995,9 @@ QWidget *CardEditor::createSkillBox(){
 
     QComboBox *suit_combobox = new QComboBox;
     const Card::Suit *suits = Card::AllSuits;
-    int i;
-    for(i=0; i<4; i++){
+    for(int i=0; i<4; i++){
         QString suit_name = Card::Suit2String(suits[i]);
-        QIcon suit_icon(QString("image/system/suit/%1.png").arg(suit_name));
+        QIcon suit_icon(QString("image/system/suit/big-%1.png").arg(suit_name));
         suit_combobox->addItem(suit_icon, Sanguosha->translate(suit_name), suit_name);
     }
     layout->addRow(tr("Insert suit"), suit_combobox);

@@ -18,7 +18,7 @@ ClientPlayer::ClientPlayer(Client *client)
     mark_doc->setDefaultTextOption(QTextOption(Qt::AlignRight));
     mark_doc_small = new QTextDocument(this);
     mark_doc_small->setTextWidth(128);
-    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignLeft));
+    mark_doc_small->setDefaultTextOption(QTextOption(Qt::AlignTop));
 }
 
 void ClientPlayer::handCardChange(int delta){
@@ -118,7 +118,7 @@ void ClientPlayer::changePile(const QString &name, bool add, int card_id){
         emit pile_changed(name);
 }
 
-QString ClientPlayer::getDeathPixmapPath() const{
+QString ClientPlayer::getDeathPixmapPath(bool isdash) const{
     QString basename = "unknown";
     if(ServerInfo.GameMode == "06_3v3" ||
        ServerInfo.GameMode == "warlords" ||
@@ -132,7 +132,8 @@ QString ClientPlayer::getDeathPixmapPath() const{
     if(property("panxin").toBool())
         basename = "unknown";
 
-    return QString("image/system/death/%1.png").arg(basename);
+    QString dash = isdash ? "dashboard" : "photo";
+    return QString("image/system/death/%1/%2.png").arg(dash).arg(basename);
 }
 
 void ClientPlayer::setHandcardNum(int n){
@@ -148,8 +149,8 @@ void ClientPlayer::setFlags(const QString &flag){
 
     if(flag.endsWith("drank"))
         emit drank_changed();
-    else if(flag.endsWith("ecst"))
-        emit ecst_changed();
+    //else if(flag.endsWith("ecst"))
+    //    emit ecst_changed();
     else if(flag.endsWith("actioned"))
         emit action_taken();
 }
@@ -160,10 +161,10 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     marks[mark] = value;
 
-    if(mark.endsWith("poison"))
-        emit poison_changed();
     if(mark.endsWith("_wake"))
         emit waked();
+    if(mark.endsWith("_jar"))
+        emit conjuring_changed();
     if(!mark.startsWith("@"))
         return;
 
@@ -171,19 +172,21 @@ void ClientPlayer::setMark(const QString &mark, int value){
     QString text = "";
     QString text_small = "";
     QMapIterator<QString, int> itor(marks);
-    while(itor.hasNext()){
-        itor.next();
+    itor.toBack();
+    while(itor.hasPrevious()){
+        itor.previous();
 
         if(itor.key().startsWith("@") && itor.value() > 0){
             QString path = QString("image/mark/%1.png").arg(itor.key());
             if(!QFile::exists(path))
                 path = QString("extensions/generals/mark/%1.png").arg(itor.key());
             QString mark_text = QString("<img src='%1' />").arg(path);
-            QString mark_text_small = QString("<img src='%1' height='15' />").arg(path);
+            QString mark_text_small = QString("<img src='%1' />").arg(path);
             if(itor.value() != 1){
                 mark_text.append(QString("x%1").arg(itor.value()));
-                mark_text_small.append(QString("x%1").arg(itor.value()));
+                mark_text_small.append(QString("%1").arg(itor.value()));
             }
+            mark_text_small.append("<br />");
             text.append(mark_text);
             text_small.append(mark_text_small);
         }

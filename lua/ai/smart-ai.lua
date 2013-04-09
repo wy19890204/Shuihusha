@@ -2736,9 +2736,11 @@ local function isCompulsoryView(card, class_name, player, card_place)
 		local callback = sgs.ai_filterskill_filter[askill]
 		if type(callback) == "function" then
 			local cb = callback(card, card_place, player)
-			if not sgs.Card_Parse(cb) then writeToConsole(debug.traceback()) end
-			if sgs.Card_Parse(cb):isKindOf(class_name) then
-				return cb
+			if cb then
+				if not sgs.Card_Parse(cb) then writeToConsole(debug.traceback()) end
+				if sgs.Card_Parse(cb):isKindOf(class_name) then
+					return cb
+				end
 			end
 		end
 	end
@@ -2824,13 +2826,17 @@ function getCards(class_name, player, room, flag)
 		if class_name == "." then table.insert(cards, card)
 		elseif isCompulsoryView(card, class_name, player, card_place) then
 			card_str = isCompulsoryView(card, class_name, player, card_place)
-			card_str = sgs.Card_Parse(card_str)
-			table.insert(cards, card_str)
+			if card_str then
+				card_str = sgs.Card_Parse(card_str)
+				table.insert(cards, card_str)
+			end
 		elseif card:isKindOf(class_name) and not prohibitUseDirectly(card, player) then table.insert(cards, card)
 		elseif getSkillViewCard(card, class_name, player, card_place) then
 			card_str = getSkillViewCard(card, class_name, player, card_place)
-			card_str = sgs.Card_Parse(card_str)
-			table.insert(cards, card_str)
+			if card_str then
+				card_str = sgs.Card_Parse(card_str)
+				table.insert(cards, card_str)
+			end
 		end
 	end
 	return cards
@@ -3582,21 +3588,7 @@ sgs.ai_skill_playerchosen["getJunShi"] = function(self, targets)
 	return targetlist[1]
 end
 
-dofile "lua/ai/general_config.lua"
-dofile "lua/ai/skill_config.lua"
-dofile "lua/ai/value_config.lua"
-dofile "lua/ai/guanxing-ai.lua"
-dofile "lua/ai/standard-ai.lua"
-dofile "lua/ai/standard_cards-ai.lua"
-dofile "lua/ai/plough-ai.lua"
-dofile "lua/ai/maneuvering-ai.lua"
-dofile "lua/ai/events-ai.lua"
-dofile "lua/ai/mini-ai.lua"
-dofile "lua/ai/debug-ai.lua"
-dofile "lua/ai/chat-ai.lua"
-dofile "lua/ai/crazyai.lua"
-
-local loaded = "standard|standard_cards|maneuvering|plough|events"
+local loaded = "mini"
 
 local files = table.concat(sgs.GetFileNames("lua/ai"), " ")
 
@@ -3611,6 +3603,15 @@ for _, ascenario in ipairs(sgs.Sanguosha:getScenarioNames()) do
 		dofile("lua/ai/" .. string.lower(ascenario) .. "-ai.lua")
 	end
 end
+
+dofile "lua/ai/general_config.lua"
+dofile "lua/ai/skill_config.lua"
+dofile "lua/ai/value_config.lua"
+dofile "lua/ai/guanxing-ai.lua"
+dofile "lua/ai/mini-ai.lua"
+dofile "lua/ai/debug-ai.lua"
+dofile "lua/ai/chat-ai.lua"
+dofile "lua/ai/crazyai.lua"
 
 if sgs.GetConfig("EnableReincarnation", false) then
 	dofile "lua/ai/reincarnation-ai.lua"

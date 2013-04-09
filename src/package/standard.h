@@ -339,8 +339,9 @@ public:
     Q_INVOKABLE Peach(Card::Suit suit, int number);
     virtual QString getSubtype() const;
     virtual QString getEffectPath(bool is_male) const;
-    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+    static bool IsAvailable(const Player *player);
     virtual void onEffect(const CardEffectStruct &effect) const;
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
     virtual bool isAvailable(const Player *player) const;
 };
 

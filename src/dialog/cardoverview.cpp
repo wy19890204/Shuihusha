@@ -38,7 +38,7 @@ CardOverview::CardOverview(QWidget *parent) :
     }else
         ui->getCardButton->hide();
 
-    ui->cardDescriptionBox->setProperty("description", true);
+    //ui->cardDescriptionBox->setProperty("type", "description");
 }
 
 void CardOverview::loadFromAll(){
@@ -65,7 +65,7 @@ void CardOverview::loadFromList(const QList<const Card*> &list){
 
 void CardOverview::addCard(int i, const Card *card){
     QString name = Sanguosha->translate(card->objectName());
-    QIcon suit_icon = QIcon(QString("image/system/suit/%1.png").arg(card->getSuitString()));
+    QIcon suit_icon = card->getSuitIcon(true);
     QString suit_str = Sanguosha->translate(card->getSuitString());
     QString point = card->getNumberString();
     QString type = Sanguosha->translate(card->getType());

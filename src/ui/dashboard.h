@@ -6,6 +6,7 @@
 #include "player.h"
 #include "skill.h"
 #include "sprite.h"
+#include "settings.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -26,6 +27,7 @@ public:
     QPushButton *addButton(const QString &name, int x, bool from_left);
     QProgressBar *addProgressBar();
 
+    void setRole(const QString &new_role, int index = 1);
     void setTrust(bool trust);
     void addCardItem(CardItem *card_item);
     CardItem *takeCardItem(int card_id, Player::Place place);
@@ -68,6 +70,7 @@ public slots:
     void refresh();
     void doFilter();
     void sortCards(int sort_type);
+    void sortCardsAuto();
     void reverseSelection();
 
 protected:
@@ -75,6 +78,7 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+    QSettings *settings;
     QPixmap left_pixmap, right_pixmap;
     QGraphicsRectItem *left, *middle, *right;
     QGraphicsItem *button_widget;
@@ -82,11 +86,11 @@ private:
     QList<CardItem*> card_items;
     CardItem *selected;
     Pixmap *avatar, *small_avatar;
-    QGraphicsPixmapItem *kingdom, *ready_item;
+    QGraphicsPixmapItem *kingdom, *role, *ready_item;
+    QGraphicsPixmapItem *handcard_pixmap;
     QGraphicsTextItem *mark_item;
     QGraphicsPixmapItem *action_item;
-
-    QGraphicsRectItem *avatar_area;
+    QGraphicsRectItem *ecst_area;
 
     bool auto_select;
     int sort_type;
@@ -94,7 +98,8 @@ private:
     QList<CardItem *> judging_area;
     QList<QGraphicsItem *> delayed_tricks;
     QGraphicsPixmapItem *death_item;
-    Pixmap *chain_icon, *back_icon, *wake_icon;
+    Pixmap *chain_icon, *back_icon, *wake_icon, *jail_icon;
+    Pixmap *phase_icon;
 
     QGraphicsRectItem *equip_rects[4];
     CardItem *weapon, *armor, *defensive_horse, *offensive_horse;
@@ -132,7 +137,8 @@ private slots:
     void onCardItemLeaveHover();
     void onMarkChanged();
     void setWakeState();
-    void setEcstState();
+    void setPhaseState();
+    //void setEcstState();
     void setActionState();
 
 signals:

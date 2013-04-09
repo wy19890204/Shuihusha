@@ -1,3 +1,5 @@
+-- translation for scene mode
+
 return {
 	["#SceneFinished"] = "场景 %arg 失效。",
 	["#SceneChanged"] = "场景 %arg 生效，%arg2。",

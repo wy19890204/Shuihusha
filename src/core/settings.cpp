@@ -72,6 +72,7 @@ void Settings::init(){
     }
     BanPackages = value("BanPackages").toStringList();
 
+    Pause = false;
     ContestMode = value("ContestMode", false).toBool();
     RandomSeat = value("RandomSeat", true).toBool();
     ForbidSIMC = value("ForbidSIMC", false).toBool();
@@ -93,6 +94,7 @@ void Settings::init(){
     FreeAssignSelf = value("Cheat/FreeAssignSelf", false).toBool();
     EnableAI = value("EnableAI", true).toBool();
     AIDelay = value("AIDelay", 1500).toInt();
+    AIDelayAD = value("AIDelayAD", 500).toInt();
     ServerPort = value("ServerPort", 9527u).toUInt();
 
 #ifdef Q_OS_WIN32
@@ -113,7 +115,6 @@ void Settings::init(){
 
     BackgroundBrush = value("BackgroundBrush", ":shuihu.jpg").toString();
     CircularView = value("CircularView", QApplication::desktop()->width() < 1030 ? false: true).toBool();
-    FitInView = value("FitInView", false).toBool();
     EnableHotKey = value("EnableHotKey", true).toBool();
     AutoSelect = value("AutoSelect", true).toBool();
     AutoTarget = value("AutoTarget", false).toBool();
@@ -194,7 +195,7 @@ void Settings::init(){
     setValue("ForbidPackages", forbid_packages.join("+"));
 
 //ui
-    setValue("UI/ExpandDashboard", value("UI/ExpandDashboard", true).toBool());
+    FitInView = value("UI/FitInView", false).toBool();
 }
 
 QString Settings::translate(const QString &to_translate) const{

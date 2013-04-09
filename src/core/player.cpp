@@ -132,6 +132,15 @@ QString Player::getFlags() const{
     return flags_list.join("+");
 }
 
+QStringList Player::getClearFlags() const{
+    QStringList flags_list;
+    foreach(QString flag, flags){
+        if(flag.startsWith("%"))
+            flags_list << flag;
+    }
+    return flags_list;
+}
+
 void Player::setFlags(const QString &flag){
     static QChar unset_symbol('-');
     if(flag.startsWith(unset_symbol)){
@@ -144,7 +153,8 @@ void Player::setFlags(const QString &flag){
 }
 
 bool Player::hasFlag(const QString &flag) const{
-    return flags.contains(flag);
+    QString clflag = "%" + flag;
+    return flags.contains(flag) || flags.contains(clflag);
 }
 
 void Player::clearFlags(){
@@ -716,9 +726,8 @@ void Player::removeMark(const QString &mark){
 }
 
 void Player::setMark(const QString &mark, int value){
-    if(marks[mark] != value){
+    if(marks[mark] != value)
         marks[mark] = value;
-    }
 }
 
 int Player::getMark(const QString &mark) const{
@@ -811,9 +820,7 @@ QList<int> Player::getPile(const QString &pile_name) const{
 QStringList Player::getPileNames() const{
     QStringList names;
     foreach(QString pile_name,piles.keys())
-    {
         names.append(pile_name);
-    }
     return names;
 }
 
@@ -931,6 +938,36 @@ int Player::getKingdoms() const{
 
 QSet<QString> Player::getAcquiredSkills() const{
     return acquired_skills;
+}
+
+QString Player::getAllSkillDescription() const{
+    if(!getGeneral())
+        return QString();
+    QString local_desc = tr("<font color=red size=4>Main:</font><br/>%1").arg(getGeneral()->getSkillDescription());
+    QString local_desc2 = getGeneral2() ? tr("<font color=blue size=4>Extra:</font><br/>%1").arg(getGeneral2()->getSkillDescription())
+        : QString();
+    QString acquired_desc = QString();
+    if(!acquired_skills.isEmpty()){
+        acquired_desc = tr("<font color=green size=4>Acquired:</font><br/>");
+        foreach(QString skill_name, acquired_skills){
+            const Skill *skill = Sanguosha->getSkill(skill_name);
+            if(skill){
+                if(skill->getFrequency() == Skill::NotSkill)
+                    continue;
+                if(getGeneral()->hasSkill(skill_name) ||
+                   (getGeneral2() && getGeneral2()->hasSkill(skill_name)))
+                    continue;
+
+                QString skill_name = Sanguosha->translate(skill->objectName());
+                QString desc = skill->getDescription();
+                desc.replace("\n", "<br/>");
+                acquired_desc.append(QString("<b>%1</b>: %2 <br/> <br/>").arg(skill_name).arg(desc));
+            }
+        }
+    }
+    QString fin = QString("%1%2%3").arg(local_desc).arg(local_desc2).arg(acquired_desc);
+    fin.replace("<br/> <br/>", "<br/>");
+    return fin;
 }
 
 bool Player::isProhibited(const Player *to, const Card *card) const{
@@ -1067,9 +1104,8 @@ void Player::setCardLocked(const QString &name){
 
 bool Player::isLocked(const Card *card) const{
     foreach(QString card_name, lock_card){
-        if(card->inherits(card_name.toStdString().c_str())){
+        if(card->inherits(card_name.toStdString().c_str()))
             return true;
-        }
     }
 
     return false;

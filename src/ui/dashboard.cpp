@@ -1,6 +1,5 @@
 #include "dashboard.h"
 #include "engine.h"
-#include "settings.h"
 #include "client.h"
 #include "standard.h"
 #include "playercarddialog.h"
@@ -23,6 +22,8 @@ Dashboard::Dashboard(QGraphicsItem *button_widget)
     weapon(NULL), armor(NULL), defensive_horse(NULL), offensive_horse(NULL),
     view_as_skill(NULL), filter(NULL)
 {
+    settings = new QSettings("image/system/dashboard.ini", QSettings::IniFormat);
+
     createLeft();
     createMiddle();
     createRight();
@@ -106,6 +107,7 @@ void Dashboard::createMiddle(){
     QBrush middle_brush(middle_pixmap);
     middle->setBrush(middle_brush);
     middle->setRect(0, 0, middle_pixmap.width(), middle_pixmap.height());
+    //middle->setZValue(-1);
 
     trusting_item = new QGraphicsRectItem(this);
     trusting_item->setRect(middle->rect());
@@ -138,81 +140,132 @@ void Dashboard::createRight(){
     if(button_widget){
         kingdom = new QGraphicsPixmapItem(button_widget);
         kingdom->setPos(57, 0);
+        role = new QGraphicsPixmapItem(button_widget);
+        role->setPos(69, 133);
     }else{
         kingdom = new QGraphicsPixmapItem(right);
         kingdom->setPos(91, 54);
+        role = new QGraphicsPixmapItem(right);
+        role->setPos(91, 204);
     }
+
+    mark_item = new QGraphicsTextItem(right);
+    settings->beginGroup("mark_item");
+    QList<QVariant> coord = settings->value("pos").toList();
+    mark_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    mark_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
+    mark_item->setDefaultTextColor(Qt::white);
+
+    phase_icon = new Pixmap;
+    phase_icon->setParentItem(right);
+    settings->beginGroup("phase_icon");
+    coord = settings->value("pos").toList();
+    phase_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    phase_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
 
 #ifdef USE_RCC
     ready_item = new QGraphicsPixmapItem(QPixmap(":system/ready.png"), avatar);
 #else
     ready_item = new QGraphicsPixmapItem(QPixmap("image/system/ready.png"), avatar);
 #endif
-    ready_item->setPos(2, 43);
+    settings->beginGroup("ready_item");
+    coord = settings->value("pos").toList();
+    ready_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    ready_item->setZValue(coord.at(2).toReal());
+    ready_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     ready_item->hide();
 
-    chain_icon = new Pixmap("image/system/chain.png");
+    chain_icon = new Pixmap("image/state/chain.png");
     chain_icon->setParentItem(right);
-    chain_icon->setPos(small_avatar->pos());
-    chain_icon->moveBy(-20 ,-45);
+    settings->beginGroup("chain_icon");
+    coord = settings->value("pos").toList();
+    chain_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    chain_icon->setZValue(coord.at(2).toReal());
+    chain_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     chain_icon->hide();
-    chain_icon->setZValue(1.0);
 
-    back_icon = new Pixmap("image/system/big-back.png");
+    back_icon = new Pixmap("image/system/cover/big-back.png");
     back_icon->setParentItem(right);
     back_icon->setPos(22, 64);
     back_icon->setZValue(0.2);
-    back_icon->setOpacity(0.6);
+    //back_icon->setOpacity(0.6);
     back_icon->hide();
 
-    QGraphicsPixmapItem *handcard_pixmap = new QGraphicsPixmapItem(right);
-    handcard_pixmap->setPixmap(QPixmap("image/system/handcard.png"));
-    handcard_pixmap->setPos(25, 127);
+    jail_icon = new Pixmap("image/system/cover/big-jail.png");
+    jail_icon->setParentItem(right);
+    jail_icon->setPos(back_icon->pos());
+    jail_icon->setZValue(back_icon->zValue() + 0.1);
+    jail_icon->setOpacity(back_icon->opacity());
+    jail_icon->hide();
 
+    handcard_pixmap = new QGraphicsPixmapItem(right);
+    handcard_pixmap->setPixmap(QPixmap("image/system/handcard2.png"));
+    settings->beginGroup("handcard_item");
+    coord = settings->value("pos").toList();
+    handcard_pixmap->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    handcard_pixmap->setZValue(0.3);
     handcard_num = new QGraphicsSimpleTextItem(handcard_pixmap);
-    handcard_num->setPos(6,8);
+    coord = settings->value("text_pos").toList();
+    handcard_num->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    settings->endGroup();
 
     QFont serifFont("Times", 10, QFont::Bold);
     handcard_num->setFont(serifFont);
-    handcard_num->setBrush(Qt::white);
+    handcard_num->setBrush(Qt::yellow);
 
-    handcard_pixmap->hide();
-
-    mark_item = new QGraphicsTextItem(right);
-    mark_item->setPos(-120 - getButtonWidgetWidth(), 5);
-    mark_item->setDefaultTextColor(Qt::white);
+    //handcard_pixmap->hide();
 
     action_item = NULL;
 
-    avatar_area = new QGraphicsRectItem(0, 0, 94, 96, right);
-    avatar_area->setPos(22, 64);
-    avatar_area->setZValue(0.3);
-    avatar_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
-    avatar_area->setVisible(false);
+    ecst_area = new QGraphicsRectItem(0, 0, 94, 96, right);
+    ecst_area->setPos(22, 64);
+    ecst_area->setZValue(0.3);
+    ecst_area->setBrush(QColor(0x00, 0x00, 0xDD, 255 * 0.35));
+    ecst_area->setVisible(false);
 
-    wake_icon = new Pixmap("image/system/sleep.png");
+    wake_icon = new Pixmap("image/state/sleep.png");
     wake_icon->setParentItem(right);
-    wake_icon->setPos(18, 127);
+    settings->beginGroup("wake_icon");
+    coord = settings->value("pos").toList();
+    wake_icon->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    wake_icon->setZValue(coord.at(2).toReal());
+    wake_icon->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
     wake_icon->hide();
-    wake_icon->setZValue(0.4);
+}
+
+void Dashboard::setRole(const QString &new_role, int index){
+    role->setPixmap(QPixmap(QString("image/system/roles/dashboard/%1-%2.png").arg(new_role).arg(index)));
 }
 
 void Dashboard::setWakeState(){
     if(Self->getWakeSkills().isEmpty())
         return;
     if(Self->getMark("_wake") > 0)
-        wake_icon->setPixmap(QPixmap("image/system/wake.png"));
+        wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
-        wake_icon->setPixmap(QPixmap("image/system/sleep.png"));
+        wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
 }
 
-void Dashboard::setEcstState(){
-    if(Self->hasFlag("ecst"))
-        avatar_area->setVisible(true);
-    //else if(Self->hasMark("poison"))
-    //    setPoisonState();
+void Dashboard::setPhaseState(){
+    if(Self->getPhase() != Player::NotActive){
+        static QList<QPixmap> phase_pixmaps;
+        if(phase_pixmaps.isEmpty()){
+            QStringList names;
+            names << "round_start" << "start" << "judge" << "draw"
+                    << "play" << "discard" << "finish";
+            foreach(QString name, names)
+                phase_pixmaps << QPixmap(QString("image/system/phase/dashboard/%1.png").arg(name));
+        }
+        int index = static_cast<int>(Self->getPhase());
+        phase_icon->setPixmap(phase_pixmaps.at(index));
+    }
     else
-        avatar_area->setVisible(false);
+        phase_icon->setPixmap(QPixmap());
 }
 
 void Dashboard::setActionState(){
@@ -279,7 +332,8 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
     connect(player, SIGNAL(ready_changed(bool)), this, SLOT(updateReadyItem(bool)));
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
-    connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+    connect(player, SIGNAL(phase_changed()), this, SLOT(setPhaseState()));
+    //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
 
     mark_item->setDocument(player->getMarkDoc());
 
@@ -288,7 +342,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
 
 void Dashboard::updateAvatar(){
     const General *general = Self->getAvatarGeneral();
-    avatar->setToolTip(general->getSkillDescription());
+    avatar->setToolTip(Self->getAllSkillDescription());
     if(!avatar->changePixmap(general->getPixmapPath("big"))){
         QPixmap pixmap(General::BigIconSize);
         pixmap.fill(Qt::black);
@@ -316,7 +370,7 @@ void Dashboard::updateAvatar(){
 void Dashboard::updateSmallAvatar(){
     const General *general2 = Self->getGeneral2();
     if(general2){
-        small_avatar->setToolTip(general2->getSkillDescription());
+        small_avatar->setToolTip(Self->getAllSkillDescription());
         bool success = small_avatar->changePixmap(general2->getPixmapPath("tiny"));
 
         if(!success){
@@ -333,6 +387,7 @@ void Dashboard::updateSmallAvatar(){
             small_avatar->setPixmap(pixmap);
         }
     }
+    updateAvatar();
 
     update();
 }
@@ -527,7 +582,11 @@ QProgressBar *Dashboard::addProgressBar(){
     QGraphicsProxyWidget *widget = new QGraphicsProxyWidget(right);
     widget->setWidget(progress_bar);
     widget->setParentItem(middle);
-    widget->setPos(300, - 20);
+    settings->beginGroup("progress_bar");
+    QList<QVariant> coord = settings->value("pos").toList();
+    widget->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    widget->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
 
     progress_bar->hide();
 
@@ -537,19 +596,27 @@ QProgressBar *Dashboard::addProgressBar(){
 void Dashboard::drawHp(QPainter *painter) const{
     int hp = qMax(0, Self->getHp());
     int max_hp = Self->getMaxHP();
-    QPixmap *magatama, *zero_magatama;
     int index = Self->isWounded() ? qMin(hp, 5) : 5;
-    if(max_hp > 6){
+    QPixmap *magatama = MagatamaWidget::GetMagatama(index);
+    QPixmap *zero_magatama = MagatamaWidget::GetMagatama(0);
+
+    qreal start_x = left_pixmap.width() + middle->rect().width();
+
+    if(max_hp > 8){
+        painter->drawPixmap(start_x + 20, 5, *magatama);
+        QFont serifFont("Georgia", 14, QFont::Bold);
+        painter->setFont(serifFont);
+        painter->setBrush(Qt::yellow);
+        painter->drawText(start_x + 45, 23, QString(" %1 / %2").arg(hp).arg(max_hp));
+        return;
+    }
+    else if(max_hp > 6){
         magatama = MagatamaWidget::GetSmallMagatama(index);
         zero_magatama = MagatamaWidget::GetSmallMagatama(0);
-    }else{
-        magatama = MagatamaWidget::GetMagatama(index);
-        zero_magatama = MagatamaWidget::GetMagatama(0);
     }
 
     qreal total_width = magatama->width() * max_hp;
     qreal skip = (121 - total_width)/ (max_hp + 1);
-    qreal start_x = left_pixmap.width() + middle->rect().width();
 
     int i;
     for(i=0; i<hp; i++)
@@ -565,7 +632,11 @@ void Dashboard::killPlayer(){
     }
 
     death_item = new QGraphicsPixmapItem(QPixmap(Self->getDeathPixmapPath()), this);
-    death_item->setPos(397, 55);
+    settings->beginGroup("death_item");
+    QList<QVariant> coord = settings->value("pos").toList();
+    death_item->setPos(coord.at(0).toReal(), coord.at(1).toReal());
+    death_item->setOpacity(settings->value("opacity").toReal());
+    settings->endGroup();
 
     filter = NULL;
 
@@ -607,7 +678,11 @@ void Dashboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
     chain_icon->setVisible(Self->isChained());
     back_icon->setVisible(!Self->faceUp());
+    jail_icon->setVisible(Self->containsTrick("indulgence", false));
     wake_icon->setVisible(!Self->getWakeSkills().isEmpty());
+    ecst_area->setVisible(Self->hasFlag("ecst"));
+
+    middle->setToolTip(tr("HandcardNum:%1").arg(handcard_num->text()));
 }
 
 void Dashboard::mousePressEvent(QGraphicsSceneMouseEvent *){
@@ -660,7 +735,7 @@ void Dashboard::drawEquip(QPainter *painter, const CardItem *equip, int order){
 
     // draw the suit of equip
     QRect suit_rect(width - 19, y + 10, 13, 13);
-    painter->drawPixmap(suit_rect, equip->getSuitPixmap());
+    painter->drawPixmap(suit_rect, equip->getSuitPixmap(true));
 
     // draw the number of equip
 
@@ -778,9 +853,9 @@ CardItem *Dashboard::takeCardItem(int card_id, Player::Place place){
 
         if(Self->isKongcheng())
             handcard_num->parentItem()->hide();
-        else{
+        else
             handcard_num->setText(QString::number(Self->getHandcardNum()));
-        }
+
         if(card_item)
             card_item->hideFrame();
     }else if(place == Player::Equip){
@@ -857,6 +932,12 @@ void Dashboard::sortCards(int sort_type){
         qSort(card_items.begin(), card_items.end(), func);
 
     adjustCards();
+}
+
+void Dashboard::sortCardsAuto(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action)
+        sortCards(action->data().toInt());
 }
 
 void Dashboard::reverseSelection(){

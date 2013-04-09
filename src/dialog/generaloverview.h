@@ -31,6 +31,7 @@ private:
     void addLines(const Skill *skill, int wake_index = 0);
     void addWakeLines(const QString &general_name);
     void addCopyAction(QCommandLinkButton *button);
+    void addChangeAction(QPushButton *button);
 
 private slots:
     void playEffect();

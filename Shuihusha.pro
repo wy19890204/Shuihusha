@@ -31,6 +31,7 @@ SOURCES += \
 	src/core/lua-wrapper.cpp \
 	src/core/player.cpp \
 	src/core/protocol.cpp \
+	src/core/record-analysis.cpp \
 	src/core/settings.cpp \
 	src/core/skill.cpp \
 	src/core/statistics.cpp \
@@ -59,6 +60,7 @@ SOURCES += \
 	src/package/plough.cpp \
 	src/package/maneuvering.cpp \
 	src/package/events.cpp \
+	src/package/purgatory.cpp \
 	src/package/gift.cpp \
 	src/package/rat.cpp \
 	src/package/ox.cpp \
@@ -171,6 +173,7 @@ HEADERS += \
 	src/core/lua-wrapper.h \
 	src/core/player.h \
 	src/core/protocol.h \
+	src/core/record-analysis.h \
 	src/core/settings.h \
 	src/core/skill.h \
 	src/core/statistics.h \
@@ -200,6 +203,7 @@ HEADERS += \
 	src/package/plough.h \
 	src/package/maneuvering.h \
 	src/package/events.h \
+	src/package/purgatory.h \
 	src/package/gift.h \
 	src/package/rat.h \
 	src/package/ox.h \
@@ -364,6 +368,7 @@ OTHER_FILES += \
         etc/customScenes/01.txt \
         image/system/coord_normal.ini \
         image/system/coord_circular.ini \
+        image/system/dashboard.ini \
         image/system/photo.ini \
         lua/config.lua
 
@@ -399,7 +404,9 @@ CONFIG(chatvoice){
 
 CONFIG(use_rcc){
         DEFINES += USE_RCC
-        RESOURCES += image/skin.qrc
+        RESOURCES += \
+		image/skin.qrc \
+		image/system/button/irregular.qrc
 }
 
 CONFIG(qrc){

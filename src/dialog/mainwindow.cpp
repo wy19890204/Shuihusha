@@ -10,6 +10,7 @@
 #include "window.h"
 #include "halldialog.h"
 #include "pixmapanimation.h"
+#include "record-analysis.h"
 #include "crypto.h"
 
 #include <cmath>
@@ -68,8 +69,8 @@ protected:
             MainWindow *main_window = qobject_cast<MainWindow *>(parentWidget());
             if(main_window){
                 main_window->setBackgroundBrush();
-                //QCursor my(QPixmap("backdrop/main.png"));
-                //main_window->setCursor(my);
+                QCursor my(QPixmap("backdrop/main.png"));
+                main_window->setCursor(my);
             }
         }
     }
@@ -110,16 +111,16 @@ MainWindow::MainWindow(QWidget *parent)
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
-/*
-    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+
+    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
-    else{*/
+    else{
         actions << ui->actionAbout << ui->actionAcknowledgement;
         foreach(QAction *action, actions)
             start_scene->addButton(action);
-    //}
+    }
 
     view = new FitView(scene);
 
@@ -136,9 +137,11 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::restoreFromConfig(){
+    Config.beginGroup("UI");
     //resize(Config.value("WindowSize", QSize(1042, 719)).toSize());
-    resize(Config.value("WindowSize", QSize(1340, 758)).toSize());
-    move(Config.value("WindowPosition", QPoint(20,20)).toPoint());
+    resize(Config.value("WindowSize", QSize(1340, 820)).toSize());
+    move(Config.value("WindowPosition", QPoint(45, 1)).toPoint());
+    Config.endGroup();
 
     QFont font;
     if(Config.AppFont != font)
@@ -146,20 +149,29 @@ void MainWindow::restoreFromConfig(){
     if(Config.UIFont != font)
         QApplication::setFont(Config.UIFont, "QTextEdit");
 
+    ui->actionPause->setChecked(false);
+    ui->actionAutoSave->setChecked(Config.value("AutoSave", false).toBool());
     ui->actionEnable_Hotkey->setChecked(Config.EnableHotKey);
     ui->actionExpand_dashboard->setChecked(Config.value("UI/ExpandDashboard", true).toBool());
-    ui->actionDraw_indicator->setChecked(!Config.value("NoIndicator", false).toBool());
-    ui->actionDraw_cardname->setChecked(Config.value("DrawCardName", true).toBool());
+    ui->actionDraw_indicator->setChecked(!Config.value("UI/NoIndicator", false).toBool());
+    ui->actionDraw_cardname->setChecked(Config.value("UI/DrawCardName", true).toBool());
     ui->actionFit_in_view->setChecked(Config.FitInView);
     ui->actionAuto_select->setChecked(Config.AutoSelect);
     ui->actionAuto_target->setChecked(Config.AutoTarget);
     ui->actionEnable_Lua->setChecked(Config.EnableLua);
-    ui->actionButton_style->setChecked(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool());
+    ui->actionButton_style->setChecked(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool());
+    ui->actionEquip_style->setChecked(Config.value("UI/EquipStyle", true).toBool());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
+    Config.beginGroup("UI");
     Config.setValue("WindowSize", size());
     Config.setValue("WindowPosition", pos());
+    if(scene->inherits("StartScene") && Config.value("ButtonStyle", false).toBool()){
+        StartScene *start_scene = qobject_cast<StartScene *>(scene);
+        Config.setValue("PlatePosition", start_scene->button_plate->pos());
+    }
+    Config.endGroup();
 
     if(systray){
         systray->showMessage(windowTitle(), tr("Game is minimized"));
@@ -183,6 +195,40 @@ void MainWindow::gotoScene(QGraphicsScene *scene){
     this->scene = scene;
 
     changeBackground();
+}
+
+void MainWindow::on_actionAutoSave_toggled(bool checked)
+{
+    if(Config.value("AutoSave").toBool() != checked)
+        Config.setValue("AutoSave", checked);
+    QDir temp;
+    QString path = Config.value("AutoSavePath", "save").toString();
+    if(!temp.exists(path))
+        temp.mkdir(path);
+}
+
+void MainWindow::on_actionAutoSavePath_triggered()
+{
+    QString path = QInputDialog::getText(this, tr("The path for replay file"),
+                                         tr("Please input the path"),
+                                         QLineEdit::Normal,
+                                         Config.value("AutoSavePath", "save").toString());
+    if(!path.isNull()){
+        Config.setValue("AutoSavePath", path);
+        QDir temp;
+        if(!temp.exists(path))
+            temp.mkdir(path);
+    }
+}
+
+void MainWindow::on_actionPause_toggled(bool checked)
+{
+    if(!Config.value("PCConsole", false).toBool()){
+        QMessageBox::warning(this, tr("Warning"), tr("Can not pause in online game!"));
+        return;
+    }
+    if(Config.Pause != checked)
+        Config.Pause = checked;
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -278,7 +324,8 @@ void MainWindow::on_actionRestart_game_triggered(){
 
 void MainWindow::on_actionReplay_triggered()
 {
-    QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    QString location = Config.value("AutoSavePath", "save").toString();
+    //QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     QString last_dir = Config.value("LastReplayDir").toString();
     if(!last_dir.isEmpty())
         location = last_dir;
@@ -385,16 +432,16 @@ void MainWindow::on_actionReturn_main_triggered(){
             << ui->actionGeneral_Overview
             << ui->actionCard_Overview
             << ui->actionScenario_Overview;
-/*
-    if(Config.value("ButtonStyle", QFile::exists("image/system/button/main/background.png")).toBool()){
+
+    if(Config.value("UI/ButtonStyle", QFile::exists("image/system/button/plate/background.png")).toBool()){
         actions << ui->actionAcknowledgement;
         start_scene->addMainButton(actions);
     }
-    else{*/
+    else{
         actions << ui->actionAbout << ui->actionAcknowledgement;
         foreach(QAction *action, actions)
             start_scene->addButton(action);
-    //}
+    }
 
     setCentralWidget(view);
     restoreFromConfig();
@@ -470,7 +517,7 @@ void MainWindow::on_actionAbout_triggered()
     config = "debug";
 #endif
 */
-    content.append(tr("Current version: %1 (%2)<br/>")
+    content.append(tr("Current version: %1 %2<br/>")
                    .arg(Sanguosha->getVersion())
                    //.arg(config)
                    .arg(Sanguosha->getVersionName()));
@@ -690,21 +737,21 @@ void MainWindow::on_actionScript_editor_triggered()
 
 void MainWindow::on_actionDraw_indicator_toggled(bool checked)
 {
-    if(Config.value("NoIndicator").toBool() == checked)
-        Config.setValue("NoIndicator", !checked);
+    if(Config.value("UI/NoIndicator").toBool() == checked)
+        Config.setValue("UI/NoIndicator", !checked);
 }
 
 void MainWindow::on_actionDraw_cardname_toggled(bool checked)
 {
-    if(Config.value("DrawCardName").toBool() != checked)
-        Config.setValue("DrawCardName", checked);
+    if(Config.value("UI/DrawCardName").toBool() != checked)
+        Config.setValue("UI/DrawCardName", checked);
 }
 
 void MainWindow::on_actionFit_in_view_toggled(bool checked)
 {
     if(Config.FitInView != checked)
         Config.FitInView = checked;
-        Config.setValue("FitInView", checked);
+        Config.setValue("UI/FitInView", checked);
 }
 
 void MainWindow::on_actionAuto_select_toggled(bool checked)
@@ -748,8 +795,14 @@ void MainWindow::on_actionEnable_Lua_toggled(bool checked)
 
 void MainWindow::on_actionButton_style_toggled(bool checked)
 {
-    if(Config.value("ButtonStyle").toBool() != checked)
-        Config.setValue("ButtonStyle", checked);
+    if(Config.value("UI/ButtonStyle").toBool() != checked)
+        Config.setValue("UI/ButtonStyle", checked);
+}
+
+void MainWindow::on_actionEquip_style_toggled(bool checked)
+{
+    if(Config.value("UI/EquipStyle").toBool() != checked)
+        Config.setValue("UI/EquipStyle", checked);
 }
 
 #include <QGroupBox>
@@ -783,7 +836,7 @@ MeleeDialog::MeleeDialog(QWidget *parent)
     server_log->setMinimumWidth(300);
     server_log->setReadOnly(true);
     server_log->setFrameStyle(QFrame::Box);
-    server_log->setProperty("description", true);
+    server_log->setProperty("type", "description");
     server_log->setFont(QFont("Verdana", 12));
 
     QVBoxLayout *vlayout = new QVBoxLayout;
@@ -1070,6 +1123,135 @@ void MainWindow::on_actionReplay_file_convert_triggered()
                 tosave_file.write(data);
         }
     }
+}
+
+void MainWindow::on_actionRecord_analysis_triggered(){
+    QString location = Config.value("AutoSavePath", "save").toString();
+    //QString location = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Load replay record"),
+                                                    location,
+                                                    tr("Pure text replay file (*.txt);; Image replay file (*.png)"));
+
+    if(filename.isEmpty())
+        return;
+
+    QDialog *rec_dialog = new QDialog(this);
+    rec_dialog->setWindowTitle(tr("Record analysis"));
+    rec_dialog->resize(800, 500);
+    QTableWidget *table = new QTableWidget;
+
+    RecAnalysis *record = new RecAnalysis(filename);
+    QMap<QString, PlayerRecordStruct *> record_map = record->getRecordMap();
+    table->setColumnCount(11);
+    table->setRowCount(record_map.keys().length());
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    static QStringList labels;
+    if(labels.isEmpty()){
+        labels << tr("ScreenName") << tr("General") << tr("Role") << tr("Living") << tr("WinOrLose")
+               << tr("Recover") << tr("Damage") << tr("Damaged") << tr("Save") << tr("Kill") << tr("Cheat")
+               //<< tr("Designation")
+                  ;
+    }
+    table->setHorizontalHeaderLabels(labels);
+    table->setSelectionBehavior(QTableWidget::SelectRows);
+
+    int i = 0;
+    foreach(PlayerRecordStruct *rec, record_map.values()){
+        QTableWidgetItem *item = new QTableWidgetItem;
+        QString screen_name = Sanguosha->translate(rec->m_screenName);
+        if(rec->m_statue == "robot")
+            screen_name += "(" + Sanguosha->translate("robot") + ")";
+
+        item->setText(screen_name);
+        table->setItem(i, 0, item);
+
+        item = new QTableWidgetItem;
+        QString generals = Sanguosha->translate(rec->m_generalName);
+        if(!rec->m_general2Name.isEmpty())
+            generals += "+" + Sanguosha->translate(rec->m_general2Name) + tr("(General2)");
+        item->setText(generals);
+        table->setItem(i, 1, item);
+
+        item = new QTableWidgetItem;
+        item->setText(Sanguosha->translate(rec->m_role));
+        table->setItem(i, 2, item);
+
+        item = new QTableWidgetItem;
+        item->setText(rec->m_isAlive ? tr("Alive") : tr("Dead"));
+        table->setItem(i, 3, item);
+
+        item = new QTableWidgetItem;
+        bool is_win = record->getRecordWinners().contains(rec->m_role) ||
+                        record->getRecordWinners().contains(record_map.key(rec));
+        item->setText(is_win ? tr("Win") : tr("Lose"));
+        table->setItem(i, 4, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_recover));
+        table->setItem(i, 5, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_damage));
+        table->setItem(i, 6, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_damaged));
+        table->setItem(i, 7, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_save));
+        table->setItem(i, 8, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_kill));
+        table->setItem(i, 9, item);
+
+        item = new QTableWidgetItem;
+        item->setText(QString::number(rec->m_cheat));
+        table->setItem(i, 10, item);
+/*
+        item = new QTableWidgetItem;
+        item->setText(rec->m_designation.join(", "));
+        table->setItem(i, 11, item);
+*/
+        i++;
+    }
+    for (int i = 2; i <= 11; i++)
+        table->resizeColumnToContents(i);
+
+    table->resizeColumnsToContents();
+
+    QLabel *mode = new QLabel;
+    mode->setText(tr("Mode:") + record->getRecordGameMode());
+
+    QLabel *label = new QLabel;
+    label->setText(tr("Packages:") + record->getRecordPackages().join(","));
+
+    QLabel *label_options = new QLabel;
+    label_options->setText(tr("GameMode:") + record->getRecordGameModes().join(","));
+
+    QTextEdit *chat_info = new QTextEdit;
+    chat_info->setReadOnly(chat_info);
+    chat_info->setProperty("type", "border");
+    chat_info->setText(record->getRecordChat());
+    chat_info->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    QLabel *table_chat_title = new QLabel;
+    table_chat_title->setText(tr("Chat Infomation:"));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(mode);
+    layout->addWidget(label);
+    layout->addWidget(label_options);
+    layout->addWidget(table);
+    layout->addSpacing(15);
+    layout->addWidget(table_chat_title);
+    layout->addWidget(chat_info);
+    rec_dialog->setLayout(layout);
+
+    rec_dialog->exec();
 }
 
 void MainWindow::sendLowLevelCommand()

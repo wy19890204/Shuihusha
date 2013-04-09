@@ -24,13 +24,24 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
+    <widget class="QMenu" name="menuAuto_save">
+     <property name="title">
+      <string>Auto save</string>
+     </property>
+     <addaction name="actionAutoSave"/>
+     <addaction name="actionAutoSavePath"/>
+    </widget>
     <addaction name="actionStart_Game"/>
     <addaction name="actionJoin_Game"/>
     <addaction name="separator"/>
     <addaction name="actionRestart_game"/>
     <addaction name="actionReturn_main"/>
     <addaction name="separator"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionSaveRecord"/>
+    <addaction name="menuAuto_save"/>
     <addaction name="actionReplay"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -46,6 +57,7 @@
     <addaction name="separator"/>
     <addaction name="actionAI_Melee"/>
     <addaction name="actionReplay_file_convert"/>
+    <addaction name="actionRecord_analysis"/>
     <addaction name="actionCrypto_audio"/>
     <addaction name="actionDecrypto_audio"/>
     <addaction name="separator"/>
@@ -57,7 +69,6 @@
     <addaction name="actionBroadcast"/>
     <addaction name="actionKick"/>
     <addaction name="actionSurrender"/>
-    <addaction name="actionSaveRecord"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -70,9 +81,6 @@
     <addaction name="actionAcknowledgement"/>
    </widget>
    <widget class="QMenu" name="menuView">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
     <property name="title">
      <string>&amp;View</string>
     </property>
@@ -88,6 +96,7 @@
     <addaction name="actionAuto_target"/>
     <addaction name="separator"/>
     <addaction name="actionButton_style"/>
+    <addaction name="actionEquip_style"/>
    </widget>
    <widget class="QMenu" name="menuCheat">
     <property name="enabled">
@@ -246,7 +255,7 @@
   </action>
   <action name="actionReplay">
    <property name="text">
-    <string>Replay</string>
+    <string>&amp;Replay</string>
    </property>
    <property name="shortcut">
     <string>F7</string>
@@ -257,7 +266,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Save battle record</string>
+    <string>&amp;Save</string>
    </property>
   </action>
   <action name="actionFullscreen">
@@ -339,7 +348,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Damage maker</string>
+    <string>Damage maker ...</string>
    </property>
   </action>
   <action name="actionExpand_dashboard">
@@ -531,6 +540,43 @@
    </property>
    <property name="text">
     <string>Button style</string>
+   </property>
+  </action>
+  <action name="actionEquip_style">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Equip style</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
+   </property>
+   <property name="shortcut">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionAutoSave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionAutoSavePath">
+   <property name="text">
+    <string>Path ...</string>
+   </property>
+  </action>
+  <action name="actionRecord_analysis">
+   <property name="text">
+    <string>Record analysis</string>
    </property>
   </action>
  </widget>

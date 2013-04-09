@@ -1,0 +1,8 @@
+slash heart 8
+jink spade 11
+analeptic club 2
+ecstasy diamond 7
+peach no_suit 0
+moonpie heart 6
+zongzi club 5
+shit heart 4

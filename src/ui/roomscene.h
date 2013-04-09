@@ -15,7 +15,7 @@ class Button;
 class CardContainer;
 class GuanxingBox;
 class IrregularButton;
-class TrustButton;
+//class TrustButton;
 class QGroupBox;
 struct RoomLayout;
 
@@ -26,6 +26,7 @@ struct RoomLayout;
 #include <QSharedMemory>
 #include <QProgressBar>
 #include <QTextEdit>
+#include <QCheckBox>
 #include <QDockWidget>
 #include <QSpinBox>
 #include <QDialog>
@@ -173,6 +174,7 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent *event);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual void timerEvent(QTimerEvent *event);
+    virtual void autoSaveReplayRecord();
 
 private:
     Button* add_robot, *fill_robots;
@@ -186,15 +188,16 @@ private:
     QQueue<CardItem*> discarded_queue;
     QQueue<CardItem*> piled_discards;
     QMainWindow *main_window;
-    QComboBox *role_combobox;
+    //QCheckBox *role_combobox;
     IrregularButton *ok_button, *cancel_button, *discard_button;
-    TrustButton *trust_button;
-    QPushButton *reverse_button, *free_discard;
+    //TrustButton *trust2_button;
+    QPushButton *trust_button, *untrust_button;
+    QPushButton *free_discard, *sort_pullbutton;
     QMenu *known_cards_menu, *change_general_menu;
     Window *prompt_box;
     QGraphicsItem *control_panel;
     QMap<QGraphicsItem *, const ClientPlayer *> item2player;
-    QComboBox *sort_combobox;
+    //QComboBox *sort_combobox;
 
     QProgressBar *progress_bar;
     int timer_id;

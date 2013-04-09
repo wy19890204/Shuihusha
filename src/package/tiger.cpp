@@ -265,16 +265,16 @@ public:
         DyingStruct dying = data.value<DyingStruct>();
         DamageStar damage = dying.damage;
         if(damage && damage->from && damage->from->hasSkill("pinming") && damage->to->isAlive()){
-            damage->from->setFlags("PinmingDie");
+            damage->from->setFlags("%PinmingDie");
             if(damage->from->askForSkillInvoke("pinming", QVariant::fromValue(damage))){
                 room->playSkillEffect("pinming", qrand() % 2 + 4);
                 room->getThread()->delay(500);
                 room->killPlayer(damage->to, damage);
                 room->getThread()->delay(1000);
                 room->killPlayer(damage->from);
+                damage->from->setFlags("-%PinmingDie");
+                return true;
             }
-            damage->from->setFlags("-PinmingDie");
-            return true;
         }
         return false;
     }
@@ -417,9 +417,8 @@ public:
         if(ServerInfo.EnableAnzhan || room->isNoLordSkill())
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->attachSkillToPlayer(player, "huweiv");
-        }
     }
 
     virtual void onIdied(ServerPlayer *tigger) const{
@@ -427,9 +426,8 @@ public:
         if(room->findPlayerBySkillName("huwei"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->detachSkillFromPlayer(player, "huweiv", false);
-        }
     }
 };
 
@@ -850,10 +848,10 @@ public:
 
 TigerPackage::TigerPackage()
     :GeneralPackage("tiger")
-{/*
+{
     General *leiheng = new General(this, "leiheng", "guan");
     leiheng->addSkill(new Guzong);
-*/
+
     General *sunli = new General(this, "sunli", "guan");
     sunli->addSkill(new Neiying);
 

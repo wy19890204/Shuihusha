@@ -1,70 +1,5 @@
 #include "joy.h"
 
-Shit::Shit(Suit suit, int number):BasicCard(suit, number){
-    setObjectName("shit");
-
-    target_fixed = true;
-}
-
-QString Shit::getSubtype() const{
-    return "disgusting_card";
-}
-
-void Shit::onMove(const CardMoveStruct &move) const{
-    ServerPlayer *from = move.from;
-    if(from && move.from_place == Player::Hand &&
-       from->getRoom()->getCurrent() == move.from
-       && (move.to_place == Player::DiscardedPile || move.to_place == Player::Special)
-       && move.to == NULL
-       && from->isAlive()){
-
-        LogMessage log;
-        log.card_str = getEffectIdString();
-        log.from = from;
-
-        Room *room = from->getRoom();
-
-        if(getSuit() == Spade){
-            log.type = "$ShitLostHp";
-            room->sendLog(log);
-
-            room->loseHp(from);
-
-            return;
-        }
-
-        DamageStruct damage;
-        damage.from = damage.to = from;
-        damage.card = this;
-
-        switch(getSuit()){
-        case Club: damage.nature = DamageStruct::Thunder; break;
-        case Heart: damage.nature = DamageStruct::Fire; break;
-        default:
-            damage.nature = DamageStruct::Normal;
-        }
-
-        log.type = "$ShitDamage";
-        room->sendLog(log);
-
-        room->damage(damage);
-    }
-}
-
-bool Shit::HasShit(const Card *card){
-    if(card->isVirtualCard()){
-        QList<int> card_ids = card->getSubcards();
-        foreach(int card_id, card_ids){
-            const Card *c = Sanguosha->getCard(card_id);
-            if(c->objectName() == "shit")
-                return true;
-        }
-
-        return false;
-    }else
-        return card->objectName() == "shit";
-}
-
 Stink::Stink(Suit suit, int number):BasicCard(suit, number){
     setObjectName("stink");
     target_fixed = true;
@@ -115,10 +50,7 @@ KusoPackage::KusoPackage()
     :CardPackage("kuso"){
     QList<Card *> cards;
 
-    cards << new Shit(Card::Club, 1)
-            << new Shit(Card::Heart, 8)
-            << new Shit(Card::Diamond, 13)
-            << new Shit(Card::Spade, 10)
+    cards
             << new Stink(Card::Diamond, 1);
 
     foreach(Card *card, cards)
@@ -261,11 +193,10 @@ JoyPackage::JoyPackage()
     cards
                 << new Saru(Card::Diamond, 5)
                 << new GaleShell(Card::Heart, 1)
-                //<< new Poison(Card::Heart, 7)
-                //<< new Poison(Card::Club, 9)
-                //<< new Poison(Card::Diamond, 11)
-                //<< new Poison(Card::Spade, 13)
-                ;
+                << new Poison(Card::Heart, 7)
+                << new Poison(Card::Club, 9)
+                << new Poison(Card::Diamond, 11)
+                << new Poison(Card::Spade, 13);
 
     foreach(Card *card, cards)
         card->setParent(this);
@@ -633,6 +564,6 @@ JoyGeneralPackage::JoyGeneralPackage()
     addMetaObject<ChuiniuCard>();
 }
 
-ADD_PACKAGE(Kuso)
-ADD_PACKAGE(Joy)
-ADD_PACKAGE(JoyGeneral)
+//ADD_PACKAGE(Kuso)
+//ADD_PACKAGE(Joy)
+//ADD_PACKAGE(JoyGeneral)

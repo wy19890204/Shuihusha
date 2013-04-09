@@ -20,9 +20,9 @@ void GanlinCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
     }
 }
 
-class GanlinViewAsSkill:public ViewAsSkill{
+class Ganlin:public ViewAsSkill{
 public:
-    GanlinViewAsSkill():ViewAsSkill("ganlin"){
+    Ganlin():ViewAsSkill("ganlin"){
     }
 
     virtual bool viewFilter(const QList<CardItem *> &, const CardItem *to_select) const{
@@ -40,25 +40,6 @@ public:
         GanlinCard *ganlin_card = new GanlinCard;
         ganlin_card->addSubcards(cards);
         return ganlin_card;
-    }
-};
-
-class Ganlin: public PhaseChangeSkill{
-public:
-    Ganlin():PhaseChangeSkill("ganlin"){
-        view_as_skill = new GanlinViewAsSkill;
-    }
-
-    virtual int getPriority(TriggerEvent) const{
-        return 2;
-    }
-
-    virtual bool onPhaseChange(ServerPlayer *p) const{
-        if(p->getPhase() == Player::NotActive){
-            Room *room = p->getRoom();
-            room->setPlayerFlag(p, "-Ganlin");
-        }
-        return false;
     }
 };
 
@@ -116,9 +97,8 @@ public:
         Room *room = player->getRoom();
         if(ServerInfo.EnableAnzhan || room->isNoLordSkill())
             return;
-        foreach(ServerPlayer *tmp, room->getAlivePlayers()){
+        foreach(ServerPlayer *tmp, room->getAlivePlayers())
             room->attachSkillToPlayer(tmp, "jui");
-        }
     }
 
     virtual void onIdied(ServerPlayer *player) const{
@@ -126,9 +106,8 @@ public:
         if(room->findPlayerBySkillName("juyi"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *tmp, players){
+        foreach(ServerPlayer *tmp, players)
             room->detachSkillFromPlayer(tmp, "jui", false);
-        }
     }
 };
 
@@ -1188,9 +1167,8 @@ public:
     virtual void onGameStart(ServerPlayer *yangvi) const{
         Room *room = yangvi->getRoom();
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->attachSkillToPlayer(player, "buyaknife");
-        }
     }
 
     virtual void onIdied(ServerPlayer *yangvi) const{
@@ -1198,9 +1176,8 @@ public:
         if(room->findPlayerBySkillName("maidao"))
             return;
         QList<ServerPlayer *> players = room->getAlivePlayers();
-        foreach(ServerPlayer *player, players){
+        foreach(ServerPlayer *player, players)
             room->detachSkillFromPlayer(player, "buyaknife", false);
-        }
     }
 };
 
@@ -1462,6 +1439,10 @@ public:
     Jibao():PhaseChangeSkill("jibao"){
     }
 
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
     virtual bool onPhaseChange(ServerPlayer *player) const{
         Room *room = player->getRoom();
         if(player->getPhase() == Player::RoundStart)
@@ -1575,7 +1556,7 @@ public:
 
     virtual bool trigger(TriggerEvent, Room* room, ServerPlayer *nana, QVariant &data) const{
         RecoverStruct rec = data.value<RecoverStruct>();
-        if(rec.who == nana && rec.card->inherits("Analeptic") &&
+        if(rec.who == nana && rec.card->isKindOf("Analeptic") && nana->getHp() < 1 &&
            nana->askForSkillInvoke(objectName(), data)){
             room->playSkillEffect(objectName());
             LogMessage log;
@@ -1584,9 +1565,11 @@ public:
             log.arg = objectName();
             log.arg2 = QString::number(1);
             room->sendLog(log);
-            rec.recover ++;
+            room->loseMaxHp(nana);
+            rec.recover = nana->getLostHp(false);
 
             data = QVariant::fromValue(rec);
+            room->setPlayerProperty(nana, "hp", nana->getMaxHp());
         }
         return false;
     }
@@ -2753,19 +2736,19 @@ StandardPackage::StandardPackage()
     General *zhutong = new General(this, "zhutong", "guan");
     zhutong->addSkill(new Sijiu);
     zhutong->addSkill(new Yixian);
-/*
+
     General *luzhishen = new General(this, "luzhishen", "kou");
     luzhishen->addSkill(new Liba);
     luzhishen->addSkill(new Zuohua);
-*/
+
     General *wusong = new General(this, "wusong", "kou");
     wusong->addSkill(new Fuhu);
-/*
+
     General *yangzhi = new General(this, "yangzhi", "guan");
     yangzhi->addSkill(new Maidao);
     skills << new BuyaKnife;
     yangzhi->addSkill(new Fengmang);
-*/
+
     General *xuning = new General(this, "xuning", "jiang");
     xuning->addSkill(new Goulian);
     xuning->addSkill(new Jinjia);
@@ -2836,11 +2819,11 @@ StandardPackage::StandardPackage()
     General *lishishi = new General(this, "lishishi", "min", 3, false);
     lishishi->addSkill(new Qinxin);
     lishishi->addSkill(new Yinjian);
-/*
+
     General *yanxijiao = new General(this, "yanxijiao", "min", 3, false);
     yanxijiao->addSkill(new Suocai);
     yanxijiao->addSkill(new Huakui);
-*/
+
     addMetaObject<GanlinCard>();
     addMetaObject<JuyiCard>();
     addMetaObject<HuaceCard>();

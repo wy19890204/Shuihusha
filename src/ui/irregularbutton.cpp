@@ -5,7 +5,11 @@
 #include <QPainter>
 
 static inline QString MakePath(const QString &name, const QString &state, const QString &father){
+#ifdef USE_RCC
+    return QString(":%1/%2-%3.png").arg(father).arg(name).arg(state);
+#else
     return QString("image/system/button/%1/%2-%3.png").arg(father).arg(name).arg(state);
+#endif
 }
 
 IrregularButton::IrregularButton(const QString &name, const QString &father)

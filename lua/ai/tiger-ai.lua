@@ -114,7 +114,7 @@ end
 sgs.ai_skill_invoke["pinming"] = function(self, data)
 	local damage = data:toDamage()
 	if (damage.from and self:isFriend(damage.from)) or damage.damage < 1 then return false end
-	if not self.player:hasFlag("PinmingDie") then
+	if not self.player:hasFlag("%PinmingDie") then
 		if self.player:getMaxHp() > 4 then
 			if damage.damage > 1 then
 				self:speak("pinming")

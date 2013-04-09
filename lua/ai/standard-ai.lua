@@ -800,8 +800,7 @@ mitan_skill.getTurnUseCard = function(self)
 	local card
 	self:sortByUseValue(cards, true)
 	for _,acard in ipairs(cards) do
-		if (acard:isKindOf("Wiretap") or
-			acard:isKindOf("Lightning") or
+		if (acard:isKindOf("Lightning") or
 			acard:isKindOf("Tsunami") or
 			acard:isKindOf("Treasury") or
 			acard:isKindOf("Provistore")) then
@@ -859,10 +858,7 @@ end
 
 -- jiuhan
 sgs.ai_skill_invoke["jiuhan"] = function(self, data)
-	if self.player:getLostHp() > self.player:getMaxHP() then
-		return true
-	end
-	return math.random(1, 3) == 2
+	return self.player:getMaxHp() > 2 and self.player:getHp() < 0
 end
 
 -- yangxiong

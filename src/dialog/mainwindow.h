@@ -116,6 +116,7 @@ private slots:
     void on_actionAbout_Lua_triggered();
     void on_actionAbout_fmod_triggered();
     void on_actionReplay_file_convert_triggered();
+    void on_actionRecord_analysis_triggered();
     void on_actionCrypto_audio_triggered();
     void on_actionDecrypto_audio_triggered();
     void on_actionAI_Melee_triggered();
@@ -140,10 +141,14 @@ private slots:
     void on_actionEnable_Lua_triggered();
     void on_actionEnable_Lua_toggled(bool );
     void on_actionButton_style_toggled(bool);
+    void on_actionEquip_style_toggled(bool);
     void on_actionCard_Overview_triggered();
     void on_actionGeneral_Overview_triggered();
     void on_actionStart_Game_triggered();
     void on_actionReturn_main_triggered();
+    void on_actionAutoSave_toggled(bool);
+    void on_actionAutoSavePath_triggered();
+    void on_actionPause_toggled(bool);
     void on_actionExit_triggered();
     void on_actionView_ban_list_triggered();
 

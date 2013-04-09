@@ -531,7 +531,7 @@ public:
     }
 
     virtual int getPriority(TriggerEvent) const{
-        return 3;
+        return -1;
     }
 
     virtual bool onPhaseChange(ServerPlayer *xueyong) const{

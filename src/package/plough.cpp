@@ -88,8 +88,34 @@ Wiretap::Wiretap(Suit suit, int number)
     setObjectName("wiretap");
 }
 
+bool Wiretap::targetsFeasible(const QList<const Player *> &targets, const Player *) const{
+    QStringList skills;
+    skills << "mitan" << "huace" << "linmo" << "fangzao";
+    if(skills.contains(getSkillName()))
+        return targets.length() == 1;
+    else
+        return targets.length() <= 1;
+}
+
+void Wiretap::onUse(Room *room, const CardUseStruct &card_use) const{
+    if(card_use.to.isEmpty()){
+        room->moveCardTo(this, NULL, Player::DiscardedPile);
+        card_use.from->playCardEffect("@recast");
+        room->setEmotion(card_use.from, "cards/recast");
+        card_use.from->drawCards(1);
+    }else
+        TrickCard::onUse(room, card_use);
+}
+
+void Wiretap::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    source->playCardEffect(objectName());
+    TrickCard::use(room, source, targets);
+}
+
 void Wiretap::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
+    if(effect.to->isKongcheng())
+        return;
     room->setTag("Wiretap", QVariant::fromValue(effect));
     QList<int> all = effect.to->handCards();
     //room->showAllCards(effect.to, effect.from);
