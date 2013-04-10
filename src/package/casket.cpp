@@ -12,8 +12,6 @@ public:
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to->getGender() == General::Male)
             damage.to->gainJur("poison_jur", 6);
-        else
-            damage.to->gainJur("sleep_jur", 3);
         return false;
     }
 };

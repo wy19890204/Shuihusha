@@ -37,35 +37,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
     Room *room = player->getRoom();
     switch(player->getPhase()){
     case Player::RoundStart:{
-            if(player->hasMark("poison_jur")){
-                LogMessage log;
-                log.from = player;
-                log.type = "#Poison";
-                room->sendLog(log);
-                player->loseMark("poison_jur");
-                if(player->getMark("poison_jur") <= 2){
-                    if(player->isAllNude() || room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
-                        room->loseHp(player);
-                    else{
-                        int index = qrand() % player->getCards("hej").length();
-                        const Card *card = player->getCards("hej").at(index);
-                        room->throwCard(card, player);
 
-                        if(!player->isAllNude()){
-                            index = qrand() % player->getCards("hej").length();
-                            card = player->getCards("hej").at(index);
-                            room->throwCard(card, player);
-                        }
-                    }
-                }
-                else{
-                    int index = qrand() % player->getCards("hej").length();
-                    const Card *card = player->getCards("hej").at(index);
-                    room->throwCard(card, player);
-                }
-                if(player->getMark("poison_jur") == 0)
-                    player->removeJur("poison_jur");
-            }
             break;
         }
     case Player::Start: {
@@ -193,48 +165,6 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 tmp->loseAllMarks("@life");
             }
 
-            // zhuan shi
-            if(Config.EnableReincarnation){
-                int count = Sanguosha->getPlayerCount(room->getMode());
-                if(count < 4)
-                    return;
-                int max = count > 5 ? 4 : 3;
-                ServerPlayer *next = player->getNext();
-                while(next->isDead()){
-                    if(next->getHandcardNum() >= max){
-                        LogMessage log;
-                        log.type = "#ReincarnRevive";
-                        log.from = next;
-                        room->sendLog(log);
-
-                        room->broadcastInvoke("playAudio", "mode/reincarnation");
-                        room->revivePlayer(next);
-
-                        if(!Config.value("ReincaPersist", false).toBool()){
-                            QStringList names;
-                            foreach(ServerPlayer *tmp, room->getAllPlayers()){
-                                names << tmp->getGeneralName();
-                                if(tmp->getGeneral2())
-                                    names << tmp->getGeneral2Name();
-                            }
-                            if(!names.isEmpty()){
-                                QSet<QString> names_set = names.toSet();
-                                QString newname = Sanguosha->getRandomGenerals(1, names_set).first();
-                                room->transfigure(next, newname, false, true);
-                            }
-                        }
-                        if(next->getMaxHp() == 0)
-                            room->setPlayerProperty(next, "maxhp", 1);
-                        room->setPlayerProperty(next, "hp", 1);
-
-                        room->getThread()->delay(1500);
-                        room->attachSkillToPlayer(next, "sacrifice");
-                        room->setPlayerMark(next, "@skull", 1);
-                        room->setPlayerProperty(next, "isDead", true);
-                    }
-                    next = next->getNext();
-                }
-            }
             return;
         }
     }
@@ -317,12 +247,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
         if(player->isLord())
             setGameProcess(room);
-
-        if(Config.EnableReincarnation && room->getMode() != "wheel_fight"){
-            int count = Sanguosha->getPlayerCount(room->getMode());
-            if(count > 3)
-                room->attachSkillToPlayer(player, "sacrifice");
-        }
 
         room->setTag("FirstRound", true);
         player->drawCards(4, false);
@@ -884,8 +808,6 @@ bool GameRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVa
 
             if(killer->isDead())
                 return true;
-            if(Config.EnableReincarnation && victim->property("isDead").toBool())
-                return true;
 
             if(room->getMode() == "06_3v3")
                 killer->drawCards(3);
@@ -1313,6 +1235,137 @@ bool BasaraMode::trigger(TriggerEvent event, Room* room, ServerPlayer *player, Q
             }
         }
 
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return false;
+}
+
+ReincarnationRule::ReincarnationRule(QObject *parent)
+    :GameRule(parent)
+{
+    setObjectName("reincarnation_rule");
+}
+
+int ReincarnationRule::getPriority(TriggerEvent) const{
+    return -1;
+}
+
+bool ReincarnationRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+    switch(event){
+    case GameStart:{
+        if(room->getMode() != "wheel_fight"){
+            int count = Sanguosha->getPlayerCount(room->getMode());
+            if(count > 3)
+                room->attachSkillToPlayer(player, "sacrifice");
+        }
+        break;
+    }
+    case RewardAndPunish:{
+        if(player->property("isDead").toBool())
+            return true;
+        break;
+    }
+    case PhaseChange:{
+        if(player->getPhase() == Player::NotActive){
+            int count = Sanguosha->getPlayerCount(room->getMode());
+            if(count < 4)
+                break;
+            int max = count > 5 ? 4 : 3;
+            ServerPlayer *next = player->getNext();
+            while(next->isDead()){
+                if(next->getHandcardNum() >= max){
+                    LogMessage log;
+                    log.type = "#ReincarnRevive";
+                    log.from = next;
+                    room->sendLog(log);
+
+                    room->broadcastInvoke("playAudio", "mode/reincarnation");
+                    room->revivePlayer(next);
+
+                    if(!Config.value("ReincaPersist", false).toBool()){
+                        QStringList names;
+                        foreach(ServerPlayer *tmp, room->getAllPlayers()){
+                            names << tmp->getGeneralName();
+                            if(tmp->getGeneral2())
+                                names << tmp->getGeneral2Name();
+                        }
+                        if(!names.isEmpty()){
+                            QSet<QString> names_set = names.toSet();
+                            QString newname = Sanguosha->getRandomGenerals(1, names_set).first();
+                            room->transfigure(next, newname, false, true);
+                        }
+                    }
+                    if(next->getMaxHp() == 0)
+                        room->setPlayerProperty(next, "maxhp", 1);
+                    room->setPlayerProperty(next, "hp", 1);
+
+                    room->getThread()->delay(1500);
+                    room->attachSkillToPlayer(next, "sacrifice");
+                    room->setPlayerMark(next, "@skull", 1);
+                    room->setPlayerProperty(next, "isDead", true);
+                }
+                next = next->getNext();
+            }
+        }
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return false;
+}
+
+ConjuringRule::ConjuringRule(QObject *parent)
+    :GameRule(parent)
+{
+    setObjectName("conjuring_rule");
+}
+
+int ConjuringRule::getPriority(TriggerEvent) const{
+    return -1;
+}
+
+bool ConjuringRule::trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const{
+    switch(event){
+    case PhaseChange:{
+        if(player->getPhase() == Player::RoundStart){
+            if(player->hasMark("poison_jur")){
+                LogMessage log;
+                log.from = player;
+                log.type = "#Poison";
+                room->sendLog(log);
+                player->loseMark("poison_jur");
+                if(player->getMark("poison_jur") <= 2){
+                    if(player->isAllNude() || room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
+                        room->loseHp(player);
+                    else{
+                        int index = qrand() % player->getCards("hej").length();
+                        const Card *card = player->getCards("hej").at(index);
+                        room->throwCard(card, player);
+
+                        if(!player->isAllNude()){
+                            index = qrand() % player->getCards("hej").length();
+                            card = player->getCards("hej").at(index);
+                            room->throwCard(card, player);
+                        }
+                    }
+                }
+                else{
+                    int index = qrand() % player->getCards("hej").length();
+                    const Card *card = player->getCards("hej").at(index);
+                    room->throwCard(card, player);
+                }
+                if(player->getMark("poison_jur") == 0)
+                    player->removeJur("poison_jur");
+            }
+        }
         break;
     }
 

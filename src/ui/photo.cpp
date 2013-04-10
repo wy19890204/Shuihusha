@@ -794,7 +794,7 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         if(player->hasMark(conjur)){
             static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
             painter->drawPixmap(-55, -47, cojur);
-            //painter->setPen(Qt::white);
+            painter->setPen(Qt::yellow);
             QFont font = Config.SmallFont;
             font.setPixelSize(15);
             painter->setFont(font);

@@ -2987,6 +2987,9 @@ void Room::startGame(){
         game_rule = new GameRule(this);
 
     thread->constructTriggerTable(game_rule);
+    thread->addTriggerSkill(new ConjuringRule(this));
+    if(Config.EnableReincarnation)
+        thread->addTriggerSkill(new ReincarnationRule(this));
     if(Config.EnableBasara)
         thread->addTriggerSkill(new BasaraMode(this));
 
