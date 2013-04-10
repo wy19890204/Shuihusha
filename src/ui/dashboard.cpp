@@ -237,10 +237,20 @@ void Dashboard::createRight(){
     settings->endGroup();
     wake_icon->hide();
 
-    conjur_icon = new Pixmap("image/state/sleep.png");
-    conjur_icon->setPos(22, 64);
-    conjur_icon->setZValue(0.4);
+    conjur_icon = new Pixmap();
+    conjur_icon->setPos(-52, 27);
+    conjur_icon->setParentItem(right);
+    conjur_icon->setZValue(0.5);
     conjur_icon->hide();
+
+    conjur_item = new QGraphicsSimpleTextItem(this);
+    conjur_item->setParentItem(right);
+    conjur_item->setBrush(Qt::yellow);
+    QFont font = Config.SmallFont;
+    font.setPixelSize(15);
+    conjur_item->setFont(font);
+    conjur_item->setPos(35, 70);
+    conjur_item->hide();
 }
 
 void Dashboard::setRole(const QString &new_role, int index){
@@ -261,23 +271,19 @@ void Dashboard::setConjuring(){
     if(!conjurs.isEmpty()){
         QString conjur = conjurs.first();
         if(Self->hasMark(conjur)){
-            static QPixmap cojur(QString("image/system/conjuring/%1_d.png").arg(conjur));
-            conjur_icon->setPixmap(cojur);
+            conjur_icon->setPixmap(QPixmap(QString("image/system/conjuring/%1_d.png").arg(conjur)));
             conjur_icon->show();
 
-            QGraphicsSimpleTextItem *conjur_item = new QGraphicsSimpleTextItem(this);
-            conjur_item->setBrush(Qt::yellow);
-            QFont font = Config.SmallFont;
-            font.setPixelSize(15);
-            conjur_item->setFont(font);
-            conjur_item->moveBy(35, 60);
             conjur_item->setText(QString("%1 %2 %3")
                               .arg(Sanguosha->translate(conjur))
                               .arg(Sanguosha->translate("multiply"))
                               .arg(Self->getMark(conjur)));
+            conjur_item->show();
         }
-        else
+        else{
             conjur_icon->hide();
+            conjur_item->hide();
+        }
     }
 }
 
@@ -364,6 +370,7 @@ void Dashboard::setPlayer(const ClientPlayer *player){
     connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
     connect(player, SIGNAL(phase_changed()), this, SLOT(setPhaseState()));
     //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
+    connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
 
     mark_item->setDocument(player->getMarkDoc());
 

@@ -43,14 +43,28 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                 log.type = "#Poison";
                 room->sendLog(log);
                 player->loseMark("poison_jur");
-                player->addMark("poison_count");
-                if(player->getMark("poison_jur") == 0){
-                    room->loseHp(player);
-                    if(player->getMark("poison_count") >= 6)
-                        player->removeJur("poison_jur");
-                    else
-                        player->gainJur("poison_jur", 3);
+                if(player->getMark("poison_jur") <= 2){
+                    if(player->isAllNude() || room->askForChoice(player, "poison_jur", "hp+cd") == "hp")
+                        room->loseHp(player);
+                    else{
+                        int index = qrand() % player->getCards("hej").length();
+                        const Card *card = player->getCards("hej").at(index);
+                        room->throwCard(card, player);
+
+                        if(!player->isAllNude()){
+                            index = qrand() % player->getCards("hej").length();
+                            card = player->getCards("hej").at(index);
+                            room->throwCard(card, player);
+                        }
+                    }
                 }
+                else{
+                    int index = qrand() % player->getCards("hej").length();
+                    const Card *card = player->getCards("hej").at(index);
+                    room->throwCard(card, player);
+                }
+                if(player->getMark("poison_jur") == 0)
+                    player->removeJur("poison_jur");
             }
             break;
         }

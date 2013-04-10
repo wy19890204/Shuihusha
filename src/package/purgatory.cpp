@@ -17,9 +17,11 @@ void Shit::onUse(Room *room, const CardUseStruct &) const{
 
 void Shit::onMove(const CardMoveStruct &move) const{
     PlayerStar from = move.from;
+    if(!from)
+        return;
     Room *room = from->getRoom();
     if(from && move.from_place == Player::Hand &&
-       from->getRoom()->getCurrent() == move.from
+       room->getCurrent() == move.from
        && (move.to_place == Player::DiscardedPile || move.to_place == Player::Special)
        && move.to == NULL
        && from->isAlive()){

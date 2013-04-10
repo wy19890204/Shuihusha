@@ -341,7 +341,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(waked()), this, SLOT(setWakeState()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
         //connect(player, SIGNAL(ecst_changed()), this, SLOT(setEcstState()));
-        connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
+        //connect(player, SIGNAL(conjuring_changed()), this, SLOT(setConjuring()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 
