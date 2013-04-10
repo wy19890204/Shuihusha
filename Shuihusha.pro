@@ -74,6 +74,7 @@ SOURCES += \
 	src/package/cock.cpp \
 	src/package/boar.cpp \
 	src/package/sp.cpp \
+	src/package/casket.cpp \
 	src/package/mini-generals.cpp \
 	src/package/joy.cpp \
 	src/package/guben.cpp \
@@ -217,6 +218,7 @@ HEADERS += \
 	src/package/cock.h \
 	src/package/boar.h \
 	src/package/sp.h \
+	src/package/casket.h \
 	src/package/mini-generals.h \
 	src/package/joy.h \
 	src/package/guben.h \

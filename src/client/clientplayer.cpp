@@ -163,7 +163,7 @@ void ClientPlayer::setMark(const QString &mark, int value){
 
     if(mark.endsWith("_wake"))
         emit waked();
-    if(mark.endsWith("_jar"))
+    if(mark.endsWith("_jur"))
         emit conjuring_changed();
     if(!mark.startsWith("@"))
         return;

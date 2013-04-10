@@ -7,8 +7,12 @@ table.insert(sgs.ai_skills, sacrifice_skill)
 sacrifice_skill.getTurnUseCard = function(self)
 	if not sgs.GetConfig("EnableReincarnation", false) then return end
 	if not self.player:hasUsed("SacrificeCard") and not self.player:isKongcheng() then
-		local deathnote = self.room:getTag("DeadPerson"):toString():split("+")
-		if deathnote[1] == "" then table.remove(deathnote, 1) end
+		local deathnote = {}
+		for _, aplayer in sgs.qlist(self.room:getAllPlayers(true)) do
+			if aplayer:isDead() then
+				table.insert(deathnote, aplayer:objectName())
+			end
+		end
 		if #deathnote == 0 then return end
 		for _, name in ipairs(deathnote) do
 			local target = self.room:findPlayer(name, true)
@@ -21,7 +25,7 @@ sacrifice_skill.getTurnUseCard = function(self)
 					local cards = sgs.QList2Table(self.player:getCards("h"))
 					self:sortByUseValue(cards, true)
 					if self:getUseValue(cards[1]) < 3 then
-						self.xjtarget = name
+						self.xjtarget = target:getGeneralName()
 						self.xjcard = cards[1]
 						return sgs.Card_Parse("@SacrificeCard=.")
 					end

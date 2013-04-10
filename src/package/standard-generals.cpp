@@ -1813,6 +1813,7 @@ public:
 };
 
 YanshouCard::YanshouCard(){
+    mute = true;
 }
 
 bool YanshouCard::targetFilter(const QList<const Player *> &targets, const Player *, const Player *Self) const{
@@ -2227,7 +2228,6 @@ public:
                     QString skill = room->askForChoice(caijing, objectName(), skills.join("+"));
                     room->acquireSkill(caijing, skill);
                 }
-                room->playSkillEffect(objectName());
 
                 room->playLightbox(caijing, "duoquan", "");
 
@@ -2450,7 +2450,6 @@ public:
                 continue;
             if(room->askForCard(xing, ".S", "@zhensha:" + player->objectName(), true, data, CardDiscarded)){
                 LogMessage log;
-                room->playSkillEffect(objectName());
                 log.type = "#UseSkill";
                 log.from = xing;
                 log.to << player;

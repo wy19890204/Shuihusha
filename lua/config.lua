@@ -5,7 +5,7 @@ config = {
 	version = "20130404",
 	version_name = "F4.7.5",
 	mod_name = "Shuihusha",
-	kingdoms = { "guan", "jiang", "min", "kou", "god"},
+	kingdoms = { "guan", "jiang", "min", "kou", "god", "moon", "sun"},
 	package_names = {
 		"StandardCard",
 		"Plough",
@@ -30,6 +30,7 @@ config = {
 --		"Cock",
 --		"Boar",
 		"SP",
+		"Casket",
 		"Test",
 --		"JoyGeneral",
 	},
@@ -95,6 +96,8 @@ config = {
 	color_min = "#4DB873",
 	color_kou = "#8A807A",
 	color_god = "#96943D",
+	color_moon = "#56789A",
+	color_sun = "#BA9876",
 
 	mini_max = 30 -- 此处以Config.S_MINI_MAX_COUNT为准
 }

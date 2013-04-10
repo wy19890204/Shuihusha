@@ -104,14 +104,17 @@ SpinDestiny::SpinDestiny(Suit suit, int number)
 void SpinDestiny::onUse(Room *room, const CardUseStruct &card_use) const{
     CardUseStruct use = card_use;
     use.to = room->getAllPlayers(false);
-    TrickCard::onUse(room, use);
+    QList<ServerPlayer *> deads;
     foreach(ServerPlayer *dead, room->getAllPlayers(true)){
-        if(dead->isDead()){
-            if(dead->getMaxHp() <= 0)
-                room->setPlayerProperty(dead, "maxhp", 1);
-            room->setPlayerProperty(dead, "hp", 1);
-            room->revivePlayer(dead);
-        }
+        if(dead->isDead())
+            deads << dead;
+    }
+    TrickCard::onUse(room, use);
+    foreach(ServerPlayer *dead, deads){
+        if(dead->getMaxHp() <= 0)
+            room->setPlayerProperty(dead, "maxhp", 1);
+        room->setPlayerProperty(dead, "hp", 1);
+        room->revivePlayer(dead);
     }
 }
 
@@ -137,7 +140,8 @@ void EdoTensei::onEffect(const CardEffectStruct &effect) const{
     }
     if(targets.isEmpty())
         return;
-    QString hcoi = room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
+    QString hcoi = targets.count() == 1 ? targets.first() :
+                   room->askForChoice(effect.from, "edo_tensei", targets.join("+"));
     int index = targets.indexOf(hcoi);
     PlayerStar revivd = room->findPlayer(targets_object.at(index), true);
     room->setPlayerProperty(revivd, "hp", 1);
