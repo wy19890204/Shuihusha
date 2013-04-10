@@ -99,7 +99,8 @@ private:
     QList<QGraphicsItem *> delayed_tricks;
     QGraphicsPixmapItem *death_item;
     Pixmap *chain_icon, *back_icon, *wake_icon, *jail_icon;
-    Pixmap *phase_icon;
+    Pixmap *phase_icon, *conjur_icon;
+    //QGraphicsSimpleTextItem *conjur_item;
 
     QGraphicsRectItem *equip_rects[4];
     CardItem *weapon, *armor, *defensive_horse, *offensive_horse;
@@ -140,6 +141,7 @@ private slots:
     void setPhaseState();
     //void setEcstState();
     void setActionState();
+    void setConjuring();
 
 signals:
     void card_selected(const Card *card);

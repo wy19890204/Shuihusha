@@ -14,7 +14,7 @@ users.db
 doc/*.html
 .DS_Store
 liblua5.1.dylib
-font/font.7z
+font/font.*
 *sha.pro.user*
 etc/customScenes/custom_scenario.txt
 *.dylib

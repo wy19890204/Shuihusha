@@ -788,21 +788,22 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         avatar_area->setBrush(Qt::NoBrush);
 
     //conjuring
-    QString conjur = player->getAllMarkName(3, "_jur").first();
-    if(player->getMark(conjur) > 0){
-        static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
-        //painter->drawPixmap(50+10*conjurs.indexOf(conjur), 63, cojur);
-        painter->drawPixmap(-55, -47, cojur);
-        //painter->setPen(Qt::white);
-        QFont font = Config.SmallFont;
-        font.setPixelSize(15);
-        painter->setFont(font);
-        //painter->drawText(55+10*conjurs.indexOf(conjur), 63, QString::number(player->getMark(conjur)));
-        painter->drawText(35, 60,
-                          QString("%1 %2 %3")
-                          .arg(Sanguosha->translate(conjur))
-                          .arg(Sanguosha->translate("multiply"))
-                          .arg(player->getMark(conjur)));
+    QStringList conjurs = player->getAllMarkName(3, "_jur");
+    if(!conjurs.isEmpty()){
+        QString conjur = conjurs.first();
+        if(player->hasMark(conjur)){
+            static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
+            painter->drawPixmap(-55, -47, cojur);
+            //painter->setPen(Qt::white);
+            QFont font = Config.SmallFont;
+            font.setPixelSize(15);
+            painter->setFont(font);
+            painter->drawText(35, 60,
+                              QString("%1 %2 %3")
+                              .arg(Sanguosha->translate(conjur))
+                              .arg(Sanguosha->translate("multiply"))
+                              .arg(player->getMark(conjur)));
+        }
     }
 
     if(player->isDead()){

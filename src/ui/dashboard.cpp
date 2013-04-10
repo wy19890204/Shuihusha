@@ -236,6 +236,11 @@ void Dashboard::createRight(){
     wake_icon->setOpacity(settings->value("opacity").toReal());
     settings->endGroup();
     wake_icon->hide();
+
+    conjur_icon = new Pixmap("image/state/sleep.png");
+    conjur_icon->setPos(22, 64);
+    conjur_icon->setZValue(0.4);
+    conjur_icon->hide();
 }
 
 void Dashboard::setRole(const QString &new_role, int index){
@@ -249,6 +254,31 @@ void Dashboard::setWakeState(){
         wake_icon->setPixmap(QPixmap("image/state/wake.png"));
     else
         wake_icon->setPixmap(QPixmap("image/state/sleep.png"));
+}
+
+void Dashboard::setConjuring(){
+    QStringList conjurs = Self->getAllMarkName(3, "_jur");
+    if(!conjurs.isEmpty()){
+        QString conjur = conjurs.first();
+        if(Self->hasMark(conjur)){
+            static QPixmap cojur(QString("image/system/conjuring/%1_d.png").arg(conjur));
+            conjur_icon->setPixmap(cojur);
+            conjur_icon->show();
+
+            QGraphicsSimpleTextItem *conjur_item = new QGraphicsSimpleTextItem(this);
+            conjur_item->setBrush(Qt::yellow);
+            QFont font = Config.SmallFont;
+            font.setPixelSize(15);
+            conjur_item->setFont(font);
+            conjur_item->moveBy(35, 60);
+            conjur_item->setText(QString("%1 %2 %3")
+                              .arg(Sanguosha->translate(conjur))
+                              .arg(Sanguosha->translate("multiply"))
+                              .arg(Self->getMark(conjur)));
+        }
+        else
+            conjur_icon->hide();
+    }
 }
 
 void Dashboard::setPhaseState(){
