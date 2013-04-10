@@ -11,7 +11,7 @@ public:
     virtual bool trigger(TriggerEvent , Room*, ServerPlayer *, QVariant &data) const{
         DamageStruct damage = data.value<DamageStruct>();
         if(damage.to->getGender() == General::Male)
-            damage.to->gainJur("poison_jur", 6);
+            damage.to->gainJur("poison_jur", 5);
         return false;
     }
 };

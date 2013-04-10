@@ -21,8 +21,10 @@ return {
 	["reflex_jur"] = "反弹",
 	["cure_jur"] = "回复",
 	["revolt_jur"] = "抵抗",
+	[":revolt_jur"] = "目标角色附加所有咒术状态的几率-50%。共持续5个回合。",
 	["violent_jur"] = "狂暴",
 	["lucky_jur"] = "幸运",
+	[":lucky_jur"] = "目标角色摸牌阶段，该角色有75%的几率额外摸一张牌。共持续2个回合。",
 	["invalid_jur"] = "无效",
 
 	["#GainJur"] = "%from 进入了 %arg 状态",

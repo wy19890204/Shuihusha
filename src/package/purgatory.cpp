@@ -155,6 +155,48 @@ bool EdoTensei::isAvailable(const Player *) const{
     return false;
 }
 
+class LashGunSkill : public WeaponSkill{
+public:
+    LashGunSkill():WeaponSkill("lash_gun"){
+        events << Damage;
+    }
+
+    virtual int getPriority(TriggerEvent) const{
+        return -1;
+    }
+
+    static QList<ServerPlayer *> getNextandPrevious(ServerPlayer *target){
+        QList<ServerPlayer *> targets;
+        targets << target->getNextAlive();
+        if(target->getRoom()->getAlivePlayers().count() > 2){
+            foreach(ServerPlayer *tmp, target->getRoom()->getOtherPlayers(target)){
+                if(tmp->getNextAlive() == target){
+                    targets << tmp;
+                    break;
+                }
+            }
+        }
+        return targets;
+    }
+
+    virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.card->isKindOf("Slash") && damage.nature != DamageStruct::Normal){
+            player->playCardEffect("Elash_gun", "weapon");
+            foreach(ServerPlayer *tmp, getNextandPrevious(damage.to))
+                tmp->gainJur("dizzy_jur", 2);
+        }
+        return false;
+    }
+};
+
+LashGun::LashGun(Suit suit, int number)
+    :Weapon(suit, number, 6)
+{
+    setObjectName("lash_gun");
+    skill = new LashGunSkill;
+}
+
 PurgatoryPackage::PurgatoryPackage()
     :CardPackage("purgatory")
 {
@@ -170,6 +212,7 @@ PurgatoryPackage::PurgatoryPackage()
             << new SpinDestiny(Card::Diamond, 5)
             << new EdoTensei(Card::Club, 5)
             << new EdoTensei(Card::Spade, 5)
+            << new LashGun(Card::Diamond, 11)
             ;
 
     foreach(Card *card, cards)
