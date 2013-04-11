@@ -13,6 +13,7 @@
 #include "pixmapanimation.h"
 #include "scenario.h"
 #include "audio.h"
+#include "cheatdialog.h"
 #include "record-analysis.h"
 
 #include <QPropertyAnimation>
@@ -2783,126 +2784,6 @@ void RoomScene::autoSaveReplayRecord(){
     ClientInstance->save(QString("%1/%2").arg(location).arg(filename));
 }
 
-ScriptExecutor::ScriptExecutor(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Script execution"));
-
-    QVBoxLayout *vlayout = new QVBoxLayout;
-
-    vlayout->addWidget(new QLabel(tr("Please input the script that should be executed at server side:\n P = you, R = your room")));
-
-    QTextEdit *box = new QTextEdit;
-    box->setObjectName("scriptBox");
-    vlayout->addWidget(box);
-
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    hlayout->addWidget(ok_button);
-
-    vlayout->addLayout(hlayout);
-
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(this, SIGNAL(accepted()), this, SLOT(doScript()));
-
-    setLayout(vlayout);
-}
-
-void ScriptExecutor::doScript(){
-    QTextEdit *box = findChild<QTextEdit *>("scriptBox");
-    if(box == NULL)
-        return;
-
-    QString script = box->toPlainText();
-    QByteArray data = script.toAscii();
-    data = qCompress(data);
-    script = data.toBase64();
-
-    ClientInstance->requestCheatRunScript(script);
-}
-
-DeathNoteDialog::DeathNoteDialog(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Death note"));
-
-    killer = new QComboBox;
-    RoomScene::FillPlayerNames(killer, true);
-
-    victim = new QComboBox;
-    RoomScene::FillPlayerNames(victim, false);
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-
-    QFormLayout *layout = new QFormLayout;
-    layout->addRow(tr("Killer"), killer);
-    layout->addRow(tr("Victim"), victim);
-
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-    hlayout->addWidget(ok_button);
-    layout->addRow(hlayout);
-
-    setLayout(layout);
-}
-
-void DeathNoteDialog::accept(){
-    QDialog::accept();
-    ClientInstance->requestCheatKill(killer->itemData(killer->currentIndex()).toString(),
-                            victim->itemData(victim->currentIndex()).toString());
-}
-
-DamageMakerDialog::DamageMakerDialog(QWidget *parent)
-    :QDialog(parent)
-{
-    setWindowTitle(tr("Damage maker"));
-
-    damage_source = new QComboBox;
-    RoomScene::FillPlayerNames(damage_source, true);
-
-    damage_target = new QComboBox;
-    RoomScene::FillPlayerNames(damage_target, false);
-
-    damage_nature = new QComboBox;
-    damage_nature->addItem(tr("Normal"), S_CHEAT_NORMAL_DAMAGE);
-    damage_nature->addItem(tr("Thunder"), S_CHEAT_THUNDER_DAMAGE);
-    damage_nature->addItem(tr("Fire"), S_CHEAT_FIRE_DAMAGE);
-    damage_nature->addItem(tr("Recover HP"), S_CHEAT_HP_RECOVER);
-    damage_nature->addItem(tr("Lose HP"), S_CHEAT_HP_LOSE);
-    damage_nature->addItem(tr("Lose Max HP"), S_CHEAT_MAX_HP_LOSE);
-    damage_nature->addItem(tr("Reset Max HP"), S_CHEAT_MAX_HP_RESET);
-
-    damage_point = new QSpinBox;
-    damage_point->setRange(1, 1000);
-    damage_point->setValue(1);
-
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addStretch();
-    hlayout->addWidget(ok_button);
-
-    QFormLayout *layout = new QFormLayout;
-
-    layout->addRow(tr("Damage source"), damage_source);
-    layout->addRow(tr("Damage target"), damage_target);
-    layout->addRow(tr("Damage nature"), damage_nature);
-    layout->addRow(tr("Damage point"), damage_point);
-    layout->addRow(hlayout);
-
-    setLayout(layout);
-
-    connect(damage_nature, SIGNAL(currentIndexChanged(int)), this, SLOT(disableSource()));
-}
-
-void DamageMakerDialog::disableSource(){
-    int nature = damage_nature->itemData(damage_nature->currentIndex()).toInt();
-    damage_source->setEnabled(nature < 5);
-}
-
 void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){
     if(add_none)
         combobox->addItem(tr("None"), ".");
@@ -2918,22 +2799,14 @@ void RoomScene::FillPlayerNames(QComboBox *combobox, bool add_none){
     }
 }
 
-void DamageMakerDialog::accept(){
-    QDialog::accept();
-
-    ClientInstance->requestCheatDamage(damage_source->itemData(damage_source->currentIndex()).toString(),
-                            damage_target->itemData(damage_target->currentIndex()).toString(),
-                            (DamageStruct::Nature)damage_nature->itemData(damage_nature->currentIndex()).toInt(),
-                            damage_point->value());
-}
-
 void RoomScene::makeDamage(){
     if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
         return;
     }
 
-    DamageMakerDialog *damage_maker = new DamageMakerDialog(main_window);
+    CheatDialog *damage_maker = new CheatDialog(main_window);
+    damage_maker->tab_widget->setCurrentIndex(0);
     damage_maker->exec();
 }
 
@@ -2943,7 +2816,8 @@ void RoomScene::makeKilling(){
         return;
     }
 
-    DeathNoteDialog *dialog = new DeathNoteDialog(main_window);
+    CheatDialog *dialog = new CheatDialog(main_window);
+    dialog->tab_widget->setCurrentIndex(1);
     dialog->exec();
 }
 
@@ -2952,6 +2826,12 @@ void RoomScene::makeReviving(){
         QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
         return;
     }
+    /*
+    CheatDialog *dialog = new CheatDialog(main_window);
+    dialog->tab_widget->setCurrentIndex(1);
+    dialog->killtype->setCurrentIndex(1);
+    dialog->exec();
+    */
 
     QStringList items;
     QList<const ClientPlayer*> victims;;

@@ -28,56 +28,11 @@ struct RoomLayout;
 #include <QTextEdit>
 #include <QCheckBox>
 #include <QDockWidget>
-#include <QSpinBox>
 #include <QDialog>
 #include <QGraphicsWidget>
 #include <QGraphicsProxyWidget>
 #include <QThread>
 #include <QHBoxLayout>
-
-class ScriptExecutor: public QDialog{
-    Q_OBJECT
-
-public:
-    ScriptExecutor(QWidget *parent);
-
-public slots:
-    void doScript();
-};
-
-class DeathNoteDialog: public QDialog{
-    Q_OBJECT
-
-public:
-    DeathNoteDialog(QWidget *parent);
-
-protected:
-    virtual void accept();
-
-private:
-    QComboBox *killer, *victim;
-};
-
-class DamageMakerDialog: public QDialog{
-    Q_OBJECT
-
-public:
-    DamageMakerDialog(QWidget *parent);
-
-protected:
-    virtual void accept();
-
-private:
-    QComboBox *damage_source;
-    QComboBox *damage_target;
-    QComboBox *damage_nature;
-    QSpinBox *damage_point;
-
-    void fillCombobox(QComboBox *combobox);
-
-private slots:
-    void disableSource();
-};
 
 class KOFOrderBox: public QGraphicsPixmapItem{
 public:
