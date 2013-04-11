@@ -371,12 +371,11 @@ void FangzaoCard::onEffect(const CardEffectStruct &effect) const{
     Room *room = effect.to->getRoom();
 
     room->playSkillEffect("fangzao", 1);
-    const Card *card = room->askForCardShow(effect.to, effect.from, "fangzao");
-    int card_id = card->getEffectiveId();
-    room->showCard(effect.to, card_id);
+    const Card *card = effect.to->getRandomHandCard();
+    room->showCard(effect.to, card->getEffectiveId());
 
     if(card->getTypeId() == Card::Basic || card->isNDTrick()){
-        room->setPlayerMark(effect.from, "fangzao", card_id);
+        room->setPlayerMark(effect.from, "fangzao", card->getEffectiveId());
         room->setPlayerFlag(effect.from, "fangzao");
     }else{
         room->setPlayerFlag(effect.from, "-fangzao");

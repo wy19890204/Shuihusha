@@ -55,4 +55,11 @@ public:
     virtual bool isAvailable(const Player *player) const;
 };
 
+class LashGun:public Weapon{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE LashGun(Card::Suit suit, int number);
+};
+
 #endif // PURGATORYPACKAGE_H

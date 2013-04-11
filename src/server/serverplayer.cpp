@@ -673,6 +673,8 @@ void ServerPlayer::gainJur(const QString &jur, int n){
     room->sendLog(log);
 
     room->setPlayerMark(this, jur, value);
+    if(jur.startsWith("dizzy"))
+        room->setPlayerProperty(this, "scarecrow", true);
 }
 
 void ServerPlayer::removeJur(const QString &jur){
@@ -683,6 +685,8 @@ void ServerPlayer::removeJur(const QString &jur){
     room->sendLog(log);
 
     removeMark(jur);
+    if(jur.startsWith("dizzy"))
+        room->setPlayerProperty(this, "scarecrow", false);
 }
 
 bool ServerPlayer::isOnline() const {

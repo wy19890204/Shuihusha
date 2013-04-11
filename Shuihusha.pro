@@ -43,6 +43,7 @@ SOURCES += \
 	src/dialog/choosegeneraldialog.cpp \
 	src/dialog/configdialog.cpp \
 	src/dialog/connectiondialog.cpp \
+	src/dialog/cheatdialog.cpp \
 	src/dialog/customassigndialog.cpp \
 	src/dialog/distanceviewdialog.cpp \
 	src/dialog/generaloverview.cpp \
@@ -185,6 +186,7 @@ HEADERS += \
 	src/dialog/cardoverview.h \
 	src/dialog/choosecarddialog.h \
 	src/dialog/choosegeneraldialog.h \
+	src/dialog/cheatdialog.h \
 	src/dialog/configdialog.h \
 	src/dialog/connectiondialog.h \
 	src/dialog/customassigndialog.h \
