@@ -36,4 +36,34 @@ private:
     QMap<QString, QString> skill_mark;
 };
 
+class EventsRule: public GameRule{
+    Q_OBJECT
+
+public:
+    EventsRule(QObject *parent);
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
+};
+
+class ReincarnationRule: public GameRule{
+    Q_OBJECT
+
+public:
+    ReincarnationRule(QObject *parent);
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
+};
+
+class ConjuringRule: public GameRule{
+    Q_OBJECT
+
+public:
+    ConjuringRule(QObject *parent);
+
+    virtual bool trigger(TriggerEvent event, Room* room, ServerPlayer *player, QVariant &data) const;
+    virtual int getPriority(TriggerEvent event = NonTrigger) const;
+};
+
 #endif // GAMERULE_H
