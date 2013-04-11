@@ -45,11 +45,12 @@ void ScriptExecutor::doScript(){
     ClientInstance->requestCheatRunScript(script);
 }
 
-CheatDialog::CheatDialog(QWidget *parent)
+CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     :QDialog(parent)
 {
     setWindowTitle(tr("Cheat dialog"));
 
+    this->Self = Self;
     QFormLayout *layout = new QFormLayout;
 
     tab_widget = new QTabWidget;
@@ -147,18 +148,18 @@ void CheatDialog::doApply(){
                                 victim->itemData(victim->currentIndex()).toString());
         else if(type == 1)
             ClientInstance->requestCheatRevive(victim->itemData(victim->currentIndex()).toString());
-        else if(type == 2){
-            QString data = makeData();
-            ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), data);
-        }
         break;
     }
+    case 2:
+        ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), makeData());
+        break;
     default:
         break;
     }
 }
 
 const QString CheatDialog::makeData(){
+    //general:songjiang|linchong,kindom:god,chained:true
     QStringList strs;
     QString str = QString("general:%1").arg(general->text());
     strs << str;
@@ -168,6 +169,18 @@ const QString CheatDialog::makeData(){
     strs << str;
     str = QString("sex:%1").arg(sex->text());
     strs << str;
+
+    str = QString("turned:%1").arg(turn->isChecked());
+    strs << str;
+    str = QString("chained:%1").arg(chain->isChecked());
+    strs << str;
+    str = QString("ecst:%1").arg(ecst->isChecked());
+    strs << str;
+    str = QString("drank:%1").arg(drank->isChecked());
+    strs << str;
+    str = QString("mark:%1").arg(mark->text());
+    strs << str;
+
     return strs.join(",");
 }
 
@@ -214,11 +227,11 @@ QWidget *CheatDialog::createSetStateTab(){
 
     QWidget *adhere = new QWidget;
     QFormLayout *adhere_layout = new QFormLayout;
-    QCheckBox *turn = new QCheckBox(tr("FaceUp"));
-    QCheckBox *chain = new QCheckBox(tr("Chained"));
-    QCheckBox *ecst = new QCheckBox(tr("Ecst"));
-    QCheckBox *drank = new QCheckBox(tr("Drank"));
-    QLineEdit *mark = new QLineEdit("@skull");
+    turn = new QCheckBox(tr("Turned"));
+    chain = new QCheckBox(tr("Chained"));
+    ecst = new QCheckBox(tr("Ecst"));
+    drank = new QCheckBox(tr("Drank"));
+    mark = new QLineEdit("@skull*1");
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(HLay(new QLabel(tr("Set Mark")), mark));
@@ -242,14 +255,12 @@ QWidget *CheatDialog::createSetStateTab(){
 }
 
 void CheatDialog::loadState(int index){
-    /*
-    QString player_obj = target->itemData(index).toString();
-    const Player *player = ClientInstance->getPlayer(player_obj);
+    /*QString player_obj = target->itemData(index).toString();
+    const Player *player = Self->findPlayer(player_obj);
     if(player){
         general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
         kingdom->setText(player->getKingdom());
         role->setText(player->getRole());
         sex->setText(player->getGenderString());
-    }
-    */
+    }*/
 }

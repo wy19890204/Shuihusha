@@ -46,6 +46,17 @@ void General::setGender(Gender gender){
     this->gender = gender;
 }
 
+void General::setGenderString(const QString &sex){
+    Gender gender;
+    if(sex == "male")
+        gender = Male;
+    else if(sex == "female")
+        gender = Female;
+    else
+        gender = Neuter;
+    setGender(gender);
+}
+
 QString General::getGenderString() const{
     switch(gender){
     case Male: return "male";

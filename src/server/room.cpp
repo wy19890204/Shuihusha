@@ -4040,9 +4040,9 @@ void Room::makeState(const QString &name, const QString &str){
         if(key == "general"){
             QString gen1 = value.split("|").first();
             QString gen2 = value.split("|").last();
-            transfigure(player, name + ":" + gen1, false, true);
+            transfigure(player, ":" + gen1, false, true);
             if(value.contains("|"))
-                transfigure(player, name + "%" + gen2, false, true);
+                transfigure(player, "%" + gen2, false, true);
         }
         else if(key == "kingdom")
             setPlayerProperty(player, "kingdom", value);
@@ -4051,20 +4051,22 @@ void Room::makeState(const QString &name, const QString &str){
             broadcastProperty(player, "role");
         }
         else if(key == "sex"){
-            int x;
-            if(value == "male")
-                x = 0;
-            else if(value == "female")
-                x = 1;
-            else
-                x = 2;
-            player->getGeneral()->setGender(x);
+            General *general = (General *)Sanguosha->getGeneral(player->getGeneralName());
+            general->setGenderString(value);
+        }
+        else if(key == "turned")
+            player->setFaceUp(value == "true" ? true : false);
+        else if(key == "chained")
+            player->setChained(value == "true" ? true : false);
+        else if(key == "ecst")
+            setPlayerFlag(player, value == "true" ? "ecst" : "-ecst");
+        else if(key == "drank")
+            setPlayerFlag(player, value == "true" ? "drank" : "-drank");
+        else if(key == "mark"){
+            int num = QString(value.split("*").last()).toInt();
+            player->gainMark(value, num);
         }
     }
-
-    revivePlayer(player);
-    setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
-    setPlayerProperty(player, "hp", player->getMaxHP());
 }
 
 void Room::fillAG(const QList<int> &card_ids, ServerPlayer *who){

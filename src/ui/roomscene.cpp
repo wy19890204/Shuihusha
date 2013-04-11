@@ -2805,7 +2805,7 @@ void RoomScene::makeDamage(){
         return;
     }
 
-    CheatDialog *damage_maker = new CheatDialog(main_window);
+    CheatDialog *damage_maker = new CheatDialog(main_window, Self);
     damage_maker->tab_widget->setCurrentIndex(0);
     damage_maker->exec();
 }
@@ -2816,7 +2816,7 @@ void RoomScene::makeKilling(){
         return;
     }
 
-    CheatDialog *dialog = new CheatDialog(main_window);
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
     dialog->tab_widget->setCurrentIndex(1);
     dialog->exec();
 }
@@ -2827,7 +2827,7 @@ void RoomScene::makeReviving(){
         return;
     }
     /*
-    CheatDialog *dialog = new CheatDialog(main_window);
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
     dialog->tab_widget->setCurrentIndex(1);
     dialog->killtype->setCurrentIndex(1);
     dialog->exec();

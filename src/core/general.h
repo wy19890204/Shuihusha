@@ -40,6 +40,7 @@ public:
     enum Gender {Male = 0, Female = 1, Neuter = 2};
     Gender getGender() const {return gender;}
     void setGender(Gender gender);
+    void setGenderString(const QString &sex);
     QString getGenderString() const;
 
     void addSkill(Skill* skill);

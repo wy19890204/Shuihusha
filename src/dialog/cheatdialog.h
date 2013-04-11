@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QSpinBox>
 #include <QListWidget>
+#include <QCheckBox>
 
 class Window;
 
@@ -23,11 +24,12 @@ class CheatDialog: public QDialog{
     Q_OBJECT
 
 public:
-    CheatDialog(QWidget *parent);
+    CheatDialog(QWidget *parent, ClientPlayer *Self);
     QTabWidget *tab_widget;
     QComboBox *killtype;
 
 private:
+    ClientPlayer *Self;
     QWidget *createDamageMakeTab();
     QWidget *createDeathNoteTab();
     QWidget *createSetStateTab();
@@ -38,10 +40,9 @@ private:
     QComboBox *killer, *victim;
 
     QComboBox *target;
-    QLineEdit *general;
-    QLineEdit *kingdom;
-    QLineEdit *role;
-    QLineEdit *sex;
+    QLineEdit *general, *kingdom, *role, *sex;
+    QCheckBox *turn, *chain, *ecst, *drank;
+    QLineEdit *mark;
 
 protected:
     virtual const QString makeData();
