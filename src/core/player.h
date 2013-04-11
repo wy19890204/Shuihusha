@@ -222,6 +222,7 @@ public:
     void copyFrom(Player* p);
 
     QList<const Player *> getSiblings() const;
+    const Player *findPlayer(const QString &objectname) const;
     void playAudio(const QString &name) const;
 
     QVariantMap tag;

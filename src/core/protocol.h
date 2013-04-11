@@ -37,6 +37,7 @@ namespace QSanProtocol
         S_CHEAT_KILL_PLAYER,
         S_CHEAT_REVIVE_PLAYER,
         S_CHEAT_MAKE_DAMAGE,
+        S_CHEAT_SET_STATE,
         S_CHEAT_RUN_SCRIPT
     };
 

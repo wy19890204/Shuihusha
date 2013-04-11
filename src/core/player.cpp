@@ -1107,6 +1107,17 @@ QList<const Player *> Player::getSiblings() const{
     return siblings;
 }
 
+const Player *Player::findPlayer(const QString &objectname) const{
+    if(parent()){
+        QList<const Player *> siblings = parent()->findChildren<const Player *>();
+        foreach(const Player *player, siblings){
+            if(player->objectName() == objectname || player->getGeneralName() == objectname)
+                return player;
+        }
+    }
+    return NULL;
+}
+
 void Player::playAudio(const QString &name) const{
     Sanguosha->playAudio(name);
 }

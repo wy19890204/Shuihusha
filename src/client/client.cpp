@@ -433,7 +433,7 @@ void Client::requestCheatRunScript(const QString& script)
 
 void Client::requestCheatRevive(const QString& name)
 {
-    Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
+    Json::Value cheatReq(Json::arrayValue);
     cheatReq[0] = (int)S_CHEAT_REVIVE_PLAYER;
     cheatReq[1] = toJsonString(name);
     requestToServer(S_COMMAND_CHEAT, cheatReq);
@@ -457,6 +457,15 @@ void Client::requestCheatKill(const QString& killer, const QString& victim)
     Json::Value cheatArg;
     cheatArg[0] = (int)S_CHEAT_KILL_PLAYER;
     cheatArg[1] = toJsonArray(killer, victim);
+    requestToServer(S_COMMAND_CHEAT, cheatArg);
+}
+
+void Client::requestCheatState(const QString &target, const QString &data)
+{
+    Json::Value cheatArg;
+    cheatArg[0] = (int)S_CHEAT_SET_STATE;
+    cheatArg[1] = toJsonString(target);
+    cheatArg[2] = toJsonString(data);
     requestToServer(S_COMMAND_CHEAT, cheatArg);
 }
 

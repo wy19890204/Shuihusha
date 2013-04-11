@@ -3928,6 +3928,10 @@ bool Room::makeCheat(ServerPlayer* player){
         if (!arg[1].isString()) return false;
         makeReviving(toQString(arg[1]));
     }
+    else if (code == S_CHEAT_SET_STATE){
+        if (!arg[1].isString()) return false;
+        makeState(toQString(arg[1]), toQString(arg[2]));
+    }
     else if (code == S_CHEAT_RUN_SCRIPT)
     {
         if (!arg[1].isString()) return false;
@@ -4019,6 +4023,45 @@ void Room::makeKilling(const QString& killerName, const QString& victimName, boo
 void Room::makeReviving(const QString &name){
     ServerPlayer *player = findChild<ServerPlayer *>(name);
     Q_ASSERT(player);
+    revivePlayer(player);
+    setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
+    setPlayerProperty(player, "hp", player->getMaxHP());
+}
+
+void Room::makeState(const QString &name, const QString &str){
+    ServerPlayer *player = findChild<ServerPlayer *>(name);
+    Q_ASSERT(player);
+    //general:songjiang|linchong,kindom:god,chained:true
+    QStringList items = str.split(",");
+    foreach(QString item, items){
+        QString key = item.split(":").first();
+        QString value = item.split(":").last();
+
+        if(key == "general"){
+            QString gen1 = value.split("|").first();
+            QString gen2 = value.split("|").last();
+            transfigure(player, name + ":" + gen1, false, true);
+            if(value.contains("|"))
+                transfigure(player, name + "%" + gen2, false, true);
+        }
+        else if(key == "kingdom")
+            setPlayerProperty(player, "kingdom", value);
+        else if(key == "role"){
+            player->setRole(value);
+            broadcastProperty(player, "role");
+        }
+        else if(key == "sex"){
+            int x;
+            if(value == "male")
+                x = 0;
+            else if(value == "female")
+                x = 1;
+            else
+                x = 2;
+            player->getGeneral()->setGender(x);
+        }
+    }
+
     revivePlayer(player);
     setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
     setPlayerProperty(player, "hp", player->getMaxHP());

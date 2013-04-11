@@ -50,6 +50,7 @@ public:
     void requestCheatKill(const QString& killer, const QString& victim);
     void requestCheatDamage(const QString& source, const QString& target, DamageStruct::Nature nature, int points);
     void requestCheatRevive(const QString& name);
+    void requestCheatState(const QString &target, const QString &data);
     void requestCheatRunScript(const QString& script);
 
     // other client requests

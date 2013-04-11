@@ -5,6 +5,7 @@
 #include "dashboard.h"
 #include <QDialog>
 #include <QSpinBox>
+#include <QListWidget>
 
 class Window;
 
@@ -35,13 +36,21 @@ private:
     QComboBox *damage_nature;
     QSpinBox *damage_point;
     QComboBox *killer, *victim;
+
     QComboBox *target;
+    QLineEdit *general;
+    QLineEdit *kingdom;
+    QLineEdit *role;
+    QLineEdit *sex;
 
 protected:
+    virtual const QString makeData();
     virtual void accept();
+
 private slots:
     void doApply();
     void disableSource();
+    void loadState(int index);
 };
 
 #endif // CHEATDIALOG_H

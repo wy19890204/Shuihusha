@@ -363,6 +363,7 @@ private:
     void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point);
     void makeKilling(const QString& killer, const QString& victim, bool force = false);
     void makeReviving(const QString &name);
+    void makeState(const QString &name, const QString &str);
     void doScript(const QString &script);
 
     //helper functions and structs

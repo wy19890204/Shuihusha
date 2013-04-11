@@ -147,11 +147,28 @@ void CheatDialog::doApply(){
                                 victim->itemData(victim->currentIndex()).toString());
         else if(type == 1)
             ClientInstance->requestCheatRevive(victim->itemData(victim->currentIndex()).toString());
+        else if(type == 2){
+            QString data = makeData();
+            ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), data);
+        }
         break;
     }
     default:
         break;
     }
+}
+
+const QString CheatDialog::makeData(){
+    QStringList strs;
+    QString str = QString("general:%1").arg(general->text());
+    strs << str;
+    str = QString("kingdom:%1").arg(kingdom->text());
+    strs << str;
+    str = QString("role:%1").arg(role->text());
+    strs << str;
+    str = QString("sex:%1").arg(sex->text());
+    strs << str;
+    return strs.join(",");
 }
 
 void CheatDialog::accept(){
@@ -177,14 +194,62 @@ QWidget *CheatDialog::createSetStateTab(){
 
     target = new QComboBox;
     RoomScene::FillPlayerNames(target, false);
+    connect(target, SIGNAL(currentIndexChanged(int)), this, SLOT(loadState(int)));
 
     QFormLayout *layout = new QFormLayout;
     layout->addRow(tr("Target"), target);
 
+    QTabWidget *tab_state = new QTabWidget;
+    QWidget *base = new QWidget;
+    QFormLayout *base_layout = new QFormLayout;
+    general = new QLineEdit("songjiang|lujunyi");
+    kingdom = new QLineEdit("guan");
+    role = new QLineEdit("lord");
+    sex = new QLineEdit("male");
+    base_layout->addRow(HLay(new QLabel(tr("General")), general));
+    base_layout->addRow(HLay(new QLabel(tr("Kingdom")), kingdom));
+    base_layout->addRow(HLay(new QLabel(tr("Role")), role));
+    base_layout->addRow(HLay(new QLabel(tr("Sex")), sex));
+    base->setLayout(base_layout);
+
+    QWidget *adhere = new QWidget;
+    QFormLayout *adhere_layout = new QFormLayout;
     QCheckBox *turn = new QCheckBox(tr("FaceUp"));
     QCheckBox *chain = new QCheckBox(tr("Chained"));
-    layout->addRow(HLay(turn, chain));
+    QCheckBox *ecst = new QCheckBox(tr("Ecst"));
+    QCheckBox *drank = new QCheckBox(tr("Drank"));
+    QLineEdit *mark = new QLineEdit("@skull");
+    adhere_layout->addRow(HLay(turn, chain));
+    adhere_layout->addRow(HLay(ecst, drank));
+    adhere_layout->addRow(HLay(new QLabel(tr("Set Mark")), mark));
+    adhere->setLayout(adhere_layout);
+
+    QWidget *conjur = new QWidget;
+    QFormLayout *conjur_layout = new QFormLayout;
+    QCheckBox *poison = new QCheckBox(tr("Poison"));
+    QCheckBox *sleep = new QCheckBox(tr("Sleep"));
+    conjur_layout->addRow(HLay(poison, sleep));
+    conjur->setLayout(conjur_layout);
+
+    tab_state->addTab(base, tr("Base"));
+    tab_state->addTab(adhere, tr("Adhere"));
+    tab_state->addTab(conjur, tr("Conjur"));
+
+    layout->addRow(tab_state);
 
     widget->setLayout(layout);
     return widget;
+}
+
+void CheatDialog::loadState(int index){
+    /*
+    QString player_obj = target->itemData(index).toString();
+    const Player *player = ClientInstance->getPlayer(player_obj);
+    if(player){
+        general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
+        kingdom->setText(player->getKingdom());
+        role->setText(player->getRole());
+        sex->setText(player->getGenderString());
+    }
+    */
 }
