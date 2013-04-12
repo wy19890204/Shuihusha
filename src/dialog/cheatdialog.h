@@ -47,12 +47,13 @@ private:
     QComboBox *target;
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank;
-    QLineEdit *mark;
     QLineEdit *poison, *sleep, *dizzy, *petro;
     QLineEdit *flags, *marks, *propty, *tag;
 
 protected:
+    virtual const Player *getPlayer();
     virtual const QString makeData();
+    virtual const QStringList getExtraSkills();
     virtual void accept();
 
 private slots:
@@ -64,6 +65,7 @@ private slots:
     void loadBase();
     void clearBase();
     void fillBase();
+    void loseSkill();
     void setGray(int index);
 };
 

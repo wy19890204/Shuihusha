@@ -608,16 +608,18 @@ public:
     }
 };
 
-class Tiandu: public TriggerSkill{
+class Tiancan: public TriggerSkill{
 public:
-    Tiandu():TriggerSkill("tiandu"){
+    Tiancan():TriggerSkill("tiancan"){
         events << PhaseEnd;
         frequency = Frequent;
     }
 
     virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &) const{
-        if(player->getPhase() == Player::Finish && player->askForSkillInvoke(objectName()))
+        if(player->getPhase() == Player::Finish && player->askForSkillInvoke(objectName())){
+            player->playSkillEffect(objectName());
             player->drawCards(1);
+        }
         return false;
     }
 };
@@ -1133,7 +1135,7 @@ SnakePackage::SnakePackage()
 
     General *houjian = new General(this, "houjian", "min", 2);
     houjian->addSkill(new Feizhen);
-    houjian->addSkill(new Tiandu);
+    houjian->addSkill(new Tiancan);
 
     General *dengfei = new General(this, "dengfei", "kou");
     dengfei->addSkill(new Jiejiu);

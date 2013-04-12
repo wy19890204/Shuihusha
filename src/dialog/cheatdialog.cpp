@@ -66,7 +66,6 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
     connect(apply_button, SIGNAL(clicked()), this, SLOT(doApply()));
-    connect(tab_widget, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
     hlayout->addWidget(ok_button);
     hlayout->addWidget(cancel_button);
     hlayout->addWidget(apply_button);
@@ -76,15 +75,13 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     setLayout(layout);
 }
 
-void CheatDialog::setGray(int index){
-    if(index == 2){
-        ok_button->setEnabled(false);
-        apply_button->setEnabled(false);
-    }
-    else{
-        ok_button->setEnabled(true);
-        apply_button->setEnabled(true);
-    }
+const Player *CheatDialog::getPlayer(){
+    QString player_obj = target->itemData(target->currentIndex()).toString();
+    const Player *player = Self->findPlayer(player_obj);
+    if(player)
+        return player;
+    else
+        return Self;
 }
 
 QWidget *CheatDialog::createDamageMakeTab(){
@@ -189,8 +186,6 @@ const QString CheatDialog::makeData(){
     str = QString("ecst:%1").arg(ecst->isChecked());
     strs << str;
     str = QString("drank:%1").arg(drank->isChecked());
-    strs << str;
-    str = QString("mark:%1").arg(mark->text());
     strs << str;
 
     str = QString("jur_poison:%1").arg(poison->text());
@@ -305,11 +300,21 @@ QWidget *CheatDialog::createSetStateTab(){
     chain = new QCheckBox(tr("Chained"));
     ecst = new QCheckBox(tr("Ecst"));
     drank = new QCheckBox(tr("Drank"));
-    mark = new QLineEdit();
-    mark->setPlaceholderText("@skull*1");
+
+    QPushButton *extra_button = new QPushButton(tr("Extra skills"));
+    QMenu *skill_menu = new QMenu(extra_button);
+    extra_button->setMenu(skill_menu);
+    QStringList extra_skills = getExtraSkills();
+    foreach(QString skill, extra_skills){
+        QAction *action = new QAction(skill_menu);
+        action->setText(Sanguosha->translate(skill));
+        action->setData(skill);
+        skill_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(loseSkill()));
+    }
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
-    adhere_layout->addRow(tr("Set Mark"), mark);
+    adhere_layout->addRow(extra_button);
     adhere->setLayout(adhere_layout);
 
     QWidget *conjur = new QWidget;
@@ -334,8 +339,8 @@ QWidget *CheatDialog::createSetStateTab(){
     QVBoxLayout *expert_layout = new QVBoxLayout;
     flags = new QLineEdit();
     flags->setPlaceholderText("key");
-    mark = new QLineEdit();
-    mark->setPlaceholderText("key=value");
+    marks = new QLineEdit();
+    marks->setPlaceholderText("key=value");
     propty = new QLineEdit();
     propty->setPlaceholderText("key=value");
     tag = new QLineEdit();
@@ -344,9 +349,35 @@ QWidget *CheatDialog::createSetStateTab(){
     QPushButton *apply = new QPushButton(tr("Apply"));
     connect(apply, SIGNAL(clicked()), this, SLOT(doClearExpert()));
     connect(apply, SIGNAL(clicked()), this, SLOT(doApplyExpert()));
+    connect(tab_state, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
     expert_layout->addWidget(new QLabel(tr("Expert Warning")));
-    expert_layout->addLayout(HLay(new QLabel("Flags"), flags));
-    expert_layout->addLayout(HLay(new QLabel("Mark"), mark));
+
+    QPushButton *flag_option = new QPushButton(tr("Option"));
+    QMenu *flag_menu = new QMenu(flag_option);
+    flag_option->setMenu(flag_menu);
+    const Player *player = getPlayer();
+    QStringList f1ags = player->getFlags().split("+");
+    foreach(QString fla, f1ags){
+        QAction *action = new QAction(flag_menu);
+        action->setText(fla);
+        action->setData("flag");
+        flag_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
+    QPushButton *mark_option = new QPushButton(tr("Option"));
+    QMenu *mark_menu = new QMenu(mark_option);
+    mark_option->setMenu(mark_menu);
+    QStringList ma2ks = player->getAllMarkName(2);
+    foreach(QString mrk, ma2ks){
+        QAction *action = new QAction(mark_menu);
+        action->setText(mrk);
+        action->setData("mark");
+        mark_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
+
+    expert_layout->addLayout(HLay(new QLabel("Flag"), flags, flag_option));
+    expert_layout->addLayout(HLay(new QLabel("Mark"), marks, mark_option));
     expert_layout->addLayout(HLay(new QLabel("Property"), propty));
     expert_layout->addLayout(HLay(new QLabel("Tag"), tag));
     expert_layout->addLayout(HLay(clear, apply));
@@ -362,6 +393,35 @@ QWidget *CheatDialog::createSetStateTab(){
     widget->setLayout(layout);
     loadState(0);
     return widget;
+}
+
+void CheatDialog::setGray(int index){
+    if(index == 2){
+        ok_button->setEnabled(false);
+        apply_button->setEnabled(false);
+    }
+    else{
+        ok_button->setEnabled(true);
+        apply_button->setEnabled(true);
+    }
+}
+
+const QStringList CheatDialog::getExtraSkills(){
+    const Player *player = getPlayer();
+    QStringList func;
+    QSet<QString> skill_names = player->getAcquiredSkills();
+    foreach(QString skill_name, skill_names){
+        const Skill *skill = Sanguosha->getSkill(skill_name);
+        if(skill){
+            if(skill->getFrequency() == Skill::NotSkill)
+                continue;
+            if(player->getGeneral()->hasSkill(skill_name) ||
+               (player->getGeneral2() && player->getGeneral2()->hasSkill(skill_name)))
+                continue;
+            func << skill_name;
+        }
+    }
+    return func;
 }
 
 void CheatDialog::loadState(int index){
@@ -380,17 +440,14 @@ void CheatDialog::loadState(int index){
 }
 
 void CheatDialog::loadBase(){
-    QString player_obj = target->itemData(target->currentIndex()).toString();
-    const Player *player = Self->findPlayer(player_obj);
-    if(player){
-        if(player->getGeneral2())
-            general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
-        else
-            general->setText(player->getGeneralName());
-        kingdom->setText(player->getKingdom());
-        role->setText(player->getRole());
-        sex->setText(player->getGenderString());
-    }
+    const Player *player = getPlayer();
+    if(player->getGeneral2())
+        general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
+    else
+        general->setText(player->getGeneralName());
+    kingdom->setText(player->getKingdom());
+    role->setText(player->getRole());
+    sex->setText(player->getGenderString());
 }
 
 void CheatDialog::clearBase(){
@@ -410,22 +467,35 @@ void CheatDialog::fillBase(){
             role->setText(action->text());
         else if(item == "sex")
             sex->setText(action->text());
+        //not base
+        else if(item == "flag")
+            flags->setText(action->text());
+    }
+}
+
+void CheatDialog::loseSkill(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action){
+        QString item = action->data().toString();
+        //skill:-sheri
+        item.prepend("skill:-");
+        ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), item);
     }
 }
 
 void CheatDialog::doClearExpert(){
-    mark->clear();
+    marks->clear();
     flags->clear();
     propty->clear();
     tag->clear();
 }
 
 void CheatDialog::doApplyExpert(){
-    //mark:key=value,flags:flag,propty:hp=2,tag:Tag=0
+    //mark:key=value,flag:flag,propty:hp=2,tag:Tag=0
     QStringList strs;
-    QString str = QString("mark:%1").arg(mark->text());
+    QString str = QString("mark:%1").arg(marks->text());
     strs << str;
-    str = QString("flags:%1").arg(flags->text());
+    str = QString("flag:%1").arg(flags->text());
     strs << str;
     str = QString("propty:%1").arg(propty->text());
     strs << str;

@@ -610,7 +610,7 @@
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="347"/>
         <source>Expert Warning</source>
-        <translation>警告：本页面仅限开发人员调试使用，任何误操作可能导致游戏崩溃。</translation>
+        <translation>警告：不懂别乱改，否则后果自负！</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="355"/>

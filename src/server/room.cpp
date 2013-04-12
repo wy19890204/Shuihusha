@@ -4072,10 +4072,11 @@ void Room::makeState(const QString &name, const QString &str){
             setPlayerFlag(player, value == "1" ? "ecst" : "-ecst");
         else if(key == "drank")
             setPlayerFlag(player, value == "1" ? "drank" : "-drank");
-        else if(key == "mark"){
-            QStringList value_spit = value.split("*");
-            int num = QString(value_spit.last()).toInt();
-            player->gainMark(value_spit.first(), num);
+        else if(key == "skill"){
+            if(value.startsWith("-")){
+                value.remove("-");
+                player->loseSkill(value);
+            }
         }
         else if(key.startsWith("jur_")){
             QStringList e = key.split("_");
@@ -4086,7 +4087,7 @@ void Room::makeState(const QString &name, const QString &str){
             if(value != "0")
                 setPlayerMark(player, key, value.toInt());
         }
-        else if(key == "flags")
+        else if(key == "flag")
             setPlayerFlag(player, value);
         else if(key == "mark"){
             QStringList m = value.split("=");
