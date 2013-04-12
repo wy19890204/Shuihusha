@@ -24,10 +24,14 @@
 #include <QHttp>
 #include <QAction>
 
-static QLayout *HLay(QWidget *left, QWidget *right){
+static QLayout *HLay(QWidget *left, QWidget *right, QWidget *other = NULL, QWidget *other2 = NULL){
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(left);
     layout->addWidget(right);
+    if(other)
+        layout->addWidget(other);
+    if(other2)
+        layout->addWidget(other2);
 
     return layout;
 }
@@ -240,8 +244,7 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     layout->addLayout(HLay(contest_mode_checkbox, random_seat_checkbox));
     layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addLayout(HLay(new QLabel(tr("Swap pile count")), swap_spinbox));
-    layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox));
+    layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox, new QLabel(tr("Swap pile count")), swap_spinbox));
     layout->addLayout(HLay(second_general_checkbox, nolordskill_checkbox));
     layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
     layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
@@ -249,9 +252,8 @@ QWidget *ServerDialog::createAdvancedTab(){
     layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
     layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
     layout->addWidget(announce_ip_checkbox);
-    layout->addLayout(HLay(new QLabel(tr("Address")), address_edit));
+    layout->addLayout(HLay(new QLabel(tr("Address")), address_edit, new QLabel(tr("Port")), port_edit));
     layout->addWidget(detect_button);
-    layout->addLayout(HLay(new QLabel(tr("Port")), port_edit));
     layout->addStretch();
 
     QWidget *widget = new QWidget;

@@ -43,6 +43,7 @@ private:
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank;
     QLineEdit *mark;
+    QLineEdit *poison, *sleep;
 
     QLineEdit *flags, *marks, *propty, *tag;
 protected:
@@ -53,6 +54,7 @@ private slots:
     void doApply();
     void disableSource();
     void loadState(int index);
+    void loadBase();
 };
 
 #endif // CHEATDIALOG_H

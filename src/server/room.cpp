@@ -4036,6 +4036,8 @@ void Room::makeState(const QString &name, const QString &str){
     foreach(QString item, items){
         QString key = item.split(":").first();
         QString value = item.split(":").last();
+        if(value == "" || value.isNull())
+            continue;
 
         if(key == "general"){
             QString gen1 = value.split("|").first();
@@ -4054,17 +4056,35 @@ void Room::makeState(const QString &name, const QString &str){
             General *general = (General *)Sanguosha->getGeneral(player->getGeneralName());
             general->setGenderString(value);
         }
-        else if(key == "turned")
-            player->setFaceUp(value == "true" ? true : false);
-        else if(key == "chained")
-            player->setChained(value == "true" ? true : false);
+        else if(key == "turned"){
+            if((value == "1" && player->faceUp()) ||
+               (value == "0" && !player->faceUp()))
+                player->turnOver();
+        }
+        else if(key == "chained"){
+            if(value == "1" && !player->isChained())
+                player->setChained(true);
+            else if(value == "0" && player->isChained())
+                player->setChained(false);
+            broadcastProperty(player, "chained");
+        }
         else if(key == "ecst")
-            setPlayerFlag(player, value == "true" ? "ecst" : "-ecst");
+            setPlayerFlag(player, value == "1" ? "ecst" : "-ecst");
         else if(key == "drank")
-            setPlayerFlag(player, value == "true" ? "drank" : "-drank");
+            setPlayerFlag(player, value == "1" ? "drank" : "-drank");
         else if(key == "mark"){
-            int num = QString(value.split("*").last()).toInt();
-            player->gainMark(value, num);
+            QStringList value_spit = value.split("*");
+            int num = QString(value_spit.last()).toInt();
+            player->gainMark(value_spit.first(), num);
+        }
+        else if(key.startsWith("jur_")){
+            QStringList e = key.split("_");
+            e.swap(0, 1);
+            key = e.join("_");
+            if(value == "0" && player->hasMark(key))
+                player->loseAllMarks(key);
+            if(value != "0")
+                setPlayerMark(player, key, value.toInt());
         }
     }
 }
