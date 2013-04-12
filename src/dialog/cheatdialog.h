@@ -43,6 +43,7 @@ private:
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank;
     QLineEdit *mark;
+    QLineEdit *poison, *sleep;
 
 protected:
     virtual const QString makeData();

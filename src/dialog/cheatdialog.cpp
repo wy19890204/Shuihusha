@@ -181,6 +181,12 @@ const QString CheatDialog::makeData(){
     str = QString("mark:%1").arg(mark->text());
     strs << str;
 
+    str = QString("jur_poison:%1").arg(poison->text());
+    strs << str;
+    str = QString("jur_sleep:%1").arg(sleep->text());
+    strs << str;
+
+    //qDebug("str: %s", qPrintable(strs.join(",")));
     return strs.join(",");
 }
 
@@ -215,10 +221,14 @@ QWidget *CheatDialog::createSetStateTab(){
     QTabWidget *tab_state = new QTabWidget;
     QWidget *base = new QWidget;
     QFormLayout *base_layout = new QFormLayout;
-    general = new QLineEdit("songjiang|lujunyi");
-    kingdom = new QLineEdit("guan");
-    role = new QLineEdit("lord");
-    sex = new QLineEdit("male");
+    general = new QLineEdit();
+    general->setPlaceholderText("songjiang|lujunyi");
+    kingdom = new QLineEdit();
+    kingdom->setPlaceholderText("guan");
+    role = new QLineEdit();
+    role->setPlaceholderText("lord");
+    sex = new QLineEdit();
+    sex->setPlaceholderText("male");
     base_layout->addRow(HLay(new QLabel(tr("General")), general));
     base_layout->addRow(HLay(new QLabel(tr("Kingdom")), kingdom));
     base_layout->addRow(HLay(new QLabel(tr("Role")), role));
@@ -231,7 +241,8 @@ QWidget *CheatDialog::createSetStateTab(){
     chain = new QCheckBox(tr("Chained"));
     ecst = new QCheckBox(tr("Ecst"));
     drank = new QCheckBox(tr("Drank"));
-    mark = new QLineEdit("@skull*1");
+    mark = new QLineEdit();
+    mark->setPlaceholderText("@skull*1");
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(HLay(new QLabel(tr("Set Mark")), mark));
@@ -239,9 +250,21 @@ QWidget *CheatDialog::createSetStateTab(){
 
     QWidget *conjur = new QWidget;
     QFormLayout *conjur_layout = new QFormLayout;
-    QCheckBox *poison = new QCheckBox(tr("Poison"));
-    QCheckBox *sleep = new QCheckBox(tr("Sleep"));
-    conjur_layout->addRow(HLay(poison, sleep));
+    poison = new QLineEdit();
+    poison->setValidator(new QIntValidator(0, 99, poison));
+    poison->setFixedWidth(20);
+    sleep = new QLineEdit();
+    sleep->setValidator(new QIntValidator(0, 99, sleep));
+    sleep->setFixedWidth(20);
+
+    QWidget *left = new QWidget;
+    QLayout *left_lay = HLay(new QLabel(tr("Poison")), poison);
+    left->setLayout(left_lay);
+    QWidget *right = new QWidget;
+    QLayout *right_lay = HLay(new QLabel(tr("Sleep")), sleep);
+    right->setLayout(right_lay);
+
+    conjur_layout->addRow(HLay(left, right));
     conjur->setLayout(conjur_layout);
 
     tab_state->addTab(base, tr("Base"));
@@ -251,16 +274,23 @@ QWidget *CheatDialog::createSetStateTab(){
     layout->addRow(tab_state);
 
     widget->setLayout(layout);
+    loadState(0);
     return widget;
 }
 
 void CheatDialog::loadState(int index){
-    /*QString player_obj = target->itemData(index).toString();
+    QString player_obj = target->itemData(index).toString();
     const Player *player = Self->findPlayer(player_obj);
     if(player){
-        general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
-        kingdom->setText(player->getKingdom());
-        role->setText(player->getRole());
-        sex->setText(player->getGenderString());
-    }*/
+        //general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
+        //kingdom->setText(player->getKingdom());
+        //role->setText(player->getRole());
+        //sex->setText(player->getGenderString());
+        turn->setChecked(!player->faceUp());
+        chain->setChecked(player->isChained());
+        ecst->setChecked(player->hasFlag("ecst"));
+        drank->setChecked(player->hasFlag("drank"));
+        poison->setText(QString::number(player->getMark("poison_jur")));
+        sleep->setText(QString::number(player->getMark("sleep_jur")));
+    }
 }
