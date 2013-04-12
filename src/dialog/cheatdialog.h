@@ -7,6 +7,7 @@
 #include <QSpinBox>
 #include <QListWidget>
 #include <QCheckBox>
+#include <QMenu>
 
 class Window;
 
@@ -33,6 +34,10 @@ private:
     QWidget *createDamageMakeTab();
     QWidget *createDeathNoteTab();
     QWidget *createSetStateTab();
+    QPushButton *ok_button;
+    QPushButton *cancel_button;
+    QPushButton *apply_button;
+
     QComboBox *damage_source;
     QComboBox *damage_target;
     QComboBox *damage_nature;
@@ -43,18 +48,23 @@ private:
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank;
     QLineEdit *mark;
-    QLineEdit *poison, *sleep;
-
+    QLineEdit *poison, *sleep, *dizzy, *petro;
     QLineEdit *flags, *marks, *propty, *tag;
+
 protected:
     virtual const QString makeData();
     virtual void accept();
 
 private slots:
     void doApply();
+    void doApplyExpert();
+    void doClearExpert();
     void disableSource();
     void loadState(int index);
     void loadBase();
+    void clearBase();
+    void fillBase();
+    void setGray(int index);
 };
 
 #endif // CHEATDIALOG_H

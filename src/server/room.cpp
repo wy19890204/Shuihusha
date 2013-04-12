@@ -4086,6 +4086,22 @@ void Room::makeState(const QString &name, const QString &str){
             if(value != "0")
                 setPlayerMark(player, key, value.toInt());
         }
+        else if(key == "flags")
+            setPlayerFlag(player, value);
+        else if(key == "mark"){
+            QStringList m = value.split("=");
+            key = m.first();
+            QVariant va = QVariant::fromValue(m.last());
+            setPlayerMark(player, key, va.toInt());
+        }
+        else if(key == "propty"){
+            QStringList p = value.split("=");
+            setPlayerProperty(player, QString(p.first()).toLocal8Bit().data(), QVariant::fromValue(p.last()));
+        }
+        else if(key == "tag"){
+            QStringList t = value.split("=");
+            player->tag.insert(t.first(), QVariant::fromValue(t.last()));
+        }
     }
 }
 

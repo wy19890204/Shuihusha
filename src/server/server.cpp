@@ -53,7 +53,7 @@ ServerDialog::ServerDialog(QWidget *parent)
     layout->addLayout(createButtonLayout());
     setLayout(layout);
 
-    setMinimumWidth(300);
+    setMinimumWidth(250);
     ok_button->setFocus();
 }
 
@@ -164,7 +164,8 @@ QWidget *ServerDialog::createPackageTab(){
 }
 
 QWidget *ServerDialog::createAdvancedTab(){
-    QVBoxLayout *layout = new QVBoxLayout;
+    //QVBoxLayout *layout = new QVBoxLayout;
+    QFormLayout *layout = new QFormLayout;
 
     contest_mode_checkbox = new QCheckBox(tr("Contest mode"));
     contest_mode_checkbox->setChecked(Config.ContestMode);
@@ -175,10 +176,12 @@ QWidget *ServerDialog::createAdvancedTab(){
 
     swap_spinbox = new QSpinBox;
     swap_spinbox->setRange(1, 1000);
+    swap_spinbox->setFixedWidth(50);
     swap_spinbox->setValue(Config.value("SwapCount", 6).toInt());
 
     maxchoice_spinbox = new QSpinBox;
     maxchoice_spinbox->setRange(3, 10);
+    maxchoice_spinbox->setFixedWidth(50);
     maxchoice_spinbox->setValue(Config.value("MaxChoice", 5).toInt());
 
     forbid_same_ip_checkbox = new QCheckBox(tr("Forbid same IP with multiple connection"));
@@ -242,19 +245,20 @@ QWidget *ServerDialog::createAdvancedTab(){
     port_edit->setText(QString::number(Config.ServerPort));
     port_edit->setValidator(new QIntValidator(1, 9999, port_edit));
 
-    layout->addLayout(HLay(contest_mode_checkbox, random_seat_checkbox));
-    layout->addLayout(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
-    layout->addLayout(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox, new QLabel(tr("Swap pile count")), swap_spinbox));
-    layout->addLayout(HLay(second_general_checkbox, nolordskill_checkbox));
-    layout->addLayout(HLay(max_hp_label, max_hp_scheme_combobox));
-    layout->addLayout(HLay(basara_checkbox, hegemony_checkbox));
-    layout->addWidget(scene_checkbox); //changjing
-    layout->addLayout(HLay(anzhan_checkbox, anzhan_equal_checkbox));
-    layout->addLayout(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
-    layout->addWidget(announce_ip_checkbox);
-    layout->addLayout(HLay(new QLabel(tr("Address")), address_edit, new QLabel(tr("Port")), port_edit));
-    layout->addWidget(detect_button);
-    layout->addStretch();
+    layout->addRow(HLay(contest_mode_checkbox, random_seat_checkbox));
+    layout->addRow(HLay(forbid_same_ip_checkbox, disable_chat_checkbox));
+    layout->addRow(HLay(new QLabel(tr("Upperlimit for general")), maxchoice_spinbox,
+                           new QLabel(tr("Swap pile count")), swap_spinbox));
+    layout->addRow(HLay(second_general_checkbox, nolordskill_checkbox));
+    layout->addRow(HLay(max_hp_label, max_hp_scheme_combobox));
+    layout->addRow(HLay(basara_checkbox, hegemony_checkbox));
+    layout->addRow(scene_checkbox); //changjing
+    layout->addRow(HLay(anzhan_checkbox, anzhan_equal_checkbox));
+    layout->addRow(HLay(reincarnation_checkbox, reinca_unchange_checkbox));
+    layout->addRow(announce_ip_checkbox);
+    layout->addRow(HLay(new QLabel(tr("Address")), address_edit, new QLabel(tr("Port")), port_edit));
+    layout->addRow(detect_button);
+    //layout->addStretch();
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
@@ -340,17 +344,20 @@ QWidget *ServerDialog::createCheatTab(){
     endless_timebox->setRange(1, 100);
     endless_timebox->setValue(Config.value("EndlessTimes", 3).toInt());
     endless_timebox->setToolTip(tr("This box set the swap times"));
+    QLabel *endless_lab = new QLabel(tr("Endless swap"));
 
     layout->addWidget(cheat_enable_checkbox);
     layout->addWidget(box);
     layout->addWidget(same_checkbox);
-    layout->addLayout(HLay(endless_checkbox, endless_timebox));
+    layout->addLayout(HLay(endless_checkbox, new QLabel, endless_lab, endless_timebox));
     layout->addStretch();
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
 
+    endless_lab->setVisible(Config.EnableEndless);
     endless_timebox->setVisible(Config.EnableEndless);
+    connect(endless_checkbox, SIGNAL(toggled(bool)), endless_lab, SLOT(setVisible(bool)));
     connect(endless_checkbox, SIGNAL(toggled(bool)), endless_timebox, SLOT(setVisible(bool)));
 
     return widget;
@@ -699,7 +706,7 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     :QDialog(parent)
 {
     setWindowTitle(tr("Scenario Advanced"));
-    resize(QSize(400, 200));
+    //resize(QSize(400, 200));
 
     QVBoxLayout *layout = new QVBoxLayout;
 
@@ -707,22 +714,24 @@ ScenarioDialog::ScenarioDialog(QWidget *parent)
     layout->addWidget(tab);
 
     QWidget *apage = new QWidget;
-    QVBoxLayout *page_layout = new QVBoxLayout;
+    QFormLayout *page_layout = new QFormLayout;
     wheel_count = new QLineEdit;
     wheel_count->setText(QString::number(Config.value("Scenario/WheelCount", 10).toInt()));
     wheel_count->setValidator(new QIntValidator(3, 999, wheel_count));
-    page_layout->addLayout(HLay(new QLabel(tr("Wheel Fight")), wheel_count));
-    page_layout->addStretch();
+    wheel_count->setFixedWidth(50);
+    page_layout->addRow(tr("Wheel Fight"), wheel_count);
+    //page_layout->addStretch();
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("wheel_fight"));
 
     apage = new QWidget;
-    page_layout = new QVBoxLayout;
+    page_layout = new QFormLayout;
     arthur_count = new QLineEdit;
     arthur_count->setText(QString::number(Config.value("Scenario/ArthurCount", 3).toInt()));
     arthur_count->setValidator(new QIntValidator(3, 5, arthur_count));
-    page_layout->addLayout(HLay(new QLabel(tr("Arthur Count")), arthur_count));
-    page_layout->addStretch();
+    arthur_count->setFixedWidth(50);
+    page_layout->addRow(tr("Arthur Count"), arthur_count);
+    //page_layout->addStretch();
     apage->setLayout(page_layout);
     tab->addTab(apage, Sanguosha->translate("arthur_ferris"));
 /*

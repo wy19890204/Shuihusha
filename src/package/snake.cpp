@@ -608,6 +608,20 @@ public:
     }
 };
 
+class Tiandu: public TriggerSkill{
+public:
+    Tiandu():TriggerSkill("tiandu"){
+        events << PhaseEnd;
+        frequency = Frequent;
+    }
+
+    virtual bool trigger(TriggerEvent, Room*, ServerPlayer *player, QVariant &) const{
+        if(player->getPhase() == Player::Finish && player->askForSkillInvoke(objectName()))
+            player->drawCards(1);
+        return false;
+    }
+};
+
 class Konghe: public TriggerSkill{
 public:
     Konghe():TriggerSkill("konghe"){
@@ -1119,6 +1133,7 @@ SnakePackage::SnakePackage()
 
     General *houjian = new General(this, "houjian", "min", 2);
     houjian->addSkill(new Feizhen);
+    houjian->addSkill(new Tiandu);
 
     General *dengfei = new General(this, "dengfei", "kou");
     dengfei->addSkill(new Jiejiu);

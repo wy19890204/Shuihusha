@@ -60,12 +60,13 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
-    QPushButton *ok_button = new QPushButton(tr("OK"));
-    QPushButton *cancel_button = new QPushButton(tr("Cancel"));
-    QPushButton *apply_button = new QPushButton(tr("Apply"));
+    ok_button = new QPushButton(tr("OK"));
+    cancel_button = new QPushButton(tr("Cancel"));
+    apply_button = new QPushButton(tr("Apply"));
     connect(ok_button, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
     connect(apply_button, SIGNAL(clicked()), this, SLOT(doApply()));
+    connect(tab_widget, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
     hlayout->addWidget(ok_button);
     hlayout->addWidget(cancel_button);
     hlayout->addWidget(apply_button);
@@ -73,6 +74,17 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     layout->addWidget(tab_widget);
     layout->addRow(hlayout);
     setLayout(layout);
+}
+
+void CheatDialog::setGray(int index){
+    if(index == 2){
+        ok_button->setEnabled(false);
+        apply_button->setEnabled(false);
+    }
+    else{
+        ok_button->setEnabled(true);
+        apply_button->setEnabled(true);
+    }
 }
 
 QWidget *CheatDialog::createDamageMakeTab(){
@@ -185,6 +197,10 @@ const QString CheatDialog::makeData(){
     strs << str;
     str = QString("jur_sleep:%1").arg(sleep->text());
     strs << str;
+    str = QString("jur_dizzy:%1").arg(dizzy->text());
+    strs << str;
+    str = QString("jur_petro:%1").arg(petro->text());
+    strs << str;
 
     //qDebug("str: %s", qPrintable(strs.join(",")));
     return strs.join(",");
@@ -233,12 +249,54 @@ QWidget *CheatDialog::createSetStateTab(){
     role->setPlaceholderText("lord");
     sex = new QLineEdit();
     sex->setPlaceholderText("male");
+
+    QPushButton *kingdom_option = new QPushButton(tr("Option"));
+    QMenu *kingdom_menu = new QMenu(kingdom_option);
+    kingdom_option->setMenu(kingdom_menu);
+    QStringList kingdoms = Sanguosha->getKingdoms();
+    foreach(QString ki, kingdoms){
+        QAction *action = new QAction(kingdom_menu);
+        action->setIcon(QIcon(QString("image/kingdom/icon/%1.png").arg(ki)));
+        action->setText(ki);
+        action->setData("kingdom");
+        kingdom_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
+    QPushButton *role_option = new QPushButton(tr("Option"));
+    QMenu *role_menu = new QMenu(role_option);
+    role_option->setMenu(role_menu);
+    QStringList roles;
+    roles << "lord" << "loyalist" << "rebel" << "renegade";
+    foreach(QString ro, roles){
+        QAction *action = new QAction(role_menu);
+        action->setIcon(QIcon(QString("image/system/roles/%1.png").arg(ro)));
+        action->setText(ro);
+        action->setData("role");
+        role_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
+    QPushButton *sex_option = new QPushButton(tr("Option"));
+    QMenu *sex_menu = new QMenu(sex_option);
+    sex_option->setMenu(sex_menu);
+    QStringList sexs;
+    sexs << "male" << "female" << "neuter";
+    foreach(QString se, sexs){
+        QAction *action = new QAction(sex_menu);
+        action->setText(se);
+        action->setData("sex");
+        sex_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
+
     QPushButton *load_base = new QPushButton(tr("Load Base"));
+    QPushButton *clear_base = new QPushButton(tr("Clear Base"));
     connect(load_base, SIGNAL(clicked()), this, SLOT(loadBase()));
+    connect(clear_base, SIGNAL(clicked()), this, SLOT(clearBase()));
     base_layout->addRow(tr("General"), general);
-    base_layout->addRow(tr("Kingdom"), kingdom);
-    base_layout->addRow(tr("Role"), role);
-    base_layout->addRow(tr("Sex"), HLay(sex, load_base));
+    base_layout->addRow(tr("Kingdom"), HLay(kingdom, kingdom_option));
+    base_layout->addRow(tr("Role"), HLay(role, role_option));
+    base_layout->addRow(tr("Sex"), HLay(sex, sex_option));
+    base_layout->addRow(QString(), HLay(load_base, clear_base));
     base->setLayout(base_layout);
 
     QWidget *adhere = new QWidget;
@@ -262,7 +320,14 @@ QWidget *CheatDialog::createSetStateTab(){
     sleep = new QLineEdit();
     sleep->setValidator(new QIntValidator(0, 99, sleep));
     sleep->setFixedWidth(30);
+    dizzy = new QLineEdit();
+    dizzy->setValidator(new QIntValidator(0, 99, poison));
+    dizzy->setFixedWidth(30);
+    petro = new QLineEdit();
+    petro->setValidator(new QIntValidator(0, 99, sleep));
+    petro->setFixedWidth(30);
     conjur_layout->addRow(HLay(new QLabel(tr("Poison")), poison, new QLabel(tr("Sleep")), sleep));
+    conjur_layout->addRow(HLay(new QLabel(tr("Dizzy")), dizzy, new QLabel(tr("Petro")), petro));
     conjur->setLayout(conjur_layout);
 
     QWidget *expert = new QWidget;
@@ -275,11 +340,16 @@ QWidget *CheatDialog::createSetStateTab(){
     propty->setPlaceholderText("key=value");
     tag = new QLineEdit();
     tag->setPlaceholderText("key=value");
+    QPushButton *clear = new QPushButton(tr("Clear"));
+    QPushButton *apply = new QPushButton(tr("Apply"));
+    connect(apply, SIGNAL(clicked()), this, SLOT(doClearExpert()));
+    connect(apply, SIGNAL(clicked()), this, SLOT(doApplyExpert()));
     expert_layout->addWidget(new QLabel(tr("Expert Warning")));
-    expert_layout->addLayout(HLay(new QLabel(tr("Flags")), flags));
-    expert_layout->addLayout(HLay(new QLabel(tr("Mark")), mark));
-    expert_layout->addLayout(HLay(new QLabel(tr("Propty")), propty));
-    expert_layout->addLayout(HLay(new QLabel(tr("Tag")), tag));
+    expert_layout->addLayout(HLay(new QLabel("Flags"), flags));
+    expert_layout->addLayout(HLay(new QLabel("Mark"), mark));
+    expert_layout->addLayout(HLay(new QLabel("Property"), propty));
+    expert_layout->addLayout(HLay(new QLabel("Tag"), tag));
+    expert_layout->addLayout(HLay(clear, apply));
     expert->setLayout(expert_layout);
 
     tab_state->addTab(base, tr("Base"));
@@ -298,16 +368,14 @@ void CheatDialog::loadState(int index){
     QString player_obj = target->itemData(index).toString();
     const Player *player = Self->findPlayer(player_obj);
     if(player){
-        //general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
-        //kingdom->setText(player->getKingdom());
-        //role->setText(player->getRole());
-        //sex->setText(player->getGenderString());
         turn->setChecked(!player->faceUp());
         chain->setChecked(player->isChained());
         ecst->setChecked(player->hasFlag("ecst"));
         drank->setChecked(player->hasFlag("drank"));
         poison->setText(QString::number(player->getMark("poison_jur")));
         sleep->setText(QString::number(player->getMark("sleep_jur")));
+        dizzy->setText(QString::number(player->getMark("dizzy_jur")));
+        petro->setText(QString::number(player->getMark("petro_jur")));
     }
 }
 
@@ -315,9 +383,55 @@ void CheatDialog::loadBase(){
     QString player_obj = target->itemData(target->currentIndex()).toString();
     const Player *player = Self->findPlayer(player_obj);
     if(player){
-        general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
+        if(player->getGeneral2())
+            general->setText(QString("%1|%2").arg(player->getGeneralName()).arg(player->getGeneral2Name()));
+        else
+            general->setText(player->getGeneralName());
         kingdom->setText(player->getKingdom());
         role->setText(player->getRole());
         sex->setText(player->getGenderString());
     }
+}
+
+void CheatDialog::clearBase(){
+    general->clear();
+    kingdom->clear();
+    role->clear();
+    sex->clear();
+}
+
+void CheatDialog::fillBase(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(action){
+        QString item = action->data().toString();
+        if(item == "kingdom")
+            kingdom->setText(action->text());
+        else if(item == "role")
+            role->setText(action->text());
+        else if(item == "sex")
+            sex->setText(action->text());
+    }
+}
+
+void CheatDialog::doClearExpert(){
+    mark->clear();
+    flags->clear();
+    propty->clear();
+    tag->clear();
+}
+
+void CheatDialog::doApplyExpert(){
+    //mark:key=value,flags:flag,propty:hp=2,tag:Tag=0
+    QStringList strs;
+    QString str = QString("mark:%1").arg(mark->text());
+    strs << str;
+    str = QString("flags:%1").arg(flags->text());
+    strs << str;
+    str = QString("propty:%1").arg(propty->text());
+    strs << str;
+    str = QString("tag:%1").arg(tag->text());
+    strs << str;
+
+    QString data = strs.join(",");
+    ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), data);
 }
