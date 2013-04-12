@@ -44,6 +44,7 @@ private:
     QCheckBox *turn, *chain, *ecst, *drank;
     QLineEdit *mark;
 
+    QLineEdit *flags, *marks, *propty, *tag;
 protected:
     virtual const QString makeData();
     virtual void accept();

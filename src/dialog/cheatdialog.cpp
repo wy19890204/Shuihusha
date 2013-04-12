@@ -244,12 +244,35 @@ QWidget *CheatDialog::createSetStateTab(){
     conjur_layout->addRow(HLay(poison, sleep));
     conjur->setLayout(conjur_layout);
 
+    QWidget *expert = new QWidget;
+    QVBoxLayout *expert_layout = new QVBoxLayout;
+    flags = new QLineEdit();
+    flags->setPlaceholderText("key");
+    mark = new QLineEdit();
+    mark->setPlaceholderText("key=value");
+    propty = new QLineEdit();
+    propty->setPlaceholderText("key=value");
+    tag = new QLineEdit();
+    tag->setPlaceholderText("key=value");
+    expert_layout->addWidget(new QLabel(tr("Expert Warning")));
+    expert_layout->addLayout(HLay(new QLabel(tr("Flags")), flags));
+    expert_layout->addLayout(HLay(new QLabel(tr("Mark")), mark));
+    expert_layout->addLayout(HLay(new QLabel(tr("Propty")), propty));
+    expert_layout->addLayout(HLay(new QLabel(tr("Tag")), tag));
+    expert->setLayout(expert_layout);
+
     tab_state->addTab(base, tr("Base"));
     tab_state->addTab(adhere, tr("Adhere"));
     tab_state->addTab(conjur, tr("Conjur"));
+    tab_state->addTab(expert, tr("Expert"));
 
     layout->addRow(tab_state);
 
+    QString a = "100";
+    int b = 100;
+    QVariant aa = QVariant::fromValue(a);
+    QVariant bb = QVariant::fromValue(b);
+    qDebug("logo: %s %s", qPrintable(QString::number(aa.toInt())), qPrintable(bb.toString()));
     widget->setLayout(layout);
     return widget;
 }
