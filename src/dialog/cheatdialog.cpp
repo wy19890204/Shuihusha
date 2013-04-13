@@ -63,6 +63,7 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     setWindowTitle(tr("Cheat dialog"));
 
     this->Self = Self;
+    setMaximumWidth(300);
     QFormLayout *layout = new QFormLayout;
 
     tab_widget = new QTabWidget;
@@ -106,14 +107,31 @@ QWidget *CheatDialog::createDamageMakeTab(){
     damage_source = new QComboBox;
     RoomScene::FillPlayerNames(damage_source, true);
 
-    target_label = new QLabel(tr("Damage target"));
     damage_target = new QComboBox;
     RoomScene::FillPlayerNames(damage_target, false);
 
-    point_label = new QLabel(tr("Damage point"));
     damage_point = new QSpinBox;
     damage_point->setRange(1, 1000);
     damage_point->setValue(1);
+
+    damage_card = new QSpinBox;
+    damage_card->setRange(-1, Sanguosha->getCardCount());
+    damage_card->setValue(-1);
+
+    QPushButton *select_card = new QPushButton(tr("Short Cut"));
+    QMenu *select_menu = new QMenu(select_card);
+    select_card->setMenu(select_menu);
+    QStringList items;
+    items << "red_slash" << "black_slash"
+         << "fire_slash" << "thunder_slash"
+         << "red_trick" << "black_trick";
+    foreach(QString item, items){
+        QAction *action = new QAction(select_menu);
+        action->setText(Sanguosha->translate(item));
+        action->setData(QString("card#%1").arg(item));
+        select_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+    }
 
     damage_nature = new QButtonGroup();
     normal = new QRadioButton(tr("Normal"));
@@ -135,10 +153,11 @@ QWidget *CheatDialog::createDamageMakeTab(){
 
     QFormLayout *layout = new QFormLayout;
 
-    layout->addRow(tr("Damage source"), damage_source);
-    layout->addRow(target_label, damage_target);
-    layout->addRow(point_label, damage_point);
-    layout->addRow(tr("Damage nature"), HLay(normal, fire, thunder));
+    layout->addRow(tr("Source"), damage_source);
+    layout->addRow(tr("Target"), damage_target);
+    layout->addRow(tr("Point"), damage_point);
+    layout->addRow(tr("CardID"), HLay(damage_card, select_card));
+    layout->addRow(tr("Nature"), HLay(normal, fire, thunder));
     layout->addRow(QString(), HLay(rec, lh));
     layout->addRow(QString(), HLay(lmh, rmh));
 
@@ -163,7 +182,6 @@ QWidget *CheatDialog::createDeathNoteTab(){
     layout->addRow(tr("Victim"), victim);
 
     killtype = new QButtonGroup();
-    //group->setExclusive(false);
     kill = new QRadioButton(tr("Kill"));
     kill->setObjectName("kill");
     kill->setChecked(true);
@@ -172,6 +190,19 @@ QWidget *CheatDialog::createDeathNoteTab(){
     unkill->setObjectName("revive");
     killtype->addButton(unkill);
     layout->addRow(tr("Type"), HLay(kill, unkill));
+
+    QButtonGroup *revivetype = new QButtonGroup();
+    revivetype->setExclusive(false);
+    revive1 = new QCheckBox(tr("Full State"));
+    revive1->setChecked(true);
+    revivetype->addButton(revive1);
+    revive2 = new QCheckBox(tr("Start Init"));
+    revivetype->addButton(revive2);
+    revive1->hide();
+    revive2->hide();
+    connect(unkill, SIGNAL(toggled(bool)), revive1, SLOT(setVisible(bool)));
+    connect(unkill, SIGNAL(toggled(bool)), revive2, SLOT(setVisible(bool)));
+    layout->addRow(QString(), HLay(revive1, revive2));
 
     widget->setLayout(layout);
     return widget;
@@ -183,12 +214,13 @@ void CheatDialog::doApply(){
         ClientInstance->requestCheatDamage(damage_source->itemData(damage_source->currentIndex()).toString(),
                                 damage_target->itemData(damage_target->currentIndex()).toString(),
                                 damage_nature->buttons().indexOf(damage_nature->checkedButton()) + 1,
-                                damage_point->value());
+                                damage_point->value(), damage_card->value());
         break;
     }
     case 1:{
         if(killtype->checkedButton()->objectName() != "kill")
-            ClientInstance->requestCheatRevive(victim->itemData(victim->currentIndex()).toString());
+            ClientInstance->requestCheatRevive(victim->itemData(victim->currentIndex()).toString(),
+                                               revive1->isChecked(), revive2->isChecked());
         else
             ClientInstance->requestCheatKill(killer->itemData(killer->currentIndex()).toString(),
                             victim->itemData(victim->currentIndex()).toString());
@@ -222,14 +254,11 @@ const QString CheatDialog::makeData(){
     strs << str;
     str = QString("drank:%1").arg(drank->isChecked());
     strs << str;
+    str = QString("tie:%1").arg(shutup->isChecked());
+    strs << str;
 
-    str = QString("jur_poison:%1").arg(poison->text());
-    strs << str;
-    str = QString("jur_sleep:%1").arg(sleep->text());
-    strs << str;
-    str = QString("jur_dizzy:%1").arg(dizzy->text());
-    strs << str;
-    str = QString("jur_petro:%1").arg(petro->text());
+    str = QString("%1:%2").arg(conjur_group->checkedButton()->objectName())
+            .arg(conjur_text->text());
     strs << str;
 
     //qDebug("str: %s", qPrintable(strs.join(",")));
@@ -244,26 +273,6 @@ void CheatDialog::accept(){
 void CheatDialog::disableSource(QAbstractButton* but){
     int nature = damage_nature->buttons().indexOf(but) + 1;
     damage_source->setEnabled(nature < 5);
-    if(nature >= 4){
-        target_label->setText(tr("Target"));
-        switch(nature){
-        case 4:
-            point_label->setText(tr("Recover point"));
-            break;
-        case 5:
-        case 6:
-            point_label->setText(tr("Lose point"));
-            break;
-        case 7:
-            point_label->setText(tr("Reset point"));
-        default:
-            break;
-        }
-    }
-    else{
-        target_label->setText(tr("Damage target"));
-        point_label->setText(tr("Damage point"));
-    }
 }
 
 QWidget *CheatDialog::createSetStateTab(){
@@ -343,28 +352,36 @@ QWidget *CheatDialog::createSetStateTab(){
     chain = new QCheckBox(tr("Chained"));
     ecst = new QCheckBox(tr("Ecst"));
     drank = new QCheckBox(tr("Drank"));
-    extra_button = new QPushButton(tr("Extra skills"));
+    shutup = new QCheckBox(tr("Tie"));
+    extra_button = new QPushButton(tr("Remove extra skills"));
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
+    adhere_layout->addRow(HLay(shutup, new QLabel));
     adhere_layout->addRow(extra_button);
     adhere->setLayout(adhere_layout);
 
     QWidget *conjur = new QWidget;
     QFormLayout *conjur_layout = new QFormLayout;
-    poison = new QLineEdit();
-    poison->setValidator(new QIntValidator(0, 99, poison));
-    poison->setFixedWidth(30);
-    sleep = new QLineEdit();
-    sleep->setValidator(new QIntValidator(0, 99, sleep));
-    sleep->setFixedWidth(30);
-    dizzy = new QLineEdit();
-    dizzy->setValidator(new QIntValidator(0, 99, poison));
-    dizzy->setFixedWidth(30);
-    petro = new QLineEdit();
-    petro->setValidator(new QIntValidator(0, 99, sleep));
-    petro->setFixedWidth(30);
-    conjur_layout->addRow(HLay(new QLabel(tr("Poison")), poison, new QLabel(tr("Sleep")), sleep));
-    conjur_layout->addRow(HLay(new QLabel(tr("Dizzy")), dizzy, new QLabel(tr("Petro")), petro));
+
+    conjur_group = new QButtonGroup();
+    poison = new QRadioButton(tr("Poison"));
+    poison->setObjectName("poison_jur");
+    conjur_group->addButton(poison);
+    sleep = new QRadioButton(tr("Sleep"));
+    sleep->setObjectName("sleep_jur");
+    conjur_group->addButton(sleep);
+    dizzy = new QRadioButton(tr("Dizzy"));
+    dizzy->setObjectName("dizzy_jur");
+    conjur_group->addButton(dizzy);
+    petro = new QRadioButton(tr("Petro"));
+    petro->setObjectName("petro_jur");
+    conjur_group->addButton(petro);
+    conjur_layout->addRow(HLay(poison, sleep));
+    conjur_layout->addRow(HLay(dizzy, petro));
+
+    conjur_text = new QLineEdit();
+    conjur_text->setValidator(new QIntValidator(0, 99, poison));
+    conjur_layout->addRow(conjur_text);
     conjur->setLayout(conjur_layout);
 
     QWidget *expert = new QWidget;
@@ -436,10 +453,15 @@ void CheatDialog::loadState(int index){
         chain->setChecked(player->isChained());
         ecst->setChecked(player->hasFlag("ecst"));
         drank->setChecked(player->hasFlag("drank"));
-        poison->setText(QString::number(player->getMark("poison_jur")));
-        sleep->setText(QString::number(player->getMark("sleep_jur")));
-        dizzy->setText(QString::number(player->getMark("dizzy_jur")));
-        petro->setText(QString::number(player->getMark("petro_jur")));
+        shutup->setChecked(player->hasFlag("ShutUp"));
+        QString jur = player->getAllMarkName(3, "_jur").first();
+        foreach(QAbstractButton *b, conjur_group->buttons()){
+            if(b->objectName() == jur){
+                b->setChecked(true);
+                conjur_text->setText(QString::number(player->getMark(jur)));
+                break;
+            }
+        }
 
         QMenu *skill_menu = new QMenu(extra_button);
         extra_button->setMenu(skill_menu);
@@ -509,6 +531,27 @@ void CheatDialog::fillBase(){
         else if(item.startsWith("mark")){
             QString num = item.split("#").last();
             marks->setText(QString("%1=%2").arg(action->text()).arg(num));
+        }
+        else if(item.startsWith("card")){
+            int id = -1;
+            QString cardkind = item.split("#").last();
+            foreach(Card *card, Sanguosha->getCards()){
+                if(cardkind.contains("slash") && card->isKindOf("Slash")){
+                    if(card->objectName() == cardkind)
+                        id = card->getId();
+                    else if((cardkind.contains("red") && card->isRed()) ||
+                            (cardkind.contains("black") && card->isBlack()))
+                        id = card->getId();
+                }
+                else if(cardkind.contains("trick") && card->isNDTrick()){
+                    if((cardkind.contains("red") && card->isRed()) ||
+                            (cardkind.contains("black") && card->isBlack()))
+                        id = card->getId();
+                }
+                if(id > 0)
+                    break;
+            }
+            damage_card->setValue(id);
         }
     }
 }

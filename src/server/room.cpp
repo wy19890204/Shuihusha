@@ -3918,15 +3918,16 @@ bool Room::makeCheat(ServerPlayer* player){
     else if (code == S_CHEAT_MAKE_DAMAGE)
     {
         if (arg[1].size() != 4 || !isStringArray(arg[1], 0, 1)
-            || !arg[1][2].isInt() || !arg[1][3].isInt())
+            || !arg[1][2].isInt() || !arg[1][3].isInt() || !arg[1][4].asInt())
             return false;
         makeDamage(toQString(arg[1][0]), toQString(arg[1][1]),
-            (QSanProtocol::CheatCategory)arg[1][2].asInt(), arg[1][3].asInt());
+            (QSanProtocol::CheatCategory)arg[1][2].asInt(), arg[1][3].asInt(), arg[1][4].asInt());
     }
     else if (code == S_CHEAT_REVIVE_PLAYER)
     {
-        if (!arg[1].isString()) return false;
-        makeReviving(toQString(arg[1]));
+        if (!arg[1].isString() || !arg[2].isString())
+            return false;
+        makeReviving(toQString(arg[1]), toQString(arg[2]));
     }
     else if (code == S_CHEAT_SET_STATE){
         if (!arg[1].isString()) return false;
@@ -3962,7 +3963,7 @@ bool Room::makeCheat(ServerPlayer* player){
     return true;
 }
 
-void Room::makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point){
+void Room::makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point, int card_id){
     ServerPlayer* sourcePlayer = findChild<ServerPlayer *>(source);
     ServerPlayer* targetPlayer = findChild<ServerPlayer *>(target);
     if (targetPlayer == NULL) return;
@@ -3979,6 +3980,8 @@ void Room::makeDamage(const QString& source, const QString& target, QSanProtocol
         RecoverStruct recover;
         recover.who = sourcePlayer;
         recover.recover = point;
+        if(card_id > -1)
+            recover.card = Sanguosha->getCard(card_id);
         this->recover(targetPlayer, recover);
         return;
     }
@@ -4000,6 +4003,8 @@ void Room::makeDamage(const QString& source, const QString& target, QSanProtocol
     damage.to = targetPlayer;
     damage.damage = point;
     damage.nature = nature_map[nature];
+    if(card_id > -1)
+        damage.card = Sanguosha->getCard(card_id);
     this->damage(damage);
 }
 
@@ -4020,12 +4025,16 @@ void Room::makeKilling(const QString& killerName, const QString& victimName, boo
     killPlayer(victim, &damage, force);
 }
 
-void Room::makeReviving(const QString &name){
+void Room::makeReviving(const QString &name, const QString &flag){
     ServerPlayer *player = findChild<ServerPlayer *>(name);
     Q_ASSERT(player);
     revivePlayer(player);
-    setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
-    setPlayerProperty(player, "hp", player->getMaxHP());
+    if(flag.contains("F")){
+        setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
+        setPlayerProperty(player, "hp", player->getMaxHP());
+    }
+    if(flag.contains("I"))
+        thread->addPlayerSkills(player, true);
 }
 
 void Room::makeState(const QString &name, const QString &str){
@@ -4072,36 +4081,47 @@ void Room::makeState(const QString &name, const QString &str){
             setPlayerFlag(player, value == "1" ? "ecst" : "-ecst");
         else if(key == "drank")
             setPlayerFlag(player, value == "1" ? "drank" : "-drank");
+        else if(key == "tie")
+            setPlayerFlag(player, value == "1" ? "ShutUp" : "-ShutUp");
         else if(key == "skill"){
             if(value.startsWith("-")){
                 value.remove("-");
                 detachSkillFromPlayer(player, value);
             }
         }
-        else if(key.startsWith("jur_")){
-            QStringList e = key.split("_");
-            e.swap(0, 1);
-            key = e.join("_");
-            if(value == "0" && player->hasMark(key))
-                player->loseAllMarks(key);
-            if(value != "0")
-                setPlayerMark(player, key, value.toInt());
-        }
+        else if(key.endsWith("_jur"))
+            player->gainJur(key, value.toInt(), true);
         else if(key == "flag")
             setPlayerFlag(player, value);
         else if(key == "mark"){
             QStringList m = value.split("=");
             key = m.first();
-            QVariant va = QVariant::fromValue(m.last());
+            value = m.last().isNull() ? "1" : m.last();
+            QVariant va = QVariant::fromValue(value);
             setPlayerMark(player, key, va.toInt());
         }
         else if(key == "propty"){
             QStringList p = value.split("=");
-            setPlayerProperty(player, QString(p.first()).toLocal8Bit().data(), QVariant::fromValue(p.last()));
+            value = p.last();
+            if(value == "true")
+                value = "1";
+            else if(value == "false")
+                value = "0";
+            setPlayerProperty(player, QString(p.first()).toLocal8Bit().data(), QVariant::fromValue(value));
         }
         else if(key == "tag"){
             QStringList t = value.split("=");
-            player->tag.insert(t.first(), QVariant::fromValue(t.last()));
+            value = t.last();
+            if(value == "true")
+                value = "1";
+            else if(value == "false")
+                value = "0";
+            if(t.first().startsWith("-")){
+                QString key2 = t.first().remove("-");
+                player->tag.remove(key2);
+            }
+            else
+                player->tag.insert(t.first(), QVariant::fromValue(value));
         }
     }
 }

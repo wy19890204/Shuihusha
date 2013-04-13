@@ -360,9 +360,9 @@ private:
 
     bool makeSurrender(ServerPlayer* player);
     bool makeCheat(ServerPlayer* player);
-    void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point);
+    void makeDamage(const QString& source, const QString& target, QSanProtocol::CheatCategory nature, int point, int card_id);
     void makeKilling(const QString& killer, const QString& victim, bool force = false);
-    void makeReviving(const QString &name);
+    void makeReviving(const QString &name, const QString &flag);
     void makeState(const QString &name, const QString &str);
     void doScript(const QString &script);
 

@@ -4,7 +4,6 @@
 #include "photo.h"
 #include "dashboard.h"
 #include <QDialog>
-#include <QLabel>
 #include <QSpinBox>
 #include <QListWidget>
 #include <QCheckBox>
@@ -42,18 +41,20 @@ private:
 
     QComboBox *damage_source;
     QComboBox *damage_target;
-    QLabel *target_label, *point_label;
     QButtonGroup *damage_nature;
     QAbstractButton *normal, *fire, *thunder, *rec, *lh, *lmh, *rmh;
-    QSpinBox *damage_point;
+    QSpinBox *damage_point, *damage_card;
     QComboBox *killer, *victim;
     QButtonGroup *killtype;
+    QAbstractButton *revive1, *revive2;
 
     QComboBox *target;
     QLineEdit *general, *kingdom, *role, *sex;
-    QCheckBox *turn, *chain, *ecst, *drank;
+    QCheckBox *turn, *chain, *ecst, *drank, *shutup;
     QPushButton *extra_button;
-    QLineEdit *poison, *sleep, *dizzy, *petro;
+    QButtonGroup *conjur_group;
+    QAbstractButton *poison, *sleep, *dizzy, *petro;
+    QLineEdit *conjur_text;
     QLineEdit *flags, *marks, *propty, *tag;
     QPushButton *flag_option;
     QPushButton *mark_option;

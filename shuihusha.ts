@@ -437,6 +437,11 @@
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="100"/>
+        <source>Short Cut</source>
+        <translation>快捷选择/translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="100"/>
         <source>Normal</source>
         <translation>普通</translation>
     </message>
@@ -472,23 +477,23 @@
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="114"/>
-        <source>Damage source</source>
-        <translation>伤害来源</translation>
+        <source>Source</source>
+        <translation>来源</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="115"/>
-        <source>Damage target</source>
-        <translation>伤害目标</translation>
+        <source>Target</source>
+        <translation>目标</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="116"/>
-        <source>Damage nature</source>
-        <translation>伤害属性</translation>
+        <source>Nature</source>
+        <translation>属性</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="117"/>
         <source>Damage point</source>
-        <translation>伤害点数</translation>
+        <translation>点数</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="136"/>
@@ -509,6 +514,16 @@
         <location filename="src/dialog/cheatdialog.cpp" line="141"/>
         <source>Revive</source>
         <translation>复活</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="141"/>
+        <source>Full State</source>
+        <translation>满状态</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="141"/>
+        <source>Start Init</source>
+        <translation>初始化</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="142"/>
@@ -578,9 +593,19 @@
         <translation>酒状态</translation>
     </message>
     <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="309"/>
+        <source>Tie</source>
+        <translation>紧缚状态</translation>
+    </message>
+    <message>
         <location filename="src/dialog/cheatdialog.cpp" line="312"/>
-        <source>Set Mark</source>
-        <translation>设置标记</translation>
+        <source>Remove extra skills</source>
+        <translation>移除额外技能</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="312"/>
+        <source>Clear History</source>
+        <translation>清除使用历史</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="329"/>
@@ -601,6 +626,11 @@
         <location filename="src/dialog/cheatdialog.cpp" line="330"/>
         <source>Petro</source>
         <translation>石化状态</translation>
+    </message>
+    <message>
+        <location filename="src/dialog/cheatdialog.cpp" line="330"/>
+        <source>Surplus</source>
+        <translation>状态剩余回合</translation>
     </message>
     <message>
         <location filename="src/dialog/cheatdialog.cpp" line="343"/>

@@ -562,6 +562,10 @@ int Engine::getCardCount() const{
     return cards.length();
 }
 
+QList<Card*> Engine::getCards() const{
+    return cards;
+}
+
 QStringList Engine::getLords() const{
     QStringList lords;
 

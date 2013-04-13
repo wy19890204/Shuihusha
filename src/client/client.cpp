@@ -431,21 +431,28 @@ void Client::requestCheatRunScript(const QString& script)
     requestToServer(S_COMMAND_CHEAT, cheatReq);
 }
 
-void Client::requestCheatRevive(const QString& name)
+void Client::requestCheatRevive(const QString& name, bool full_state, bool invoke_start)
 {
     Json::Value cheatReq(Json::arrayValue);
     cheatReq[0] = (int)S_CHEAT_REVIVE_PLAYER;
     cheatReq[1] = toJsonString(name);
+    QString flag;
+    if(full_state)
+        flag.append("F");
+    if(invoke_start)
+        flag.append("I");
+    cheatReq[2] = toJsonString(flag);
     requestToServer(S_COMMAND_CHEAT, cheatReq);
 }
 
-void Client::requestCheatDamage(const QString& source, const QString& target, int nature, int points)
+void Client::requestCheatDamage(const QString& source, const QString& target, int nature, int points, int card_id)
 {
     Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
     cheatArg[0] = toJsonString(source);
     cheatArg[1] = toJsonString(target);
-    cheatArg[2] = (int)nature;
+    cheatArg[2] = nature;
     cheatArg[3] = points;
+    cheatArg[4] = card_id;
 
     cheatReq[0] = (int)S_CHEAT_MAKE_DAMAGE;
     cheatReq[1] = cheatArg;
