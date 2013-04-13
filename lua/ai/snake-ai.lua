@@ -9,7 +9,7 @@ sgs.ai_skill_invoke["konghe"] = function(self, data)
 	local damage = data:toDamage()
 	if damage then
 		local cur = self.room:getCurrent()
-		return cur:getNextAlive() ~= self.player
+		return cur:getNextAlive():objectName() ~= self.player:objectName()
 	else
 		local source = data:toPlayer()
 		if source then

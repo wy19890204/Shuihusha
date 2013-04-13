@@ -661,7 +661,7 @@ void ServerPlayer::gainJur(const QString &jur, int n, bool overlying){
     int value = getMark(jur) + n;
     if(n < 1)
         return;
-    if(!overlying && hasMark(jur) > 0) //do not overlying
+    if(!overlying && getMark(jur) > 0) //do not overlying
         return;
     foreach(QString mark, getAllMarkName(3, "_jur"))
         loseAllMarks(mark);

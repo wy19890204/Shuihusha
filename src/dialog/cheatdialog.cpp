@@ -70,6 +70,7 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     tab_widget->addTab(createDamageMakeTab(), tr("Damage maker"));
     tab_widget->addTab(createDeathNoteTab(), tr("Death note"));
     tab_widget->addTab(createSetStateTab(), tr("Set state"));
+    connect(tab_widget, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addStretch();
@@ -122,7 +123,7 @@ QWidget *CheatDialog::createDamageMakeTab(){
     QMenu *select_menu = new QMenu(select_card);
     select_card->setMenu(select_menu);
     QStringList items;
-    items << "red_slash" << "black_slash"
+    items << "slash_red" << "slash_black"
          << "fire_slash" << "thunder_slash"
          << "red_trick" << "black_trick";
     foreach(QString item, items){
@@ -235,7 +236,7 @@ void CheatDialog::doApply(){
 }
 
 const QString CheatDialog::makeData(){
-    //general:songjiang|linchong,kindom:god,chained:true
+    //general:songjiang|linchong,kindom:god,chained:true,poison_jur:4
     QStringList strs;
     QString str = QString("general:%1").arg(general->text());
     strs << str;
@@ -257,9 +258,11 @@ const QString CheatDialog::makeData(){
     str = QString("tie:%1").arg(shutup->isChecked());
     strs << str;
 
-    str = QString("%1:%2").arg(conjur_group->checkedButton()->objectName())
-            .arg(conjur_text->text());
-    strs << str;
+    if(conjur_group->checkedButton()){
+        str = QString("%1:%2").arg(conjur_group->checkedButton()->objectName())
+                .arg(conjur_text->text());
+        strs << str;
+    }
 
     //qDebug("str: %s", qPrintable(strs.join(",")));
     return strs.join(",");
@@ -285,7 +288,7 @@ QWidget *CheatDialog::createSetStateTab(){
     QFormLayout *layout = new QFormLayout;
     layout->addRow(tr("Target"), target);
 
-    QTabWidget *tab_state = new QTabWidget;
+    tab_state = new QTabWidget;
     QWidget *base = new QWidget;
     QFormLayout *base_layout = new QFormLayout;
     general = new QLineEdit();
@@ -335,6 +338,10 @@ QWidget *CheatDialog::createSetStateTab(){
         connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
     }
 
+    QPushButton *draw_one = new QPushButton(tr("Draw One"));
+    QPushButton *discard_one = new QPushButton(tr("Discard One"));
+    connect(draw_one, SIGNAL(clicked()), this, SLOT(drawOne()));
+    connect(discard_one, SIGNAL(clicked()), this, SLOT(discardOne()));
     QPushButton *load_base = new QPushButton(tr("Load Base"));
     QPushButton *clear_base = new QPushButton(tr("Clear Base"));
     connect(load_base, SIGNAL(clicked()), this, SLOT(loadBase()));
@@ -343,6 +350,7 @@ QWidget *CheatDialog::createSetStateTab(){
     base_layout->addRow(tr("Kingdom"), HLay(kingdom, kingdom_option));
     base_layout->addRow(tr("Role"), HLay(role, role_option));
     base_layout->addRow(tr("Sex"), HLay(sex, sex_option));
+    base_layout->addRow(QString(), HLay(draw_one, discard_one));
     base_layout->addRow(QString(), HLay(load_base, clear_base));
     base->setLayout(base_layout);
 
@@ -354,10 +362,12 @@ QWidget *CheatDialog::createSetStateTab(){
     drank = new QCheckBox(tr("Drank"));
     shutup = new QCheckBox(tr("Tie"));
     extra_button = new QPushButton(tr("Remove extra skills"));
+    QPushButton *clear_button = new QPushButton(tr("Clear History"));
+    connect(clear_button, SIGNAL(clicked()), this, SLOT(clearHistory()));
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(HLay(shutup, new QLabel));
-    adhere_layout->addRow(extra_button);
+    adhere_layout->addRow(HLay(extra_button, clear_button));
     adhere->setLayout(adhere_layout);
 
     QWidget *conjur = new QWidget;
@@ -380,8 +390,10 @@ QWidget *CheatDialog::createSetStateTab(){
     conjur_layout->addRow(HLay(dizzy, petro));
 
     conjur_text = new QLineEdit();
-    conjur_text->setValidator(new QIntValidator(0, 99, poison));
-    conjur_layout->addRow(conjur_text);
+    conjur_text->setValidator(new QIntValidator(0, 99, conjur_text));
+    conjur_text->setPlaceholderText("0");
+    conjur_layout->addRow(tr("Surplus"), conjur_text);
+    connect(conjur_group, SIGNAL(buttonClicked(QAbstractButton*)), conjur_text, SLOT(clear()));
     conjur->setLayout(conjur_layout);
 
     QWidget *expert = new QWidget;
@@ -422,9 +434,21 @@ QWidget *CheatDialog::createSetStateTab(){
     return widget;
 }
 
-void CheatDialog::setGray(int index){
-    ok_button->setVisible(index != 3);
-    apply_button->setVisible(index != 3);
+void CheatDialog::setGray(int){
+    ok_button->setVisible(tab_state->currentIndex() != 3 || tab_widget->currentIndex() != 2);
+    apply_button->setVisible(tab_state->currentIndex() != 3 || tab_widget->currentIndex() != 2);
+}
+
+void CheatDialog::drawOne(){
+    //dod:1
+    QString item = "dod:1";
+    ClientInstance->requestCheatState(getPlayerString(), item);
+}
+
+void CheatDialog::discardOne(){
+    //dod:0
+    QString item = "dod:0";
+    ClientInstance->requestCheatState(getPlayerString(), item);
 }
 
 const QStringList CheatDialog::getExtraSkills(){
@@ -454,12 +478,15 @@ void CheatDialog::loadState(int index){
         ecst->setChecked(player->hasFlag("ecst"));
         drank->setChecked(player->hasFlag("drank"));
         shutup->setChecked(player->hasFlag("ShutUp"));
-        QString jur = player->getAllMarkName(3, "_jur").first();
-        foreach(QAbstractButton *b, conjur_group->buttons()){
-            if(b->objectName() == jur){
-                b->setChecked(true);
-                conjur_text->setText(QString::number(player->getMark(jur)));
-                break;
+        QStringList jurlist = player->getAllMarkName(3, "_jur");
+        if(!jurlist.isEmpty()){
+            QString jur = jurlist.first();
+            foreach(QAbstractButton *b, conjur_group->buttons()){
+                if(b->objectName() == jur){
+                    b->setChecked(true);
+                    conjur_text->setText(QString::number(player->getMark(jur)));
+                    break;
+                }
             }
         }
 
@@ -565,6 +592,12 @@ void CheatDialog::loseSkill(){
         ClientInstance->requestCheatState(getPlayerString(), item);
         //loadState(target->currentIndex());
     }
+}
+
+void CheatDialog::clearHistory(){
+    //history:1
+    QString item = "history:1";
+    ClientInstance->requestCheatState(getPlayerString(), item);
 }
 
 void CheatDialog::doClearExpert(){

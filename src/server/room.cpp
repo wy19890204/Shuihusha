@@ -182,7 +182,7 @@ void Room::enterDying(ServerPlayer *player, DamageStruct *reason){
     thread->trigger(Dying, this, player, dying_data);
 }
 
-void Room::revivePlayer(ServerPlayer *player){
+void Room::revivePlayer(ServerPlayer *player, bool invoke_start){
     player->setAlive(true);
     broadcastProperty(player, "alive");
 
@@ -202,7 +202,7 @@ void Room::revivePlayer(ServerPlayer *player){
     updateStateItem();
     setEmotion(player, "revive");
 
-    thread->addPlayerSkills(player, true);
+    thread->addPlayerSkills(player, invoke_start);
 }
 
 static bool CompareByRole(ServerPlayer *player1, ServerPlayer *player2){
@@ -3917,7 +3917,7 @@ bool Room::makeCheat(ServerPlayer* player){
     }
     else if (code == S_CHEAT_MAKE_DAMAGE)
     {
-        if (arg[1].size() != 4 || !isStringArray(arg[1], 0, 1)
+        if (arg[1].size() != 5 || !isStringArray(arg[1], 0, 1)
             || !arg[1][2].isInt() || !arg[1][3].isInt() || !arg[1][4].asInt())
             return false;
         makeDamage(toQString(arg[1][0]), toQString(arg[1][1]),
@@ -4028,13 +4028,17 @@ void Room::makeKilling(const QString& killerName, const QString& victimName, boo
 void Room::makeReviving(const QString &name, const QString &flag){
     ServerPlayer *player = findChild<ServerPlayer *>(name);
     Q_ASSERT(player);
-    revivePlayer(player);
+    revivePlayer(player, flag.contains("I"));
     if(flag.contains("F")){
         setPlayerProperty(player, "maxhp", player->getGeneralMaxHP());
         setPlayerProperty(player, "hp", player->getMaxHP());
     }
-    if(flag.contains("I"))
-        thread->addPlayerSkills(player, true);
+    else{
+        if(player->getMaxHp() < 1)
+            setPlayerProperty(player, "maxhp", 1);
+        if(player->getHp() < 1)
+            setPlayerProperty(player, "hp", 1);
+    }
 }
 
 void Room::makeState(const QString &name, const QString &str){
@@ -4065,6 +4069,12 @@ void Room::makeState(const QString &name, const QString &str){
             General *general = (General *)Sanguosha->getGeneral(player->getGeneralName());
             general->setGenderString(value);
         }
+        else if(key == "dod"){
+            if(value == "1")
+                player->drawCards(1);
+            else if(!player->isKongcheng())
+                throwCard(player->getRandomHandCardId(), player);
+        }
         else if(key == "turned"){
             if((value == "1" && player->faceUp()) ||
                (value == "0" && !player->faceUp()))
@@ -4089,8 +4099,10 @@ void Room::makeState(const QString &name, const QString &str){
                 detachSkillFromPlayer(player, value);
             }
         }
+        else if(key == "history")
+            player->clearHistory();
         else if(key.endsWith("_jur"))
-            player->gainJur(key, value.toInt(), true);
+            player->gainJur(key, value.toInt());
         else if(key == "flag")
             setPlayerFlag(player, value);
         else if(key == "mark"){

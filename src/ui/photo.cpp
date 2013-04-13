@@ -794,15 +794,20 @@ void Photo::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         if(player->hasMark(conjur)){
             static QPixmap cojur(QString("image/system/conjuring/%1_p.png").arg(conjur));
             painter->drawPixmap(-55, -47, cojur);
-            painter->setPen(Qt::yellow);
+            QString conj_text = QString("%1 %2 %3")
+                    .arg(Sanguosha->translate(conjur))
+                    .arg(Sanguosha->translate("multiply"))
+                    .arg(player->getMark(conjur));
+            painter->setPen(Qt::black);
             QFont font = Config.SmallFont;
             font.setPixelSize(15);
             painter->setFont(font);
-            painter->drawText(35, 60,
-                              QString("%1 %2 %3")
-                              .arg(Sanguosha->translate(conjur))
-                              .arg(Sanguosha->translate("multiply"))
-                              .arg(player->getMark(conjur)));
+            painter->drawText(36, 61, conj_text);
+            painter->setPen(Qt::yellow);
+            font = Config.SmallFont;
+            font.setPixelSize(15);
+            painter->setFont(font);
+            painter->drawText(35, 60, conj_text);
         }
     }
 

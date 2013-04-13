@@ -140,4 +140,8 @@ return {
 	["draw2card"] = "摸2张牌",
 	["recover1hp"] = "回复1点体力",
 	["cancel"] = "不发动",
+
+	--超级作弊器相关
+	["red_trick"] = "红色锦囊",
+	["black_trick"] = "黑色锦囊",
 }
