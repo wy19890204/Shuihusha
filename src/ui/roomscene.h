@@ -119,6 +119,7 @@ public slots:
     void makeDamage();
     void makeKilling();
     void makeReviving();
+    void makeState();
     void doScript();
 
     EffectAnimation * getEA() const{return animations;}

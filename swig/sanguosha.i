@@ -869,7 +869,7 @@ public:
 	QList<ServerPlayer *> getAlivePlayers() const;
 	void enterDying(ServerPlayer *player, DamageStruct *reason);
 	void killPlayer(ServerPlayer *victim, DamageStruct *reason = NULL, bool force = false);
-	void revivePlayer(ServerPlayer *player);
+	void revivePlayer(ServerPlayer *player, bool invoke_start = true);
 	QStringList aliveRoles(ServerPlayer *except = NULL) const;
 	void gameOver(const char *winner);
 	void slashEffect(const SlashEffectStruct &effect);

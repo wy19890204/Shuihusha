@@ -2400,6 +2400,11 @@
         <translation>复活魔杖 ...</translation>
     </message>
     <message>
+        <location filename="src/dialog/mainwindow.ui" line="379"/>
+        <source>State control ...</source>
+        <translation>状态操纵 ...</translation>
+    </message>
+    <message>
         <location filename="src/dialog/mainwindow.ui" line="386"/>
         <source>Card editor ...</source>
         <translation>卡牌编辑器 ...</translation>

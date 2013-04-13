@@ -395,6 +395,7 @@ void MainWindow::enterRoom(){
         connect(ui->actionDeath_note, SIGNAL(triggered()), room_scene, SLOT(makeKilling()));
         connect(ui->actionDamage_maker, SIGNAL(triggered()), room_scene, SLOT(makeDamage()));
         connect(ui->actionRevive_wand, SIGNAL(triggered()), room_scene, SLOT(makeReviving()));
+        connect(ui->actionState_control, SIGNAL(triggered()), room_scene, SLOT(makeState()));
         connect(ui->actionSend_lowlevel_command, SIGNAL(triggered()), this, SLOT(sendLowLevelCommand()));
         connect(ui->actionExecute_script_at_server_side, SIGNAL(triggered()), room_scene, SLOT(doScript()));
     }
@@ -404,6 +405,7 @@ void MainWindow::enterRoom(){
         ui->actionDeath_note->disconnect();
         ui->actionDamage_maker->disconnect();
         ui->actionRevive_wand->disconnect();
+        ui->actionState_control->disconnect();
         ui->actionSend_lowlevel_command->disconnect();
         ui->actionExecute_script_at_server_side->disconnect();
     }
@@ -451,6 +453,7 @@ void MainWindow::on_actionReturn_main_triggered(){
     ui->actionDeath_note->disconnect();
     ui->actionDamage_maker->disconnect();
     ui->actionRevive_wand->disconnect();
+    ui->actionState_control->disconnect();
     ui->actionSend_lowlevel_command->disconnect();
     ui->actionExecute_script_at_server_side->disconnect();
     gotoScene(start_scene);

@@ -2821,6 +2821,17 @@ void RoomScene::makeKilling(){
     dialog->exec();
 }
 
+void RoomScene::makeState(){
+    if(Self->getPhase() != Player::Play){
+        QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
+        return;
+    }
+
+    CheatDialog *dialog = new CheatDialog(main_window, Self);
+    dialog->tab_widget->setCurrentIndex(2);
+    dialog->exec();
+}
+
 void RoomScene::makeReviving(){
     if(Self->getPhase() != Player::Play){
         QMessageBox::warning(main_window, tr("Warning"), tr("This function is only allowed at your play phase!"));
