@@ -48,6 +48,7 @@ private:
     QButtonGroup *killtype;
     QAbstractButton *revive1, *revive2;
 
+    QTabWidget *tab_state;
     QComboBox *target;
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank, *shutup;
@@ -76,7 +77,10 @@ private slots:
     void clearBase();
     void fillBase();
     void loseSkill();
-    void setGray(int index);
+    void clearHistory();
+    void drawOne();
+    void discardOne();
+    void setGray(int);
 };
 
 #endif // CHEATDIALOG_H

@@ -32,4 +32,5 @@ return {
 	["#Poison"] = "%from 毒发！剧痛难忍，将自己抓出了条条血痕",
 	["poison_jur:cd"] = "丢两张牌",
 	["poison_jur:hp"] = "掉一点体力",
+	["#Sleep"] = "%from 在昏睡，无法使用或打出牌！",
 }

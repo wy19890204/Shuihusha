@@ -19,6 +19,7 @@ return {
 	["$sun_peiruhai"] = "阳武将",
 	["#sun_peiruhai"] = "海阇黎", -- 3/4
 	["sun_peiruhai"] = "裴如海",
+	["designer:sun_peiruhai"] = "烨子&宇文天启",
 	["fanyin"] = "梵音",
 	[":fanyin"] = "<font color=deeppink><b>咒术技</b></font>，出牌阶段，你可以弃置X张类别不同的牌（X至少为2），为一至X名其他角色附加“昏睡”状态。每阶段限一次。",
 	["lichen"] = "离尘",
