@@ -2829,7 +2829,7 @@ void RoomScene::makeReviving(){
     /*
     CheatDialog *dialog = new CheatDialog(main_window, Self);
     dialog->tab_widget->setCurrentIndex(1);
-    dialog->killtype->setCurrentIndex(1);
+    dialog->unkill->setChecked(true);
     dialog->exec();
     */
 

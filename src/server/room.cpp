@@ -4075,7 +4075,7 @@ void Room::makeState(const QString &name, const QString &str){
         else if(key == "skill"){
             if(value.startsWith("-")){
                 value.remove("-");
-                player->loseSkill(value);
+                detachSkillFromPlayer(player, value);
             }
         }
         else if(key.startsWith("jur_")){

@@ -4,9 +4,11 @@
 #include "photo.h"
 #include "dashboard.h"
 #include <QDialog>
+#include <QLabel>
 #include <QSpinBox>
 #include <QListWidget>
 #include <QCheckBox>
+#include <QRadioButton>
 #include <QMenu>
 
 class Window;
@@ -27,7 +29,7 @@ class CheatDialog: public QDialog{
 public:
     CheatDialog(QWidget *parent, ClientPlayer *Self);
     QTabWidget *tab_widget;
-    QComboBox *killtype;
+    QAbstractButton *kill, *unkill;
 
 private:
     ClientPlayer *Self;
@@ -40,17 +42,24 @@ private:
 
     QComboBox *damage_source;
     QComboBox *damage_target;
-    QComboBox *damage_nature;
+    QLabel *target_label, *point_label;
+    QButtonGroup *damage_nature;
+    QAbstractButton *normal, *fire, *thunder, *rec, *lh, *lmh, *rmh;
     QSpinBox *damage_point;
     QComboBox *killer, *victim;
+    QButtonGroup *killtype;
 
     QComboBox *target;
     QLineEdit *general, *kingdom, *role, *sex;
     QCheckBox *turn, *chain, *ecst, *drank;
+    QPushButton *extra_button;
     QLineEdit *poison, *sleep, *dizzy, *petro;
     QLineEdit *flags, *marks, *propty, *tag;
+    QPushButton *flag_option;
+    QPushButton *mark_option;
 
 protected:
+    virtual QString getPlayerString();
     virtual const Player *getPlayer();
     virtual const QString makeData();
     virtual const QStringList getExtraSkills();
@@ -60,7 +69,7 @@ private slots:
     void doApply();
     void doApplyExpert();
     void doClearExpert();
-    void disableSource();
+    void disableSource(QAbstractButton* but);
     void loadState(int index);
     void loadBase();
     void clearBase();

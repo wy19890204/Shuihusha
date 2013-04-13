@@ -45,6 +45,18 @@ void ScriptExecutor::doScript(){
     ClientInstance->requestCheatRunScript(script);
 }
 
+static QLayout *HLay(QWidget *left, QWidget *right, QWidget *other = NULL, QWidget *other2 = NULL){
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(left);
+    layout->addWidget(right);
+    if(other)
+        layout->addWidget(other);
+    if(other2)
+        layout->addWidget(other2);
+
+    return layout;
+}
+
 CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     :QDialog(parent)
 {
@@ -75,8 +87,12 @@ CheatDialog::CheatDialog(QWidget *parent, ClientPlayer *Self)
     setLayout(layout);
 }
 
+QString CheatDialog::getPlayerString(){
+    return target->itemData(target->currentIndex()).toString();
+}
+
 const Player *CheatDialog::getPlayer(){
-    QString player_obj = target->itemData(target->currentIndex()).toString();
+    QString player_obj = getPlayerString();
     const Player *player = Self->findPlayer(player_obj);
     if(player)
         return player;
@@ -90,30 +106,43 @@ QWidget *CheatDialog::createDamageMakeTab(){
     damage_source = new QComboBox;
     RoomScene::FillPlayerNames(damage_source, true);
 
+    target_label = new QLabel(tr("Damage target"));
     damage_target = new QComboBox;
     RoomScene::FillPlayerNames(damage_target, false);
 
-    damage_nature = new QComboBox;
-    damage_nature->addItem(tr("Normal"), S_CHEAT_NORMAL_DAMAGE);
-    damage_nature->addItem(tr("Thunder"), S_CHEAT_THUNDER_DAMAGE);
-    damage_nature->addItem(tr("Fire"), S_CHEAT_FIRE_DAMAGE);
-    damage_nature->addItem(tr("Recover HP"), S_CHEAT_HP_RECOVER);
-    damage_nature->addItem(tr("Lose HP"), S_CHEAT_HP_LOSE);
-    damage_nature->addItem(tr("Lose Max HP"), S_CHEAT_MAX_HP_LOSE);
-    damage_nature->addItem(tr("Reset Max HP"), S_CHEAT_MAX_HP_RESET);
-
+    point_label = new QLabel(tr("Damage point"));
     damage_point = new QSpinBox;
     damage_point->setRange(1, 1000);
     damage_point->setValue(1);
 
+    damage_nature = new QButtonGroup();
+    normal = new QRadioButton(tr("Normal"));
+    damage_nature->addButton(normal);
+    fire = new QRadioButton(tr("Fire"));
+    damage_nature->addButton(fire);
+    thunder = new QRadioButton(tr("Thunder"));
+    damage_nature->addButton(thunder);
+
+    rec = new QRadioButton(tr("Recover HP"));
+    damage_nature->addButton(rec);
+    lh = new QRadioButton(tr("Lose HP"));
+    damage_nature->addButton(lh);
+    lmh = new QRadioButton(tr("Lose Max HP"));
+    damage_nature->addButton(lmh);
+    rmh = new QRadioButton(tr("Reset Max HP"));
+    damage_nature->addButton(rmh);
+    normal->setChecked(true);
+
     QFormLayout *layout = new QFormLayout;
 
     layout->addRow(tr("Damage source"), damage_source);
-    layout->addRow(tr("Damage target"), damage_target);
-    layout->addRow(tr("Damage nature"), damage_nature);
-    layout->addRow(tr("Damage point"), damage_point);
+    layout->addRow(target_label, damage_target);
+    layout->addRow(point_label, damage_point);
+    layout->addRow(tr("Damage nature"), HLay(normal, fire, thunder));
+    layout->addRow(QString(), HLay(rec, lh));
+    layout->addRow(QString(), HLay(lmh, rmh));
 
-    connect(damage_nature, SIGNAL(currentIndexChanged(int)), this, SLOT(disableSource()));
+    connect(damage_nature, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(disableSource(QAbstractButton*)));
 
     widget->setLayout(layout);
 
@@ -133,10 +162,16 @@ QWidget *CheatDialog::createDeathNoteTab(){
     layout->addRow(tr("Killer"), killer);
     layout->addRow(tr("Victim"), victim);
 
-    killtype = new QComboBox;
-    killtype->addItem(tr("Kill"));
-    killtype->addItem(tr("Revive"));
-    layout->addRow(tr("Type"), killtype);
+    killtype = new QButtonGroup();
+    //group->setExclusive(false);
+    kill = new QRadioButton(tr("Kill"));
+    kill->setObjectName("kill");
+    kill->setChecked(true);
+    killtype->addButton(kill);
+    unkill = new QRadioButton(tr("Revive"));
+    unkill->setObjectName("revive");
+    killtype->addButton(unkill);
+    layout->addRow(tr("Type"), HLay(kill, unkill));
 
     widget->setLayout(layout);
     return widget;
@@ -144,23 +179,23 @@ QWidget *CheatDialog::createDeathNoteTab(){
 
 void CheatDialog::doApply(){
     switch(tab_widget->currentIndex()){
-    case 0:
+    case 0:{
         ClientInstance->requestCheatDamage(damage_source->itemData(damage_source->currentIndex()).toString(),
                                 damage_target->itemData(damage_target->currentIndex()).toString(),
-                                (DamageStruct::Nature)damage_nature->itemData(damage_nature->currentIndex()).toInt(),
+                                damage_nature->buttons().indexOf(damage_nature->checkedButton()) + 1,
                                 damage_point->value());
         break;
+    }
     case 1:{
-        int type = killtype->currentIndex();
-        if(type == 0)
-            ClientInstance->requestCheatKill(killer->itemData(killer->currentIndex()).toString(),
-                                victim->itemData(victim->currentIndex()).toString());
-        else if(type == 1)
+        if(killtype->checkedButton()->objectName() != "kill")
             ClientInstance->requestCheatRevive(victim->itemData(victim->currentIndex()).toString());
+        else
+            ClientInstance->requestCheatKill(killer->itemData(killer->currentIndex()).toString(),
+                            victim->itemData(victim->currentIndex()).toString());
         break;
     }
     case 2:
-        ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), makeData());
+        ClientInstance->requestCheatState(getPlayerString(), makeData());
         break;
     default:
         break;
@@ -206,21 +241,29 @@ void CheatDialog::accept(){
     doApply();
 }
 
-void CheatDialog::disableSource(){
-    int nature = damage_nature->itemData(damage_nature->currentIndex()).toInt();
+void CheatDialog::disableSource(QAbstractButton* but){
+    int nature = damage_nature->buttons().indexOf(but) + 1;
     damage_source->setEnabled(nature < 5);
-}
-
-static QLayout *HLay(QWidget *left, QWidget *right, QWidget *other = NULL, QWidget *other2 = NULL){
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(left);
-    layout->addWidget(right);
-    if(other)
-        layout->addWidget(other);
-    if(other2)
-        layout->addWidget(other2);
-
-    return layout;
+    if(nature >= 4){
+        target_label->setText(tr("Target"));
+        switch(nature){
+        case 4:
+            point_label->setText(tr("Recover point"));
+            break;
+        case 5:
+        case 6:
+            point_label->setText(tr("Lose point"));
+            break;
+        case 7:
+            point_label->setText(tr("Reset point"));
+        default:
+            break;
+        }
+    }
+    else{
+        target_label->setText(tr("Damage target"));
+        point_label->setText(tr("Damage point"));
+    }
 }
 
 QWidget *CheatDialog::createSetStateTab(){
@@ -300,18 +343,7 @@ QWidget *CheatDialog::createSetStateTab(){
     chain = new QCheckBox(tr("Chained"));
     ecst = new QCheckBox(tr("Ecst"));
     drank = new QCheckBox(tr("Drank"));
-
-    QPushButton *extra_button = new QPushButton(tr("Extra skills"));
-    QMenu *skill_menu = new QMenu(extra_button);
-    extra_button->setMenu(skill_menu);
-    QStringList extra_skills = getExtraSkills();
-    foreach(QString skill, extra_skills){
-        QAction *action = new QAction(skill_menu);
-        action->setText(Sanguosha->translate(skill));
-        action->setData(skill);
-        skill_menu->addAction(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(loseSkill()));
-    }
+    extra_button = new QPushButton(tr("Extra skills"));
     adhere_layout->addRow(HLay(turn, chain));
     adhere_layout->addRow(HLay(ecst, drank));
     adhere_layout->addRow(extra_button);
@@ -347,35 +379,12 @@ QWidget *CheatDialog::createSetStateTab(){
     tag->setPlaceholderText("key=value");
     QPushButton *clear = new QPushButton(tr("Clear"));
     QPushButton *apply = new QPushButton(tr("Apply"));
-    connect(apply, SIGNAL(clicked()), this, SLOT(doClearExpert()));
+    connect(clear, SIGNAL(clicked()), this, SLOT(doClearExpert()));
     connect(apply, SIGNAL(clicked()), this, SLOT(doApplyExpert()));
-    connect(tab_state, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
     expert_layout->addWidget(new QLabel(tr("Expert Warning")));
 
-    QPushButton *flag_option = new QPushButton(tr("Option"));
-    QMenu *flag_menu = new QMenu(flag_option);
-    flag_option->setMenu(flag_menu);
-    const Player *player = getPlayer();
-    QStringList f1ags = player->getFlags().split("+");
-    foreach(QString fla, f1ags){
-        QAction *action = new QAction(flag_menu);
-        action->setText(fla);
-        action->setData("flag");
-        flag_menu->addAction(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
-    }
-    QPushButton *mark_option = new QPushButton(tr("Option"));
-    QMenu *mark_menu = new QMenu(mark_option);
-    mark_option->setMenu(mark_menu);
-    QStringList ma2ks = player->getAllMarkName(2);
-    foreach(QString mrk, ma2ks){
-        QAction *action = new QAction(mark_menu);
-        action->setText(mrk);
-        action->setData("mark");
-        mark_menu->addAction(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
-    }
-
+    flag_option = new QPushButton(tr("Option"));
+    mark_option = new QPushButton(tr("Option"));
     expert_layout->addLayout(HLay(new QLabel("Flag"), flags, flag_option));
     expert_layout->addLayout(HLay(new QLabel("Mark"), marks, mark_option));
     expert_layout->addLayout(HLay(new QLabel("Property"), propty));
@@ -387,6 +396,7 @@ QWidget *CheatDialog::createSetStateTab(){
     tab_state->addTab(adhere, tr("Adhere"));
     tab_state->addTab(conjur, tr("Conjur"));
     tab_state->addTab(expert, tr("Expert"));
+    connect(tab_state, SIGNAL(currentChanged(int)), this, SLOT(setGray(int)));
 
     layout->addRow(tab_state);
 
@@ -396,14 +406,8 @@ QWidget *CheatDialog::createSetStateTab(){
 }
 
 void CheatDialog::setGray(int index){
-    if(index == 2){
-        ok_button->setEnabled(false);
-        apply_button->setEnabled(false);
-    }
-    else{
-        ok_button->setEnabled(true);
-        apply_button->setEnabled(true);
-    }
+    ok_button->setVisible(index != 3);
+    apply_button->setVisible(index != 3);
 }
 
 const QStringList CheatDialog::getExtraSkills(){
@@ -436,6 +440,38 @@ void CheatDialog::loadState(int index){
         sleep->setText(QString::number(player->getMark("sleep_jur")));
         dizzy->setText(QString::number(player->getMark("dizzy_jur")));
         petro->setText(QString::number(player->getMark("petro_jur")));
+
+        QMenu *skill_menu = new QMenu(extra_button);
+        extra_button->setMenu(skill_menu);
+        QStringList extra_skills = getExtraSkills();
+        foreach(QString skill, extra_skills){
+            QAction *action = new QAction(skill_menu);
+            action->setText(Sanguosha->translate(skill));
+            action->setData(skill);
+            skill_menu->addAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(loseSkill()));
+        }
+        QMenu *flag_menu = new QMenu(flag_option);
+        flag_option->setMenu(flag_menu);
+        QStringList f1ags = player->getFlags().split("+");
+        foreach(QString fla, f1ags){
+            QAction *action = new QAction(flag_menu);
+            action->setText(fla);
+            action->setData("flag");
+            flag_menu->addAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+        }
+        QMenu *mark_menu = new QMenu(mark_option);
+        mark_option->setMenu(mark_menu);
+        QStringList ma2ks = player->getAllMarkName(2);
+        foreach(QString mrk, ma2ks){
+            QAction *action = new QAction(mark_menu);
+            action->setIcon(QIcon(QString("image/mark/%1.png").arg(mrk)));
+            action->setText(mrk);
+            action->setData(QString("mark#%1").arg(player->getMark(mrk)));
+            mark_menu->addAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(fillBase()));
+        }
     }
 }
 
@@ -470,6 +506,10 @@ void CheatDialog::fillBase(){
         //not base
         else if(item == "flag")
             flags->setText(action->text());
+        else if(item.startsWith("mark")){
+            QString num = item.split("#").last();
+            marks->setText(QString("%1=%2").arg(action->text()).arg(num));
+        }
     }
 }
 
@@ -479,7 +519,8 @@ void CheatDialog::loseSkill(){
         QString item = action->data().toString();
         //skill:-sheri
         item.prepend("skill:-");
-        ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), item);
+        ClientInstance->requestCheatState(getPlayerString(), item);
+        //loadState(target->currentIndex());
     }
 }
 
@@ -503,5 +544,5 @@ void CheatDialog::doApplyExpert(){
     strs << str;
 
     QString data = strs.join(",");
-    ClientInstance->requestCheatState(target->itemData(target->currentIndex()).toString(), data);
+    ClientInstance->requestCheatState(getPlayerString(), data);
 }

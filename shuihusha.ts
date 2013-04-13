@@ -4707,7 +4707,7 @@ P = 你自己, R = 你所在的房间</translation>
     <message>
         <location filename="src/server/server.cpp" line="313"/>
         <source>Change me freely</source>
-        <translation>启用自我变身</translation>
+        <translation>启用变身卡</translation>
     </message>
     <message>
         <location filename="src/server/server.cpp" line="316"/>

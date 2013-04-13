@@ -48,7 +48,7 @@ public:
     void requestCheatGetOneCard(int card_id);
     void requestCheatChangeGeneral(QString name);
     void requestCheatKill(const QString& killer, const QString& victim);
-    void requestCheatDamage(const QString& source, const QString& target, DamageStruct::Nature nature, int points);
+    void requestCheatDamage(const QString& source, const QString& target, int nature, int points);
     void requestCheatRevive(const QString& name);
     void requestCheatState(const QString &target, const QString &data);
     void requestCheatRunScript(const QString& script);

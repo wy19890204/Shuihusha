@@ -439,7 +439,7 @@ void Client::requestCheatRevive(const QString& name)
     requestToServer(S_COMMAND_CHEAT, cheatReq);
 }
 
-void Client::requestCheatDamage(const QString& source, const QString& target, DamageStruct::Nature nature, int points)
+void Client::requestCheatDamage(const QString& source, const QString& target, int nature, int points)
 {
     Json::Value cheatReq(Json::arrayValue), cheatArg(Json::arrayValue);
     cheatArg[0] = toJsonString(source);
